@@ -4,8 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
 <title>Burning Bush — Bible Memory</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Cinzel:wght@600;800&family=Cormorant+Garamond:wght@600;700&family=Luckiest+Guy&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link href="/burningbush/fonts/fonts.css" rel="stylesheet"><!-- fonts bundled locally for full offline / mobile-app use -->
 <style>
   :root{
     --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --panel3:#252a35; --ink:#e9ecf1; --muted:#9aa3b2;
@@ -98,6 +97,10 @@
   .tile.locked{background:var(--panel2);color:#454b57;cursor:not-allowed;box-shadow:0 6px 0 #101319}
   .tile.done::before{content:"✓";position:absolute;top:-4px;left:-4px;background:var(--green);color:#062a12;width:22px;height:22px;border-radius:50%;font-size:13px;display:grid;place-items:center}
   .tile.gold.done::before,.tile.gray.done::before{display:none}
+  .tile.pro{filter:grayscale(.55) brightness(.82);position:relative}
+  .lockbadge{position:absolute;top:-7px;right:-7px;background:var(--gold);color:#241a02;width:23px;height:23px;border-radius:50%;font-size:12px;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.45);z-index:2}
+  .tile.focusnext{animation:focuspulse 1.4s ease-in-out infinite}
+  @keyframes focuspulse{0%,100%{box-shadow:0 6px 0 #2f4f9e,0 0 0 0 rgba(109,155,255,.55)}50%{box-shadow:0 6px 0 #2f4f9e,0 0 0 10px rgba(109,155,255,0)}}
   .legend{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:18px}
   .legend b{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:4px}
 
@@ -224,7 +227,9 @@
   .vpsel{width:100%;background:var(--panel2);border:2px solid var(--line);color:var(--ink);border-radius:12px;padding:14px;font-size:17px;font-weight:700;appearance:none;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239aa3b2' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
   .vpsel:focus{border-color:var(--gold2);outline:none}
-  .milestone{margin-top:12px;background:var(--panel2);border:1px dashed #3a4150;border-radius:16px;padding:18px;text-align:center;opacity:.72}
+  .vpsel.correct{border-color:var(--green);background:#16281a}
+  .vpsel.wrong{border-color:var(--miss);background:#2a1418}
+  .milestone{margin:26px 0;background:var(--panel2);border:1px dashed #3a4150;border-radius:16px;padding:18px;text-align:center;opacity:.72}
   .milestone.reached{background:linear-gradient(135deg,#2a2413,#1a1710);border:1px solid var(--gold);opacity:1}
   .milestone .mtitle{font-size:18px;font-weight:800;color:var(--muted);letter-spacing:.4px;margin:4px 0}
   .milestone.reached .mtitle{color:var(--gold)}
@@ -246,6 +251,18 @@
   .theme-opt .sw{width:44px;height:44px;border-radius:10px;flex:none;border:1px solid rgba(255,255,255,.15)}
   .theme-opt .tn{font-weight:800;font-size:15px} .theme-opt .td{font-size:12px;color:var(--muted)}
   .prof-sect{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--gold);font-weight:800;margin-bottom:8px}
+  .badgecat{font-size:12px;font-weight:800;color:var(--gold);margin:14px 0 8px}
+  .badgecat .muted{font-weight:600}
+  .badgegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .badge{text-align:center}
+  .badge .ring{width:54px;height:54px;border-radius:50%;margin:0 auto;display:grid;place-items:center;font-size:24px;
+    background:radial-gradient(circle at 35% 30%,rgba(232,201,106,.4),rgba(30,25,60,.9));border:1px solid var(--line);box-shadow:0 0 14px rgba(232,201,106,.22)}
+  .badge.locked .ring{filter:grayscale(1) brightness(.5);opacity:.45;box-shadow:none}
+  .badge .bn{font-size:9px;color:#cbd2dc;display:block;margin-top:4px;line-height:1.15}
+  .badge.locked .bn{color:var(--muted)}
+  .badge .bnum{font-size:8px;color:var(--gold2);font-weight:800}
+  .badge-pop{font-size:64px;animation:badgepop .5s ease;filter:drop-shadow(0 0 16px var(--glow,rgba(227,179,74,.5)))}
+  @keyframes badgepop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.2)}100%{transform:scale(1)}}
   .trans-opt{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;background:var(--panel2);border:2px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:8px;cursor:pointer;color:var(--ink);text-align:left}
   .trans-opt.sel{border-color:var(--gold)}
   .trans-opt .ti b{font-size:14px} .trans-opt .ti div{font-size:11px;color:var(--muted)}
@@ -267,6 +284,20 @@
   /* palace */
   .palace-card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;cursor:pointer}
   .palace-card h3{margin:0 0 3px;font-size:16px} .palace-card p{margin:0;font-size:12.5px;color:var(--muted)}
+  /* spaced-repetition trail */
+  .srtrail{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:nowrap}
+  .srn{display:flex;flex-direction:column;align-items:center;gap:4px;flex:0 0 auto}
+  .srdot{width:16px;height:16px;border-radius:50%;background:var(--panel2);border:2px solid var(--line)}
+  .srlbl{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.3px}
+  .srn.done .srdot{background:var(--gold);border-color:var(--gold)}
+  .srn.done .srlbl{color:var(--gold)}
+  .srn.due .srdot{background:#4b76e6;border-color:#6d9bff;animation:focuspulse 1.4s ease-in-out infinite}
+  .srn.due .srlbl{color:#8fb0ff}
+  .srline{flex:1 1 auto;height:2px;background:var(--line);margin:0 3px;position:relative;top:-8px;min-width:8px}
+  .due-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff5a5a;margin-left:6px;vertical-align:middle;box-shadow:0 0 6px rgba(255,90,90,.8)}
+  .tabbar button{position:relative}
+  .tabbar .tabbadge{position:absolute;top:4px;right:calc(50% - 18px);width:9px;height:9px;border-radius:50%;background:#ff5a5a;box-shadow:0 0 6px rgba(255,90,90,.9);display:none}
+  .tabbar button.hasdue .tabbadge{display:block}
   .station{display:flex;gap:12px;align-items:flex-start;background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--gold2);border-radius:12px;padding:13px;margin-bottom:10px}
   .station .snum{width:26px;height:26px;border-radius:50%;background:var(--gold);color:#241a02;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
   .station .sbody b{color:var(--gold)} .station .sbody{font-size:14px;line-height:1.5}
@@ -400,6 +431,9 @@
   .grouphead.grp-cracked .gmeta{color:#241a02}
   .vlist .vrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
   .vrow.clkrow{cursor:pointer}
+  .bookhead{width:100%;display:flex;justify-content:space-between;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 13px;margin:8px 0 4px;cursor:pointer;color:var(--ink);font-weight:800;font-size:14px;text-align:left}
+  .bookhead:active{border-color:var(--gold2)}
+  .bookhead .gmeta{color:var(--muted);font-size:12px;font-weight:700}
   .storydivider{text-align:center;margin:26px 0 6px;font-family:inherit;font-size:22px;font-weight:800;color:var(--gold);letter-spacing:.5px}
   .storydivider span{display:block;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.3px;margin-top:2px}
   .vlist .vrow .vt{flex:1} .vlist .vrow .vt .muted{font-size:12px;line-height:1.4}
@@ -486,7 +520,7 @@
     <button data-tab="journey" class="on"><span class="ic">🗺️</span>Journey</button>
     <button data-tab="learn"><span class="ic">🎓</span>Learn</button>
     <button data-tab="verse"><span class="ic">📖</span>Verse</button>
-    <button data-tab="palace"><span class="ic">🏛️</span>Palace</button>
+    <button data-tab="palace"><span class="tabbadge"></span><span class="ic">🏛️</span>Palace</button>
     <button data-tab="foundations"><span class="ic">📚</span>Ref</button>
   </div>
 
@@ -503,7 +537,20 @@
       <div class="prof-sect" style="margin-top:16px">Account</div>
       <div id="acctBox"></div>
 
-      <button class="btn" id="themeClose" style="margin-top:12px">Done</button>
+      <div class="prof-sect" style="margin-top:16px">Back up your progress</div>
+      <p class="hint" style="margin:0 0 8px">Progress is saved in this browser only. Export a backup file to keep it safe or move to another device.</p>
+      <div class="btnrow" style="margin-top:0">
+        <button class="btn ghost" id="expBtn">⬇️ Export backup</button>
+        <button class="btn ghost" id="impBtn">⬆️ Restore</button>
+      </div>
+      <input type="file" id="impFile" accept="application/json" style="display:none">
+      <div id="backupMsg" class="hint" style="margin-top:8px"></div>
+
+      <div class="prof-sect" style="margin-top:18px">Badges <span id="badgeCount" style="color:var(--muted);float:right;text-transform:none;letter-spacing:0"></span></div>
+      <div id="badgeGrid"></div>
+      <p class="hint" id="badgeNext" style="margin:8px 0 0"></p>
+
+      <button class="btn" id="themeClose" style="margin-top:14px">Done</button>
     </div>
   </div>
 
@@ -521,11 +568,44 @@
       <p class="hint" style="margin-top:12px">Prototype: sign-in is stored on this device. Real Google/Apple/email auth is wired in the mobile build.</p>
     </div>
   </div>
+
+  <div class="modal" id="payModal" style="display:none">
+    <div class="modal-card" style="text-align:center">
+      <div style="font-size:40px;line-height:1;margin-bottom:6px">🔥📖</div>
+      <h2 style="font-size:20px;margin:0 0 4px">Unlock the whole Bible</h2>
+      <p class="lead" style="font-size:13px;margin:0 0 14px">You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelation.</p>
+      <div style="text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:13.5px;line-height:1.7">
+        <div style="opacity:.7;margin-bottom:6px"><b>Free forever:</b> the Major-System sounds, the Torah (Genesis–Deuteronomy), your first memory palace, and Matthew.</div>
+        <div><b class="gold">Pro unlocks:</b></div>
+        <div>✦ All 66 books &amp; the balanced climb</div>
+        <div>✦ Every number peg (chapters &amp; verses to 176)</div>
+        <div>✦ All 100 Bible-story lessons</div>
+        <div>✦ Unlimited bonus memory palaces</div>
+      </div>
+      <button class="btn blue" id="payGo" style="width:100%"><span id="payPrice">$25/year</span> · Go Pro</button>
+      <button class="btn ghost" id="payRestore" style="width:100%;margin-top:8px">I already paid · Restore</button>
+      <button class="btn ghost" id="payClose" style="width:100%;margin-top:8px">Maybe later</button>
+      <p class="hint" style="margin-top:12px">Secure checkout by Stripe. Cancel anytime.</p>
+      <button id="payCode" style="background:none;border:none;color:var(--muted);text-decoration:underline;font-size:12px;cursor:pointer;margin-top:6px">I have a code</button>
+    </div>
+  </div>
 </div>
 
 <script src="/burningbush/kjv.js"></script>
 <script src="/burningbush/bbe.js"></script>
 <script>
+/* =================== STORAGE LAYER =================== */
+// Single choke-point for all persistence. Today it's localStorage; for the mobile app
+// (Capacitor) only this object changes — swap the bodies for Preferences/SQLite and every
+// caller keeps working. Every operation is crash-proof: a failure or full disk never throws
+// up into the app, so a bad/blocked store can't white-screen it.
+const Store = {
+  get(k, fb=null){ try{ const v=localStorage.getItem(k); return v===null?fb:v; }catch(e){ return fb; } },
+  set(k, v){ try{ localStorage.setItem(k, v); return true; }catch(e){ return false; } },
+  remove(k){ try{ localStorage.removeItem(k); }catch(e){} },
+  getJSON(k, fb){ try{ const v=localStorage.getItem(k); return v===null?fb:(JSON.parse(v)??fb); }catch(e){ return fb; } },
+  setJSON(k, v){ return Store.set(k, JSON.stringify(v)); }
+};
 /* =================== BIBLE TRANSLATIONS =================== */
 // Public-domain texts are bundled (KJV, BBE). Copyrighted translations (NKJV, NIV, NLT, ESV)
 // cannot be bundled — in the mobile app they load via a licensed Bible API. Structure is ready.
@@ -537,7 +617,7 @@ const TRANSLATIONS=[
  {id:"ESV", name:"English Standard Version", data:()=>null, licensed:true},
  {id:"BBE", name:"Bible in Basic English", data:()=>window.BBE, licensed:false, bonus:true}
 ];
-function curTrans(){ try{ return localStorage.getItem("vv_trans")||"KJV"; }catch(e){ return "KJV"; } }
+function curTrans(){ return Store.get("vv_trans","KJV"); }
 function transData(){ const t=TRANSLATIONS.find(x=>x.id===curTrans()); const d=t&&t.data&&t.data(); return d||window.KJV; } // fallback KJV
 function transFellBack(){ const t=TRANSLATIONS.find(x=>x.id===curTrans()); return !!(t&&t.licensed); }
 /* KJV structure (chapter/verse counts) drives navigation for every translation */
@@ -548,37 +628,24 @@ let _totVerses=0;
 function totalVerses(){ if(!_totVerses && window.KJV) _totVerses=window.KJV.reduce((s,b)=>s+b.reduce((t,ch)=>t+ch.length,0),0); return _totVerses; }
 // verses the user can currently ENCODE (book, chapter and verse numbers all known) — grows as they learn
 let _rvc=null,_rvcLen=-1;
+function progTag(){ return Prog.doneSkills.length+"_"+(Prog.extraKnown||[]).length; }
 function reachableVerseCount(){
-  if(_rvc!==null && _rvcLen===Prog.doneSkills.length) return _rvc;
+  if(_rvc!==null && _rvcLen===progTag()) return _rvc;
   const k=knownNumbers(); let n=0;
   for(let b=1;b<=66;b++){ if(!k.has(b)||!window.KJV[b-1]) continue; const chs=window.KJV[b-1];
     for(let c=1;c<=chs.length;c++){ if(!k.has(c)) continue; const vc=chs[c-1].length;
       for(let v=1;v<=vc;v++) if(k.has(v)) n++; } }
-  _rvc=n; _rvcLen=Prog.doneSkills.length; return n;
+  _rvc=n; _rvcLen=progTag(); return n;
 }
+// clear all reachability caches so the next render reflects a fresh unlock
+function bustCaches(){ _known=null; _rvc=null; }
 
 /* =================== MAJOR SYSTEM ENGINE =================== */
 // User's own peg list (memoryOS), numbers 00-165. Two-digit list: single
 // digits (books/chapters/verses 1-9) use the zero-padded 0X peg.
-const PEGS = ["Sauce","Seed","Sun","Sumo","Sore","Soul","Sushi","Sock","Sofa","Soap",
-"Dice","Dad","DNA","Dime","Door","Doll","Tissue","Toga","TV","Tuba",
-"Nose","Net","Nun","Nemo","Nero","Nail","Nacho","Nike","Knife","Nap",
-"Mouse","Mat","Moon","Mummy","Mare","Molly","Match","Mic","Movie","Map",
-"Rose","Radio","Rhino","Rum","Error","Reel","Arch","Rock","Roof","Harp",
-"Lasso","Lid","Lion","Limo","Hillary","LOL","Leech","Leak","Lava","Lip",
-"Cheese","Cheetah","Genie","Chime","Cherry","Chilli","Judge","Chick","Chef","Ship",
-"Goose","Cat","Gun","Gum","Car","Koala","Cage","Cake","Coffee","Cube",
-"Vase","Foot","Fan","Foam","Fire","Fly","Fish","Fog","FIFA","Phoebe",
-"Bus","Bat","Piano","Beam","Bear","Apple","Bush","Book","Biff","Poop"];
+const PEGS = ["Sauce","Seed","Sun","Sumo","Sore","Soul","Sushi","Sock","Sofa","Soap","Dice","Dad","DNA","Dime","Door","Doll","Tissue","Toga","TV","Tuba","Nose","Net","Nun","Nemo","Nero","Nail","Nacho","Nike","Knife","Nap","Mouse","Mat","Moon","Mummy","Mare","Molly","Match","Mic","Movie","Map","Rose","Radio","Rhino","Rum","Error","Reel","Arch","Rock","Roof","Harp","Lasso","Lid","Lion","Limo","Hillary","LOL","Leech","Leak","Lava","Lip","Cheese","Cheetah","Genie","Chime","Cherry","Chilli","Judge","Chick","Chef","Ship","Goose","Cat","Gun","Gum","Car","Koala","Cage","Cake","Coffee","Cube","Vase","Foot","Fan","Foam","Fire","Fly","Fish","Fog","FIFA","Phoebe","Bus","Bat","Piano","Beam","Bear","Apple","Bush","Book","Biff","Poop"];
 const PEGS100 = {
-100:"Daisies",101:"Toast",102:"Dozen",103:"Tasmanian devil",104:"Taser",105:"Tesla",106:"Dosage",107:"Disc",108:"Adhesive",109:"Teaspoon",
-110:"Adidas",111:"Deadwood",112:"Titan",113:"Totem",114:"Tutor",115:"Doodle",116:"Ditch",117:"Hotdog",118:"Dead fox",119:"Hot tub",
-120:"Tennis",121:"Tent",122:"Tuna",123:"Dynamite",124:"Dinner",125:"Tunnel",126:"Tangerine",127:"Tank",128:"Tinfoil",129:"Tenpin",
-130:"Thames",131:"Tomato",132:"Diamond",133:"Time machine",134:"Timer",135:"Oatmeal",136:"Damage",137:"Tomcat",138:"The Movie",139:"Dumbo",
-140:"Dress",141:"Dart",142:"Drone",143:"Tram",144:"Dryer",145:"Drill",146:"Torch",147:"Truck",148:"Trophy",149:"Drop",
-150:"Tellus",151:"Toilet",152:"Dylan",153:"Dilemma",154:"Tailor",155:"Delilah",156:"Deluge",157:"Talc",158:"Tea leaf",159:"Tulip",
-160:"Duchess",161:"Hatchet",162:"Audition",163:"Taj Mahal",164:"Teacher",165:"Eat chilli",
-166:"Dishwasher",167:"Hitchhiker",168:"Déjà vu",169:"Douchebag",170:"Tacos",171:"Ticket",172:"Toucan",173:"Dogma",174:"Tiger",175:"Tackle",176:"Head coach"};
+100:"Daisies",101:"Toast",102:"Dozen",103:"Tasmanian devil",104:"Taser",105:"Tesla",106:"Dosage",107:"Disc",108:"Adhesive",109:"Teaspoon",110:"Adidas",111:"Deadwood",112:"Titan",113:"Totem",114:"Tutor",115:"Doodle",116:"Ditch",117:"Hotdog",118:"Dead fox",119:"Hot tub",120:"Tennis",121:"Tent",122:"Tuna",123:"Dynamite",124:"Dinner",125:"Tunnel",126:"Tangerine",127:"Tank",128:"Tinfoil",129:"Tenpin",130:"Thames",131:"Tomato",132:"Diamond",133:"Time machine",134:"Timer",135:"Oatmeal",136:"Damage",137:"Tomcat",138:"The Movie",139:"Dumbo",140:"Dress",141:"Dart",142:"Drone",143:"Tram",144:"Dryer",145:"Drill",146:"Torch",147:"Truck",148:"Trophy",149:"Drop",150:"Tellus",151:"Toilet",152:"Dylan",153:"Dilemma",154:"Tailor",155:"Delilah",156:"Deluge",157:"Talc",158:"Tea leaf",159:"Tulip",160:"Duchess",161:"Hatchet",162:"Audition",163:"Taj Mahal",164:"Teacher",165:"Eat chilli",166:"Dishwasher",167:"Hitchhiker",168:"Déjà vu",169:"Douchebag",170:"Tacos",171:"Ticket",172:"Toucan",173:"Dogma",174:"Tiger",175:"Tackle",176:"Head coach"};
 // DECODE HOOKS — read the number back OUT of the image, by a vivid count feature.
 const DECODE = {
 1:"A single lone seed sprouts one straight stem shooting up like the number 1 — one seed, Seed = 1.",
@@ -813,7 +880,7 @@ const MNEM_BOOK = {
 3:{s:"a priest levitating (Leviticus)",t:"LEVITICUS lifts a priest LEVITATING above the altar — book 3 — while your ma looks up in awe (ma = 3)."},
 4:{s:"floating numbers (Numbers)",t:"NUMBERS is a wilderness raining floating counting-NUMBERS — book 4 — down onto a loaf of rye (rye = 4)."},
 5:{s:"the Law given again (Deuteronomy)",t:"DEUTERONOMY is the Law repeated a second time — book 5 — the stone tablets of the LAW held high (law = 5)."},
-6:{s:"a GIANT SHOE knocking down ALL the walls",p:[["Jo","GIANT"],["shu","SHOE"],["a","ALL"]],t:"JOSHUA blows the trumpet and Jericho falls — book 6 — a giant SHOE stomping the walls flat (shoe = 6)."},
+6:{s:"a GIANT SHOE knocking down ALL the walls",t:"JOSHUA blows the trumpet and Jericho falls — book 6 — a giant SHOE stomping the walls flat (shoe = 6).",p:[["Jo","GIANT"],["shu","SHOE"],["a","ALL"]]},
 7:{s:"a judge's gavel (Judges)",t:"JUDGES raise gavels from the bench — book 7 — while a COW lows in the courtroom (cow = 7)."},
 8:{s:"a sheltering roof (Ruth)",t:"RUTH gleans in the field and finds shelter under a ROOF — book 8 — draped in figure-8 IVY (ivy = 8)."},
 9:{s:"the boy Samuel (1 Samuel)",t:"First SAMUEL: young Sam hears God call in the night — book 9 — as a BEE buzzes softly by his ear (bee = 9)."},
@@ -823,7 +890,7 @@ const MNEM_BOOK = {
 13:{s:"a long scroll (1 Chronicles)",t:"First CHRONICLES unrolls a long family scroll — book 13 — pinned with a shiny DIME (dime = 13)."},
 14:{s:"a scroll again (2 Chronicles)",t:"Second CHRONICLES: the temple rises — book 14 — as workers roll great stones on a TIRE (tire = 14)."},
 15:{s:"a razor (Ezra)",t:"EZRA rebuilds the temple, precise as a RAZOR — book 15 — snapping a TOWEL to rally the workers (towel = 15)."},
-16:{s:"a KNEE-HIGH wall MADE by Ya",p:[["Nehe","KNEE-HIGH"],["mi","MADE"],["ah","YA"]],t:"NEHEMIAH rebuilds the wall knee-high overnight — book 16 — bricks stacked on a DISH (dish = 16)."},
+16:{s:"a KNEE-HIGH wall MADE by Ya",t:"NEHEMIAH rebuilds the wall knee-high overnight — book 16 — bricks stacked on a DISH (dish = 16).",p:[["Nehe","KNEE-HIGH"],["mi","MADE"],["ah","YA"]]},
 17:{s:"a star (Esther)",t:"ESTHER means STAR — book 17 — the brave queen shines like a star, a DUCK tucked under her royal robe (duck = 17)."},
 18:{s:"a job / hard work (Job)",t:"JOB loses all yet keeps his JOB of faith — book 18 — a DOVE landing gently on his ash heap (dove = 18)."},
 19:{s:"palms (Psalms)",t:"PSALMS: hands lift in praise under swaying PALMS — book 19 — beside an overflowing TUB of song (tub = 19)."},
@@ -842,7 +909,7 @@ const MNEM_BOOK = {
 32:{s:"a whale (Jonah)",t:"JONAH is swallowed by a great WHALE — book 32 — then set on dry land under a huge MOON (moon = 32)."},
 33:{s:"a microphone (Micah)",t:"MICAH lifts the MIC and proclaims justice — book 33 — his voice echoing past a MUMMY's tomb (mummy = 33)."},
 34:{s:"a warning hum (Nahum)",t:"NAHUM hums a warning over Nineveh — book 34 — as a runaway MOWER levels the field (mower = 34)."},
-35:{s:"HAVE A COOK on an uphill climb",p:[["Ha","HAVE"],["bak","A"],["kuk","COOK"]],t:"HABAKKUK brings hard questions to God and climbs to watch — book 35 — riding a steady MULE uphill (mule = 35)."},
+35:{s:"HAVE A COOK on an uphill climb",t:"HABAKKUK brings hard questions to God and climbs to watch — book 35 — riding a steady MULE uphill (mule = 35).",p:[["Ha","HAVE"],["bak","A"],["kuk","COOK"]]},
 36:{s:"a rushing wind (Zephaniah)",t:"ZEPHANIAH warns the day of the Lord sweeps in like a WIND — book 36 — fanning a struck MATCH (match = 36)."},
 37:{s:"builders at work (Haggai)",t:"HAGGAI urges the people to rebuild the temple — book 37 — hauling timber, pausing over a coffee MUG (mug = 37)."},
 38:{s:"night visions on a screen (Zechariah)",t:"ZECHARIAH sees eight night visions — book 38 — playing across a glowing MOVIE screen (movie = 38)."},
@@ -873,7 +940,8 @@ const MNEM_BOOK = {
 63:{s:"a tiny letter (2 John)",t:"Second JOHN: walk in truth, a short letter — book 63 — a single flawless GEM in your palm (gem = 63)."},
 64:{s:"a third note (3 John)",t:"Third JOHN: welcome the traveling brothers — book 64 — set a bowl of CHERRIES on the table (cherry = 64)."},
 65:{s:"a shield (Jude)",t:"JUDE: contend for the faith — book 65 — raise a SHIELD against intruders and bar the JAIL door on falsehood (jail = 65)."},
-66:{s:"the curtain drawn back (Revelation)",t:"REVELATION: the curtain is drawn back, REVEALING the throne — book 66 — the righteous JUDGE brings the final verdict (judge = 66)."}};
+66:{s:"the curtain drawn back (Revelation)",t:"REVELATION: the curtain is drawn back, REVEALING the throne — book 66 — the righteous JUDGE brings the final verdict (judge = 66)."}
+};
 
 /* =================== SCENES — 3 foundation promises (deep designs) =================== */
 // All within book 1-9, chapter 1-9, verse 1-9. God shown only as light/glory/voice.
@@ -1043,13 +1111,87 @@ function pegImg(kind,n,word,big){
 const DAY = 86400000;
 const INTERVAL = {1:0,2:1,3:3,4:7,5:21};
 const SRS_KEY="vv_srs_v3", PROG_KEY="vv_progress_v3";
-function load(k,f){ try{ return JSON.parse(localStorage.getItem(k))||f; }catch(e){ return f; } }
-function save(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
+const PROG_SCHEMA=1; // bump when the saved-progress shape changes; migrateProg() upgrades old saves
+function load(k,f){ return Store.getJSON(k,f); }   // thin wrappers over the storage layer
+function save(k,v){ return Store.setJSON(k,v); }
+// Bring any saved progress up to the current schema: fill in fields added since it was written,
+// heal inconsistencies, then stamp the version. Runs on every load so old saves never break.
+function migrateProg(p){
+  p=p||{};
+  if(typeof p.level!=="number") p.level=0;
+  p.memorized=p.memorized||[]; p.doneSkills=p.doneSkills||[]; p.chosen=p.chosen||{};
+  if(typeof p.onboarded!=="boolean") p.onboarded=!!p.onboarded;
+  p.saved=p.saved||[]; p.skipped=p.skipped||[];               // green (come back later) / red (skip)
+  p.extraKnown=p.extraKnown||[]; p.palaces=p.palaces||[]; p.customBook=p.customBook||{}; p.badges=p.badges||[]; p.customScene=p.customScene||{}; // ad-hoc numbers, palaces, edited book texts, badges, user's own verse scenes
+  p.palaces=p.palaces.map(pl=>{ if(pl&&typeof pl==="object"){ if(!pl.learnedAt) pl.learnedAt=Date.now(); if(!pl.step) pl.step=1; } return pl; }); // spaced-repetition trail: D0 done at build
+  p.talents=p.talents||0; p.streak=p.streak||0; p.bestStreak=p.bestStreak||0; p.talentLog=p.talentLog||{}; // Talents (verse-practice points), streaks, per-verse 24h earn log
+  p.saved=p.saved.filter(k=>!p.memorized.includes(k)); p.skipped=p.skipped.filter(k=>!p.memorized.includes(k)); // heal verses stuck in saved/skip after being learned
+  // (future) if(p.__v<2){ ...transform... }
+  p.__v=PROG_SCHEMA;
+  return p;
+}
+// Load progress defensively: if the stored blob is corrupt (fails to parse/migrate), keep a copy
+// under a _corrupt key for recovery instead of silently wiping it, and start fresh so the app still opens.
+function loadProg(){
+  const raw=Store.get(PROG_KEY,null);
+  try{ return migrateProg(raw?JSON.parse(raw):null); }
+  catch(e){ if(raw) Store.set(PROG_KEY+"_corrupt", raw); return migrateProg(null); }
+}
 let SRS = load(SRS_KEY,{});
-let Prog = load(PROG_KEY,{level:0, memorized:[], onboarded:false, doneSkills:[], chosen:{}});
-Prog.saved=Prog.saved||[]; Prog.skipped=Prog.skipped||[];   // green (come back later) / red (skip)
-Prog.extraKnown=Prog.extraKnown||[]; Prog.palaces=Prog.palaces||[]; Prog.customBook=Prog.customBook||{}; // ad-hoc learned numbers, custom palaces, edited book texts
+let Prog = loadProg();
 function saveProg(){ save(PROG_KEY,Prog); }
+
+/* =================== ENTITLEMENTS / BILLING (Pro — $25/year) =================== */
+// Free tier: The Code (sounds), the Torah's five books, your first memory palace, and Matthew.
+// Everything else (the rest of the Bible, bonus palaces, the number pegs, Bible Stories) is Pro.
+const FREE_SKILLS = new Set([
+  "snd:0-4","snd:5-9",                       // the Major-System sounds (foundation)
+  "num:1","num:2","num:3","num:4","num:5",   // the Torah · Genesis–Deuteronomy
+  "palace:0",                                // your first memory palace
+  "book:40"                                  // Matthew
+]);
+function isFreeSkill(sk){ return FREE_SKILLS.has(sk.id); }
+function isPaidSkill(sk){ return !isFreeSkill(sk); }
+// Is a given skill locked behind the paywall for THIS user right now?
+function skillPaywalled(sk){ return isPaidSkill(sk) && !Billing.isPro(); }
+
+// Single choke-point for the subscription. Web uses Stripe; the mobile app must use the
+// App Store / Play in-app purchase instead (stores forbid Stripe for digital goods) — only
+// this object changes for that. Entitlement is stored via Store so it survives with progress.
+const Billing = {
+  // ── configure these once your Stripe product exists ──
+  cfg: {
+    priceLabel: "$25/year",
+    // Paste your Stripe Payment Link here (a hosted $25/year subscription checkout).
+    // Set its post-payment redirect to this app's URL with ?checkout=success appended.
+    checkoutUrl: "",
+    // Optional: Stripe customer-portal link so subscribers can manage/cancel.
+    manageUrl: ""
+  },
+  data(){ return Store.getJSON("vv_pro", null); },
+  isPro(){ const d=Billing.data(); if(!d||!d.active) return false; if(d.until && Date.now()>d.until) return false; return true; },
+  // Grant Pro for a period (default one year). Called after a confirmed purchase.
+  grant(months=12){ Store.setJSON("vv_pro",{active:true, plan:"annual", since:Date.now(), until:Date.now()+Math.round(months*30.44*DAY)}); },
+  revoke(){ Store.remove("vv_pro"); },
+  // Comp / promo codes that unlock the full app permanently (no expiry).
+  codes: ["elijahsentme"],
+  redeem(code){ const c=(code||"").trim().toLowerCase().replace(/\s+/g,""); if(Billing.codes.includes(c)){ Store.setJSON("vv_pro",{active:true, plan:"code", since:Date.now(), until:null}); return true; } return false; },
+  startCheckout(){
+    if(!Billing.cfg.checkoutUrl){ toast("Checkout isn't set up yet — add your Stripe link in Billing.cfg."); return; }
+    try{ location.href = Billing.cfg.checkoutUrl; }catch(e){ toast("Couldn't open checkout."); }
+  },
+  // On app load: if we've returned from a successful Stripe checkout, unlock Pro and tidy the URL.
+  // NOTE: this trusts the redirect. For tamper-proof entitlement, verify the session server-side
+  // (a small endpoint that calls Stripe with the session_id) and grant based on that response.
+  handleReturn(){
+    let p; try{ p=new URLSearchParams(location.search); }catch(e){ return; }
+    if(p.get("checkout")==="success"){
+      Billing.grant(12);
+      try{ history.replaceState(null,"",location.pathname); }catch(e){}
+      setTimeout(()=>toast("✨ Pro unlocked — the whole Bible is open to you!"),300);
+    }
+  }
+};
 // any verse (curated pool object if present, else built from the full KJV)
 function verseObj(b,c,v){ const p=verseAt(refKey(b,c,v));
   if(p) return {b:p.b||bookName(b),c,v,text:p.text||kjvText(b,c,v),concept:p.concept||"",scene:p.scene,elements:p.elements};
@@ -1093,6 +1235,8 @@ function updateMetrics(){
   el("mLvl").textContent=Prog.level;
   el("mBk").textContent=booksKnown();
   el("mMem").textContent=Prog.memorized.length;
+  const palTab=document.querySelector('.tabbar button[data-tab="palace"]');
+  if(palTab) palTab.classList.toggle("hasdue", palacesDueCount()>0);   // red dot when a palace is due
 }
 
 /* =================== ROUTING =================== */
@@ -1103,7 +1247,7 @@ function show(tab){
   document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   document.querySelector(".content").scrollTop=0;
   if(tab==="journey") renderJourney();
-  if(tab==="learn") renderPath();
+  if(tab==="learn") renderPath(true);
   if(tab==="verse") renderVerse();
   if(tab==="palace") renderPalace();
 }
@@ -1119,7 +1263,7 @@ function renderJourney(){
     <h2>Your Journey</h2>
     <p class="lead">Master number images to unlock books, chapters and verses across the whole Bible.</p>
     <div class="counters">
-      <div class="counter"><div class="v">${Prog.level}</div><div class="l">numbers mastered</div></div>
+      <div class="counter"><div class="v">${[...knownNumbers()].filter(n=>n>=1&&n<=176).length}</div><div class="l">numbers mastered</div></div>
       <div class="counter"><div class="v">${booksKnown()}</div><div class="l">books unlocked</div></div>
       <div class="counter"><div class="v" style="font-size:18px">${Prog.memorized.length}/${reachableVerseCount().toLocaleString()}</div><div class="l">verses you can memorize</div></div>
       <div class="counter"><div class="v">${Prog.saved.length}</div><div class="l">saved for later</div></div>
@@ -1159,7 +1303,7 @@ function renderBookScreen(bn){
         <div><h2 style="margin:0;font-size:20px">${bookName(bn)}</h2>
           <div class="muted" style="font-size:13px">Book ${bn} · image “${w}” · ${chapCount(bn)} chapters</div></div>
       </div>
-      <div class="vlegend" style="margin-top:10px"><span><b style="border-color:var(--gold2)"></b>chapters you can memorize</span><span><b style="border-color:#2a2f3a"></b>not ready yet</span></div>
+      <div class="vlegend" style="margin-top:10px"><span><b style="background:var(--gold2);border-color:var(--gold)"></b>chapters you can memorize</span><span><b style="background:#20242e;border-color:#3a4150"></b>not ready yet</span></div>
       <div class="vboxes chapters">${chips}</div>
     </div>`;
   el("bkBack").onclick=renderJourney;
@@ -1184,10 +1328,10 @@ function renderChapterScreen(bn,c){
       <h2 style="margin:0 0 2px;font-size:20px">${bookName(bn)} ${c}</h2>
       <div class="muted" style="font-size:13px;margin-bottom:8px">${verseCount(bn,c)} verses</div>
       <div class="vlegend">
-        <span><b style="border-color:var(--gold2)"></b>ready</span>
-        <span><b style="border-color:var(--green)"></b>suggested / saved</span>
-        <span><b style="border-color:var(--miss)"></b>skip</span>
-        <span><b style="border-color:#2a2f3a"></b>not ready</span>
+        <span><b style="background:var(--gold2);border-color:var(--gold)"></b>ready</span>
+        <span><b style="background:var(--green);border-color:var(--green)"></b>suggested / saved</span>
+        <span><b style="background:var(--miss);border-color:var(--miss)"></b>skip</span>
+        <span><b style="background:#20242e;border-color:#3a4150"></b>not ready</span>
         <span><b style="background:var(--gold);border-color:var(--gold)"></b>learned</span>
       </div>
       <p class="hint">Tap a verse to memorize it.</p>
@@ -1394,13 +1538,25 @@ function renderMilestone(m){
                    : `<b class="gold">${reachableGems()}</b> of ${totalGems()} heart-verses within your reach`)
       : `<span class="muted">Locked — keep climbing to reach this checkpoint</span>`}</div></div>`;
 }
-function renderPath(){
+// The next lesson to work on: first unlocked, not-yet-done skill in path order (a "blue" tile).
+// Prefer the main path; fall back to optional skills only if the main path is complete.
+function nextBlueSkill(){
+  const flat=flatSkills();
+  for(const f of flat){ if(!f.optional && !Prog.doneSkills.includes(f.id) && skillUnlocked(f.ui,f.si)) return f; }
+  for(const f of flat){ if(!Prog.doneSkills.includes(f.id) && skillUnlocked(f.ui,f.si)) return f; }
+  return null;
+}
+function renderPath(focus){
   updateMetrics();
   const L=el("learn");
   let html=`<h2>Learn</h2><p class="lead">The Torah first, then the New Testament, then a <b class="gold">balanced climb</b> — every round pairs a few Old Testament books with a New Testament one, so both advance together.</p>
     <div class="vidph"><div class="play">▶</div><div class="vt">Video: How Burning Bush works</div><div class="vs">Placeholder — a 90-second intro to the Major System and what you're about to learn</div></div>
     <div class="legend"><span><b style="background:var(--gold)"></b>gold · strong</span><span><b style="background:#6b7480"></b>gray · practice</span><span><b style="background:#4b76e6"></b>new</span><span><b style="background:var(--panel2)"></b>locked</span></div>`;
   if(expandedUnits===null) expandedUnits=new Set(); // start with every group collapsed
+  // Opening Learn from the bottom menu: minimize everything, open only the unit holding the
+  // next blue lesson, and scroll to it.
+  let focusTile=null;
+  if(focus){ const nb=nextBlueSkill(); if(nb){ expandedUnits=new Set([nb.ui]); focusTile=nb; } }
   html+=`<p class="hint" style="margin:2px 0 10px">Tap a group to open it.</p>`;
   UNITS.forEach((U,ui)=>{
     const total=U.skills.length, done=U.skills.filter(sk=>Prog.doneSkills.includes(sk.id)).length;
@@ -1417,26 +1573,35 @@ function renderPath(){
       html+=`<div class="path" style="margin-top:16px">`;
       U.skills.forEach((sk,si)=>{
         const unlocked=skillUnlocked(ui,si), color=skillColor(sk,unlocked), d=Prog.doneSkills.includes(sk.id)?"done":"";
+        const pro=skillPaywalled(sk);
         const isStory=sk.kind==="story", isPalace=sk.kind==="palace";
         const label = (isStory||isPalace||sk.kind==="book") ? sk.label : (sk.items.length===1?`${sk.items[0]} · ${sk.label}`:sk.label);
         const face = isStory ? "📖" : (isPalace ? "🏛️" : (sk.items.length===1?sk.items[0]:"★"));
-        html+=`<button class="tile ${color} ${d}" data-ui="${ui}" data-si="${si}" ${color==="locked"?"disabled":""}>
-          ${face}<small>${label}</small></button>`;
+        html+=`<button class="tile ${color} ${d} ${pro?"pro":""}" data-ui="${ui}" data-si="${si}" ${(color==="locked"&&!pro)?"disabled":""}>
+          ${pro?`<span class="lockbadge">🔒</span>`:""}${face}<small>${label}</small></button>`;
       });
       html+=`</div>`;
-      if(!U.story && !U.palace) html+=`<div style="text-align:center;margin-top:22px"><button class="btn sm ghost" data-cq="${ui}">⚡ Chapter quiz · test out</button>
-        <div class="hint" style="margin:6px 0 0">Ace it (100%) to turn the whole section gold. One wrong answer ends it.</div></div>`;
+      if(!U.story && !U.palace){
+        const unitPaid=U.skills.some(isPaidSkill) && !Billing.isPro(); // any paid content locks "test out"
+        html+=`<div style="text-align:center;margin-top:22px"><button class="btn sm ghost" data-cq="${ui}" ${unitPaid?`data-prolock="1"`:""}>${unitPaid?"🔒 ":"⚡ "}Chapter quiz · test out</button>
+        <div class="hint" style="margin:6px 0 0">${unitPaid?"Unlock the full Bible to test out of this section.":"Ace it (100%) to turn the whole section gold. One wrong answer ends it."}</div></div>`;
+      }
     }
     html+=`</div>`;
     MILESTONES.forEach(m=>{ if(U.name.startsWith(m.after)) html+=renderMilestone(m); });
   });
   L.innerHTML=html;
   L.querySelectorAll("[data-grp]").forEach(h=>h.onclick=()=>{ const ui=+h.dataset.grp; expandedUnits.has(ui)?expandedUnits.delete(ui):expandedUnits.add(ui); renderPath(); });
-  L.querySelectorAll("[data-cq]").forEach(b=>b.onclick=()=>startChapterQuiz(+b.dataset.cq));
+  L.querySelectorAll("[data-cq]").forEach(b=>b.onclick=()=>{ if(b.dataset.prolock){ openPaywall(); return; } startChapterQuiz(+b.dataset.cq); });
   L.querySelectorAll(".tile").forEach(t=>t.onclick=()=>{
+    if(t.classList.contains("pro")){ openPaywall(); return; }
     if(t.classList.contains("locked")) return;
     startLesson(UNITS[+t.dataset.ui].skills[+t.dataset.si]);
   });
+  if(focusTile){
+    const tile=L.querySelector(`.tile[data-ui="${focusTile.ui}"][data-si="${focusTile.si}"]`);
+    if(tile){ tile.classList.add("focusnext"); requestAnimationFrame(()=>tile.scrollIntoView({behavior:"smooth",block:"center"})); }
+  }
 }
 
 /* ---- lesson runner ---- */
@@ -1469,7 +1634,7 @@ function renderStoryStep(){
 }
 function finishStory(){
   const sk=ST.sk; if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id);
-  sk.items.forEach(id=>gradeKey(`sk:story:${id}`,"good")); saveProg(); updateMetrics(); ST=null;
+  sk.items.forEach(id=>gradeKey(`sk:story:${id}`,"good")); saveProg(); updateMetrics(); ST=null; checkBadges();
   el("learn").innerHTML=`<div class="card center"><div style="font-size:52px">📖</div><h2>Story located!</h2>
     <p class="lead">You'll remember exactly where to find it. Keep going through the stories.</p>
     <button class="btn" id="stBack">Back to stories</button></div>`;
@@ -1477,32 +1642,103 @@ function finishStory(){
 }
 /* ---- Memory Palace builder (build 3 personal palaces) ---- */
 const PALACE_PLACES=["My house","My school / workplace","A previous home","A friend's or relative's house","My daily commute / route","My church"];
+/* ---- palace spaced-repetition trail: review at D0, D1, D3, D7, D16, D30 ---- */
+const SR_TRAIL=[0,1,3,7,16,30]; // days since learning
+// index of the checkpoint currently due (>= its day has passed and it isn't done yet), else -1
+function palaceDueIndex(p){ if(!p||!p.learnedAt) return -1; const step=p.step||1; if(step>=SR_TRAIL.length) return -1;
+  return Date.now() >= p.learnedAt + SR_TRAIL[step]*DAY ? step : -1; }
+function palaceDue(p){ return palaceDueIndex(p)>=0; }
+function palaceTrailDone(p){ return (p&&(p.step||1))>=SR_TRAIL.length; }
+// ms until the next checkpoint comes due (0 if due now, null if the trail is complete)
+function palaceNextReviewMs(p){ const step=p&&p.step||1; if(step>=SR_TRAIL.length) return null;
+  return Math.max(0, (p.learnedAt+SR_TRAIL[step]*DAY) - Date.now()); }
+function palacesDueCount(){ return (Prog.palaces||[]).filter(pl=>pl&&palaceDue(pl)).length; }
+function srHuman(ms){ if(ms==null) return "—"; if(ms<=0) return "today"; const d=Math.round(ms/DAY); return d<=1?"1 day":d+" days"; }
+// the 6-node D0…D30 trail: done = filled gold, due = pulsing, upcoming = dim
+function srTrailHTML(p){ const step=(p&&p.step)||1, di=palaceDueIndex(p);
+  const nodes=SR_TRAIL.map((d,i)=>{ const cls = i<step ? "srn done" : (i===di ? "srn due" : "srn"); return `<div class="${cls}"><span class="srdot"></span><span class="srlbl">D${d}</span></div>`; }).join("<span class='srline'></span>");
+  return `<div class="srtrail">${nodes}</div>`;
+}
 let PB=null; // {slot, stage, place, custom, stations:[]}
 function startPalaceLesson(sk){
-  const slot=sk.items[0];
-  const existing=Prog.palaces[slot];
-  PB={slot, stage:0, place:existing?existing.place:"", stations:existing?existing.stations.slice():[]};
+  const slot=sk.items[0], existing=Prog.palaces[slot];
+  if(existing) return startPalacePractice(slot,"learn",renderPath); // already built → practice/refresh it
+  PB={slot, stage:0, place:"", stations:[], host:"learn", ret:renderPath};
+  renderPalaceBuild();
+}
+/* ---- palace practice: name shown, pick each room in order (re-gilds a decayed palace) ---- */
+let PP=null;
+function startPalacePractice(slot, host, ret){
+  const p=Prog.palaces[slot]; if(!p) return;
+  PP={slot, p, host:host||"learn", ret:ret||renderPath, i:0, wrong:0};
+  renderPalacePractice();
+}
+function renderPalacePractice(){
+  const p=PP.p, L=el(PP.host);
+  if(PP.i>=p.stations.length){ // walked the whole palace → re-gild it + advance the SR trail
+    const id="palace:"+PP.slot; if(!Prog.doneSkills.includes(id)) Prog.doneSkills.push(id);
+    const stored=Prog.palaces[PP.slot];
+    const di=stored?palaceDueIndex(stored):-1, advanced=(stored&&di>=0);
+    if(advanced) stored.step=di+1;                        // this review clears the due checkpoint
+    strengthen("sk:palace:"+PP.slot); saveProg(); updateMetrics(); checkBadges();
+    const done=stored&&palaceTrailDone(stored), nextMs=stored?palaceNextReviewMs(stored):null;
+    const trailMsg = !stored ? "" : done
+      ? "🎉 You've walked the whole spaced-repetition trail — this palace is locked into long-term memory."
+      : `Next spaced-repetition review in <b class="gold">${srHuman(nextMs)}</b>.`;
+    const ret=PP.ret; PP=null;
+    L.innerHTML=`<div class="card center"><div style="font-size:52px">🏛️</div><h2>Palace refreshed!</h2>
+      <p class="lead">You walked all ${p.stations.length} stations of <b class="gold">${p.place}</b> in order — it's gold again.</p>
+      ${trailMsg?`<div style="margin:6px 0 14px">${srTrailHTML(stored)}<p class="hint" style="margin-top:8px">${trailMsg}</p></div>`:""}
+      <button class="btn" id="ppFin">Done</button></div>`;
+    el("ppFin").onclick=ret; return;
+  }
+  const pos=PP.i, correct=p.stations[pos];
+  const distract=shuffle(p.stations.filter((_,j)=>j!==pos).slice()).slice(0,3);
+  const options=shuffle([correct,...distract]);
+  const pct=Math.round(100*pos/p.stations.length);
+  L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="ppClose">✕</button>
+      <div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>
+      <div style="font-size:12px;color:var(--muted);font-weight:700;margin-left:8px">${pos+1}/${p.stations.length}</div></div>
+    <div class="card">
+      <div style="font-weight:800;color:var(--gold);text-align:center;font-size:16px">🏛️ ${p.place}</div>
+      <div class="prompt" style="margin-top:12px">What is stop #${pos+1} on your walk?</div>
+      <div class="opts">${options.map(o=>`<button class="opt" data-ok="${o===correct?1:0}">${o}</button>`).join("")}</div>
+      <div id="ppFb"></div></div>`;
+  el("ppClose").onclick=PP.ret;
+  L.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
+    if(b.disabled) return;
+    if(b.dataset.ok==="1"){ // correct → next room
+      b.classList.add("correct"); L.querySelectorAll("[data-ok]").forEach(x=>x.disabled=true);
+      setTimeout(()=>{ PP.i++; renderPalacePractice(); }, 450);
+    } else { // wrong → red, retry this room
+      b.classList.add("wrong"); b.disabled=true; PP.wrong++;
+      el("ppFb").innerHTML=`<div class="hint" style="text-align:center;margin-top:10px">Not that one — which spot is #${pos+1}?</div>`;
+    }
+  });
+}
+function startNewPalace(){ // build an extra palace from the Palace tab
+  PB={slot:Prog.palaces.length, stage:0, place:"", stations:[], host:"palace", ret:renderPalace};
   renderPalaceBuild();
 }
 function renderPalaceBuild(){
-  const L=el("learn");
+  const L=el(PB.host), title=PB.slot===0?"Build your first palace":"Build a palace";
   if(PB.stage===0){ // intro + video + why
-    L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="pbClose">✕</button><div style="font-weight:800;flex:1;text-align:center">${PB.slot===0?"Build your first palace":"Bonus palace"}</div><div style="width:24px"></div></div>
+    L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="pbClose">✕</button><div style="font-weight:800;flex:1;text-align:center">${title}</div><div style="width:24px"></div></div>
       <div class="card">
         <div class="vidph"><div class="play">▶</div><div class="vt">Video: What is a Memory Palace?</div><div class="vs">Placeholder — explains the method of loci and why it works</div></div>
         <h2 style="font-size:19px;margin:6px 0 4px">Build a place you already know</h2>
         <p class="lead">A memory palace is a real location you know by heart. You'll place things you want to remember — in order — at spots along a familiar walk. Because you already know the route, the order sticks. Let's build yours.</p>
         <button class="btn" id="pbGo">Choose my place →</button></div></div>`;
-    el("pbClose").onclick=renderPath; el("pbGo").onclick=()=>{ PB.stage=1; renderPalaceBuild(); };
+    el("pbClose").onclick=PB.ret; el("pbGo").onclick=()=>{ PB.stage=1; renderPalaceBuild(); };
     return;
   }
   if(PB.stage===1){ // pick place
-    L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="pbClose">✕</button><div style="font-weight:800;flex:1;text-align:center">${PB.slot===0?"Build your first palace":"Bonus palace"}</div><div style="width:24px"></div></div>
+    L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="pbClose">✕</button><div style="font-weight:800;flex:1;text-align:center">${title}</div><div style="width:24px"></div></div>
       <div class="card"><h2 style="font-size:18px">Which place will this palace be?</h2>
         <p class="hint">Pick somewhere you can walk in your mind with your eyes closed.</p>
         ${PALACE_PLACES.map(p=>`<button class="placechip" data-place="${p}">${p}</button>`).join("")}
         <button class="placechip" data-place="__custom">✏️ Custom — type my own…</button></div></div>`;
-    el("pbClose").onclick=renderPath;
+    el("pbClose").onclick=PB.ret;
     L.querySelectorAll("[data-place]").forEach(b=>b.onclick=()=>{
       if(b.dataset.place==="__custom"){ const t=prompt("Name your place (e.g. Grandma's house):"); if(!t) return; PB.place=t.trim(); }
       else PB.place=b.dataset.place;
@@ -1511,8 +1747,8 @@ function renderPalaceBuild(){
     return;
   }
   // stage 2: add stations (walk through, type each location)
-  const L2=el("learn"), min=5, n=PB.stations.length;
-  L2.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="pbClose">✕</button><div style="font-weight:800;flex:1;text-align:center">${PB.place}</div><div style="width:24px"></div></div>
+  const min=5, n=PB.stations.length;
+  L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="pbClose">✕</button><div style="font-weight:800;flex:1;text-align:center">${PB.place}</div><div style="width:24px"></div></div>
     <div class="card">
       <h2 style="font-size:18px">Walk through “${PB.place}”</h2>
       <p class="lead">Type each spot along your route, <b>in the order you'd walk past them</b> (e.g. front door → hallway → kitchen sink → couch…). Add at least ${min}.</p>
@@ -1520,23 +1756,25 @@ function renderPalaceBuild(){
       <div class="stationlist">${PB.stations.map((s,i)=>`<div class="st"><span><b class="gold">${i+1}.</b> ${s}</span><span class="rm" data-rm="${i}">✕</span></div>`).join("")||`<p class="hint">No locations yet — add your first stop.</p>`}</div>
       <button class="btn" id="pbDone" ${n>=min?"":"disabled"}>${n>=min?`Complete palace (${n} locations) ✓`:`Add ${min-n} more to finish`}</button>
     </div></div>`;
-  el("pbClose").onclick=renderPath;
+  el("pbClose").onclick=PB.ret;
   const addStation=()=>{ const v=(el("pbIn").value||"").trim(); if(!v) return; PB.stations.push(v); renderPalaceBuild(); };
   el("pbAdd").onclick=addStation;
   el("pbIn").addEventListener("keydown",e=>{ if(e.key==="Enter") addStation(); });
   el("pbIn").focus();
-  L2.querySelectorAll("[data-rm]").forEach(x=>x.onclick=()=>{ PB.stations.splice(+x.dataset.rm,1); renderPalaceBuild(); });
+  L.querySelectorAll("[data-rm]").forEach(x=>x.onclick=()=>{ PB.stations.splice(+x.dataset.rm,1); renderPalaceBuild(); });
   el("pbDone").onclick=()=>{ if(PB.stations.length<min) return;
-    Prog.palaces[PB.slot]={place:PB.place, stations:PB.stations.slice()};
+    Prog.palaces[PB.slot]={place:PB.place, stations:PB.stations.slice(), learnedAt:Date.now(), step:1};
     const id="palace:"+PB.slot; if(!Prog.doneSkills.includes(id)) Prog.doneSkills.push(id);
-    gradeKey("sk:palace:"+PB.slot,"good"); saveProg(); updateMetrics();
-    el("learn").innerHTML=`<div class="card center"><div style="font-size:52px">🏛️</div><h2>Palace built!</h2>
-      <p class="lead"><b class="gold">${PB.place}</b> now has ${PB.stations.length} memory stations. Revisit it anytime in the Palace tab. ${PB.slot===0?"Your first palace is built — the New Testament is unlocked!":"A bonus palace, beautifully done. These are always optional — the path moves on with or without them."}</p>
-      <button class="btn" id="pbFin">Back to path</button></div>`;
-    el("pbFin").onclick=renderPath; PB=null;
+    gradeKey("sk:palace:"+PB.slot,"good"); saveProg(); updateMetrics(); checkBadges();
+    const ret=PB.ret;
+    el(PB.host).innerHTML=`<div class="card center"><div style="font-size:52px">🏛️</div><h2>Palace built!</h2>
+      <p class="lead"><b class="gold">${PB.place}</b> now has ${PB.stations.length} memory stations. Revisit it anytime in the Palace tab. ${PB.slot===0?"Your first palace is built — the New Testament is unlocked!":"Beautifully done."}</p>
+      <button class="btn" id="pbFin">Done</button></div>`;
+    el("pbFin").onclick=ret; PB=null;
   };
 }
 function startLesson(sk){
+  if(skillPaywalled(sk)) return openPaywall();   // Pro-only content
   if(sk.kind==="palace") return startPalaceLesson(sk);
   if(sk.kind==="story") return startStoryLesson(sk);
   if(sk.kind==="sound"){
@@ -1547,16 +1785,31 @@ function startLesson(sk){
     LZ={sk,steps:steps.concat(tests),i:0,total:0,ok:0}; LZ.total=LZ.steps.length; renderStep(); return;
   }
   const steps=[];
-  // Teach each item, then test a sample of the six number/image/book pairings.
+  // Teach each new item, then test a sample of the six number/image/book pairings.
   sk.items.forEach(n=>steps.push({type:"teach",kind:sk.kind,n}));
   const tests=[];
   sk.items.forEach(n=>{
     shuffle(pairTypesFor(n).slice()).slice(0,3).forEach(t=>tests.push({type:t,kind:sk.kind,n}));
   });
+  // reinforce the last 2–5 previously-learned numbers/books, mixed in with the new questions
+  recentLearnedItems(sk.id, 5).forEach(it=>{
+    tests.push({type:pick(pairTypesFor(it.n)), kind:it.kind, n:it.n, review:true});
+  });
   shuffle(tests);
   LZ={sk,steps:steps.concat(tests),i:0,total:0,ok:0};
   LZ.total=LZ.steps.length;
   renderStep();
+}
+// the last `max` learned number/book items before this skill (most recent first)
+function recentLearnedItems(skId, max){
+  const flat=flatSkills(), idx=flat.findIndex(x=>x.id===skId), items=[];
+  for(let j=idx-1; j>=0 && items.length<max; j--){
+    const s=UNITS[flat[j].ui].skills[flat[j].si];
+    if((s.kind==="num"||s.kind==="book") && Prog.doneSkills.includes(s.id)){
+      for(let k=s.items.length-1; k>=0 && items.length<max; k--) items.push({kind:s.kind, n:s.items[k]});
+    }
+  }
+  return items;
 }
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
@@ -1675,9 +1928,10 @@ function renderStep(){
       <input class="typein" id="typeIn" inputmode="numeric" placeholder="?" autocomplete="off">
       <button class="btn" id="typeGo" style="margin-top:12px">Check</button>`;
   }
+  const reviewChip = s.review ? `<div style="text-align:center;margin-bottom:6px"><span class="pill" style="border-color:var(--accent);color:var(--accent)">🔁 quick review</span></div>` : "";
   L.innerHTML=`<div class="lesson">
     <div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div></div>
-    <div id="lBody">${body}</div></div>`;
+    <div id="lBody">${reviewChip}${body}</div></div>`;
   el("lClose").onclick=()=>renderPath();
   wireStep(s);
 }
@@ -1759,7 +2013,8 @@ function answer(s,good){
 function advance(){ LZ.i++; renderStep(); }
 /* ---- chapter quiz (test out): 100% turns the whole section gold; one wrong = out ---- */
 function startChapterQuiz(ui){
-  const U=UNITS[ui]; const steps=[];
+  const U=UNITS[ui]; if(U.skills.some(skillPaywalled)) return openPaywall();  // Pro-only section
+  const steps=[];
   U.skills.forEach(sk=>{ if(sk.kind==="palace"||sk.kind==="story") return; // bonus palaces aren't quizzed
     sk.items.forEach(n=>{
     if(sk.kind==="sound"){ steps.push({type:"s_d2s",kind:"sound",n}); steps.push({type:"s_s2d",kind:"sound",n}); }
@@ -1781,7 +2036,7 @@ function passChapter(){
   const U=UNITS[LZ.ui];
   U.skills.forEach(sk=>{ if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id);
     sk.items.forEach(n=>gradeKey(`sk:${sk.kind}:${n}`,"good")); });   // mark every node gold
-  recomputeLevel(); saveProg(); updateMetrics(); LZ=null;
+  bustCaches(); recomputeLevel(); saveProg(); updateMetrics(); checkBadges(); LZ=null;
   el("learn").innerHTML=`<div class="card center"><div style="font-size:52px">💯</div>
     <h2>Perfect — chapter mastered!</h2>
     <p class="lead">100% on the chapter quiz. Every node in this section is now <b class="gold">gold</b> — you tested out.</p>
@@ -1794,7 +2049,7 @@ function finishLesson(){
   const rk=v=>refKey(bookNum(v.b),v.c,v.v);
   const before=new Set(allVerses().filter(v=>reachable(bookNum(v.b),v.c,v.v)).map(rk));
   if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id);
-  recomputeLevel(); saveProg(); updateMetrics();
+  bustCaches(); recomputeLevel(); saveProg(); updateMetrics(); checkBadges();
   const newly=allVerses().filter(v=>reachable(bookNum(v.b),v.c,v.v) && !before.has(rk(v)));
   let msg="";
   if(sk.kind==="num" && sk.items.length===1 && sk.items[0]===Prog.level && Prog.level>=1)
@@ -1822,11 +2077,11 @@ function finishLesson(){
 /* =================== VERSE (daily + my verses) =================== */
 function reachableScenes(){ return SCENES.filter(s=>reachable(bookNum(s.b),s.c,s.v)); }
 let curScene=null, wSteps=[], wIdx=0;
-let memTestCur=null;
-const vSec={sugg:false, mem:false, saved:false}; // all three sections start minimized
-function verseRow(b,c,v,st){
+let memTestCur=null, memTestRecent=[], memTestWrong=0;
+const vSec={sugg:false, topics:false, mem:false, saved:false}; // sections start minimized
+function verseRow(b,c,v,st,star){
   const t=kjvText(b,c,v);
-  return `<div class="vrow clkrow" data-vb="${b}:${c}:${v}"><div class="vt"><b class="gold">${bookName(b)} ${c}:${v}</b><div class="muted">${t.length>56?t.slice(0,56)+"…":t}</div></div><div>${st==="mem"?'<span style="color:var(--good);font-weight:800">✓</span>':'→'}</div></div>`;
+  return `<div class="vrow clkrow" data-vb="${b}:${c}:${v}"><div class="vt"><b class="gold">${star?"✨ ":""}${bookName(b)} ${c}:${v}</b><div class="muted">${t.length>56?t.slice(0,56)+"…":t}</div></div><div>${st==="mem"?'<span style="color:var(--good);font-weight:800">✓</span>':'→'}</div></div>`;
 }
 function suggestedVerses(){
   // all curated heart-verses, not yet memorized/skipped; reachable ones first
@@ -1854,81 +2109,267 @@ function randomReachableVerse(){
   }
   return null;
 }
+// per-section expanded books (module-level so they persist when you go back)
+const vBook={sugg:new Set(), mem:new Set(), saved:new Set()};
+// browse verses by life-topic
+const TOPICS=[
+ {name:"Fear & Anxiety",icon:"🌊",kw:["fear not","be not afraid","afraid","dismayed"],refs:[[5,31,6],[6,1,9],[19,23,4],[19,27,1],[19,34,4],[19,56,3],[19,91,5],[23,41,10],[40,6,34],[43,14,27],[50,4,6],[55,1,7],[60,5,7],[62,4,18]]},
+ {name:"Guilt & Shame",icon:"🧼",kw:["ashamed","blot out","cleanse","no condemnation"],refs:[[19,32,5],[19,103,12],[23,1,18],[23,43,25],[23,61,7],[33,7,19],[45,5,1],[45,8,1],[45,8,33],[47,5,21],[51,2,14],[58,8,12],[62,1,9]]},
+ {name:"Doubt & Unbelief",icon:"⚓",kw:["unbelief","doubt","believe not"],refs:[[20,3,5],[23,26,3],[40,14,31],[40,21,21],[41,9,24],[41,11,23],[43,20,29],[45,10,17],[47,5,7],[58,11,1],[58,11,6],[59,1,6],[65,1,22]]},
+ {name:"Identity & Worth",icon:"⭐",kw:["fearfully","children of god","chosen","beloved"],refs:[[19,139,14],[22,6,3],[23,43,1],[24,1,5],[36,3,17],[43,1,12],[45,8,17],[47,5,17],[48,2,20],[49,1,5],[49,2,10],[51,2,10],[60,2,9],[62,3,1]]},
+ {name:"Depression & Despair",icon:"🌅",kw:["cast down","brokenhearted","heaviness"],refs:[[6,1,9],[19,27,14],[19,30,5],[19,34,18],[19,40,1],[19,42,5],[19,42,11],[19,143,7],[19,147,3],[23,40,31],[23,41,10],[25,3,22],[34,1,7],[47,4,8]]},
+ {name:"Temptation & Sin",icon:"🚪",kw:["temptation","flee","overcometh"],refs:[[19,119,11],[20,28,13],[40,26,41],[45,6,14],[46,10,13],[48,5,16],[55,2,22],[58,2,18],[58,4,15],[59,1,12],[59,4,7],[60,5,8],[62,1,9],[62,2,16]]},
+ {name:"Grief & Loss",icon:"🕊️",kw:["mourn","they that weep","wipe away","comfort"],refs:[[19,23,4],[19,30,5],[19,34,18],[19,46,1],[19,147,3],[23,25,8],[23,61,3],[40,5,4],[40,11,28],[43,11,25],[43,14,1],[47,1,3],[52,4,13],[66,21,4]]},
+ {name:"Sickness & Healing",icon:"⚕️",kw:["healeth","health","made whole","heal thee"],refs:[[2,15,26],[19,30,2],[19,41,3],[19,103,2],[19,107,20],[20,4,20],[23,53,5],[24,17,14],[39,4,2],[40,8,17],[41,11,24],[59,5,14],[60,2,24],[64,1,2]]},
+ {name:"Provision & Finances",icon:"🍞",kw:["shall not want","supply","daily bread"],refs:[[5,8,18],[19,23,1],[19,37,4],[19,37,25],[20,3,9],[39,3,10],[40,6,26],[40,6,31],[40,6,33],[42,6,38],[47,9,8],[50,4,19]]},
+ {name:"Loneliness & Rejection",icon:"👣",kw:["never leave","forsake thee","not forsaken"],refs:[[5,31,6],[6,1,9],[19,27,10],[19,68,6],[19,147,3],[23,41,10],[23,43,2],[36,3,17],[40,28,20],[43,14,18],[58,13,5],[60,5,7]]},
+ {name:"Anger & Unforgiveness",icon:"✋",kw:["slow to anger","forgiving","wrath of man"],refs:[[3,19,18],[20,15,1],[20,19,11],[21,7,9],[40,5,44],[40,6,14],[40,18,22],[41,11,25],[45,12,19],[49,4,26],[49,4,32],[51,3,13],[59,1,19]]},
+ {name:"Resisting the Enemy",icon:"🛡️",kw:["resist the devil","the devil","adversary","stand against"],refs:[[19,91,1],[23,54,17],[42,10,19],[47,10,4],[49,6,11],[49,6,12],[51,2,15],[55,1,7],[59,4,7],[60,5,8],[60,5,9],[62,4,4],[62,5,4],[66,12,11]]},
+ {name:"Strength in Weakness",icon:"💪",kw:["my strength","made strong","strengtheneth"],refs:[[16,8,10],[19,27,1],[19,46,1],[19,73,26],[23,40,29],[23,40,31],[23,41,10],[35,3,19],[47,12,9],[47,12,10],[49,6,10],[50,4,13]]},
+ {name:"Peace",icon:"🌿",kw:["my peace","peace of god","perfect peace"],refs:[[4,6,26],[19,4,8],[19,29,11],[23,9,6],[23,26,3],[43,14,27],[43,16,33],[45,5,1],[50,4,6],[50,4,7],[51,3,15],[53,3,16]]},
+ {name:"Perseverance in Trials",icon:"🏃",kw:["patience","endure","tribulation","stedfast"],refs:[[45,5,3],[45,5,4],[45,8,28],[46,15,58],[47,4,17],[48,6,9],[58,10,36],[58,12,1],[59,1,2],[59,1,3],[59,1,12],[60,1,7]]},
+ {name:"Freedom from Bondage",icon:"🔓",kw:["make you free","liberty","deliver","the truth shall"],refs:[[19,40,2],[19,107,14],[23,61,1],[42,4,18],[43,8,32],[43,8,36],[45,6,14],[45,6,18],[45,8,2],[47,3,17],[48,5,1],[55,1,7]]},
+ {name:"God's Promises",icon:"🤝",cat:"promise"},
+ {name:"Who God Is",icon:"👑",cat:"character"},
+ {name:"How to Live",icon:"🧭",cat:"command"},
+ {name:"The Gospel",icon:"✝️",cat:"gospel"},
+ {name:"Wisdom",icon:"🦉",cat:"wisdom"},
+ {name:"Worship & Praise",icon:"🎶",cat:"worship"}
+];
+const vTopic=new Set();
+function versesForTopic(t){
+  // Merge the topic's hand-picked refs with curated heart-verses matching its theme
+  // (by category or keyword) so the topic keeps filling in as new books/numbers unlock.
+  const seen=new Set(), pool=[];
+  const add=(b,c,v)=>{ const k=b+":"+c+":"+v; if(!seen.has(k)){ seen.add(k); pool.push([b,c,v]); } };
+  if(t.refs) t.refs.forEach(r=>add(r[0],r[1],r[2]));
+  allVerses().forEach(x=>{ const b=bookNum(x.b);
+    if(t.cat && x.cat===t.cat){ add(b,x.c,x.v); return; }
+    if(t.kw){ const txt=(kjvText(b,x.c,x.v)||"").toLowerCase(); if(t.kw.some(w=>txt.includes(w))) add(b,x.c,x.v); }
+  });
+  return pool.filter(a=>{ const k=refKey(a[0],a[1],a[2]); return !Prog.memorized.includes(k)&&!Prog.skipped.includes(k)&&reachable(a[0],a[1],a[2]); })
+    .sort((a,b)=>a[0]-b[0]||a[1]-b[1]||a[2]-b[2]);
+}
+let verseScroll=0;
+function reVerse(){ const c=document.querySelector(".content"), y=c.scrollTop; renderVerse(); requestAnimationFrame(()=>{ c.scrollTop=y; }); }
+function backToVerse(){ renderVerse(); requestAnimationFrame(()=>{ document.querySelector(".content").scrollTop=verseScroll; }); }
+// render verses grouped under collapsible book headers
+function bookGroupedList(verses, section){
+  const groups={}; verses.forEach(a=>{ (groups[a[0]]=groups[a[0]]||[]).push(a); });
+  const bns=Object.keys(groups).map(Number).sort((x,y)=>x-y);
+  if(!bns.length) return "";
+  return bns.map(bn=>{
+    const open=vBook[section].has(bn);
+    return `<button class="bookhead" data-bk="${section}:${bn}"><span>${bookName(bn)} <span class="muted" style="font-weight:600">· ${groups[bn].length}</span></span><span class="gmeta">${open?"▾":"▸"}</span></button>`
+      + (open?`<div class="vlist">`+groups[bn].map(a=>verseRow(a[0],a[1],a[2], section==="mem"?"mem":"go")).join("")+`</div>`:"");
+  }).join("");
+}
 function renderVerse(){
   updateMetrics();
   const V=el("verse");
   const saved=Prog.saved.map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2]));
   const mem=Prog.memorized.map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2]));
-  const sugg=suggestedVerses();
+  const suggGroups=suggestedByBook();               // {bookNum: [reachable curated verses]}
+  const kNums=knownNumbers(), unlockedBooks=[];      // every book you've unlocked, in order
+  for(let b=1;b<=66;b++) if(kNums.has(b)&&window.KJV[b-1]) unlockedBooks.push(b);
+  const suggReach=unlockedBooks.reduce((s,bn)=>s+((suggGroups[bn]||[]).length),0);
+  const lockedCount=suggestedVerses().length-suggReach;
   V.innerHTML=`<h2>Verses</h2>
-    <p class="lead">Build any verse in the Bible into pictures — then test what you've hidden in your heart.</p>
+    <p class="lead">Build any verse into pictures — then test what you've hidden in your heart.</p>
     <div class="btnrow" style="margin-top:0">
       <button class="btn" id="randBtn">🎲 Random verse</button>
-      <button class="btn ghost" id="shareBtn">📣 Share progress</button>
+      <button class="btn ghost" id="shareBtn">📣 Share</button>
+    </div>
+    ${(mem.length||Prog.talents)?`<div style="display:flex;justify-content:space-around;font-size:13px;font-weight:800;margin-top:12px;padding:10px;background:var(--panel2);border:1px solid var(--line);border-radius:12px">
+      <span class="gold">🪙 ${Prog.talents||0} talents</span><span style="color:var(--accent)">🔥 streak ${Prog.streak||0}</span><span class="muted">best ${Prog.bestStreak||0}</span></div>`:""}
+    ${mem.length?`<button class="btn blue" id="memTest" style="width:100%;margin-top:10px">🎯 Test my memorized verses (${mem.length})</button>`:""}
+    ${knownNumbers().size>=2?`<button class="btn ghost" id="numTest" style="width:100%;margin-top:10px">🔢 Test my numbers (15 questions)</button>`:""}
+    <div class="card" style="margin-top:14px">
+      <button class="grouphead ${vSec.sugg?"open":""}" data-sec="sugg" style="width:100%"><span>✨ Suggested to memorize${suggReach?` · ${suggReach}`:""}</span><span class="gmeta">${vSec.sugg?"▾":"▸"}</span></button>
+      ${vSec.sugg?`<div style="margin-top:12px">
+        <p class="hint">Every book you've unlocked — tap one to open its suggested heart-verses. New suggestions appear as you unlock more books &amp; numbers.</p>
+        ${unlockedBooks.length?unlockedBooks.map(bn=>{
+          const list=suggGroups[bn]||[], open=vBook.sugg.has(bn);
+          return `<button class="bookhead" data-bk="sugg:${bn}"><span>${bookName(bn)} <span class="muted" style="font-weight:600">· ${list.length}</span></span><span class="gmeta">${open?"▾":"▸"}</span></button>`
+            + (open?(list.length?`<div class="vlist">`+list.map(a=>verseRow(a[0],a[1],a[2],"go")).join("")+`</div>`
+                :`<p class="hint" style="margin:4px 0 8px">No suggested verses in range yet — learn more of ${bookName(bn)}'s chapter &amp; verse numbers to unlock them.</p>`):"");
+        }).join(""):`<p class="hint">Learn a book &amp; its numbers in <b class="gold">Learn</b> to unlock your first suggestions.</p>`}
+      </div>`:""}
     </div>
     <div class="card">
-      <button class="grouphead ${vSec.sugg?"open":""}" data-sec="sugg" style="width:100%"><span>✨ Suggested to memorize</span><span class="gmeta">${vSec.sugg?"▾":"▸"}</span></button>
-      ${vSec.sugg?`<div style="margin-top:12px">
-        <p class="hint">Heart-verses ready now, grouped by the books you've unlocked.</p>
-        ${(function(){
-          const groups=suggestedByBook(), bns=Object.keys(groups).map(Number).sort((a,b)=>a-b);
-          const readyCount=bns.reduce((s,bn)=>s+groups[bn].length,0), lockedCount=sugg.length-readyCount;
-          if(!bns.length) return `<p class="hint">${lockedCount?`Learn a book &amp; its numbers in <b class="gold">Learn</b> to unlock your first suggestions (${lockedCount} waiting).`:"You've memorized every suggested verse in range — well done!"}</p>`;
-          return bns.map(bn=>`<div style="font-weight:800;margin:12px 0 4px;font-size:14px">${bookName(bn)} <span class="muted" style="font-size:12px">· ${groups[bn].length}</span></div>`+
-            `<div class="vlist">`+groups[bn].map(a=>`<div class="vrow clkrow" data-vb="${a[0]}:${a[1]}:${a[2]}"><div class="vt"><b class="gold">${bookName(a[0])} ${a[1]}:${a[2]}</b><div class="muted">${(kjvText(a[0],a[1],a[2])||"").slice(0,52)}…</div></div><div>→</div></div>`).join("")+`</div>`).join("")
-            +(lockedCount?`<p class="hint" style="margin-top:10px">+${lockedCount} more suggested verses unlock as you learn their numbers.</p>`:"");
-        })()}
+      <button class="grouphead ${vSec.topics?"open":""}" data-sec="topics" style="width:100%"><span>📚 Browse by topic</span><span class="gmeta">${vSec.topics?"▾":"▸"}</span></button>
+      ${vSec.topics?`<div style="margin-top:12px">
+        <p class="hint">Verses for what you're walking through — tap a topic to open it.</p>
+        ${TOPICS.map((t,ti)=>{ const vs=versesForTopic(t), open=vTopic.has(ti);
+          return `<button class="bookhead" data-topic="${ti}"><span>${t.icon} ${t.name} <span class="muted" style="font-weight:600">· ${vs.length}</span></span><span class="gmeta">${open?"▾":"▸"}</span></button>`
+            + (open?(vs.length?`<div class="vlist">`+vs.map(a=>verseRow(a[0],a[1],a[2],"go")).join("")+`</div>`:`<p class="hint" style="margin:4px 0 8px">None in your range yet — learn more numbers to unlock these.</p>`):"");
+        }).join("")}
       </div>`:""}
     </div>
     <div class="card">
       <button class="grouphead ${vSec.mem?"open":""}" data-sec="mem" style="width:100%"><span>★ Memorized verses (${mem.length})</span><span class="gmeta">${vSec.mem?"▾":"▸"}</span></button>
       ${vSec.mem?`<div style="margin-top:12px">
-        ${mem.length?`<div class="btnrow" style="margin-top:0"><button class="btn blue" id="memTest">Test: pick the reference</button><button class="btn ghost" id="memFade">Recite word-for-word</button></div>
-          <p class="hint" style="margin:8px 0">Tap any verse to rebuild it.</p><div class="vlist">`+mem.map(a=>verseRow(a[0],a[1],a[2],"mem")).join("")+`</div>`
+        ${mem.length?`<div class="btnrow" style="margin-top:0"><button class="btn ghost" id="memFade">Recite word-for-word</button></div>
+          <p class="hint" style="margin:8px 0">Tap a book, then a verse to rebuild it.</p>`+bookGroupedList(mem,"mem")
           :`<p class="hint">Verses you finish building show up here.</p>`}
       </div>`:""}
     </div>
     <div class="card">
       <button class="grouphead ${vSec.saved?"open":""}" data-sec="saved" style="width:100%"><span>🔖 Saved for later (${saved.length})</span><span class="gmeta">${vSec.saved?"▾":"▸"}</span></button>
       ${vSec.saved?`<div style="margin-top:12px">
-        ${saved.length?`<div class="vlist">`+saved.map(a=>verseRow(a[0],a[1],a[2],"save")).join("")+`</div>`
-          :`<p class="hint">Tap "Save · come back later" on any verse and it lands here.</p>`}
+        ${saved.length?bookGroupedList(saved,"saved"):`<p class="hint">Tap "Save · come back later" on any verse and it lands here.</p>`}
       </div>`:""}
     </div>`;
-  el("randBtn").onclick=()=>{ const r=randomReachableVerse(); if(r) openVerseWizard(r[0],r[1],r[2],renderVerse); else toast("Learn some numbers first in the Learn tab!"); };
+  el("randBtn").onclick=()=>{ const r=randomReachableVerse(); if(r){ verseScroll=document.querySelector(".content").scrollTop; openVerseWizard(r[0],r[1],r[2],backToVerse); } else toast("Learn some numbers first in the Learn tab!"); };
   el("shareBtn").onclick=()=>shareProgress(null);
-  V.querySelectorAll("[data-sec]").forEach(h=>h.onclick=()=>{ const s=h.dataset.sec; vSec[s]=!vSec[s]; renderVerse(); });
+  V.querySelectorAll("[data-sec]").forEach(h=>h.onclick=()=>{ vSec[h.dataset.sec]=!vSec[h.dataset.sec]; reVerse(); });
+  V.querySelectorAll("[data-bk]").forEach(h=>h.onclick=()=>{ const [sec,bn]=h.dataset.bk.split(":"); const set=vBook[sec]; const n=+bn; set.has(n)?set.delete(n):set.add(n); reVerse(); });
+  V.querySelectorAll("[data-topic]").forEach(h=>h.onclick=()=>{ const ti=+h.dataset.topic; vTopic.has(ti)?vTopic.delete(ti):vTopic.add(ti); reVerse(); });
   if(el("memTest")) el("memTest").onclick=startMemTest;
+  if(el("numTest")) el("numTest").onclick=startNumberTest;
   if(el("memFade")) el("memFade").onclick=()=>{ const m=mem[Math.floor(Math.random()*mem.length)]; startTextFade(m[0],m[1],m[2]); };
-  V.querySelectorAll("[data-vb]").forEach(b=>b.onclick=()=>{ const [x,y,z]=b.dataset.vb.split(":").map(Number); openVerseWizard(x,y,z,renderVerse); });
+  V.querySelectorAll("[data-vb]").forEach(b=>b.onclick=()=>{ const [x,y,z]=b.dataset.vb.split(":").map(Number); verseScroll=document.querySelector(".content").scrollTop; openVerseWizard(x,y,z,backToVerse); });
 }
+/* ---- Talents (verse-practice points) + streaks ---- */
+function bumpStreak(correct){
+  if(correct){ Prog.streak=(Prog.streak||0)+1; if(Prog.streak>(Prog.bestStreak||0)) Prog.bestStreak=Prog.streak; }
+  else Prog.streak=0;
+}
+function awardTalents(k, firstTry){
+  const now=Date.now(), last=(Prog.talentLog[k]||0);
+  if(now-last < 86400000) return -1;            // already earned on this verse in the last 24h
+  const pts=firstTry?10:5;
+  Prog.talents=(Prog.talents||0)+pts; Prog.talentLog[k]=now;
+  return pts;
+}
+function testHUD(){ return `<div id="testHud" style="display:flex;justify-content:space-around;font-size:12px;font-weight:800;margin:0 0 10px">
+  <span class="gold">🪙 ${Prog.talents||0} talents</span>
+  <span style="color:var(--accent)">🔥 streak ${Prog.streak||0}</span>
+  <span class="muted">best ${Prog.bestStreak||0}</span></div>`; }
+function refreshHUD(){ const h=el("testHud"); if(h) h.outerHTML=testHUD(); }
+function talentMsg(pts){ return pts<0 ? `<span class="muted">already earned today — streak still counts!</span>` : `<b class="gold">+${pts} talents</b> · streak ${Prog.streak}`; }
 function startMemTest(){
   const mem=Prog.memorized.map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2]));
   if(!mem.length){ renderVerse(); return; }
-  memTestCur=mem[Math.floor(Math.random()*mem.length)]; memTestRender();
+  // don't ask a recently-answered verse again soon
+  const avoid=new Set(memTestRecent);
+  let pool=mem.filter(a=>!avoid.has(a.join(":")));
+  if(!pool.length) pool=mem;
+  memTestCur=pool[Math.floor(Math.random()*pool.length)];
+  memTestRecent.push(memTestCur.join(":"));
+  while(memTestRecent.length > Math.min(mem.length-1, 6)) memTestRecent.shift();
+  memTestWrong=0;
+  memTestRender();
+}
+
+/* =================== NUMBERS TEST — 15 Qs translating number ↔ image ↔ book =================== */
+// Correct answers STRENGTHEN the item's spaced-repetition (jump toward box 5) so it stays gold longer.
+function strengthen(k){ const st=cardState(k), now=Date.now(); st.box=Math.min((st.box||1)+2,5); st.due=now+INTERVAL[st.box]*DAY; SRS[k]=st; save(SRS_KEY,SRS); }
+function strengthenNumber(n){ strengthen(`sk:num:${n}`); if(n>=1&&n<=66) strengthen(`sk:book:${n}`); }
+let NT=null;
+function startNumberTest(){
+  const known=[...knownNumbers()].filter(n=>n>=1&&n<=176);
+  if(known.length<2){ toast("Learn a few number images first!"); return; }
+  const withBook=known.filter(n=>n<=66);
+  const qs=[];
+  for(let i=0;i<15;i++){
+    const n=known[Math.floor(Math.random()*known.length)];
+    const types = (n<=66 && withBook.length>=4) ? ["q_n2i","q_i2n","q_n2b","q_b2n","q_i2b","q_b2i"] : ["q_n2i","q_i2n"];
+    qs.push({n, type:pick(types)});
+  }
+  NT={qs, i:0, ok:0, wrong:0}; renderNumTest();
+}
+function renderNumTest(){
+  const V=el("verse"); if(NT.i>=NT.qs.length) return finishNumberTest();
+  const q=NT.qs[NT.i], n=q.n, word=pegFor(n).word, pct=Math.round(100*NT.i/NT.qs.length);
+  let prompt="", stimulus="", options=[], correct;
+  if(q.type==="q_n2i"){ prompt="Which image is this number?"; stimulus=`<div class="bignum">${n}</div><div class="sounds">${pegFor(n).sounds}</div>`;
+    correct=word; options=shuffle([word,...distract("num",n,3).map(x=>pegFor(x).word)]); }
+  else if(q.type==="q_i2n"){ prompt="Which number is this image?"; stimulus=`<div class="imgwrap">${pegImg("num",n,word,true)}</div>`;
+    correct=String(n); options=shuffle([n,...distract("num",n,3)]).map(String); }
+  else if(q.type==="q_n2b"){ prompt="Which book is this number?"; stimulus=`<div class="bignum">${n}</div>`;
+    correct=bookName(n); options=shuffle([bookName(n),...distract("book",n,3).map(bookName)]); }
+  else if(q.type==="q_b2n"){ prompt="Which number is this book?"; stimulus=`<div class="bigword">${bookName(n)}</div>`;
+    correct=String(n); options=shuffle([n,...distract("book",n,3)]).map(String); }
+  else if(q.type==="q_i2b"){ prompt="Which book has this image?"; stimulus=`<div class="imgwrap">${pegImg("num",n,word,true)}</div><div class="bigword">${word}</div>`;
+    correct=bookName(n); options=shuffle([bookName(n),...distract("book",n,3).map(bookName)]); }
+  else { prompt="Which image is this book?"; stimulus=`<div class="bigword">${bookName(n)}</div>`;
+    correct=word; options=shuffle([word,...distract("book",n,3).map(x=>pegFor(x).word)]); }
+  V.innerHTML=`<div class="qhead"><button class="lclose" id="ntClose">✕</button>
+      <div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>
+      <div style="font-size:12px;color:var(--muted);font-weight:700;margin-left:8px">${NT.i+1}/15</div></div>
+    <div class="card"><div class="prompt">${prompt}</div>
+      <div style="text-align:center;margin:6px 0 10px">${stimulus}</div>
+      <div class="opts">${options.map(o=>`<button class="opt" data-ok="${o===correct?1:0}">${o}</button>`).join("")}</div>
+      <div id="ntFb"></div></div>`;
+  el("ntClose").onclick=renderVerse;
+  V.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
+    if(b.disabled) return;
+    if(b.dataset.ok==="1"){                       // correct → green, strengthen, next
+      b.classList.add("correct"); V.querySelectorAll("[data-ok]").forEach(x=>x.disabled=true);
+      NT.ok++; strengthenNumber(n);
+      setTimeout(()=>{ NT.i++; renderNumTest(); }, 550);
+    } else {                                       // wrong → red, stay to retry
+      b.classList.add("wrong"); b.disabled=true; NT.wrong++;
+      gradeKey(`sk:num:${n}`,"miss");
+    }
+  });
+}
+function finishNumberTest(){
+  updateMetrics();
+  el("verse").innerHTML=`<div class="card center"><div style="font-size:52px">🔢</div>
+    <h2>Numbers test complete!</h2>
+    <p class="lead">${NT.ok} answered${NT.wrong?` · ${NT.wrong} retr${NT.wrong===1?"y":"ies"}`:" — flawless!"}. The ones you nailed just got <b class="gold">stronger</b> — they'll stay gold longer.</p>
+    <div class="btnrow"><button class="btn" id="ntAgain">Test again</button><button class="btn ghost" id="ntDone">Done</button></div></div>`;
+  el("ntAgain").onclick=startNumberTest; el("ntDone").onclick=renderVerse; NT=null;
 }
 function memTestRender(){
   const V=el("verse"), b=memTestCur[0], c=memTestCur[1], v=memTestCur[2], k=knownNumbers();
   let books=""; for(let bb=1;bb<=66;bb++) if(k.has(bb)) books+=`<option value="${bb}">${bookName(bb)}</option>`;
   const nums=max=>{ let o=""; for(let n=1;n<=max;n++) if(k.has(n)) o+=`<option value="${n}">${n}</option>`; return o; };
   V.innerHTML=`<div class="qhead"><button class="lclose" id="mtClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Test yourself</div><div style="width:24px"></div></div>
-    <div class="card"><p class="lead" style="margin-bottom:8px">Which verse is this? Choose its book, chapter and verse.</p>
+    <div class="card">${testHUD()}<p class="lead" style="margin-bottom:8px">Which verse is this? Choose its book, chapter and verse.</p>
       <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${kjvText(b,c,v)}"</div>
       <label class="vplabel">Book</label><select class="vpsel" id="mtB">${books}</select>
       <label class="vplabel">Chapter</label><select class="vpsel" id="mtC">${nums(150)}</select>
       <label class="vplabel">Verse</label><select class="vpsel" id="mtV">${nums(176)}</select>
-      <button class="btn" id="mtCheck" style="margin-top:16px">Check</button><div id="mtFb"></div></div>`;
+      <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):`3 tries, then I'll reveal the answer.`}</div>
+      <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
+      <button class="btn ghost sm" id="mtForgot" style="margin-top:8px;width:100%">🤔 I forgot this — re-encode later</button>
+      <div id="mtFb"></div></div>`;
   el("mtClose").onclick=renderVerse;
+  el("mtForgot").onclick=()=>{
+    forgotVerse(b,c,v); bumpStreak(false); refreshHUD();
+    toast(`Moved “${bookName(b)} ${c}:${v}” to Saved for later to re-encode.`);
+    setTimeout(goNext, 350);
+  };
+  const sels=[el("mtB"),el("mtC"),el("mtV")];
+  const nextBtn=()=>`<button class="btn" id="mtNext" style="margin-top:10px">${Prog.memorized.length>1?"Next verse →":"Done"}</button>`;
+  const goNext=()=> Prog.memorized.length>1 ? startMemTest() : renderVerse();
   el("mtCheck").onclick=()=>{
     const ok=(+el("mtB").value===b && +el("mtC").value===c && +el("mtV").value===v);
-    el("mtCheck").disabled=true;
-    const more=Prog.memorized.length>1;
-    el("mtFb").innerHTML=`<div class="feedback ${ok?"ok":"no"}" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px">
-      <div class="ttl">${ok?"Correct! 🎉":"Not quite —"}</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b></div>
-      <button class="btn" id="mtNext" style="margin-top:10px">${more?"Another →":"Done"}</button></div>`;
-    el("mtNext").onclick=()=> more? startMemTest() : renderVerse();
+    if(ok){ // flash green, auto-advance to next verse
+      bumpStreak(true); const pts=awardTalents(refKey(b,c,v), memTestWrong===0); saveProg(); refreshHUD(); checkBadges();
+      sels.forEach(s=>s.classList.add("correct")); el("mtCheck").disabled=true; el("mtWarn").textContent="";
+      el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}</div></div>`;
+      setTimeout(goNext, 900);
+    } else {
+      memTestWrong++; bumpStreak(false); saveProg(); refreshHUD();
+      sels.forEach(s=>{ s.classList.add("wrong"); s.classList.remove("correct"); });
+      if(memTestWrong>=3){ // auto-reveal the answer
+        el("mtB").value=b; el("mtC").value=c; el("mtV").value=v;
+        sels.forEach(s=>{ s.classList.remove("wrong"); s.disabled=true; }); el("mtCheck").disabled=true; el("mtWarn").textContent="";
+        el("mtFb").innerHTML=`<div class="feedback no" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Here's the answer 👇</div><div class="sub">This is <b class="gold">${bookName(b)} ${c}:${v}</b>. Take a moment, then keep going.</div>${nextBtn()}</div>`;
+        el("mtNext").onclick=goNext;
+      } else {
+        el("mtWarn").textContent=warnText(memTestWrong);
+        el("mtFb").innerHTML=`<div class="feedback no" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Not quite — try again</div><div class="sub">${warnText(memTestWrong)}</div></div>`;
+      }
+    }
   };
+  sels.forEach(s=>s.addEventListener("change",()=>{ s.classList.remove("wrong"); el("mtFb").innerHTML=""; }));
 }
+function warnText(wrong){ const left=3-wrong; return `${left} more ${left===1?"try":"tries"} before the answer is revealed.`; }
 function maxBook(){ let m=0; Prog.memorized.forEach(r=>m=Math.max(m,+r.split(":")[0])); return m; }
 function myVersesList(){
   return `<div style="margin-top:8px">`+Prog.memorized.map(r=>{
@@ -1936,9 +2377,86 @@ function myVersesList(){
     return `<div style="padding:8px 0;border-top:1px solid var(--line);font-size:14px"><b class="gold">${bookName(b)} ${c}:${v}</b></div>`;
   }).join("")+`</div>`;
 }
+/* =================== BADGES — biblical milestones across every discipline =================== */
+function palaceCount(){ return (Prog.palaces||[]).filter(Boolean).length; }
+function soundsDone(){ return Prog.doneSkills.includes("snd:0-4") && Prog.doneSkills.includes("snd:5-9"); }
+const vB=(n,icon,name,ref)=>({id:"v"+n, cat:"Verses Memorized", icon, name, sub:ref+` · ${n} verse${n>1?"s":""}`, have:()=>Prog.memorized.length>=n, n});
+const BADGES=[
+ // Verses memorized — many early, gaps widen
+ vB(1,"🌱","First Fruits","the first of the harvest"), vB(2,"🕊️","Two by Two","as into the ark"),
+ vB(3,"🧵","Threefold Cord","Ecclesiastes 4:12"), vB(5,"🪨","Five Smooth Stones","1 Samuel 17"),
+ vB(7,"🕯️","Sabbath Rest","the seventh day"), vB(10,"📜","The Ten Words","the commandments"),
+ vB(15,"🎶","Song of Ascents","the pilgrim psalms"), vB(21,"🍞","Hidden Manna","bread from heaven"),
+ vB(30,"🌾","Thirtyfold Harvest","the good soil"), vB(45,"🫒","Oil and Wine","the anointed portion"),
+ vB(66,"📖","The Whole Counsel","all 66 books"), vB(90,"🪔","Golden Lampstand","the light that shines"),
+ vB(120,"🔥","Upper Room","Acts 1:15"), vB(175,"💧","Wells of Salvation","Isaiah 12:3"),
+ vB(250,"🏛️","Pillar in the Temple","Revelation 3:12"), vB(365,"🚶","Walked with God","Enoch, Genesis 5:24"),
+ vB(500,"☁️","Cloud of Witnesses","Hebrews 12:1"), vB(750,"🏺","The Storehouse","treasures of the Word"),
+ vB(1000,"👑","Thousand Generations","Deuteronomy 7:9"),
+ // Major System — the code of numbers & books
+ {id:"ms1", cat:"The Major System", icon:"🔤", name:"The Sacred Sounds", sub:"learned the 0–9 sound code", have:()=>soundsDone()},
+ {id:"ms2", cat:"The Major System", icon:"📕", name:"Torah of Numbers", sub:"images for books 1–5", have:()=>knownNum(5)},
+ {id:"ms3", cat:"The Major System", icon:"⚡", name:"Bible Power", sub:"reached number 17", have:()=>Prog.level>=17},
+ {id:"ms4", cat:"The Major System", icon:"📚", name:"Every Book", sub:"all 66 book images", have:()=>booksKnown()>=66},
+ {id:"ms5", cat:"The Major System", icon:"🎼", name:"Every Chapter", sub:"numbers to 150 (Psalm 150)", have:()=>knownNum(150)},
+ {id:"ms6", cat:"The Major System", icon:"🔢", name:"Every Number", sub:"all numbers to 176", have:()=>knownNum(176)},
+ // Memory Palaces
+ {id:"mp1", cat:"Memory Palaces", icon:"🏛️", name:"First Palace", sub:"built your first palace", have:()=>palaceCount()>=1},
+ {id:"mp2", cat:"Memory Palaces", icon:"🏰", name:"Palace Builder", sub:"built 3 palaces", have:()=>palaceCount()>=3},
+ {id:"mp3", cat:"Memory Palaces", icon:"🗝️", name:"Keeper of Rooms", sub:"built 7 palaces", have:()=>palaceCount()>=7},
+ {id:"mp4", cat:"Memory Palaces", icon:"👑", name:"Palace Architect", sub:"built 12 palaces", have:()=>palaceCount()>=12},
+ // Bible Stories
+ {id:"bs1", cat:"Bible Stories", icon:"🌍", name:"In the Beginning", sub:"5 stories located", have:()=>storiesLearned()>=5},
+ {id:"bs2", cat:"Bible Stories", icon:"🗺️", name:"Story Traveler", sub:"25 stories", have:()=>storiesLearned()>=25},
+ {id:"bs3", cat:"Bible Stories", icon:"⚔️", name:"The Old Story", sub:"the Old Testament narrative", have:()=>storiesLearned()>=55},
+ {id:"bs4", cat:"Bible Stories", icon:"🌾", name:"Every Parable", sub:"all of Jesus' parables", have:()=>storiesLearned()>=85},
+ {id:"bs5", cat:"Bible Stories", icon:"⭐", name:"All 100 Stories", sub:"every great story of Scripture", have:()=>storiesLearned()>=100},
+ // Verse Practice — Talents earned & best streak
+ {id:"tal1", cat:"Verse Practice", icon:"🪙", name:"Faithful in Little", sub:"earn 50 talents", have:()=>Prog.talents>=50},
+ {id:"tal2", cat:"Verse Practice", icon:"💰", name:"Good & Faithful Servant", sub:"250 talents", have:()=>Prog.talents>=250},
+ {id:"tal3", cat:"Verse Practice", icon:"🏆", name:"Ruler over Many", sub:"1,000 talents", have:()=>Prog.talents>=1000},
+ {id:"tal4", cat:"Verse Practice", icon:"👑", name:"Enter the Joy", sub:"3,000 talents", have:()=>Prog.talents>=3000},
+ {id:"stk1", cat:"Verse Practice", icon:"🔥", name:"Kindled Heart", sub:"5 correct in a row", have:()=>Prog.bestStreak>=5},
+ {id:"stk2", cat:"Verse Practice", icon:"🏃", name:"Run the Race", sub:"15 in a row", have:()=>Prog.bestStreak>=15},
+ {id:"stk3", cat:"Verse Practice", icon:"🎯", name:"Pressing Toward the Mark", sub:"30 in a row", have:()=>Prog.bestStreak>=30}
+];
+function earnedBadges(){ return BADGES.filter(b=>b.have()); }
+function nextBadge(){ const c=Prog.memorized.length; return BADGES.filter(b=>b.cat==="Verses Memorized").find(b=>b.n>c)||null; }
+// detect newly-earned badges across ALL categories and celebrate the newest
+function checkBadges(){
+  const newly=[];
+  BADGES.forEach(b=>{ if(b.have() && !Prog.badges.includes(b.id)){ Prog.badges.push(b.id); newly.push(b); } });
+  if(newly.length){ saveProg(); showBadgeModal(newly[newly.length-1]); }
+}
+function showBadgeModal(b){
+  let m=document.getElementById("badgeModal");
+  if(!m){ m=document.createElement("div"); m.id="badgeModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  m.innerHTML=`<div class="modal-card center" style="max-width:320px">
+    <div class="badge-pop">${b.icon}</div>
+    <div class="prof-sect" style="color:var(--gold)">Badge earned · ${b.cat}</div>
+    <h2 style="font-size:22px;margin:2px 0 2px">${b.name}</h2>
+    <p class="lead" style="font-size:13px;margin:0"><i>${b.sub}</i></p>
+    <div class="btnrow"><button class="btn" id="badgeShare">📣 Share</button><button class="btn ghost" id="badgeClose">Continue</button></div>
+  </div>`;
+  m.style.display="flex";
+  document.getElementById("badgeClose").onclick=()=>{ m.style.display="none"; };
+  document.getElementById("badgeShare").onclick=()=>{ m.style.display="none"; shareProgress(`the "${b.name}" badge`); };
+}
 function addMemorized(s){
   const k=refKey(bookNum(s.b),s.c,s.v);
-  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); saveProg(); updateMetrics(); }
+  Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k); // once learned, drop from saved/skip
+  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); saveProg(); updateMetrics(); checkBadges(); }
+  else saveProg();
+}
+// "I forgot this": pull a verse OUT of memorized so it returns to the pool to re-encode later.
+// It lands in "Saved for later" (the come-back queue) and its spaced-repetition strength is cleared.
+function forgotVerse(b,c,v){
+  const k=refKey(b,c,v);
+  Prog.memorized=Prog.memorized.filter(x=>x!==k);       // no longer "learned"
+  if(!Prog.saved.includes(k)) Prog.saved.push(k);        // queue it to rebuild
+  if(Prog.talentLog) delete Prog.talentLog[k];           // clear the 24h points lock
+  if(SRS[k]){ delete SRS[k]; save(SRS_KEY,SRS); }        // drop its review strength
+  saveProg(); updateMetrics(); checkBadges();
 }
 
 // ---- Verse Practice 1: show text, pick book/chapter/verse from known-only dropdowns ----
@@ -1967,10 +2485,17 @@ function torahMenu(){
   });
   return h+`<p class="hint" style="margin-top:10px">More open up as you climb — only near-term verses are shown.</p></div>`;
 }
+let vpRecent=[], vpWrong=0;
 function vpStart(){
   const pool=practiceable();
   if(!pool.length){ renderVerse(); return; }
-  vpCur=pool[Math.floor(Math.random()*pool.length)];
+  const avoid=new Set(vpRecent);
+  let p=pool.filter(s=>!avoid.has(refKey(bookNum(s.b),s.c,s.v)));
+  if(!p.length) p=pool;
+  vpCur=p[Math.floor(Math.random()*p.length)];
+  vpRecent.push(refKey(bookNum(vpCur.b),vpCur.c,vpCur.v));
+  while(vpRecent.length > Math.min(pool.length-1, 6)) vpRecent.shift();
+  vpWrong=0;
   vpRender();
 }
 function vpRender(){
@@ -1979,17 +2504,19 @@ function vpRender(){
   let nums=""; for(let n=1;n<=L;n++) nums+=`<option value="${n}">${n}</option>`;
   V.innerHTML=`<div class="qhead"><button class="lclose" id="vpClose">✕</button>
       <div style="font-weight:800;flex:1;text-align:center">Verse Practice 1</div><div style="width:24px"></div></div>
-    <div class="card">
+    <div class="card">${testHUD()}
       <p class="lead" style="margin-bottom:8px">Which verse is this? Choose the book, chapter and verse — only what you've learned is shown.</p>
       <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${s.text}"</div>
       <label class="vplabel">Book</label><select class="vpsel" id="vpB">${books}</select>
       <label class="vplabel">Chapter</label><select class="vpsel" id="vpC">${nums}</select>
       <label class="vplabel">Verse</label><select class="vpsel" id="vpV">${nums}</select>
-      <button class="btn" id="vpCheck" style="margin-top:18px">Check</button>
+      <div class="hint" id="vpWarn" style="margin-top:10px;text-align:center">${vpWrong>0?warnText(vpWrong):`3 tries, then I'll reveal the answer.`}</div>
+      <button class="btn" id="vpCheck" style="margin-top:8px">Check</button>
       <div id="vpFb"></div>
     </div>`;
   el("vpClose").onclick=renderVerse;
   el("vpCheck").onclick=vpCheck;
+  [el("vpB"),el("vpC"),el("vpV")].forEach(x=>x.addEventListener("change",()=>{ x.classList.remove("wrong"); el("vpFb").innerHTML=""; }));
 }
 function vpCheck(){
   const s=vpCur, bn=bookNum(s.b);
@@ -1997,12 +2524,26 @@ function vpCheck(){
   const ok=(b===bn && c===s.c && v===s.v);
   gradeKey(`vp:${refKey(bn,s.c,s.v)}`, ok?"good":"miss");
   const bp=pegFor(bn),cp=pegFor(s.c),vp=pegFor(s.v);
-  el("vpCheck").disabled=true;
-  el("vpFb").innerHTML=`<div class="feedback ${ok?"ok":"no"}" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px">
-    <div class="ttl">${ok?"Correct! 🎉":"Not quite —"}</div>
-    <div class="sub"><b class="gold">${s.b} ${s.c}:${s.v}</b> &nbsp;·&nbsp; ${bp.word} · ${cp.word} · ${vp.word}</div>
-    <button class="btn" id="vpNext" style="margin-top:10px">${practiceable().length>1?"Another verse →":"Done"}</button></div>`;
-  el("vpNext").onclick=()=> practiceable().length>1 ? vpStart() : renderVerse();
+  const sels=[el("vpB"),el("vpC"),el("vpV")];
+  const goNext=()=> practiceable().length>1 ? vpStart() : renderVerse();
+  if(ok){ // flash green, auto-advance
+    bumpStreak(true); const pts=awardTalents(refKey(bn,s.c,s.v), vpWrong===0); saveProg(); refreshHUD(); checkBadges();
+    sels.forEach(x=>x.classList.add("correct")); el("vpCheck").disabled=true; el("vpWarn").textContent="";
+    el("vpFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${s.b} ${s.c}:${s.v}</b> · ${talentMsg(pts)}</div></div>`;
+    setTimeout(goNext, 900);
+  } else {
+    vpWrong++; bumpStreak(false); saveProg(); refreshHUD();
+    sels.forEach(x=>{ x.classList.add("wrong"); x.classList.remove("correct"); });
+    if(vpWrong>=3){ // auto-reveal
+      el("vpB").value=bn; el("vpC").value=s.c; el("vpV").value=s.v;
+      sels.forEach(x=>{ x.classList.remove("wrong"); x.disabled=true; }); el("vpCheck").disabled=true; el("vpWarn").textContent="";
+      el("vpFb").innerHTML=`<div class="feedback no" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Here's the answer 👇</div><div class="sub">This is <b class="gold">${s.b} ${s.c}:${s.v}</b> — ${bp.word} · ${cp.word} · ${vp.word}.</div><button class="btn" id="vpNext" style="margin-top:10px">${practiceable().length>1?"Next verse →":"Done"}</button></div>`;
+      el("vpNext").onclick=goNext;
+    } else {
+      el("vpWarn").textContent=warnText(vpWrong);
+      el("vpFb").innerHTML=`<div class="feedback no" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Not quite — try again</div><div class="sub">${warnText(vpWrong)}</div></div>`;
+    }
+  }
 }
 function startSceneWalk(s){
   const bn=bookNum(s.b), bp=pegFor(bn), cp=pegFor(s.c), vp=pegFor(s.v);
@@ -2043,14 +2584,23 @@ function renderWalk(){
          <div class="hint" style="margin:0 0 8px">You're missing ${missing.length} image${missing.length>1?"s":""} for this verse. Learn each to unlock it:</div>
          ${missing.map((m,i)=>`<button class="btn ghost sm" style="width:100%;margin-bottom:6px;border-color:var(--gold2);color:var(--gold)" data-learn="${m.n}" data-book="${m.book?1:0}">📚 Learn ${m.lbl}</button>`).join("")}
        </div>` : "";
+  const vkey=refKey(cbn,curScene.c,curScene.v);
+  const isMeaning=(s.icon==="🕯️"), myScene=Prog.customScene[vkey]||"";
+  // the user's own scene (shown on the meaning step) + editable field on the last step
+  const mySceneShow = (isMeaning && myScene) ? `<div class="why" style="border-left-color:var(--gold2)"><b class="gold">Your scene:</b><br>${myScene}</div>` : "";
+  const sceneField = last ? `<div style="margin-top:14px;text-align:left">
+      <label class="hint" style="display:block;margin-bottom:6px">✍️ Your own scene for this verse (optional)</label>
+      <textarea id="wScene" rows="3" placeholder="Describe the picture you imagined…" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:11px;font-size:14px;font-family:inherit;resize:vertical">${myScene.replace(/</g,"&lt;")}</textarea>
+    </div>` : "";
   const btns = wIdx===0
     ? `${arrows}<button class="btn" id="wNext" ${canLearn?"":"disabled"}>Next → learn it</button>
        ${missHtml}
        <div class="btnrow" style="margin-top:10px">
          <button class="btn ghost" id="wSave" style="border-color:var(--green);color:#9ff0a0">Save · come back later</button>
          <button class="btn ghost" id="wSkip" style="border-color:var(--miss);color:#ff9a9a">Skip</button></div>
+       <button class="btn ghost" id="wFade" style="margin-top:10px;border-color:var(--accent);color:#a9c2ff">📖 Word-for-word practice</button>
        ${alreadyMem?"":`<button class="btn ghost" id="wKnow" style="margin-top:10px;border-color:var(--gold2);color:var(--gold)">✓ I already know this — add to my test verses</button>`}`
-    : `<div class="btnrow">
+    : `${sceneField}<div class="btnrow" style="margin-top:14px">
          <button class="btn ghost" id="wPrev">← Back</button>
          <button class="btn" id="wNext">${last?"Done ✓":"Next →"}</button></div>`;
   const head = wIdx===0
@@ -2059,19 +2609,21 @@ function renderWalk(){
     ${head}
     <div class="stage"><div class="stepIcon">${s.icon}</div>
       <div class="steplabel">${s.label}</div><div class="steptitle">${s.title}</div>
-      <div class="steptext">${s.text}</div>${whyHtml}</div>
+      <div class="steptext">${s.text}</div>${whyHtml}${mySceneShow}</div>
     <div class="dots">${wSteps.map((_,i)=>`<div class="dot ${i<=wIdx?"on":""}"></div>`).join("")}</div>
     ${btns}</div>`;
+  const saveScene=()=>{ const t=el("wScene"); if(t){ const v=t.value.trim(); if(v) Prog.customScene[vkey]=v; else delete Prog.customScene[vkey]; saveProg(); } };
   if(el("wClose")) el("wClose").onclick=()=>walkReturn();
+  if(el("wFade")) el("wFade").onclick=()=>startTextFade(cbn,curScene.c,curScene.v,()=>openVerseWizard(cbn,curScene.c,curScene.v,walkReturn));
   V.querySelectorAll("[data-learn]").forEach(b=>b.onclick=()=>{ const n=+b.dataset.learn, isBook=b.dataset.book==="1", ret=walkReturn;
     startAdhocLearn(n,isBook,()=>openVerseWizard(cbn,curScene.c,curScene.v,ret)); });
   if(el("wVPrev")) el("wVPrev").onclick=()=>{ if(hasPrev) openVerseWizard(cbn,curScene.c,curScene.v-1,walkReturn); };
   if(el("wVNext")) el("wVNext").onclick=()=>{ if(hasNext) openVerseWizard(cbn,curScene.c,curScene.v+1,walkReturn); };
   if(el("wKnow")) el("wKnow").onclick=()=>{ const k=refKey(cbn,curScene.c,curScene.v); Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k); addMemorized(curScene); toast("Added to your memorized & test verses ✓"); walkReturn(); };
-  if(el("wPrev")) el("wPrev").onclick=()=>{ if(wIdx>0){wIdx--;renderWalk();} };
+  if(el("wPrev")) el("wPrev").onclick=()=>{ saveScene(); if(wIdx>0){wIdx--;renderWalk();} };
   if(el("wSave")) el("wSave").onclick=()=>{ markSaved(); walkReturn(); };
   if(el("wSkip")) el("wSkip").onclick=()=>{ markSkipped(); walkReturn(); };
-  el("wNext").onclick=()=>{ if(el("wNext").disabled) return; if(!last){wIdx++;renderWalk();} else { const fresh=!Prog.memorized.includes(refKey(bookNum(curScene.b),curScene.c,curScene.v)); addMemorized(curScene); if(fresh) offerShare(`${curScene.b} ${curScene.c}:${curScene.v}`); walkReturn(); } };
+  el("wNext").onclick=()=>{ if(el("wNext").disabled) return; if(!last){wIdx++;renderWalk();} else { saveScene(); addMemorized(curScene); walkReturn(); } };
 }
 
 /* ---- ad-hoc learn a single number/book from the verse screen (unlocks it) ---- */
@@ -2113,7 +2665,7 @@ function renderAdhoc(){
 }
 function finishAdhoc(){
   const n=AB.n; if(!Prog.extraKnown.includes(n)) Prog.extraKnown.push(n);
-  gradeKey(`sk:${AB.kind}:${n}`,"good"); saveProg(); updateMetrics();
+  bustCaches(); gradeKey(`sk:${AB.kind}:${n}`,"good"); saveProg(); updateMetrics(); checkBadges();
   const ret=AB.ret; AB=null;
   el("verse").innerHTML=`<div class="card center"><div style="font-size:48px">🔓</div><h2>Unlocked!</h2>
     <p class="lead"><b class="gold">${n}</b> is now learned. Any verse that needed it just opened up.</p>
@@ -2159,12 +2711,6 @@ async function shareProgress(ref,verseText){
   try{ await navigator.clipboard.writeText(text); toast("Copied — paste it anywhere to share!"); }
   catch(e){ toast("Share: "+text); }
 }
-function offerShare(ref){
-  const total=Prog.memorized.length;
-  if(total===1 || total%5===0){ // celebrate the 1st and every 5th
-    setTimeout(()=>{ if(confirm(`🎉 ${ref} is etched — ${total} verse${total===1?"":"s"} memorized!\n\nShare your progress?`)) shareProgress(ref); }, 300);
-  }
-}
 function toast(msg){
   let t=document.getElementById("vvToast");
   if(!t){ t=document.createElement("div"); t.id="vvToast";
@@ -2175,18 +2721,50 @@ function toast(msg){
 }
 
 /* =================== ACCOUNT (login shell) =================== */
-function acct(){ try{ return JSON.parse(localStorage.getItem("vv_acct")); }catch(e){ return null; } }
-function setAcct(a){ try{ localStorage.setItem("vv_acct",JSON.stringify(a)); }catch(e){} renderAcctBox(); }
+function acct(){ return Store.getJSON("vv_acct",null); }
+function setAcct(a){ Store.setJSON("vv_acct",a); renderAcctBox(); }
 function renderAcctBox(){
   const box=el("acctBox"); if(!box) return; const a=acct();
-  box.innerHTML = a
+  const pro=Billing.isPro(), d=Billing.data();
+  const until=(pro&&d&&d.until)?new Date(d.until).toLocaleDateString():null;
+  const proRow = pro
+    ? `<div class="acct-row" style="margin-top:10px"><div class="acct-av" style="background:var(--gold);color:#241a02">★</div>
+        <div style="flex:1"><div style="font-weight:700;font-size:14px" class="gold">Pro — whole Bible unlocked</div>
+        <div class="muted" style="font-size:11px">${until?"Renews "+until:"Active"}</div></div>
+        ${Billing.cfg.manageUrl?`<a class="btn sm ghost" href="${Billing.cfg.manageUrl}" target="_blank" rel="noopener">Manage</a>`:""}</div>`
+    : `<div class="acct-row" style="margin-top:10px"><div class="acct-av" style="background:var(--panel2)">🔒</div>
+        <div style="flex:1"><div style="font-weight:700;font-size:14px">Free path</div>
+        <div class="muted" style="font-size:11px">Torah, first palace &amp; Matthew</div></div>
+        <button class="btn sm blue" id="goProBtn">Go Pro</button></div>`;
+  box.innerHTML = (a
     ? `<div class="acct-row"><div class="acct-av">${(a.email||a.provider||"?")[0].toUpperCase()}</div>
         <div style="flex:1"><div style="font-weight:700;font-size:14px">${a.email||("Signed in with "+a.provider)}</div>
         <div class="muted" style="font-size:11px">via ${a.provider}</div></div>
         <button class="btn sm ghost" id="signOut">Sign out</button></div>`
-    : `<button class="btn" id="signInBtn">Sign in / Create account</button>`;
+    : `<button class="btn" id="signInBtn">Sign in / Create account</button>`) + proRow;
   if(el("signInBtn")) el("signInBtn").onclick=()=>{ el("themeModal").style.display="none"; el("loginModal").style.display="flex"; };
-  if(el("signOut")) el("signOut").onclick=()=>{ try{ localStorage.removeItem("vv_acct"); }catch(e){} renderAcctBox(); };
+  if(el("signOut")) el("signOut").onclick=()=>{ Store.remove("vv_acct"); renderAcctBox(); };
+  if(el("goProBtn")) el("goProBtn").onclick=()=>{ el("themeModal").style.display="none"; openPaywall(); };
+}
+/* ---- paywall ---- */
+function openPaywall(){ const m=el("payModal"); if(!m) return; if(el("payPrice")) el("payPrice").textContent=Billing.cfg.priceLabel; m.style.display="flex"; }
+function closePaywall(){ if(el("payModal")) el("payModal").style.display="none"; }
+function wirePaywall(){
+  if(el("payGo")) el("payGo").onclick=()=>Billing.startCheckout();
+  if(el("payClose")) el("payClose").onclick=closePaywall;
+  if(el("payModal")) el("payModal").onclick=e=>{ if(e.target===el("payModal")) closePaywall(); };
+  if(el("payRestore")) el("payRestore").onclick=()=>{
+    // If a subscriber returns on a new device, they re-open checkout; a real backend would look
+    // up their subscription. Here, direct them to checkout (Stripe recognizes existing subscribers).
+    if(Billing.isPro()){ toast("You're already Pro ✨"); closePaywall(); renderPath(); }
+    else Billing.startCheckout();
+  };
+  if(el("payCode")) el("payCode").onclick=()=>{
+    const code=prompt("Enter your unlock code:");
+    if(code===null) return;
+    if(Billing.redeem(code)){ closePaywall(); renderAcctBox(); renderPath(); toast("✨ Code accepted — full access unlocked!"); }
+    else toast("That code isn't valid.");
+  };
 }
 function wireLogin(){
   document.querySelectorAll(".loginbtn").forEach(b=>b.onclick=()=>{
@@ -2195,7 +2773,7 @@ function wireLogin(){
     else setAcct({provider:p});
     el("loginModal").style.display="none"; toast("Signed in!");
   });
-  el("loginSkip").onclick=()=>{ el("loginModal").style.display="none"; try{ localStorage.setItem("vv_skiplogin","1"); }catch(e){} };
+  el("loginSkip").onclick=()=>{ el("loginModal").style.display="none"; Store.set("vv_skiplogin","1"); };
   el("loginModal").onclick=e=>{ if(e.target===el("loginModal")) el("loginModal").style.display="none"; };
 }
 
@@ -2203,7 +2781,7 @@ function wireLogin(){
 function applyTheme(t){
   t=t||"classic";
   document.querySelector(".phone").setAttribute("data-theme",t);
-  try{ localStorage.setItem("vv_theme",t); }catch(e){}
+  Store.set("vv_theme",t);
   document.querySelectorAll(".theme-opt").forEach(b=>b.classList.toggle("sel",b.dataset.th===t));
   buildSky(t==="illumined");
 }
@@ -2229,23 +2807,64 @@ function renderTransList(){
       <span class="check">✓</span></button>`;
   }).join("");
   el("transList").querySelectorAll("[data-tr]").forEach(b=>b.onclick=()=>{
-    try{ localStorage.setItem("vv_trans",b.dataset.tr); }catch(e){}
+    Store.set("vv_trans",b.dataset.tr);
     renderTransList(); refreshCurrentView();
   });
 }
 function refreshCurrentView(){ const v=document.querySelector(".view.active"); if(v){ const id=v.id;
   if(id==="journey") renderJourney(); else if(id==="verse") renderVerse(); else if(id==="learn") renderPath(); } }
-el("themeBtn").onclick=()=>{ renderTransList(); el("themeModal").style.display="flex"; };
+function renderBadges(){
+  el("badgeCount").textContent=`${earnedBadges().length} / ${BADGES.length}`;
+  const cats=[...new Set(BADGES.map(b=>b.cat))];
+  el("badgeGrid").innerHTML=cats.map(cat=>{
+    const list=BADGES.filter(b=>b.cat===cat);
+    return `<div class="badgecat">${cat} <span class="muted">· ${list.filter(b=>b.have()).length}/${list.length}</span></div>
+      <div class="badgegrid">`+list.map(b=>{ const got=b.have();
+        return `<div class="badge ${got?"":"locked"}"><div class="ring">${b.icon}</div><span class="bn">${b.name}</span><span class="bnum">${got?"✓":(b.n?b.n:"—")}</span></div>`;
+      }).join("")+`</div>`;
+  }).join("");
+  const nb=nextBadge(), c=Prog.memorized.length;
+  el("badgeNext").innerHTML = nb ? `Next verse badge: <b class="gold">${nb.icon} ${nb.name}</b> at ${nb.n} (${nb.n-c} to go).` : `Every verse badge earned. 👑`;
+}
+/* ---- progress backup / restore (no backend yet — protects against localStorage loss) ---- */
+function exportBackup(){
+  const data={app:"BurningBush", ver:1, when:new Date().toISOString(),
+    prog:load(PROG_KEY,{}), srs:load(SRS_KEY,{}), theme:curTrans?curTrans():"KJV",
+    themePick:Store.get("vv_theme",null)};
+  const blob=new Blob([JSON.stringify(data)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  const d=new Date(); a.download="burning-bush-backup-"+d.getFullYear()+("0"+(d.getMonth()+1)).slice(-2)+("0"+d.getDate()).slice(-2)+".json";
+  document.body.appendChild(a); a.click(); a.remove();
+  el("backupMsg").innerHTML=`<b style="color:var(--good)">Backup downloaded.</b> Keep it safe — restore it anytime, or on another device.`;
+}
+function importBackup(file){
+  const r=new FileReader();
+  r.onload=()=>{ try{ const d=JSON.parse(r.result);
+    if(!d || !d.prog){ throw new Error("not a backup"); }
+    if(!confirm("Restore this backup? It will REPLACE the current progress in this browser.")) return;
+    if(d.prog) Store.setJSON(PROG_KEY, migrateProg(d.prog));   // migrate an older backup on restore
+    if(d.srs)  Store.setJSON(SRS_KEY, d.srs);
+    if(d.themePick) Store.set("vv_theme", d.themePick);
+    if(d.theme) Store.set("vv_trans", d.theme);
+    el("backupMsg").innerHTML=`<b style="color:var(--good)">Restored!</b> Reloading…`;
+    setTimeout(()=>location.reload(), 700);
+  }catch(e){ el("backupMsg").innerHTML=`<b style="color:var(--miss)">That file isn't a valid backup.</b>`; } };
+  r.readAsText(file);
+}
+el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); el("backupMsg").innerHTML=""; el("themeModal").style.display="flex"; };
+el("expBtn").onclick=exportBackup;
+el("impBtn").onclick=()=>el("impFile").click();
+el("impFile").onchange=e=>{ if(e.target.files[0]) importBackup(e.target.files[0]); };
 el("themeClose").onclick=()=>el("themeModal").style.display="none";
 el("themeModal").onclick=e=>{ if(e.target===el("themeModal")) el("themeModal").style.display="none"; };
 document.querySelectorAll(".theme-opt").forEach(b=>b.onclick=()=>applyTheme(b.dataset.th));
-applyTheme((function(){ try{ return localStorage.getItem("vv_theme")||"illumined"; }catch(e){ return "illumined"; } })()); // Illumined Night is the main theme
+applyTheme(Store.get("vv_theme","illumined")); // Illumined Night is the main theme
 
 /* =================== TEXT-FADE (word-for-word) =================== */
 let TF=null;
-function startTextFade(b,c,v){
+function startTextFade(b,c,v,retFn){
   const words=(kjvText(b,c,v)||"").split(/\s+/).filter(Boolean);
-  TF={b,c,v,words,stage:0,ret:document.querySelector(".view.active").id};
+  TF={b,c,v,words,stage:0,ret:document.querySelector(".view.active").id,retFn:retFn||null};
   renderTextFade();
 }
 function renderTextFade(){
@@ -2273,7 +2892,7 @@ function renderTextFade(){
   el("tfReveal").onclick=()=>{ TF.stage=0; renderTextFade(); };
   el("tfNext").onclick=()=>{ if(done){ backFromTF(); } else { TF.stage++; renderTextFade(); } };
 }
-function backFromTF(){ const r=TF.ret; TF=null; show(r); }
+function backFromTF(){ const r=TF.ret, fn=TF.retFn; TF=null; if(fn) fn(); else show(r); }
 
 /* =================== MEMORY PALACE (Method of Loci) =================== */
 // Pre-built palaces for SEQUENCES the Major System handles poorly (ordered lists).
@@ -2283,32 +2902,100 @@ const PALACES=[
  {id:"beatitudes",icon:"⛰️",name:"The Beatitudes",ref:"Matthew 5:3–10",place:"Climb a MOUNTAIN path",
   stations:[["The trailhead","Poor in spirit — empty pockets turned out"],["First bench","They that mourn — a weeping figure comforted"],["A meek deer","The meek — inherits the whole meadow"],["A dry spring","Hunger & thirst for righteousness — filled to overflowing"],["A helping hand","The merciful — pulls you up, obtains mercy"],["A clear pool","Pure in heart — you see God reflected"],["A broken fence mended","Peacemakers — called children of God"],["A storm at the peak","Persecuted — yet the kingdom is theirs"]]},
  {id:"armor",icon:"🛡️",name:"The Armor of God",ref:"Ephesians 6:14–17",place:"Suit up head-to-toe",
-  stations:[["Waist","Belt of TRUTH"],["Chest","Breastplate of RIGHTEOUSNESS"],["Feet","Shoes of the GOSPEL of peace"],["Arm","Shield of FAITH"],["Head","Helmet of SALVATION"],["Hand","Sword of the SPIRIT — the word of God"]]},
- {id:"books-nt",icon:"📚",name:"Order of the Gospels & Acts",ref:"Books 40–44",place:"Your peg-images in a row",
-  stations:[["40","MATTHEW — a welcome MAT with a rose"],["41","MARK — a marker head from a radio"],["42","LUKE — Luke Skywalker vs a rhino"],["43","JOHN — John the Baptist & the rum barrel"],["44","ACTS — an axe splits the red-X error"]]}
+  stations:[["Waist","Belt of TRUTH"],["Chest","Breastplate of RIGHTEOUSNESS"],["Feet","Shoes of the GOSPEL of peace"],["Arm","Shield of FAITH"],["Head","Helmet of SALVATION"],["Hand","Sword of the SPIRIT — the word of God"]]}
 ];
 function renderPalace(){
   const P=el("palace");
   const mine=(Prog.palaces||[]).map((p,i)=>[p,i]).filter(x=>x[0]);
+  const due=palacesDueCount();
   P.innerHTML=`<h2>Memory Palace</h2>
     <p class="lead">A <b>palace</b> is for sequences — walk a familiar place and leave each item at a spot. Do it once and the order sticks.</p>
-    ${mine.length?`<div class="prof-sect">My palaces</div>`+mine.map(([p,i])=>`<div class="palace-card" data-mine="${i}"><h3>🏛️ ${p.place}</h3><p>${p.stations.length} locations · tap to walk it</p></div>`).join(""):""}
+    <div class="vidph"><div class="play">▶</div><div class="vt">Video: How spaced repetition locks memory in</div><div class="vs">Placeholder — why reviewing at D0, D1, D3, D7, D16 &amp; D30 moves a palace into long-term memory. (Add your video here.)</div></div>
+    <p class="hint" style="margin:-4px 0 12px">Each palace has a <b class="gold">spaced-repetition trail</b> — walk it again on day 0, 1, 3, 7, 16 and 30. We'll nudge you when a review is due.</p>
+    <button class="btn" id="palAdd" style="width:100%">➕ Build a new palace</button>
+    ${mine.length?`<div class="prof-sect" style="margin-top:16px">My palaces${due?` <span style="color:#ff8a8a;text-transform:none;letter-spacing:0;font-weight:800">· ${due} due</span>`:""}</div>`+mine.map(([p,i])=>{
+        const pdue=palaceDue(p), pdone=palaceTrailDone(p), status=pdue?`<span style="color:#ff8a8a;font-weight:800">● Review due now</span>`:(pdone?`<span class="gold">✓ Trail complete</span>`:`Next review in ${srHuman(palaceNextReviewMs(p))}`);
+        return `<div class="palace-card" data-mine="${i}"><h3>🏛️ ${p.place}${pdue?`<span class="due-dot"></span>`:""}</h3>
+          <p>${p.stations.length} locations · ${status}</p>
+          <div style="margin-top:12px">${srTrailHTML(p)}</div></div>`;
+      }).join(""):""}
     <div class="prof-sect" style="margin-top:16px">Ready-made palaces</div>
     ${PALACES.map(p=>`<div class="palace-card" data-pal="${p.id}"><h3>${p.icon} ${p.name}</h3><p>${p.ref} · ${p.stations.length} stations</p></div>`).join("")}
     <div class="callout" style="margin-top:14px"><b>How to use it:</b> open one, close your eyes, and walk the place in order. Each spot hands you the next item. Come back and walk it again tomorrow.</div>`;
+  el("palAdd").onclick=startNewPalace;
   P.querySelectorAll("[data-pal]").forEach(c=>c.onclick=()=>renderPalaceWalk(c.dataset.pal));
   P.querySelectorAll("[data-mine]").forEach(c=>c.onclick=()=>renderMyPalace(+c.dataset.mine));
 }
 function renderMyPalace(i){
   const p=Prog.palaces[i], P=el("palace");
+  const due=palaceDue(p), done=palaceTrailDone(p), nextMs=palaceNextReviewMs(p);
+  const status = due?`<span style="color:#ff8a8a;font-weight:800">● Spaced-repetition review due now</span>`
+    : (done?`<span class="gold">✓ Full trail complete — locked in long-term memory</span>`
+    : `Next review in <b class="gold">${srHuman(nextMs)}</b>`);
   P.innerHTML=`<button class="btn ghost sm" id="palBack" style="width:auto;margin-bottom:12px">← Palaces</button>
     <div class="card">
-      <h2 style="font-size:19px;margin:0">🏛️ ${p.place}</h2>
+      <h2 style="font-size:19px;margin:0">🏛️ ${p.place}${due?`<span class="due-dot"></span>`:""}</h2>
       <div class="muted" style="font-size:13px;margin:2px 0 12px">${p.stations.length} memory stations · walk them in order</div>
+      <div style="background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 10px;margin-bottom:14px">
+        ${srTrailHTML(p)}
+        <p class="hint" style="text-align:center;margin:10px 0 0">${status}</p>
+      </div>
       ${p.stations.map((s,idx)=>`<div class="station"><div class="snum">${idx+1}</div><div class="sbody">${s}</div></div>`).join("")}
+      <button class="btn ${due?"blue":"blue"}" id="palPractice" style="width:100%;margin-top:12px">${due?"🎯 Review now (due)":"🎯 Practice this palace"}</button>
+      <button class="btn ghost" id="palEdit" style="width:100%;margin-top:8px">✏️ Edit locations</button>
       <p class="hint" style="margin-top:10px">Place things you want to remember at each spot, in order.</p>
     </div>`;
   el("palBack").onclick=renderPalace;
+  el("palPractice").onclick=()=>startPalacePractice(i,"palace",()=>renderMyPalace(i));
+  el("palEdit").onclick=()=>startPalaceEdit(i);
+}
+/* ---- edit an existing palace: rename, edit/reorder/add/remove locations ---- */
+let PE=null;
+function startPalaceEdit(i){ const p=Prog.palaces[i]; if(!p) return; PE={slot:i, place:p.place, stations:p.stations.slice()}; renderPalaceEdit(); }
+function syncPE(){ // pull the current field values into PE before a structural re-render
+  const P=el("palace"); const nm=P.querySelector("#peName"); if(nm) PE.place=nm.value;
+  P.querySelectorAll(".peLoc").forEach(inp=>{ PE.stations[+inp.dataset.si]=inp.value; });
+}
+function renderPalaceEdit(){
+  const P=el("palace"), n=PE.stations.length;
+  // inputs are rendered empty then filled via .value (below) so user text can never break the markup
+  P.innerHTML=`<button class="btn ghost sm" id="peBack" style="width:auto;margin-bottom:12px">← Cancel</button>
+    <div class="card">
+      <h2 style="font-size:18px;margin:0 0 10px">✏️ Edit palace</h2>
+      <div class="hint" style="margin-bottom:4px">Palace name</div>
+      <input class="typein" id="peName" style="text-align:left;font-size:15px;padding:12px;margin-bottom:14px">
+      <div class="hint" style="margin-bottom:6px">Locations — in the order you walk them. Edit the text, use ↑ ↓ to reorder, ✕ to remove.</div>
+      <div class="stationlist">
+        ${PE.stations.map((s,i)=>`<div class="st" style="gap:6px">
+            <b class="gold" style="min-width:20px;text-align:right">${i+1}.</b>
+            <input class="typein peLoc" data-si="${i}" style="flex:1;text-align:left;font-size:14px;padding:9px">
+            <span class="rm" data-up="${i}" title="Move up" style="color:var(--muted)">↑</span>
+            <span class="rm" data-down="${i}" title="Move down" style="color:var(--muted)">↓</span>
+            <span class="rm" data-rm="${i}" title="Remove">✕</span>
+          </div>`).join("")||`<p class="hint">No locations — add one below.</p>`}
+      </div>
+      <div class="btnrow" style="margin-top:8px"><input class="typein" id="peIn" placeholder="Add a location…" style="text-align:left;font-size:15px;padding:12px"><button class="btn sm" id="peAdd" style="width:auto">Add</button></div>
+      <button class="btn" id="peSave" style="margin-top:12px">Save changes</button>
+      <p class="hint" style="margin-top:8px">Tip: keep at least 3 locations for good practice.</p>
+    </div>`;
+  el("peName").value=PE.place||"";
+  P.querySelectorAll(".peLoc").forEach(inp=>{ inp.value=PE.stations[+inp.dataset.si]||""; });
+  el("peBack").onclick=()=>{ const i=PE.slot; PE=null; renderMyPalace(i); };
+  P.querySelectorAll("[data-up]").forEach(x=>x.onclick=()=>{ syncPE(); const i=+x.dataset.up; if(i>0){ const t=PE.stations[i-1]; PE.stations[i-1]=PE.stations[i]; PE.stations[i]=t; } renderPalaceEdit(); });
+  P.querySelectorAll("[data-down]").forEach(x=>x.onclick=()=>{ syncPE(); const i=+x.dataset.down; if(i<PE.stations.length-1){ const t=PE.stations[i+1]; PE.stations[i+1]=PE.stations[i]; PE.stations[i]=t; } renderPalaceEdit(); });
+  P.querySelectorAll("[data-rm]").forEach(x=>x.onclick=()=>{ syncPE(); PE.stations.splice(+x.dataset.rm,1); renderPalaceEdit(); });
+  const add=()=>{ syncPE(); const v=(el("peIn").value||"").trim(); if(!v) return; PE.stations.push(v); renderPalaceEdit(); requestAnimationFrame(()=>el("peIn").focus()); };
+  el("peAdd").onclick=add;
+  el("peIn").addEventListener("keydown",e=>{ if(e.key==="Enter") add(); });
+  el("peSave").onclick=()=>{
+    syncPE();
+    const place=(PE.place||"").trim()||Prog.palaces[PE.slot].place;
+    const stations=PE.stations.map(s=>(s||"").trim()).filter(Boolean);
+    if(!stations.length){ toast("Add at least one location."); return; }
+    Prog.palaces[PE.slot]={place, stations};
+    saveProg(); updateMetrics();
+    const i=PE.slot; PE=null; toast("Palace updated ✓"); renderMyPalace(i);
+  };
 }
 function renderPalaceWalk(id){
   const p=PALACES.find(x=>x.id===id), P=el("palace");
@@ -2323,12 +3010,14 @@ function renderPalaceWalk(id){
 }
 
 /* =================== INIT =================== */
+Billing.handleReturn();   // unlock Pro if we've just returned from a successful Stripe checkout
 wireLogin();
+wirePaywall();
 renderAcctBox();
 recomputeLevel();
 updateMetrics();
 show("journey");
-if(!acct()){ try{ if(!localStorage.getItem("vv_skiplogin")) el("loginModal").style.display="flex"; }catch(e){} }
+if(!acct()){ if(!Store.get("vv_skiplogin")) el("loginModal").style.display="flex"; }
 </script>
 </body>
 </html>
