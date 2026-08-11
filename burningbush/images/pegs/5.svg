@@ -1,10 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
 <!-- 5 = Soul (soul singer at a microphone) -->
 <defs>
-<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
 <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
 </defs>
-<rect width="96" height="96" rx="22" fill="url(#bg)"/>
 <g fill="url(#g)">
 <circle cx="43" cy="30" r="16"/>
 <path d="M25 84 V64 a18 16 0 0 1 36 0 V84 Z"/>

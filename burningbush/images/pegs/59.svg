@@ -1,10 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
 <!-- 59 = Lip (red) -->
 <defs>
-<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
 <linearGradient id="r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8f8f"/><stop offset=".5" stop-color="#e5433f"/><stop offset="1" stop-color="#b52230"/></linearGradient>
 </defs>
-<rect width="96" height="96" rx="22" fill="url(#bg)"/>
 <path d="M18 46 Q30 34 42 42 Q45 44 48 44 Q51 44 54 42 Q66 34 78 46 Q64 66 48 58 Q32 66 18 46 Z" fill="url(#r)"/>
 <path d="M18 46 Q33 52 48 49 Q63 52 78 46" fill="none" stroke="#7a1524" stroke-width="2.2" opacity=".6"/>
 </svg>

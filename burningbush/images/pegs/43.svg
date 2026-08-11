@@ -1,10 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
 <!-- 43 = Rum (barrel) -->
 <defs>
-<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
 <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
 </defs>
-<rect width="96" height="96" rx="22" fill="url(#bg)"/>
 <path d="M30 22 Q48 18 66 22 Q74 34 74 48 Q74 62 66 74 Q48 78 30 74 Q22 62 22 48 Q22 34 30 22 Z" fill="url(#g)"/>
 <g stroke="#0e2c1d" stroke-width="3" opacity=".5"><line x1="24" y1="35" x2="72" y2="35"/><line x1="22" y1="48" x2="74" y2="48"/><line x1="24" y1="61" x2="72" y2="61"/></g>
 <g stroke="#0e2c1d" stroke-width="1.6" opacity=".3"><line x1="38" y1="20" x2="38" y2="76"/><line x1="48" y1="18" x2="48" y2="78"/><line x1="58" y1="20" x2="58" y2="76"/></g>

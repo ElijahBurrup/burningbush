@@ -1,11 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
 <!-- 40 = Rose (red bloom, green leaves) -->
 <defs>
-<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
 <linearGradient id="r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8f9a"/><stop offset=".5" stop-color="#e33b52"/><stop offset="1" stop-color="#b01f3a"/></linearGradient>
 <linearGradient id="lf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9db78"/><stop offset="1" stop-color="#3f8a2c"/></linearGradient>
 </defs>
-<rect width="96" height="96" rx="22" fill="url(#bg)"/>
 <rect x="46" y="54" width="4" height="30" rx="2" fill="url(#lf)"/>
 <path d="M50 66 Q64 62 71 51 Q60 51 50 60 Z" fill="url(#lf)"/>
 <path d="M46 74 Q31 71 25 60 Q36 60 46 67 Z" fill="url(#lf)"/>

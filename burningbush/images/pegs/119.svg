@@ -1,11 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
 <!-- 119 = Hot tub (blue water) -->
 <defs>
-<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
 <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
 <linearGradient id="blu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe4f7"/><stop offset="1" stop-color="#4b9bd6"/></linearGradient>
 </defs>
-<rect width="96" height="96" rx="22" fill="url(#bg)"/>
 <path d="M20 50 H76 L72 78 Q71 82 66 82 H30 Q25 82 24 78 Z" fill="url(#g)"/>
 <ellipse cx="48" cy="50" rx="28" ry="7" fill="url(#blu)"/>
 <g fill="#ffffff" opacity=".55"><circle cx="36" cy="49" r="3"/><circle cx="48" cy="47" r="3.6"/><circle cx="60" cy="49" r="3"/></g>

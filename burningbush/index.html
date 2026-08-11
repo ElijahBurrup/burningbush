@@ -141,14 +141,11 @@
   .feedback .sub{font-size:13px;color:var(--muted)}
 
   /* ---- image slot ---- */
-  .pegimg{width:150px;height:150px;object-fit:cover;border-radius:16px;border:1px solid var(--line);background:var(--panel2)}
-  .imgph{width:150px;height:150px;border:1px dashed #3a4150;border-radius:16px;display:flex;
-    align-items:center;justify-content:center;flex-direction:column;gap:3px;color:var(--muted);font-size:11px;text-align:center;background:var(--panel)}
-  .imgph b{color:var(--gold);font-size:15px}
+  .pegimg{width:150px;height:150px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45))}
+  .imgph{width:150px;height:150px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;color:var(--muted);font-size:11px;text-align:center}
   .imgwrap{display:grid;place-items:center;margin:6px 0}
-  .pegimg-sm{width:104px;height:104px;object-fit:cover;border-radius:12px;border:1px solid var(--line);background:var(--panel)}
-  .imgph-sm{width:104px;height:104px;border:1px dashed #3a4150;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--muted);font-size:10px;text-align:center;background:var(--panel)}
-  .imgph-sm b{color:var(--gold);font-size:13px}
+  .pegimg-sm{width:104px;height:104px;object-fit:contain;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4))}
+  .imgph-sm{width:104px;height:104px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--muted);font-size:10px;text-align:center}
 
   /* ---- scene walkthrough ---- */
   .stage{text-align:center;padding:8px 2px}
@@ -1107,8 +1104,9 @@ function verseAt(k){ return _vm()[k]; }
 function pegImg(kind,n,word,big){
   const src = kind==="book" ? `/burningbush/images/books/${n}.svg` : `/burningbush/images/pegs/${n}.svg`;
   const c = big ? "pegimg" : "pegimg-sm", ph = big ? "imgph" : "imgph-sm";
-  return `<img class="${c}" src="${src}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <div class="${ph}">🖼<b>${word}</b>${big?"<span>image coming</span>":""}</div>`;
+  if(kind==="book") return `<img class="${c}" src="${src}" alt="${word}" onerror="this.style.display='none'">`;
+  return `<img class="${c}" src="${src}" alt="${word}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="${ph}"><span>image coming</span></div>`;
 }
 
 /* =================== SRS (Leitner) + PROGRESS STATE =================== */
