@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 49 = Harp (triangular concert harp) -->
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect width="96" height="96" rx="22" fill="url(#bg)"/>
+<!-- soundboard (resonator) — thick diagonal body bottom-left to top-right -->
+<path d="M22 82 L34 82 L70 34 L60 26 Z" fill="url(#g)"/>
+<!-- front pillar (left vertical) -->
+<path d="M22 82 V30 Q22 22 30 24 L30 82 Z" fill="url(#g)"/>
+<!-- neck (curved top) joining pillar to soundboard head -->
+<path d="M25 25 Q46 13 66 30 L61 37 Q45 24 30 32 Z" fill="url(#g)"/>
+<!-- foot -->
+<rect x="16" y="80" width="26" height="7" rx="3" fill="url(#g)"/>
+<!-- strings -->
+<g stroke="url(#g)" stroke-width="1.4" opacity=".75">
+<line x1="34" y1="30" x2="40" y2="76"/><line x1="40" y1="27" x2="45" y2="68"/><line x1="46" y1="26" x2="50" y2="60"/><line x1="52" y1="27" x2="55" y2="52"/><line x1="58" y1="31" x2="60" y2="44"/>
+</g>
+</svg>

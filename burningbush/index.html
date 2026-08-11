@@ -4,6 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
 <title>Burning Bush — Bible Memory</title>
+<link rel="icon" type="image/png" href="/burningbush/images/icon-512.png">
+<link rel="apple-touch-icon" href="/burningbush/images/icon-512.png">
+<link rel="manifest" href="/burningbush/manifest.webmanifest">
+<meta name="theme-color" content="#0f1115">
 <link href="/burningbush/fonts/fonts.css" rel="stylesheet"><!-- fonts bundled locally for full offline / mobile-app use -->
 <style>
   :root{
@@ -643,9 +647,9 @@ function bustCaches(){ _known=null; _rvc=null; }
 /* =================== MAJOR SYSTEM ENGINE =================== */
 // User's own peg list (memoryOS), numbers 00-165. Two-digit list: single
 // digits (books/chapters/verses 1-9) use the zero-padded 0X peg.
-const PEGS = ["Sauce","Seed","Sun","Sumo","Sore","Soul","Sushi","Sock","Sofa","Soap","Dice","Dad","DNA","Dime","Door","Doll","Tissue","Toga","TV","Tuba","Nose","Net","Nun","Nemo","Nero","Nail","Nacho","Nike","Knife","Nap","Mouse","Mat","Moon","Mummy","Mare","Molly","Match","Mic","Movie","Map","Rose","Radio","Rhino","Rum","Error","Reel","Arch","Rock","Roof","Harp","Lasso","Lid","Lion","Limo","Hillary","LOL","Leech","Leak","Lava","Lip","Cheese","Cheetah","Genie","Chime","Cherry","Chilli","Judge","Chick","Chef","Ship","Goose","Cat","Gun","Gum","Car","Koala","Cage","Cake","Coffee","Cube","Vase","Foot","Fan","Foam","Fire","Fly","Fish","Fog","FIFA","Phoebe","Bus","Bat","Piano","Beam","Bear","Apple","Bush","Book","Biff","Poop"];
+const PEGS = ["Sauce","Seed","Sun","Sumo","Sore","Soul","Sushi","Sock","Sofa","Soap","Dice","Dad","DNA","Dime","Door","Doll","Tissue","Toga","TV","Tuba","Nose","Net","Nun","Nemo","Nero","Nail","Nacho","Nike","Knife","Nap","Mouse","Mat","Moon","Mummy","Hammer","Mole","Match","Mic","Movie","Map","Rose","Radio","Rhino","Rum","Error","Reel","Arch","Rock","Roof","Harp","Lasso","Lid","Lion","Limo","Lure","LOL","Leech","Leak","Lava","Lip","Cheese","Cheetah","Genie","Chime","Cherry","Chilli","Judge","Chick","Chef","Ship","Goose","Cat","Gun","Gum","Car","Koala","Cage","Cake","Coffee","Cube","Vase","Foot","Fan","Foam","Fire","Fly","Fish","Fog","FIFA","FBI","Bus","Bat","Piano","Beam","Bear","Apple","Bush","Book","Beehive","Poop"];
 const PEGS100 = {
-100:"Daisies",101:"Toast",102:"Dozen",103:"Tasmanian devil",104:"Taser",105:"Tesla",106:"Dosage",107:"Disc",108:"Adhesive",109:"Teaspoon",110:"Adidas",111:"Deadwood",112:"Titan",113:"Totem",114:"Tutor",115:"Doodle",116:"Ditch",117:"Hotdog",118:"Dead fox",119:"Hot tub",120:"Tennis",121:"Tent",122:"Tuna",123:"Dynamite",124:"Dinner",125:"Tunnel",126:"Tangerine",127:"Tank",128:"Tinfoil",129:"Tenpin",130:"Thames",131:"Tomato",132:"Diamond",133:"Time machine",134:"Timer",135:"Oatmeal",136:"Damage",137:"Tomcat",138:"The Movie",139:"Dumbo",140:"Dress",141:"Dart",142:"Drone",143:"Tram",144:"Dryer",145:"Drill",146:"Torch",147:"Truck",148:"Trophy",149:"Drop",150:"Tellus",151:"Toilet",152:"Dylan",153:"Dilemma",154:"Tailor",155:"Delilah",156:"Deluge",157:"Talc",158:"Tea leaf",159:"Tulip",160:"Duchess",161:"Hatchet",162:"Audition",163:"Taj Mahal",164:"Teacher",165:"Eat chilli",166:"Dishwasher",167:"Hitchhiker",168:"Déjà vu",169:"Douchebag",170:"Tacos",171:"Ticket",172:"Toucan",173:"Dogma",174:"Tiger",175:"Tackle",176:"Head coach"};
+100:"Daisies",101:"Toast",102:"Dozen",103:"Tasmanian (Devil)",104:"Taser",105:"Tesla",106:"Dosage",107:"Disc",108:"Adhesive",109:"Teaspoon",110:"Adidas",111:"Deadwood",112:"Tighten",113:"Totem",114:"Tutor",115:"Doodle",116:"Ditch",117:"Hotdog",118:"Dead Fox",119:"Hot Tub",120:"Tennis",121:"Tent",122:"Tuna",123:"Dynamite",124:"Dinner",125:"Tunnel",126:"Tangerine",127:"Tank",128:"Tinfoil",129:"Tenpin",130:"Thames",131:"Tomato",132:"Diamond",133:"Time Machine",134:"Timer",135:"Oatmeal",136:"Damage",137:"Tomcat",138:"The Movie",139:"Dumbo",140:"Dress",141:"Dart",142:"Drone",143:"Tram",144:"Dryer",145:"Drill",146:"Torch",147:"Truck",148:"Trophy",149:"Drop",150:"Tellus",151:"Toilet",152:"Dylan",153:"Dilemma",154:"Tailor",155:"Tell-All (Book)",156:"Deluge",157:"Talc",158:"Tea Leaf",159:"Tulip",160:"Duchess",161:"Hatchet",162:"Audition",163:"Taj Mahal",164:"Teacher",165:"Thai Chilli",166:"Dishwasher",167:"Hitchhiker",168:"Déjà Vu",169:"Touch-Up (Paint)",170:"Tacos",171:"Ticket",172:"Toucan",173:"Dog Mom",174:"Tiger",175:"Tackle",176:"Head Coach"};
 // DECODE HOOKS — read the number back OUT of the image, by a vivid count feature.
 const DECODE = {
 1:"A single lone seed sprouts one straight stem shooting up like the number 1 — one seed, Seed = 1.",
@@ -690,7 +694,7 @@ function pegFor(n){
   return {word:"?", sounds:digitSounds(n)};
 }
 // clarifiers for less-obvious pegs
-const NOTE = {12:"a DNA double-helix",30:"a small mouse",43:"a bottle of rum",44:"a red X error mark",54:"the name Hillary",55:"LOL — laughing out loud",79:"a Rubik's Cube",88:"a FIFA soccer star",89:"Phoebe from Friends",93:"a beam of light",98:"Biff, Back to the Future",99:"the poop emoji",103:"the Tasmanian devil",110:"Adidas shoes",111:"Deadwood — a pile of dead logs",118:"a dead fox",133:"a time machine",138:"the movie",139:"Dumbo the elephant",150:"Tellus, the Roman earth goddess",152:"Bob Dylan",153:"a dilemma — a hard choice",155:"Delilah (Samson & Delilah)",156:"a deluge — a great flood",157:"talc — talcum powder",163:"the Taj Mahal",165:"eating a hot chilli"};
+const NOTE = {12:"a DNA double-helix",30:"a small mouse",43:"a bottle of rum",44:"a red X error mark",54:"a fishing lure",55:"LOL — laughing out loud",79:"a Rubik's Cube",88:"a FIFA soccer star",89:"the FBI",93:"a beam of light",98:"a beehive",99:"the poop emoji",103:"the Tasmanian devil",110:"Adidas shoes",111:"Deadwood — a pile of dead logs",118:"a dead fox",133:"a time machine",138:"the movie",139:"Dumbo the elephant",150:"Tellus, the Roman earth goddess",152:"Bob Dylan",153:"a dilemma — a hard choice",155:"a tell-all book",156:"a deluge — a great flood",157:"talc — talcum powder",163:"the Taj Mahal",165:"a Thai chilli"};
 const BOOKS = ["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth",
 "1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther",
 "Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon","Isaiah","Jeremiah","Lamentations","Ezekiel",
@@ -755,8 +759,8 @@ const MNEM_NUM = {
 31:"You trip on a welcome mat that flips up and reads 31 on the underside.",
 32:"The full moon rises with a grinning face, winks, and drops behind the hill at 3:2.",
 33:"A mummy unravels its bandages into two big M-loops — a wobbly 33 — and chases you.",
-34:"A lawn mower roars to life on its own and mows a giant 34 into the grass.",
-35:"A stubborn mule sits down flat and refuses to budge, braying thirty-five times.",
+34:"A giant hammer swings down and pounds a bold 34 deep into a wooden board.",
+35:"A mole tunnels up out of the lawn and pokes out its nose, sniffing thirty-five times.",
 36:"You strike a match and the flame leaps into the shape of a 3 kissing a 6.",
 37:"A steaming coffee mug sprouts arms and a 3-shaped handle and toasts you seven times.",
 38:"On the movie screen a 3 and an 8 duel with lightsabers in glorious slow motion.",
@@ -819,12 +823,12 @@ const MNEM_NUM = {
 95:"A church bell swings wildly, clanging a 9 into a 5 across the valley.",
 96:"Waves crash on the beach, curling into a 9 that flattens into a 6 of foam.",
 97:"A heavy book slams shut, pages fanning a 9 that flips to a 7.",
-98:"A slab of beef sizzles on the grill, fat popping in 9s and 8s of grease.",
+98:"A busy beehive hums as bees pour out in swarms of 9s and 8s.",
 99:"A plumber's pipe bends into a double curve — two 9s — and bursts, soaking everyone.",
 100:"You gulp a whole tray of pill doses at once — a big round 100 on the bottle.",
 101:"A slice of toast pops so hard it flips and lands between two candlesticks — 1, 0, 1.",
 102:"A full dozen doughnuts stack up, the middle one a hollow 0 between two 1s.",
-103:"A face frozen in dismay watches the number 103 crumble off the wall.",
+103:"The Tasmanian devil spins into a whirlwind, chewing the number 103 to bits.",
 104:"A jewelled Tsar sits on his throne, sceptre tapping out 1-0-4 on the gold floor.",
 105:"A diesel truck belches black smoke, exhaust curling into a 1, a 0, and a 5.",
 106:"A nurse measures a dosage into a little cup, the meniscus reading 106.",
@@ -833,7 +837,7 @@ const MNEM_NUM = {
 109:"A bar of soap squirts from your hand and skates across the floor spelling 109.",
 110:"A dancer's shiny tights stretch over two legs — a pair of 1s framing a 0.",
 111:"A can of DDT bug-spray hisses, and three stick-straight 1s of poison mist rise.",
-112:"A towering Titan strides over the mountains, each thunderous step booming 1-1-2.",
+112:"A wrench cranks a giant bolt tighter and tighter, clicking out 1-1-2.",
 113:"A carved totem pole stacks grinning faces to the clouds, the tallest a 3.",
 114:"The theater marquee blazes to life, bulbs spelling 1-1-4 above the doors.",
 115:"A car title stamped in gold ink lands on the desk, serial number 115.",
@@ -950,12 +954,12 @@ const SCENES = [
  {b:"Genesis",c:1,v:1, text:"In the beginning God created the heaven and the earth.", concept:"God is the Creator of everything",
   scene:"Out of total darkness, a burst of radiant Light explodes and spins into a whole blue-green earth beneath a sky of brand-new stars. Cradled in the Light float three glowing seeds — the very first seeds of everything — and from them the whole world unfurls. This is the absolute beginning, and God speaks it all into being.",
   elements:[["Light bursting from darkness into an earth and stars","'God created the heaven and the earth' — God shown as the Light itself, never a form"],["The very first seeds of everything","'in the beginning'"],["Three glowing seeds","Seed · Seed · Seed = 1 · 1 · 1  (Genesis · ch 1 · v 1)"]]},
- {b:"Genesis",c:1,v:3, text:"And God said, Let there be light: and there was light.", concept:"God speaks, and light obeys",
-  scene:"In the darkness a golden Voice rings out, and instantly a brilliant sunrise floods everything with light. Two glowing seeds burst open the moment the light touches them, and a massive sumo wrestler stomps once — BOOM — as if his stomp threw the switch that lit the whole world.",
-  elements:[["A golden Voice, then sudden light","'God said, Let there be light: and there was light' — His voice and light, never a form"],["Seeds bursting open at the touch of light","new life waking at God's word"],["Two seeds and a sumo","Seed · Seed · Sumo = 1 · 1 · 3  (Genesis · ch 1 · v 3)"]]},
- {b:"Exodus",c:3,v:5, text:"Put off thy shoes from off thy feet, for the place whereon thou standest is holy ground.", concept:"God's holiness calls for reverence",
-  scene:"A bush blazes with golden fire yet is never burned up, and the ground around it glows. A man bends to slip off his sandals at the edge of the holy circle. Overhead a blazing Sun watches, a great sumo wrestler bows low, and a shining soul (a small luminous spirit) hovers in awe — everything bowing before the holy ground.",
-  elements:[["A bush burning yet unconsumed, glowing ground","God's holy presence — fire and light, never a form"],["Slipping off the sandals","'put off thy shoes... the place is holy ground'"],["A Sun, a sumo, a shining soul","Sun · Sumo · Soul = 2 · 3 · 5  (Exodus · ch 3 · v 5)"]]}
+ {b:"Deuteronomy",c:5,v:1, text:"And Moses called all Israel, and said unto them, Hear, O Israel, the statutes and judgments which I speak in your ears this day, that ye may learn them, and keep, and do them.", concept:"Hear, learn, keep, and do God's statutes",
+  scene:"At the foot of the mountain, all Israel gathers as Moses lifts his voice, and beside him two soul singers stand with microphones, singing the statutes back to the crowd in call and response so every ear must hear. A warm light rests over the assembly, the glory of the Lord whose words are being proclaimed this day. As the people listen, Moses presses a single seed into the soil before them, for a word that is heard, learned, kept, and done takes root and grows.",
+  elements:[["Moses calling and two singers echoing the statutes","Hear, O Israel, the statutes and judgments I speak in your ears this day"],["A seed pressed into the soil before the people","Learn them, and keep, and do them, so the word takes root in living obedience"],["Two soul singers and a seed","Soul · Soul · Seed = 5 · 5 · 1  (Deuteronomy · ch 5 · v 1)"]]},
+ {b:"Exodus",c:5,v:1, text:"And afterward Moses and Aaron went in, and told Pharaoh, Thus saith the LORD God of Israel, Let my people go, that they may hold a feast unto me in the wilderness.", concept:"Let my people go to feast unto the LORD",
+  scene:"Under a blazing sun, Moses and Aaron stand before Pharaoh's throne, and from the burning light above them a Voice thunders, 'Let my people go.' Beside them a soul singer lifts a microphone and pours out the demand in song, 'that they may hold a feast unto me in the wilderness.' Moses opens his palm toward Pharaoh, revealing a single seed, the promise of a nation waiting to be planted free in the desert. Pharaoh scowls, but the sunlight of the LORD's word blazes on, undimmed.",
+  elements:[["A blazing sun over Pharaoh's throne","The light and glory of the LORD, whose Voice commands, 'Let my people go'"],["A soul singer proclaiming the demand in song","Moses and Aaron delivering God's word, and the feast Israel will hold in the wilderness"],["A sun, a soul singer, and a seed","Sun · Soul · Seed = 2 · 5 · 1  (Exodus · ch 5 · v 1)"]]}
 ];
 
 /* =================== TORAH VERSE POOL — top 3 powerful verses per book =================== */
@@ -1101,7 +1105,7 @@ function verseAt(k){ return _vm()[k]; }
 
 /* =================== IMAGE HELPERS (fallback to word/placeholder) =================== */
 function pegImg(kind,n,word,big){
-  const src = kind==="book" ? `images/books/${n}.png` : `images/pegs/${n}.png`;
+  const src = kind==="book" ? `/burningbush/images/books/${n}.svg` : `/burningbush/images/pegs/${n}.svg`;
   const c = big ? "pegimg" : "pegimg-sm", ph = big ? "imgph" : "imgph-sm";
   return `<img class="${c}" src="${src}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
     <div class="${ph}">🖼<b>${word}</b>${big?"<span>image coming</span>":""}</div>`;

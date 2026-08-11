@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 156 = Deluge (flood: storm + rain + waves) -->
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect width="96" height="96" rx="22" fill="url(#bg)"/>
+<path d="M24 34 Q20 24 32 23 Q34 15 44 18 Q48 12 56 16 Q69 15 70 26 Q80 27 78 37 Q78 42 70 42 L30 42 Q22 42 24 34 Z" fill="url(#g)"/>
+<g stroke="url(#g)" stroke-width="3" stroke-linecap="round"><path d="M32 46 L28 58"/><path d="M42 46 L38 60"/><path d="M52 46 L48 58"/><path d="M62 46 L58 60"/></g>
+<path d="M12 72 Q24 66 36 72 Q48 78 60 72 Q72 66 84 72 V84 H12 Z" fill="url(#g)" opacity=".55"/>
+</svg>

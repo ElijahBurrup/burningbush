@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 70 = Goose -->
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect width="96" height="96" rx="22" fill="url(#bg)"/>
+<ellipse cx="40" cy="58" rx="24" ry="16" fill="url(#g)"/>
+<path d="M56 52 Q68 44 65 28 Q64 20 71 18 L76 22 Q70 25 71 33 Q73 47 60 56 Z" fill="url(#g)"/>
+<path d="M71 18 l9 -2 -4 8 z" fill="#0e2c1d"/>
+<circle cx="70" cy="26" r="2" fill="#0e2c1d"/>
+<path d="M18 54 l-9 -3 4 9 z" fill="url(#g)"/>
+<path d="M32 52 Q46 47 56 54 Q45 62 32 57 Z" fill="#0e2c1d" opacity=".18"/>
+</svg>

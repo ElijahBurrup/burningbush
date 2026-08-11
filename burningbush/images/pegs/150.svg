@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 150 = Tellus (blue Earth, green continents) -->
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
+<linearGradient id="blu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe4f7"/><stop offset=".5" stop-color="#5aa8dd"/><stop offset="1" stop-color="#2f74b8"/></linearGradient>
+<linearGradient id="lf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fce6a"/><stop offset="1" stop-color="#3f8a2c"/></linearGradient>
+<clipPath id="globe"><circle cx="48" cy="48" r="28"/></clipPath>
+</defs>
+<rect width="96" height="96" rx="22" fill="url(#bg)"/>
+<circle cx="48" cy="48" r="28" fill="url(#blu)"/>
+<g clip-path="url(#globe)" fill="url(#lf)">
+<path d="M26 26 Q37 22 45 29 Q44 35 37 36 L41 42 L35 45 L32 40 Q25 38 24 32 Q24 28 26 26 Z"/>
+<path d="M39 47 Q48 46 49 55 Q48 63 42 69 L40 63 Q36 58 38 52 Q37 49 39 47 Z"/>
+<path d="M55 37 Q66 36 67 47 Q66 55 60 63 L56 57 Q52 50 55 43 Q54 39 55 37 Z"/>
+</g>
+<circle cx="48" cy="48" r="28" fill="none" stroke="#ffffff" stroke-width="1.5" opacity=".12"/>
+</svg>

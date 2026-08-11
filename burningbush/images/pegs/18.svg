@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 18 = TV (retro) -->
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect width="96" height="96" rx="22" fill="url(#bg)"/>
+<g stroke="url(#g)" stroke-width="3" stroke-linecap="round"><line x1="48" y1="34" x2="34" y2="16"/><line x1="48" y1="34" x2="62" y2="16"/></g>
+<rect x="20" y="34" width="56" height="40" rx="8" fill="url(#g)"/>
+<rect x="26" y="40" width="34" height="28" rx="3" fill="#0e2c1d"/>
+<circle cx="68" cy="46" r="2.6" fill="#0e2c1d"/><circle cx="68" cy="55" r="2.6" fill="#0e2c1d"/>
+<g stroke="url(#g)" stroke-width="4" stroke-linecap="round"><line x1="30" y1="74" x2="27" y2="82"/><line x1="66" y1="74" x2="69" y2="82"/></g>
+</svg>

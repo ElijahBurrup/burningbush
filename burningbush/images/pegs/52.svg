@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 52 = Lion (maned head) -->
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect width="96" height="96" rx="22" fill="url(#bg)"/>
+<g fill="url(#g)"><circle cx="48" cy="16" r="7"/><circle cx="71" cy="25" r="7"/><circle cx="80" cy="48" r="7"/><circle cx="71" cy="71" r="7"/><circle cx="48" cy="80" r="7"/><circle cx="25" cy="71" r="7"/><circle cx="16" cy="48" r="7"/><circle cx="25" cy="25" r="7"/></g>
+<circle cx="48" cy="48" r="27" fill="url(#g)"/>
+<circle cx="48" cy="49" r="18" fill="none" stroke="#0e2c1d" stroke-width="1.8" opacity=".35"/>
+<circle cx="40" cy="45" r="2.6" fill="#0e2c1d"/><circle cx="56" cy="45" r="2.6" fill="#0e2c1d"/>
+<path d="M43 54 h10 l-5 5 z" fill="#0e2c1d"/>
+<path d="M48 59 v4" stroke="#0e2c1d" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M48 62 q-6 3 -11 1 M48 62 q6 3 11 1" fill="none" stroke="#0e2c1d" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

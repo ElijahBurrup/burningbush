@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 124 = Dinner (plate + cutlery) -->
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect width="96" height="96" rx="22" fill="url(#bg)"/>
+<ellipse cx="48" cy="54" rx="24" ry="11" fill="url(#g)"/>
+<ellipse cx="48" cy="52" rx="15" ry="6" fill="#0e2c1d" opacity=".3"/>
+<g fill="url(#g)"><rect x="19" y="24" width="3" height="46" rx="1.5"/><rect x="16" y="24" width="2.4" height="13" rx="1"/><rect x="23" y="24" width="2.4" height="13" rx="1"/></g>
+<g fill="url(#g)"><rect x="74" y="24" width="4" height="46" rx="2"/><path d="M74 24 q-6 8 0 17 h4 v-17z"/></g>
+</svg>

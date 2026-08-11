@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 175 = Tackle (fishing tackle box) -->
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect width="96" height="96" rx="22" fill="url(#bg)"/>
+<path d="M38 28 Q48 19 58 28" fill="none" stroke="url(#g)" stroke-width="4" stroke-linecap="round"/>
+<path d="M20 34 H76 L72 47 H24 Z" fill="url(#g)"/>
+<rect x="20" y="47" width="56" height="32" rx="3" fill="url(#g)"/>
+<rect x="44" y="43" width="8" height="9" rx="1.5" fill="#0e2c1d" opacity=".6"/>
+<g stroke="#0e2c1d" stroke-width="1.4" opacity=".3"><path d="M24 47 H72"/><path d="M20 59 H76"/><path d="M20 69 H76"/></g>
+<g fill="#0e2c1d" opacity=".35"><path d="M42 40 Q48 36 54 40 Q52 43 48 42 Q44 43 42 40 Z"/><path d="M54 40 l4 -2 v4 z"/></g>
+</svg>

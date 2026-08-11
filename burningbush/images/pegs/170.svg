@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 170 = Tacos -->
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect width="96" height="96" rx="22" fill="url(#bg)"/>
+<path d="M18 68 Q18 40 48 40 Q78 40 78 68 Q78 72 74 72 H22 Q18 72 18 68 Z" fill="url(#g)"/>
+<path d="M24 54 Q48 44 72 54 Q60 58 48 56 Q36 58 24 54 Z" fill="#0e2c1d" opacity=".5"/>
+<g fill="#0e2c1d" opacity=".4"><circle cx="36" cy="52" r="2.6"/><circle cx="48" cy="50" r="2.6"/><circle cx="60" cy="52" r="2.6"/></g>
+<path d="M18 68 H78" stroke="#0e2c1d" stroke-width="1.4" opacity=".2"/>
+</svg>

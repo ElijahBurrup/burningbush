@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 102 = Dozen (egg carton) -->
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16402a"/><stop offset="1" stop-color="#092115"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect width="96" height="96" rx="22" fill="url(#bg)"/>
+<g fill="url(#g)"><ellipse cx="26" cy="50" rx="8" ry="10"/><ellipse cx="42" cy="50" rx="8" ry="10"/><ellipse cx="58" cy="50" rx="8" ry="10"/><ellipse cx="74" cy="50" rx="8" ry="10"/></g>
+<path d="M14 54 H82 L78 74 H18 Z" fill="url(#g)"/>
+<g stroke="#0e2c1d" stroke-width="1.7" opacity=".3"><line x1="34" y1="55" x2="34" y2="72"/><line x1="50" y1="55" x2="50" y2="72"/><line x1="66" y1="55" x2="66" y2="72"/></g>
+</svg>
