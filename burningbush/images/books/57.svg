@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 57 = Philemon : broken chains (a snapped chain link, freedom) -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M20 30 a12 12 0 0 0 0 24 h8 v-8 h-8 a4 4 0 0 1 0 -8 h8 v-8 z" fill="url(#g)"/>
+<path d="M32 34 h6 l-3 8 4 0 -7 12 3 -8 -4 0 z" fill="url(#g)"/>
+<path d="M76 42 a12 12 0 0 0 0 24 h-8 v-8 h8 a4 4 0 0 0 0 -8 h-8 v-8 z" transform="rotate(180 62 54)" fill="url(#g)"/>
+<path d="M76 66 a12 12 0 0 0 0 -24 h-8 v8 h8 a4 4 0 0 1 0 8 h-8 v8 z" fill="url(#g)"/>
+<path d="M64 46 h-6 l3 8 -4 0 7 12 -3 -8 4 0 z" fill="url(#g)"/>
+</svg>

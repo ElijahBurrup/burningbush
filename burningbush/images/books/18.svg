@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 18 = Job : a cracked clay pot with a potsherd -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M30 34 h36 l-4 8 c8 5 12 15 12 24 c0 8-12 14-26 14 s-26-6-26-14 c0-9 4-19 12-24 z" fill="url(#g)"/>
+<path d="M28 32 h40 v6 h-40 z" fill="url(#g)"/>
+<path d="M48 44 l-4 12 l6 6 l-3 12" fill="none" stroke="#0e2c1d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M62 74 l14 6 l-2 8 l-14 -4 z" fill="url(#g)" stroke="#0e2c1d" stroke-width="1.5"/>
+</svg>

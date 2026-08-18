@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 22 = Song of Solomon : a single rose (red bloom, green stem) -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<linearGradient id="r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6a5e"/><stop offset="1" stop-color="#e23a30"/></linearGradient>
+</defs>
+<rect x="45" y="46" width="6" height="34" rx="3" fill="#3f8a2c"/>
+<path d="M48 62 c-12-2-18-8-20-16 c10 0 18 4 20 12 z" fill="#3f8a2c"/>
+<path d="M48 58 c12-2 18-8 20-16 c-10 0-18 4-20 12 z" fill="#3f8a2c"/>
+<circle cx="48" cy="30" r="18" fill="url(#r)"/>
+<path d="M48 16 c8 4 12 10 12 16 c0 8-6 14-12 14 s-12-6-12-14 c0-6 4-12 12-16 z" fill="#e23a30"/>
+<path d="M48 22 c4 2 7 6 7 10 c0 5-3 8-7 8 s-7-3-7-8 c0-4 3-8 7-10 z" fill="#0e2c1d" opacity="0.35"/>
+<circle cx="30" cy="52" r="4" fill="url(#g)"/>
+</svg>

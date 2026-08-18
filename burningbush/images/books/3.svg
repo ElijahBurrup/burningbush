@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 3 = Leviticus : stone altar with rising flame -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<linearGradient id="red" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf4d"/><stop offset=".6" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e23a30"/></linearGradient>
+</defs>
+<path d="M22 64 h52 l-6 18 h-40 Z" fill="url(#g)"/>
+<rect x="26" y="58" width="44" height="8" rx="2" fill="url(#g)"/>
+<path d="M18 58 l6-8 h48 l6 8 Z" fill="url(#g)"/>
+<path d="M48 20 Q40 32 44 40 Q46 34 48 38 Q56 30 52 44 Q60 36 56 50 Q54 56 48 56 Q40 56 40 48 Q40 38 48 20Z" fill="url(#red)"/>
+<path d="M28 60 h40 M32 54 h32" stroke="#0e2c1d" stroke-width="1.5"/>
+</svg>

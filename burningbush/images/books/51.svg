@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 51 = Colossians : a towering statue / colossus figure -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect x="30" y="80" width="36" height="6" rx="2" fill="url(#g)"/>
+<rect x="34" y="74" width="28" height="6" rx="2" fill="url(#g)"/>
+<circle cx="48" cy="22" r="9" fill="url(#g)"/>
+<path d="M40 32 h16 l4 14 -4 4 v22 h-16 v-22 l-4 -4 z" fill="url(#g)"/>
+<path d="M40 34 l-9 6 v14 l5 2 v-10 l4 -3 z" fill="url(#g)"/>
+<path d="M56 34 l9 6 v14 l-5 2 v-10 l-4 -3 z" fill="url(#g)"/>
+<line x1="48" y1="46" x2="48" y2="70" stroke="#0e2c1d" stroke-width="2"/>
+<circle cx="45" cy="21" r="1.4" fill="#0e2c1d"/>
+<circle cx="51" cy="21" r="1.4" fill="#0e2c1d"/>
+</svg>

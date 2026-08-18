@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 32 = Jonah : a whale (small blue water spout) -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd0ef"/><stop offset="1" stop-color="#4b9bd6"/></linearGradient>
+</defs>
+<path d="M20 52 c0-16 16-24 32-24 c18 0 30 10 30 24 c0 6-2 10-2 10 l6 6 l-12 2 c-6 4-14 6-22 6 c-18 0-32-10-32-24 z" fill="url(#g)"/>
+<path d="M74 62 l10 -4 l-2 12 z" fill="url(#g)"/>
+<circle cx="38" cy="48" r="3.5" fill="#0e2c1d"/>
+<path d="M20 56 c8 4 20 4 30 0" fill="none" stroke="#0e2c1d" stroke-width="2" opacity="0.5"/>
+<path d="M58 30 c0-8 2-12 4-14 c2 2 4 6 4 14" fill="none" stroke="url(#b)" stroke-width="4" stroke-linecap="round"/>
+<circle cx="60" cy="14" r="3" fill="#4b9bd6"/>
+</svg>

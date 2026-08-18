@@ -8,6 +8,11 @@
 <link rel="apple-touch-icon" href="/burningbush/images/icon-512.png">
 <link rel="manifest" href="/burningbush/manifest.webmanifest">
 <meta name="theme-color" content="#0f1115">
+<!-- Firebase (Google + email auth, email verification, password reset, cloud progress sync).
+     Loads from Google's CDN; if these fail (offline / not set up) the app still works fully in local-only mode. -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <link href="/burningbush/fonts/fonts.css" rel="stylesheet"><!-- fonts bundled locally for full offline / mobile-app use -->
 <style>
   :root{
@@ -146,6 +151,8 @@
   .imgwrap{display:grid;place-items:center;margin:6px 0}
   .pegimg-sm{width:104px;height:104px;object-fit:contain;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4))}
   .imgph-sm{width:104px;height:104px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--muted);font-size:10px;text-align:center}
+  .srflash{animation:srpop .4s cubic-bezier(.2,.8,.2,1)}
+  @keyframes srpop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
 
   /* ---- scene walkthrough ---- */
   .stage{text-align:center;padding:8px 2px}
@@ -520,7 +527,7 @@
   <div class="tabbar">
     <button data-tab="journey" class="on"><span class="ic">🗺️</span>Journey</button>
     <button data-tab="learn"><span class="ic">🎓</span>Learn</button>
-    <button data-tab="verse"><span class="ic">📖</span>Verse</button>
+    <button data-tab="verse"><span class="tabbadge"></span><span class="ic">📖</span>Verse</button>
     <button data-tab="palace"><span class="tabbadge"></span><span class="ic">🏛️</span>Palace</button>
     <button data-tab="foundations"><span class="ic">📚</span>Ref</button>
   </div>
@@ -535,6 +542,10 @@
       <div class="prof-sect" style="margin-top:16px">Theme</div>
       <button class="theme-opt" data-th="illumined"><span class="sw" style="background:linear-gradient(135deg,#0e0a26,#8b7bff,#f6dd8c)"></span><div><div class="tn">Illumined Night</div><div class="td">Glowing worship starfield · main theme</div></div></button>
       <button class="theme-opt" data-th="classic"><span class="sw" style="background:linear-gradient(135deg,#171a21,#e3b34a)"></span><div><div class="tn">Classic</div><div class="td">Midnight navy &amp; gold</div></div></button>
+
+      <div class="prof-sect" style="margin-top:16px">Daily reminder</div>
+      <div id="reminderBox"></div>
+
       <div class="prof-sect" style="margin-top:16px">Account</div>
       <div id="acctBox"></div>
 
@@ -559,14 +570,19 @@
     <div class="modal-card" style="text-align:center">
       <div class="logo" style="margin:0 auto 10px;width:52px;height:52px"><svg viewBox="0 0 48 48" width="40" height="40"><defs><radialGradient id="flm2" cx="50%" cy="38%" r="60%"><stop offset="0%" stop-color="#fff3c4"/><stop offset="45%" stop-color="#ffcf4d"/><stop offset="78%" stop-color="#ff8a1e"/><stop offset="100%" stop-color="#e0450f"/></radialGradient></defs><path d="M24 3c2.7 4.2 1.1 6.8-.2 8.9 2.4-1.1 4.3-3.4 4.6-6.6 3 3.3 4.4 7 3.3 10.7 2-1 3.4-2.9 3.9-5.4 2.4 3.4 3 7.4 1.2 11.4 1.7-.6 3-1.9 3.7-3.7 1.7 3.3 1.6 7.2-.7 10.9 1.6-.3 3-1.2 3.9-2.7.4 4.6-2.1 8.9-6.9 11.2C37 39 32 41 24 41s-13-2-15.1-3.9c-4.8-2.3-7.3-6.6-6.9-11.2.9 1.5 2.3 2.4 3.9 2.7-2.3-3.7-2.4-7.6-.7-10.9.7 1.8 2 3.1 3.7 3.7-1.8-4-1.2-8 1.2-11.4.5 2.5 1.9 4.4 3.9 5.4-1.1-3.7.3-7.4 3.3-10.7.3 3.2 2.2 5.5 4.6 6.6C22.9 9.8 21.3 7.2 24 3z" fill="url(#flm2)"/><path d="M14 40h20l-1.4 4.5a2 2 0 0 1-1.9 1.5H17.3a2 2 0 0 1-1.9-1.5L14 40z" fill="#4b7a2e"/></svg></div>
       <h2 style="font-size:20px;margin:0 0 4px">Welcome to Burning Bush</h2>
-      <p class="lead" style="font-size:13px;margin:0 0 16px">Sign in to sync your journey across devices.</p>
-      <button class="btn ghost loginbtn" data-prov="google"><span>🔵</span> Continue with Google</button>
-      <button class="btn ghost loginbtn" data-prov="apple"><span></span> Continue with Apple</button>
-      <div class="ordiv"><span>or</span></div>
-      <input class="typein" id="loginEmail" type="email" placeholder="you@email.com" style="text-align:left;font-size:15px;padding:13px">
-      <button class="btn loginbtn" data-prov="email" style="margin-top:10px">Continue with Email</button>
-      <button class="btn ghost" id="loginSkip" style="margin-top:14px">Skip for now</button>
-      <p class="hint" style="margin-top:12px">Prototype: sign-in is stored on this device. Real Google/Apple/email auth is wired in the mobile build.</p>
+      <p class="lead" style="font-size:13px;margin:0 0 16px">Sign in to save your journey to your account and sync it across devices.</p>
+      <button class="btn ghost loginbtn" id="btnGoogle"><span>🔵</span> Continue with Google</button>
+      <div class="ordiv"><span>or with email</span></div>
+      <input class="typein" id="loginEmail" type="email" placeholder="you@email.com" autocomplete="email" style="text-align:left;font-size:15px;padding:13px">
+      <input class="typein" id="loginPass" type="password" placeholder="password (6+ characters)" autocomplete="current-password" style="text-align:left;font-size:15px;padding:13px;margin-top:8px">
+      <div class="btnrow" style="margin-top:10px;gap:8px">
+        <button class="btn ghost" id="btnSignin" style="flex:1">Sign in</button>
+        <button class="btn" id="btnCreate" style="flex:1">Create account</button>
+      </div>
+      <button class="btn ghost sm" id="btnForgot" style="width:100%;margin-top:8px;background:none;border:none;color:var(--accent)">Forgot password?</button>
+      <div id="loginMsg" class="hint" style="margin-top:8px;min-height:16px"></div>
+      <button class="btn ghost" id="loginSkip" style="margin-top:6px">Skip for now</button>
+      <p class="hint" id="loginNote" style="margin-top:12px"></p>
     </div>
   </div>
 
@@ -699,8 +715,8 @@ const BOOKS = ["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","
 "Zechariah","Malachi","Matthew","Mark","Luke","John","Acts","Romans","1 Corinthians","2 Corinthians",
 "Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy",
 "2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude","Revelation"];
-function bookName(n){ return BOOKS[n-1]; }
-function bookNum(name){ return BOOKS.indexOf(name)+1; }
+function bookName(n){ return BOOKS[n-1] || ("Book "+n); }   // never render literal "undefined" for an out-of-range index
+function bookNum(name){ return BOOKS.indexOf(name)+1; }      // 0 = unknown name (callers should guard)
 
 const DEF = {
 "saw":"a toothed blade for cutting wood","tie":"a necktie worn at the collar","noah":"the patriarch who built the ark","ma":"an informal word for mother","rye":"a hardy cereal grain; rye bread","law":"the rules a society enforces","shoe":"footwear for the foot","cow":"a female of domestic cattle","ivy":"a climbing evergreen vine","bee":"a flying insect that makes honey",
@@ -875,74 +891,7 @@ const MNEM_NUM = {
 150:"A straining Atlas hoists the whole world on his shoulders — the last peak, 150."};
 
 /* =================== BOOK SOUNDALIKES (reverence-audited) =================== */
-const MNEM_BOOK = {
-1:{s:"a glowing seed (Genesis)",t:"GENESIS = a glowing SEED that sprouts a whole world — book 1 — knotted off with the first knot of a necktie (tie = 1) at the beginning of everything."},
-2:{s:"an EXIT sign (Exodus)",t:"EXODUS is a glowing EXIT the people rush through — book 2 — led out in pairs like Noah's animals (Noah = 2)."},
-3:{s:"a priest levitating (Leviticus)",t:"LEVITICUS lifts a priest LEVITATING above the altar — book 3 — while your ma looks up in awe (ma = 3)."},
-4:{s:"floating numbers (Numbers)",t:"NUMBERS is a wilderness raining floating counting-NUMBERS — book 4 — down onto a loaf of rye (rye = 4)."},
-5:{s:"the Law given again (Deuteronomy)",t:"DEUTERONOMY is the Law repeated a second time — book 5 — the stone tablets of the LAW held high (law = 5)."},
-6:{s:"a GIANT SHOE knocking down ALL the walls",t:"JOSHUA blows the trumpet and Jericho falls — book 6 — a giant SHOE stomping the walls flat (shoe = 6).",p:[["Jo","GIANT"],["shu","SHOE"],["a","ALL"]]},
-7:{s:"a judge's gavel (Judges)",t:"JUDGES raise gavels from the bench — book 7 — while a COW lows in the courtroom (cow = 7)."},
-8:{s:"a sheltering roof (Ruth)",t:"RUTH gleans in the field and finds shelter under a ROOF — book 8 — draped in figure-8 IVY (ivy = 8)."},
-9:{s:"the boy Samuel (1 Samuel)",t:"First SAMUEL: young Sam hears God call in the night — book 9 — as a BEE buzzes softly by his ear (bee = 9)."},
-10:{s:"Samuel again (2 Samuel)",t:"Second SAMUEL: King David dances before the ark — book 10 — barefoot, all ten TOES showing (toes = 10)."},
-11:{s:"a crown (1 Kings)",t:"First KINGS: Solomon's CROWN gleams — book 11 — as two royal TOTS are brought before the throne (tot = 11)."},
-12:{s:"a crown again (2 Kings)",t:"Second KINGS: a chariot of fire whisks Elijah up — book 12 — trailing rattling TIN cans (tin = 12)."},
-13:{s:"a long scroll (1 Chronicles)",t:"First CHRONICLES unrolls a long family scroll — book 13 — pinned with a shiny DIME (dime = 13)."},
-14:{s:"a scroll again (2 Chronicles)",t:"Second CHRONICLES: the temple rises — book 14 — as workers roll great stones on a TIRE (tire = 14)."},
-15:{s:"a razor (Ezra)",t:"EZRA rebuilds the temple, precise as a RAZOR — book 15 — snapping a TOWEL to rally the workers (towel = 15)."},
-16:{s:"a KNEE-HIGH wall MADE by Ya",t:"NEHEMIAH rebuilds the wall knee-high overnight — book 16 — bricks stacked on a DISH (dish = 16).",p:[["Nehe","KNEE-HIGH"],["mi","MADE"],["ah","YA"]]},
-17:{s:"a star (Esther)",t:"ESTHER means STAR — book 17 — the brave queen shines like a star, a DUCK tucked under her royal robe (duck = 17)."},
-18:{s:"a job / hard work (Job)",t:"JOB loses all yet keeps his JOB of faith — book 18 — a DOVE landing gently on his ash heap (dove = 18)."},
-19:{s:"palms (Psalms)",t:"PSALMS: hands lift in praise under swaying PALMS — book 19 — beside an overflowing TUB of song (tub = 19)."},
-20:{s:"pro-HERBS (Proverbs)",t:"PROVERBS: a wise sage sniffs fragrant HERBS of wisdom — book 20 — his large NOSE twitching (nose = 20)."},
-21:{s:"a weary preacher (Ecclesiastes)",t:"ECCLESIASTES: a tired preacher sighs 'all is vanity' — book 21 — casting a NET that comes up empty (net = 21)."},
-22:{s:"a love song (Song of Solomon)",t:"SONG OF SOLOMON: two lovers SING a duet — book 22 — while two NUNS smile at the wedding (nun = 22)."},
-23:{s:"a giant eye (Isaiah)",t:"ISAIAH sees a vision — a giant EYE in the sky (I-saw-ya) — book 23 — with your NAME on the pupil (name = 23)."},
-24:{s:"a smashed jar (Jeremiah)",t:"JEREMIAH the weeping prophet smashes a clay JAR — book 24 — as Nero-like flames rise over the city (Nero = 24)."},
-25:{s:"bitter lemons (Lamentations)",t:"LAMENTATIONS: the city weeps bitter as LEMONS — book 25 — each tear a NAIL in the heart (nail = 25)."},
-26:{s:"a flaming wheel (Ezekiel)",t:"EZEKIEL sees a flaming WHEEL within a wheel — book 26 — carving a NOTCH across the sky (notch = 26)."},
-27:{s:"a lion (Daniel)",t:"DANIEL sits calm in the LIONS' den — book 27 — as a lion gently nuzzles his NECK (neck = 27)."},
-28:{s:"a garden hose (Hosea)",t:"HOSEA pursues his wandering bride with steadfast love, a garden HOSE — book 28 — coiling near a KNIFE (knife = 28)."},
-29:{s:"a jewel (Joel)",t:"JOEL warns of a locust swarm — book 29 — sweeping past a glittering JEWEL on a door KNOB (knob = 29)."},
-30:{s:"a shepherd (Amos)",t:"AMOS the SHEPHERD is called from his flock to prophesy — book 30 — a MOUSE scurrying up his crook (mouse = 30)."},
-31:{s:"a sealed decree (Obadiah)",t:"OBADIAH proclaims Edom's judgment on a sealed decree — book 31 — nailed to a welcome MAT (mat = 31)."},
-32:{s:"a whale (Jonah)",t:"JONAH is swallowed by a great WHALE — book 32 — then set on dry land under a huge MOON (moon = 32)."},
-33:{s:"a microphone (Micah)",t:"MICAH lifts the MIC and proclaims justice — book 33 — his voice echoing past a MUMMY's tomb (mummy = 33)."},
-34:{s:"a warning hum (Nahum)",t:"NAHUM hums a warning over Nineveh — book 34 — as a runaway MOWER levels the field (mower = 34)."},
-35:{s:"HAVE A COOK on an uphill climb",t:"HABAKKUK brings hard questions to God and climbs to watch — book 35 — riding a steady MULE uphill (mule = 35).",p:[["Ha","HAVE"],["bak","A"],["kuk","COOK"]]},
-36:{s:"a rushing wind (Zephaniah)",t:"ZEPHANIAH warns the day of the Lord sweeps in like a WIND — book 36 — fanning a struck MATCH (match = 36)."},
-37:{s:"builders at work (Haggai)",t:"HAGGAI urges the people to rebuild the temple — book 37 — hauling timber, pausing over a coffee MUG (mug = 37)."},
-38:{s:"night visions on a screen (Zechariah)",t:"ZECHARIAH sees eight night visions — book 38 — playing across a glowing MOVIE screen (movie = 38)."},
-39:{s:"a sealed letter (Malachi)",t:"MALACHI means 'my messenger' — the last word before 400 silent years — book 39 — a sealed LETTER laid on a MAP (map = 39)."},
-40:{s:"a welcome mat (Matthew)",t:"MATTHEW rolls out a welcome MAT for the King — book 40 — laid on a bed of ROSES (rose = 40)."},
-41:{s:"a marker (Mark)",t:"MARK records the gospel swiftly with a bold MARKER — book 41 — underlined with a straight ROD (rod = 41)."},
-42:{s:"'look closely' (Luke)",t:"LUKE the physician says LOOK closely — book 42 — as healing RAIN falls on the sick (rain = 42)."},
-43:{s:"an eagle (John)",t:"JOHN's gospel soars like its symbol the EAGLE — book 43 — 'God so loved the world' proclaimed from the upper ROOM (room = 43)."},
-44:{s:"a great stage (Acts)",t:"ACTS: the church bursts into ACTION on a great stage — book 44 — tongues of fire above two ROWERS pressing forward (rower = 44)."},
-45:{s:"a Roman soldier (Romans)",t:"ROMANS: a ROMAN soldier carries the good news through the empire — book 45 — on a long scroll ROLL (roll = 45)."},
-46:{s:"a marble column (1 Corinthians)",t:"First CORINTHIANS: a tall marble COLUMN of the church is strained by quarrels — book 46 — a ROACH scuttling up it (roach = 46)."},
-47:{s:"a column again (2 Corinthians)",t:"Second CORINTHIANS: Paul defends his ministry, firm as a COLUMN — book 47 — planted on solid ROCK (rock = 47)."},
-48:{s:"a galaxy (Galatians)",t:"GALATIANS: freedom in Christ blazes across a whole GALAXY — book 48 — high over a red ROOF (roof = 48)."},
-49:{s:"a soldier's armor (Ephesians)",t:"EPHESIANS: put on the whole armor of God — book 49 — helmet and shield belted with a stout ROPE (rope = 49)."},
-50:{s:"an overflowing cup (Philippians)",t:"PHILIPPIANS: joy overflows, FILLING UP the cup — book 50 — spilling over delicate LACE (lace = 50)."},
-51:{s:"a colossus (Colossians)",t:"COLOSSIANS: Christ towers supreme like a COLOSSUS — book 51 — a beam of LIGHT blazing from his chest (light = 51)."},
-52:{s:"a trumpet in the salon (1 Thessalonians)",t:"First THESSALONIANS: the Lord's return sounds like a trumpet mid-haircut in THE SALON — book 52 — a LION rising to meet Him (lion = 52)."},
-53:{s:"the salon again (2 Thessalonians)",t:"Second THESSALONIANS: keep working faithfully till He comes, back in THE SALON — book 53 — a fresh LIME in hand (lime = 53)."},
-54:{s:"young Timothy (1 Timothy)",t:"First TIMOTHY: young Tim shepherds the church against the clock — book 54 — casting a LURE of sound doctrine (lure = 54)."},
-55:{s:"the race finished (2 Timothy)",t:"Second TIMOTHY: 'I have finished the race' — book 55 — a white LILY laid in Paul's prison cell (lily = 55)."},
-56:{s:"a tight rein (Titus)",t:"TITUS: keep the young church in good order on a TIGHT rein — book 56 — a firm LEASH of sound teaching (leash = 56)."},
-57:{s:"a lemon turned sweet (Philemon)",t:"PHILEMON: forgive the returning servant — book 57 — a sour LEMON turned sweet on a floating LOG (log = 57)."},
-58:{s:"steam rising, He brews (Hebrews)",t:"HEBREWS: Christ is greater — steam rises as HE BREWS a fresh pot — book 58 — over glowing LAVA (lava = 58)."},
-59:{s:"a jam jar (James)",t:"JAMES sounds like JAM — book 59 — faith without works is empty, so he fills a JAM jar with his own hands, sealing his LIP in resolve (lip = 59)."},
-60:{s:"the rock with keys (1 Peter)",t:"First PETER: you are living stones — book 60 — Peter the ROCK holds the keys, standing on a great wheel of CHEESE (cheese = 60)."},
-61:{s:"the rock stands firm (2 Peter)",t:"Second PETER warns against false teachers — book 61 — Peter the ROCK stands firm as a JET streaks past (jet = 61)."},
-62:{s:"warm light of love (1 John)",t:"First JOHN: 'God is love' glows warm — book 62 — a golden CHAIN of light linking believers (chain = 62)."},
-63:{s:"a tiny letter (2 John)",t:"Second JOHN: walk in truth, a short letter — book 63 — a single flawless GEM in your palm (gem = 63)."},
-64:{s:"a third note (3 John)",t:"Third JOHN: welcome the traveling brothers — book 64 — set a bowl of CHERRIES on the table (cherry = 64)."},
-65:{s:"a shield (Jude)",t:"JUDE: contend for the faith — book 65 — raise a SHIELD against intruders and bar the JAIL door on falsehood (jail = 65)."},
-66:{s:"the curtain drawn back (Revelation)",t:"REVELATION: the curtain is drawn back, REVEALING the throne — book 66 — the righteous JUDGE brings the final verdict (judge = 66)."}
-};
+const MNEM_BOOK = {1:{s:"a glowing seed (Genesis)",t:"ONE lone SEED, the only thing in the empty void, glows like a spark until the whole garden of Eden GENERATES overnight."},2:{s:"an EXIT sign (Exodus)",t:"The parted Red Sea stands as TWO glassy walls, the SUN mirrored once in each, as Moses leads Israel toward the glowing EXIT sign."},3:{s:"a priest levitating (Leviticus)",t:"A SUMO wrestler so triple-wide he fills THREE pews gapes upward as the priest LEVITATES above the smoking altar."},4:{s:"floating numbers (Numbers)",t:"The census-taker rides a horse whose FOUR hooves are all SORE from the long trek as he NUMBERS every tent of Israel."},5:{s:"the Law given again (Deuteronomy)",t:"A DUET of SOUL singers hums Moses' farewell, then seals it with a giant HIGH FIVE, five fingers to five, as the Law sounds a SECOND time."},6:{s:"a GIANT SHOE knocking down ALL the walls",t:"JOSH and his trumpet blowers circle Jericho's wall of colossal SUSHI rolls once a day for SIX days, until one great shout splatters it into rice.",p:[["Jo","GIANT"],["shu","SHOE"],["a","ALL"]]},7:{s:"a judge's gavel (Judges)",t:"A JUDGE in a big black robe bangs his gavel SEVEN times on a giant smelly SOCK, then shouts, \"You are SET FREE!\""},8:{s:"a sheltering roof (Ruth)",t:"Up on a ROOF sits a squishy SOFA where a big happy spider lounges, slowly stretching out all EIGHT of its fuzzy legs."},9:{s:"the boy Samuel (1 Samuel)",t:"A wobbly CAMEL keeps slipping on a bar of SOAP and nearly squashing a cat, who springs back up giggling every time thanks to its NINE LIVES."},10:{s:"Samuel again (2 Samuel)",t:"Crowned King David throws TWO golden DICE that land five and five, a perfect TEN, as heralds unroll SAMUEL's SECOND scroll."},11:{s:"a crown (1 Kings)",t:"Your DAD plops a golden paper CROWN on his head and rules the living room from the couch, the very first KING."},12:{s:"a crown again (2 Kings)",t:"A twisty DNA ladder spins slowly while TWO tiny crowned KINGS ride its rungs like a merry-go-round."},13:{s:"a long scroll (1 Chronicles)",t:"You drop one shiny DIME in the freezer machine and out slides one giant grape POPSICLE."},14:{s:"a scroll again (2 Chronicles)",t:"You open a creaky DOOR and TWO frosty POPSICLES march out arm in arm."},15:{s:"a razor (Ezra)",t:"A DOLL keeps popping off the crowded toy shelf because it is the one EXTRA (\"EZ-ra\") nobody has room for."},16:{s:"a KNEE-HIGH wall MADE by Ya",t:"A soft TISSUE folds itself into fuzzy KNEE-HIGH socks that snap up to your knees — \"knee-high-miah!\"",p:[["Nehe","KNEE-HIGH"],["mi","MADE"],["ah","YA"]]},17:{s:"a star (Esther)",t:"The EASTER bunny hops past in a flowing white TOGA, painted eggs spilling out with every hop."},18:{s:"a job / hard work (Job)",t:"On the TV a kid scrubs, sweeps, rakes, and mows in fast-forward, doing the hardest JOB in the world without quitting."},19:{s:"palms (Psalms)",t:"A big brass TUBA oompahs under the PALM trees, and the palms sway in time to the song."},20:{s:"pro-HERBS (Proverbs)",t:"A giant NOSE cracks open FORTUNE COOKIES one by one and sniffs each wise little saying (the PROVERBS)."},21:{s:"a weary preacher (Ecclesiastes)",t:"A boy swings a NET at shimmering BUBBLES that pop into plain WIND every time — Ecclesiastes says it is all chasing the wind."},22:{s:"a love song (Song of Solomon)",t:"A NUN sings a syrupy love SONG to a big flopping SALMON that slaps its tail to the beat — \"Song of SALMON.\""},23:{s:"a giant eye (Isaiah)",t:"NEMO the little orange clownfish presses his face to the tank glass and shouts \"I SAW YA!\""},24:{s:"a smashed jar (Jeremiah)",t:"Old emperor NERO in his toga fiddles a tune while a giant BULLFROG named JEREMIAH croaks the bass line."},25:{s:"bitter lemons (Lamentations)",t:"A NAIL gets hammered through a pile of sour LEMONS and everyone puckers up crying — \"lemon-TATIONS.\""},26:{s:"a flaming wheel (Ezekiel)",t:"A kid named ZEKE dives into a mountain of cheesy NACHOS, crunching every chip — \"E-ZEEK-iel.\""},27:{s:"a lion (Daniel)",t:"A floppy-eared SPANIEL sprints laps in squeaky NIKE sneakers, ears flapping — \"Daniel the spaniel.\""},28:{s:"a garden hose (Hosea)",t:"A KNIFE slices right through a wriggling garden HOSE and water sprays everywhere — \"HOSE-a.\""},29:{s:"a jewel (Joel)",t:"You curl up for a NAP on a giant sparkling JEWEL that glitters like a pillow of light — \"jewel\" = Joel."},30:{s:"a shepherd (Amos)",t:"A tiny MOUSE rides high on the antlers of a giant MOOSE, squeaking \"A MOOSE! A MOOSE!\" — Amos."},31:{s:"a sealed decree (Obadiah)",t:"The welcome MAT groans \"OH, BAD idea!\" the second your foot lands on it — oh-BAD-iah."},32:{s:"a whale (Jonah)",t:"Under a huge full MOON, a great WHALE gulps down a man named JONAH in one big splashy swallow."},33:{s:"a microphone (Micah)",t:"A bandaged MUMMY honks the horn of MY CAR over and over, yelling \"call me MIKE-ah!\""},34:{s:"a warning hum (Nahum)",t:"A HAMMER that HUMS taps the nail singing \"NAH-HUM, NAH-HUM\" with every bang."},35:{s:"HAVE A COOK on an uphill climb",t:"A MOLE in a tall chef's hat flips burnt pancakes as the world's worst COOK — \"HAVE-A-COOK!\"",p:[["Ha","HAVE"],["bak","A"],["kuk","COOK"]]},36:{s:"a rushing wind (Zephaniah)",t:"A playful ZEPHYR breeze whooshes \"Zeph-a-NYE-ah!\" and puffs out your MATCH every time you strike it."},37:{s:"builders at work (Haggai)",t:"A muddy HOG grabs the MIC and squeals \"HOG-eye! HOG-eye!\" spraying happy mud flecks with every snort."},38:{s:"night visions on a screen (Zechariah)",t:"Little ZACK munches popcorn at a MOVIE so thrilling he shouts \"Zack-a-RYE-ah!\" every time the screen flashes."},39:{s:"a sealed letter (Malachi)",t:"You unroll a giant MAP of the MALL and a golden KEY tumbles out — \"MALL-a-KEY\" opens every store."},40:{s:"a welcome mat (Matthew)",t:"A cheerful welcome MAT named MATT sprouts a giant red ROSE through its middle, tickling everyone who wipes their feet."},41:{s:"a marker (Mark)",t:"A squeaky MARKER scribbles big check-MARKS all over the RADIO until every dial is covered in ink."},42:{s:"'look closely' (Luke)",t:"A RHINO thunders down the street so enormous everyone points and yells \"LOOK! LOOK!\" as the windows rattle."},43:{s:"an eagle (John)",t:"A wooden RUM barrel waddles past wearing bright red LONG JOHNS, stubby legs poking out of the button flap."},44:{s:"a great stage (Acts)",t:"Actors ACT out a grand stage play until one trips and a big red ERROR buzzer blares at the blooper."},45:{s:"a Roman soldier (Romans)",t:"A spinning film REEL shows ROMAN soldiers ROAMIN' round and round wherever the flapping filmstrip points."},46:{s:"a marble column (1 Corinthians)",t:"You walk under a towering ARCH built entirely of buttery CORN on the cob, kernels popping loose overhead."},47:{s:"a column again (2 Corinthians)",t:"You bite the second ear of CORN and crunch on a gray ROCK wedged right between the kernels."},48:{s:"a galaxy (Galatians)",t:"A pair of yellow GALOSHES stomps across the ROOF all by themselves, splashing puddles with every rubbery step."},49:{s:"a soldier's armor (Ephesians)",t:"A golden HARP sits frozen solid in a block of ice, its strings \"a-FREEZIN'\" and twanging icy little notes."},50:{s:"an overflowing cup (Philippians)",t:"A cowboy twirls a LASSO and ropes a flapping pile of rubber FLIPPERS that slap and wiggle like fish."},51:{s:"a colossus (Colossians)",t:"A COLOSSAL pot LID the size of a playground clangs down over the whole street, booming like a gong."},52:{s:"a trumpet in the salon (1 Thessalonians)",t:"A hungry LION gobbles a teetering stack of BALONEY sandwiches, licking mustard off his whiskers."},53:{s:"the salon again (2 Thessalonians)",t:"The second load of BALONEY gets stuffed into a stretch LIMO until floppy slices squish out of every window."},54:{s:"young Timothy (1 Timothy)",t:"Timid little TIM tiptoes to the pond and dangles a sparkly LURE, whispering \"here, fishy\" as quietly as he can."},55:{s:"the race finished (2 Timothy)",t:"Now TIM cannot stop laughing, texting \"LOL! LOL!\" so hard his phone bounces out of his hands."},56:{s:"a tight rein (Titus)",t:"A wiggly LEECH dresses up in a fancy red bow TIE and bows politely — \"TIE-tus, at your service.\""},57:{s:"a lemon turned sweet (Philemon)",t:"You FILL a pitcher with fresh LEMONade but it springs a LEAK, dribbling lemony drops from a tiny hole."},58:{s:"steam rising, He brews (Hebrews)",t:"A plastic HAIRBRUSH tumbles into bubbling LAVA and melts, bristles curling like tiny orange noodles."},59:{s:"a jam jar (James)",t:"A giant LIP smacks loudly, smeared top to bottom with sticky strawberry JAM dripping onto the chin."},60:{s:"the rock with keys (1 Peter)",t:"A giant green PEA rolls downhill and splats into a wobbly wheel of CHEESE, sticking there like a bullseye."},61:{s:"the rock stands firm (2 Peter)",t:"That same giant PEA rolls for its life as a spotted CHEETAH sprints after it, paws a blur."},62:{s:"warm light of love (1 John)",t:"A GENIE whooshes out of the lamp wearing just baggy red LONG JOHNS, striking a proud pose."},63:{s:"a tiny letter (2 John)",t:"A second pair of red LONG JOHNS dangles from a wind CHIME, jingling every time the legs kick."},64:{s:"a third note (3 John)",t:"A third pair of LONG JOHNS twirls by with a bright red CHERRY perched on top like a tiny hat."},65:{s:"a shield (Jude)",t:"A CHILLI pepper leans way back in tiny sunglasses and drawls \"whoa, DUDE,\" steam curling from its stem."},66:{s:"the curtain drawn back (Revelation)",t:"The JUDGE solemnly parts a great curtain for the final REVEAL, and glorious golden light floods out over everyone."}};
 
 /* =================== SCENES — 3 foundation promises (deep designs) =================== */
 // All within book 1-9, chapter 1-9, verse 1-9. God shown only as light/glory/voice.
@@ -1115,18 +1064,27 @@ const INTERVAL = {1:0,2:1,3:3,4:7,5:21};
 const SRS_KEY="vv_srs_v3", PROG_KEY="vv_progress_v3";
 const PROG_SCHEMA=1; // bump when the saved-progress shape changes; migrateProg() upgrades old saves
 function load(k,f){ return Store.getJSON(k,f); }   // thin wrappers over the storage layer
-function save(k,v){ return Store.setJSON(k,v); }
+function save(k,v){ const r=Store.setJSON(k,v);
+  // When progress or review data changes, stamp a local timestamp and schedule a cloud sync (if signed in).
+  if(k===PROG_KEY||k===SRS_KEY){ Store.set("vv_localts",String(Date.now())); if(typeof Auth!=="undefined") Auth.syncUp(); }
+  return r; }
 // Bring any saved progress up to the current schema: fill in fields added since it was written,
 // heal inconsistencies, then stamp the version. Runs on every load so old saves never break.
 function migrateProg(p){
   p=p||{};
+  // coerce WRONG-typed fields (corrupt/tampered/older-shape saves), not just missing ones, so a parseable-but-malformed blob self-heals instead of throwing downstream
+  const arr=x=>Array.isArray(x)?x:[]; const obj=x=>(x&&typeof x==="object"&&!Array.isArray(x))?x:{};
   if(typeof p.level!=="number") p.level=0;
-  p.memorized=p.memorized||[]; p.doneSkills=p.doneSkills||[]; p.chosen=p.chosen||{};
+  p.memorized=arr(p.memorized); p.doneSkills=arr(p.doneSkills); p.chosen=obj(p.chosen);
   if(typeof p.onboarded!=="boolean") p.onboarded=!!p.onboarded;
-  p.saved=p.saved||[]; p.skipped=p.skipped||[];               // green (come back later) / red (skip)
-  p.extraKnown=p.extraKnown||[]; p.palaces=p.palaces||[]; p.customBook=p.customBook||{}; p.badges=p.badges||[]; p.customScene=p.customScene||{}; // ad-hoc numbers, palaces, edited book texts, badges, user's own verse scenes
+  p.saved=arr(p.saved); p.skipped=arr(p.skipped);               // green (come back later) / red (skip)
+  p.extraKnown=arr(p.extraKnown); p.palaces=arr(p.palaces); p.customBook=obj(p.customBook); p.badges=arr(p.badges); p.customScene=obj(p.customScene); // ad-hoc numbers, palaces, edited book texts, badges, user's own verse scenes
   p.palaces=p.palaces.map(pl=>{ if(pl&&typeof pl==="object"){ if(!pl.learnedAt) pl.learnedAt=Date.now(); if(!pl.step) pl.step=1; } return pl; }); // spaced-repetition trail: D0 done at build
-  p.talents=p.talents||0; p.streak=p.streak||0; p.bestStreak=p.bestStreak||0; p.talentLog=p.talentLog||{}; // Talents (verse-practice points), streaks, per-verse 24h earn log
+  p.verseSR=obj(p.verseSR); (p.memorized||[]).forEach(k=>{ if(!p.verseSR[k]) p.verseSR[k]={learnedAt:Date.now(),step:1}; }); // per-verse SR trail; back-fill existing memorized verses
+  p.talents=p.talents||0; p.streak=p.streak||0; p.bestStreak=p.bestStreak||0; p.talentLog=obj(p.talentLog); // Talents (verse-practice points), streaks, per-verse 24h earn log
+  if(typeof p.dayStreak!=="number") p.dayStreak=0; if(typeof p.bestDayStreak!=="number") p.bestDayStreak=0; if(typeof p.lastReviewDay!=="string") p.lastReviewDay=""; // daily review streak (distinct from the per-answer streak)
+  if(typeof p.freezes!=="number") p.freezes=0; p.freezeAwards=arr(p.freezeAwards); // Streak-Freeze power-ups + which milestones already granted one
+  p.reminder=obj(p.reminder); if(typeof p.reminder.on!=="boolean") p.reminder.on=false; if(typeof p.reminder.time!=="string") p.reminder.time="20:00"; // daily reminder preference
   p.saved=p.saved.filter(k=>!p.memorized.includes(k)); p.skipped=p.skipped.filter(k=>!p.memorized.includes(k)); // heal verses stuck in saved/skip after being learned
   // (future) if(p.__v<2){ ...transform... }
   p.__v=PROG_SCHEMA;
@@ -1139,7 +1097,7 @@ function loadProg(){
   try{ return migrateProg(raw?JSON.parse(raw):null); }
   catch(e){ if(raw) Store.set(PROG_KEY+"_corrupt", raw); return migrateProg(null); }
 }
-let SRS = load(SRS_KEY,{});
+let SRS = load(SRS_KEY,{}); if(!SRS || typeof SRS!=="object" || Array.isArray(SRS)) SRS={}; // guard a corrupt/tampered SRS blob
 let Prog = loadProg();
 function saveProg(){ save(PROG_KEY,Prog); }
 
@@ -1194,6 +1152,86 @@ const Billing = {
     }
   }
 };
+
+/* =================== ACCOUNTS + CLOUD SYNC (Firebase) =================== */
+// PLACEHOLDER: paste your Firebase web-app config here.
+// Firebase console → Project settings → Your apps → Web app → SDK setup and configuration → Config.
+// These values are safe to ship in the client (security is enforced by Firebase Auth + Firestore rules).
+const FIREBASE_CONFIG = {
+  apiKey: "REPLACE_WITH_FIREBASE_API_KEY",
+  authDomain: "REPLACE_PROJECT.firebaseapp.com",
+  projectId: "REPLACE_PROJECT",
+  storageBucket: "REPLACE_PROJECT.appspot.com",
+  messagingSenderId: "REPLACE_SENDER_ID",
+  appId: "REPLACE_APP_ID"
+};
+// True once the SDK loaded AND real config was pasted in. Otherwise the app runs local-only.
+function firebaseReady(){ return typeof firebase!=="undefined" && FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey.indexOf("REPLACE")<0; }
+
+const Auth = {
+  user:null, _fbUser:null, _auth:null, _db:null, _timer:null, _pulling:false, _ready:false,
+  init(){
+    if(!firebaseReady()) return;          // stays local-only; login modal explains how to enable
+    try{
+      firebase.initializeApp(FIREBASE_CONFIG);
+      Auth._auth = firebase.auth(); Auth._db = firebase.firestore(); Auth._ready = true;
+      try{ Auth._auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(e){}
+      Auth._auth.onAuthStateChanged(async (u)=>{
+        Auth._fbUser = u;
+        if(u){
+          const prov = (u.providerData[0] && u.providerData[0].providerId) || "password";
+          Auth.user = { uid:u.uid, email:u.email, provider: prov.replace(".com",""), verified:u.emailVerified };
+          Store.setJSON("vv_acct", Auth.user);
+          await Auth.syncDown();
+          if(el("loginModal")) el("loginModal").style.display="none";
+          renderAcctBox();
+        } else {
+          Auth.user=null; Store.remove("vv_acct"); renderAcctBox();
+        }
+      });
+    }catch(e){ console.warn("Firebase init failed:", e && e.message); }
+  },
+  loggedIn(){ return !!Auth._fbUser; },
+  // ── auth actions ──
+  google(){ return Auth._auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); },
+  signUp(email,pw){ return Auth._auth.createUserWithEmailAndPassword(email,pw)
+      .then(c=>c.user.sendEmailVerification().then(()=>c)); },
+  signIn(email,pw){ return Auth._auth.signInWithEmailAndPassword(email,pw); },
+  resetPassword(email){ return Auth._auth.sendPasswordResetEmail(email); },
+  resendVerification(){ return Auth._fbUser ? Auth._fbUser.sendEmailVerification() : Promise.resolve(); },
+  signOut(){ return Auth._ready ? Auth._auth.signOut() : Promise.resolve(); },
+  // ── cloud progress (stored as JSON strings to dodge all Firestore type limits) ──
+  _doc(){ return Auth._db.collection("users").doc(Auth._fbUser.uid); },
+  push(){
+    if(!Auth._fbUser) return Promise.resolve();
+    return Auth._doc().set({ progJson: JSON.stringify(Prog), srsJson: JSON.stringify(SRS), updatedAt: Date.now() }, {merge:true})
+      .catch(e=>console.warn("cloud push failed:", e && e.message));
+  },
+  // Last-writer-wins by timestamp: local edits made offline are pushed; otherwise cloud is pulled.
+  async syncDown(){
+    if(!Auth._fbUser) return;
+    Auth._pulling=true;
+    try{
+      const snap=await Auth._doc().get();
+      const localTs=Number(Store.get("vv_localts",0))||0;
+      if(!snap.exists){ await Auth.push(); }
+      else {
+        const d=snap.data(), cloudTs=Number(d.updatedAt||0);
+        if(localTs>cloudTs){ await Auth.push(); }         // local is newer (e.g. offline changes) → keep it
+        else {                                            // cloud is source of truth → load it
+          if(d.progJson){ try{ Prog=migrateProg(JSON.parse(d.progJson)); Store.setJSON(PROG_KEY,Prog); }catch(e){} }
+          if(d.srsJson){ try{ SRS=JSON.parse(d.srsJson)||{}; Store.setJSON(SRS_KEY,SRS); }catch(e){} }
+          Store.set("vv_localts",String(cloudTs));
+          bustCaches(); recomputeLevel(); updateMetrics();
+          const active=document.querySelector(".view.active");
+          if(active){ if(active.id==="journey")renderJourney(); else if(active.id==="learn")renderPath(); else if(active.id==="verse")renderVerse(); else if(active.id==="palace")renderPalace(); }
+        }
+      }
+    }catch(e){ console.warn("cloud pull failed:", e && e.message); }
+    Auth._pulling=false;
+  },
+  syncUp(){ if(!Auth._fbUser||Auth._pulling) return; clearTimeout(Auth._timer); Auth._timer=setTimeout(()=>Auth.push(),1500); }
+};
 // any verse (curated pool object if present, else built from the full KJV)
 function verseObj(b,c,v){ const p=verseAt(refKey(b,c,v));
   if(p) return {b:p.b||bookName(b),c,v,text:p.text||kjvText(b,c,v),concept:p.concept||"",scene:p.scene,elements:p.elements};
@@ -1209,7 +1247,7 @@ function verseState(b,c,v){
   if(/\bbegat\b|\bthe son of\b|\bcubits?\b|\bshekels?\b|\bwere numbered\b|\bnumbered of the\b|\bnumber of the\b|\bafter their families\b|\bhe goats\b|\bhe lambs\b|\blambs of the first year\b|\bmeat offering\b|\bwave offering\b|\bthe sons of \w+ were\b|\bhundred and \w+ thousand\b/i.test(kjvText(b,c,v))) return "sugskip"; // genealogy / offerings / cubits / census → suggest skip
   return "ready";                                                // reachable, no suggestion
 }
-function cardState(k){ return SRS[k]||{box:1,due:0}; }
+function cardState(k){ const st=SRS[k]; return (st && typeof st.box==="number") ? st : {box:1,due:0}; } // heal entries missing/NaN box (which would poison due dates)
 function gradeKey(k,g){
   const st=cardState(k), now=Date.now();
   if(g==="good"){ st.box=Math.min(st.box+1,5); st.due=now+INTERVAL[st.box]*DAY; }
@@ -1239,12 +1277,16 @@ function updateMetrics(){
   el("mMem").textContent=Prog.memorized.length;
   const palTab=document.querySelector('.tabbar button[data-tab="palace"]');
   if(palTab) palTab.classList.toggle("hasdue", palacesDueCount()>0);   // red dot when a palace is due
+  const vsTab=document.querySelector('.tabbar button[data-tab="verse"]');
+  if(vsTab) vsTab.classList.toggle("hasdue", versesDueCount()>0);      // red dot when a verse is due for review
 }
 
 /* =================== ROUTING =================== */
 const el=id=>document.getElementById(id);
 const views=document.querySelectorAll(".view");
 function show(tab){
+  // leaving the intro via a tab tap = onboarding is done; stamp it so Journey doesn't re-show the intro from step 0 (state desync)
+  if(!Prog.onboarded && tab!=="journey"){ Prog.onboarded=true; saveProg(); }
   views.forEach(v=>v.classList.toggle("active",v.id===tab));
   document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   document.querySelector(".content").scrollTop=0;
@@ -1264,6 +1306,15 @@ function renderJourney(){
   J.innerHTML=`
     <h2>Your Journey</h2>
     <p class="lead">Master number images to unlock books, chapters and verses across the whole Bible.</p>
+    ${(function(){ // daily habit hook: the first thing you see is today's review + your streak
+      const dueV=versesDueCount(), dueP=palacesDueCount(), td=dueV+dueP;
+      const streak=(Prog.dayStreak>0?`<span class="gold" style="font-weight:800">🔥 ${Prog.dayStreak}-day streak</span>`:"")+(Prog.freezes>0?`<span title="Streak Freezes — auto-save a missed day" style="margin-left:8px;font-weight:800">🧊 ${Prog.freezes}</span>`:"");
+      if(td>0){ const bits=[]; if(dueV) bits.push(`${dueV} verse${dueV>1?"s":""}`); if(dueP) bits.push(`${dueP} palace${dueP>1?"s":""}`);
+        return `<div class="card" style="border:1px solid var(--gold2);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+          <div><div style="font-weight:800">🔔 ${bits.join(" · ")} due today</div>${streak?`<div style="margin-top:3px">${streak}</div>`:""}</div>
+          <button class="btn blue" id="jReview" style="margin:0;flex:0 0 auto">Review now →</button></div>`; }
+      return `<div class="card center" style="margin-bottom:12px"><div style="font-weight:800;color:var(--good)">✓ You're caught up today</div>${streak?`<div style="margin-top:4px">${streak} — come back tomorrow to keep it alive</div>`:`<div class="hint" style="margin-top:4px">Memorize a verse and review it daily to start a streak.</div>`}</div>`;
+    })()}
     <div class="counters">
       <div class="counter"><div class="v">${[...knownNumbers()].filter(n=>n>=1&&n<=176).length}</div><div class="l">numbers mastered</div></div>
       <div class="counter"><div class="v">${booksKnown()}</div><div class="l">books unlocked</div></div>
@@ -1278,6 +1329,7 @@ function renderJourney(){
       <div class="biblestrip">${stripFor(40,66)}</div></div>
     <div class="btnrow"><button class="btn ghost" id="replayIntro">Replay the intro</button></div>`;
   J.querySelectorAll("[data-book]").forEach(c=>c.onclick=()=>renderBookScreen(+c.dataset.book));
+  if(el("jReview")) el("jReview").onclick=()=>{ show("verse"); startMemTest(); };   // jump straight into today's review
   el("replayIntro").onclick=()=>{ obIdx=0; renderOnboard(); };
 }
 
@@ -1381,7 +1433,8 @@ function renderOnboard(){
     each one is the book, chapter, and verse in disguise. Learn the simple code and you can read any address straight
     out of the picture — and build your own.</p>
     <button class="btn" id="obDone">Learn the code →</button></div>`;
-  el("obDone").onclick=()=>{ Prog.onboarded=true; SCENES.forEach(s=>addMemorized(s)); saveProg(); if(expandedUnits===null) expandedUnits=new Set(); expandedUnits.add(0); show("learn"); }; // start on the Major System path
+  // NOTE: the intro scenes are a teaching teaser, NOT yet "memorized" — seeding them into Prog.memorized before any numbers are known produced a "3/0" counter, a premature badge, and un-testable verses (empty mem-test dropdowns). The user re-builds them for real once they've learned the code.
+  el("obDone").onclick=()=>{ Prog.onboarded=true; saveProg(); if(expandedUnits===null) expandedUnits=new Set(); expandedUnits.add(0); show("learn"); }; // start on the Major System path
 }
 
 /* =================== BIBLE STORIES — 100 stories, 20 sections of 5 =================== */
@@ -1645,16 +1698,30 @@ function finishStory(){
 /* ---- Memory Palace builder (build 3 personal palaces) ---- */
 const PALACE_PLACES=["My house","My school / workplace","A previous home","A friend's or relative's house","My daily commute / route","My church"];
 /* ---- palace spaced-repetition trail: review at D0, D1, D3, D7, D16, D30 ---- */
-const SR_TRAIL=[0,1,3,7,16,30]; // days since learning
-// index of the checkpoint currently due (>= its day has passed and it isn't done yet), else -1
-function palaceDueIndex(p){ if(!p||!p.learnedAt) return -1; const step=p.step||1; if(step>=SR_TRAIL.length) return -1;
-  return Date.now() >= p.learnedAt + SR_TRAIL[step]*DAY ? step : -1; }
-function palaceDue(p){ return palaceDueIndex(p)>=0; }
+const SR_TRAIL=[0,1,3,7,16,30]; // checkpoint days. Intervals are RELATIVE: each completed review restarts the clock to the NEXT gap,
+// so a backlog only ever advances ONE checkpoint at a time (fall 3 days behind and D1+D3 due → doing it counts as D1, then D3 waits 2 more days).
+function srDueAt(o){ const step=o.step||1; return o.dueAt!=null ? o.dueAt : (o.learnedAt||0)+SR_TRAIL[step]*DAY; } // legacy saves without dueAt fall back to cumulative day
+// index of the checkpoint currently due (its dueAt has passed and it isn't done yet), else -1
+function srDueIndex(o){ if(!o||!o.learnedAt) return -1; const step=o.step||1; if(step>=SR_TRAIL.length) return -1;
+  return Date.now() >= srDueAt(o) ? step : -1; }
+// complete the one due checkpoint, then restart the counter to the NEXT gap only (never skip ahead over a backlog)
+function srAdvance(o){ const di=srDueIndex(o); if(di<0) return false; o.step=di+1;
+  o.dueAt = o.step<SR_TRAIL.length ? Date.now()+(SR_TRAIL[o.step]-SR_TRAIL[o.step-1])*DAY : null; return true; }
+function palaceDueIndex(p){ return srDueIndex(p); }
+function palaceDue(p){ return srDueIndex(p)>=0; }
 function palaceTrailDone(p){ return (p&&(p.step||1))>=SR_TRAIL.length; }
 // ms until the next checkpoint comes due (0 if due now, null if the trail is complete)
 function palaceNextReviewMs(p){ const step=p&&p.step||1; if(step>=SR_TRAIL.length) return null;
-  return Math.max(0, (p.learnedAt+SR_TRAIL[step]*DAY) - Date.now()); }
+  return Math.max(0, srDueAt(p) - Date.now()); }
 function palacesDueCount(){ return (Prog.palaces||[]).filter(pl=>pl&&palaceDue(pl)).length; }
+// verse spaced-repetition trail — the SAME relative D0…D30 model as palaces, one per memorized verse.
+function verseSRobj(k){ return (Prog.verseSR||{})[k]; }
+function verseDue(k){ const o=verseSRobj(k); return !!o && srDueIndex(o)>=0; }
+function versesDueCount(){ const sr=Prog.verseSR||{}; return (Prog.memorized||[]).filter(k=>{ const o=sr[k]; return o && srDueIndex(o)>=0; }).length; }
+function newSR(){ return {learnedAt:Date.now(), step:1, dueAt:Date.now()+(SR_TRAIL[1]-SR_TRAIL[0])*DAY}; } // D0 done at learn, D1 due in 1 day
+function startVerseSR(k){ Prog.verseSR=Prog.verseSR||{}; if(!Prog.verseSR[k]) Prog.verseSR[k]=newSR(); }
+function reviewVerseSR(k){ if(!Prog.memorized.includes(k)) return; Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k];
+  if(!o){ Prog.verseSR[k]=newSR(); return; } srAdvance(o); }
 function srHuman(ms){ if(ms==null) return "—"; if(ms<=0) return "today"; const d=Math.round(ms/DAY); return d<=1?"1 day":d+" days"; }
 // the 6-node D0…D30 trail: done = filled gold, due = pulsing, upcoming = dim
 function srTrailHTML(p){ const step=(p&&p.step)||1, di=palaceDueIndex(p);
@@ -1670,9 +1737,9 @@ function startPalaceLesson(sk){
 }
 /* ---- palace practice: name shown, pick each room in order (re-gilds a decayed palace) ---- */
 let PP=null;
-function startPalacePractice(slot, host, ret){
+function startPalacePractice(slot, host, ret, onAbort){
   const p=Prog.palaces[slot]; if(!p) return;
-  PP={slot, p, host:host||"learn", ret:ret||renderPath, i:0, wrong:0};
+  PP={slot, p, host:host||"learn", ret:ret||renderPath, onAbort:onAbort||null, i:0, wrong:0};
   renderPalacePractice();
 }
 function renderPalacePractice(){
@@ -1680,8 +1747,7 @@ function renderPalacePractice(){
   if(PP.i>=p.stations.length){ // walked the whole palace → re-gild it + advance the SR trail
     const id="palace:"+PP.slot; if(!Prog.doneSkills.includes(id)) Prog.doneSkills.push(id);
     const stored=Prog.palaces[PP.slot];
-    const di=stored?palaceDueIndex(stored):-1, advanced=(stored&&di>=0);
-    if(advanced) stored.step=di+1;                        // this review clears the due checkpoint
+    const advanced = !!(stored && srAdvance(stored));     // clear the due checkpoint + restart the counter to the next gap
     strengthen("sk:palace:"+PP.slot); saveProg(); updateMetrics(); checkBadges();
     const done=stored&&palaceTrailDone(stored), nextMs=stored?palaceNextReviewMs(stored):null;
     const trailMsg = !stored ? "" : done
@@ -1706,7 +1772,7 @@ function renderPalacePractice(){
       <div class="prompt" style="margin-top:12px">What is stop #${pos+1} on your walk?</div>
       <div class="opts">${options.map(o=>`<button class="opt" data-ok="${o===correct?1:0}">${o}</button>`).join("")}</div>
       <div id="ppFb"></div></div>`;
-  el("ppClose").onclick=PP.ret;
+  el("ppClose").onclick=PP.onAbort||PP.ret;   // in the SR queue, ✕ aborts the whole queue (onAbort) instead of re-looping the same still-due palace
   L.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
     if(b.disabled) return;
     if(b.dataset.ok==="1"){ // correct → next room
@@ -1816,8 +1882,9 @@ function recentLearnedItems(skId, max){
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function distract(kind,n,count){
-  const pool = kind==="book" ? range(1,66) : (n<=99?range(0,99):range(100,150));
-  const out=[]; while(out.length<count){ const r=pool[Math.floor(Math.random()*pool.length)];
+  // draw distractors from a window AROUND n (not a fixed 0–99 / 100–150 block) so high pegs get plausible near-neighbours instead of being the obvious odd-one-out
+  const pool = kind==="book" ? range(1,66) : range(Math.max(0,n-30), Math.min(176,n+30));
+  const out=[]; let guard=0; while(out.length<count && guard++<500){ const r=pool[Math.floor(Math.random()*pool.length)];
     if(r!==n && !out.includes(r)) out.push(r); } return out;
 }
 function itemWord(kind,n){ return kind==="book" ? pegFor(n).word : pegFor(n).word; }
@@ -1879,9 +1946,11 @@ function renderStep(){
   if(s.type==="teach"){
     const mb=MNEM_BOOK[s.n];
     const hook = s.kind==="book"
-      ? (mb&&mb.p
-          ? `The name <b>${bookName(s.n)}</b> breaks into sounds — say each part and picture its word:${phonHtml(mb.p)}<div style="margin-top:6px">Put them together (<b>${mb.s}</b>) and chain that with its number image, <b class="gold">${word}</b>.</div>`
-          : `The name <b>${bookName(s.n)}</b> sounds like <b>${mb?mb.s:""}</b>, and its number image is <b class="gold">${word}</b>. Picture them together.`)
+      ? (mb&&mb.t
+          ? `<b class="gold">Picture this scene:</b> ${mb.t}<div class="hint" style="margin-top:8px">One scene, hiding the book <b>${bookName(s.n)}</b> and its number image <b class="gold">${word}</b>.</div>`
+          : (mb&&mb.p
+            ? `The name <b>${bookName(s.n)}</b> breaks into sounds — say each part and picture its word:${phonHtml(mb.p)}<div style="margin-top:6px">Put them together (<b>${mb.s}</b>) and chain that with its number image, <b class="gold">${word}</b>.</div>`
+            : `The name <b>${bookName(s.n)}</b> sounds like <b>${mb?mb.s:""}</b>, and its number image is <b class="gold">${word}</b>. Picture them together.`))
       : `<b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${NOTE[s.n]?" ("+NOTE[s.n]+")":""} — make it move, glow, and refuse to be forgotten.`
         + (DECODE[s.n]?`<br><br><b style="color:var(--good)">Read it back → ${s.n}:</b> ${DECODE[s.n]}`:"");
     const rel=relBoxes(s.n);
@@ -2036,7 +2105,8 @@ function failChapter(){
 }
 function passChapter(){
   const U=UNITS[LZ.ui];
-  U.skills.forEach(sk=>{ if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id);
+  U.skills.forEach(sk=>{ if(sk.kind==="palace"||sk.kind==="story") return;   // don't "complete" a palace/story the user never actually built
+    if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id);
     sk.items.forEach(n=>gradeKey(`sk:${sk.kind}:${n}`,"good")); });   // mark every node gold
   bustCaches(); recomputeLevel(); saveProg(); updateMetrics(); checkBadges(); LZ=null;
   el("learn").innerHTML=`<div class="card center"><div style="font-size:52px">💯</div>
@@ -2083,7 +2153,15 @@ let memTestCur=null, memTestRecent=[], memTestWrong=0;
 const vSec={sugg:false, topics:false, mem:false, saved:false}; // sections start minimized
 function verseRow(b,c,v,st,star){
   const t=kjvText(b,c,v);
-  return `<div class="vrow clkrow" data-vb="${b}:${c}:${v}"><div class="vt"><b class="gold">${star?"✨ ":""}${bookName(b)} ${c}:${v}</b><div class="muted">${t.length>56?t.slice(0,56)+"…":t}</div></div><div>${st==="mem"?'<span style="color:var(--good);font-weight:800">✓</span>':'→'}</div></div>`;
+  let srBadge="", trail="";
+  if(st==="mem"){
+    const o=verseSRobj(refKey(b,c,v));
+    if(o){ const due=palaceDueIndex(o)>=0, doneAll=(o.step||1)>=SR_TRAIL.length;
+      srBadge = due?'<span class="due-dot"></span>':'';
+      trail = `<div style="margin-top:6px">${srTrailHTML(o)}<span class="muted" style="font-size:11px;margin-left:8px">${due?'<b style="color:#ff8a8a">review due</b>':(doneAll?'✓ locked in':'next in '+srHuman(palaceNextReviewMs(o)))}</span></div>`;
+    }
+  }
+  return `<div class="vrow clkrow" data-vb="${b}:${c}:${v}"><div class="vt"><b class="gold">${star?"✨ ":""}${bookName(b)} ${c}:${v}${srBadge}</b><div class="muted">${t.length>56?t.slice(0,56).replace(/\s+\S*$/,"")+"…":t}</div>${trail}</div><div>${st==="mem"?'<span style="color:var(--good);font-weight:800">✓</span>':'→'}</div></div>`;
 }
 function suggestedVerses(){
   // all curated heart-verses, not yet memorized/skipped; reachable ones first
@@ -2184,7 +2262,7 @@ function renderVerse(){
     </div>
     ${(mem.length||Prog.talents)?`<div style="display:flex;justify-content:space-around;font-size:13px;font-weight:800;margin-top:12px;padding:10px;background:var(--panel2);border:1px solid var(--line);border-radius:12px">
       <span class="gold">🪙 ${Prog.talents||0} talents</span><span style="color:var(--accent)">🔥 streak ${Prog.streak||0}</span><span class="muted">best ${Prog.bestStreak||0}</span></div>`:""}
-    ${mem.length?`<button class="btn blue" id="memTest" style="width:100%;margin-top:10px">🎯 Test my memorized verses (${mem.length})</button>`:""}
+    ${mem.length?`<button class="btn blue" id="memTest" style="width:100%;margin-top:10px">${versesDueCount()?`🔔 Review ${versesDueCount()} verse${versesDueCount()>1?"s":""} due now`:`🎯 Test my memorized verses (${mem.length})`}</button>`:""}
     ${knownNumbers().size>=2?`<button class="btn ghost" id="numTest" style="width:100%;margin-top:10px">🔢 Test my numbers (15 questions)</button>`:""}
     <div class="card" style="margin-top:14px">
       <button class="grouphead ${vSec.sugg?"open":""}" data-sec="sugg" style="width:100%"><span>✨ Suggested to memorize${suggReach?` · ${suggReach}`:""}</span><span class="gmeta">${vSec.sugg?"▾":"▸"}</span></button>
@@ -2209,7 +2287,7 @@ function renderVerse(){
       </div>`:""}
     </div>
     <div class="card">
-      <button class="grouphead ${vSec.mem?"open":""}" data-sec="mem" style="width:100%"><span>★ Memorized verses (${mem.length})</span><span class="gmeta">${vSec.mem?"▾":"▸"}</span></button>
+      <button class="grouphead ${vSec.mem?"open":""}" data-sec="mem" style="width:100%"><span>★ Memorized verses (${mem.length})${versesDueCount()?` · <span style="color:#ff8a8a;font-weight:800">${versesDueCount()} due</span>`:""}</span><span class="gmeta">${vSec.mem?"▾":"▸"}</span></button>
       ${vSec.mem?`<div style="margin-top:12px">
         ${mem.length?`<div class="btnrow" style="margin-top:0"><button class="btn ghost" id="memFade">Recite word-for-word</button></div>
           <p class="hint" style="margin:8px 0">Tap a book, then a verse to rebuild it.</p>`+bookGroupedList(mem,"mem")
@@ -2234,7 +2312,8 @@ function renderVerse(){
 }
 /* ---- Talents (verse-practice points) + streaks ---- */
 function bumpStreak(correct){
-  if(correct){ Prog.streak=(Prog.streak||0)+1; if(Prog.streak>(Prog.bestStreak||0)) Prog.bestStreak=Prog.streak; }
+  if(correct){ Prog.streak=(Prog.streak||0)+1; if(Prog.streak>(Prog.bestStreak||0)) Prog.bestStreak=Prog.streak;
+    ANS_FREEZE.forEach(m=>{ if(Prog.streak===m) grantFreeze("ans"+m, `${m} correct in a row`); }); }
   else Prog.streak=0;
 }
 function awardTalents(k, firstTry){
@@ -2250,18 +2329,110 @@ function testHUD(){ return `<div id="testHud" style="display:flex;justify-conten
   <span class="muted">best ${Prog.bestStreak||0}</span></div>`; }
 function refreshHUD(){ const h=el("testHud"); if(h) h.outerHTML=testHUD(); }
 function talentMsg(pts){ return pts<0 ? `<span class="muted">already earned today — streak still counts!</span>` : `<b class="gold">+${pts} talents</b> · streak ${Prog.streak}`; }
+// A verse-test session runs in two phases:
+//   1) "sr"       — review every verse due for spaced repetition (flanked by Start/Complete banners), then offer due palaces
+//   2) "practice" — free-flowing verse practice afterwards; both phases feed the streak counter
+let MS=null; // {phase:"sr"|"practice", srQueue:[keys]}
+function memArr(){ return Prog.memorized.map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2])); }
 function startMemTest(){
-  const mem=Prog.memorized.map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2]));
-  if(!mem.length){ renderVerse(); return; }
-  // don't ask a recently-answered verse again soon
+  const mem=memArr(); if(!mem.length){ renderVerse(); return; }
+  memTestRecent=[];
+  const due=mem.map(a=>a.join(":")).filter(k=>verseDue(k));   // verses whose next SR checkpoint has come due
+  const anyDue = due.length>0 || palacesDueCount()>0;
+  MS={ phase: due.length?"sr":"practice", srQueue:due.slice(), dueWork:anyDue };
+  if(due.length) srBanner("start");
+  else if(anyDue) afterSR();          // palaces due but no verses
+  else practiceNext(true);            // nothing due → straight to free practice (skip the "done for today" moment)
+}
+function askVerse(key){ memTestCur=key.split(":").map(Number); memTestWrong=0; memTestRender(); }
+function nextMemVerse(){                       // the "go to next" hook fired after each answered verse
+  if(MS && MS.phase==="sr"){
+    while(MS.srQueue.length && !verseDue(MS.srQueue[0])) MS.srQueue.shift(); // drop any already cleared
+    if(MS.srQueue.length){ askVerse(MS.srQueue.shift()); return; }
+    srBanner("complete"); return;              // all due verses handled → complete banner → palaces → practice
+  }
+  practiceNext(false);
+}
+function practiceNext(first){
+  MS={phase:"practice", srQueue:[]};
+  const mem=memArr();
+  if(!mem.length || (!first && mem.length<2)){ renderVerse(); return; } // a single verse: test once, then stop (no endless loop)
   const avoid=new Set(memTestRecent);
-  let pool=mem.filter(a=>!avoid.has(a.join(":")));
-  if(!pool.length) pool=mem;
-  memTestCur=pool[Math.floor(Math.random()*pool.length)];
-  memTestRecent.push(memTestCur.join(":"));
-  while(memTestRecent.length > Math.min(mem.length-1, 6)) memTestRecent.shift();
-  memTestWrong=0;
-  memTestRender();
+  let pool=mem.filter(a=>!avoid.has(a.join(":"))); if(!pool.length) pool=mem;
+  const cur=pool[Math.floor(Math.random()*pool.length)].join(":");
+  memTestRecent.push(cur); while(memTestRecent.length>Math.min(mem.length-1,6)) memTestRecent.shift();
+  askVerse(cur);
+}
+function srBanner(kind){
+  const V=el("verse");
+  if(kind==="start"){
+    const n=MS.srQueue.length;
+    V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🔔</div>
+      <h2 class="gold">Spaced Repetition — Start</h2>
+      <p class="lead">${n} verse${n>1?"s":""} ${n>1?"are":"is"} due for review today. We'll lock ${n>1?"each one":"it"} back in first — one checkpoint at a time — then move on to free practice.</p>
+      <button class="btn blue" id="srGo">Begin review →</button></div>`;
+    el("srGo").onclick=nextMemVerse; return;
+  }
+  V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">✅</div>
+    <h2 class="gold">Spaced Repetition — Complete</h2>
+    <p class="lead">Every due verse reviewed. The ones you recalled just moved forward on their D0…D30 trail — the rest stay due for next time.</p>
+    <button class="btn" id="srNext">Continue →</button></div>`;
+  el("srNext").onclick=afterSR;
+}
+function afterSR(){                             // between verse-SR and free practice, offer any palaces that are also due
+  const n=palacesDueCount();
+  if(n>0){
+    const V=el("verse");
+    V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🏛️</div>
+      <h2>Palace reviews due</h2>
+      <p class="lead">${n} memory palace${n>1?"s are":" is"} also due for spaced-repetition review. Walk ${n>1?"them":"it"} now?</p>
+      <div class="btnrow"><button class="btn blue" id="srPalYes">Yes — review ${n>1?"palaces":"palace"}</button><button class="btn ghost" id="srPalNo">Skip for now</button></div></div>`;
+    el("srPalYes").onclick=()=>runDuePalaces(finishDue);
+    el("srPalNo").onclick=finishDue;
+    return;
+  }
+  finishDue();
+}
+function finishDue(){ if(MS && MS.dueWork) doneForToday(); else practiceNext(true); }
+// The "you're done for today" moment — the emotional close of the daily loop; credits the day streak, then offers optional free practice.
+function doneForToday(){
+  creditToday();
+  const V=el("verse");
+  V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🌿</div>
+    <h2 class="gold">You're done for today</h2>
+    <p class="lead">Everything due is locked back in.${Prog.dayStreak>0?` <b class="gold">🔥 ${Prog.dayStreak}-day streak</b> — come back tomorrow to keep it alive.`:""}${Prog.freezes>0?` <span class="muted">🧊 ${Prog.freezes} Streak Freeze${Prog.freezes>1?"s":""} banked.</span>`:""}</p>
+    <div class="btnrow"><button class="btn" id="dtMore">Keep practicing</button><button class="btn ghost" id="dtFin">Finish</button></div></div>`;
+  el("dtMore").onclick=()=>practiceNext(true);
+  el("dtFin").onclick=renderVerse;
+}
+function dayKey(d){ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }   // local-day identity for the daily streak
+// Streak Freeze power-ups: earned at day-streak & answer-streak milestones, auto-spent to save a streak when a day is missed.
+const FREEZE_MAX=5;
+const DAY_FREEZE=[3,7,14,30,60,100,150,200,300,365];   // day-streak milestones that grant a freeze
+const ANS_FREEZE=[25,50,100,200,500];                   // correct-in-a-row milestones that grant a freeze
+function grantFreeze(key, reason){
+  if(Prog.freezeAwards.includes(key)) return;           // one grant per milestone, ever
+  Prog.freezeAwards.push(key);
+  if((Prog.freezes||0)<FREEZE_MAX){ Prog.freezes=(Prog.freezes||0)+1; toast(`🧊 Streak Freeze earned — ${reason}!`); }
+  saveProg();
+}
+function creditToday(){
+  const today=dayKey(new Date());
+  if(Prog.lastReviewDay===today) return;                       // already credited today
+  const yest=dayKey(new Date(Date.now()-DAY));
+  if(!Prog.lastReviewDay) Prog.dayStreak=1;
+  else if(Prog.lastReviewDay===yest) Prog.dayStreak=(Prog.dayStreak||0)+1;   // consecutive day → +1
+  else if((Prog.freezes||0)>0){ Prog.freezes--; Prog.dayStreak=(Prog.dayStreak||0)+1; setTimeout(()=>toast(`🧊 A Streak Freeze saved your ${Prog.dayStreak}-day streak!`),500); } // missed a day → spend a freeze to keep it alive
+  else Prog.dayStreak=1;                                        // missed, no freeze → restart
+  if(Prog.dayStreak>(Prog.bestDayStreak||0)) Prog.bestDayStreak=Prog.dayStreak;
+  Prog.lastReviewDay=today;
+  DAY_FREEZE.forEach(m=>{ if(Prog.dayStreak>=m) grantFreeze("day"+m, `${m}-day streak`); });   // milestone rewards
+  saveProg(); updateMetrics(); checkBadges();
+}
+function runDuePalaces(done){                   // walk each due palace in turn (in the Verses view), then continue
+  const slot=(Prog.palaces||[]).findIndex(p=>p&&palaceDue(p));
+  if(slot<0){ done(); return; }
+  startPalacePractice(slot,"verse",()=>runDuePalaces(done), done);   // ✕ during the queue → skip remaining palaces, go straight to practice
 }
 
 /* =================== NUMBERS TEST — 15 Qs translating number ↔ image ↔ book =================== */
@@ -2346,12 +2517,12 @@ function memTestRender(){
     setTimeout(goNext, 350);
   };
   const sels=[el("mtB"),el("mtC"),el("mtV")];
-  const nextBtn=()=>`<button class="btn" id="mtNext" style="margin-top:10px">${Prog.memorized.length>1?"Next verse →":"Done"}</button>`;
-  const goNext=()=> Prog.memorized.length>1 ? startMemTest() : renderVerse();
+  const nextBtn=()=>`<button class="btn" id="mtNext" style="margin-top:10px">${memArr().length>1?"Next verse →":"Done"}</button>`;
+  const goNext=nextMemVerse;   // session decides: next due SR verse → complete banner → palaces → free practice
   el("mtCheck").onclick=()=>{
     const ok=(+el("mtB").value===b && +el("mtC").value===c && +el("mtV").value===v);
     if(ok){ // flash green, auto-advance to next verse
-      bumpStreak(true); const pts=awardTalents(refKey(b,c,v), memTestWrong===0); saveProg(); refreshHUD(); checkBadges();
+      bumpStreak(true); reviewVerseSR(refKey(b,c,v)); const pts=awardTalents(refKey(b,c,v), memTestWrong===0); saveProg(); refreshHUD(); checkBadges();
       sels.forEach(s=>s.classList.add("correct")); el("mtCheck").disabled=true; el("mtWarn").textContent="";
       el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}</div></div>`;
       setTimeout(goNext, 900);
@@ -2369,7 +2540,17 @@ function memTestRender(){
       }
     }
   };
-  sels.forEach(s=>s.addEventListener("change",()=>{ s.classList.remove("wrong"); el("mtFb").innerHTML=""; }));
+  // scope Chapter to the selected book's chapter count, and Verse to that chapter's verse count (both ∩ known numbers) — no more "chapter 150" for a 1-chapter book
+  function repop(){
+    const bb=+el("mtB").value||0, cMax=chapCount(bb)||150, curC=+el("mtC").value;
+    el("mtC").innerHTML=nums(cMax); if(k.has(curC)&&curC<=cMax) el("mtC").value=curC;
+    const cc=+el("mtC").value||0, vMax=verseCount(bb,cc)||176, curV=+el("mtV").value;
+    el("mtV").innerHTML=nums(vMax); if(k.has(curV)&&curV<=vMax) el("mtV").value=curV;
+  }
+  el("mtB").addEventListener("change",()=>{ el("mtB").classList.remove("wrong"); el("mtFb").innerHTML=""; repop(); });
+  el("mtC").addEventListener("change",()=>{ el("mtC").classList.remove("wrong"); el("mtFb").innerHTML=""; repop(); });
+  el("mtV").addEventListener("change",()=>{ el("mtV").classList.remove("wrong"); el("mtFb").innerHTML=""; });
+  repop();   // scope the dropdowns to the initially-selected book on first render
 }
 function warnText(wrong){ const left=3-wrong; return `${left} more ${left===1?"try":"tries"} before the answer is revealed.`; }
 function maxBook(){ let m=0; Prog.memorized.forEach(r=>m=Math.max(m,+r.split(":")[0])); return m; }
@@ -2420,7 +2601,11 @@ const BADGES=[
  {id:"tal4", cat:"Verse Practice", icon:"👑", name:"Enter the Joy", sub:"3,000 talents", have:()=>Prog.talents>=3000},
  {id:"stk1", cat:"Verse Practice", icon:"🔥", name:"Kindled Heart", sub:"5 correct in a row", have:()=>Prog.bestStreak>=5},
  {id:"stk2", cat:"Verse Practice", icon:"🏃", name:"Run the Race", sub:"15 in a row", have:()=>Prog.bestStreak>=15},
- {id:"stk3", cat:"Verse Practice", icon:"🎯", name:"Pressing Toward the Mark", sub:"30 in a row", have:()=>Prog.bestStreak>=30}
+ {id:"stk3", cat:"Verse Practice", icon:"🎯", name:"Pressing Toward the Mark", sub:"30 in a row", have:()=>Prog.bestStreak>=30},
+ {id:"day1", cat:"Daily Devotion", icon:"🕯️", name:"Daily Bread", sub:"3-day review streak", have:()=>Prog.bestDayStreak>=3},
+ {id:"day2", cat:"Daily Devotion", icon:"📅", name:"Seven-fold", sub:"7-day review streak", have:()=>Prog.bestDayStreak>=7},
+ {id:"day3", cat:"Daily Devotion", icon:"🗓️", name:"Faithful Month", sub:"30-day review streak", have:()=>Prog.bestDayStreak>=30},
+ {id:"day4", cat:"Daily Devotion", icon:"💎", name:"Hundredfold", sub:"100-day review streak", have:()=>Prog.bestDayStreak>=100}
 ];
 function earnedBadges(){ return BADGES.filter(b=>b.have()); }
 function nextBadge(){ const c=Prog.memorized.length; return BADGES.filter(b=>b.cat==="Verses Memorized").find(b=>b.n>c)||null; }
@@ -2447,7 +2632,7 @@ function showBadgeModal(b){
 function addMemorized(s){
   const k=refKey(bookNum(s.b),s.c,s.v);
   Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k); // once learned, drop from saved/skip
-  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); saveProg(); updateMetrics(); checkBadges(); }
+  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); saveProg(); updateMetrics(); checkBadges(); }
   else saveProg();
 }
 // "I forgot this": pull a verse OUT of memorized so it returns to the pool to re-encode later.
@@ -2457,6 +2642,7 @@ function forgotVerse(b,c,v){
   Prog.memorized=Prog.memorized.filter(x=>x!==k);       // no longer "learned"
   if(!Prog.saved.includes(k)) Prog.saved.push(k);        // queue it to rebuild
   if(Prog.talentLog) delete Prog.talentLog[k];           // clear the 24h points lock
+  if(Prog.verseSR) delete Prog.verseSR[k];               // drop its spaced-repetition trail
   if(SRS[k]){ delete SRS[k]; save(SRS_KEY,SRS); }        // drop its review strength
   saveProg(); updateMetrics(); checkBadges();
 }
@@ -2529,7 +2715,7 @@ function vpCheck(){
   const sels=[el("vpB"),el("vpC"),el("vpV")];
   const goNext=()=> practiceable().length>1 ? vpStart() : renderVerse();
   if(ok){ // flash green, auto-advance
-    bumpStreak(true); const pts=awardTalents(refKey(bn,s.c,s.v), vpWrong===0); saveProg(); refreshHUD(); checkBadges();
+    bumpStreak(true); reviewVerseSR(refKey(bn,s.c,s.v)); const pts=awardTalents(refKey(bn,s.c,s.v), vpWrong===0); saveProg(); refreshHUD(); checkBadges();
     sels.forEach(x=>x.classList.add("correct")); el("vpCheck").disabled=true; el("vpWarn").textContent="";
     el("vpFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${s.b} ${s.c}:${s.v}</b> · ${talentMsg(pts)}</div></div>`;
     setTimeout(goNext, 900);
@@ -2642,7 +2828,9 @@ function renderAdhoc(){
   if(s.t==="teach"){
     const rel = AB.isBook && REL[n] ? relBoxes(n) : "";
     const hook = AB.isBook
-      ? `The name <b>${bookName(n)}</b> sounds like <b>${MNEM_BOOK[n]?MNEM_BOOK[n].s:""}</b>; its number image is <b class="gold">${word}</b>.`
+      ? (MNEM_BOOK[n]&&MNEM_BOOK[n].t
+          ? `<b class="gold">Picture this scene:</b> ${MNEM_BOOK[n].t}`
+          : `The name <b>${bookName(n)}</b> sounds like <b>${MNEM_BOOK[n]?MNEM_BOOK[n].s:""}</b>; its number image is <b class="gold">${word}</b>.`)
       : `<b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${NOTE[n]?" ("+NOTE[n]+")":""}.${DECODE[n]?`<br><br><b style="color:var(--good)">Read it back → ${n}:</b> ${DECODE[n]}`:""}`;
     body=`<div class="stage"><div class="prompt">${AB.isBook?"Book "+n+" · "+bookName(n):"Learn the picture for"}</div>
       <div class="bignum">${n}</div><div class="sounds">sounds: <b>${p.sounds}</b></div>
@@ -2696,7 +2884,7 @@ document.querySelectorAll(".subnav button").forEach(b=>b.onclick=()=>{
     bt+=`<tr class="bdetail" id="bd${n}" style="display:none"><td colspan="3">
       <div class="imgwrap">${pegImg("book",n,w,false)}</div>
       <div class="mnem-def">Book <b class="gold">${n}</b> → number image <b class="gold">${w}</b> (${p.sounds})</div>
-      <div class="mnem-def" style="margin-top:6px"><span class="sound">Name sounds like: ${mb.s}</span></div></td></tr>`; });
+      <div class="mnem-def" style="margin-top:6px"><span class="sound">${mb.t?mb.t:("Name sounds like: "+mb.s)}</span></div></td></tr>`; });
   el("booksBody").innerHTML=bt;
   el("booksBody").addEventListener("click",e=>{ const r=e.target.closest(".brow"); if(!r) return;
     const dd=el("bd"+r.dataset.n); dd.style.display=dd.style.display==="none"?"table-row":"none"; });
@@ -2738,14 +2926,18 @@ function renderAcctBox(){
         <div style="flex:1"><div style="font-weight:700;font-size:14px">Free path</div>
         <div class="muted" style="font-size:11px">Torah, first palace &amp; Matthew</div></div>
         <button class="btn sm blue" id="goProBtn">Go Pro</button></div>`;
+  const prov = a ? (a.provider==="password"?"email":a.provider) : "";
+  const unverified = a && (a.provider==="password"||a.provider==="email") && a.verified===false;
+  const verifyRow = unverified ? `<button class="btn sm ghost" id="resendVerify" style="width:100%;margin-top:8px">✉️ Verify your email — resend link</button>` : "";
   box.innerHTML = (a
     ? `<div class="acct-row"><div class="acct-av">${(a.email||a.provider||"?")[0].toUpperCase()}</div>
-        <div style="flex:1"><div style="font-weight:700;font-size:14px">${a.email||("Signed in with "+a.provider)}</div>
-        <div class="muted" style="font-size:11px">via ${a.provider}</div></div>
+        <div style="flex:1"><div style="font-weight:700;font-size:14px">${a.email||("Signed in with "+prov)}</div>
+        <div class="muted" style="font-size:11px">via ${prov}${unverified?" · unverified":""} · ☁ synced</div></div>
         <button class="btn sm ghost" id="signOut">Sign out</button></div>`
-    : `<button class="btn" id="signInBtn">Sign in / Create account</button>`) + proRow;
+    : `<button class="btn" id="signInBtn">Sign in / Create account</button>`) + verifyRow + proRow;
   if(el("signInBtn")) el("signInBtn").onclick=()=>{ el("themeModal").style.display="none"; el("loginModal").style.display="flex"; };
-  if(el("signOut")) el("signOut").onclick=()=>{ Store.remove("vv_acct"); renderAcctBox(); };
+  if(el("resendVerify")) el("resendVerify").onclick=()=>{ Auth.resendVerification().then(()=>toast("Verification email sent.")).catch(()=>toast("Couldn't send right now.")); };
+  if(el("signOut")) el("signOut").onclick=()=>{ if(typeof Auth!=="undefined" && Auth.loggedIn()){ Auth.signOut(); toast("Signed out."); } else { Store.remove("vv_acct"); renderAcctBox(); } };
   if(el("goProBtn")) el("goProBtn").onclick=()=>{ el("themeModal").style.display="none"; openPaywall(); };
 }
 /* ---- paywall ---- */
@@ -2768,13 +2960,51 @@ function wirePaywall(){
     else toast("That code isn't valid.");
   };
 }
+function authErr(e){ const c=(e&&e.code)||"";
+  if(c.includes("email-already-in-use")) return "That email already has an account — try Sign in instead.";
+  if(c.includes("wrong-password")||c.includes("invalid-credential")||c.includes("invalid-login")) return "Wrong email or password.";
+  if(c.includes("user-not-found")) return "No account for that email — try Create account.";
+  if(c.includes("invalid-email")) return "That email doesn't look right.";
+  if(c.includes("weak-password")) return "Password is too weak — use at least 6 characters.";
+  if(c.includes("too-many-requests")) return "Too many attempts — wait a moment and try again.";
+  if(c.includes("popup-closed")||c.includes("cancelled-popup")||c.includes("popup-blocked")) return "Google sign-in was cancelled or blocked.";
+  if(c.includes("network")) return "Network error — check your connection.";
+  return (e&&e.message)||"Something went wrong.";
+}
 function wireLogin(){
-  document.querySelectorAll(".loginbtn").forEach(b=>b.onclick=()=>{
-    const p=b.dataset.prov;
-    if(p==="email"){ const em=(el("loginEmail").value||"").trim(); if(!/.+@.+\..+/.test(em)){ toast("Enter a valid email"); return; } setAcct({provider:"email",email:em}); }
-    else setAcct({provider:p});
-    el("loginModal").style.display="none"; toast("Signed in!");
-  });
+  const msg=(t,ok)=>{ const m=el("loginMsg"); if(m){ m.textContent=t||""; m.style.color=ok?"var(--good)":"var(--miss)"; } };
+  const configured=firebaseReady();
+  if(el("loginNote")) el("loginNote").innerHTML = configured
+    ? "New here? Type an email and password, then tap <b>Create account</b> — we'll email you a verification link."
+    : `<b style="color:var(--gold2)">Cloud login isn't configured yet.</b> Paste your Firebase config in the code to turn on Google + email sign-in. You can <b>Skip for now</b> and use the app on this device.`;
+  ["btnGoogle","btnSignin","btnCreate","btnForgot"].forEach(id=>{ if(el(id)) el(id).disabled=!configured; });
+  const email=()=>(el("loginEmail").value||"").trim();
+  const pass=()=>(el("loginPass").value||"");
+  const okEmail=e=>/.+@.+\..+/.test(e);
+
+  if(el("btnGoogle")) el("btnGoogle").onclick=()=>{ msg("Opening Google…",true);
+    Auth.google().then(()=>toast("Signed in with Google!")).catch(e=>msg(authErr(e))); };
+
+  if(el("btnSignin")) el("btnSignin").onclick=()=>{
+    if(!okEmail(email())) return msg("Enter a valid email.");
+    if(pass().length<6) return msg("Enter your password (6+ characters).");
+    msg("Signing in…",true);
+    Auth.signIn(email(),pass()).then(cred=>{
+      if(cred.user && !cred.user.emailVerified) msg("Almost there — please click the verification link in your email, then sign in again.");
+      else toast("Welcome back!");
+    }).catch(e=>msg(authErr(e))); };
+
+  if(el("btnCreate")) el("btnCreate").onclick=()=>{
+    if(!okEmail(email())) return msg("Enter a valid email.");
+    if(pass().length<6) return msg("Choose a password of at least 6 characters.");
+    msg("Creating your account…",true);
+    Auth.signUp(email(),pass()).then(()=>msg("Account created! We emailed you a verification link — click it, then Sign in.",true))
+      .catch(e=>msg(authErr(e))); };
+
+  if(el("btnForgot")) el("btnForgot").onclick=()=>{
+    if(!okEmail(email())) return msg("Type your email above first, then tap Forgot password.");
+    Auth.resetPassword(email()).then(()=>msg("Password reset email sent — check your inbox.",true)).catch(e=>msg(authErr(e))); };
+
   el("loginSkip").onclick=()=>{ el("loginModal").style.display="none"; Store.set("vv_skiplogin","1"); };
   el("loginModal").onclick=e=>{ if(e.target===el("loginModal")) el("loginModal").style.display="none"; };
 }
@@ -2853,7 +3083,37 @@ function importBackup(file){
   }catch(e){ el("backupMsg").innerHTML=`<b style="color:var(--miss)">That file isn't a valid backup.</b>`; } };
   r.readAsText(file);
 }
-el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); el("backupMsg").innerHTML=""; el("themeModal").style.display="flex"; };
+// Daily reminder. Uses Capacitor LocalNotifications in the installed app (reliable, scheduled); best-effort Web Notification while the tab is open otherwise.
+const Reminders = {
+  cap(){ return (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.LocalNotifications) || null; },
+  async enable(){
+    let granted=true; const cap=this.cap();
+    try{ if(cap){ const p=await cap.requestPermissions(); granted=(p.display==="granted"); }
+      else if("Notification" in window){ granted=(await Notification.requestPermission())==="granted"; } }catch(e){ granted=false; }
+    if(!granted){ Prog.reminder.on=false; saveProg(); toast("Allow notifications to get daily reminders."); return; }
+    Prog.reminder.on=true; saveProg(); await this.schedule(); toast("Daily reminder set for "+Prog.reminder.time+" ✓");
+  },
+  async disable(){ Prog.reminder.on=false; saveProg(); const cap=this.cap(); if(cap){ try{ await cap.cancel({notifications:[{id:4200}]}); }catch(e){} } if(this._t){ clearTimeout(this._t); this._t=null; } },
+  async schedule(){ const r=Prog.reminder; if(!r.on) return; const [hh,mm]=(r.time||"20:00").split(":").map(Number); const cap=this.cap();
+    if(cap){ try{ await cap.cancel({notifications:[{id:4200}]}); }catch(e){}
+      try{ await cap.schedule({notifications:[{id:4200,title:"Burning Bush",body:"Your verses are waiting — keep your streak alive 🔥",schedule:{on:{hour:hh,minute:mm},repeats:true}}]}); }catch(e){} return; }
+    this.armWeb(hh,mm); },
+  armWeb(hh,mm){ if(this._t) clearTimeout(this._t); const now=new Date(), t=new Date(); t.setHours(hh,mm,0,0); if(t<=now) t.setDate(t.getDate()+1);
+    const ms=t-now; if(ms>0 && ms<26*3600*1000) this._t=setTimeout(()=>{ this.fireWeb(); this.armWeb(hh,mm); }, ms); },
+  fireWeb(){ if(!Prog.reminder.on) return; if(!("Notification" in window)||Notification.permission!=="granted") return;
+    const due=versesDueCount()+palacesDueCount();
+    try{ new Notification("Burning Bush",{body: due>0?`${due} review${due>1?"s":""} due — keep your streak alive 🔥`:"Time to hide a verse in your heart 📖"}); }catch(e){} },
+  init(){ if(Prog.reminder && Prog.reminder.on) this.schedule(); }
+};
+function renderReminder(){
+  const r=Prog.reminder, box=el("reminderBox"); if(!box) return;
+  box.innerHTML=`<label style="display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer"><span>Remind me to review daily</span><input type="checkbox" id="remOn" ${r.on?"checked":""} style="width:20px;height:20px"></label>
+    <div id="remTimeRow" style="margin-top:8px;${r.on?"":"opacity:.45;pointer-events:none"}"><label class="vplabel">Time</label><input type="time" id="remTime" class="typein" value="${r.time}" style="text-align:left"></div>
+    <p class="hint" style="margin-top:6px">${Reminders.cap()?"A gentle nudge at your chosen time each day.":"On the web this only nudges you while the app is open — install the app for reliable daily reminders."}</p>`;
+  el("remOn").onchange=async()=>{ if(el("remOn").checked) await Reminders.enable(); else await Reminders.disable(); renderReminder(); };
+  el("remTime").onchange=async()=>{ Prog.reminder.time=el("remTime").value||"20:00"; saveProg(); if(Prog.reminder.on) await Reminders.schedule(); };
+}
+el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); renderReminder(); el("backupMsg").innerHTML=""; el("themeModal").style.display="flex"; };
 el("expBtn").onclick=exportBackup;
 el("impBtn").onclick=()=>el("impFile").click();
 el("impFile").onchange=e=>{ if(e.target.files[0]) importBackup(e.target.files[0]); };
@@ -2861,6 +3121,7 @@ el("themeClose").onclick=()=>el("themeModal").style.display="none";
 el("themeModal").onclick=e=>{ if(e.target===el("themeModal")) el("themeModal").style.display="none"; };
 document.querySelectorAll(".theme-opt").forEach(b=>b.onclick=()=>applyTheme(b.dataset.th));
 applyTheme(Store.get("vv_theme","illumined")); // Illumined Night is the main theme
+Reminders.init(); // re-arm the daily reminder on app open
 
 /* =================== TEXT-FADE (word-for-word) =================== */
 let TF=null;
@@ -3013,6 +3274,7 @@ function renderPalaceWalk(id){
 
 /* =================== INIT =================== */
 Billing.handleReturn();   // unlock Pro if we've just returned from a successful Stripe checkout
+Auth.init();              // start Firebase auth + cloud sync (no-op until config is pasted in)
 wireLogin();
 wirePaywall();
 renderAcctBox();
