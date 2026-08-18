@@ -153,6 +153,8 @@
   .imgph-sm{width:104px;height:104px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--muted);font-size:10px;text-align:center}
   .srflash{animation:srpop .4s cubic-bezier(.2,.8,.2,1)}
   @keyframes srpop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+  .storeitem{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-align:left}
+  .storeitem .btn{margin:0;flex:0 0 auto;padding:8px 12px}
 
   /* ---- scene walkthrough ---- */
   .stage{text-align:center;padding:8px 2px}
@@ -1084,6 +1086,8 @@ function migrateProg(p){
   p.talents=p.talents||0; p.streak=p.streak||0; p.bestStreak=p.bestStreak||0; p.talentLog=obj(p.talentLog); // Talents (verse-practice points), streaks, per-verse 24h earn log
   if(typeof p.dayStreak!=="number") p.dayStreak=0; if(typeof p.bestDayStreak!=="number") p.bestDayStreak=0; if(typeof p.lastReviewDay!=="string") p.lastReviewDay=""; // daily review streak (distinct from the per-answer streak)
   if(typeof p.freezes!=="number") p.freezes=0; p.freezeAwards=arr(p.freezeAwards); // Streak-Freeze power-ups + which milestones already granted one
+  if(typeof p.hints!=="number") p.hints=0; // "Peek" tokens spendable in the verse test
+  if(typeof p.weekKey!=="string") p.weekKey=""; if(typeof p.weekDays!=="number") p.weekDays=0; if(typeof p.weekGoalHit!=="boolean") p.weekGoalHit=false; // Perfect-Week tracking
   p.reminder=obj(p.reminder); if(typeof p.reminder.on!=="boolean") p.reminder.on=false; if(typeof p.reminder.time!=="string") p.reminder.time="20:00"; // daily reminder preference
   p.saved=p.saved.filter(k=>!p.memorized.includes(k)); p.skipped=p.skipped.filter(k=>!p.memorized.includes(k)); // heal verses stuck in saved/skip after being learned
   // (future) if(p.__v<2){ ...transform... }
@@ -1309,17 +1313,18 @@ function renderJourney(){
     ${(function(){ // daily habit hook: the first thing you see is today's review + your streak
       const dueV=versesDueCount(), dueP=palacesDueCount(), td=dueV+dueP;
       const streak=(Prog.dayStreak>0?`<span class="gold" style="font-weight:800">🔥 ${Prog.dayStreak}-day streak</span>`:"")+(Prog.freezes>0?`<span title="Streak Freezes — auto-save a missed day" style="margin-left:8px;font-weight:800">🧊 ${Prog.freezes}</span>`:"");
+      const wd=weekDaysNow(), weekLine=`This week: ${"●".repeat(Math.min(wd,5))}${"○".repeat(Math.max(0,5-wd))} ${wd}/5${Prog.weekGoalHit?" ⭐ Perfect Week!":""}`;
       if(td>0){ const bits=[]; if(dueV) bits.push(`${dueV} verse${dueV>1?"s":""}`); if(dueP) bits.push(`${dueP} palace${dueP>1?"s":""}`);
         return `<div class="card" style="border:1px solid var(--gold2);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
-          <div><div style="font-weight:800">🔔 ${bits.join(" · ")} due today</div>${streak?`<div style="margin-top:3px">${streak}</div>`:""}</div>
+          <div><div style="font-weight:800">🔔 ${bits.join(" · ")} due today</div>${streak?`<div style="margin-top:3px">${streak}</div>`:""}<div class="hint" style="margin-top:2px">${weekLine}</div></div>
           <button class="btn blue" id="jReview" style="margin:0;flex:0 0 auto">Review now →</button></div>`; }
-      return `<div class="card center" style="margin-bottom:12px"><div style="font-weight:800;color:var(--good)">✓ You're caught up today</div>${streak?`<div style="margin-top:4px">${streak} — come back tomorrow to keep it alive</div>`:`<div class="hint" style="margin-top:4px">Memorize a verse and review it daily to start a streak.</div>`}</div>`;
+      return `<div class="card center" style="margin-bottom:12px"><div style="font-weight:800;color:var(--good)">✓ You're caught up today</div>${streak?`<div style="margin-top:4px">${streak} — come back tomorrow to keep it alive</div>`:`<div class="hint" style="margin-top:4px">Memorize a verse and review it daily to start a streak.</div>`}<div class="hint" style="margin-top:4px">${weekLine}</div></div>`;
     })()}
     <div class="counters">
       <div class="counter"><div class="v">${[...knownNumbers()].filter(n=>n>=1&&n<=176).length}</div><div class="l">numbers mastered</div></div>
       <div class="counter"><div class="v">${booksKnown()}</div><div class="l">books unlocked</div></div>
       <div class="counter"><div class="v" style="font-size:18px">${Prog.memorized.length}/${reachableVerseCount().toLocaleString()}</div><div class="l">verses you can memorize</div></div>
-      <div class="counter"><div class="v">${Prog.saved.length}</div><div class="l">saved for later</div></div>
+      <div class="counter"><div class="v">${sealedCount()}</div><div class="l">verses sealed 👑</div></div>
     </div>
     <div class="card"><h2 style="font-size:16px">The whole Bible</h2>
       <p class="hint">Blue = books you can already address. Tap a book to browse its chapters.</p>
@@ -1533,6 +1538,10 @@ function skillColor(sk,unlocked){
 }
 function flatSkills(){ const f=[]; UNITS.forEach((U,ui)=>U.skills.forEach((sk,si)=>f.push({ui,si,id:sk.id,optional:!!sk.optional}))); return f; }
 function skillUnlocked(ui,si){
+  const sk0=UNITS[ui]&&UNITS[ui].skills[si];
+  // Bible stories unlock the moment their STARTING VERSE is addressable with the numbers you already know —
+  // no need to finish every book first. (Everything else still unlocks sequentially.)
+  if(sk0&&sk0.kind==="story"){ const s=sk0.story; return reachable(bookNum(s.b),s.c,s.v); }
   const flat=flatSkills(), idx=flat.findIndex(x=>x.ui===ui&&x.si===si);
   if(idx<=0) return true;
   // unlock when the previous REQUIRED skill is done — optional (bonus palace) tiles never gate progress
@@ -1689,7 +1698,12 @@ function renderStoryStep(){
 }
 function finishStory(){
   const sk=ST.sk; if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id);
-  sk.items.forEach(id=>gradeKey(`sk:story:${id}`,"good")); saveProg(); updateMetrics(); ST=null; checkBadges();
+  sk.items.forEach(id=>gradeKey(`sk:story:${id}`,"good"));
+  // The story's starting verse now joins spaced repetition, so you keep its location hidden in your heart.
+  const s=sk.story, k=refKey(bookNum(s.b),s.c,s.v);
+  Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k);
+  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); }
+  saveProg(); updateMetrics(); ST=null; checkBadges();
   el("learn").innerHTML=`<div class="card center"><div style="font-size:52px">📖</div><h2>Story located!</h2>
     <p class="lead">You'll remember exactly where to find it. Keep going through the stories.</p>
     <button class="btn" id="stBack">Back to stories</button></div>`;
@@ -2156,9 +2170,9 @@ function verseRow(b,c,v,st,star){
   let srBadge="", trail="";
   if(st==="mem"){
     const o=verseSRobj(refKey(b,c,v));
-    if(o){ const due=palaceDueIndex(o)>=0, doneAll=(o.step||1)>=SR_TRAIL.length;
-      srBadge = due?'<span class="due-dot"></span>':'';
-      trail = `<div style="margin-top:6px">${srTrailHTML(o)}<span class="muted" style="font-size:11px;margin-left:8px">${due?'<b style="color:#ff8a8a">review due</b>':(doneAll?'✓ locked in':'next in '+srHuman(palaceNextReviewMs(o)))}</span></div>`;
+    if(o){ const due=palaceDueIndex(o)>=0, doneAll=(o.step||1)>=SR_TRAIL.length, tier=verseTier(o);
+      srBadge = ` <span title="${tier.name}">${tier.icon}</span>`+(due?'<span class="due-dot"></span>':'');
+      trail = `<div style="margin-top:6px">${srTrailHTML(o)}<span class="muted" style="font-size:11px;margin-left:8px">${due?'<b style="color:#ff8a8a">review due</b>':(doneAll?'👑 <b class="gold">Sealed in your heart</b>':tier.name+' · next in '+srHuman(palaceNextReviewMs(o)))}</span></div>`;
     }
   }
   return `<div class="vrow clkrow" data-vb="${b}:${c}:${v}"><div class="vt"><b class="gold">${star?"✨ ":""}${bookName(b)} ${c}:${v}${srBadge}</b><div class="muted">${t.length>56?t.slice(0,56).replace(/\s+\S*$/,"")+"…":t}</div>${trail}</div><div>${st==="mem"?'<span style="color:var(--good);font-weight:800">✓</span>':'→'}</div></div>`;
@@ -2260,8 +2274,8 @@ function renderVerse(){
       <button class="btn" id="randBtn">🎲 Random verse</button>
       <button class="btn ghost" id="shareBtn">📣 Share</button>
     </div>
-    ${(mem.length||Prog.talents)?`<div style="display:flex;justify-content:space-around;font-size:13px;font-weight:800;margin-top:12px;padding:10px;background:var(--panel2);border:1px solid var(--line);border-radius:12px">
-      <span class="gold">🪙 ${Prog.talents||0} talents</span><span style="color:var(--accent)">🔥 streak ${Prog.streak||0}</span><span class="muted">best ${Prog.bestStreak||0}</span></div>`:""}
+    ${(mem.length||Prog.talents)?`<div id="talentBar" title="Tap to open the Talent Store" style="display:flex;justify-content:space-around;align-items:center;font-size:13px;font-weight:800;margin-top:12px;padding:10px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;cursor:pointer">
+      <span class="gold">🪙 ${Prog.talents||0}</span><span style="color:var(--accent)">🔥 ${Prog.streak||0}</span>${Prog.freezes>0?`<span>🧊 ${Prog.freezes}</span>`:""}<span class="muted">🛒 Store</span></div>`:""}
     ${mem.length?`<button class="btn blue" id="memTest" style="width:100%;margin-top:10px">${versesDueCount()?`🔔 Review ${versesDueCount()} verse${versesDueCount()>1?"s":""} due now`:`🎯 Test my memorized verses (${mem.length})`}</button>`:""}
     ${knownNumbers().size>=2?`<button class="btn ghost" id="numTest" style="width:100%;margin-top:10px">🔢 Test my numbers (15 questions)</button>`:""}
     <div class="card" style="margin-top:14px">
@@ -2305,6 +2319,7 @@ function renderVerse(){
   V.querySelectorAll("[data-sec]").forEach(h=>h.onclick=()=>{ vSec[h.dataset.sec]=!vSec[h.dataset.sec]; reVerse(); });
   V.querySelectorAll("[data-bk]").forEach(h=>h.onclick=()=>{ const [sec,bn]=h.dataset.bk.split(":"); const set=vBook[sec]; const n=+bn; set.has(n)?set.delete(n):set.add(n); reVerse(); });
   V.querySelectorAll("[data-topic]").forEach(h=>h.onclick=()=>{ const ti=+h.dataset.topic; vTopic.has(ti)?vTopic.delete(ti):vTopic.add(ti); reVerse(); });
+  if(el("talentBar")) el("talentBar").onclick=openStore;
   if(el("memTest")) el("memTest").onclick=startMemTest;
   if(el("numTest")) el("numTest").onclick=startNumberTest;
   if(el("memFade")) el("memFade").onclick=()=>{ const m=mem[Math.floor(Math.random()*mem.length)]; startTextFade(m[0],m[1],m[2]); };
@@ -2398,10 +2413,13 @@ function finishDue(){ if(MS && MS.dueWork) doneForToday(); else practiceNext(tru
 function doneForToday(){
   creditToday();
   const V=el("verse");
+  const wd=weekDaysNow();
   V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🌿</div>
     <h2 class="gold">You're done for today</h2>
     <p class="lead">Everything due is locked back in.${Prog.dayStreak>0?` <b class="gold">🔥 ${Prog.dayStreak}-day streak</b> — come back tomorrow to keep it alive.`:""}${Prog.freezes>0?` <span class="muted">🧊 ${Prog.freezes} Streak Freeze${Prog.freezes>1?"s":""} banked.</span>`:""}</p>
-    <div class="btnrow"><button class="btn" id="dtMore">Keep practicing</button><button class="btn ghost" id="dtFin">Finish</button></div></div>`;
+    <div class="hint" style="margin:2px 0 4px">This week: ${"●".repeat(Math.min(wd,5))}${"○".repeat(Math.max(0,5-wd))} ${wd}/5${Prog.weekGoalHit?" ⭐":""}</div>
+    ${encourageHTML()}
+    <div class="btnrow" style="margin-top:12px"><button class="btn" id="dtMore">Keep practicing</button><button class="btn ghost" id="dtFin">Finish</button></div></div>`;
   el("dtMore").onclick=()=>practiceNext(true);
   el("dtFin").onclick=renderVerse;
 }
@@ -2427,7 +2445,44 @@ function creditToday(){
   if(Prog.dayStreak>(Prog.bestDayStreak||0)) Prog.bestDayStreak=Prog.dayStreak;
   Prog.lastReviewDay=today;
   DAY_FREEZE.forEach(m=>{ if(Prog.dayStreak>=m) grantFreeze("day"+m, `${m}-day streak`); });   // milestone rewards
+  creditWeek();
   saveProg(); updateMetrics(); checkBadges();
+}
+// ---- Perfect Week: review on ≥5 days in a Monday-anchored week → talent reward (feeds the store) ----
+function weekKeyOf(d){ const dt=new Date(d.getFullYear(),d.getMonth(),d.getDate()); dt.setDate(dt.getDate()-((dt.getDay()+6)%7)); return dt.getFullYear()+"-"+(dt.getMonth()+1)+"-"+dt.getDate(); }
+function weekDaysNow(){ return (Prog.weekKey===weekKeyOf(new Date())) ? (Prog.weekDays||0) : 0; }
+function creditWeek(){ const wk=weekKeyOf(new Date());
+  if(Prog.weekKey!==wk){ Prog.weekKey=wk; Prog.weekDays=0; Prog.weekGoalHit=false; }   // new week → reset
+  Prog.weekDays=(Prog.weekDays||0)+1;                                                    // creditToday already runs once/day
+  if(Prog.weekDays>=5 && !Prog.weekGoalHit){ Prog.weekGoalHit=true; Prog.talents=(Prog.talents||0)+100; setTimeout(()=>toast("⭐ Perfect Week — +100 talents!"),700); }
+}
+// ---- Verse mastery tiers: make the D0…D30 SR trail visible & rewarding (Bronze→Silver→Gold→Sealed) ----
+const VTIERS=[{min:6,name:"Sealed",icon:"👑"},{min:5,name:"Gold",icon:"🥇"},{min:3,name:"Silver",icon:"🥈"},{min:1,name:"Bronze",icon:"🥉"}];
+function verseTier(o){ const s=(o&&o.step)||1; return VTIERS.find(t=>s>=t.min)||VTIERS[VTIERS.length-1]; }
+function sealedCount(){ const sr=Prog.verseSR||{}; return (Prog.memorized||[]).filter(k=>{ const o=sr[k]; return o&&(o.step||1)>=SR_TRAIL.length; }).length; }
+// ---- Encouragement: Scriptures about knowing, keeping & meditating on God's Word — the very thing the user is doing ----
+const WORD_VERSES=[[19,119,11],[6,1,8],[19,1,2],[19,119,105],[51,3,16],[40,4,4],[19,119,97],[24,15,16],[19,119,15],[55,2,15],[23,40,8],[58,4,12],[59,1,22],[19,119,16],[19,119,103],[20,7,3],[5,11,18],[43,8,31],[19,119,162],[19,19,7]];
+function encourageHTML(){ const r=WORD_VERSES[Math.floor(Date.now()/DAY)%WORD_VERSES.length]; const t=kjvText(r[0],r[1],r[2]); if(!t) return "";
+  return `<div class="teachbox" style="margin-top:14px;font-style:italic;text-align:left">“${t}” <span class="gold" style="font-style:normal;font-weight:800">— ${bookName(r[0])} ${r[1]}:${r[2]}</span></div>`; }
+// ---- Talent Store: spend earned talents on tools that aid the practice (a Freeze, or a Peek token) ----
+function openStore(){
+  let m=document.getElementById("storeModal");
+  if(!m){ m=document.createElement("div"); m.id="storeModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  const t=Prog.talents||0, freezeFull=(Prog.freezes||0)>=FREEZE_MAX, canFreeze=t>=120&&!freezeFull, canPeek=t>=40;
+  m.innerHTML=`<div class="modal-card">
+    <h2 style="font-size:18px;margin:0 0 4px">🛒 Talent Store</h2>
+    <p class="hint" style="margin:0 0 12px">You have <b class="gold">🪙 ${t} talents</b>. Spend them on tools that keep you going.</p>
+    <div class="storeitem"><div><b>🧊 Streak Freeze</b><div class="hint">Auto-saves your streak if you miss a day. ${freezeFull?`You're at the max of ${FREEZE_MAX}.`:`You have ${Prog.freezes||0}.`}</div></div><button class="btn ${canFreeze?"":"ghost"}" data-buy="freeze" ${canFreeze?"":"disabled"}>120 🪙</button></div>
+    <div class="storeitem" style="margin-top:10px"><div><b>🔎 Peek token</b><div class="hint">Reveal the book in a verse test when you're stuck. You have ${Prog.hints||0}.</div></div><button class="btn ${canPeek?"":"ghost"}" data-buy="peek" ${canPeek?"":"disabled"}>40 🪙</button></div>
+    <button class="btn ghost" id="storeClose" style="margin-top:14px;width:100%">Done</button></div>`;
+  m.style.display="flex";
+  m.querySelector("#storeClose").onclick=()=>{ m.style.display="none"; };
+  m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{
+    if(b.dataset.buy==="freeze"){ if((Prog.freezes||0)>=FREEZE_MAX||(Prog.talents||0)<120) return; Prog.talents-=120; Prog.freezes++; toast("🧊 Streak Freeze purchased!"); }
+    else { if((Prog.talents||0)<40) return; Prog.talents-=40; Prog.hints=(Prog.hints||0)+1; toast("🔎 Peek token purchased!"); }
+    saveProg(); updateMetrics(); openStore();
+  });
 }
 function runDuePalaces(done){                   // walk each due palace in turn (in the Verses view), then continue
   const slot=(Prog.palaces||[]).findIndex(p=>p&&palaceDue(p));
@@ -2508,6 +2563,7 @@ function memTestRender(){
       <label class="vplabel">Verse</label><select class="vpsel" id="mtV">${nums(176)}</select>
       <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):`3 tries, then I'll reveal the answer.`}</div>
       <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
+      ${Prog.hints>0?`<button class="btn ghost sm" id="mtPeek" style="margin-top:8px;width:100%">🔎 Reveal the book (1 peek · ${Prog.hints} left)</button>`:""}
       <button class="btn ghost sm" id="mtForgot" style="margin-top:8px;width:100%">🤔 I forgot this — re-encode later</button>
       <div id="mtFb"></div></div>`;
   el("mtClose").onclick=renderVerse;
@@ -2551,6 +2607,12 @@ function memTestRender(){
   el("mtC").addEventListener("change",()=>{ el("mtC").classList.remove("wrong"); el("mtFb").innerHTML=""; repop(); });
   el("mtV").addEventListener("change",()=>{ el("mtV").classList.remove("wrong"); el("mtFb").innerHTML=""; });
   repop();   // scope the dropdowns to the initially-selected book on first render
+  if(el("mtPeek")) el("mtPeek").onclick=()=>{                 // spend a Peek token to reveal just the book
+    if((Prog.hints||0)<=0) return; Prog.hints--; saveProg();
+    el("mtB").value=b; repop(); el("mtB").classList.add("correct");
+    el("mtPeek").disabled=true; el("mtPeek").textContent="🔎 Book revealed — now the chapter & verse";
+    toast("🔎 Book revealed");
+  };
 }
 function warnText(wrong){ const left=3-wrong; return `${left} more ${left===1?"try":"tries"} before the answer is revealed.`; }
 function maxBook(){ let m=0; Prog.memorized.forEach(r=>m=Math.max(m,+r.split(":")[0])); return m; }
