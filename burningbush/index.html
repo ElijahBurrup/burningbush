@@ -199,6 +199,15 @@
   .vbox.locked{border-color:#2a2f3a;color:#4a515e}
   /* chapter picker = round gold chips; verse picker = square tiles (visual differentiator) */
   .vboxes.chapters .vbox{border-radius:50%}
+  /* CHAPTERS render as big gold "CH" cards; VERSES stay small number squares — unmistakably different screens */
+  .chapboxes{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:12px 0 4px}
+  .chapbox{position:relative;aspect-ratio:1.1;border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;background:#1a1e27;border:2px solid #3a4150;color:#9aa3b2;font-weight:800}
+  .chapbox.ready{background:linear-gradient(135deg,rgba(227,179,74,.20),rgba(201,150,47,.05));border-color:var(--gold2);color:var(--gold)}
+  .chapbox.locked{opacity:.5;cursor:default}
+  .chapbox .ck{font-size:9px;letter-spacing:1.5px;opacity:.75}
+  .chapbox .cn{font-size:21px;line-height:1}
+  .storymark{position:absolute;top:-7px;right:-6px;font-size:12px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.7))}
+  .vbox .storymark{top:-8px;right:-5px;font-size:11px}
   .screenkind{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;padding:4px 10px;border-radius:999px;margin-bottom:8px}
   .screenkind.ch{background:rgba(232,201,106,.14);color:var(--gold);border:1px solid var(--gold2)}
   .screenkind.vs{background:rgba(91,140,255,.14);color:var(--accent);border:1px solid var(--accent)}
@@ -485,6 +494,8 @@
     <section id="verse" class="view"></section>
     <!-- ===================== PALACE ===================== -->
     <section id="palace" class="view"></section>
+    <!-- ===================== STORIES ===================== -->
+    <section id="stories" class="view"></section>
     <!-- ===================== FOUNDATIONS ===================== -->
     <section id="foundations" class="view">
       <h2>Foundations</h2>
@@ -531,7 +542,7 @@
     <button data-tab="learn"><span class="ic">🎓</span>Learn</button>
     <button data-tab="verse"><span class="tabbadge"></span><span class="ic">📖</span>Verse</button>
     <button data-tab="palace"><span class="tabbadge"></span><span class="ic">🏛️</span>Palace</button>
-    <button data-tab="foundations"><span class="ic">📚</span>Ref</button>
+    <button data-tab="stories"><span class="ic">📜</span>Stories</button>
   </div>
 
   <div class="modal" id="themeModal" style="display:none">
@@ -547,6 +558,9 @@
 
       <div class="prof-sect" style="margin-top:16px">Daily reminder</div>
       <div id="reminderBox"></div>
+
+      <div class="prof-sect" style="margin-top:16px">Reference library</div>
+      <button class="btn ghost" id="refBtn" style="width:100%">📚 The Major System, number pegs &amp; the 66 books</button>
 
       <div class="prof-sect" style="margin-top:16px">Account</div>
       <div id="acctBox"></div>
@@ -1298,6 +1312,7 @@ function show(tab){
   if(tab==="learn") renderPath(true);
   if(tab==="verse") renderVerse();
   if(tab==="palace") renderPalace();
+  if(tab==="stories") renderStories();
 }
 document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>show(b.dataset.tab));
 
@@ -1339,12 +1354,18 @@ function renderJourney(){
 }
 
 /* =================== BOOK BROWSER (full KJV) =================== */
+// where the 100 Bible stories begin — so the browser can flag those chapters/verses with a 📖
+let _storyStarts=null;
+function storyStarts(){ if(_storyStarts) return _storyStarts; const v=new Set(), c=new Set();
+  STORY_GROUPS.forEach(g=>g.s.forEach(st=>{ const b=bookNum(st[1]); v.add(b+":"+st[2]+":"+st[3]); c.add(b+":"+st[2]); }));
+  _storyStarts={v,c}; return _storyStarts; }
 function renderBookScreen(bn){
-  const J=el("journey"), w=pegFor(bn).word;
+  const J=el("journey"), w=pegFor(bn).word, SS=storyStarts();
   let chips="";
   for(let c=1;c<=chapCount(bn);c++){
     const ready = knownNum(bn) && knownNum(c);   // chapter you can address
-    chips+=`<div class="vbox ${ready?"ready":"locked"}" data-chap="${c}">${c}</div>`;
+    const story = SS.c.has(bn+":"+c);
+    chips+=`<div class="chapbox ${ready?"ready":"locked"}" data-chap="${c}"><span class="ck">CH</span><span class="cn">${c}</span>${story?`<span class="storymark" title="A Bible story begins in this chapter">📖</span>`:""}</div>`;
   }
   const prevB=bn>1?bn-1:null, nextB=bn<66?bn+1:null;
   J.innerHTML=`
@@ -1356,23 +1377,24 @@ function renderBookScreen(bn){
       </div>
     </div>
     <div class="card">
-      <span class="screenkind ch">📗 Pick a chapter</span>
+      <span class="screenkind ch">📖 CHAPTERS</span>
       <div style="display:flex;gap:12px;align-items:center">
         <div>${pegImg("book",bn,w,false)}</div>
         <div><h2 style="margin:0;font-size:20px">${bookName(bn)}</h2>
-          <div class="muted" style="font-size:13px">Book ${bn} · image “${w}” · ${chapCount(bn)} chapters</div></div>
+          <div class="muted" style="font-size:13px">Book ${bn} · image “${w}” · tap a chapter</div></div>
       </div>
-      <div class="vlegend" style="margin-top:10px"><span><b style="background:var(--gold2);border-color:var(--gold)"></b>chapters you can memorize</span><span><b style="background:#20242e;border-color:#3a4150"></b>not ready yet</span></div>
-      <div class="vboxes chapters">${chips}</div>
+      <div class="vlegend" style="margin-top:10px"><span><b style="background:var(--gold2);border-color:var(--gold)"></b>chapters you can memorize</span><span><b style="background:#20242e;border-color:#3a4150"></b>not ready yet</span><span>📖 a story begins here</span></div>
+      <div class="chapboxes">${chips}</div>
     </div>`;
   el("bkBack").onclick=renderJourney;
   J.querySelectorAll("[data-gob]").forEach(b=>b.onclick=()=>renderBookScreen(+b.dataset.gob));
   J.querySelectorAll("[data-chap]").forEach(h=>h.onclick=()=>renderChapterScreen(bn,+h.dataset.chap));
 }
 function renderChapterScreen(bn,c){
-  const J=el("journey");
+  const J=el("journey"), SS=storyStarts();
   let boxes="";
-  for(let v=1;v<=verseCount(bn,c);v++) boxes+=`<div class="vbox ${verseState(bn,c,v)}" data-v="${v}">${v}</div>`;
+  for(let v=1;v<=verseCount(bn,c);v++){ const story=SS.v.has(bn+":"+c+":"+v);
+    boxes+=`<div class="vbox ${verseState(bn,c,v)}" data-v="${v}">${v}${story?`<span class="storymark" title="A Bible story begins here">📖</span>`:""}</div>`; }
   const prevC=c>1?c-1:null, nextC=c<chapCount(bn)?c+1:null;
   J.innerHTML=`
     <div class="navrow">
@@ -1383,15 +1405,16 @@ function renderChapterScreen(bn,c){
       </div>
     </div>
     <div class="card">
-      <span class="screenkind vs">📘 Pick a verse</span>
-      <h2 style="margin:0 0 2px;font-size:20px">${bookName(bn)} ${c}</h2>
-      <div class="muted" style="font-size:13px;margin-bottom:8px">${verseCount(bn,c)} verses</div>
+      <span class="screenkind vs">✒️ VERSES · ${bookName(bn)} ${c}</span>
+      <h2 style="margin:0 0 2px;font-size:20px">${bookName(bn)} ${c}<span class="muted" style="font-size:14px;font-weight:600">:1–${verseCount(bn,c)}</span></h2>
+      <div class="muted" style="font-size:13px;margin-bottom:8px">${verseCount(bn,c)} verses — small squares</div>
       <div class="vlegend">
         <span><b style="background:var(--gold2);border-color:var(--gold)"></b>ready</span>
         <span><b style="background:var(--green);border-color:var(--green)"></b>suggested / saved</span>
         <span><b style="background:var(--miss);border-color:var(--miss)"></b>skip</span>
         <span><b style="background:#20242e;border-color:#3a4150"></b>not ready</span>
         <span><b style="background:var(--gold);border-color:var(--gold)"></b>learned</span>
+        <span>📖 a story begins here</span>
       </div>
       <p class="hint">Tap a verse to memorize it.</p>
       <div class="vboxes">${boxes}</div>
@@ -1605,9 +1628,9 @@ function renderMilestone(m){
 // The next lesson to work on: first unlocked, not-yet-done skill in path order (a "blue" tile).
 // Prefer the main path; fall back to optional skills only if the main path is complete.
 function nextBlueSkill(){
-  const flat=flatSkills();
-  for(const f of flat){ if(!f.optional && !Prog.doneSkills.includes(f.id) && skillUnlocked(f.ui,f.si)) return f; }
-  for(const f of flat){ if(!Prog.doneSkills.includes(f.id) && skillUnlocked(f.ui,f.si)) return f; }
+  const flat=flatSkills(), isStory=f=>UNITS[f.ui].skills[f.si].kind==="story";   // stories have their own tab; keep Learn focus off them
+  for(const f of flat){ if(!isStory(f) && !f.optional && !Prog.doneSkills.includes(f.id) && skillUnlocked(f.ui,f.si)) return f; }
+  for(const f of flat){ if(!isStory(f) && !Prog.doneSkills.includes(f.id) && skillUnlocked(f.ui,f.si)) return f; }
   return null;
 }
 function renderPath(focus){
@@ -1623,6 +1646,7 @@ function renderPath(focus){
   if(focus){ const nb=nextBlueSkill(); if(nb){ expandedUnits=new Set([nb.ui]); focusTile=nb; } }
   html+=`<p class="hint" style="margin:2px 0 10px">Tap a group to open it.</p>`;
   UNITS.forEach((U,ui)=>{
+    if(U.story) return;   // stories live in their own tab now, not the Learn path
     const total=U.skills.length, done=U.skills.filter(sk=>Prog.doneSkills.includes(sk.id)).length;
     const golds=U.skills.filter(sk=>skillColor(sk,true)==="gold").length, allDone=done===total, allGold=golds===total;
     // all gold → gold; fully learned but decayed (not practiced in a while) → cracked gold; partly learned → blue
@@ -1675,9 +1699,9 @@ function pairTypesFor(n){ return (n>=1&&n<=66) ? PAIRQ : ["q_n2i","q_i2n"]; } //
 let LZ=null; // lesson state
 let expandedUnits=null; // which learning groups are expanded (start: all collapsed)
 let ST=null;
-function startStoryLesson(sk){
+function startStoryLesson(sk, host, ret){
   const s=sk.story, bn=bookNum(s.b), bp=pegFor(bn), cp=pegFor(s.c), vp=pegFor(s.v);
-  ST={sk,i:0,steps:[
+  ST={sk,i:0,host:host||"learn",ret:ret||renderPath,steps:[
     {ic:"📖",lb:"The story",ti:s.n,tx:`This story begins at <b class="gold">${s.b} ${s.c}:${s.v}</b>. To always find it, turn that address into three pictures.`},
     {ic:"📕",lb:`Book ${bn}`,ti:`${s.b} = "${bp.word}"`,tx:`Book <b>${bn}</b> → <b>${bp.sounds}</b> → a <b>${bp.word}</b>.`,img:["book",bn,bp.word]},
     {ic:"📗",lb:`Chapter ${s.c}`,ti:`Chapter ${s.c} = "${cp.word}"`,tx:`Chapter <b>${s.c}</b> → <b>${cp.sounds}</b> → a <b>${cp.word}</b>.`,img:["num",s.c,cp.word]},
@@ -1687,27 +1711,60 @@ function startStoryLesson(sk){
   renderStoryStep();
 }
 function renderStoryStep(){
-  const L=el("learn"), s=ST.steps[ST.i], last=ST.i===ST.steps.length-1, pct=Math.round(100*ST.i/(ST.steps.length-1));
+  const L=el(ST.host||"learn"), s=ST.steps[ST.i], last=ST.i===ST.steps.length-1, pct=Math.round(100*ST.i/(ST.steps.length-1));
   const img=s.img?`<div class="imgwrap">${pegImg(s.img[0],s.img[1],s.img[2],true)}</div>`:"";
   L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="stClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div></div>
     <div class="stage"><div class="stepIcon">${s.ic}</div><div class="steplabel">${s.lb}</div><div class="steptitle">${s.ti}</div>${img}<div class="steptext">${s.tx}</div></div>
     <div class="btnrow">${ST.i>0?`<button class="btn ghost" id="stPrev">← Back</button>`:""}<button class="btn" id="stNext">${last?"Done ✓":"Next →"}</button></div></div>`;
-  el("stClose").onclick=renderPath;
+  el("stClose").onclick=ST.ret||renderPath;
   if(el("stPrev")) el("stPrev").onclick=()=>{ ST.i--; renderStoryStep(); };
   el("stNext").onclick=()=>{ if(!last){ST.i++;renderStoryStep();} else finishStory(); };
 }
 function finishStory(){
-  const sk=ST.sk; if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id);
+  const sk=ST.sk, host=ST.host||"learn", ret=ST.ret||renderPath;
+  if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id);
   sk.items.forEach(id=>gradeKey(`sk:story:${id}`,"good"));
   // The story's starting verse now joins spaced repetition, so you keep its location hidden in your heart.
   const s=sk.story, k=refKey(bookNum(s.b),s.c,s.v);
   Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k);
   if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); }
   saveProg(); updateMetrics(); ST=null; checkBadges();
-  el("learn").innerHTML=`<div class="card center"><div style="font-size:52px">📖</div><h2>Story located!</h2>
-    <p class="lead">You'll remember exactly where to find it. Keep going through the stories.</p>
+  el(host).innerHTML=`<div class="card center"><div style="font-size:52px">📖</div><h2>Story located!</h2>
+    <p class="lead">Its opening verse just joined your daily review. Keep going through the stories.</p>
     <button class="btn" id="stBack">Back to stories</button></div>`;
-  el("stBack").onclick=renderPath;
+  el("stBack").onclick=ret;
+}
+let storyExpanded=null;
+function renderStories(){
+  updateMetrics();
+  const S=el("stories"); if(!S) return;
+  const groups=[]; UNITS.forEach((U,ui)=>{ if(U.story) groups.push({U,ui}); });
+  let doneCount=0, readyCount=0, total=0;
+  groups.forEach(({U,ui})=>U.skills.forEach((sk,si)=>{ total++; if(Prog.doneSkills.includes(sk.id)) doneCount++; else if(skillUnlocked(ui,si)) readyCount++; }));
+  if(storyExpanded===null){ storyExpanded=new Set(); const g0=groups.find(({U,ui})=>U.skills.some((sk,si)=>!Prog.doneSkills.includes(sk.id)&&skillUnlocked(ui,si))); if(g0) storyExpanded.add(g0.ui); } // open the first group with something ready
+  let html=`<h2>Bible Stories</h2>
+    <p class="lead">100 key stories. Each unlocks the moment you can address its opening verse — learn where it begins, and it joins your daily review.</p>
+    <div class="counters">
+      <div class="counter"><div class="v">${doneCount}</div><div class="l">stories located</div></div>
+      <div class="counter"><div class="v">${readyCount}</div><div class="l">ready to learn now</div></div>
+      <div class="counter"><div class="v">${total}</div><div class="l">total stories</div></div>
+    </div>
+    ${readyCount===0&&doneCount<total?`<p class="hint">Learn more chapter &amp; verse numbers in <b class="gold">Learn</b> to unlock stories — a story opens as soon as you can address its book, chapter &amp; verse.</p>`:""}`;
+  groups.forEach(({U,ui})=>{
+    const done=U.skills.filter(sk=>Prog.doneSkills.includes(sk.id)).length, tot=U.skills.length;
+    const ready=U.skills.some((sk,si)=>!Prog.doneSkills.includes(sk.id)&&skillUnlocked(ui,si));
+    const open=storyExpanded.has(ui), grp=done===tot?"grp-gold":(ready?"grp-blue":"");
+    html+=`<div class="unit"><button class="grouphead ${open?"open":""} ${grp}" data-sgrp="${ui}"><span>${U.name}</span><span class="gmeta">${done}/${tot} ${open?"▾":"▸"}</span></button>`;
+    if(open){ html+=`<div class="vlist" style="margin-top:10px">`;
+      U.skills.forEach((sk,si)=>{ const s=sk.story, unlocked=skillUnlocked(ui,si), isDone=Prog.doneSkills.includes(sk.id), can=unlocked||isDone;
+        const state=isDone?`<span style="color:var(--good);font-weight:800">✓ located</span>`:(unlocked?`<span class="gold" style="font-weight:800">Learn →</span>`:`<span class="muted">🔒 learn its numbers</span>`);
+        html+=`<div class="vrow ${can?"clkrow":""}" ${can?`data-story="${ui}:${si}"`:""}><div class="vt"><b class="gold">${s.n}</b><div class="muted">${s.b} ${s.c}:${s.v}</div></div><div>${state}</div></div>`; });
+      html+=`</div>`; }
+    html+=`</div>`;
+  });
+  S.innerHTML=html;
+  S.querySelectorAll("[data-sgrp]").forEach(h=>h.onclick=()=>{ const ui=+h.dataset.sgrp; storyExpanded.has(ui)?storyExpanded.delete(ui):storyExpanded.add(ui); renderStories(); });
+  S.querySelectorAll("[data-story]").forEach(r=>r.onclick=()=>{ const [ui,si]=r.dataset.story.split(":").map(Number); startStoryLesson(UNITS[ui].skills[si],"stories",renderStories); });
 }
 /* ---- Memory Palace builder (build 3 personal palaces) ---- */
 const PALACE_PLACES=["My house","My school / workplace","A previous home","A friend's or relative's house","My daily commute / route","My church"];
@@ -3180,6 +3237,7 @@ el("expBtn").onclick=exportBackup;
 el("impBtn").onclick=()=>el("impFile").click();
 el("impFile").onchange=e=>{ if(e.target.files[0]) importBackup(e.target.files[0]); };
 el("themeClose").onclick=()=>el("themeModal").style.display="none";
+el("refBtn").onclick=()=>{ el("themeModal").style.display="none"; show("foundations"); };   // Reference now lives under the profile menu
 el("themeModal").onclick=e=>{ if(e.target===el("themeModal")) el("themeModal").style.display="none"; };
 document.querySelectorAll(".theme-opt").forEach(b=>b.onclick=()=>applyTheme(b.dataset.th));
 applyTheme(Store.get("vv_theme","illumined")); // Illumined Night is the main theme
