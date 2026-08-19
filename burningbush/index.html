@@ -505,6 +505,7 @@
     <section id="stories" class="view"></section>
     <!-- ===================== FOUNDATIONS ===================== -->
     <section id="foundations" class="view">
+      <button class="btn ghost sm" onclick="show('journey')" style="width:auto;margin-bottom:10px">← Back</button>
       <h2>Foundations</h2>
       <p class="lead">The reference library. Build the structure once; every verse hangs on it.</p>
       <div class="subnav">
@@ -1115,16 +1116,49 @@ function migrateProg(p){
   p.__v=PROG_SCHEMA;
   return p;
 }
+// Merge two progress snapshots WITHOUT losing data — the UNION of everything earned/added on either device.
+// Used by cloud sync so two devices never clobber each other. Favors "never lose progress" over honoring deletions.
+function mergeProg(a,b){
+  a=migrateProg(a||{}); b=migrateProg(b||{});
+  const uniq=(x,y)=>[...new Set([...(x||[]),...(y||[])])];
+  const m=JSON.parse(JSON.stringify(a));
+  m.memorized=uniq(a.memorized,b.memorized); m.doneSkills=uniq(a.doneSkills,b.doneSkills);
+  m.badges=uniq(a.badges,b.badges); m.extraKnown=uniq(a.extraKnown,b.extraKnown); m.freezeAwards=uniq(a.freezeAwards,b.freezeAwards);
+  m.saved=uniq(a.saved,b.saved).filter(k=>!m.memorized.includes(k)); m.skipped=uniq(a.skipped,b.skipped).filter(k=>!m.memorized.includes(k));
+  ["talents","streak","bestStreak","dayStreak","bestDayStreak","freezes","hints","level"].forEach(f=>m[f]=Math.max(a[f]||0,b[f]||0)); // keep the higher
+  m.onboarded=!!(a.onboarded||b.onboarded);
+  m.lastReviewDay=(a.lastReviewDay>b.lastReviewDay)?a.lastReviewDay:b.lastReviewDay;
+  m.chosen=Object.assign({},b.chosen,a.chosen); m.customBook=Object.assign({},b.customBook,a.customBook);
+  m.customScene=Object.assign({},b.customScene,a.customScene); m.talentLog=Object.assign({},b.talentLog,a.talentLog);
+  m.palaces=((a.palaces||[]).length>=(b.palaces||[]).length)?a.palaces:b.palaces;   // keep the fuller palace set
+  m.verseSR=mergeSR(a.verseSR,b.verseSR);
+  return migrateProg(m);
+}
+function mergeSR(a,b){ a=a||{}; b=b||{}; const out={}; new Set([...Object.keys(a),...Object.keys(b)]).forEach(k=>{
+  const x=a[k], y=b[k]; if(!x){out[k]=y;return;} if(!y){out[k]=x;return;}
+  const primary=((x.step||1)>=(y.step||1))?x:y, other=(primary===x)?y:x;   // the more-advanced D0…D30 trail wins the base
+  out[k]={...other, ...primary, cr:Math.max(x.cr||0,y.cr||0), lc:Math.max(x.lc||0,y.lc||0), sz:Math.max(x.sz||0,y.sz||0), dueAt:Math.max(x.dueAt||0,y.dueAt||0), learnedAt:Math.min(x.learnedAt||Date.now(),y.learnedAt||Date.now())};
+}); return out; }
 // Load progress defensively: if the stored blob is corrupt (fails to parse/migrate), keep a copy
 // under a _corrupt key for recovery instead of silently wiping it, and start fresh so the app still opens.
 function loadProg(){
   const raw=Store.get(PROG_KEY,null);
   try{ return migrateProg(raw?JSON.parse(raw):null); }
-  catch(e){ if(raw) Store.set(PROG_KEY+"_corrupt", raw); return migrateProg(null); }
+  catch(e){
+    if(raw) Store.set(PROG_KEY+"_corrupt", raw);        // keep the bad blob for forensics
+    try{ const bak=Store.get(PROG_KEY+"_bak",null); if(bak){ console.warn("Recovered progress from last-known-good snapshot"); return migrateProg(JSON.parse(bak)); } }catch(e2){} // roll back to the last good save before starting over
+    return migrateProg(null);
+  }
 }
 let SRS = load(SRS_KEY,{}); if(!SRS || typeof SRS!=="object" || Array.isArray(SRS)) SRS={}; // guard a corrupt/tampered SRS blob
 let Prog = loadProg();
-function saveProg(){ save(PROG_KEY,Prog); }
+let _saveWarned=false;
+function saveProg(){
+  const ok=save(PROG_KEY,Prog);
+  if(ok){ try{ Store.setJSON(PROG_KEY+"_bak",Prog); }catch(e){} }   // rolling last-known-good copy — a later corrupt/failed write can roll back to this
+  else if(!_saveWarned){ _saveWarned=true; try{ toast("⚠️ Couldn't save — device storage may be full. Export a backup in Settings and free up space."); }catch(e){} }
+  return ok;
+}
 
 /* =================== ENTITLEMENTS / BILLING (Pro — $25/year) =================== */
 // Free tier: The Code (sounds), the Torah's five books, your first memory palace, and Matthew.
@@ -1233,24 +1267,29 @@ const Auth = {
       .catch(e=>console.warn("cloud push failed:", e && e.message));
   },
   // Last-writer-wins by timestamp: local edits made offline are pushed; otherwise cloud is pulled.
+  // Union-merge local + cloud so neither device ever loses progress, then write the merged result back so both converge.
   async syncDown(){
     if(!Auth._fbUser) return;
     Auth._pulling=true;
     try{
       const snap=await Auth._doc().get();
-      const localTs=Number(Store.get("vv_localts",0))||0;
-      if(!snap.exists){ await Auth.push(); }
+      if(!snap.exists){ await Auth.push(); }              // first sign-in on this account → seed the cloud from local
       else {
-        const d=snap.data(), cloudTs=Number(d.updatedAt||0);
-        if(localTs>cloudTs){ await Auth.push(); }         // local is newer (e.g. offline changes) → keep it
-        else {                                            // cloud is source of truth → load it
-          if(d.progJson){ try{ Prog=migrateProg(JSON.parse(d.progJson)); Store.setJSON(PROG_KEY,Prog); }catch(e){} }
-          if(d.srsJson){ try{ SRS=JSON.parse(d.srsJson)||{}; Store.setJSON(SRS_KEY,SRS); }catch(e){} }
-          Store.set("vv_localts",String(cloudTs));
+        const d=snap.data();
+        let cloudProg=null, cloudSRS=null, parsed=true;
+        try{ if(d.progJson) cloudProg=JSON.parse(d.progJson); if(d.srsJson) cloudSRS=JSON.parse(d.srsJson); }
+        catch(e){ parsed=false; console.warn("cloud doc unparseable — keeping local, not overwriting"); }
+        if(parsed && cloudProg){
+          Prog = mergeProg(Prog, cloudProg);              // ← union, never last-writer-wins: no device clobbers the other
+          SRS  = Object.assign({}, cloudSRS||{}, SRS);     // union review strengths (local wins per key)
+          Store.setJSON(PROG_KEY,Prog); Store.setJSON(SRS_KEY,SRS); Store.setJSON(PROG_KEY+"_bak",Prog);
+          Store.set("vv_localts",String(Date.now()));
+          await Auth.push();                              // upload the merged truth so the other device gets it too
           bustCaches(); recomputeLevel(); updateMetrics();
           const active=document.querySelector(".view.active");
-          if(active){ if(active.id==="journey")renderJourney(); else if(active.id==="learn")renderPath(); else if(active.id==="verse")renderVerse(); else if(active.id==="palace")renderPalace(); }
+          if(active){ if(active.id==="journey")renderJourney(); else if(active.id==="learn")renderPath(); else if(active.id==="verse")renderVerse(); else if(active.id==="palace")renderPalace(); else if(active.id==="stories")renderStories(); }
         }
+        // parse failed → do NOT touch local or vv_localts; the next push re-uploads our good local copy
       }
     }catch(e){ console.warn("cloud pull failed:", e && e.message); }
     Auth._pulling=false;
@@ -1768,6 +1807,7 @@ function renderStories(){
         html+=`<div class="vrow ${can?"clkrow":""}" ${can?`data-story="${ui}:${si}"`:""}><div class="vt"><b class="gold">${s.n}</b><div class="muted">${s.b} ${s.c}:${s.v}</div></div><div>${state}</div></div>`; });
       html+=`</div>`; }
     html+=`</div>`;
+    MILESTONES.forEach(m=>{ if(m.stories && U.name.startsWith(m.after)) html+=renderMilestone(m); });   // story capstones (Creation Remembered … 100 Stories Mastered)
   });
   S.innerHTML=html;
   S.querySelectorAll("[data-sgrp]").forEach(h=>h.onclick=()=>{ const ui=+h.dataset.sgrp; storyExpanded.has(ui)?storyExpanded.delete(ui):storyExpanded.add(ui); renderStories(); });
@@ -2235,7 +2275,7 @@ function verseRow(b,c,v,st,star){
   if(st==="mem"){
     const o=verseSRobj(refKey(b,c,v));
     if(o){ const now=Date.now(), snoozed=o.sz>now, due=palaceDueIndex(o)>=0, doneAll=(o.step||1)>=SR_TRAIL.length, tier=verseTier(o);
-      srBadge = ` <span title="${tier.name}">${tier.icon}</span>`+(snoozed?' <span title="Resting 14 days">😴</span>':'')+((due&&!snoozed)?'<span class="due-dot"></span>':'');
+      srBadge = ` <span title="${tier.name}">${tier.icon}</span>`+(snoozed?` <span title="Resting ${srHuman(o.sz-now)}">😴</span>`:'')+((due&&!snoozed)?'<span class="due-dot"></span>':'');
       const streakNote = (o.cr||0)>=1 ? ` <span class="gold">· 🔥 ${o.cr} in a row</span>` : "";
       const statusTxt = snoozed ? `😴 resting ${srHuman(o.sz-now)}` : (due?'<b style="color:#ff8a8a">review due</b>':(doneAll?'👑 <b class="gold">Sealed in your heart</b>':tier.name+' · next in '+srHuman(palaceNextReviewMs(o))));
       trail = `<div style="margin-top:6px">${srTrailHTML(o)}<span class="muted" style="font-size:11px;margin-left:8px">${statusTxt}${streakNote}</span></div>`;
@@ -2440,7 +2480,11 @@ function practiceNext(first){
   const mem=memArr(); if(!mem.length){ renderVerse(); return; }
   if(!suppressGrowth && allEstablished()){ showGrowthEncouragement(); return; }  // everything mastered → celebrate + suggest moving on
   const deck=deckKeys();
-  if(!deck.length){ roundCompleteScreen(); return; }                             // every verse cleared this round → offer a fresh pass
+  if(!deck.length){
+    const anyAskable=memArr().some(a=>{ const o=vsr(a.join(":")); return !o||!(o.sz>Date.now()); }); // any verse not currently resting
+    if(!anyAskable){ showGrowthEncouragement(); return; }   // everything is resting/established → terminal (no endless "New round" loop)
+    roundCompleteScreen(); return;                          // a normal round cleared → offer a fresh pass
+  }
   const avoid=new Set(memTestRecent);
   let pool=deck.filter(k=>!avoid.has(k)); if(!pool.length) pool=deck;
   const cur=pool[Math.floor(Math.random()*pool.length)];
@@ -2470,14 +2514,17 @@ function roundCompleteScreen(){
 const GROW_VERSES=[[50,3,14],[61,3,18],[58,6,1],[60,2,2],[51,1,10],[20,4,18]];  // press-on/growth: Phil 3:14, 2 Pet 3:18, Heb 6:1, 1 Pet 2:2, Col 1:10, Prov 4:18
 function growVerseHTML(){ const r=GROW_VERSES[Math.floor(Date.now()/DAY)%GROW_VERSES.length], t=kjvText(r[0],r[1],r[2]); if(!t) return ""; return `<div class="teachbox" style="margin-top:14px;font-style:italic;text-align:left">“${t}” <span class="gold" style="font-style:normal;font-weight:800">— ${bookName(r[0])} ${r[1]}:${r[2]}</span></div>`; }
 function showGrowthEncouragement(){
-  creditToday();   // clearing a fully-established deck counts as showing up today
   const V=el("verse");
   V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🌾</div><h2 class="gold">These are well established</h2>
     <p class="lead">Every verse you're holding came back cleanly, 5+ times running in the last two weeks — they're settling into long-term memory. Time to <b>press forward</b>: learn a new book and hide more of the Word in your heart.</p>
     ${growVerseHTML()}
     <div class="btnrow" style="margin-top:12px"><button class="btn blue" id="grLearn">Learn something new →</button><button class="btn ghost" id="grStay">Keep reviewing anyway</button></div></div>`;
   el("grLearn").onclick=()=>show("learn");
-  el("grStay").onclick=()=>{ suppressGrowth=true; deckRoundReset(); practiceNext(true); };
+  el("grStay").onclick=()=>{ suppressGrowth=true;
+    const now=Date.now(), anyAskable=memArr().some(a=>{ const o=vsr(a.join(":")); return !o||!(o.sz>now); });
+    if(!anyAskable){ (Prog.memorized||[]).forEach(k=>{ const o=vsr(k); if(o&&o.sz>now){ o.sz=0; o.dueAt=Math.min(o.dueAt||now,now); } }); saveProg(); } // "review anyway" wakes rested verses so there's something to do
+    deckRoundReset(); practiceNext(true);
+  };
 }
 function srBanner(kind){
   const V=el("verse");
@@ -2512,7 +2559,6 @@ function afterSR(){                             // between verse-SR and free pra
 function finishDue(){ if(MS && MS.dueWork) doneForToday(); else practiceNext(true); }
 // The "you're done for today" moment — the emotional close of the daily loop; credits the day streak, then offers optional free practice.
 function doneForToday(){
-  creditToday();
   const V=el("verse");
   const wd=weekDaysNow();
   V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🌿</div>
@@ -2532,18 +2578,17 @@ const DAY_FREEZE=[3,7,14,30,60,100,150,200,300,365];   // day-streak milestones 
 const ANS_FREEZE=[25,50,100,200,500];                   // correct-in-a-row milestones that grant a freeze
 function grantFreeze(key, reason){
   if(Prog.freezeAwards.includes(key)) return;           // one grant per milestone, ever
-  Prog.freezeAwards.push(key);
-  if((Prog.freezes||0)<FREEZE_MAX){ Prog.freezes=(Prog.freezes||0)+1; toast(`🧊 Streak Freeze earned — ${reason}!`); }
-  saveProg();
+  if((Prog.freezes||0)>=FREEZE_MAX) return;             // at the cap → don't burn the milestone; grant it later when there's room
+  Prog.freezeAwards.push(key); Prog.freezes=(Prog.freezes||0)+1; toast(`🧊 Streak Freeze earned — ${reason}!`); saveProg();
 }
 function creditToday(){
   const today=dayKey(new Date());
   if(Prog.lastReviewDay===today) return;                       // already credited today
-  const yest=dayKey(new Date(Date.now()-DAY));
+  const yest=dayKey(new Date(Date.now()-DAY)), twoAgo=dayKey(new Date(Date.now()-2*DAY));
   if(!Prog.lastReviewDay) Prog.dayStreak=1;
   else if(Prog.lastReviewDay===yest) Prog.dayStreak=(Prog.dayStreak||0)+1;   // consecutive day → +1
-  else if((Prog.freezes||0)>0){ Prog.freezes--; Prog.dayStreak=(Prog.dayStreak||0)+1; setTimeout(()=>toast(`🧊 A Streak Freeze saved your ${Prog.dayStreak}-day streak!`),500); } // missed a day → spend a freeze to keep it alive
-  else Prog.dayStreak=1;                                        // missed, no freeze → restart
+  else if(Prog.lastReviewDay===twoAgo && (Prog.freezes||0)>0){ Prog.freezes--; Prog.dayStreak=(Prog.dayStreak||0)+1; setTimeout(()=>toast(`🧊 A Streak Freeze saved your ${Prog.dayStreak}-day streak!`),500); } // exactly ONE missed day → a freeze bridges it
+  else Prog.dayStreak=1;                                        // missed 2+ days (or no freeze) → restart
   if(Prog.dayStreak>(Prog.bestDayStreak||0)) Prog.bestDayStreak=Prog.dayStreak;
   Prog.lastReviewDay=today;
   DAY_FREEZE.forEach(m=>{ if(Prog.dayStreak>=m) grantFreeze("day"+m, `${m}-day streak`); });   // milestone rewards
@@ -2661,14 +2706,14 @@ function finishNumberTest(){
 }
 function memTestRender(){
   const V=el("verse"), b=memTestCur[0], c=memTestCur[1], v=memTestCur[2], k=knownNumbers();
-  let books=""; for(let bb=1;bb<=66;bb++) if(k.has(bb)) books+=`<option value="${bb}">${bookName(bb)}</option>`;
-  const nums=max=>{ let o=""; for(let n=1;n<=max;n++) if(k.has(n)) o+=`<option value="${n}">${n}</option>`; return o; };
+  let books=""; for(let bb=1;bb<=66;bb++) if(k.has(bb)||bb===b) books+=`<option value="${bb}">${bookName(bb)}</option>`;   // always include the correct book
+  const nums=(max,force)=>{ let o=""; for(let n=1;n<=max;n++) if(k.has(n)||n===force) o+=`<option value="${n}">${n}</option>`; return o; }; // force = the correct answer, always selectable
   V.innerHTML=`<div class="qhead"><button class="lclose" id="mtClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Test yourself</div><div style="width:24px"></div></div>
     <div class="card">${testHUD()}<p class="lead" style="margin-bottom:8px">Which verse is this? Choose its book, chapter and verse.</p>
       <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${kjvText(b,c,v)}"</div>
       <label class="vplabel">Book</label><select class="vpsel" id="mtB">${books}</select>
-      <label class="vplabel">Chapter</label><select class="vpsel" id="mtC">${nums(150)}</select>
-      <label class="vplabel">Verse</label><select class="vpsel" id="mtV">${nums(176)}</select>
+      <label class="vplabel">Chapter</label><select class="vpsel" id="mtC">${nums(150,c)}</select>
+      <label class="vplabel">Verse</label><select class="vpsel" id="mtV">${nums(176,v)}</select>
       <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):`3 tries, then I'll reveal the answer.`}</div>
       <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
       ${Prog.hints>0?`<button class="btn ghost sm" id="mtPeek" style="margin-top:8px;width:100%">🔎 Reveal the book (1 peek · ${Prog.hints} left)</button>`:""}
@@ -2690,9 +2735,10 @@ function memTestRender(){
       const firstTry=memTestWrong===0, kk=refKey(b,c,v);
       bumpStreak(true); reviewVerseSR(kk); const cr=markAnswer(kk,true,firstTry); const pts=awardTalents(kk, firstTry); saveProg(); refreshHUD(); checkBadges();
       if(!reviewedThisSession.includes(kk)) reviewedThisSession.push(kk);   // remember what we reviewed → show trails at the end
+      creditToday();   // a real recall = showing up today (idempotent per day; credits SR & free practice alike, never a no-recall open)
       sels.forEach(s=>s.classList.add("correct")); el("mtCheck").disabled=true; el("mtWarn").textContent="";
       el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}</div></div>`;
-      if(cr===5){   // 5 clean recalls in a row → offer to rest this verse for 14 days
+      if(cr>=5 && cr%5===0){   // every 5 clean recalls in a row → offer to rest this verse for 14 days (re-offered if declined earlier)
         el("mtFb").innerHTML+=`<div class="feedback ok" style="position:static;margin:10px -20px -20px;border-radius:0"><div class="sub" style="margin-bottom:8px">🎯 That's 5 in a row! Rest this verse for <b>14 days</b>?</div><div class="btnrow" style="margin:0"><button class="btn" id="szYes" style="margin:0">Snooze 14 days</button><button class="btn ghost" id="szNo" style="margin:0">Keep reviewing</button></div></div>`;
         el("szYes").onclick=()=>{ snoozeVerse(kk); toast("😴 Resting for 14 days"); goNext(); };
         el("szNo").onclick=goNext;
@@ -2714,9 +2760,9 @@ function memTestRender(){
   // scope Chapter to the selected book's chapter count, and Verse to that chapter's verse count (both ∩ known numbers) — no more "chapter 150" for a 1-chapter book
   function repop(){
     const bb=+el("mtB").value||0, cMax=chapCount(bb)||150, curC=+el("mtC").value;
-    el("mtC").innerHTML=nums(cMax); if(k.has(curC)&&curC<=cMax) el("mtC").value=curC;
+    el("mtC").innerHTML=nums(cMax,c); if((k.has(curC)||curC===c)&&curC<=cMax) el("mtC").value=curC;
     const cc=+el("mtC").value||0, vMax=verseCount(bb,cc)||176, curV=+el("mtV").value;
-    el("mtV").innerHTML=nums(vMax); if(k.has(curV)&&curV<=vMax) el("mtV").value=curV;
+    el("mtV").innerHTML=nums(vMax,v); if((k.has(curV)||curV===v)&&curV<=vMax) el("mtV").value=curV;
   }
   el("mtB").addEventListener("change",()=>{ el("mtB").classList.remove("wrong"); el("mtFb").innerHTML=""; repop(); });
   el("mtC").addEventListener("change",()=>{ el("mtC").classList.remove("wrong"); el("mtFb").innerHTML=""; repop(); });
@@ -3188,7 +3234,7 @@ function wireLogin(){
 
 /* =================== THEMES =================== */
 function applyTheme(t){
-  t=t||"classic";
+  if(!["illumined","classic","buddy","glass","quest"].includes(t)) t="illumined";   // unknown/tampered value → main theme, never a bare render
   document.querySelector(".phone").setAttribute("data-theme",t);
   Store.set("vv_theme",t);
   document.querySelectorAll(".theme-opt").forEach(b=>b.classList.toggle("sel",b.dataset.th===t));
@@ -3264,7 +3310,7 @@ function importBackup(file){
 const Reminders = {
   cap(){ return (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.LocalNotifications) || null; },
   async enable(){
-    let granted=true; const cap=this.cap();
+    let granted=false; const cap=this.cap();   // default false: no Capacitor AND no Notification API → can't actually remind, so don't claim success
     try{ if(cap){ const p=await cap.requestPermissions(); granted=(p.display==="granted"); }
       else if("Notification" in window){ granted=(await Notification.requestPermission())==="granted"; } }catch(e){ granted=false; }
     if(!granted){ Prog.reminder.on=false; saveProg(); toast("Allow notifications to get daily reminders."); return; }
@@ -3277,7 +3323,7 @@ const Reminders = {
     this.armWeb(hh,mm); },
   armWeb(hh,mm){ if(this._t) clearTimeout(this._t); const now=new Date(), t=new Date(); t.setHours(hh,mm,0,0); if(t<=now) t.setDate(t.getDate()+1);
     const ms=t-now; if(ms>0 && ms<26*3600*1000) this._t=setTimeout(()=>{ this.fireWeb(); this.armWeb(hh,mm); }, ms); },
-  fireWeb(){ if(!Prog.reminder.on) return; if(!("Notification" in window)||Notification.permission!=="granted") return;
+  fireWeb(){ if(!Prog.reminder.on) return; if(!("Notification" in window)||Notification.permission!=="granted"){ Prog.reminder.on=false; saveProg(); return; }   // permission revoked → stop claiming reminders are on
     const due=versesDueCount()+palacesDueCount();
     try{ new Notification("Burning Bush",{body: due>0?`${due} review${due>1?"s":""} due — keep your streak alive 🔥`:"Time to hide a verse in your heart 📖"}); }catch(e){} },
   init(){ if(Prog.reminder && Prog.reminder.on) this.schedule(); }
@@ -3451,6 +3497,9 @@ function renderPalaceWalk(id){
 }
 
 /* =================== INIT =================== */
+// Ask the browser to keep our data persistent — reduces eviction under storage pressure and, on iOS, helps survive
+// Intelligent Tracking Prevention's 7-day localStorage clearing. Best-effort; harmless where unsupported.
+try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{}); }catch(e){}
 Billing.handleReturn();   // unlock Pro if we've just returned from a successful Stripe checkout
 Auth.init();              // start Firebase auth + cloud sync (no-op until config is pasted in)
 wireLogin();
