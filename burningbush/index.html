@@ -2230,9 +2230,11 @@ function verseRow(b,c,v,st,star){
   let srBadge="", trail="";
   if(st==="mem"){
     const o=verseSRobj(refKey(b,c,v));
-    if(o){ const due=palaceDueIndex(o)>=0, doneAll=(o.step||1)>=SR_TRAIL.length, tier=verseTier(o);
-      srBadge = ` <span title="${tier.name}">${tier.icon}</span>`+(due?'<span class="due-dot"></span>':'');
-      trail = `<div style="margin-top:6px">${srTrailHTML(o)}<span class="muted" style="font-size:11px;margin-left:8px">${due?'<b style="color:#ff8a8a">review due</b>':(doneAll?'👑 <b class="gold">Sealed in your heart</b>':tier.name+' · next in '+srHuman(palaceNextReviewMs(o)))}</span></div>`;
+    if(o){ const now=Date.now(), snoozed=o.sz>now, due=palaceDueIndex(o)>=0, doneAll=(o.step||1)>=SR_TRAIL.length, tier=verseTier(o);
+      srBadge = ` <span title="${tier.name}">${tier.icon}</span>`+(snoozed?' <span title="Resting 14 days">😴</span>':'')+((due&&!snoozed)?'<span class="due-dot"></span>':'');
+      const streakNote = (o.cr||0)>=1 ? ` <span class="gold">· 🔥 ${o.cr} in a row</span>` : "";
+      const statusTxt = snoozed ? `😴 resting ${srHuman(o.sz-now)}` : (due?'<b style="color:#ff8a8a">review due</b>':(doneAll?'👑 <b class="gold">Sealed in your heart</b>':tier.name+' · next in '+srHuman(palaceNextReviewMs(o))));
+      trail = `<div style="margin-top:6px">${srTrailHTML(o)}<span class="muted" style="font-size:11px;margin-left:8px">${statusTxt}${streakNote}</span></div>`;
     }
   }
   return `<div class="vrow clkrow" data-vb="${b}:${c}:${v}"><div class="vt"><b class="gold">${star?"✨ ":""}${bookName(b)} ${c}:${v}${srBadge}</b><div class="muted">${t.length>56?t.slice(0,56).replace(/\s+\S*$/,"")+"…":t}</div>${trail}</div><div>${st==="mem"?'<span style="color:var(--good);font-weight:800">✓</span>':'→'}</div></div>`;
@@ -2411,7 +2413,7 @@ let MS=null; // {phase:"sr"|"practice", srQueue:[keys]}
 function memArr(){ return Prog.memorized.map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2])); }
 function startMemTest(){
   const mem=memArr(); if(!mem.length){ renderVerse(); return; }
-  memTestRecent=[];
+  memTestRecent=[]; suppressGrowth=false;
   const due=mem.map(a=>a.join(":")).filter(k=>verseDue(k));   // verses whose next SR checkpoint has come due
   const anyDue = due.length>0 || palacesDueCount()>0;
   MS={ phase: due.length?"sr":"practice", srQueue:due.slice(), dueWork:anyDue };
@@ -2428,15 +2430,50 @@ function nextMemVerse(){                       // the "go to next" hook fired af
   }
   practiceNext(false);
 }
+let suppressGrowth=false;   // set when the user chooses to keep reviewing already-established verses (so we don't re-nag)
 function practiceNext(first){
   MS={phase:"practice", srQueue:[]};
-  const mem=memArr();
-  if(!mem.length || (!first && mem.length<2)){ renderVerse(); return; } // a single verse: test once, then stop (no endless loop)
+  const mem=memArr(); if(!mem.length){ renderVerse(); return; }
+  if(!suppressGrowth && allEstablished()){ showGrowthEncouragement(); return; }  // everything mastered → celebrate + suggest moving on
+  const deck=deckKeys();
+  if(!deck.length){ roundCompleteScreen(); return; }                             // every verse cleared this round → offer a fresh pass
   const avoid=new Set(memTestRecent);
-  let pool=mem.filter(a=>!avoid.has(a.join(":"))); if(!pool.length) pool=mem;
-  const cur=pool[Math.floor(Math.random()*pool.length)].join(":");
-  memTestRecent.push(cur); while(memTestRecent.length>Math.min(mem.length-1,6)) memTestRecent.shift();
+  let pool=deck.filter(k=>!avoid.has(k)); if(!pool.length) pool=deck;
+  const cur=pool[Math.floor(Math.random()*pool.length)];
+  memTestRecent.push(cur); while(memTestRecent.length>Math.min(deck.length-1,6)) memTestRecent.shift();
   askVerse(cur);
+}
+/* ---- Verse practice DECK: a correctly-answered verse drops out of the deck until the whole deck is cleared, then a
+   new round begins. State (cr=correct-in-a-row, rd=cleared this round, lc=last-correct, sz=snooze-until) lives on each
+   verseSR entry, so it persists across sessions with zero extra storage or per-frame work. ---- */
+const SNOOZE_MS=14*DAY, ESTAB_CR=5;
+function vsr(k){ return (Prog.verseSR||{})[k]||null; }
+function deckKeys(){ const now=Date.now(); return memArr().map(a=>a.join(":")).filter(k=>{ const o=vsr(k); return !o || ((!(o.sz>now)) && !o.rd); }); } // askable = not snoozed & not already correct this round
+function deckRoundReset(){ const now=Date.now(); (Prog.memorized||[]).forEach(k=>{ const o=vsr(k); if(o && !(o.sz>now)) o.rd=false; }); saveProg(); }
+function markAnswer(k, correct, firstTry){ Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k]||(Prog.verseSR[k]=newSR());
+  if(correct){ o.rd=true; o.lc=Date.now(); o.cr=firstTry?(o.cr||0)+1:0; } else { o.cr=0; } return o.cr||0; }   // any miss breaks the streak
+function snoozeVerse(k){ const now=Date.now(), o=vsr(k)||(Prog.verseSR[k]=newSR()); o.sz=now+SNOOZE_MS; o.rd=true; o.dueAt=now+SNOOZE_MS; saveProg(); }
+function verseEstablished(k){ const o=vsr(k); if(!o) return false; const now=Date.now(); return (o.sz>now) || ((o.cr||0)>=ESTAB_CR && (now-(o.lc||0))<=SNOOZE_MS); }
+function allEstablished(){ const mem=memArr(); return mem.length>0 && mem.every(a=>verseEstablished(a.join(":"))); }
+function roundCompleteScreen(){
+  const V=el("verse");
+  V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🔄</div><h2 class="gold">Deck cleared!</h2>
+    <p class="lead">You've correctly recalled every verse in this round. Start a fresh pass, or finish for now — we'll remember right where you left off.</p>
+    <div class="btnrow"><button class="btn blue" id="rcAgain">New round →</button><button class="btn ghost" id="rcDone">Finish</button></div></div>`;
+  el("rcAgain").onclick=()=>{ deckRoundReset(); practiceNext(true); };
+  el("rcDone").onclick=renderVerse;
+}
+const GROW_VERSES=[[50,3,14],[61,3,18],[58,6,1],[60,2,2],[51,1,10],[20,4,18]];  // press-on/growth: Phil 3:14, 2 Pet 3:18, Heb 6:1, 1 Pet 2:2, Col 1:10, Prov 4:18
+function growVerseHTML(){ const r=GROW_VERSES[Math.floor(Date.now()/DAY)%GROW_VERSES.length], t=kjvText(r[0],r[1],r[2]); if(!t) return ""; return `<div class="teachbox" style="margin-top:14px;font-style:italic;text-align:left">“${t}” <span class="gold" style="font-style:normal;font-weight:800">— ${bookName(r[0])} ${r[1]}:${r[2]}</span></div>`; }
+function showGrowthEncouragement(){
+  creditToday();   // clearing a fully-established deck counts as showing up today
+  const V=el("verse");
+  V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🌾</div><h2 class="gold">These are well established</h2>
+    <p class="lead">Every verse you're holding came back cleanly, 5+ times running in the last two weeks — they're settling into long-term memory. Time to <b>press forward</b>: learn a new book and hide more of the Word in your heart.</p>
+    ${growVerseHTML()}
+    <div class="btnrow" style="margin-top:12px"><button class="btn blue" id="grLearn">Learn something new →</button><button class="btn ghost" id="grStay">Keep reviewing anyway</button></div></div>`;
+  el("grLearn").onclick=()=>show("learn");
+  el("grStay").onclick=()=>{ suppressGrowth=true; deckRoundReset(); practiceNext(true); };
 }
 function srBanner(kind){
   const V=el("verse");
@@ -2644,12 +2681,17 @@ function memTestRender(){
   el("mtCheck").onclick=()=>{
     const ok=(+el("mtB").value===b && +el("mtC").value===c && +el("mtV").value===v);
     if(ok){ // flash green, auto-advance to next verse
-      bumpStreak(true); reviewVerseSR(refKey(b,c,v)); const pts=awardTalents(refKey(b,c,v), memTestWrong===0); saveProg(); refreshHUD(); checkBadges();
+      const firstTry=memTestWrong===0, kk=refKey(b,c,v);
+      bumpStreak(true); reviewVerseSR(kk); const cr=markAnswer(kk,true,firstTry); const pts=awardTalents(kk, firstTry); saveProg(); refreshHUD(); checkBadges();
       sels.forEach(s=>s.classList.add("correct")); el("mtCheck").disabled=true; el("mtWarn").textContent="";
       el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}</div></div>`;
-      setTimeout(goNext, 900);
+      if(cr===5){   // 5 clean recalls in a row → offer to rest this verse for 14 days
+        el("mtFb").innerHTML+=`<div class="feedback ok" style="position:static;margin:10px -20px -20px;border-radius:0"><div class="sub" style="margin-bottom:8px">🎯 That's 5 in a row! Rest this verse for <b>14 days</b>?</div><div class="btnrow" style="margin:0"><button class="btn" id="szYes" style="margin:0">Snooze 14 days</button><button class="btn ghost" id="szNo" style="margin:0">Keep reviewing</button></div></div>`;
+        el("szYes").onclick=()=>{ snoozeVerse(kk); toast("😴 Resting for 14 days"); goNext(); };
+        el("szNo").onclick=goNext;
+      } else setTimeout(goNext, 900);
     } else {
-      memTestWrong++; bumpStreak(false); saveProg(); refreshHUD();
+      memTestWrong++; bumpStreak(false); markAnswer(refKey(b,c,v),false); saveProg(); refreshHUD();
       sels.forEach(s=>{ s.classList.add("wrong"); s.classList.remove("correct"); });
       if(memTestWrong>=3){ // auto-reveal the answer
         el("mtB").value=b; el("mtC").value=c; el("mtV").value=v;
