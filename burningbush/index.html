@@ -11,6 +11,9 @@
 <!-- Firebase (Google + email auth, email verification, password reset, cloud progress sync).
      Loads from Google's CDN; if these fail (offline / not set up) the app still works fully in local-only mode. -->
 <link href="/burningbush/fonts/fonts.css" rel="stylesheet"><!-- fonts bundled locally for full offline / mobile-app use -->
+<!-- theme display fonts (online; offline falls back to bundled Cinzel/Baloo 2/Luckiest Guy) — TODO bundle locally -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     /* ===== DESIGN TOKENS — every visual decision flows through these. =====
@@ -470,6 +473,7 @@
   /* ============ STAINED GLASS — cathedral leaded-glass, jewel tones, Cinzel ============ */
   .phone[data-theme="glass"]{--bg:#0a0b14;--panel:#141726;--panel2:#1b1f33;--panel3:#252b45;--ink:#eef0f6;--muted:#98a0bd;--gold:#e8c96a;--gold2:#b8912f;--accent:#4f7fe0;--green:#3fae7a;--miss:#d05a72;--line:#33406b;
     --radius-card:10px;--radius-box:6px;--radius-pill:8px;
+    --font-body:"EB Garamond",Georgia,serif;--font-cap:"Cormorant Garamond",serif;
     background:
       repeating-conic-gradient(from 92deg at 50% -12%,rgba(232,201,106,.06) 0deg 5deg,transparent 5deg 13deg),
       radial-gradient(560px 300px at 16% 2%,rgba(79,127,224,.22),transparent 60%),
@@ -491,30 +495,43 @@
   .phone[data-theme="glass"] .btn.blue:active{box-shadow:0 2px 0 #24386f}
   .phone[data-theme="glass"] .btn.ghost{background:rgba(255,255,255,.03);color:var(--gold-ink);border:1px solid #33406b;box-shadow:0 5px 0 #10131f}
   .phone[data-theme="glass"] .btn.ghost:active{box-shadow:0 2px 0 #10131f}
-  /* glass-pane tiles (rounded rects, leaded) */
-  .phone[data-theme="glass"] .tile{border-radius:14px;border:2px solid #05070f;box-shadow:0 5px 0 #05070f}
-  .phone[data-theme="glass"] .tile:active{box-shadow:0 2px 0 #05070f}
-  .phone[data-theme="glass"] .tile.gold{background:linear-gradient(160deg,#f2dd90,#b8912f)}
-  .phone[data-theme="glass"] .tile.new{background:linear-gradient(160deg,#88a8f0,#3a5fbf);color:#fff}
-  .phone[data-theme="glass"] .tile.gray{background:linear-gradient(160deg,#7b8296,#464d61);color:#eef0f6}
-  .phone[data-theme="glass"] .tile.locked{background:#141726;color:#4a5170;box-shadow:0 5px 0 #05070f}
-  .phone[data-theme="glass"] .counter .v,.phone[data-theme="glass"] .stat .v{color:var(--gold-ink)}
-  .phone[data-theme="glass"] .milestone.reached{background:linear-gradient(135deg,rgba(232,201,106,.14),rgba(79,127,224,.08));border:1px solid var(--gold2);box-shadow:inset 0 0 0 1px rgba(232,201,106,.22)}
-  .phone[data-theme="glass"] .grouphead.grp-gold{background:linear-gradient(135deg,#f0d98a,#b8912f);color:#241a02}
   .phone[data-theme="glass"] code{background:rgba(0,0,0,.4);color:var(--gold-ink)}
-  /* glass LAYOUT: skill path as a luminous leaded cord with gently staggered panes */
-  .phone[data-theme="glass"] .path{position:relative;gap:22px}
-  .phone[data-theme="glass"] .path::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:6px;transform:translateX(-50%);border-radius:3px;z-index:0;
-    background:linear-gradient(180deg,rgba(232,201,106,.55),rgba(79,127,224,.45),rgba(208,90,114,.4))}
-  .phone[data-theme="glass"] .path .tile{position:relative;z-index:1}
-  .phone[data-theme="glass"] .path .tile:nth-child(odd){transform:translateX(-34px)}
-  .phone[data-theme="glass"] .path .tile:nth-child(even){transform:translateX(34px)}
-  .phone[data-theme="glass"] .path .tile:nth-child(odd):active{transform:translateX(-34px) translateY(2px)}
-  .phone[data-theme="glass"] .path .tile:nth-child(even):active{transform:translateX(34px) translateY(2px)}
-  /* glass ORNAMENT: a stained-glass window arch crowning each card */
-  .phone[data-theme="glass"] .card{position:relative}
-  .phone[data-theme="glass"] .card::before{content:"";position:absolute;left:14px;right:14px;top:-1px;height:10px;border-radius:0 0 40% 40%/0 0 100% 100%;
-    background:linear-gradient(90deg,rgba(232,201,106,.35),rgba(79,127,224,.35),rgba(208,90,114,.35));opacity:.6}
+  /* ---- glass PROTOTYPE MATCH (design-03): jewel chips, glass-orb grid, leaded pills ---- */
+  /* Learn path = a wrapped grid of leaded glass ORBS (not a cord) */
+  .phone[data-theme="glass"] .path{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:28px 14px}
+  .phone[data-theme="glass"] .path::before{display:none}
+  .phone[data-theme="glass"] .tile{width:66px;height:66px;border-radius:14px;border:3px solid #0a0a0d;box-shadow:0 0 0 1px #b48a1f,0 6px 14px rgba(0,0,0,.5);font-family:"Cinzel",serif;overflow:visible}
+  .phone[data-theme="glass"] .tile::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(120deg,rgba(255,255,255,.22),transparent 50%);pointer-events:none}
+  .phone[data-theme="glass"] .tile.gold{background:radial-gradient(circle at 40% 30%,#f7e39a,#b48a1f);color:#2a1e00}
+  .phone[data-theme="glass"] .tile.new{background:radial-gradient(circle at 40% 30%,#2f5fd4,#1a3a8f);color:#fff}
+  .phone[data-theme="glass"] .tile.gray{background:conic-gradient(from 20deg,#e8c25a,#5b420f 30%,#b48a1f 55%,#2f2205 75%,#e8c25a);color:#2a1e00}
+  .phone[data-theme="glass"] .tile.locked{background:#201f29;color:#555;box-shadow:0 0 0 1px #33406b}
+  .phone[data-theme="glass"] .tile small{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-family:"Cormorant Garamond",serif;font-style:italic;font-size:11px;color:#cdbf9c}
+  .phone[data-theme="glass"] .tile.focusnext{animation:glasspulse 2s infinite}
+  @keyframes glasspulse{0%,100%{box-shadow:0 0 0 1px var(--gold2),0 0 0 var(--blue-glow0)}50%{box-shadow:0 0 0 1px var(--gold2),0 0 22px var(--blue-glow)}}
+  /* per-book JEWEL chips — deterministic 5-hue cycle over the whole-Bible strip */
+  .phone[data-theme="glass"] .biblestrip .bk{border:2px solid #0a0a0d;border-radius:5px;background:#0e0d13;color:#4a4757;box-shadow:inset 0 0 6px rgba(0,0,0,.6);font-family:"Cinzel",serif;font-weight:600}
+  .phone[data-theme="glass"] .biblestrip .bk.on{color:#fff;text-shadow:0 1px 2px #000;box-shadow:0 0 10px rgba(0,0,0,.4),inset 0 0 10px rgba(255,255,255,.15)}
+  .phone[data-theme="glass"] .biblestrip .bk.on:nth-of-type(5n+1){background:radial-gradient(circle at 40% 30%,#2f5fd4,#1a3a8f)}
+  .phone[data-theme="glass"] .biblestrip .bk.on:nth-of-type(5n+2){background:radial-gradient(circle at 40% 30%,#c8203f,#8f1029)}
+  .phone[data-theme="glass"] .biblestrip .bk.on:nth-of-type(5n+3){background:radial-gradient(circle at 40% 30%,#1f9a68,#0f5a3c)}
+  .phone[data-theme="glass"] .biblestrip .bk.on:nth-of-type(5n+4){background:radial-gradient(circle at 40% 30%,#e8c25a,#b48a1f);color:#2a1e00;text-shadow:none}
+  .phone[data-theme="glass"] .biblestrip .bk.on:nth-of-type(5n){background:radial-gradient(circle at 40% 30%,#7a3fb0,#4a1f6e)}
+  /* section headers = leaded panels + gold-ringed status pill */
+  .phone[data-theme="glass"] .grouphead{border:3px solid #0a0a0d;box-shadow:0 0 0 1px #b48a1f;letter-spacing:.08em;overflow:hidden}
+  .phone[data-theme="glass"] .grouphead::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.16),transparent 45%);pointer-events:none}
+  .phone[data-theme="glass"] .grouphead.grp-gold{background:linear-gradient(160deg,rgba(232,194,90,.85),rgba(180,138,31,.55));color:#2a1e00}
+  .phone[data-theme="glass"] .grouphead.grp-blue{background:linear-gradient(160deg,rgba(47,95,212,.85),rgba(26,58,143,.6));color:#eef2ff}
+  .phone[data-theme="glass"] .grouphead.grp-cracked{background:conic-gradient(from 20deg,#e8c25a,#6b4e12 30%,#b48a1f 55%,#3a2a06 75%,#e8c25a);color:#2a1e00}
+  .phone[data-theme="glass"] .grouphead .gmeta{font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:20px;border:1px solid #b48a1f;background:rgba(0,0,0,.4);color:var(--gold-ink)}
+  /* emerald stat panels + amethyst/leaded milestones */
+  .phone[data-theme="glass"] .counter{background:linear-gradient(160deg,rgba(15,90,60,.55),rgba(15,90,60,.25));border:3px solid #0a0a0d;box-shadow:0 0 0 1px #b48a1f}
+  .phone[data-theme="glass"] .counter .v{font-family:"Cinzel",serif;color:#f7e39a}
+  .phone[data-theme="glass"] .counter .l{color:#cdbf9c;letter-spacing:.06em}
+  .phone[data-theme="glass"] .milestone{border:3px solid #0a0a0d;box-shadow:0 0 0 1px #b48a1f;background:linear-gradient(160deg,rgba(74,31,110,.5),transparent)}
+  .phone[data-theme="glass"] .milestone.reached{background:radial-gradient(200px 100px at 50% 0,#f7e39a,#b48a1f)}
+  .phone[data-theme="glass"] .milestone.reached .mtitle{color:#2a1e00;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+  .phone[data-theme="glass"] .milestone.reached .msub{color:#4a3810}
 
   /* ============ SCRIPTURE QUEST — youth adventure/RPG, chunky, Luckiest Guy ============ */
   .phone[data-theme="quest"]{--bg:#122320;--panel:#1b312b;--panel2:#213a33;--panel3:#2b4a41;--ink:#f5eede;--muted:#a6b3a5;--gold:#f4b942;--gold2:#c9852f;--accent:#2ec4b6;--green:#4caf50;--miss:#e76f51;--line:#2d4640;
@@ -556,8 +573,48 @@
   .phone[data-theme="quest"] .path .tile:nth-child(4n+3){transform:translateX(54px)}
   .phone[data-theme="quest"] .path .tile:nth-child(4n+1):active{transform:translateX(-54px) translateY(3px)}
   .phone[data-theme="quest"] .path .tile:nth-child(4n+3):active{transform:translateX(54px) translateY(3px)}
-  /* quest ORNAMENT: a carved wooden banner behind unit headers */
-  .phone[data-theme="quest"] .grouphead{border:2px solid #0c1613;box-shadow:0 4px 0 #0c1613}
+  /* ---- quest PROTOTYPE MATCH (design-07): HUD, stat coins, islands, wooden signs, treasure ---- */
+  .phone[data-theme="quest"] .topbar{background:linear-gradient(180deg,#3a2410,#2a1a08);border-bottom:4px solid #c99400;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+  .phone[data-theme="quest"] .brand b{font-family:var(--font-display2);letter-spacing:1.5px;color:#ffcf33;text-shadow:1px 1px 0 #000}
+  .phone[data-theme="quest"] .logo{border:3px solid #ffcf33;border-radius:12px;background:radial-gradient(circle at 30% 25%,#ffe08a,#c99400);box-shadow:0 3px 0 #5a3414}
+  .phone[data-theme="quest"] .metric{font-family:var(--font-display2);font-size:18px;letter-spacing:1px;color:#fff;text-shadow:1px 1px 0 #000}
+  .phone[data-theme="quest"] .metric.lvl{background:linear-gradient(180deg,#ff8a3c,#ff5a3c);border:3px solid #ffb84d;border-radius:14px;padding:1px 9px;box-shadow:0 3px 0 #a83000}
+  /* comic stat coins */
+  .phone[data-theme="quest"] .counter{background:radial-gradient(circle at 30% 25%,#fff4d1,#e6cf9e);border:4px solid #7a4a1f;box-shadow:0 5px 0 #5a3414;color:#2a1a08}
+  .phone[data-theme="quest"] .counter .v{font-family:var(--font-display2);font-size:28px;letter-spacing:1px}
+  .phone[data-theme="quest"] .counter .l{color:#5a3414;font-weight:900}
+  .phone[data-theme="quest"] .counter:nth-child(1) .v{color:#3aa0d8}
+  .phone[data-theme="quest"] .counter:nth-child(2) .v{color:#8b5cf6}
+  .phone[data-theme="quest"] .counter:nth-child(3) .v{color:#2f7d34}
+  .phone[data-theme="quest"] .counter:nth-child(4) .v{color:#ff5a3c}
+  /* book islands (circles, crowns via emoji) */
+  .phone[data-theme="quest"] .biblestrip .bk{border-radius:50%;border:3px solid #6a5030;background:#b7a078;color:#4a3a1e;box-shadow:0 3px 0 #6a5030;font-family:var(--font-display2)}
+  .phone[data-theme="quest"] .biblestrip .bk.on{background:radial-gradient(circle at 30% 25%,#ffe58a,#ffcf33);border-color:#c99400;color:#5a4200;box-shadow:0 3px 0 #c99400}
+  /* wooden section signs */
+  .phone[data-theme="quest"] .grouphead{border:4px solid;letter-spacing:1.5px;font-size:17px;box-shadow:0 5px 0 rgba(0,0,0,.25);text-shadow:1px 1px 0 rgba(0,0,0,.2)}
+  .phone[data-theme="quest"] .grouphead:not(.grp-gold):not(.grp-blue):not(.grp-cracked){background:linear-gradient(135deg,#8a7654,#6a5030);border-color:#4a3414;color:#f4e4c1}
+  .phone[data-theme="quest"] .grouphead.grp-gold{background:linear-gradient(135deg,#ffe066,#ffcf33);border-color:#c99400;color:#5a4200}
+  .phone[data-theme="quest"] .grouphead.grp-blue{background:linear-gradient(135deg,#7fd0f5,#3aa0d8);border-color:#1f6f9c;color:#08344d}
+  .phone[data-theme="quest"] .grouphead.grp-cracked{background:linear-gradient(135deg,#e8c96a,#c9a227);border-color:#8a6600;color:#4a3600}
+  .phone[data-theme="quest"] .grouphead.grp-cracked::after{content:"⚡ REFRESH";position:absolute;top:-9px;right:12px;background:#ff5a3c;color:#fff;font-family:var(--font-display2);font-size:10px;padding:2px 9px;border-radius:10px;border:2px solid #fff}
+  .phone[data-theme="quest"] .grouphead .gmeta{color:inherit;font-family:var(--font-display2)}
+  /* map-node tiles */
+  .phone[data-theme="quest"] .tile{border-radius:16px;border:4px solid #4a3414;box-shadow:0 6px 0 #2a1e0a}
+  .phone[data-theme="quest"] .tile.gold{background:radial-gradient(circle at 30% 25%,#ffe58a,#ffcf33);border-color:#c99400;box-shadow:0 6px 0 #8a6600;color:#5a4200}
+  .phone[data-theme="quest"] .tile.new{background:radial-gradient(circle at 30% 25%,#8fe887,#4caf50);border-color:#2f7d34;box-shadow:0 6px 0 #1e5c22;color:#04310c}
+  .phone[data-theme="quest"] .tile.gray{background:repeating-linear-gradient(45deg,#f0d98a,#f0d98a 5px,#c9a227 5px,#c9a227 10px);border-color:#8a6600;box-shadow:0 6px 0 #6a4e00;color:#5a4200}
+  .phone[data-theme="quest"] .tile.locked{background:#8a7654;border-color:#4a3414;box-shadow:0 6px 0 #2a1e0a;color:#5a4a35}
+  .phone[data-theme="quest"] .tile small{font-family:var(--font-display2);letter-spacing:1px;font-size:12px;color:#e6cf9e}
+  /* treasure-chest milestone banners */
+  .phone[data-theme="quest"] .milestone{border:4px solid #4a3414;background:linear-gradient(135deg,#8a7654,#6a5030);color:#f4e4c1;box-shadow:0 5px 0 rgba(0,0,0,.25);opacity:1}
+  .phone[data-theme="quest"] .milestone .mtitle{font-family:var(--font-display2);letter-spacing:1.5px;color:#f4e4c1;text-shadow:1px 1px 0 rgba(0,0,0,.3)}
+  .phone[data-theme="quest"] .milestone.reached{background:linear-gradient(135deg,#ffe066,#ffcf33);border-color:#c99400}
+  .phone[data-theme="quest"] .milestone.reached .mtitle{color:#4a3600}
+  .phone[data-theme="quest"] .milestone.reached .msub{color:#5a4200}
+  /* daily-review card → quest ribbon */
+  .phone[data-theme="quest"] #journey .card:first-of-type{background:linear-gradient(135deg,#fff7e0,#ffe9b8);border:4px solid #c99400;box-shadow:0 5px 0 #c99400;color:#2a1a08}
+  .phone[data-theme="quest"] #journey .card:first-of-type h2,.phone[data-theme="quest"] #journey .card:first-of-type .lead,.phone[data-theme="quest"] #journey .card:first-of-type .muted,.phone[data-theme="quest"] #journey .card:first-of-type .hint{color:#5a3414}
+  .phone[data-theme="quest"] #journey .card:first-of-type::before{content:"⚔ DAILY QUEST";position:absolute;top:-12px;left:14px;background:#ff5a3c;color:#fff;font-family:var(--font-display2);letter-spacing:1.5px;font-size:14px;padding:3px 14px;border-radius:8px;border:2px solid #fff;box-shadow:0 3px 0 #a83000;transform:rotate(-3deg)}
 
   /* ============ VERSE BUDDY — bright friendly light theme for kids, Baloo 2 ============
      Note how little this block needs: it redefines the TOKEN SET (below), and the
@@ -610,6 +667,36 @@
   /* buddy ORNAMENT: fat friendly pill tabs + big tap targets */
   .phone[data-theme="buddy"] .tabbar button.on .ic{transform:scale(1.12)}
   .phone[data-theme="buddy"] .pill{border-width:2px}
+  /* ---- buddy PROTOTYPE MATCH (design-06): grass hero, chunky section cards, chest banners, bubbles ---- */
+  .phone[data-theme="buddy"] #journey .card:first-of-type{background:linear-gradient(135deg,#7fe063,#58cc02);border:0;box-shadow:0 8px 0 #46a302;color:#fff;overflow:hidden}
+  .phone[data-theme="buddy"] #journey .card:first-of-type::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 10%,rgba(255,255,255,.35),transparent 40%);pointer-events:none}
+  .phone[data-theme="buddy"] #journey .card:first-of-type h2,.phone[data-theme="buddy"] #journey .card:first-of-type .lead,.phone[data-theme="buddy"] #journey .card:first-of-type .hint,.phone[data-theme="buddy"] #journey .card:first-of-type .muted{color:#f6ffe9}
+  .phone[data-theme="buddy"] #journey .card:first-of-type .gold{color:#fffceb}
+  .phone[data-theme="buddy"] #journey .card:first-of-type>div{color:#ffffff!important}   /* white on the grass hero (overrides inline green) */
+  .phone[data-theme="buddy"] .counter:nth-child(1) .v{color:#1899d6}
+  .phone[data-theme="buddy"] .counter:nth-child(2) .v{color:#ce82ff}
+  .phone[data-theme="buddy"] .counter:nth-child(3) .v{color:#ff4b9b}
+  .phone[data-theme="buddy"] .counter:nth-child(4) .v{color:#46a302}
+  /* section headers → fat colored cards + NEEDS REFRESH ribbon */
+  .phone[data-theme="buddy"] .grouphead{border:0;color:#fff;padding:14px 16px}
+  .phone[data-theme="buddy"] .grouphead:not(.grp-gold):not(.grp-blue):not(.grp-cracked){background:#fff;color:#3a4a5e;box-shadow:0 4px 0 #e5edf2;border:2px solid #eef3f6}
+  .phone[data-theme="buddy"] .grouphead.grp-blue{background:linear-gradient(135deg,#5cc6ff,#1cb0f6);box-shadow:0 6px 0 #1899d6}
+  .phone[data-theme="buddy"] .grouphead.grp-gold{background:linear-gradient(135deg,#ffd84d,#ffb300);box-shadow:0 6px 0 #e6a600}
+  .phone[data-theme="buddy"] .grouphead.grp-cracked{background:linear-gradient(135deg,#e8c96a,#c9a227);box-shadow:0 6px 0 #a5851d}
+  .phone[data-theme="buddy"] .grouphead.grp-cracked::after{content:"⚡ NEEDS REFRESH";position:absolute;top:-8px;right:12px;background:#ff4b4b;color:#fff;font-size:9px;font-weight:800;padding:3px 8px;border-radius:20px}
+  .phone[data-theme="buddy"] .grouphead .gmeta{color:inherit}
+  /* bubbles */
+  .phone[data-theme="buddy"] .tile{width:66px;height:60px}
+  .phone[data-theme="buddy"] .tile.gold{background:#ffc800;box-shadow:0 7px 0 #e6a600;color:#7a5b00}
+  .phone[data-theme="buddy"] .tile.new{background:#58cc02;box-shadow:0 7px 0 #46a302;color:#fff}
+  .phone[data-theme="buddy"] .tile.gray{background:repeating-linear-gradient(45deg,#f0d98a,#f0d98a 5px,#d9bb55 5px,#d9bb55 10px);box-shadow:0 7px 0 #c9a227;color:#6b5300}
+  .phone[data-theme="buddy"] .tile.locked{background:#d2dade;box-shadow:0 7px 0 #a7b2b8;color:#8a97a8}
+  /* milestones → chest banners */
+  .phone[data-theme="buddy"] .milestone{border:2px solid #eef3f6;background:#fff;box-shadow:0 3px 0 #e5edf2;opacity:1}
+  .phone[data-theme="buddy"] .milestone .mtitle{color:#8a97a8}
+  .phone[data-theme="buddy"] .milestone.reached{background:linear-gradient(135deg,#ffd84d,#ffb300);border:0;box-shadow:0 6px 0 #e6a600}
+  .phone[data-theme="buddy"] .milestone.reached .mtitle{color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.12)}
+  .phone[data-theme="buddy"] .milestone.reached .msub{color:#fff8e6}
   .relbox{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;text-align:left;font-size:13.5px;line-height:1.5}
   .relbox .rl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--good);font-weight:800;margin-bottom:4px}
   .phon{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0}
