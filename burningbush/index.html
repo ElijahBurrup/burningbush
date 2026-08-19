@@ -142,12 +142,15 @@
   .btn:disabled:active{transform:none;box-shadow:0 5px 0 var(--disabled-shadow)}
   .btn.sm{width:auto;padding:10px 16px;font-size:13px;border-radius:11px;box-shadow:none}
   .btnrow{display:flex;gap:10px;margin-top:12px}
-  /* verse hub — six big launcher buttons */
-  .versehub{display:flex;flex-direction:column;gap:10px;margin-top:6px}
-  .vhub{display:flex;align-items:center;gap:12px;width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:17px 16px;font-size:16px;font-weight:800;color:var(--ink);cursor:pointer;text-align:left}
-  .vhub .vi{font-size:22px;line-height:1;flex:none}
-  .vhub small{margin-left:auto;font-size:13px;font-weight:700;color:var(--muted)}
-  .vhub:active{transform:scale(.99)}
+  /* verse hub — large square launcher buttons (2-col grid) + full-width test/review bars */
+  .versehub{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+  .vhub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:16px 12px;font-size:15px;font-weight:800;color:var(--ink);cursor:pointer;text-align:center}
+  .vhub.sq{aspect-ratio:1.1}
+  .vhub .vi{font-size:30px;line-height:1}
+  .vhub small{font-size:12px;font-weight:700;color:var(--muted)}
+  .vhub.wide{grid-column:1/-1;flex-direction:row;gap:12px;aspect-ratio:auto;padding:16px}
+  .vhub.wide .vi{font-size:22px}
+  .vhub:active{transform:scale(.98)}
   .vhub.review{background:linear-gradient(135deg,var(--blue),var(--blue2));color:var(--on-blue);border:none;box-shadow:0 4px 0 var(--blue-shadow)}
   .vhub.review small{color:var(--on-blue)}
 
@@ -199,6 +202,14 @@
   .prompt{font-size:15px;color:var(--muted);font-weight:700;margin:6px 0 4px;text-transform:uppercase;letter-spacing:.5px}
   .bignum{font-size:76px;font-weight:800;text-align:center;letter-spacing:1px;margin:10px 0}
   .bigword{font-size:40px;font-weight:800;color:var(--gold-ink);text-align:center;margin:8px 0}
+  .teachhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 4px}
+  .teachhead .th-book{display:flex;align-items:center;gap:10px;text-align:left}
+  .teachhead .th-book .pegimg-sm,.teachhead .th-book .imgph-sm{width:60px;height:60px}
+  .teachhead .th-name{font-size:20px;font-weight:800;line-height:1.1}
+  .teachhead .th-sub{font-size:14px;color:var(--muted);font-weight:700}
+  .teachhead .th-img{text-align:center}
+  .teachhead .th-img .pegimg,.teachhead .th-img .imgph{width:120px;height:120px}
+  .teachhead .th-word{font-size:20px;font-weight:800;color:var(--gold-ink);margin-top:2px}
   .sounds{text-align:center;color:var(--muted);font-size:15px;margin-bottom:8px}
   .teachbox{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;line-height:1.55;font-size:14px}
   .opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
@@ -224,10 +235,10 @@
 
   /* ---- image slot ---- */
   .pegimg{width:150px;height:150px;object-fit:contain;filter:drop-shadow(0 4px 10px var(--img-shadow))}
-  .imgph{width:150px;height:150px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;color:var(--muted);font-size:11px;text-align:center}
+  .imgph{width:150px;height:150px;display:none;align-items:center;justify-content:center;flex-direction:column;gap:3px;color:var(--muted);font-size:11px;text-align:center}
   .imgwrap{display:grid;place-items:center;margin:6px 0}
   .pegimg-sm{width:104px;height:104px;object-fit:contain;filter:drop-shadow(0 3px 7px var(--shadow-soft))}
-  .imgph-sm{width:104px;height:104px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--muted);font-size:10px;text-align:center}
+  .imgph-sm{width:104px;height:104px;display:none;align-items:center;justify-content:center;flex-direction:column;color:var(--muted);font-size:10px;text-align:center}
   .srflash{animation:srpop .4s cubic-bezier(.2,.8,.2,1)}
   @keyframes srpop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
   .storeitem{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:left}
@@ -896,7 +907,8 @@
   </div>
 
   <div class="modal" id="payModal" style="display:none">
-    <div class="modal-card" style="text-align:center">
+    <div class="modal-card" style="text-align:center;position:relative">
+      <button class="lclose" id="payX" style="position:absolute;top:8px;right:10px;font-size:22px">✕</button>
       <div style="font-size:40px;line-height:1;margin-bottom:6px">🔥📖</div>
       <h2 style="font-size:20px;margin:0 0 4px">Unlock the whole Bible</h2>
       <p class="lead" style="font-size:13px;margin:0 0 14px">You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelation.</p>
@@ -1009,6 +1021,10 @@ const SND_WHY = {
 9:"a 9 is the mirror image of p and b — 9."
 };
 function digitSounds(n){ return String(n).split("").map(d=>SND[+d]).join(" · "); }
+// "Use the Major System to decode SUN to 02 because 0 = s and 2 = n"
+function decodeSentence(n){ const w=pegFor(n).word, nn=(n>=0&&n<10?"0"+n:""+n), ds=String(nn).split("");
+  const parts=ds.map(d=>`<b>${d}</b> = <b class="gold">${SND[+d]||"?"}</b>`);
+  return `Use the Major System to decode <b class="gold">${(w||"").toUpperCase()}</b> to <b class="gold">${nn}</b> because ${parts.join(ds.length>2?", ":" and ")}.`; }
 // number pegs are two-digit (00–99): show low peg numbers zero-padded ("01","02","03") so the
 // two-consonant peg words (Seed 01, Sun 02, Sumo 03) read correctly. Books/sounds stay single-digit.
 function dispNum(kind,n){ return (kind!=="book" && n>=0 && n<10) ? "0"+n : ""+n; }
@@ -1833,12 +1849,10 @@ function buildUnits(){
     {id:"snd:0-4",label:"Sounds 0–4",kind:"sound",items:[0,1,2,3,4]},
     {id:"snd:5-9",label:"Sounds 5–9",kind:"sound",items:[5,6,7,8,9]}
   ]});
-  // 1) The Torah — books 1-5, taught as number images (foundation).
-  units.push({name:"The Torah · books 1–5", torahEnd:true, skills: range(1,5).map(d=>({id:"num:"+d,label:PEGS[d],kind:"num",items:[d]}))});
-  // 2) First Gospel — Matthew (book 40): the New Testament anchor of the foundation.
-  units.push({name:"First Gospel · Matthew", skills:[bk(40)]});
-  // 3) Memory Palace — build ONE personal palace (the last step of the foundation; its lesson opens with the video).
-  units.push({name:"Memory Palace · build your first", palace:true, foundationEnd:true, skills:[
+  // 1) The Foundation — ONE track: the Torah (books 1-5) + Matthew (40) + your first memory palace.
+  units.push({name:"The Foundation · Torah, Matthew &amp; a palace", torahEnd:true, foundationEnd:true, skills:[
+    ...range(1,5).map(d=>({id:"num:"+d,label:PEGS[d],kind:"num",items:[d]})),
+    bk(40),
     {id:"palace:0",label:"My palace",kind:"palace",items:[0]}
   ]});
   // Optional bonus palaces get appended to the end of each later section (never block progress).
@@ -1904,7 +1918,7 @@ function skillUnlocked(ui,si){
 }
 /* ---- milestone checkpoints (grey until reached, then gold) ---- */
 const MILESTONES=[
- {after:"Memory Palace · build your first", reached:()=>foundationsDone(), e:"🕯️", t:"Foundations Laid",
+ {after:"The Foundation", reached:()=>foundationsDone(), e:"🕯️", t:"Foundations Laid",
   c:"The Torah (Genesis–Deuteronomy), Matthew, and your first memory palace are complete — Verses and Stories are now unlocked.",
   d:"The story of creation and the life of Jesus are open to you — you can already stand on foundational promises, commands, and identity verses."},
  {after:"Round 4 ", reached:()=>Prog.level>=MILESTONE, counts:true, e:"🏆", t:"Bible Power Unlocked",
@@ -2350,26 +2364,35 @@ function renderStep(){
   const word=itemWord(s.kind,s.n), p=pegFor(s.n), snd=p.sounds;
   if(s.type==="teach"){
     const mb=MNEM_BOOK[s.n];
-    const hook = s.kind==="book"
-      ? (mb&&mb.t
-          ? `<b class="gold">Picture this scene:</b> ${mb.t}<div class="hint" style="margin-top:8px">One scene, hiding the book <b>${bookName(s.n)}</b> and its number image <b class="gold">${word}</b>.</div>`
-          : (mb&&mb.p
-            ? `The name <b>${bookName(s.n)}</b> breaks into sounds — say each part and picture its word:${phonHtml(mb.p)}<div style="margin-top:6px">Put them together (<b>${mb.s}</b>) and chain that with its number image, <b class="gold">${word}</b>.</div>`
-            : `The name <b>${bookName(s.n)}</b> sounds like <b>${mb?mb.s:""}</b>, and its number image is <b class="gold">${word}</b>. Picture them together.`))
-      : `<b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${NOTE[s.n]?" ("+NOTE[s.n]+")":""} — make it move, glow, and refuse to be forgotten.`
-        + (DECODE[s.n]?`<br><br><b style="color:var(--good)">Read it back → ${dispNum(s.kind,s.n)}:</b> ${DECODE[s.n]}`:"");
-    const rel=relBoxes(s.n);
-    const custom = (s.kind==="book" && Prog.customBook[s.n]) ? `<div class="relbox" style="border:1px solid var(--gold2)"><div class="rl" style="color:var(--gold-ink)">★ My own way to remember</div>${Prog.customBook[s.n]}</div>` : "";
-    const editBtn = s.kind==="book" ? `<button class="btn ghost sm" id="lEdit" style="width:100%;margin-top:8px">✏️ ${Prog.customBook[s.n]?"Edit my note":"Make it my own — add my own idea"}</button>` : "";
-    body=`<div class="stage">
-      <div class="prompt">${s.kind==="book"?"Book "+s.n+" · "+bookName(s.n):"Learn the picture for"}</div>
-      <div class="bignum">${dispNum(s.kind,s.n)}</div>
-      <div class="sounds">sounds: <b>${snd}</b></div>
-      <div class="imgwrap">${pegImg(s.kind,s.n,word,true)}</div>
-      <div class="bigword">${word}</div></div>
-      ${rel || `<div class="teachbox">${hook}</div>`}
-      ${custom}${editBtn}
-      <button class="btn" id="lNext" style="margin-top:10px">I can see it →</button>`;
+    const nn = s.n<10 ? "0"+s.n : ""+s.n;
+    const decode = decodeSentence(s.n);
+    if(s.kind==="book"){
+      // one combined scene (image → book) is the only example needed
+      const scene = (typeof REL!=="undefined" && REL[s.n] && REL[s.n].imgToBook) ? REL[s.n].imgToBook
+        : (mb&&mb.t ? mb.t : `The name <b>${bookName(s.n)}</b> sounds like <b>${mb?mb.s:""}</b>; its number image is <b class="gold">${word}</b>.`);
+      const custom = Prog.customBook[s.n] ? `<div class="relbox" style="border:1px solid var(--gold2)"><div class="rl" style="color:var(--gold-ink)">★ My own scene</div>${Prog.customBook[s.n]}</div>` : "";
+      const editBtn = `<button class="btn ghost sm" id="lEdit" style="width:100%;margin-top:8px">✏️ ${Prog.customBook[s.n]?"Edit my scene":"Write my own scene"}</button>`;
+      body = `<div class="stage">
+          <div class="prompt">Book of the Bible</div>
+          <div class="teachhead">
+            <div class="th-book">${pegImg("book",s.n,bookName(s.n),false)}<div><div class="th-name">${bookName(s.n)}</div><div class="th-sub">Book ${nn}</div></div></div>
+            <div class="th-img">${pegImg("num",s.n,word,true)}<div class="th-word">${word}</div></div>
+          </div>
+          <div class="sounds">sounds: <b>${snd}</b></div></div>
+        <div class="hint" style="text-align:center;margin:10px 0 2px">Write your own scene below to lock it in — here's an example:</div>
+        ${editBtn}${custom}
+        <div class="teachbox"><b class="gold">Example · image → book:</b> ${scene}<br><br>${decode}</div>
+        <button class="btn" id="lNext" style="margin-top:10px">I can see it →</button>`;
+    } else {
+      body = `<div class="stage">
+          <div class="prompt">Learn the picture for</div>
+          <div class="bignum">${dispNum(s.kind,s.n)}</div>
+          <div class="sounds">sounds: <b>${snd}</b></div>
+          <div class="imgwrap">${pegImg(s.kind,s.n,word,true)}</div>
+          <div class="bigword">${word}</div></div>
+        <div class="teachbox"><b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${NOTE[s.n]?" ("+NOTE[s.n]+")":""}.<br><br>${decode}</div>
+        <button class="btn" id="lNext" style="margin-top:10px">I can see it →</button>`;
+    }
   } else if(s.type==="q_n2i"){ // number → image
     const w=shuffle([word,...distract(s.kind,s.n,3).map(x=>pegFor(x).word)]);
     body=`<div class="prompt">Which image is number <b>${dispNum(s.kind,s.n)}</b>?</div>
@@ -2408,6 +2431,7 @@ function renderStep(){
   L.innerHTML=`<div class="lesson">
     <div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div></div>
     <div id="lBody">${reviewChip}${body}</div></div>`;
+  const c=document.querySelector(".content"); if(c) c.scrollTop=0;   // every lesson step starts at the top
   el("lClose").onclick=()=>renderPath();
   wireStep(s);
 }
@@ -2698,12 +2722,12 @@ function renderVerse(){
   V.innerHTML=`<h2>Verses</h2>
     <p class="lead">Pick what to work on — build verses into pictures, then test what you've hidden in your heart.</p>
     <div class="versehub">
-      <button class="vhub" data-view="sugg"><span class="vi">✨</span><span>Suggested to memorize</span><small>${suggReach} in reach</small></button>
-      <button class="vhub" data-view="topics"><span class="vi">📚</span><span>Browse by topic</span><small>${TOPICS.length}</small></button>
-      <button class="vhub" data-view="mem"><span class="vi">★</span><span>Memorized verses</span><small>${mem.length}</small></button>
-      <button class="vhub" data-view="saved"><span class="vi">🔖</span><span>Saved for later</span><small>${saved.length}</small></button>
-      <button class="vhub" id="vNumTest"><span class="vi">🔢</span><span>Test my Numbers &amp; Books</span></button>
-      <button class="vhub review" id="vMemTest"><span class="vi">🎯</span><span>${reviewLabel}</span></button>
+      <button class="vhub sq" data-view="sugg"><span class="vi">✨</span><span>Suggested</span><small>${suggReach} in reach</small></button>
+      <button class="vhub sq" data-view="topics"><span class="vi">📚</span><span>Topics</span><small>${TOPICS.length}</small></button>
+      <button class="vhub sq" data-view="mem"><span class="vi">★</span><span>Memorized</span><small>${mem.length}</small></button>
+      <button class="vhub sq" data-view="saved"><span class="vi">🔖</span><span>Saved</span><small>${saved.length}</small></button>
+      <button class="vhub wide" id="vNumTest"><span class="vi">🔢</span><span>Test my Numbers &amp; Books</span></button>
+      <button class="vhub wide review" id="vMemTest"><span class="vi">🎯</span><span>${reviewLabel}</span></button>
     </div>`;
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
   el("vNumTest").onclick=()=> knownNumbers().size>=2 ? startNumberTest() : toast("Learn a few numbers first in the Learn tab!");
@@ -3448,6 +3472,7 @@ function closePaywall(){ if(el("payModal")) el("payModal").style.display="none";
 function wirePaywall(){
   if(el("payGo")) el("payGo").onclick=()=>Billing.startCheckout();
   if(el("payClose")) el("payClose").onclick=closePaywall;
+  if(el("payX")) el("payX").onclick=closePaywall;
   if(el("payModal")) el("payModal").onclick=e=>{ if(e.target===el("payModal")) closePaywall(); };
   if(el("payRestore")) el("payRestore").onclick=()=>{
     // If a subscriber returns on a new device, they re-open checkout; a real backend would look
