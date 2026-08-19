@@ -32,7 +32,7 @@
   .phone{
     width:100%;max-width:412px;height:100dvh;max-height:892px;position:relative;
     background:radial-gradient(900px 500px at 50% -8%,#1a1f2b 0%,var(--bg) 55%);
-    display:flex;flex-direction:column;overflow:hidden;
+    display:flex;flex-direction:column;overflow:hidden;color:var(--ink);
     border:10px solid #05060a;border-radius:44px;box-shadow:0 30px 80px rgba(0,0,0,.6);
   }
   @media (max-width:480px){ body{align-items:stretch} .phone{max-height:none;border:0;border-radius:0} }
@@ -406,34 +406,127 @@
   .phone[data-theme="illumined"] code{background:rgba(0,0,0,.35);color:var(--gold-hi)}
   .phone[data-theme="illumined"] .pill{background:rgba(232,201,106,.08);border-color:var(--line);color:var(--gold-hi)}
 
-  .phone[data-theme="glass"]{--bg:#0a0b10;--panel:#14161f;--panel2:#1b1e2b;--panel3:#242838;--ink:#eef0f6;--muted:#95a0b8;--gold:#e8c96a;--gold2:#b8912f;--accent:#2f6bd6;--green:#1f8f5a;--miss:#c0344a;--line:#2b3040;
-    background:radial-gradient(700px 400px at 50% -6%,#1b2340 0%,#0a0b10 55%)}
-  .phone[data-theme="glass"] .brand b,.phone[data-theme="glass"] h1,.phone[data-theme="glass"] h2,.phone[data-theme="glass"] .mtitle{font-family:"Cinzel",serif;letter-spacing:.5px}
-  .phone[data-theme="glass"] .card{border:2px solid #04050a;box-shadow:inset 0 0 0 1px rgba(232,201,106,.32),0 8px 30px rgba(0,0,0,.5)}
+  /* ============ STAINED GLASS — cathedral leaded-glass, jewel tones, Cinzel ============ */
+  .phone[data-theme="glass"]{--bg:#0a0b14;--panel:#141726;--panel2:#1b1f33;--panel3:#252b45;--ink:#eef0f6;--muted:#98a0bd;--gold:#e8c96a;--gold2:#b8912f;--accent:#4f7fe0;--green:#3fae7a;--miss:#d05a72;--line:#33406b;
+    background:
+      radial-gradient(560px 300px at 16% 2%,rgba(79,127,224,.20),transparent 60%),
+      radial-gradient(560px 300px at 84% 6%,rgba(208,90,114,.16),transparent 60%),
+      radial-gradient(700px 440px at 50% -6%,#20264a 0%,#0a0b14 64%)}
+  .phone[data-theme="glass"] .brand b,.phone[data-theme="glass"] h1,.phone[data-theme="glass"] h2,.phone[data-theme="glass"] .mtitle,
+  .phone[data-theme="glass"] .steptitle,.phone[data-theme="glass"] .grouphead,.phone[data-theme="glass"] .storydivider,
+  .phone[data-theme="glass"] .milestone .mtitle,.phone[data-theme="glass"] .ref{font-family:"Cinzel",serif;letter-spacing:.5px}
+  .phone[data-theme="glass"] .topbar{background:linear-gradient(180deg,#131730,#0c0f1f);border-bottom:1px solid #33406b}
+  .phone[data-theme="glass"] .tabbar{background:#0c0f1f;border-top:1px solid #33406b}
+  .phone[data-theme="glass"] .tabbar button.on{color:var(--gold)}
+  /* leaded-glass cards: dark "leading" border + luminous inner hairline */
+  .phone[data-theme="glass"] .card{background:linear-gradient(180deg,rgba(79,127,224,.06),rgba(208,90,114,.04));border:2px solid #05070f;box-shadow:inset 0 0 0 1px rgba(232,201,106,.30),0 10px 34px rgba(0,0,0,.55)}
+  .phone[data-theme="glass"] .callout,.phone[data-theme="glass"] .teachbox{border:1px solid #05070f;box-shadow:inset 0 0 0 1px rgba(232,201,106,.16)}
+  /* jewel buttons framed in leading */
+  .phone[data-theme="glass"] .btn{background:linear-gradient(180deg,#f0d98a,#c9962f);color:#241a02;border:2px solid #05070f;box-shadow:0 5px 0 #7c5e1c}
+  .phone[data-theme="glass"] .btn:active{box-shadow:0 2px 0 #7c5e1c}
+  .phone[data-theme="glass"] .btn.blue{background:linear-gradient(180deg,#7aa0ec,#3a5fbf);color:#fff;border:2px solid #05070f;box-shadow:0 5px 0 #24386f}
+  .phone[data-theme="glass"] .btn.blue:active{box-shadow:0 2px 0 #24386f}
+  .phone[data-theme="glass"] .btn.ghost{background:rgba(255,255,255,.03);color:var(--gold);border:1px solid #33406b;box-shadow:0 5px 0 #10131f}
+  .phone[data-theme="glass"] .btn.ghost:active{box-shadow:0 2px 0 #10131f}
+  /* glass-pane tiles (rounded rects, leaded) */
+  .phone[data-theme="glass"] .tile{border-radius:14px;border:2px solid #05070f;box-shadow:0 5px 0 #05070f}
+  .phone[data-theme="glass"] .tile:active{box-shadow:0 2px 0 #05070f}
+  .phone[data-theme="glass"] .tile.gold{background:linear-gradient(160deg,#f2dd90,#b8912f)}
+  .phone[data-theme="glass"] .tile.new{background:linear-gradient(160deg,#88a8f0,#3a5fbf);color:#fff}
+  .phone[data-theme="glass"] .tile.gray{background:linear-gradient(160deg,#7b8296,#464d61);color:#eef0f6}
+  .phone[data-theme="glass"] .tile.locked{background:#141726;color:#4a5170;box-shadow:0 5px 0 #05070f}
+  .phone[data-theme="glass"] .counter .v,.phone[data-theme="glass"] .stat .v{color:var(--gold)}
+  .phone[data-theme="glass"] .milestone.reached{background:linear-gradient(135deg,rgba(232,201,106,.14),rgba(79,127,224,.08));border:1px solid var(--gold2);box-shadow:inset 0 0 0 1px rgba(232,201,106,.22)}
+  .phone[data-theme="glass"] .grouphead.grp-gold{background:linear-gradient(135deg,#f0d98a,#b8912f);color:#241a02}
+  .phone[data-theme="glass"] code{background:rgba(0,0,0,.4);color:var(--gold)}
 
-  .phone[data-theme="quest"]{--bg:#122320;--panel:#1b312b;--panel2:#213a33;--panel3:#2b4a41;--ink:#f5eede;--muted:#a6b3a5;--gold:#e9c46a;--gold2:#c99a34;--accent:#2a9d8f;--green:#2a9d8f;--miss:#e76f51;--line:#2d4640;
-    background:radial-gradient(820px 460px at 50% -6%,#214a41 0%,#0f1c19 58%)}
-  .phone[data-theme="quest"] .brand b,.phone[data-theme="quest"] h1,.phone[data-theme="quest"] h2,.phone[data-theme="quest"] .mtitle,.phone[data-theme="quest"] .grouphead,.phone[data-theme="quest"] .steptitle{font-family:"Luckiest Guy",cursive;letter-spacing:.6px;font-weight:400}
-  .phone[data-theme="quest"] .tile,.phone[data-theme="quest"] .btn{border-radius:16px}
+  /* ============ SCRIPTURE QUEST — youth adventure/RPG, chunky, Luckiest Guy ============ */
+  .phone[data-theme="quest"]{--bg:#122320;--panel:#1b312b;--panel2:#213a33;--panel3:#2b4a41;--ink:#f5eede;--muted:#a6b3a5;--gold:#f4b942;--gold2:#c9852f;--accent:#2ec4b6;--green:#4caf50;--miss:#e76f51;--line:#2d4640;
+    background:radial-gradient(820px 460px at 50% -6%,#245046 0%,#0f1c19 60%)}
+  .phone[data-theme="quest"] .brand b,.phone[data-theme="quest"] h1,.phone[data-theme="quest"] h2,.phone[data-theme="quest"] .mtitle,
+  .phone[data-theme="quest"] .grouphead,.phone[data-theme="quest"] .steptitle,.phone[data-theme="quest"] .steplabel,
+  .phone[data-theme="quest"] .storydivider,.phone[data-theme="quest"] .bigword,.phone[data-theme="quest"] .counter .v,
+  .phone[data-theme="quest"] .stat .v,.phone[data-theme="quest"] .milestone .mtitle{font-family:"Luckiest Guy",cursive;letter-spacing:.6px;font-weight:400}
+  .phone[data-theme="quest"] .topbar{background:linear-gradient(180deg,#1c332c,#122019);border-bottom:2px solid #2d4640}
+  .phone[data-theme="quest"] .tabbar{background:#122019;border-top:2px solid #2d4640}
+  .phone[data-theme="quest"] .tabbar button.on{color:var(--gold)}
+  .phone[data-theme="quest"] .card{border:2px solid #0c1613;border-radius:20px;box-shadow:0 6px 0 #0c1613}
+  /* chunky game buttons */
+  .phone[data-theme="quest"] .btn{border-radius:16px;background:linear-gradient(180deg,#f9c85a,#e0982f);color:#3a2405;box-shadow:0 6px 0 #a86a1c;text-transform:uppercase;letter-spacing:.5px}
+  .phone[data-theme="quest"] .btn:active{box-shadow:0 2px 0 #a86a1c}
+  .phone[data-theme="quest"] .btn.blue{background:linear-gradient(180deg,#48d6c6,#1f9d90);color:#04211d;box-shadow:0 6px 0 #14675f}
+  .phone[data-theme="quest"] .btn.blue:active{box-shadow:0 2px 0 #14675f}
+  .phone[data-theme="quest"] .btn.ghost{background:rgba(255,255,255,.05);color:var(--gold);box-shadow:0 6px 0 #0c1613}
+  .phone[data-theme="quest"] .btn.ghost:active{box-shadow:0 2px 0 #0c1613}
+  /* level-node tiles */
+  .phone[data-theme="quest"] .tile{border-radius:18px;box-shadow:0 6px 0 #0c1613}
+  .phone[data-theme="quest"] .tile:active{box-shadow:0 3px 0 #0c1613}
+  .phone[data-theme="quest"] .tile.gold{background:linear-gradient(180deg,#f9c85a,#c9852f);box-shadow:0 6px 0 #8a5a1e}
+  .phone[data-theme="quest"] .tile.new{background:linear-gradient(180deg,#48d6c6,#1f9d90);color:#04211d;box-shadow:0 6px 0 #14675f}
+  .phone[data-theme="quest"] .tile.gray{background:linear-gradient(180deg,#8a9585,#5a6357);color:#f5eede}
+  .phone[data-theme="quest"] .tile.locked{background:#1b312b;color:#5c6b5e;box-shadow:0 6px 0 #0c1613}
+  .phone[data-theme="quest"] .milestone.reached{background:linear-gradient(135deg,#2e4a1f,#1e3315);border:2px solid var(--gold)}
+  .phone[data-theme="quest"] .grouphead.grp-gold{background:linear-gradient(135deg,#f9c85a,#c9852f);color:#3a2405}
+  .phone[data-theme="quest"] code{background:rgba(0,0,0,.3);color:var(--gold)}
 
-  .phone[data-theme="buddy"]{--bg:#eaf4ff;--panel:#ffffff;--panel2:#eef3f8;--panel3:#e4ebf3;--ink:#2b2f38;--muted:#7c8592;--gold:#ffc800;--gold2:#e0a600;--accent:#1cb0f6;--green:#58cc02;--miss:#ff5252;--line:#e2e8ef;
-    background:radial-gradient(720px 420px at 50% -6%,#ffffff 0%,#dcecff 62%);font-family:"Baloo 2","Fredoka",system-ui,sans-serif}
-  .phone[data-theme="buddy"] .brand b,.phone[data-theme="buddy"] h1,.phone[data-theme="buddy"] h2,.phone[data-theme="buddy"] .mtitle,.phone[data-theme="buddy"] .steptitle,.phone[data-theme="buddy"] .grouphead{font-family:"Baloo 2",cursive;font-weight:800}
+  /* ============ VERSE BUDDY — bright friendly light theme for kids, Baloo 2 ============ */
+  .phone[data-theme="buddy"]{--bg:#eaf4ff;--panel:#ffffff;--panel2:#f0f5fb;--panel3:#e4ebf3;--ink:#3a4a5e;--muted:#8a97a8;--gold:#ffb800;--gold2:#e0a600;--accent:#1cb0f6;--green:#58cc02;--miss:#ff5b5b;--line:#e2e8ef;
+    background:radial-gradient(720px 420px at 50% -6%,#ffffff 0%,#d7ebff 62%);font-family:"Baloo 2","Fredoka",system-ui,sans-serif}
+  .phone[data-theme="buddy"] .brand b,.phone[data-theme="buddy"] h1,.phone[data-theme="buddy"] h2,.phone[data-theme="buddy"] .mtitle,
+  .phone[data-theme="buddy"] .steptitle,.phone[data-theme="buddy"] .grouphead,.phone[data-theme="buddy"] .storydivider{font-family:"Baloo 2",cursive;font-weight:800}
   .phone[data-theme="buddy"] .topbar{background:linear-gradient(180deg,#ffffff,#eef5ff);border-bottom-color:#e2e8ef}
   .phone[data-theme="buddy"] .tabbar{background:#fff;border-top-color:#e2e8ef}
-  .phone[data-theme="buddy"] .vbox{background:#eef3f8;border-color:#d7dee7;color:#8a93a1}
-  .phone[data-theme="buddy"] .biblestrip .bk{background:#eef3f8;color:#aab3c0}
+  .phone[data-theme="buddy"] .card{border-color:#e2e8ef;box-shadow:0 6px 0 #dbe3ec,0 12px 24px rgba(80,120,170,.10)}
+  /* bright chunky buttons */
+  .phone[data-theme="buddy"] .btn{box-shadow:0 5px 0 #cc9300}
+  .phone[data-theme="buddy"] .btn:active{box-shadow:0 2px 0 #cc9300}
+  .phone[data-theme="buddy"] .btn.blue{background:linear-gradient(135deg,#4cc2ff,#1cb0f6);color:#fff;box-shadow:0 5px 0 #1183c2}
+  .phone[data-theme="buddy"] .btn.blue:active{box-shadow:0 2px 0 #1183c2}
+  .phone[data-theme="buddy"] .btn.ghost{background:#fff;color:var(--accent);border:2px solid #e2e8ef;box-shadow:0 5px 0 #dbe3ec}
+  .phone[data-theme="buddy"] .btn.ghost:active{box-shadow:0 2px 0 #dbe3ec}
+  .phone[data-theme="buddy"] .btn:disabled{background:#e4ebf3;color:#aab4c2;box-shadow:0 5px 0 #d3dbe5}
+  .phone[data-theme="buddy"] .btn:disabled:active{transform:none;box-shadow:0 5px 0 #d3dbe5}
+  /* tiles */
+  .phone[data-theme="buddy"] .tile{box-shadow:0 6px 0 #dbe3ec}
+  .phone[data-theme="buddy"] .tile.gold{box-shadow:0 6px 0 #cc9300}
+  .phone[data-theme="buddy"] .tile.new{box-shadow:0 6px 0 #1183c2}
+  .phone[data-theme="buddy"] .tile.gray{background:linear-gradient(135deg,#b8c2cf,#93a0b0);color:#fff;box-shadow:0 6px 0 #9aa6b4}
+  .phone[data-theme="buddy"] .tile.locked{background:#eef3f8;color:#b3bcc8;box-shadow:0 6px 0 #dde3ea}
+  /* light-mode contrast fixes (base uses dark state colors) */
+  .phone[data-theme="buddy"] .opt.correct,.phone[data-theme="buddy"] .typein.correct,.phone[data-theme="buddy"] .vpsel.correct{background:#e6f8d8;border-color:var(--green)}
+  .phone[data-theme="buddy"] .opt.wrong,.phone[data-theme="buddy"] .typein.wrong,.phone[data-theme="buddy"] .vpsel.wrong{background:#ffe3e3;border-color:var(--miss)}
+  .phone[data-theme="buddy"] .feedback.ok{background:#e6f8d8;border-top-color:#c4e8a0}
+  .phone[data-theme="buddy"] .feedback.no{background:#ffe3e3;border-top-color:#ffc4c4}
+  .phone[data-theme="buddy"] .feedback.ok .ttl{color:#3f9e00}
+  .phone[data-theme="buddy"] .feedback.no .ttl{color:#d23b3b}
+  .phone[data-theme="buddy"] .mtile.sel{background:#dbf0ff;border-color:var(--accent)}
+  .phone[data-theme="buddy"] .steptext,.phone[data-theme="buddy"] .cellcard .mnem,.phone[data-theme="buddy"] tr.bdetail td{color:#4a5a6e}
+  .phone[data-theme="buddy"] tr.bdetail td{background:#f0f5fb}
+  .phone[data-theme="buddy"] .vgrid .cell{background:#e4ebf3;color:#aab4c2}
+  .phone[data-theme="buddy"] .vgrid .cell.reach{background:#fff2cc;border-color:var(--gold2);color:#a06f00}
+  .phone[data-theme="buddy"] .chapbox{background:#f0f5fb;border-color:#dbe3ec;color:#8a97a8}
+  .phone[data-theme="buddy"] .chapbox.ready{background:linear-gradient(135deg,#fff2cc,#ffe89a);border-color:var(--gold2);color:#a06f00}
+  .phone[data-theme="buddy"] .vbox{background:#f0f5fb;border-color:#dbe3ec;color:#8a97a8}
+  .phone[data-theme="buddy"] .vbox.ready{border-color:var(--gold2);color:#a06f00}
+  .phone[data-theme="buddy"] .vbox.save,.phone[data-theme="buddy"] .vbox.sugmem,.phone[data-theme="buddy"] .vbox.memgreen{background:#e6f8d8;border-color:var(--green);color:#3f9e00}
+  .phone[data-theme="buddy"] .vbox.skip,.phone[data-theme="buddy"] .vbox.sugskip{background:#ffe3e3;border-color:var(--miss);color:#d23b3b}
+  .phone[data-theme="buddy"] .vbox.locked{background:#eef3f8;border-color:#e2e8ef;color:#b3bcc8}
+  /* re-assert gold/highlight states at theme specificity (buddy overrides the base element, which would otherwise win) */
+  .phone[data-theme="buddy"] .vbox.mem{background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:var(--gold);color:#3a2a00}
+  .phone[data-theme="buddy"] .vgrid .cell.mem{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#3a2a00;font-weight:800}
+  .phone[data-theme="buddy"] .biblestrip .bk{background:#e4ebf3;color:#aab4c2}
+  .phone[data-theme="buddy"] .biblestrip .bk.on{background:var(--accent);color:#fff}
+  .phone[data-theme="buddy"] .subnav button.active{color:var(--gold2);border-color:var(--gold2)}
+  .phone[data-theme="buddy"] .screenkind.ch{background:#fff2cc;color:#a06f00;border-color:var(--gold2)}
+  .phone[data-theme="buddy"] .metric.mem{color:#3f9e00}
+  .phone[data-theme="buddy"] .why{background:#eef5ff}
   .phone[data-theme="buddy"] code{background:#eef3f8;color:#c98a00}
-  .phone[data-theme="buddy"] .btn.ghost{box-shadow:0 5px 0 #cdd6e0}
-  .phone[data-theme="buddy"] .tile{box-shadow:0 6px 0 #cdd6e0}
-  .phone[data-theme="buddy"] .tile.locked{box-shadow:0 6px 0 #dde3ea;color:#b3bcc8}
-  .phone[data-theme="buddy"] .feedback.ok{background:#e5f8d8}
-  .phone[data-theme="buddy"] .feedback.no{background:#ffe3e3}
-  .phone[data-theme="buddy"] .milestone.reached{background:linear-gradient(135deg,#fff2c9,#ffe08a)}
+  .phone[data-theme="buddy"] .milestone.reached{background:linear-gradient(135deg,#fff2c9,#ffe08a);border-color:var(--gold2)}
   .phone[data-theme="buddy"] .milestone.reached .mtitle{color:#8a6d00}
   .phone[data-theme="buddy"] .milestone.reached .msub{color:#6a5500}
   .phone[data-theme="buddy"] .gemcount{background:rgba(0,0,0,.05)}
-  .phone[data-theme="buddy"] .gemcount .gc-l{color:#6a5500}
+  .phone[data-theme="buddy"] .gemcount .gc-n{color:var(--gold2)}
+  .phone[data-theme="buddy"] .gemcount .gc-l{color:#6a7585}
   .relbox{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;text-align:left;font-size:13.5px;line-height:1.5}
   .relbox .rl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--good);font-weight:800;margin-bottom:4px}
   .phon{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0}
@@ -560,6 +653,9 @@
       <div class="prof-sect" style="margin-top:16px">Theme</div>
       <button class="theme-opt" data-th="illumined"><span class="sw" style="background:linear-gradient(135deg,#0e0a26,#8b7bff,#f6dd8c)"></span><div><div class="tn">Illumined Night</div><div class="td">Glowing worship starfield · main theme</div></div></button>
       <button class="theme-opt" data-th="classic"><span class="sw" style="background:linear-gradient(135deg,#171a21,#e3b34a)"></span><div><div class="tn">Classic</div><div class="td">Midnight navy &amp; gold</div></div></button>
+      <button class="theme-opt" data-th="glass"><span class="sw" style="background:linear-gradient(135deg,#3a5fbf,#b8912f 55%,#d05a72)"></span><div><div class="tn">Stained Glass</div><div class="td">Cathedral leaded glass · jewel tones</div></div></button>
+      <button class="theme-opt" data-th="quest"><span class="sw" style="background:linear-gradient(135deg,#1f9d90,#f4b942)"></span><div><div class="tn">Scripture Quest</div><div class="td">Playful adventure · for youth</div></div></button>
+      <button class="theme-opt" data-th="buddy"><span class="sw" style="background:linear-gradient(135deg,#1cb0f6,#58cc02 60%,#ffb800)"></span><div><div class="tn">Verse Buddy</div><div class="td">Bright &amp; friendly · for kids</div></div></button>
 
       <div class="prof-sect" style="margin-top:16px">Daily reminder</div>
       <div id="reminderBox"></div>
@@ -1058,7 +1154,9 @@ const GEMS=[
 ["1 Peter",3,15,"command"],["1 Peter",4,8,"command"],["1 Peter",5,7,"comfort"],["1 Peter",5,8,"command"],["2 Peter",1,3,"power"],["2 Peter",3,9,"promise"],["1 John",1,7,"gospel"],["1 John",1,9,"promise"],
 ["1 John",2,15,"command"],["1 John",3,1,"identity"],["1 John",4,4,"power"],["1 John",4,8,"character"],["1 John",4,19,"faith"],["1 John",5,4,"faith"],["2 John",1,6,"command"],["3 John",1,2,"promise"],
 ["3 John",1,4,"comfort"],["Jude",1,20,"command"],["Jude",1,24,"worship"],["Revelation",1,8,"identity"],["Revelation",3,20,"promise"],["Revelation",4,11,"worship"],["Revelation",5,12,"worship"],["Revelation",21,4,"promise"],
-["Revelation",22,13,"identity"]
+["Revelation",22,13,"identity"],
+/* ---- per-book early-reachable additions (auto-curated, validated vs KJV, dedup'd) ---- */
+["Judges",2,1,"promise"],["Judges",7,7,"power"],["Ruth",1,8,"character"],["Ruth",2,4,"worship"],["1 Samuel",2,3,"wisdom"],["1 Samuel",2,9,"promise"],["2 Samuel",5,10,"promise"],["2 Samuel",7,3,"faith"],["2 Samuel",9,7,"comfort"],["1 Kings",2,2,"character"],["1 Kings",2,3,"command"],["1 Kings",3,5,"promise"],["1 Kings",3,9,"wisdom"],["2 Kings",2,2,"faith"],["2 Kings",2,9,"power"],["2 Kings",7,9,"gospel"],["1 Chronicles",4,10,"faith"],["2 Chronicles",1,7,"character"],["2 Chronicles",1,10,"wisdom"],["2 Chronicles",6,14,"worship"],["2 Chronicles",7,3,"worship"],["Ezra",1,3,"command"],["Ezra",3,11,"worship"],["Ezra",5,5,"power"],["Ezra",7,9,"faith"],["Ezra",7,10,"character"],["Nehemiah",1,4,"character"],["Nehemiah",4,14,"command"],["Nehemiah",6,9,"faith"],["Esther",2,15,"character"],["Esther",5,2,"comfort"],["Esther",9,1,"power"],["Job",5,8,"faith"],["Job",5,17,"wisdom"],["Job",8,7,"promise"],["Job",12,10,"power"],["Lamentations",3,24,"identity"],["Lamentations",3,25,"promise"],["Ezekiel",2,1,"command"],["Ezekiel",2,2,"power"],["Ezekiel",2,6,"comfort"],["Ezekiel",3,3,"wisdom"],["Hosea",3,5,"promise"],["Hosea",6,1,"comfort"],["Joel",1,3,"command"],["Joel",2,1,"command"],["Joel",2,12,"command"],["Amos",3,3,"wisdom"],["Amos",4,13,"power"],["Amos",5,4,"promise"],["Amos",5,8,"worship"],["Amos",5,14,"command"],["Obadiah",1,3,"wisdom"],["Obadiah",1,4,"power"],["Obadiah",1,12,"command"],["Jonah",1,9,"identity"],["Jonah",2,2,"faith"],["Jonah",2,7,"faith"],["Jonah",4,2,"character"],["Nahum",1,3,"power"],["Nahum",1,13,"promise"],["Nahum",1,15,"gospel"],["Zephaniah",2,3,"command"],["Zephaniah",3,9,"promise"],["Zephaniah",3,12,"faith"],["Zephaniah",3,14,"worship"],["Zephaniah",3,15,"comfort"],["Haggai",1,5,"command"],["Haggai",1,13,"comfort"],["Haggai",2,4,"command"],["Haggai",2,5,"comfort"],["Zechariah",1,3,"promise"],["Zechariah",2,5,"comfort"],["Zechariah",2,8,"identity"],["Malachi",2,10,"identity"],["Malachi",3,1,"gospel"],["Malachi",3,6,"character"],["Mark",1,11,"identity"],["Luke",2,14,"worship"],["Luke",4,4,"wisdom"],["Luke",4,8,"worship"],["John",4,14,"promise"],["2 Thessalonians",1,2,"worship"],["2 Thessalonians",2,15,"faith"],["2 Thessalonians",3,5,"comfort"],["Titus",1,2,"promise"],["Titus",2,11,"gospel"],["Titus",2,12,"command"],["Philemon",1,3,"worship"],["Philemon",1,4,"character"],["Philemon",1,5,"faith"],["Philemon",1,7,"comfort"],["2 Peter",1,2,"worship"],["2 Peter",1,4,"promise"],["2 Peter",1,5,"faith"],["2 John",1,2,"comfort"],["2 John",1,3,"worship"],["2 John",1,5,"command"],["2 John",1,9,"faith"],["3 John",1,5,"character"],["3 John",1,8,"command"],["3 John",1,11,"wisdom"],["Jude",1,1,"identity"],["Jude",1,2,"worship"],["Jude",1,3,"faith"],["Jude",1,21,"command"],["Esther",7,3,"faith"]
 ].map(g=>({b:g[0],c:g[1],v:g[2],cat:g[3]}));
 function reachableGemCounts(){ const c={}; GEMS.forEach(g=>{ if(reachable(bookNum(g.b),g.c,g.v)) c[g.cat]=(c[g.cat]||0)+1; }); return c; }
 function totalGemCounts(){ const c={}; GEMS.forEach(g=>c[g.cat]=(c[g.cat]||0)+1); return c; }

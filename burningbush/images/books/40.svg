@@ -1,11 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
-<!-- 40 = Matthew : a welcome doormat -->
+<!-- 40 = Matthew : a tax collector's coins -->
 <defs>
 <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
 </defs>
-<path d="M18 40 L78 40 L84 78 L12 78 Z" fill="url(#g)"/>
-<path d="M24 46 L72 46 L76 72 L20 72 Z" fill="none" stroke="#0e2c1d" stroke-width="3"/>
-<rect x="30" y="55" width="36" height="6" fill="#0e2c1d"/>
-<path d="M18 40 L12 34 M78 40 L84 34 M30 40 L26 34 M48 40 L48 34 M66 40 L70 34" stroke="#0e2c1d" stroke-width="2" fill="none"/>
-<path d="M12 78 L8 84 M84 78 L88 84 M48 78 L48 84 M30 78 L28 84 M66 78 L68 84" stroke="#0e2c1d" stroke-width="2" fill="none"/>
+<g stroke="#0e2c1d" stroke-width="2">
+<ellipse cx="38" cy="72" rx="22" ry="8" fill="url(#g)"/>
+<ellipse cx="38" cy="64" rx="22" ry="8" fill="url(#g)"/>
+<ellipse cx="38" cy="56" rx="22" ry="8" fill="url(#g)"/>
+</g>
+<circle cx="64" cy="38" r="20" fill="url(#g)" stroke="#0e2c1d" stroke-width="2.5"/>
+<circle cx="64" cy="38" r="13" fill="none" stroke="#0e2c1d" stroke-width="1.8"/>
+<circle cx="64" cy="38" r="3.2" fill="#0e2c1d"/>
 </svg>
