@@ -202,14 +202,11 @@
   .prompt{font-size:15px;color:var(--muted);font-weight:700;margin:6px 0 4px;text-transform:uppercase;letter-spacing:.5px}
   .bignum{font-size:76px;font-weight:800;text-align:center;letter-spacing:1px;margin:10px 0}
   .bigword{font-size:40px;font-weight:800;color:var(--gold-ink);text-align:center;margin:8px 0}
-  .teachhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 4px}
-  .teachhead .th-book{display:flex;align-items:center;gap:10px;text-align:left}
-  .teachhead .th-book .pegimg-sm,.teachhead .th-book .imgph-sm{width:60px;height:60px}
-  .teachhead .th-name{font-size:20px;font-weight:800;line-height:1.1}
-  .teachhead .th-sub{font-size:14px;color:var(--muted);font-weight:700}
-  .teachhead .th-img{text-align:center}
-  .teachhead .th-img .pegimg,.teachhead .th-img .imgph{width:120px;height:120px}
-  .teachhead .th-word{font-size:20px;font-weight:800;color:var(--gold-ink);margin-top:2px}
+  .tline{display:flex;align-items:center;justify-content:center;gap:16px;margin:6px 0}
+  .tline .pegimg,.tline .imgph,.tline .pegimg-sm,.tline .imgph-sm{width:112px;height:112px}
+  .tline .tname{font-size:26px;font-weight:800}
+  .tline .tword{font-size:24px;font-weight:800;color:var(--gold-ink)}
+  .tnum{font-size:52px;font-weight:900;text-align:center;line-height:1.05;margin:2px 0;letter-spacing:.5px}
   .sounds{text-align:center;color:var(--muted);font-size:15px;margin-bottom:8px}
   .teachbox{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;line-height:1.55;font-size:14px}
   .opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
@@ -2373,11 +2370,9 @@ function renderStep(){
       const custom = Prog.customBook[s.n] ? `<div class="relbox" style="border:1px solid var(--gold2)"><div class="rl" style="color:var(--gold-ink)">★ My own scene</div>${Prog.customBook[s.n]}</div>` : "";
       const editBtn = `<button class="btn ghost sm" id="lEdit" style="width:100%;margin-top:8px">✏️ ${Prog.customBook[s.n]?"Edit my scene":"Write my own scene"}</button>`;
       body = `<div class="stage">
-          <div class="prompt">Book of the Bible</div>
-          <div class="teachhead">
-            <div class="th-book">${pegImg("book",s.n,bookName(s.n),false)}<div><div class="th-name">${bookName(s.n)}</div><div class="th-sub">Book ${nn}</div></div></div>
-            <div class="th-img">${pegImg("num",s.n,word,true)}<div class="th-word">${word}</div></div>
-          </div>
+          <div class="tline">${pegImg("book",s.n,bookName(s.n),true)}<span class="tname">${bookName(s.n)}</span></div>
+          <div class="tnum">Book ${nn}</div>
+          <div class="tline"><span class="tword">${word}</span>${pegImg("num",s.n,word,true)}</div>
           <div class="sounds">sounds: <b>${snd}</b></div></div>
         <div class="hint" style="text-align:center;margin:10px 0 2px">Write your own scene below to lock it in — here's an example:</div>
         ${editBtn}${custom}
@@ -3899,6 +3894,32 @@ recomputeLevel();
 updateMetrics();
 show("learn");   // land on the Learn path (this also auto-completes onboarding — no intro-scene carousel)
 if(!acct()){ if(!Store.get("vv_skiplogin")) el("loginModal").style.display="flex"; }
+
+/* ---- Android / browser back button = in-app back (one screen per press); at the Learn home, back again exits ---- */
+function appBack(){
+  // 1) a visible pop-up modal → close it
+  const modal=[...document.querySelectorAll(".modal")].filter(m=>{const d=m.style.display||getComputedStyle(m).display; return d && d!=="none";}).pop();
+  if(modal){ modal.style.display="none"; return true; }
+  const active=document.querySelector(".view.active"); if(!active) return false;
+  // 2) a lesson / flow is running → use its own ✕ close (returns to the path / verse hub / etc.)
+  const lc=active.querySelector(".lclose"); if(lc){ lc.click(); return true; }
+  // 3) a "← back" button in this view (verse sub-page, book / chapter drill-in)
+  const bk=[...active.querySelectorAll("button")].find(b=>b.offsetParent!==null && b.textContent.trim().startsWith("←"));
+  if(bk){ bk.click(); return true; }
+  // 4) any tab other than Learn → step back to the Learn home
+  if(active.id!=="learn"){ show("learn"); return true; }
+  return false;   // Learn home = root
+}
+(function(){
+  let armed=false, armT=null;
+  const seed=()=>{ try{ history.pushState({bb:1},""); }catch(e){} };
+  seed();
+  window.addEventListener("popstate",()=>{
+    if(appBack()){ armed=false; seed(); return; }                 // consumed one in-app screen
+    if(!armed){ armed=true; seed(); if(typeof toast==="function") toast("Press back again to exit"); clearTimeout(armT); armT=setTimeout(()=>armed=false,2500); return; }
+    armed=false; history.back();                                   // already at the home → leave the app
+  });
+})();
 </script>
 </body>
 </html>
