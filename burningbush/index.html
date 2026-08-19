@@ -153,8 +153,11 @@
   .imgph-sm{width:104px;height:104px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--muted);font-size:10px;text-align:center}
   .srflash{animation:srpop .4s cubic-bezier(.2,.8,.2,1)}
   @keyframes srpop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
-  .storeitem{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-align:left}
-  .storeitem .btn{margin:0;flex:0 0 auto;padding:8px 12px}
+  .storeitem{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:left}
+  .storeitem .si-top{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px}
+  .storeitem .si-have{margin-left:auto;font-weight:700;color:var(--muted);font-size:12px}
+  .storeitem .si-desc{color:var(--muted);font-size:12.5px;line-height:1.45;margin:6px 0 12px}
+  .storeitem .btn{width:100%;margin:0}
 
   /* ---- scene walkthrough ---- */
   .stage{text-align:center;padding:8px 2px}
@@ -2529,9 +2532,15 @@ function openStore(){
   m.innerHTML=`<div class="modal-card">
     <h2 style="font-size:18px;margin:0 0 4px">🛒 Talent Store</h2>
     <p class="hint" style="margin:0 0 12px">You have <b class="gold">🪙 ${t} talents</b>. Spend them on tools that keep you going.</p>
-    <div class="storeitem"><div><b>🧊 Streak Freeze</b><div class="hint">Auto-saves your streak if you miss a day. ${freezeFull?`You're at the max of ${FREEZE_MAX}.`:`You have ${Prog.freezes||0}.`}</div></div><button class="btn ${canFreeze?"":"ghost"}" data-buy="freeze" ${canFreeze?"":"disabled"}>120 🪙</button></div>
-    <div class="storeitem" style="margin-top:10px"><div><b>🔎 Peek token</b><div class="hint">Reveal the book in a verse test when you're stuck. You have ${Prog.hints||0}.</div></div><button class="btn ${canPeek?"":"ghost"}" data-buy="peek" ${canPeek?"":"disabled"}>40 🪙</button></div>
-    <button class="btn ghost" id="storeClose" style="margin-top:14px;width:100%">Done</button></div>`;
+    <div class="storeitem">
+      <div class="si-top"><span>🧊 Streak Freeze</span><span class="si-have">have ${Prog.freezes||0}</span></div>
+      <div class="si-desc">Auto-saves your streak if you miss a day.${freezeFull?` You're at the max of ${FREEZE_MAX}.`:""}</div>
+      <button class="btn ${canFreeze?"":"ghost"}" data-buy="freeze" ${canFreeze?"":"disabled"}>${freezeFull?"Maxed out":"Buy · 120 🪙"}</button></div>
+    <div class="storeitem" style="margin-top:12px">
+      <div class="si-top"><span>🔎 Peek token</span><span class="si-have">have ${Prog.hints||0}</span></div>
+      <div class="si-desc">Reveal the book in a verse test when you're stuck.</div>
+      <button class="btn ${canPeek?"":"ghost"}" data-buy="peek" ${canPeek?"":"disabled"}>${canPeek?"Buy · 40 🪙":"Need 40 🪙"}</button></div>
+    <button class="btn ghost" id="storeClose" style="margin-top:16px;width:100%">Done</button></div>`;
   m.style.display="flex";
   m.querySelector("#storeClose").onclick=()=>{ m.style.display="none"; };
   m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
@@ -3323,10 +3332,10 @@ function renderMyPalace(i){
         ${srTrailHTML(p)}
         <p class="hint" style="text-align:center;margin:10px 0 0">${status}</p>
       </div>
+      <button class="btn blue" id="palPractice" style="width:100%">${due?"🎯 Review now (due)":"🎯 Practice this palace"}</button>
+      <p class="hint" style="text-align:center;margin:8px 0 12px">Try to recall each stop from memory first — the list below is the answer key.</p>
       ${p.stations.map((s,idx)=>`<div class="station"><div class="snum">${idx+1}</div><div class="sbody">${s}</div></div>`).join("")}
-      <button class="btn ${due?"blue":"blue"}" id="palPractice" style="width:100%;margin-top:12px">${due?"🎯 Review now (due)":"🎯 Practice this palace"}</button>
-      <button class="btn ghost" id="palEdit" style="width:100%;margin-top:8px">✏️ Edit locations</button>
-      <p class="hint" style="margin-top:10px">Place things you want to remember at each spot, in order.</p>
+      <button class="btn ghost" id="palEdit" style="width:100%;margin-top:12px">✏️ Edit locations</button>
     </div>`;
   el("palBack").onclick=renderPalace;
   el("palPractice").onclick=()=>startPalacePractice(i,"palace",()=>renderMyPalace(i));
