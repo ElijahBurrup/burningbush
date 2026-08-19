@@ -10,9 +10,6 @@
 <meta name="theme-color" content="#0f1115">
 <!-- Firebase (Google + email auth, email verification, password reset, cloud progress sync).
      Loads from Google's CDN; if these fail (offline / not set up) the app still works fully in local-only mode. -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <link href="/burningbush/fonts/fonts.css" rel="stylesheet"><!-- fonts bundled locally for full offline / mobile-app use -->
 <style>
   :root{
@@ -1212,89 +1209,62 @@ const Billing = {
   }
 };
 
-/* =================== ACCOUNTS + CLOUD SYNC (Firebase) =================== */
-// PLACEHOLDER: paste your Firebase web-app config here.
-// Firebase console → Project settings → Your apps → Web app → SDK setup and configuration → Config.
-// These values are safe to ship in the client (security is enforced by Firebase Auth + Firestore rules).
-const FIREBASE_CONFIG = {
-  apiKey: "REPLACE_WITH_FIREBASE_API_KEY",
-  authDomain: "REPLACE_PROJECT.firebaseapp.com",
-  projectId: "REPLACE_PROJECT",
-  storageBucket: "REPLACE_PROJECT.appspot.com",
-  messagingSenderId: "REPLACE_SENDER_ID",
-  appId: "REPLACE_APP_ID"
-};
-// True once the SDK loaded AND real config was pasted in. Otherwise the app runs local-only.
-function firebaseReady(){ return typeof firebase!=="undefined" && FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey.indexOf("REPLACE")<0; }
-
+/* =================== ACCOUNTS + CLOUD SYNC (Kingdom Builders API) =================== */
+// One shared Kingdom Builders login (kb.users) backs every product; this app syncs its progress to burningbush.progress.
+// Progress travels as JSON blobs; on pull we UNION-MERGE cloud with local (mergeProg) so no device ever loses data.
+const API_BASE = "https://burningbush-api.onrender.com/api";
+function firebaseReady(){ return true; }   // cloud accounts are live (kept the name so existing call sites just work)
 const Auth = {
-  user:null, _fbUser:null, _auth:null, _db:null, _timer:null, _pulling:false, _ready:false,
+  user:null, _token:null, _timer:null, _pulling:false, _resetToken:null,
   init(){
-    if(!firebaseReady()) return;          // stays local-only; login modal explains how to enable
-    try{
-      firebase.initializeApp(FIREBASE_CONFIG);
-      Auth._auth = firebase.auth(); Auth._db = firebase.firestore(); Auth._ready = true;
-      try{ Auth._auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(e){}
-      Auth._auth.onAuthStateChanged(async (u)=>{
-        Auth._fbUser = u;
-        if(u){
-          const prov = (u.providerData[0] && u.providerData[0].providerId) || "password";
-          Auth.user = { uid:u.uid, email:u.email, provider: prov.replace(".com",""), verified:u.emailVerified };
-          Store.setJSON("vv_acct", Auth.user);
-          await Auth.syncDown();
-          if(el("loginModal")) el("loginModal").style.display="none";
-          renderAcctBox();
-        } else {
-          Auth.user=null; Store.remove("vv_acct"); renderAcctBox();
-        }
-      });
-    }catch(e){ console.warn("Firebase init failed:", e && e.message); }
+    Auth._token = Store.get("vv_token", null);
+    Auth.user = Store.getJSON("vv_acct", null);
+    const m = (location.search||"").match(/[?&]reset=([a-f0-9]+)/i); if(m) Auth._resetToken = m[1];   // arrived from a password-reset email
+    if(Auth._token) Auth.pull();          // already signed in → merge cloud on boot
+    renderAcctBox();
   },
-  loggedIn(){ return !!Auth._fbUser; },
-  // ── auth actions ──
-  google(){ return Auth._auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); },
-  signUp(email,pw){ return Auth._auth.createUserWithEmailAndPassword(email,pw)
-      .then(c=>c.user.sendEmailVerification().then(()=>c)); },
-  signIn(email,pw){ return Auth._auth.signInWithEmailAndPassword(email,pw); },
-  resetPassword(email){ return Auth._auth.sendPasswordResetEmail(email); },
-  resendVerification(){ return Auth._fbUser ? Auth._fbUser.sendEmailVerification() : Promise.resolve(); },
-  signOut(){ return Auth._ready ? Auth._auth.signOut() : Promise.resolve(); },
-  // ── cloud progress (stored as JSON strings to dodge all Firestore type limits) ──
-  _doc(){ return Auth._db.collection("users").doc(Auth._fbUser.uid); },
-  push(){
-    if(!Auth._fbUser) return Promise.resolve();
-    return Auth._doc().set({ progJson: JSON.stringify(Prog), srsJson: JSON.stringify(SRS), updatedAt: Date.now() }, {merge:true})
-      .catch(e=>console.warn("cloud push failed:", e && e.message));
+  loggedIn(){ return !!Auth._token; },
+  async _req(path, method, body){
+    const r = await fetch(API_BASE+path, { method, headers:{ "Content-Type":"application/json", ...(Auth._token?{"Authorization":"Bearer "+Auth._token}:{}) }, body: body?JSON.stringify(body):undefined });
+    let d={}; try{ d=await r.json(); }catch(e){}
+    if(!r.ok){ if(r.status===401 && Auth._token){ Auth._token=null; Store.remove("vv_token"); } throw new Error(d.error || ("Something went wrong ("+r.status+").")); }
+    return d;
   },
-  // Last-writer-wins by timestamp: local edits made offline are pushed; otherwise cloud is pulled.
-  // Union-merge local + cloud so neither device ever loses progress, then write the merged result back so both converge.
-  async syncDown(){
-    if(!Auth._fbUser) return;
-    Auth._pulling=true;
+  async _onAuth(d){ Auth._token=d.token; Auth.user={email:d.email, provider:"email", verified:true};
+    Store.set("vv_token",d.token); Store.setJSON("vv_acct",Auth.user); await Auth.pull(); renderAcctBox(); return d; },
+  // interface used by wireLogin / renderAcctBox
+  google(){ return Promise.reject(new Error("Please use email sign-in.")); },   // no Google OAuth on this backend (button hidden)
+  signIn(email,pw){ return Auth._req("/login","POST",{email,password:pw}).then(d=>Auth._onAuth(d)); },
+  signUp(email,pw){ return Auth._req("/signup","POST",{email,password:pw}).then(d=>Auth._onAuth(d)); },
+  resetPassword(email){ return Auth._req("/forgot","POST",{email}); },
+  submitReset(token,pw){ return Auth._req("/reset","POST",{token,password:pw}); },
+  resendVerification(){ return Promise.resolve(); },   // no email-verification step in this backend
+  signOut(){ Auth._token=null; Auth.user=null; Store.remove("vv_token"); Store.remove("vv_acct"); renderAcctBox(); return Promise.resolve(); },
+  // pull cloud → union-merge with local → push the merged truth back (both devices converge, nothing lost)
+  async pull(){
+    if(!Auth._token) return; Auth._pulling=true;
     try{
-      const snap=await Auth._doc().get();
-      if(!snap.exists){ await Auth.push(); }              // first sign-in on this account → seed the cloud from local
-      else {
-        const d=snap.data();
-        let cloudProg=null, cloudSRS=null, parsed=true;
-        try{ if(d.progJson) cloudProg=JSON.parse(d.progJson); if(d.srsJson) cloudSRS=JSON.parse(d.srsJson); }
-        catch(e){ parsed=false; console.warn("cloud doc unparseable — keeping local, not overwriting"); }
-        if(parsed && cloudProg){
-          Prog = mergeProg(Prog, cloudProg);              // ← union, never last-writer-wins: no device clobbers the other
-          SRS  = Object.assign({}, cloudSRS||{}, SRS);     // union review strengths (local wins per key)
+      const d=await Auth._req("/sync","GET");
+      if(d && d.progJson){
+        let cloud=null; try{ cloud=JSON.parse(d.progJson); }catch(e){}
+        if(cloud){
+          Prog=mergeProg(Prog,cloud);
+          let cloudSRS={}; try{ cloudSRS=JSON.parse(d.srsJson||"{}")||{}; }catch(e){}
+          SRS=Object.assign({},cloudSRS,SRS);
           Store.setJSON(PROG_KEY,Prog); Store.setJSON(SRS_KEY,SRS); Store.setJSON(PROG_KEY+"_bak",Prog);
-          Store.set("vv_localts",String(Date.now()));
-          await Auth.push();                              // upload the merged truth so the other device gets it too
           bustCaches(); recomputeLevel(); updateMetrics();
           const active=document.querySelector(".view.active");
           if(active){ if(active.id==="journey")renderJourney(); else if(active.id==="learn")renderPath(); else if(active.id==="verse")renderVerse(); else if(active.id==="palace")renderPalace(); else if(active.id==="stories")renderStories(); }
         }
-        // parse failed → do NOT touch local or vv_localts; the next push re-uploads our good local copy
       }
+      await Auth.push();   // seed cloud on first login, or upload the merged result
     }catch(e){ console.warn("cloud pull failed:", e && e.message); }
     Auth._pulling=false;
   },
-  syncUp(){ if(!Auth._fbUser||Auth._pulling) return; clearTimeout(Auth._timer); Auth._timer=setTimeout(()=>Auth.push(),1500); }
+  async push(){ if(!Auth._token) return;
+    try{ await Auth._req("/sync","PUT",{ progJson:JSON.stringify(Prog), srsJson:JSON.stringify(SRS), updatedAt:Number(Store.get("vv_localts",0))||Date.now() }); }
+    catch(e){ console.warn("cloud push failed:", e && e.message); } },
+  syncUp(){ if(!Auth._token||Auth._pulling) return; clearTimeout(Auth._timer); Auth._timer=setTimeout(()=>Auth.push(),2000); }
 };
 // any verse (curated pool object if present, else built from the full KJV)
 function verseObj(b,c,v){ const p=verseAt(refKey(b,c,v));
@@ -3196,37 +3166,48 @@ function authErr(e){ const c=(e&&e.code)||"";
 }
 function wireLogin(){
   const msg=(t,ok)=>{ const m=el("loginMsg"); if(m){ m.textContent=t||""; m.style.color=ok?"var(--good)":"var(--miss)"; } };
-  const configured=firebaseReady();
-  if(el("loginNote")) el("loginNote").innerHTML = configured
-    ? "New here? Type an email and password, then tap <b>Create account</b> — we'll email you a verification link."
-    : `<b style="color:var(--gold2)">Cloud login isn't configured yet.</b> Paste your Firebase config in the code to turn on Google + email sign-in. You can <b>Skip for now</b> and use the app on this device.`;
-  ["btnGoogle","btnSignin","btnCreate","btnForgot"].forEach(id=>{ if(el(id)) el(id).disabled=!configured; });
   const email=()=>(el("loginEmail").value||"").trim();
   const pass=()=>(el("loginPass").value||"");
   const okEmail=e=>/.+@.+\..+/.test(e);
+  if(el("btnGoogle")) el("btnGoogle").style.display="none";                 // email-only backend
+  const ordiv=document.querySelector("#loginModal .ordiv"); if(ordiv) ordiv.style.display="none";
+  ["btnSignin","btnCreate","btnForgot"].forEach(id=>{ if(el(id)) el(id).disabled=false; });
 
-  if(el("btnGoogle")) el("btnGoogle").onclick=()=>{ msg("Opening Google…",true);
-    Auth.google().then(()=>toast("Signed in with Google!")).catch(e=>msg(authErr(e))); };
+  // Arrived from a password-reset email (?reset=TOKEN) → show a "set a new password" form instead of sign-in.
+  if(Auth._resetToken){
+    el("loginModal").style.display="flex";
+    if(el("loginNote")) el("loginNote").innerHTML="";
+    if(el("loginEmail")) el("loginEmail").style.display="none";
+    ["btnCreate","btnForgot","loginSkip"].forEach(id=>{ if(el(id)) el(id).style.display="none"; });
+    el("loginPass").placeholder="new password (6+ characters)";
+    if(el("btnSignin")){ el("btnSignin").textContent="Set new password"; el("btnSignin").style.flex="1"; }
+    msg("Choose a new password, then tap Set new password.",true);
+    el("btnSignin").onclick=()=>{ if(pass().length<6) return msg("Password must be at least 6 characters.");
+      msg("Updating your password…",true);
+      Auth.submitReset(Auth._resetToken,pass()).then(()=>{ msg("Password updated! Sign in with your new password.",true);
+        try{history.replaceState(null,"",location.pathname);}catch(e){} setTimeout(()=>location.reload(),1300);
+      }).catch(e=>msg(e.message)); };
+    return;
+  }
+
+  if(el("loginNote")) el("loginNote").innerHTML = "Create a free <b>Kingdom Builders</b> account to back up your progress to the cloud and restore it on any device. One login works across all our apps.";
+  const done=(t)=>{ el("loginModal").style.display="none"; Store.remove("vv_skiplogin"); toast(t); };
 
   if(el("btnSignin")) el("btnSignin").onclick=()=>{
     if(!okEmail(email())) return msg("Enter a valid email.");
     if(pass().length<6) return msg("Enter your password (6+ characters).");
     msg("Signing in…",true);
-    Auth.signIn(email(),pass()).then(cred=>{
-      if(cred.user && !cred.user.emailVerified) msg("Almost there — please click the verification link in your email, then sign in again.");
-      else toast("Welcome back!");
-    }).catch(e=>msg(authErr(e))); };
+    Auth.signIn(email(),pass()).then(()=>done("Welcome back — your progress is synced! ☁")).catch(e=>msg(e.message)); };
 
   if(el("btnCreate")) el("btnCreate").onclick=()=>{
     if(!okEmail(email())) return msg("Enter a valid email.");
     if(pass().length<6) return msg("Choose a password of at least 6 characters.");
     msg("Creating your account…",true);
-    Auth.signUp(email(),pass()).then(()=>msg("Account created! We emailed you a verification link — click it, then Sign in.",true))
-      .catch(e=>msg(authErr(e))); };
+    Auth.signUp(email(),pass()).then(()=>done("Account created — your progress is backed up! ☁")).catch(e=>msg(e.message)); };
 
   if(el("btnForgot")) el("btnForgot").onclick=()=>{
     if(!okEmail(email())) return msg("Type your email above first, then tap Forgot password.");
-    Auth.resetPassword(email()).then(()=>msg("Password reset email sent — check your inbox.",true)).catch(e=>msg(authErr(e))); };
+    Auth.resetPassword(email()).then(()=>msg("If that email has an account, a reset link is on its way — check your inbox.",true)).catch(e=>msg(e.message)); };
 
   el("loginSkip").onclick=()=>{ el("loginModal").style.display="none"; Store.set("vv_skiplogin","1"); };
   el("loginModal").onclick=e=>{ if(e.target===el("loginModal")) el("loginModal").style.display="none"; };
