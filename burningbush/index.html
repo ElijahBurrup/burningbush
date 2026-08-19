@@ -1212,7 +1212,11 @@ const Billing = {
 /* =================== ACCOUNTS + CLOUD SYNC (Kingdom Builders API) =================== */
 // One shared Kingdom Builders login (kb.users) backs every product; this app syncs its progress to burningbush.progress.
 // Progress travels as JSON blobs; on pull we UNION-MERGE cloud with local (mergeProg) so no device ever loses data.
-const API_BASE = "https://burningbush-api.onrender.com/api";
+// Environment-aware backend: the QA build (served from a burningbush-qa host, or run locally) talks to the QA API +
+// QA data schemas; production (kingdombuilders.ai) talks to the production API. One codebase, two environments.
+const API_BASE = (/burningbush-qa|localhost|127\.0\.0\.1|^$/.test(location.hostname))
+  ? "https://burningbush-api-qa.onrender.com/api"
+  : "https://burningbush-api.onrender.com/api";
 function firebaseReady(){ return true; }   // cloud accounts are live (kept the name so existing call sites just work)
 const Auth = {
   user:null, _token:null, _timer:null, _pulling:false, _resetToken:null,
