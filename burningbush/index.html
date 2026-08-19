@@ -21,6 +21,10 @@
     --miss:#ff9a9a; --good:#9ff0a0;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  /* touch-action:manipulation removes the ~300ms double-tap delay on Android, so taps register on pointer-up
+     instead of being held/swallowed while the browser waits to see if it's a double-tap-to-zoom. */
+  button,select,input,textarea,a,label,
+  .clkrow,.vrow,.vbox,.chapbox,.tile,.opt,.palace-card,.cellcard,.bookhead,.grouphead,.theme-opt,.storeitem{touch-action:manipulation}
   html,body{margin:0;height:100%}
   body{
     font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink);
@@ -2223,7 +2227,7 @@ function finishLesson(){
 /* =================== VERSE (daily + my verses) =================== */
 function reachableScenes(){ return SCENES.filter(s=>reachable(bookNum(s.b),s.c,s.v)); }
 let curScene=null, wSteps=[], wIdx=0;
-let memTestCur=null, memTestRecent=[], memTestWrong=0;
+let memTestCur=null, memTestRecent=[], memTestWrong=0, reviewedThisSession=[];
 const vSec={sugg:false, topics:false, mem:false, saved:false}; // sections start minimized
 function verseRow(b,c,v,st,star){
   const t=kjvText(b,c,v);
@@ -2413,7 +2417,7 @@ let MS=null; // {phase:"sr"|"practice", srQueue:[keys]}
 function memArr(){ return Prog.memorized.map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2])); }
 function startMemTest(){
   const mem=memArr(); if(!mem.length){ renderVerse(); return; }
-  memTestRecent=[]; suppressGrowth=false;
+  memTestRecent=[]; suppressGrowth=false; reviewedThisSession=[];
   const due=mem.map(a=>a.join(":")).filter(k=>verseDue(k));   // verses whose next SR checkpoint has come due
   const anyDue = due.length>0 || palacesDueCount()>0;
   MS={ phase: due.length?"sr":"practice", srQueue:due.slice(), dueWork:anyDue };
@@ -2515,6 +2519,7 @@ function doneForToday(){
     <h2 class="gold">You're done for today</h2>
     <p class="lead">Everything due is locked back in.${Prog.dayStreak>0?` <b class="gold">🔥 ${Prog.dayStreak}-day streak</b> — come back tomorrow to keep it alive.`:""}${Prog.freezes>0?` <span class="muted">🧊 ${Prog.freezes} Streak Freeze${Prog.freezes>1?"s":""} banked.</span>`:""}</p>
     <div class="hint" style="margin:2px 0 4px">This week: ${"●".repeat(Math.min(wd,5))}${"○".repeat(Math.max(0,5-wd))} ${wd}/5${Prog.weekGoalHit?" ⭐":""}</div>
+    ${reviewedThisSession.length?`<div style="margin-top:14px;text-align:left"><div class="prof-sect" style="margin-bottom:8px">Where these verses stand · D0…D30</div>${reviewedThisSession.slice(0,8).map(k=>{const p=k.split(":").map(Number),o=verseSRobj(k)||{step:1,learnedAt:Date.now()};return `<div style="margin:0 0 10px"><div class="gold" style="font-weight:700;font-size:13px;margin-bottom:3px">${bookName(p[0])} ${p[1]}:${p[2]}</div>${srTrailHTML(o)}</div>`;}).join("")}</div>`:""}
     ${encourageHTML()}
     <div class="btnrow" style="margin-top:12px"><button class="btn" id="dtMore">Keep practicing</button><button class="btn ghost" id="dtFin">Finish</button></div></div>`;
   el("dtMore").onclick=()=>practiceNext(true);
@@ -2668,6 +2673,7 @@ function memTestRender(){
       <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
       ${Prog.hints>0?`<button class="btn ghost sm" id="mtPeek" style="margin-top:8px;width:100%">🔎 Reveal the book (1 peek · ${Prog.hints} left)</button>`:""}
       <button class="btn ghost sm" id="mtForgot" style="margin-top:8px;width:100%">🤔 I forgot this — re-encode later</button>
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)"><div class="hint" style="text-align:center;margin-bottom:6px">This verse's memory trail (D0…D30)</div>${srTrailHTML(verseSRobj(refKey(b,c,v))||{step:1,learnedAt:Date.now()})}</div>
       <div id="mtFb"></div></div>`;
   el("mtClose").onclick=renderVerse;
   el("mtForgot").onclick=()=>{
@@ -2683,6 +2689,7 @@ function memTestRender(){
     if(ok){ // flash green, auto-advance to next verse
       const firstTry=memTestWrong===0, kk=refKey(b,c,v);
       bumpStreak(true); reviewVerseSR(kk); const cr=markAnswer(kk,true,firstTry); const pts=awardTalents(kk, firstTry); saveProg(); refreshHUD(); checkBadges();
+      if(!reviewedThisSession.includes(kk)) reviewedThisSession.push(kk);   // remember what we reviewed → show trails at the end
       sels.forEach(s=>s.classList.add("correct")); el("mtCheck").disabled=true; el("mtWarn").textContent="";
       el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}</div></div>`;
       if(cr===5){   // 5 clean recalls in a row → offer to rest this verse for 14 days
