@@ -120,6 +120,10 @@
     font-size:11px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
   .tabbar button .ic{font-size:20px;line-height:1}
   .tabbar button.on{color:var(--gold-ink)}
+  .tabbar button.locked{opacity:.3;pointer-events:none;filter:grayscale(.7)}
+  .tabbar button.tabflash{color:var(--gold-ink)}
+  .tabbar button.tabflash .ic{animation:tabflash .5s ease-in-out 6}
+  @keyframes tabflash{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
 
   h2{font-size:21px;margin:0 0 4px;font-family:var(--font-display)}
   .lead{color:var(--muted);margin:0 0 18px;font-size:14px;line-height:1.5}
@@ -138,6 +142,14 @@
   .btn:disabled:active{transform:none;box-shadow:0 5px 0 var(--disabled-shadow)}
   .btn.sm{width:auto;padding:10px 16px;font-size:13px;border-radius:11px;box-shadow:none}
   .btnrow{display:flex;gap:10px;margin-top:12px}
+  /* verse hub — six big launcher buttons */
+  .versehub{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .vhub{display:flex;align-items:center;gap:12px;width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:17px 16px;font-size:16px;font-weight:800;color:var(--ink);cursor:pointer;text-align:left}
+  .vhub .vi{font-size:22px;line-height:1;flex:none}
+  .vhub small{margin-left:auto;font-size:13px;font-weight:700;color:var(--muted)}
+  .vhub:active{transform:scale(.99)}
+  .vhub.review{background:linear-gradient(135deg,var(--blue),var(--blue2));color:var(--on-blue);border:none;box-shadow:0 4px 0 var(--blue-shadow)}
+  .vhub.review small{color:var(--on-blue)}
 
   code{background:var(--code-bg);padding:2px 6px;border-radius:6px;color:var(--gold-ink);font-size:12px}
 
@@ -806,11 +818,11 @@
   </div>
 
   <div class="tabbar">
-    <button data-tab="journey" class="on"><span class="ic">🗺️</span>Journey</button>
-    <button data-tab="learn"><span class="ic">🎓</span>Learn</button>
+    <button data-tab="learn" class="on"><span class="ic">🎓</span>Learn</button>
     <button data-tab="verse"><span class="tabbadge"></span><span class="ic">📖</span>Verse</button>
-    <button data-tab="palace"><span class="tabbadge"></span><span class="ic">🏛️</span>Palace</button>
     <button data-tab="stories"><span class="ic">📜</span>Stories</button>
+    <button data-tab="palace"><span class="tabbadge"></span><span class="ic">🏛️</span>Palace</button>
+    <button data-tab="journey"><span class="ic">🗺️</span>Journey</button>
   </div>
 
   <div class="modal" id="themeModal" style="display:none">
@@ -833,6 +845,12 @@
       <div class="prof-sect" style="margin-top:16px">Reference library</div>
       <button class="btn ghost" id="refBtn" style="width:100%">📚 The Major System, number pegs &amp; the 66 books</button>
 
+      <div class="prof-sect" style="margin-top:16px">Share &amp; rewards</div>
+      <div class="btnrow" style="margin-top:0">
+        <button class="btn ghost" id="pShare">📣 Share progress</button>
+        <button class="btn ghost" id="pStore">🛒 Talent Store</button>
+      </div>
+
       <div class="prof-sect" style="margin-top:16px">Account</div>
       <div id="acctBox"></div>
 
@@ -844,6 +862,10 @@
       </div>
       <input type="file" id="impFile" accept="application/json" style="display:none">
       <div id="backupMsg" class="hint" style="margin-top:8px"></div>
+
+      <div class="prof-sect" style="margin-top:18px">Start over</div>
+      <p class="hint" style="margin:0 0 8px">Wipe all progress and begin as a brand-new user. <b>Export a backup first</b> — you can Restore it later.</p>
+      <button class="btn ghost" id="resetBtn" style="width:100%;color:var(--miss-ink);border-color:var(--miss)">♻️ Reset all progress</button>
 
       <div class="prof-sect" style="margin-top:18px">Badges <span id="badgeCount" style="color:var(--muted);float:right;text-transform:none;letter-spacing:0"></span></div>
       <div id="badgeGrid"></div>
@@ -1588,6 +1610,23 @@ function updateMetrics(){
   if(palTab) palTab.classList.toggle("hasdue", palacesDueCount()>0);   // red dot when a palace is due
   const vsTab=document.querySelector('.tabbar button[data-tab="verse"]');
   if(vsTab) vsTab.classList.toggle("hasdue", versesDueCount()>0);      // red dot when a verse is due for review
+  updateTabLocks();
+}
+/* Progressive unlock: new users start with only Learn; Palace opens when the first palace is
+   built, and Verse/Stories/Journey open at "Foundations Laid" (books 1-5 + Matthew + a palace). */
+function foundationsDone(){ return [1,2,3,4,5,40].every(n=>knownNum(n)) && Prog.doneSkills.includes("palace:0"); }
+function tabUnlocked(tab){
+  if(tab==="learn") return true;
+  if(tab==="palace") return Prog.doneSkills.includes("palace:0") || foundationsDone();
+  return foundationsDone();   // verse, stories, journey
+}
+function updateTabLocks(){
+  document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("locked", !tabUnlocked(b.dataset.tab)));
+  if(foundationsDone() && !Prog.foundationsCelebrated){   // one-time celebration
+    Prog.foundationsCelebrated=true; saveProg();
+    ["verse","stories"].forEach(t=>{ const b=document.querySelector(`.tabbar button[data-tab="${t}"]`); if(b){ b.classList.remove("locked"); b.classList.add("tabflash"); setTimeout(()=>b.classList.remove("tabflash"),3400); } });
+    setTimeout(()=>toast("🎉 Verses & Stories unlocked!"),400);
+  }
 }
 
 /* =================== ROUTING =================== */
@@ -1781,6 +1820,8 @@ const STORY_GROUPS=[
  {t:"Paul & the End", s:[["The Conversion of Saul","Acts",9,1],["Peter's Vision & Cornelius","Acts",10,1],["Paul & Silas in Prison","Acts",16,16],["Paul's Shipwreck","Acts",27,1],["The New Heaven & New Earth","Revelation",21,1]]}
 ];
 function storiesDone(a,b){ for(let g=a;g<=b;g++) if(!Prog.doneSkills.includes("story:"+g)) return false; return true; }
+// reachability sort key for a story: the largest number it needs (book #, chapter OR verse). Higher = harder to reach = lower in the list.
+function storyReachKey(sk){ const s=sk.story; return Math.max(bookNum(s.b)||0, s.c||0, s.v||0); }
 
 /* =================== LEARN — Duolingo-style skill path =================== */
 // A skill = {id, label, kind:'num'|'book'|'sound'|'story', items:[n...]} ; tiles unlock in order.
@@ -1792,20 +1833,19 @@ function buildUnits(){
     {id:"snd:0-4",label:"Sounds 0–4",kind:"sound",items:[0,1,2,3,4]},
     {id:"snd:5-9",label:"Sounds 5–9",kind:"sound",items:[5,6,7,8,9]}
   ]});
-  // 1) The Torah — books 1-5, taught as number images (with decode hooks) — foundation.
+  // 1) The Torah — books 1-5, taught as number images (foundation).
   units.push({name:"The Torah · books 1–5", torahEnd:true, skills: range(1,5).map(d=>({id:"num:"+d,label:PEGS[d],kind:"num",items:[d]}))});
-  // 1.5) Memory Palace — build ONE personal palace (required, between Torah and NT).
-  units.push({name:"Memory Palace · build your first", palace:true, skills:[
+  // 2) First Gospel — Matthew (book 40): the New Testament anchor of the foundation.
+  units.push({name:"First Gospel · Matthew", skills:[bk(40)]});
+  // 3) Memory Palace — build ONE personal palace (the last step of the foundation; its lesson opens with the video).
+  units.push({name:"Memory Palace · build your first", palace:true, foundationEnd:true, skills:[
     {id:"palace:0",label:"My palace",kind:"palace",items:[0]}
   ]});
   // Optional bonus palaces get appended to the end of each later section (never block progress).
   let _palaceSlot=1;
   const addOptPalace=(u)=>{ u.skills.push({id:"palace:"+_palaceSlot,label:"Bonus palace",kind:"palace",optional:true,items:[_palaceSlot]}); _palaceSlot++; return u; };
-  // 2) The New Testament's first 5 — books 40-44 (Matthew–Acts).
-  units.push(addOptPalace({name:"New Testament · first 5 (Matthew–Acts)", skills: range(40,44).map(bk)}));
-  // 3) Balanced climb: each round pairs 2-3 Old Testament books with 1 New Testament book,
-  //    so both testaments advance together (OT 6-39, NT 45-66).
-  const ot=range(6,39), nt=range(45,66), ROUNDS=12; // 34 OT + 22 NT books across 12 balanced rounds
+  // 4) Balanced climb: each round pairs Old Testament books with New Testament books (OT 6-39, NT 41-66 — Mark onward).
+  const ot=range(6,39), nt=range(41,66), ROUNDS=12;
   const rng=arr=>arr.length?bookName(arr[0])+(arr.length>1?"–"+bookName(arr[arr.length-1]):""):"";
   for(let r=1;r<=ROUNDS;r++){
     const left=ROUNDS-r+1;                                 // even distribution: take ceil(remaining/roundsLeft)
@@ -1864,8 +1904,8 @@ function skillUnlocked(ui,si){
 }
 /* ---- milestone checkpoints (grey until reached, then gold) ---- */
 const MILESTONES=[
- {after:"New Testament · first 5", reached:()=>knownNum(44), e:"🕯️", t:"Foundations Laid",
-  c:"The Torah (Genesis–Deuteronomy) and the Gospels + Acts (Matthew–Acts) are now within reach.",
+ {after:"Memory Palace · build your first", reached:()=>foundationsDone(), e:"🕯️", t:"Foundations Laid",
+  c:"The Torah (Genesis–Deuteronomy), Matthew, and your first memory palace are complete — Verses and Stories are now unlocked.",
   d:"The story of creation and the life of Jesus are open to you — you can already stand on foundational promises, commands, and identity verses."},
  {after:"Round 4 ", reached:()=>Prog.level>=MILESTONE, counts:true, e:"🏆", t:"Bible Power Unlocked",
   c:`You can pinpoint any book, chapter &amp; verse from 1–${MILESTONE} — one huge contiguous span of Scripture.`,
@@ -1944,7 +1984,6 @@ function renderPath(focus){
     const grp = allGold ? "grp-gold" : (allDone ? "grp-cracked" : (done>0 ? "grp-blue" : ""));
     const open=expandedUnits.has(ui);
     if(U.firstStory) html+=`<div class="storydivider">📖 Bible Stories<span>where every great story begins — book · chapter · verse</span></div>`;
-    if(U.palace) html+=`<div class="vidph"><div class="play">▶</div><div class="vt">Video: Why build a Memory Palace?</div><div class="vs">Placeholder — how the method of loci helps you hold ordered lists and long passages</div></div>`;
     html+=`<div class="unit">
       <button class="grouphead ${open?"open":""} ${grp}" data-grp="${ui}">
         <span>${U.name}</span><span class="gmeta">${done}/${total} ${open?"▾":"▸"}</span></button>`;
@@ -2048,7 +2087,9 @@ function renderStories(){
     const open=storyExpanded.has(ui), grp=done===tot?"grp-gold":(ready?"grp-blue":"");
     html+=`<div class="unit"><button class="grouphead ${open?"open":""} ${grp}" data-sgrp="${ui}"><span>${U.name}</span><span class="gmeta">${done}/${tot} ${open?"▾":"▸"}</span></button>`;
     if(open){ html+=`<div class="vlist" style="margin-top:10px">`;
-      U.skills.forEach((sk,si)=>{ const s=sk.story, unlocked=skillUnlocked(ui,si), isDone=Prog.doneSkills.includes(sk.id), can=unlocked||isDone;
+      // sort by reachability: the highest number (book, chapter OR verse) sinks to the bottom, so 4:1 comes before 2:7
+      const ord=U.skills.map((sk,si)=>({sk,si})).sort((a,b)=>storyReachKey(a.sk)-storyReachKey(b.sk)||a.si-b.si);
+      ord.forEach(({sk,si})=>{ const s=sk.story, unlocked=skillUnlocked(ui,si), isDone=Prog.doneSkills.includes(sk.id), can=unlocked||isDone;
         const state=isDone?`<span style="color:var(--good);font-weight:800">✓ located</span>`:(unlocked?`<span class="gold" style="font-weight:800">Learn →</span>`:`<span class="muted">🔒 learn its numbers</span>`);
         html+=`<div class="vrow ${can?"clkrow":""}" ${can?`data-story="${ui}:${si}"`:""}><div class="vt"><b class="gold">${s.n}</b><div class="muted">${s.b} ${s.c}:${s.v}</div></div><div>${state}</div></div>`; });
       html+=`</div>`; }
@@ -2610,72 +2651,64 @@ function bookGroupedList(verses, section){
       + (open?`<div class="vlist">`+groups[bn].map(a=>verseRow(a[0],a[1],a[2], section==="mem"?"mem":"go")).join("")+`</div>`:"");
   }).join("");
 }
+let vView="hub";   // "hub" (the 6 big buttons) or a sub-list: sugg|topics|mem|saved
 function renderVerse(){
   updateMetrics();
   const V=el("verse");
   const saved=Prog.saved.map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2]));
   const mem=Prog.memorized.map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2]));
-  const suggGroups=suggestedByBook();               // {bookNum: [reachable curated verses]}
-  const kNums=knownNumbers(), unlockedBooks=[];      // every book you've unlocked, in order
+  const suggGroups=suggestedByBook();
+  const kNums=knownNumbers(), unlockedBooks=[];
   for(let b=1;b<=66;b++) if(kNums.has(b)&&window.KJV[b-1]) unlockedBooks.push(b);
   const suggReach=unlockedBooks.reduce((s,bn)=>s+((suggGroups[bn]||[]).length),0);
-  const lockedCount=suggestedVerses().length-suggReach;
+
+  // ---- sub-list pages (opened from a hub button; each has a back button) ----
+  if(vView!=="hub"){
+    let title="", body="";
+    if(vView==="sugg"){ title="✨ Suggested to memorize";
+      body=`<p class="hint">Every book you've unlocked — tap one to open its suggested heart-verses.</p>`
+        +(unlockedBooks.length?unlockedBooks.map(bn=>{ const list=suggGroups[bn]||[], open=vBook.sugg.has(bn);
+            return `<button class="bookhead" data-bk="sugg:${bn}"><span>${bookName(bn)} <span class="muted" style="font-weight:600">· ${list.length}</span></span><span class="gmeta">${open?"▾":"▸"}</span></button>`
+              +(open?(list.length?`<div class="vlist">`+list.map(a=>verseRow(a[0],a[1],a[2],"go")).join("")+`</div>`:`<p class="hint" style="margin:4px 0 8px">No suggested verses in range yet — learn more of ${bookName(bn)}'s numbers.</p>`):"");
+          }).join(""):`<p class="hint">Learn a book &amp; its numbers in <b class="gold">Learn</b> to unlock your first suggestions.</p>`);
+    } else if(vView==="topics"){ title="📚 Browse by topic";
+      body=`<p class="hint">Verses for what you're walking through — tap a topic.</p>`
+        +TOPICS.map((t,ti)=>{ const vs=versesForTopic(t), open=vTopic.has(ti);
+            return `<button class="bookhead" data-topic="${ti}"><span>${t.icon} ${t.name} <span class="muted" style="font-weight:600">· ${vs.length}</span></span><span class="gmeta">${open?"▾":"▸"}</span></button>`
+              +(open?(vs.length?`<div class="vlist">`+vs.map(a=>verseRow(a[0],a[1],a[2],"go")).join("")+`</div>`:`<p class="hint" style="margin:4px 0 8px">None in your range yet — learn more numbers.</p>`):"");
+          }).join("");
+    } else if(vView==="mem"){ title="★ Memorized verses";
+      body=mem.length?`<div class="btnrow" style="margin-top:0"><button class="btn ghost" id="memFade">Recite word-for-word</button></div><p class="hint" style="margin:8px 0">Tap a book, then a verse to rebuild it.</p>`+bookGroupedList(mem,"mem")
+        :`<p class="hint">Verses you finish building show up here.</p>`;
+    } else if(vView==="saved"){ title="🔖 Saved for later";
+      body=saved.length?bookGroupedList(saved,"saved"):`<p class="hint">Tap "Save · come back later" on any verse and it lands here.</p>`;
+    }
+    V.innerHTML=`<div class="navrow"><button class="btn sm ghost" id="vBack">← Verses</button></div><h2>${title}</h2>${body}`;
+    el("vBack").onclick=()=>{ vView="hub"; renderVerse(); document.querySelector(".content").scrollTop=0; };
+    V.querySelectorAll("[data-bk]").forEach(h=>h.onclick=()=>{ const [sec,bn]=h.dataset.bk.split(":"); const set=vBook[sec]; const n=+bn; set.has(n)?set.delete(n):set.add(n); reVerse(); });
+    V.querySelectorAll("[data-topic]").forEach(h=>h.onclick=()=>{ const ti=+h.dataset.topic; vTopic.has(ti)?vTopic.delete(ti):vTopic.add(ti); reVerse(); });
+    if(el("memFade")) el("memFade").onclick=()=>{ const m=mem[Math.floor(Math.random()*mem.length)]; startTextFade(m[0],m[1],m[2]); };
+    V.querySelectorAll("[data-vb]").forEach(b=>b.onclick=()=>{ const [x,y,z]=b.dataset.vb.split(":").map(Number); verseScroll=document.querySelector(".content").scrollTop; openVerseWizard(x,y,z,backToVerse); });
+    paintTheme(); return;
+  }
+
+  // ---- HUB: six big buttons; review last ----
+  const due=versesDueCount();
+  const reviewLabel=due?`🔔 Review ${due} verse${due>1?"s":""} due now`:(mem.length?`🎯 Test my verses (${mem.length})`:`🎯 Test my verses`);
   V.innerHTML=`<h2>Verses</h2>
-    <p class="lead">Build any verse into pictures — then test what you've hidden in your heart.</p>
-    <div class="btnrow" style="margin-top:0">
-      <button class="btn" id="randBtn">🎲 Random verse</button>
-      <button class="btn ghost" id="shareBtn">📣 Share</button>
-    </div>
-    ${(mem.length||Prog.talents)?`<div id="talentBar" title="Tap to open the Talent Store" style="display:flex;justify-content:space-around;align-items:center;font-size:13px;font-weight:800;margin-top:12px;padding:10px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;cursor:pointer">
-      <span class="gold">🪙 ${Prog.talents||0}</span><span style="color:var(--accent)">🔥 ${Prog.streak||0}</span>${Prog.freezes>0?`<span>🧊 ${Prog.freezes}</span>`:""}<span class="muted">🛒 Store</span></div>`:""}
-    ${mem.length?`<button class="btn blue" id="memTest" style="width:100%;margin-top:10px">${versesDueCount()?`🔔 Review ${versesDueCount()} verse${versesDueCount()>1?"s":""} due now`:`🎯 Test my memorized verses (${mem.length})`}</button>`:""}
-    ${knownNumbers().size>=2?`<button class="btn ghost" id="numTest" style="width:100%;margin-top:10px">🔢 Test my numbers (15 questions)</button>`:""}
-    <div class="card" style="margin-top:14px">
-      <button class="grouphead ${vSec.sugg?"open":""}" data-sec="sugg" style="width:100%"><span>✨ Suggested to memorize${suggReach?` · ${suggReach}`:""}</span><span class="gmeta">${vSec.sugg?"▾":"▸"}</span></button>
-      ${vSec.sugg?`<div style="margin-top:12px">
-        <p class="hint">Every book you've unlocked — tap one to open its suggested heart-verses. New suggestions appear as you unlock more books &amp; numbers.</p>
-        ${unlockedBooks.length?unlockedBooks.map(bn=>{
-          const list=suggGroups[bn]||[], open=vBook.sugg.has(bn);
-          return `<button class="bookhead" data-bk="sugg:${bn}"><span>${bookName(bn)} <span class="muted" style="font-weight:600">· ${list.length}</span></span><span class="gmeta">${open?"▾":"▸"}</span></button>`
-            + (open?(list.length?`<div class="vlist">`+list.map(a=>verseRow(a[0],a[1],a[2],"go")).join("")+`</div>`
-                :`<p class="hint" style="margin:4px 0 8px">No suggested verses in range yet — learn more of ${bookName(bn)}'s chapter &amp; verse numbers to unlock them.</p>`):"");
-        }).join(""):`<p class="hint">Learn a book &amp; its numbers in <b class="gold">Learn</b> to unlock your first suggestions.</p>`}
-      </div>`:""}
-    </div>
-    <div class="card">
-      <button class="grouphead ${vSec.topics?"open":""}" data-sec="topics" style="width:100%"><span>📚 Browse by topic</span><span class="gmeta">${vSec.topics?"▾":"▸"}</span></button>
-      ${vSec.topics?`<div style="margin-top:12px">
-        <p class="hint">Verses for what you're walking through — tap a topic to open it.</p>
-        ${TOPICS.map((t,ti)=>{ const vs=versesForTopic(t), open=vTopic.has(ti);
-          return `<button class="bookhead" data-topic="${ti}"><span>${t.icon} ${t.name} <span class="muted" style="font-weight:600">· ${vs.length}</span></span><span class="gmeta">${open?"▾":"▸"}</span></button>`
-            + (open?(vs.length?`<div class="vlist">`+vs.map(a=>verseRow(a[0],a[1],a[2],"go")).join("")+`</div>`:`<p class="hint" style="margin:4px 0 8px">None in your range yet — learn more numbers to unlock these.</p>`):"");
-        }).join("")}
-      </div>`:""}
-    </div>
-    <div class="card">
-      <button class="grouphead ${vSec.mem?"open":""}" data-sec="mem" style="width:100%"><span>★ Memorized verses (${mem.length})${versesDueCount()?` · <span style="color:#ff8a8a;font-weight:800">${versesDueCount()} due</span>`:""}</span><span class="gmeta">${vSec.mem?"▾":"▸"}</span></button>
-      ${vSec.mem?`<div style="margin-top:12px">
-        ${mem.length?`<div class="btnrow" style="margin-top:0"><button class="btn ghost" id="memFade">Recite word-for-word</button></div>
-          <p class="hint" style="margin:8px 0">Tap a book, then a verse to rebuild it.</p>`+bookGroupedList(mem,"mem")
-          :`<p class="hint">Verses you finish building show up here.</p>`}
-      </div>`:""}
-    </div>
-    <div class="card">
-      <button class="grouphead ${vSec.saved?"open":""}" data-sec="saved" style="width:100%"><span>🔖 Saved for later (${saved.length})</span><span class="gmeta">${vSec.saved?"▾":"▸"}</span></button>
-      ${vSec.saved?`<div style="margin-top:12px">
-        ${saved.length?bookGroupedList(saved,"saved"):`<p class="hint">Tap "Save · come back later" on any verse and it lands here.</p>`}
-      </div>`:""}
+    <p class="lead">Pick what to work on — build verses into pictures, then test what you've hidden in your heart.</p>
+    <div class="versehub">
+      <button class="vhub" data-view="sugg"><span class="vi">✨</span><span>Suggested to memorize</span><small>${suggReach} in reach</small></button>
+      <button class="vhub" data-view="topics"><span class="vi">📚</span><span>Browse by topic</span><small>${TOPICS.length}</small></button>
+      <button class="vhub" data-view="mem"><span class="vi">★</span><span>Memorized verses</span><small>${mem.length}</small></button>
+      <button class="vhub" data-view="saved"><span class="vi">🔖</span><span>Saved for later</span><small>${saved.length}</small></button>
+      <button class="vhub" id="vNumTest"><span class="vi">🔢</span><span>Test my Numbers &amp; Books</span></button>
+      <button class="vhub review" id="vMemTest"><span class="vi">🎯</span><span>${reviewLabel}</span></button>
     </div>`;
-  el("randBtn").onclick=()=>{ const r=randomReachableVerse(); if(r){ verseScroll=document.querySelector(".content").scrollTop; openVerseWizard(r[0],r[1],r[2],backToVerse); } else toast("Learn some numbers first in the Learn tab!"); };
-  el("shareBtn").onclick=()=>shareProgress(null);
-  V.querySelectorAll("[data-sec]").forEach(h=>h.onclick=()=>{ vSec[h.dataset.sec]=!vSec[h.dataset.sec]; reVerse(); });
-  V.querySelectorAll("[data-bk]").forEach(h=>h.onclick=()=>{ const [sec,bn]=h.dataset.bk.split(":"); const set=vBook[sec]; const n=+bn; set.has(n)?set.delete(n):set.add(n); reVerse(); });
-  V.querySelectorAll("[data-topic]").forEach(h=>h.onclick=()=>{ const ti=+h.dataset.topic; vTopic.has(ti)?vTopic.delete(ti):vTopic.add(ti); reVerse(); });
-  if(el("talentBar")) el("talentBar").onclick=openStore;
-  if(el("memTest")) el("memTest").onclick=startMemTest;
-  if(el("numTest")) el("numTest").onclick=startNumberTest;
-  if(el("memFade")) el("memFade").onclick=()=>{ const m=mem[Math.floor(Math.random()*mem.length)]; startTextFade(m[0],m[1],m[2]); };
-  V.querySelectorAll("[data-vb]").forEach(b=>b.onclick=()=>{ const [x,y,z]=b.dataset.vb.split(":").map(Number); verseScroll=document.querySelector(".content").scrollTop; openVerseWizard(x,y,z,backToVerse); });
+  V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
+  el("vNumTest").onclick=()=> knownNumbers().size>=2 ? startNumberTest() : toast("Learn a few numbers first in the Learn tab!");
+  el("vMemTest").onclick=()=> mem.length ? startMemTest() : toast("Memorize a verse first — tap Suggested!");
+  paintTheme();
 }
 /* ---- Talents (verse-practice points) + streaks ---- */
 function bumpStreak(correct){
@@ -3662,6 +3695,15 @@ function renderReminder(){
 el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); renderReminder(); el("backupMsg").innerHTML=""; el("themeModal").style.display="flex"; };
 el("expBtn").onclick=exportBackup;
 el("impBtn").onclick=()=>el("impFile").click();
+if(el("pShare")) el("pShare").onclick=()=>shareProgress(null);
+if(el("pStore")) el("pStore").onclick=()=>{ el("themeModal").style.display="none"; openStore(); };
+if(el("resetBtn")) el("resetBtn").onclick=resetAllProgress;
+function resetAllProgress(){
+  if(!confirm("Start over as a brand-new user?\n\nThis wipes ALL progress on this device — lessons, verses, palaces, streaks — and signs you out.\n\nTip: Export a backup first (you can Restore it later).")) return;
+  [PROG_KEY, SRS_KEY, PROG_KEY+"_bak", SRS_KEY+"_bak", "vv_token", "vv_acct"].forEach(k=>{ try{ Store.remove(k); }catch(e){} localStorage.removeItem(k); });
+  Store.set("vv_skiplogin","1");   // reload straight into a fresh new-user experience
+  location.reload();
+}
 el("impFile").onchange=e=>{ if(e.target.files[0]) importBackup(e.target.files[0]); };
 el("themeClose").onclick=()=>el("themeModal").style.display="none";
 el("refBtn").onclick=()=>{ el("themeModal").style.display="none"; show("foundations"); };   // Reference now lives under the profile menu
