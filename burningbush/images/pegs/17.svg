@@ -1,13 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
-<!-- 17 = Toga (draped robe figure) -->
+<!-- 17 = Dog (happy, wagging tail, bone in mouth) -->
 <defs>
-<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0c896"/><stop offset=".45" stop-color="#d9a25f"/><stop offset=".8" stop-color="#b87b38"/><stop offset="1" stop-color="#8f5a24"/></linearGradient>
 </defs>
-<g fill="url(#g)">
-<circle cx="48" cy="24" r="10"/>
-<path d="M30 82 L35 46 Q48 38 61 46 L66 82 Z"/>
-</g>
-<g fill="none" stroke="#0e2c1d" stroke-width="2.6" stroke-linecap="round">
-<path d="M36 48 L60 68"/><path d="M40 46 L62 62"/><path d="M34 60 L50 78"/>
-</g>
+<path d="M66 62 Q84 52 82 66 Q90 62 86 74 Q78 78 68 70 Z" fill="url(#g)"/>
+<ellipse cx="48" cy="66" rx="25" ry="19" fill="url(#g)"/>
+<circle cx="48" cy="37" r="19" fill="url(#g)"/>
+<path d="M31 24 Q17 32 24 50 Q33 46 34 30 Z" fill="url(#g)"/>
+<path d="M65 24 Q79 32 72 50 Q63 46 62 30 Z" fill="url(#g)"/>
+<ellipse cx="48" cy="46" rx="12" ry="9" fill="#fbe7c9"/>
+<ellipse cx="48" cy="41" rx="4" ry="3" fill="#0e2c1d"/>
+<circle cx="39" cy="33" r="3" fill="#0e2c1d"/><circle cx="57" cy="33" r="3" fill="#0e2c1d"/>
+<rect x="30" y="47" width="36" height="6.5" rx="3.2" fill="#fff8ec"/>
+<circle cx="30" cy="47" r="4.5" fill="#fff8ec"/><circle cx="30" cy="53.5" r="4.5" fill="#fff8ec"/>
+<circle cx="66" cy="47" r="4.5" fill="#fff8ec"/><circle cx="66" cy="53.5" r="4.5" fill="#fff8ec"/>
 </svg>

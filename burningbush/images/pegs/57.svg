@@ -1,10 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
-<!-- 57 = Leak (dripping faucet) -->
+<!-- 57 = Lock (closed padlock, keyhole) -->
 <defs>
 <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<linearGradient id="m" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f7fa"/><stop offset="1" stop-color="#9fb1bd"/></linearGradient>
 </defs>
-<rect x="22" y="24" width="12" height="6" rx="2" fill="url(#g)"/>
-<path d="M18 30 h20 v9 h9 q9 0 9 9 v5 h-9 v-4 q0 -3 -3 -3 h-6 v11 h-20 z" fill="url(#g)"/>
-<path d="M47 60 c3.5 4.5 5 7 5 9 a5 5 0 0 1 -10 0 c0 -2 1.5 -4.5 5 -9 z" fill="url(#g)"/>
-<ellipse cx="47" cy="78" rx="17" ry="4" fill="url(#g)" opacity=".5"/>
+<path d="M32 44 V32 Q32 12 48 12 Q64 12 64 32 V44" fill="none" stroke="url(#m)" stroke-width="9"/>
+<rect x="20" y="42" width="56" height="42" rx="8" fill="url(#g)"/>
+<circle cx="48" cy="58" r="7" fill="#0e2c1d"/>
+<path d="M45 63 L51 63 L48 76 Z" fill="#0e2c1d"/>
 </svg>

@@ -1,10 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
-<!-- 55 = LOL (laughing face) -->
+<!-- 55 = Lily (white trumpet lily) -->
 <defs>
-<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<linearGradient id="w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dbe4ea"/></linearGradient>
+<linearGradient id="lf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9db78"/><stop offset="1" stop-color="#3f8a2c"/></linearGradient>
 </defs>
-<circle cx="48" cy="48" r="30" fill="url(#g)"/>
-<path d="M30 42 q6 -7 12 0" fill="none" stroke="#0e2c1d" stroke-width="2.8" stroke-linecap="round"/>
-<path d="M54 42 q6 -7 12 0" fill="none" stroke="#0e2c1d" stroke-width="2.8" stroke-linecap="round"/>
-<path d="M31 54 Q48 76 65 54 Q57 61 48 61 Q39 61 31 54 Z" fill="#0e2c1d"/>
+<rect x="45" y="52" width="4" height="34" rx="2" fill="url(#lf)"/>
+<path d="M47 68 Q62 64 68 52 Q56 53 47 62 Z" fill="url(#lf)"/>
+<g fill="url(#w)">
+<path d="M47 50 Q30 42 26 16 Q46 26 47 50 Z"/>
+<path d="M47 50 Q64 42 68 16 Q48 26 47 50 Z"/>
+<path d="M47 50 Q37 34 40 10 Q52 24 47 50 Z"/>
+<path d="M47 50 Q57 34 54 10 Q42 24 47 50 Z"/>
+<path d="M47 50 Q47 28 47 8 Q52 28 47 50 Z" opacity=".7"/>
+</g>
+<g stroke="#e8b23c" stroke-width="2" stroke-linecap="round">
+<path d="M47 50 L40 30"/><path d="M47 50 L47 26"/><path d="M47 50 L54 30"/>
+</g>
+<circle cx="40" cy="29" r="1.8" fill="#c07a1e"/><circle cx="47" cy="25" r="1.8" fill="#c07a1e"/><circle cx="54" cy="29" r="1.8" fill="#c07a1e"/>
 </svg>

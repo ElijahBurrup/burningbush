@@ -1,11 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
-<!-- 2 = Exodus : exit doorway with arrow -->
+<!-- 2 = Exodus : the parted Red Sea, a dry path between two walls of water -->
 <defs>
 <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cd0f0"/><stop offset="1" stop-color="#1f6fa8"/></linearGradient>
 </defs>
-<path d="M26 16 h30 a6 6 0 0 1 6 6 v52 a6 6 0 0 1-6 6 h-30 Z" fill="url(#g)"/>
-<rect x="34" y="24" width="24" height="48" rx="3" fill="#0e2c1d"/>
-<path d="M40 48 h24 M64 48 l-9-9 M64 48 l-9 9" stroke="url(#g)" stroke-width="0" fill="none"/>
-<rect x="40" y="45.5" width="26" height="5" fill="url(#g)"/>
-<path d="M78 48 L64 37 L64 59 Z" fill="url(#g)"/>
+<path d="M4 88 V26 Q4 12 18 12 Q30 12 30 26 L30 88 Z" fill="url(#sea)" stroke="#0e2c1d" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M92 88 V26 Q92 12 78 12 Q66 12 66 26 L66 88 Z" fill="url(#sea)" stroke="#0e2c1d" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M10 20 q8 -8 16 0 M70 20 q8 -8 16 0" fill="none" stroke="#eaf8ff" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M18 34 q6 6 0 12 M78 34 q-6 6 0 12" fill="none" stroke="#eaf8ff" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
+<path d="M30 88 L30 52 Q48 42 66 52 L66 88 Z" fill="url(#g)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M38 78 h6 M52 78 h6 M42 66 h5 M49 66 h5" stroke="#b5793a" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>
 </svg>

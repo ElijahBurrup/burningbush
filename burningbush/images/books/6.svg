@@ -1,9 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
-<!-- 6 = Joshua : ram's-horn trumpet (shofar) -->
+<!-- 6 = Joshua : a ram's-horn shofar before a cracking, toppling wall -->
 <defs>
 <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<linearGradient id="stone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3d5b3"/><stop offset="1" stop-color="#a8916a"/></linearGradient>
 </defs>
-<path d="M18 40 Q30 24 52 26 Q76 28 82 56 Q82 68 70 70 Q78 60 72 50 Q64 40 48 42 Q30 44 30 56 Q30 66 40 66 Q30 72 22 62 Q14 50 18 40Z" fill="url(#g)"/>
-<circle cx="24" cy="44" r="2.5" fill="#0e2c1d"/>
-<path d="M40 66 Q42 60 48 60" stroke="#0e2c1d" stroke-width="1.5" fill="none"/>
+<path d="M50 26 L88 20 L92 84 L54 90 Z" fill="url(#stone)" stroke="#0e2c1d" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M50 26 L68 50 L56 90" fill="none" stroke="#0e2c1d" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M56 38 h30 M55 56 h32 M55 74 h30" stroke="#0e2c1d" stroke-width="1.3" opacity=".5"/>
+<rect x="66" y="4" width="13" height="11" fill="url(#stone)" stroke="#0e2c1d" stroke-width="2" transform="rotate(20 72 9)"/>
+<path d="M8 54 Q14 34 34 32 Q52 30 56 48 Q58 60 46 62 Q52 54 46 46 Q38 38 28 42 Q24 50 32 56 Q24 60 18 52 Q10 58 8 54Z" fill="url(#g)" stroke="#0e2c1d" stroke-width="2.2" stroke-linejoin="round"/>
+<circle cx="12" cy="53" r="2.4" fill="#0e2c1d"/>
 </svg>
