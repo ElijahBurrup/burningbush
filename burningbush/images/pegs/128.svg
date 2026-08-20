@@ -1,10 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
-<!-- 128 = Tinfoil (tinfoil hat) -->
+<!-- 128 = Hot Knife (glowing red-hot knife slicing butter) -->
 <defs>
-<linearGradient id="fo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f6f9"/><stop offset=".5" stop-color="#c3cbd7"/><stop offset="1" stop-color="#93a0b0"/></linearGradient>
+<linearGradient id="k" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff1a8"/><stop offset=".5" stop-color="#ff8a1e"/><stop offset="1" stop-color="#d92b1e"/></linearGradient>
 </defs>
-<path d="M46 22 L41 10 L52 15 Z" fill="url(#fo)"/>
-<path d="M24 66 Q24 30 47 20 Q72 30 72 66 Z" fill="url(#fo)"/>
-<g stroke="#5b6472" stroke-width="1.2" opacity=".4" fill="none"><path d="M40 66 L46 30 L36 48"/><path d="M56 66 L49 28 L60 46"/><path d="M48 30 L48 66"/></g>
-<ellipse cx="48" cy="66" rx="30" ry="6" fill="url(#fo)"/>
+<rect x="14" y="58" width="46" height="20" rx="3" fill="#fff2c2" stroke="#d9b96a" stroke-width="2"/>
+<path d="M14 58 h46 l-10 -8 h-26 Z" fill="#fff8dd" stroke="#d9b96a" stroke-width="1.6"/>
+<path d="M30 40 L84 22 L88 30 L36 54 Z" fill="url(#k)" stroke="#8a1a10" stroke-width="2"/>
+<rect x="20" y="52" width="16" height="7" rx="3" fill="#4a2e18" stroke="#2b1a0d" stroke-width="1.6" transform="rotate(-20 28 55)"/>
+<g stroke="#ff8a1e" stroke-width="2" stroke-linecap="round" fill="none" opacity=".75">
+<path d="M62 18 q3 -8 -2 -12"/>
+<path d="M72 20 q3 -8 -2 -12"/>
+<path d="M52 24 q3 -8 -2 -12"/>
+</g>
 </svg>

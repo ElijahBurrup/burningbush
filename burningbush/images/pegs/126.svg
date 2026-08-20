@@ -1,11 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
-<!-- 126 = Tangerine -->
+<!-- 126 = Danish (swirled pastry with white icing) -->
 <defs>
-<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<linearGradient id="p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c877"/><stop offset="1" stop-color="#c9812f"/></linearGradient>
 </defs>
-<circle cx="48" cy="54" r="26" fill="url(#g)"/>
-<g stroke="#0e2c1d" stroke-width="1.6" opacity=".3"><path d="M48 54 V29 M48 54 V79 M48 54 H73 M48 54 H23 M48 54 L66 36 M48 54 L30 72 M48 54 L66 72 M48 54 L30 36"/></g>
-<circle cx="48" cy="54" r="4" fill="#0e2c1d" opacity=".3"/>
-<circle cx="48" cy="28" r="3" fill="#0e2c1d" opacity=".5"/>
-<path d="M50 26 Q60 20 68 24 Q60 32 50 28 Z" fill="url(#g)"/>
+<circle cx="48" cy="52" r="32" fill="url(#p)" stroke="#8a5a1e" stroke-width="2"/>
+<path d="M48 52 m-22 0 a22 22 0 0 1 44 0 a16 16 0 0 1 -32 0 a10 10 0 0 1 20 0 a5 5 0 0 1 -10 0" fill="none" stroke="#8a5a1e" stroke-width="2.4" stroke-linecap="round" opacity=".7"/>
+<circle cx="48" cy="52" r="4" fill="#e2383f"/>
+<g stroke="#fffdf5" stroke-width="3.2" fill="none" stroke-linecap="round">
+<path d="M22 40 q6 8 0 16 q-6 8 0 16"/>
+<path d="M74 40 q-6 8 0 16 q6 8 0 16"/>
+<path d="M40 22 q8 6 16 0"/>
+</g>
 </svg>

@@ -1,12 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
-<!-- 166 = Dishwasher -->
+<!-- 166 = Dutch Shoe (wooden clog) -->
 <defs>
-<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<linearGradient id="w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2c777"/><stop offset=".55" stop-color="#d99a3f"/><stop offset="1" stop-color="#a86a22"/></linearGradient>
 </defs>
-<rect x="20" y="18" width="56" height="62" rx="4" fill="url(#g)"/>
-<rect x="24" y="22" width="48" height="8" rx="2" fill="#0e2c1d" opacity=".4"/>
-<g fill="url(#g)"><circle cx="30" cy="26" r="1.8"/><circle cx="36" cy="26" r="1.8"/></g>
-<rect x="26" y="34" width="44" height="42" rx="2" fill="#0e2c1d"/>
-<rect x="30" y="36" width="36" height="3" rx="1.5" fill="url(#g)"/>
-<g><circle cx="38" cy="54" r="8" fill="url(#g)" opacity=".5"/><circle cx="38" cy="54" r="4" fill="#0e2c1d"/><circle cx="56" cy="54" r="8" fill="url(#g)" opacity=".5"/><circle cx="56" cy="54" r="4" fill="#0e2c1d"/></g>
+<g stroke="#5a3410" stroke-width="3" stroke-linejoin="round">
+<path d="M14 60 Q12 46 30 44 L58 44 Q78 44 82 60 Q84 70 74 72 L22 72 Q13 72 14 60 Z" fill="url(#w)"/>
+<path d="M30 44 Q34 30 46 30 Q40 40 44 44 Z" fill="url(#w)"/>
+</g>
+<path d="M22 62 h54" stroke="#7a4a18" stroke-width="3" stroke-linecap="round" fill="none"/>
+<ellipse cx="40" cy="52" rx="12" ry="7" fill="#b98a44" stroke="#5a3410" stroke-width="2"/>
+<path d="M20 76 h56" stroke="#3f2408" stroke-width="4" stroke-linecap="round"/>
 </svg>
