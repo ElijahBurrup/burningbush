@@ -1,25 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
-<!-- 41 = Mark : the winged lion (Mark's traditional symbol) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+<!-- 41 = Mark : winged lion (evangelist symbol) -->
 <defs>
-<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<linearGradient id="g41" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
 </defs>
-<!-- wings spreading behind -->
-<path d="M42 42 q-20 -16 -34 -9 q8 8 17 9 q-9 4 -13 13 q13 2 26 -7 z" fill="url(#g)" stroke="#0e2c1d" stroke-width="1.2" stroke-linejoin="round"/>
-<path d="M54 42 q20 -16 34 -9 q-8 8 -17 9 q9 4 13 13 q-13 2 -26 -7 z" fill="url(#g)" stroke="#0e2c1d" stroke-width="1.2" stroke-linejoin="round"/>
-<!-- lion head, mane -->
-<circle cx="48" cy="52" r="18" fill="url(#g)"/>
-<g stroke="url(#g)" stroke-width="6" stroke-linecap="round">
-<line x1="48" y1="36" x2="48" y2="30"/>
-<line x1="61" y1="41" x2="67" y2="37"/>
-<line x1="35" y1="41" x2="29" y2="37"/>
-<line x1="65" y1="52" x2="72" y2="52"/>
-<line x1="31" y1="52" x2="24" y2="52"/>
-<line x1="61" y1="63" x2="67" y2="67"/>
-<line x1="35" y1="63" x2="29" y2="67"/>
-</g>
-<circle cx="48" cy="52" r="12" fill="url(#g)" stroke="#0e2c1d" stroke-width="1.6"/>
-<circle cx="43" cy="50" r="2.2" fill="#0e2c1d"/>
-<circle cx="53" cy="50" r="2.2" fill="#0e2c1d"/>
-<path d="M48 55 l-3 4 h6 z" fill="#0e2c1d"/>
-<path d="M48 59 q-4 3 -7 1 M48 59 q4 3 7 1" fill="none" stroke="#0e2c1d" stroke-width="1.8" stroke-linecap="round"/>
+<!-- wings spread behind -->
+<path d="M46 44 C60 30 74 26 84 28 C80 34 74 36 70 37 C76 38 80 41 82 44 C76 45 70 45 66 45 C70 48 72 51 73 54 C66 52 58 49 52 46 Z" fill="url(#g41)" stroke="#0e2c1d" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M50 44 C36 30 22 26 12 28 C16 34 22 36 26 37 C20 38 16 41 14 44 C20 45 26 45 30 45 C26 48 24 51 23 54 C30 52 38 49 44 46 Z" fill="url(#g41)" stroke="#0e2c1d" stroke-width="1.6" stroke-linejoin="round"/>
+<!-- mane -->
+<g fill="url(#g41)"><circle cx="48" cy="35" r="6.5"/><circle cx="61" cy="41" r="6.5"/><circle cx="67" cy="54" r="6.5"/><circle cx="61" cy="67" r="6.5"/><circle cx="48" cy="73" r="6.5"/><circle cx="35" cy="67" r="6.5"/><circle cx="29" cy="54" r="6.5"/><circle cx="35" cy="41" r="6.5"/></g>
+<circle cx="48" cy="54" r="19" fill="url(#g41)"/>
+<circle cx="48" cy="55" r="12" fill="none" stroke="#0e2c1d" stroke-width="1.6" opacity=".33"/>
+<!-- face -->
+<circle cx="42" cy="52" r="2.4" fill="#0e2c1d"/><circle cx="54" cy="52" r="2.4" fill="#0e2c1d"/>
+<path d="M44 59 h8 l-4 4 z" fill="#0e2c1d"/>
+<path d="M48 63 v3" stroke="#0e2c1d" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M48 66 q-5 2.5 -9 0.5 M48 66 q5 2.5 9 0.5" fill="none" stroke="#0e2c1d" stroke-width="1.5" stroke-linecap="round"/>
 </svg>

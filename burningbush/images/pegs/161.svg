@@ -1,8 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
-<!-- 161 = Digit (a single raised index finger) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+<!-- 161 = Digit : a hand with one raised index finger -->
 <defs>
-<linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd9ae"/><stop offset="1" stop-color="#e8a86e"/></linearGradient>
+<linearGradient id="sk161" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffddb0"/><stop offset=".55" stop-color="#f2b877"/><stop offset="1" stop-color="#d98f4c"/></linearGradient>
 </defs>
-<path d="M40 90 q-14 0 -14 -14 v-16 q0 -6 6 -6 q6 0 6 6 v6 h2 v-40 q0 -7 7 -7 q7 0 7 7 v34 h2 v-4 q0 -6 6 -6 q6 0 6 6 v10 h2 q0 -5 5 -5 q5 0 5 5 v14 q0 10 -10 10 Z" fill="url(#s)" stroke="#a86a3a" stroke-width="2" stroke-linejoin="round"/>
-<path d="M47 22 v34" stroke="#a86a3a" stroke-width="1.4" opacity=".4"/>
+<!-- wrist -->
+<rect x="40" y="72" width="20" height="16" rx="6" fill="url(#sk161)" stroke="#0e2c1d" stroke-width="2"/>
+<!-- raised index finger -->
+<rect x="44" y="15" width="12" height="36" rx="6" fill="url(#sk161)" stroke="#0e2c1d" stroke-width="2"/>
+<!-- thumb out to the side -->
+<path d="M35 56 C27 56 21 60 21 66 C21 71 26 72 30 68 C33 65 36 62 38 60 Z" fill="url(#sk161)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<!-- fist / folded fingers -->
+<rect x="33" y="46" width="30" height="30" rx="12" fill="url(#sk161)" stroke="#0e2c1d" stroke-width="2"/>
+<!-- curled finger grooves (the other three fingers) -->
+<g fill="none" stroke="#0e2c1d" stroke-width="1.5" opacity=".45" stroke-linecap="round">
+<path d="M52 50 v9"/><path d="M57 51 v8"/><path d="M61 53 v6"/>
+<path d="M36 64 q13 4 24 0"/>
+</g>
 </svg>
