@@ -506,6 +506,12 @@
   .prof-sect{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--gold-ink);font-weight:800;margin-bottom:8px}
   .prof-sect.prof-collapsible{cursor:pointer;padding:8px 10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;margin-bottom:6px;user-select:none}
   .prof-sect .prof-caret{display:inline-block;width:14px;color:var(--muted)}
+  .bug-grid{width:100%;border-collapse:collapse;font-size:13px}
+  .bug-grid th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--line)}
+  .bug-grid td{padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  .bug-grid .bug-em{color:var(--gold-ink);font-weight:700;word-break:break-all;max-width:120px}
+  .bug-grid .bug-tx{color:var(--ink);white-space:pre-wrap}
+  .bug-status,.bug-del{background:none;border:none;cursor:pointer;font-size:18px;line-height:1;padding:2px}
   .badgecat{font-size:12px;font-weight:800;color:var(--gold-ink);margin:14px 0 8px}
   .badgecat .muted{font-weight:600}
   .badgegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -559,6 +565,14 @@
   .vidph{border:1px dashed var(--gold2);border-radius:14px;padding:22px;text-align:center;background:var(--vidph-bg);margin:12px 0}
   .vidph .play{width:52px;height:52px;border-radius:50%;background:var(--gold);color:var(--on-accent);display:grid;place-items:center;font-size:22px;margin:0 auto 8px}
   .vidph .vt{font-weight:800;font-size:15px} .vidph .vs{font-size:12px;color:var(--muted);margin-top:3px}
+  .tile.video{background:linear-gradient(135deg,var(--accent),var(--blue2,var(--accent)));color:var(--on-accent)}
+  .tile.video .vface{font-size:26px;line-height:1}
+  .tile.video.done{opacity:.9}
+  @keyframes navflash{0%,100%{transform:translateY(0);filter:none}50%{transform:translateY(-5px);filter:drop-shadow(0 0 10px var(--gold2))}}
+  .tabbar button.navflash{color:var(--gold-ink)!important}
+  .tabbar button.navflash .ic{animation:navflash .6s ease-in-out infinite}
+  #navBanner{position:absolute;left:50%;bottom:74px;transform:translateX(-50%) translateY(12px);background:var(--gold);color:var(--on-accent);font-weight:800;font-size:14px;padding:10px 16px;border-radius:12px;z-index:69;box-shadow:0 6px 20px var(--scrim);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;max-width:90%}
+  #navBanner.show{opacity:1;transform:translateX(-50%) translateY(0)}
   .placechip{display:block;width:100%;text-align:left;background:var(--panel2);border:2px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:9px;color:var(--ink);font-weight:700;font-size:15px;cursor:pointer}
   .placechip:active{border-color:var(--gold2)}
   .stationlist{margin:10px 0}
@@ -1059,6 +1073,11 @@
       <button class="btn ghost" id="testStoriesDone" style="width:100%;margin-top:8px">📜 Simulate Stories finished</button>
       <button class="btn ghost" id="testRestore" style="width:100%;margin-top:8px;color:var(--miss-ink);border-color:var(--miss)">↩ Restore my real progress (after a simulation)</button>
 
+      <div id="bugReportsWrap" style="display:none">
+        <div class="prof-sect" style="margin-top:18px">Bug reports</div>
+        <button class="btn ghost" id="bugReportsBtn" style="width:100%">🐞 Review bug reports</button>
+      </div>
+
       <div class="prof-sect" style="margin-top:18px">Badges <span id="badgeCount" style="color:var(--muted);float:right;text-transform:none;letter-spacing:0"></span></div>
       <div id="badgeGrid"></div>
       <p class="hint" id="badgeNext" style="margin:8px 0 0"></p>
@@ -1164,7 +1183,7 @@ function bustCaches(){ _known=null; _rvc=null; }
 /* =================== MAJOR SYSTEM ENGINE =================== */
 // User's own peg list (memoryOS), numbers 00-165. Two-digit list: single
 // digits (books/chapters/verses 1-9) use the zero-padded 0X peg.
-const PEGS = ["Sauce","Seed","Sun","Sumo","Sore","Soul","Sushi","Sock","Sofa","Soap","Dice","Dad","DNA","Dime","Door","Doll","Tissue","Toga","TV","Tuba","Nose","Net","Nun","Nemo","Nero","Nail","Nacho","Nike","Knife","Nap","Mouse","Mat","Moon","Mummy","Hammer","Mole","Match","Mic","Movie","Map","Rose","Radio","Rhino","Rum","Error","Reel","Arch","Rock","Roof","Harp","Lasso","Lid","Lion","Limo","Lure","LOL","Leech","Leak","Lava","Lip","Cheese","Cheetah","Genie","Chime","Cherry","Chilli","Judge","Chick","Chef","Ship","Goose","Cat","Gun","Gum","Car","Koala","Cage","Cake","Coffee","Cube","Vase","Foot","Fan","Foam","Fire","Fly","Fish","Fog","FIFA","FBI","Bus","Bat","Piano","Beam","Bear","Apple","Bush","Book","Beehive","Poop"];
+const PEGS = ["Sauce","Seed","Sun","Sumo","Sore","Seal","Sushi","Sock","Sofa","Soap","Dice","Dad","Tuna","Dime","Door","Doll","Tissue","Dog","Dove","Tuba","Nose","Net","Nun","Gnome","Winner","Nail","Nacho","Ink","Knife","Knob","Mouse","Mat","Moon","Mummy","Hammer","Mole","Match","Mic","Movie","Map","Rose","Radio","Rhino","Rum","Rower","Reel","Arch","Rock","Roof","Harp","Lasso","Lid","Lion","Limo","Lure","Lily","Leech","Lock","Lava","Lip","Cheese","Cheetah","Genie","Chime","Cherry","Chilli","Judge","Chick","Chef","Ship","Goose","Cat","Gun","Gum","Car","Koala","Cage","Cake","Coffee","Cube","Vase","Foot","Fan","Foam","Fire","Fly","Fish","Fig","Fife","Fob","Bus","Bat","Piano","Beam","Bear","Apple","Bush","Book","Beehive","Baby"];
 const PEGS100 = {
 100:"Daisies",101:"Toast",102:"Dozen",103:"Tasmanian (Devil)",104:"Taser",105:"Tesla",106:"Dosage",107:"Disc",108:"Adhesive",109:"Dizzy Bee",110:"Adidas",111:"Deadwood",112:"Tighten",113:"Totem",114:"Tutor",115:"Doodle",116:"Teddy Shoe",117:"Hotdog",118:"Wet Dove",119:"Hot Tub",120:"Tennis",121:"Tent",122:"Downy Hen",123:"Denim",124:"Dinner",125:"Tunnel",126:"Danish",127:"Tank",128:"Hot Knife",129:"Tuna Pie",130:"Thames",131:"Tomato",132:"Domino",133:"Edamame",134:"Timer",135:"Oatmeal",136:"Damage",137:"Tomahawk",138:"The Movie",139:"Dumbo",140:"Dress",141:"Dart",142:"Drone",143:"Tram",144:"Dryer",145:"Drill",146:"Torch",147:"Truck",148:"Trophy",149:"Drop",150:"Tellus",151:"Toilet",152:"Dylan",153:"Dilemma",154:"Tailor",155:"Tell-All (Book)",156:"Deluge",157:"Talc",158:"Tea Leaf",159:"Tulip",160:"Duchess",161:"Digit",162:"Audition",163:"Hot Jam",164:"Teacher",165:"Thai Chilli",166:"Dutch Shoe",167:"Woodchuck",168:"Déjà Vu",169:"Touch-Up (Paint)",170:"Tacos",171:"Ticket",172:"Toucan",173:"Dog Home",174:"Tiger",175:"Tackle",176:"Head Coach"};
 // DECODE HOOKS — read the number back OUT of the image, by a vivid count feature.
@@ -1173,7 +1192,7 @@ const DECODE = {
 2:"The sun blazes in the sky while its twin shimmers reflected in the water below — 2 suns, Sun = 2.",
 3:"A sumo wrestler braces on 3 massive legs as he stomps the ring — count them, 3 — Sumo = 3.",
 4:"A car limps along with a throbbing sore on each of its 4 tires — 4 sores, Sore = 4.",
-5:"A glowing soul streams out through all 5 fingers of an open hand and reconnects just outside the body — 5 fingers, Soul = 5."
+5:"A seal balances a ball on its nose and claps — the SL sound gives you the 5. Picture the seal on your open hand of 5 fingers: Seal = 5."
 };
 // NUMBER <-> IMAGE <-> BOOK relationships (authored with Fable 5 — see memoverse.md).
 // Reversible: numToImg, imgToNum, imgToBook, bookToImg.
@@ -1225,8 +1244,8 @@ const ALT_PEGS = {
   "12":["Tin","Den","Dune","Down","Tuna"],"13":["Dime","Dam","Dome","Team"],"14":["Tire","Door","Deer","Tower","Diary","Tar"],
   "15":["Towel","Tail","Doll","Dial","Tool"],"16":["Dish","Ditch","Touch","Dodge"],"17":["Duck","Dock","Dog","Attic"],
   "18":["Dove","Taffy"],"19":["Tub","Tuba","Tube"],"20":["Nose","Noose","News"],"21":["Net","Nut","Node"],
-  "22":["Noon","Nun","Nan","Neon"],"23":["Name","Enemy"],"24":["Narrow","Honor"],"25":["Nail","Nile","Null"],
-  "26":["Notch","Nacho"],"27":["Neck","Nike","Nag"],"28":["Nave","Navy"],"29":["Nap","Nib"],
+  "22":["Noon","Nun","Nan","Neon"],"23":["Gnome","Name","Enemy"],"24":["Winner","Narrow","Honor"],"25":["Nail","Nile","Null"],
+  "26":["Notch","Nacho"],"27":["Ink","Neck","Nag"],"28":["Nave","Navy"],"29":["Knob","Nap","Nib"],
   "30":["Mouse","Maze","Moss"],"31":["Mat","Mud","Moat","Maid","Meat"],"32":["Moon","Mane","Omen","Money","Mine"],
   "33":["Mummy","Mime","Memo"],"34":["Mower","Mayor"],"35":["Mail","Mole","Mule","Mall","Meal"],
   "36":["Match","Image","Mesh"],"37":["Mug"],"38":["Muff","Mafia","Movie"],"39":["Map","Mop","Mob"],
@@ -1243,7 +1262,7 @@ const ALT_PEGS = {
   "75":["Coal","Kale","Gale","Goal","Cola"],"76":["Cage","Cash","Coach","Couch"],"77":["Cake","Cook","Keg","Kick"],
   "78":["Cave","Coffee","Cuff"],"79":["Cup","Cape","Cop"],"80":["Face","Vase","Phase"],"81":["Fat","Food","Feet","Foot","Fad"],
   "82":["Fan","Phone","Fun","Fawn","Van"],"83":["Foam","Fume","Fame","Vim"],"84":["Fire","Fair","Fur","Ferry","Ivory"],
-  "85":["Foal","Fowl","Flee","Fool"],"86":["Fish","Fudge","Voyage"],"87":["Fog","Fake","Fig"],"88":["Fife"],
+  "85":["Foal","Fowl","Flee","Fool"],"86":["Fish","Fudge","Voyage"],"87":["Fig","Fog","Fake"],"88":["Fife","Fifi"],"89":["Fob"],
   "90":["Bus","Base","Boss","Abyss"],"91":["Bat","Bad","Boat","Bead","Abbot"],"92":["Bone","Bun","Ban","Bin","Bean"],
   "93":["Beam","Bum"],"94":["Bear","Bar","Berry","Bower","Brow"],"95":["Bell","Bull","Ball","Bowl"],
   "96":["Beach","Beige","Badge","Budge"],"97":["Book","Bag","Bike","Beak","Bug"],"98":["Beef"],"99":["Pipe","Pope","Pub","Baby","Bib"]
@@ -1263,7 +1282,7 @@ function pegFor(n){
   return r;
 }
 // clarifiers for less-obvious pegs
-const NOTE = {12:"a DNA double-helix",30:"a small mouse",43:"a bottle of rum",44:"a red X error mark",54:"a fishing lure",55:"LOL — laughing out loud",79:"a Rubik's Cube",88:"a FIFA soccer star",89:"the FBI",93:"a beam of light",98:"a beehive",99:"the poop emoji",103:"the Tasmanian devil",110:"Adidas shoes",111:"Deadwood — a pile of dead logs",118:"a dead fox",133:"a time machine",138:"the movie",139:"Dumbo the elephant",150:"Tellus, the Roman earth goddess",152:"Bob Dylan",153:"a dilemma — a hard choice",155:"a tell-all book",156:"a deluge — a great flood",157:"talc — talcum powder",163:"the Taj Mahal",165:"a Thai chilli"};
+const NOTE = {12:"a tuna fish",30:"a small mouse",43:"a bottle of rum",44:"a rower pulling two oars",54:"a fishing lure",55:"a white lily",79:"a Rubik's Cube",88:"a fife — a small marching flute",89:"a car key fob",93:"a beam of light",98:"a beehive",99:"a baby",103:"the Tasmanian devil",110:"Adidas shoes",111:"Deadwood — a pile of dead logs",118:"a dead fox",133:"a time machine",138:"the movie",139:"Dumbo the elephant",150:"Tellus, the Roman earth goddess",152:"Bob Dylan",153:"a dilemma — a hard choice",155:"a tell-all book",156:"a deluge — a great flood",157:"talc — talcum powder",163:"the Taj Mahal",165:"a Thai chilli"};
 const BOOKS = ["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth",
 "1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther",
 "Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon","Isaiah","Jeremiah","Lamentations","Ezekiel",
@@ -1318,7 +1337,7 @@ const MNEM_NUM = {
 21:"You cast a fishing net and haul up exactly twenty-one flopping fish.",
 22:"Two nuns in black habits shuffle side by side, a mirror-image pair like 22.",
 23:"Your NAME blazes in neon on a billboard, blinking twenty-three times.",
-24:"Emperor Nero fiddles on his balcony while Rome burns — the clock strikes 24.",
+24:"A winner throws both arms up on the podium as the medal is hung — the crowd counts 2, 4.",
 25:"You hammer a nail and it bends into the hook of a 5 leaning on a 2.",
 26:"You carve a deep notch into a tree trunk — the twenty-sixth mark on the bark.",
 27:"A giraffe's absurd neck stretches up seven stories, a 2 balanced on a 7.",
@@ -1337,7 +1356,7 @@ const MNEM_NUM = {
 40:"A single red rose blooms, forty petals spiralling open in a perfect ring — a 0 after the 4.",
 41:"A fishing rod bends into a stiff line — a 4 leaning on a straight 1 — as a monster fish pulls.",
 42:"Rain hammers down in sheets, forty-two fat drops splashing a puddle shaped like a face.",
-43:"You open a door into a room where a giant 4 and a 3 lounge on the couch watching TV.",
+43:"You open a door into a room where a giant 4 and a 3 lounge on the couch watching a screen.",
 44:"A rower digs in with two oars — a matching pair, 4 and 4 — and rockets across the lake.",
 45:"A cinnamon roll unspools into a long spiral, coiling like a 5 chasing a 4.",
 46:"A cockroach the size of a shoe scuttles up the wall, antennae twitching a 4 and a 6.",
@@ -1381,9 +1400,9 @@ const MNEM_NUM = {
 84:"A bonfire roars up, flames licking into an 8 that splits into a 4.",
 85:"A metal file rasps across iron, shavings curling into an 8 and a 5.",
 86:"A fish leaps clean out of the water, tail flicking an 8 into a 6 of spray.",
-87:"Thick fog swallows the street, leaving only an 8 and a 7 glowing on a sign.",
+87:"A fat purple fig splits open, its red seeds spelling out an 8 and a 7.",
 88:"A tiny fife squeals a marching tune — two round 8s dancing in the air.",
-89:"FBI agents in black kick down the door, badges flashing an 8 and a 9.",
+89:"You thumb a car key fob, the lights blink an 8 and a 9 as the doors clunk unlocked.",
 90:"A double-decker bus rumbles by, its two round wheels a 9 rolling toward a 0.",
 91:"A baseball bat cracks a home run, the ball arcing a 9 down onto a straight 1.",
 92:"A dog buries a giant bone, digging a hole shaped like a 9 beside a 2.",
@@ -1447,7 +1466,7 @@ const MNEM_NUM = {
 150:"A straining Atlas hoists the whole world on his shoulders — the last peak, 150."};
 
 /* =================== BOOK SOUNDALIKES (reverence-audited) =================== */
-const MNEM_BOOK = {1:{s:"a glowing seed (Genesis)",t:"ONE lone SEED, the only thing in the empty void, glows like a spark until the whole garden of Eden GENERATES overnight."},2:{s:"an EXIT sign (Exodus)",t:"The parted Red Sea stands as TWO glassy walls, the SUN mirrored once in each, as Moses leads Israel toward the glowing EXIT sign."},3:{s:"a priest levitating (Leviticus)",t:"A SUMO wrestler so triple-wide he fills THREE pews gapes upward as the priest LEVITATES above the smoking altar."},4:{s:"floating numbers (Numbers)",t:"The census-taker rides a horse whose FOUR hooves are all SORE from the long trek as he NUMBERS every tent of Israel."},5:{s:"the Law given again (Deuteronomy)",t:"A DUET of SOUL singers hums Moses' farewell, then seals it with a giant HIGH FIVE, five fingers to five, as the Law sounds a SECOND time."},6:{s:"a GIANT SHOE knocking down ALL the walls",t:"JOSH and his trumpet blowers circle Jericho's wall of colossal SUSHI rolls once a day for SIX days, until one great shout splatters it into rice.",p:[["Jo","GIANT"],["shu","SHOE"],["a","ALL"]]},7:{s:"a judge's gavel (Judges)",t:"A JUDGE in a big black robe bangs his gavel SEVEN times on a giant smelly SOCK, then shouts, \"You are SET FREE!\""},8:{s:"a sheltering roof (Ruth)",t:"Up on a ROOF sits a squishy SOFA where a big happy spider lounges, slowly stretching out all EIGHT of its fuzzy legs."},9:{s:"the boy Samuel (1 Samuel)",t:"A wobbly CAMEL keeps slipping on a bar of SOAP and nearly squashing a cat, who springs back up giggling every time thanks to its NINE LIVES."},10:{s:"Samuel again (2 Samuel)",t:"Crowned King David throws TWO golden DICE that land five and five, a perfect TEN, as heralds unroll SAMUEL's SECOND scroll."},11:{s:"a crown (1 Kings)",t:"Your DAD plops a golden paper CROWN on his head and rules the living room from the couch, the very first KING."},12:{s:"a crown again (2 Kings)",t:"A twisty DNA ladder spins slowly while TWO tiny crowned KINGS ride its rungs like a merry-go-round."},13:{s:"a long scroll (1 Chronicles)",t:"You drop one shiny DIME in the freezer machine and out slides one giant grape POPSICLE."},14:{s:"a scroll again (2 Chronicles)",t:"You open a creaky DOOR and TWO frosty POPSICLES march out arm in arm."},15:{s:"a razor (Ezra)",t:"A DOLL keeps popping off the crowded toy shelf because it is the one EXTRA (\"EZ-ra\") nobody has room for."},16:{s:"a KNEE-HIGH wall MADE by Ya",t:"A soft TISSUE folds itself into fuzzy KNEE-HIGH socks that snap up to your knees — \"knee-high-miah!\"",p:[["Nehe","KNEE-HIGH"],["mi","MADE"],["ah","YA"]]},17:{s:"a star (Esther)",t:"The EASTER bunny hops past in a flowing white TOGA, painted eggs spilling out with every hop."},18:{s:"a job / hard work (Job)",t:"On the TV a kid scrubs, sweeps, rakes, and mows in fast-forward, doing the hardest JOB in the world without quitting."},19:{s:"palms (Psalms)",t:"A big brass TUBA oompahs under the PALM trees, and the palms sway in time to the song."},20:{s:"pro-HERBS (Proverbs)",t:"A giant NOSE cracks open FORTUNE COOKIES one by one and sniffs each wise little saying (the PROVERBS)."},21:{s:"a weary preacher (Ecclesiastes)",t:"A boy swings a NET at shimmering BUBBLES that pop into plain WIND every time — Ecclesiastes says it is all chasing the wind."},22:{s:"a love song (Song of Solomon)",t:"A NUN sings a syrupy love SONG to a big flopping SALMON that slaps its tail to the beat — \"Song of SALMON.\""},23:{s:"a giant eye (Isaiah)",t:"NEMO the little orange clownfish presses his face to the tank glass and shouts \"I SAW YA!\""},24:{s:"a smashed jar (Jeremiah)",t:"Old emperor NERO in his toga fiddles a tune while a giant BULLFROG named JEREMIAH croaks the bass line."},25:{s:"bitter lemons (Lamentations)",t:"A NAIL gets hammered through a pile of sour LEMONS and everyone puckers up crying — \"lemon-TATIONS.\""},26:{s:"a flaming wheel (Ezekiel)",t:"A kid named ZEKE dives into a mountain of cheesy NACHOS, crunching every chip — \"E-ZEEK-iel.\""},27:{s:"a lion (Daniel)",t:"A floppy-eared SPANIEL sprints laps in squeaky NIKE sneakers, ears flapping — \"Daniel the spaniel.\""},28:{s:"a garden hose (Hosea)",t:"A KNIFE slices right through a wriggling garden HOSE and water sprays everywhere — \"HOSE-a.\""},29:{s:"a jewel (Joel)",t:"You curl up for a NAP on a giant sparkling JEWEL that glitters like a pillow of light — \"jewel\" = Joel."},30:{s:"a shepherd (Amos)",t:"A tiny MOUSE rides high on the antlers of a giant MOOSE, squeaking \"A MOOSE! A MOOSE!\" — Amos."},31:{s:"a sealed decree (Obadiah)",t:"The welcome MAT groans \"OH, BAD idea!\" the second your foot lands on it — oh-BAD-iah."},32:{s:"a whale (Jonah)",t:"Under a huge full MOON, a great WHALE gulps down a man named JONAH in one big splashy swallow."},33:{s:"a microphone (Micah)",t:"A bandaged MUMMY honks the horn of MY CAR over and over, yelling \"call me MIKE-ah!\""},34:{s:"a warning hum (Nahum)",t:"A HAMMER that HUMS taps the nail singing \"NAH-HUM, NAH-HUM\" with every bang."},35:{s:"HAVE A COOK on an uphill climb",t:"A MOLE in a tall chef's hat flips burnt pancakes as the world's worst COOK — \"HAVE-A-COOK!\"",p:[["Ha","HAVE"],["bak","A"],["kuk","COOK"]]},36:{s:"a rushing wind (Zephaniah)",t:"A playful ZEPHYR breeze whooshes \"Zeph-a-NYE-ah!\" and puffs out your MATCH every time you strike it."},37:{s:"builders at work (Haggai)",t:"A muddy HOG grabs the MIC and squeals \"HOG-eye! HOG-eye!\" spraying happy mud flecks with every snort."},38:{s:"night visions on a screen (Zechariah)",t:"Little ZACK munches popcorn at a MOVIE so thrilling he shouts \"Zack-a-RYE-ah!\" every time the screen flashes."},39:{s:"a sealed letter (Malachi)",t:"You unroll a giant MAP of the MALL and a golden KEY tumbles out — \"MALL-a-KEY\" opens every store."},40:{s:"a welcome mat (Matthew)",t:"A cheerful welcome MAT named MATT sprouts a giant red ROSE through its middle, tickling everyone who wipes their feet."},41:{s:"a marker (Mark)",t:"A squeaky MARKER scribbles big check-MARKS all over the RADIO until every dial is covered in ink."},42:{s:"'look closely' (Luke)",t:"A RHINO thunders down the street so enormous everyone points and yells \"LOOK! LOOK!\" as the windows rattle."},43:{s:"an eagle (John)",t:"A wooden RUM barrel waddles past wearing bright red LONG JOHNS, stubby legs poking out of the button flap."},44:{s:"a great stage (Acts)",t:"Actors ACT out a grand stage play until one trips and a big red ERROR buzzer blares at the blooper."},45:{s:"a Roman soldier (Romans)",t:"A spinning film REEL shows ROMAN soldiers ROAMIN' round and round wherever the flapping filmstrip points."},46:{s:"a marble column (1 Corinthians)",t:"You walk under a towering ARCH built entirely of buttery CORN on the cob, kernels popping loose overhead."},47:{s:"a column again (2 Corinthians)",t:"You bite the second ear of CORN and crunch on a gray ROCK wedged right between the kernels."},48:{s:"a galaxy (Galatians)",t:"A pair of yellow GALOSHES stomps across the ROOF all by themselves, splashing puddles with every rubbery step."},49:{s:"a soldier's armor (Ephesians)",t:"A golden HARP sits frozen solid in a block of ice, its strings \"a-FREEZIN'\" and twanging icy little notes."},50:{s:"an overflowing cup (Philippians)",t:"A cowboy twirls a LASSO and ropes a flapping pile of rubber FLIPPERS that slap and wiggle like fish."},51:{s:"a colossus (Colossians)",t:"A COLOSSAL pot LID the size of a playground clangs down over the whole street, booming like a gong."},52:{s:"a trumpet in the salon (1 Thessalonians)",t:"A hungry LION gobbles a teetering stack of BALONEY sandwiches, licking mustard off his whiskers."},53:{s:"the salon again (2 Thessalonians)",t:"The second load of BALONEY gets stuffed into a stretch LIMO until floppy slices squish out of every window."},54:{s:"young Timothy (1 Timothy)",t:"Timid little TIM tiptoes to the pond and dangles a sparkly LURE, whispering \"here, fishy\" as quietly as he can."},55:{s:"the race finished (2 Timothy)",t:"Now TIM cannot stop laughing, texting \"LOL! LOL!\" so hard his phone bounces out of his hands."},56:{s:"a tight rein (Titus)",t:"A wiggly LEECH dresses up in a fancy red bow TIE and bows politely — \"TIE-tus, at your service.\""},57:{s:"a lemon turned sweet (Philemon)",t:"You FILL a pitcher with fresh LEMONade but it springs a LEAK, dribbling lemony drops from a tiny hole."},58:{s:"steam rising, He brews (Hebrews)",t:"A plastic HAIRBRUSH tumbles into bubbling LAVA and melts, bristles curling like tiny orange noodles."},59:{s:"a jam jar (James)",t:"A giant LIP smacks loudly, smeared top to bottom with sticky strawberry JAM dripping onto the chin."},60:{s:"the rock with keys (1 Peter)",t:"A giant green PEA rolls downhill and splats into a wobbly wheel of CHEESE, sticking there like a bullseye."},61:{s:"the rock stands firm (2 Peter)",t:"That same giant PEA rolls for its life as a spotted CHEETAH sprints after it, paws a blur."},62:{s:"warm light of love (1 John)",t:"A GENIE whooshes out of the lamp wearing just baggy red LONG JOHNS, striking a proud pose."},63:{s:"a tiny letter (2 John)",t:"A second pair of red LONG JOHNS dangles from a wind CHIME, jingling every time the legs kick."},64:{s:"a third note (3 John)",t:"A third pair of LONG JOHNS twirls by with a bright red CHERRY perched on top like a tiny hat."},65:{s:"a shield (Jude)",t:"A CHILLI pepper leans way back in tiny sunglasses and drawls \"whoa, DUDE,\" steam curling from its stem."},66:{s:"the curtain drawn back (Revelation)",t:"The JUDGE solemnly parts a great curtain for the final REVEAL, and glorious golden light floods out over everyone."}};
+const MNEM_BOOK = {1:{s:"a glowing seed (Genesis)",t:"ONE lone SEED, the only thing in the empty void, glows like a spark until the whole garden of Eden GENERATES overnight."},2:{s:"an EXIT sign (Exodus)",t:"The parted Red Sea stands as TWO glassy walls, the SUN mirrored once in each, as Moses leads Israel toward the glowing EXIT sign."},3:{s:"a priest levitating (Leviticus)",t:"A SUMO wrestler so triple-wide he fills THREE pews gapes upward as the priest LEVITATES above the smoking altar."},4:{s:"floating numbers (Numbers)",t:"The census-taker rides a horse whose FOUR hooves are all SORE from the long trek as he NUMBERS every tent of Israel."},5:{s:"the Law given again (Deuteronomy)",t:"A DUET of clapping SEALS honks along as Moses gives his farewell, sealing it with a giant HIGH FIVE, five fingers to five, as the Law sounds a SECOND time."},6:{s:"a GIANT SHOE knocking down ALL the walls",t:"JOSH and his trumpet blowers circle Jericho's wall of colossal SUSHI rolls once a day for SIX days, until one great shout splatters it into rice.",p:[["Jo","GIANT"],["shu","SHOE"],["a","ALL"]]},7:{s:"a judge's gavel (Judges)",t:"A JUDGE in a big black robe bangs his gavel SEVEN times on a giant smelly SOCK, then shouts, \"You are SET FREE!\""},8:{s:"a sheltering roof (Ruth)",t:"Up on a ROOF sits a squishy SOFA where a big happy spider lounges, slowly stretching out all EIGHT of its fuzzy legs."},9:{s:"the boy Samuel (1 Samuel)",t:"A wobbly CAMEL keeps slipping on a bar of SOAP and nearly squashing a cat, who springs back up giggling every time thanks to its NINE LIVES."},10:{s:"Samuel again (2 Samuel)",t:"Crowned King David throws TWO golden DICE that land five and five, a perfect TEN, as heralds unroll SAMUEL's SECOND scroll."},11:{s:"a crown (1 Kings)",t:"Your DAD plops a golden paper CROWN on his head and rules the living room from the couch, the very first KING."},12:{s:"a crown again (2 Kings)",t:"A giant leaping TUNA arcs over the waves while TWO tiny crowned KINGS ride its back like a merry-go-round."},13:{s:"a long scroll (1 Chronicles)",t:"You drop one shiny DIME in the freezer machine and out slides one giant grape POPSICLE."},14:{s:"a scroll again (2 Chronicles)",t:"You open a creaky DOOR and TWO frosty POPSICLES march out arm in arm."},15:{s:"a razor (Ezra)",t:"A DOLL keeps popping off the crowded toy shelf because it is the one EXTRA (\"EZ-ra\") nobody has room for."},16:{s:"a KNEE-HIGH wall MADE by Ya",t:"A soft TISSUE folds itself into fuzzy KNEE-HIGH socks that snap up to your knees — \"knee-high-miah!\"",p:[["Nehe","KNEE-HIGH"],["mi","MADE"],["ah","YA"]]},17:{s:"a star (Esther)",t:"The EASTER bunny hops past walking a fluffy white DOG on a leash, painted eggs spilling out with every hop."},18:{s:"a job / hard work (Job)",t:"A gentle white DOVE watches from a branch as a kid scrubs, sweeps, rakes, and mows in fast-forward, doing the hardest JOB in the world without quitting."},19:{s:"palms (Psalms)",t:"A big brass TUBA oompahs under the PALM trees, and the palms sway in time to the song."},20:{s:"pro-HERBS (Proverbs)",t:"A giant NOSE cracks open FORTUNE COOKIES one by one and sniffs each wise little saying (the PROVERBS)."},21:{s:"a weary preacher (Ecclesiastes)",t:"A boy swings a NET at shimmering BUBBLES that pop into plain WIND every time — Ecclesiastes says it is all chasing the wind."},22:{s:"a love song (Song of Solomon)",t:"A NUN sings a syrupy love SONG to a big flopping SALMON that slaps its tail to the beat — \"Song of SALMON.\""},23:{s:"a giant eye (Isaiah)",t:"A little garden GNOME presses his painted face to the window glass and shouts \"I SAW YA!\" (Isaiah)."},24:{s:"a smashed jar (Jeremiah)",t:"A gold-medal WINNER hoists his trophy overhead while a giant BULLFROG named JEREMIAH croaks the bass line."},25:{s:"bitter lemons (Lamentations)",t:"A NAIL gets hammered through a pile of sour LEMONS and everyone puckers up crying — \"lemon-TATIONS.\""},26:{s:"a flaming wheel (Ezekiel)",t:"A kid named ZEKE dives into a mountain of cheesy NACHOS, crunching every chip — \"E-ZEEK-iel.\""},27:{s:"a lion (Daniel)",t:"A floppy-eared SPANIEL sprints laps leaving squeaky INK pawprints everywhere, ears flapping — \"Daniel the spaniel.\""},28:{s:"a garden hose (Hosea)",t:"A KNIFE slices right through a wriggling garden HOSE and water sprays everywhere — \"HOSE-a.\""},29:{s:"a jewel (Joel)",t:"You twist a shining door KNOB carved from a giant sparkling JEWEL that glitters like light — \"jewel\" = Joel."},30:{s:"a shepherd (Amos)",t:"A tiny MOUSE rides high on the antlers of a giant MOOSE, squeaking \"A MOOSE! A MOOSE!\" — Amos."},31:{s:"a sealed decree (Obadiah)",t:"The welcome MAT groans \"OH, BAD idea!\" the second your foot lands on it — oh-BAD-iah."},32:{s:"a whale (Jonah)",t:"Under a huge full MOON, a great WHALE gulps down a man named JONAH in one big splashy swallow."},33:{s:"a microphone (Micah)",t:"A bandaged MUMMY honks the horn of MY CAR over and over, yelling \"call me MIKE-ah!\""},34:{s:"a warning hum (Nahum)",t:"A HAMMER that HUMS taps the nail singing \"NAH-HUM, NAH-HUM\" with every bang."},35:{s:"HAVE A COOK on an uphill climb",t:"A MOLE in a tall chef's hat flips burnt pancakes as the world's worst COOK — \"HAVE-A-COOK!\"",p:[["Ha","HAVE"],["bak","A"],["kuk","COOK"]]},36:{s:"a rushing wind (Zephaniah)",t:"A playful ZEPHYR breeze whooshes \"Zeph-a-NYE-ah!\" and puffs out your MATCH every time you strike it."},37:{s:"builders at work (Haggai)",t:"A muddy HOG grabs the MIC and squeals \"HOG-eye! HOG-eye!\" spraying happy mud flecks with every snort."},38:{s:"night visions on a screen (Zechariah)",t:"Little ZACK munches popcorn at a MOVIE so thrilling he shouts \"Zack-a-RYE-ah!\" every time the screen flashes."},39:{s:"a sealed letter (Malachi)",t:"You unroll a giant MAP of the MALL and a golden KEY tumbles out — \"MALL-a-KEY\" opens every store."},40:{s:"a welcome mat (Matthew)",t:"A cheerful welcome MAT named MATT sprouts a giant red ROSE through its middle, tickling everyone who wipes their feet."},41:{s:"a marker (Mark)",t:"A squeaky MARKER scribbles big check-MARKS all over the RADIO until every dial is covered in ink."},42:{s:"'look closely' (Luke)",t:"A RHINO thunders down the street so enormous everyone points and yells \"LOOK! LOOK!\" as the windows rattle."},43:{s:"an eagle (John)",t:"A wooden RUM barrel waddles past wearing bright red LONG JOHNS, stubby legs poking out of the button flap."},44:{s:"a great stage (Acts)",t:"Actors ACT out a grand stage play until a ROWER rows his boat right across the stage and a big red buzzer blares at the blooper."},45:{s:"a Roman soldier (Romans)",t:"A spinning film REEL shows ROMAN soldiers ROAMIN' round and round wherever the flapping filmstrip points."},46:{s:"a marble column (1 Corinthians)",t:"You walk under a towering ARCH built entirely of buttery CORN on the cob, kernels popping loose overhead."},47:{s:"a column again (2 Corinthians)",t:"You bite the second ear of CORN and crunch on a gray ROCK wedged right between the kernels."},48:{s:"a galaxy (Galatians)",t:"A pair of yellow GALOSHES stomps across the ROOF all by themselves, splashing puddles with every rubbery step."},49:{s:"a soldier's armor (Ephesians)",t:"A golden HARP sits frozen solid in a block of ice, its strings \"a-FREEZIN'\" and twanging icy little notes."},50:{s:"an overflowing cup (Philippians)",t:"A cowboy twirls a LASSO and ropes a flapping pile of rubber FLIPPERS that slap and wiggle like fish."},51:{s:"a colossus (Colossians)",t:"A COLOSSAL pot LID the size of a playground clangs down over the whole street, booming like a gong."},52:{s:"a trumpet in the salon (1 Thessalonians)",t:"A hungry LION gobbles a teetering stack of BALONEY sandwiches, licking mustard off his whiskers."},53:{s:"the salon again (2 Thessalonians)",t:"The second load of BALONEY gets stuffed into a stretch LIMO until floppy slices squish out of every window."},54:{s:"young Timothy (1 Timothy)",t:"Timid little TIM tiptoes to the pond and dangles a sparkly LURE, whispering \"here, fishy\" as quietly as he can."},55:{s:"the race finished (2 Timothy)",t:"Now TIM crosses the finish line and flops into a patch of white LILIES, laughing so hard his phone bounces out of his hands."},56:{s:"a tight rein (Titus)",t:"A wiggly LEECH dresses up in a fancy red bow TIE and bows politely — \"TIE-tus, at your service.\""},57:{s:"a lemon turned sweet (Philemon)",t:"You FILL a pitcher with fresh LEMONade, then snap a tiny LOCK on the lid so no one can sneak a sip."},58:{s:"steam rising, He brews (Hebrews)",t:"A plastic HAIRBRUSH tumbles into bubbling LAVA and melts, bristles curling like tiny orange noodles."},59:{s:"a jam jar (James)",t:"A giant LIP smacks loudly, smeared top to bottom with sticky strawberry JAM dripping onto the chin."},60:{s:"the rock with keys (1 Peter)",t:"A giant green PEA rolls downhill and splats into a wobbly wheel of CHEESE, sticking there like a bullseye."},61:{s:"the rock stands firm (2 Peter)",t:"That same giant PEA rolls for its life as a spotted CHEETAH sprints after it, paws a blur."},62:{s:"warm light of love (1 John)",t:"A GENIE whooshes out of the lamp wearing just baggy red LONG JOHNS, striking a proud pose."},63:{s:"a tiny letter (2 John)",t:"A second pair of red LONG JOHNS dangles from a wind CHIME, jingling every time the legs kick."},64:{s:"a third note (3 John)",t:"A third pair of LONG JOHNS twirls by with a bright red CHERRY perched on top like a tiny hat."},65:{s:"a shield (Jude)",t:"A CHILLI pepper leans way back in tiny sunglasses and drawls \"whoa, DUDE,\" steam curling from its stem."},66:{s:"the curtain drawn back (Revelation)",t:"The JUDGE solemnly parts a great curtain for the final REVEAL, and glorious golden light floods out over everyone."}};
 
 /* =================== SCENES — 3 foundation promises (deep designs) =================== */
 // All within book 1-9, chapter 1-9, verse 1-9. God shown only as light/glory/voice.
@@ -1457,11 +1476,11 @@ const SCENES = [
   scene:"Out of total darkness, a burst of radiant Light explodes and spins into a whole blue-green earth beneath a sky of brand-new stars. Cradled in the Light float three glowing seeds — the very first seeds of everything — and from them the whole world unfurls. This is the absolute beginning, and God speaks it all into being.",
   elements:[["Light bursting from darkness into an earth and stars","'God created the heaven and the earth' — God shown as the Light itself, never a form"],["The very first seeds of everything","'in the beginning'"],["Three glowing seeds","Seed · Seed · Seed = 1 · 1 · 1  (Genesis · ch 1 · v 1)"]]},
  {b:"Deuteronomy",c:5,v:1, text:"And Moses called all Israel, and said unto them, Hear, O Israel, the statutes and judgments which I speak in your ears this day, that ye may learn them, and keep, and do them.", concept:"Hear, learn, keep, and do God's statutes",
-  scene:"At the foot of the mountain, all Israel gathers as Moses lifts his voice, and beside him two soul singers stand with microphones, singing the statutes back to the crowd in call and response so every ear must hear. A warm light rests over the assembly, the glory of the Lord whose words are being proclaimed this day. As the people listen, Moses presses a single seed into the soil before them, for a word that is heard, learned, kept, and done takes root and grows.",
-  elements:[["Moses calling and two singers echoing the statutes","Hear, O Israel, the statutes and judgments I speak in your ears this day"],["A seed pressed into the soil before the people","Learn them, and keep, and do them, so the word takes root in living obedience"],["Two soul singers and a seed","Soul · Soul · Seed = 5 · 5 · 1  (Deuteronomy · ch 5 · v 1)"]]},
+  scene:"At the foot of the mountain, all Israel gathers as Moses lifts his voice, and beside him two clapping seals balance microphones on their noses, barking the statutes back to the crowd in call and response so every ear must hear. A warm light rests over the assembly, the glory of the Lord whose words are being proclaimed this day. As the people listen, Moses presses a single seed into the soil before them, for a word that is heard, learned, kept, and done takes root and grows.",
+  elements:[["Moses calling and two seals barking the statutes back","Hear, O Israel, the statutes and judgments I speak in your ears this day"],["A seed pressed into the soil before the people","Learn them, and keep, and do them, so the word takes root in living obedience"],["Two seals and a seed","Seal · Seal · Seed = 5 · 5 · 1  (Deuteronomy · ch 5 · v 1)"]]},
  {b:"Exodus",c:5,v:1, text:"And afterward Moses and Aaron went in, and told Pharaoh, Thus saith the LORD God of Israel, Let my people go, that they may hold a feast unto me in the wilderness.", concept:"Let my people go to feast unto the LORD",
-  scene:"Under a blazing sun, Moses and Aaron stand before Pharaoh's throne, and from the burning light above them a Voice thunders, 'Let my people go.' Beside them a soul singer lifts a microphone and pours out the demand in song, 'that they may hold a feast unto me in the wilderness.' Moses opens his palm toward Pharaoh, revealing a single seed, the promise of a nation waiting to be planted free in the desert. Pharaoh scowls, but the sunlight of the LORD's word blazes on, undimmed.",
-  elements:[["A blazing sun over Pharaoh's throne","The light and glory of the LORD, whose Voice commands, 'Let my people go'"],["A soul singer proclaiming the demand in song","Moses and Aaron delivering God's word, and the feast Israel will hold in the wilderness"],["A sun, a soul singer, and a seed","Sun · Soul · Seed = 2 · 5 · 1  (Exodus · ch 5 · v 1)"]]}
+  scene:"Under a blazing sun, Moses and Aaron stand before Pharaoh's throne, and from the burning light above them a Voice thunders, 'Let my people go.' Beside them a seal balances a microphone on its nose and barks out the demand, 'that they may hold a feast unto me in the wilderness.' Moses opens his palm toward Pharaoh, revealing a single seed, the promise of a nation waiting to be planted free in the desert. Pharaoh scowls, but the sunlight of the LORD's word blazes on, undimmed.",
+  elements:[["A blazing sun over Pharaoh's throne","The light and glory of the LORD, whose Voice commands, 'Let my people go'"],["A seal barking the demand aloud","Moses and Aaron delivering God's word, and the feast Israel will hold in the wilderness"],["A sun, a seal, and a seed","Sun · Seal · Seed = 2 · 5 · 1  (Exodus · ch 5 · v 1)"]]}
 ];
 
 /* =================== TORAH VERSE POOL — top 3 powerful verses per book =================== */
@@ -1884,8 +1903,13 @@ const Auth = {
   async push(){ if(!Auth._token) return;
     try{ await Auth._req("/sync","PUT",{ progJson:JSON.stringify(Prog), srsJson:JSON.stringify(SRS), updatedAt:Number(Store.get("vv_localts",0))||Date.now() }); }
     catch(e){ console.warn("cloud push failed:", e && e.message); } },
-  syncUp(){ if(!Auth._token||Auth._pulling) return; clearTimeout(Auth._timer); Auth._timer=setTimeout(()=>Auth.push(),2000); }
+  syncUp(){ if(!Auth._token||Auth._pulling) return; clearTimeout(Auth._timer); Auth._timer=setTimeout(()=>Auth.push(),2000); },
+  isAdmin(){ return !!(Auth.user && ADMIN_EMAILS.includes((Auth.user.email||"").toLowerCase())); },
+  adminTickets(type){ return Auth._req("/admin/tickets"+(type?("?type="+encodeURIComponent(type)):""),"GET"); },
+  adminSetDone(key,done){ return Auth._req("/admin/tickets/status","POST",{key,done}); },
+  adminDelete(key){ return Auth._req("/admin/tickets/delete","POST",{key}); }
 };
+const ADMIN_EMAILS=["elijah@kingdombuilders.ai"];   // who may review every user's bug reports
 // any verse (curated pool object if present, else built from the full KJV)
 function verseObj(b,c,v){ const p=verseAt(refKey(b,c,v));
   if(p) return {b:p.b||bookName(b),c,v,text:p.text||kjvText(b,c,v),concept:p.concept||"",scene:p.scene,elements:p.elements};
@@ -2039,8 +2063,7 @@ function renderJourney(){
   const J=el("journey");
   const stripFor=(a,z)=>{ let s=""; for(let b=a;b<=z;b++) s+=`<div class="bk ${knownNum(b)?"on":""}" data-book="${b}" title="${bookName(b)}">${pad2(b)}</div>`; return s; };
   J.innerHTML=`
-    <h2>Your Journey</h2>
-    <p class="lead">Master number images to unlock books, chapters and verses across the whole Bible.</p>
+    <h2 style="margin:0 0 8px">Your Journey</h2>
     ${(function(){ // daily habit hook: the first thing you see is today's review + your streak
       const dueV=versesDueCount(), dueP=palacesDueCount(), td=dueV+dueP;
       const streak=(Prog.dayStreak>0?`<span class="gold" style="font-weight:800">🔥 ${Prog.dayStreak}-day streak</span>`:"")+(Prog.freezes>0?`<span title="Streak Freezes — auto-save a missed day" style="margin-left:8px;font-weight:800">🧊 ${Prog.freezes}</span>`:"");
@@ -2051,11 +2074,11 @@ function renderJourney(){
           <button class="btn blue" id="jReview" style="margin:0;flex:0 0 auto">Review now →</button></div>`; }
       return `<div class="card center" style="margin-bottom:12px"><div style="font-weight:800;color:var(--good)">✓ You're caught up today</div>${streak?`<div style="margin-top:4px">${streak} — come back tomorrow to keep it alive</div>`:`<div class="hint" style="margin-top:4px">Memorize a verse and review it daily to start a streak.</div>`}<div class="hint" style="margin-top:4px">${weekLine}</div></div>`;
     })()}
-    <div class="card"><h2 style="font-size:16px">The whole Bible</h2>
-      <p class="hint">Blue = books you can already address. Tap a book to browse its chapters.</p>
+    <div class="card" style="margin-top:10px"><h2 style="font-size:15px;margin:0 0 2px">The whole Bible</h2>
+      <p class="hint" style="margin:0 0 8px">Blue = books you can already address. Tap one to browse chapters.</p>
       <div class="otnt-label">Old Testament <span>books 1–39</span></div>
       <div class="biblestrip">${stripFor(1,39)}</div>
-      <div class="otnt-label" style="margin-top:16px">New Testament <span>books 40–66</span></div>
+      <div class="otnt-label" style="margin-top:10px">New Testament <span>books 40–66</span></div>
       <div class="biblestrip">${stripFor(40,66)}</div></div>`;
   J.querySelectorAll("[data-book]").forEach(c=>c.onclick=()=>renderBookScreen(+c.dataset.book));
   if(el("jReview")) el("jReview").onclick=()=>{ show("verse"); startMemTest(); };   // jump straight into today's review
@@ -2204,11 +2227,20 @@ function storyReachKey(sk){ const s=sk.story; return Math.max(bookNum(s.b)||0, s
 
 /* =================== LEARN — Duolingo-style skill path =================== */
 // A skill = {id, label, kind:'num'|'book'|'sound'|'story', items:[n...]} ; tiles unlock in order.
+// video lessons woven into the Learn track (defined before buildUnits, which references them via vid())
+const VIDEOS = {
+  major: {skill:"video:major", title:"How the Major System works", sub:"Ten simple sounds turn any number into a picture — the key to everything.", done:"I watched it →"},
+  verse: {skill:"video:verse", title:"How to create a verse scene", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse", done:"I watched it →"},
+  palace:{skill:"video:palace", title:"What is a Memory Palace?", sub:"Walk a place you know and leave each item at a spot — do it once and the order sticks.", cta:"palace", done:"I watched it →"},
+  sr:    {skill:"video:sr", title:"How spaced repetition locks it in", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long-term memory.", cta:"sr", done:"I watched it →"}
+};
 function buildUnits(){
   const bk=n=>({id:"book:"+n,label:bookName(n),kind:"book",items:[n]});
   const units=[];
-  // 0) The Code — the Major System sound↔digit map, drilled both ways (the decoder foundation).
+  const vid=(k)=>({id:VIDEOS[k].skill, label:VIDEOS[k].title, kind:"video", vkey:k, optional:true, items:[]});
+  // 0) The Code — the Major System video first, then the sound↔digit map drilled both ways.
   units.push({name:"The Code · Major System sounds", skills:[
+    vid("major"),
     {id:"snd:0-4",label:"Sounds 0–4",kind:"sound",items:[0,1,2,3,4]},
     {id:"snd:5-9",label:"Sounds 5–9",kind:"sound",items:[5,6,7,8,9]}
   ]});
@@ -2218,11 +2250,16 @@ function buildUnits(){
     ...range(1,5).map(d=>({id:"num:"+d,label:PEGS[d],kind:"num",items:[d]})),
     bk(40)
   ]});
-  // 2) Your Memory Palace — the palace lesson lives here but is HIDDEN behind a scratch-off in the
-  //    Learn menu until the user earns it (memorize 5 verses). Optional so it never blocks the climb.
+  // 1b) Learn Verses — watch the scene-building video, then go memorize verses in the Verse tab.
+  units.push({name:"Learn Verses", videoTrack:true, skills:[ vid("verse") ]});
+  // 2) Your Memory Palace — video first, then create one (the create lesson is hidden behind a
+  //    scratch-off until earned; memorize 5 verses). Optional so it never blocks the climb.
   units.push({name:"Your Memory Palace", palaceUnit:true, skills:[
+    vid("palace"),
     {id:"palace:0",label:"My palace",kind:"palace",optional:true,items:[0]}
   ]});
+  // 2b) Spaced Repetition — watch the video, then practice from the Verse tab.
+  units.push({name:"Spaced Repetition", videoTrack:true, skills:[ vid("sr") ]});
   // Optional bonus palaces get appended to the end of each later section (never block progress).
   let _palaceSlot=1;
   const addOptPalace=(u)=>{ u.skills.push({id:"palace:"+_palaceSlot,label:"Bonus palace",kind:"palace",optional:true,items:[_palaceSlot]}); _palaceSlot++; return u; };
@@ -2368,6 +2405,27 @@ function nextFocus(){
   return nextSkillLabel() || "keep climbing the Word";
 }
 function videoPlaceholder(title, sub){ return `<div class="vidph"><div class="play">▶</div><div class="vt">${title}</div><div class="vs">${sub}</div></div>`; }
+/* ---- video LESSONS in the Learn path: watch → earn a check → (optionally) flash the nav ---- */
+function startVideoLesson(key, ret){
+  const V=VIDEOS[key], L=el("learn"); if(!V) return;
+  L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="vlClose">✕</button><div class="lbar" style="flex:1"><span style="width:100%"></span></div></div>
+    <div id="lBody"><div class="card">
+      ${videoPlaceholder("▶ "+V.title, V.sub+" (Add your video here.)")}
+      <h2 style="font-size:19px;text-align:center;margin:12px 0 4px">${V.title}</h2>
+      <p class="lead" style="text-align:center">${V.sub}</p>
+      <button class="btn" id="vlDone" style="margin-top:14px">✓ ${V.done}</button></div></div></div>`;
+  const back=()=>ret?ret():renderPath();
+  el("vlClose").onclick=back;
+  el("vlDone").onclick=()=>{ if(!Prog.doneSkills.includes(V.skill)) Prog.doneSkills.push(V.skill); saveProg(); bustCaches(); back(); if(V.cta) setTimeout(()=>flashNav(V.cta),300); };
+}
+function flashNav(cta){
+  const map={verse:{tab:"verse",msg:"👇 Learn your verses here"}, palace:{tab:"palace",msg:"👇 Create your palace here"}, sr:{tab:"verse",msg:"👇 Tap Verse, then the Spaced-Repetition button"}};
+  const c=map[cta]; if(!c) return;
+  const btn=document.querySelector(`.tabbar button[data-tab="${c.tab}"]`);
+  if(btn){ btn.classList.add("navflash"); setTimeout(()=>btn.classList.remove("navflash"),5000); }
+  let bn=el("navBanner"); if(!bn){ bn=document.createElement("div"); bn.id="navBanner"; document.querySelector(".phone").appendChild(bn); }
+  bn.textContent=c.msg; bn.className="navbanner show"; clearTimeout(bn._t); bn._t=setTimeout(()=>{bn.className="navbanner";},5000);
+}
 function goalpostCard(){
   const pics=Prog.doneSkills.filter(id=>/^(num|book):/.test(id)).length;
   const verses=Prog.memorized.length;
@@ -2429,6 +2487,12 @@ function renderPath(focus){
             <span class="tikface">🎫</span><small>${earned?"Scratch to unlock!":"Memory Palace"}</small></button>`;
           return;
         }
+        if(sk.kind==="video"){
+          const watched=Prog.doneSkills.includes(sk.id);
+          html+=`<button class="tile video ${watched?"done":""}" data-video="${sk.vkey}">
+            <span class="vface">${watched?"✓":"▶"}</span><small>${sk.label}</small></button>`;
+          return;
+        }
         const unlocked=skillUnlocked(ui,si), color=skillColor(sk,unlocked), d=Prog.doneSkills.includes(sk.id)?"done":"";
         const pro=skillPaywalled(sk);
         const isStory=sk.kind==="story";
@@ -2452,11 +2516,12 @@ function renderPath(focus){
   L.innerHTML=html;
   L.querySelectorAll("[data-grp]").forEach(h=>h.onclick=()=>{ const ui=+h.dataset.grp; expandedUnits.has(ui)?expandedUnits.delete(ui):expandedUnits.add(ui); renderPath(); });
   L.querySelectorAll("[data-cq]").forEach(b=>b.onclick=()=>{ if(b.dataset.prolock){ openPaywall(); return; } startChapterQuiz(+b.dataset.cq); });
-  L.querySelectorAll(".tile:not(.tickettile)").forEach(t=>t.onclick=()=>{
+  L.querySelectorAll(".tile:not(.tickettile):not(.video)").forEach(t=>t.onclick=()=>{
     if(t.classList.contains("pro")){ openPaywall(); return; }
     if(t.classList.contains("locked")) return;
     startLesson(UNITS[+t.dataset.ui].skills[+t.dataset.si]);
   });
+  L.querySelectorAll(".tile.video").forEach(t=>t.onclick=()=>startVideoLesson(t.dataset.video, renderPath));
   L.querySelectorAll("[data-palaceticket]").forEach(t=>t.onclick=()=>{
     const rung=SCRATCH_LADDER.findIndex(r=>r.tab==="palace");
     if(SCRATCH_LADDER[rung].gate()) Scratch.open(rung);
@@ -3716,7 +3781,6 @@ function renderWalk(){
     ? `<div class="qhead"><button class="lclose" id="wClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Learn a verse</div><button class="w4wbtn w4wsm" id="wWord" title="Word-for-word practice"><span>📖</span>W4W</button></div>` : "";
   V.innerHTML=`<div class="card">
     ${head}
-    ${wIdx===0?videoPlaceholder("Video: How to create a verse scene","Placeholder — how to turn a verse's book·chapter·verse into three pictures woven into one unforgettable scene. (Add your video here.)"):""}
     <div class="stage"><div class="stepIcon">${s.icon}</div>
       <div class="steplabel">${s.label}</div><div class="steptitle">${s.title}</div>
       <div class="steptext">${s.text}</div>${whyHtml}${mySceneShow}</div>
@@ -4243,13 +4307,16 @@ function renderReminder(){
   el("remOn").onchange=async()=>{ if(el("remOn").checked) await Reminders.enable(); else await Reminders.disable(); renderReminder(); };
   el("remTime").onchange=async()=>{ Prog.reminder.time=el("remTime").value||"20:00"; saveProg(); if(Prog.reminder.on) await Reminders.schedule(); };
 }
-el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); renderReminder(); el("backupMsg").innerHTML=""; el("themeModal").style.display="flex"; initProfileCollapse(); };
+el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); renderReminder(); el("backupMsg").innerHTML="";
+  if(el("bugReportsWrap")) el("bugReportsWrap").style.display = (typeof Auth!=="undefined" && Auth.isAdmin()) ? "" : "none";
+  el("themeModal").style.display="flex"; initProfileCollapse(); };
 // Make each profile subheader a collapsible section; all collapsed each time the menu opens.
 function initProfileCollapse(){
   const card=el("themeModal").querySelector(".modal-card"); if(!card) return;
   [...card.querySelectorAll(".prof-sect")].forEach(sec=>{
     const group=[]; let sib=sec.nextElementSibling;
-    while(sib && !sib.classList.contains("prof-sect") && sib.id!=="themeClose"){ group.push(sib); sib=sib.nextElementSibling; }
+    // stop at the next section header, the Done button, or the admin bug-reports wrapper (its own section)
+    while(sib && !sib.classList.contains("prof-sect") && sib.id!=="themeClose" && sib.id!=="bugReportsWrap"){ group.push(sib); sib=sib.nextElementSibling; }
     if(!sec.querySelector(".prof-caret")) sec.insertAdjacentHTML("afterbegin", `<span class="prof-caret">▸</span> `);
     sec.classList.add("prof-collapsible");
     const caret=sec.querySelector(".prof-caret");
@@ -4265,6 +4332,42 @@ if(el("pStore")) el("pStore").onclick=()=>{ el("themeModal").style.display="none
 if(el("resetBtn")) el("resetBtn").onclick=resetAllProgress;
 if(el("testScratchBtn")) el("testScratchBtn").onclick=()=>{ el("themeModal").style.display="none"; ScratchSim.begin(); };
 if(el("testOnboardBtn")) el("testOnboardBtn").onclick=()=>{ el("themeModal").style.display="none"; Onboard.preview(); };
+if(el("bugReportsBtn")) el("bugReportsBtn").onclick=()=>openBugReports();
+
+// Admin-only: review every user's submitted bug reports (email · text · done/undone · delete).
+async function openBugReports(){
+  let m=el("bugModal"); if(!m){ m=document.createElement("div"); m.id="bugModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  const esc=s=>String(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  const shell=(inner)=>`<div class="modal-card" style="max-height:88vh;display:flex;flex-direction:column">
+      <div class="ed-head"><h2>🐞 Bug reports</h2></div>
+      <div id="bugList" style="flex:1;overflow:auto;margin:6px 0 10px">${inner}</div>
+      <div class="btnrow"><button class="btn ghost" id="bugRefresh">↻ Refresh</button><button class="btn" id="bugClose">Done</button></div>
+    </div>`;
+  m.innerHTML=shell(`<p class="hint" style="text-align:center;margin:20px 0">Loading…</p>`);
+  m.style.display="flex";
+  m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("bugClose").onclick=()=>m.style.display="none";
+  const wire=(list)=>{
+    el("bugRefresh").onclick=()=>openBugReports();
+    (list||[]).forEach(t=>{
+      const row=m.querySelector(`[data-bk="${CSS.escape(t.key)}"]`); if(!row) return;
+      row.querySelector(".bug-status").onclick=async()=>{ try{ await Auth.adminSetDone(t.key,!t.done); openBugReports(); }catch(e){ toast(e.message||"Couldn't update."); } };
+      row.querySelector(".bug-del").onclick=async()=>{ if(!confirm("Delete this bug report permanently?")) return; try{ await Auth.adminDelete(t.key); openBugReports(); }catch(e){ toast(e.message||"Couldn't delete."); } };
+    });
+  };
+  try{
+    const {tickets}=await Auth.adminTickets("bug");
+    if(!tickets || !tickets.length){ el("bugList").innerHTML=`<p class="hint" style="text-align:center;margin:20px 0">No bug reports yet. 🎉</p>`; return; }
+    el("bugList").innerHTML=`<table class="bug-grid"><thead><tr><th>Email</th><th>Bug</th><th></th><th></th></tr></thead><tbody>${
+      tickets.map(t=>`<tr data-bk="${esc(t.key)}">
+        <td class="bug-em">${esc(t.email)}</td>
+        <td class="bug-tx">${esc(t.text)}</td>
+        <td><button class="bug-status ${t.done?"done":"open"}" title="${t.done?"Completed — tap to reopen":"Open — tap to mark complete"}">${t.done?"✅":"❌"}</button></td>
+        <td><button class="bug-del" title="Delete permanently">🗑️</button></td>
+      </tr>`).join("")}</tbody></table>`;
+    wire(tickets);
+  }catch(e){ el("bugList").innerHTML=`<p class="hint" style="text-align:center;margin:20px 0;color:var(--miss-ink)">${esc(e.message||"Couldn't load bug reports.")}</p>`; }
+}
 function simComplete(which){
   if(!Store.get("vv_simbak")) Store.setJSON("vv_simbak", Prog);   // snapshot real progress once
   UNITS.forEach(U=>{ const isStory=!!U.story; if((which==="learn")!==isStory) U.skills.forEach(sk=>{ if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id); }); });
@@ -4377,8 +4480,8 @@ function renderTypeTest(){
     <div class="card">
       <div style="font-weight:800;color:var(--gold-ink);text-align:center">${bookName(TT.b)} ${TT.c}:${TT.v}</div>
       <div class="ttdisplay"><span class="ttdone">${committed}</span>${wrongTop||(done||TT.wrongWord?"":`<span style="color:var(--muted)">your words appear here as you go…</span>`)}</div>
-      <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type word ${done+1}, then press space…">
-      <p class="hint" style="text-align:center;margin-top:8px">Type each word, then press <b>space</b>. A wrong word clears so you can try again.</p>
+      <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type word ${done+1}…">
+      <p class="hint" style="text-align:center;margin-top:8px">Each word jumps to the top the moment you finish it — <b>green</b> if right, <b>red</b> if wrong (then it clears to retry).</p>
     </div>`;
   el("ttClose").onclick=()=>{ const r=TT.ret; TT=null; r?r():renderVerse(); };
   const inp=el("ttIn"); setTimeout(()=>{ try{inp.focus();}catch(e){} }, 60);
@@ -4393,13 +4496,14 @@ function renderTypeTest(){
       TT.wrong=true; TT.wrongWord=typed; inp.value=""; renderTypeTest();
     }
   };
-  inp.onkeydown=(e)=>{ if(e.key===" " || e.key==="Enter"){ e.preventDefault(); commitWord(); } };
-  // last word has no trailing space: also commit the instant it matches exactly
+  // no space/enter needed: the moment the typed word is as long as the target, it jumps to the top
+  // to be judged (green = right, red = wrong then clears). Space is swallowed so it can't add a gap.
+  inp.onkeydown=(e)=>{ if(e.key===" "){ e.preventDefault(); } };
   inp.oninput=()=>{
     const expected=TT.words[TT.idx]; if(expected===undefined) return;
-    if(TT.idx===total-1 && normWord(inp.value)===normWord(expected)){ commitWord(); return; }
-    const nexp=normWord(expected), ncur=normWord(inp.value), wrong=ncur.length>0 && !nexp.startsWith(ncur);
+    const nexp=normWord(expected), ncur=normWord(inp.value.replace(/\s+/g,"")), wrong=ncur.length>0 && !nexp.startsWith(ncur);
     inp.classList.toggle("wrong", wrong); inp.classList.toggle("good", !wrong && ncur.length>0);
+    if(ncur.length>=nexp.length) commitWord();   // word finished → judge it automatically
   };
 }
 function typeTestComplete(){
@@ -4903,4 +5007,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260820-143002 -->
+<!-- deploy bb-20260820-152228 -->
