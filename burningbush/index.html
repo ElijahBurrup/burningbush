@@ -206,6 +206,19 @@
   .tline .pegimg,.tline .imgph,.tline .pegimg-sm,.tline .imgph-sm{width:112px;height:112px}
   .tline .tname,.tline .tword{font-size:30px;font-weight:800;color:var(--ink)}
   .tnum{font-size:52px;font-weight:900;text-align:center;line-height:1.05;margin:2px 0;letter-spacing:.5px;color:var(--gold-ink)}
+  .pegedit{margin:8px 0;border:1px solid var(--line);border-radius:12px;background:var(--panel2);padding:0 12px}
+  .pegedit summary{cursor:pointer;padding:10px 2px;font-weight:700;color:var(--accent);list-style:none}
+  .pegedit summary::-webkit-details-marker{display:none}
+  .pegopts{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:12px}
+  .pegchip{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:700;font-size:15px;cursor:pointer}
+  .pegchip.on{border-color:var(--gold2);color:var(--gold-ink)}
+  .pegchip.reset{border-style:dashed;color:var(--muted)}
+  .pegcustom{width:112px;height:112px;border:2px dashed var(--line);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);text-align:center;padding:6px;box-sizing:border-box}
+  .pegcustom span{font-size:12px;opacity:.8}
+  .pegcustom b{color:var(--gold-ink);font-size:18px}
+  .pegcustom.pegcustom-sm{width:56px;height:56px;border-width:1.5px;gap:0}
+  .pegcustom.pegcustom-sm span{display:none}
+  .pegcustom.pegcustom-sm b{font-size:12px}
   .sounds{text-align:center;color:var(--muted);font-size:15px;margin-bottom:8px}
   .teachbox{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;line-height:1.55;font-size:14px}
   .opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
@@ -1024,11 +1037,53 @@ function decodeSentence(n){ const w=pegFor(n).word, nn=(n>=0&&n<10?"0"+n:""+n), 
 // number pegs are two-digit (00–99): show low peg numbers zero-padded ("01","02","03") so the
 // two-consonant peg words (Seed 01, Sun 02, Sumo 03) read correctly. Books/sounds stay single-digit.
 function dispNum(kind,n){ return (kind!=="book" && n>=0 && n<10) ? "0"+n : ""+n; }
+/* ---- alternate image words for the "change the image word" picker ----
+   Each list is Major-System verified (tools/gen-alt-pegs.js): every word decodes to the same
+   two-digit code, so a user can swap Soap→Soup for 09 but never Cat (71). Generated, do not hand-edit. */
+const ALT_PEGS = {
+  "00":["Sauce","Seesaw"],"01":["Seed","Side","Seat","Suit","Soda","City"],"02":["Sun","Swan","Sauna"],
+  "03":["Sumo","Seam"],"04":["Sari","Soar","Sewer","Sore"],"05":["Sail","Seal","Soul","Silo","Sole"],
+  "06":["Sage","Sash","Sushi"],"07":["Sock","Sack","Saga","Ski","Sky"],"08":["Sofa","Safe"],
+  "09":["Soap","Soup","Sub","Sap","Spa"],"10":["Toes","Daisy","Dice","Dose"],"11":["Tot","Dad","Toad","Date","Data"],
+  "12":["Tin","Den","Dune","Down","Tuna"],"13":["Dime","Dam","Dome","Team"],"14":["Tire","Door","Deer","Tower","Diary","Tar"],
+  "15":["Towel","Tail","Doll","Dial","Tool"],"16":["Dish","Ditch","Touch","Dodge"],"17":["Duck","Dock","Dog","Attic"],
+  "18":["Dove","Taffy"],"19":["Tub","Tuba","Tube"],"20":["Nose","Noose","News"],"21":["Net","Nut","Node"],
+  "22":["Noon","Nun","Nan","Neon"],"23":["Name","Enemy"],"24":["Narrow","Honor"],"25":["Nail","Nile","Null"],
+  "26":["Notch","Nacho"],"27":["Neck","Nike","Nag"],"28":["Nave","Navy"],"29":["Nap","Nib"],
+  "30":["Mouse","Maze","Moss"],"31":["Mat","Mud","Moat","Maid","Meat"],"32":["Moon","Mane","Omen","Money","Mine"],
+  "33":["Mummy","Mime","Memo"],"34":["Mower","Mayor"],"35":["Mail","Mole","Mule","Mall","Meal"],
+  "36":["Match","Image","Mesh"],"37":["Mug"],"38":["Muff","Mafia","Movie"],"39":["Map","Mop","Mob"],
+  "40":["Rose"],"41":["Rat","Road","Rod","Ride","Root"],"42":["Rain","Rhino","Urn"],"43":["Ram","Room","Rim","Arm"],
+  "44":["Rare","Rower","Rear","Roar"],"45":["Roll","Rail","Reel","Rally"],"46":["Roach","Rash","Ridge"],
+  "47":["Rock","Rug","Rag","Rake","Ark"],"48":["Roof","Reef"],"49":["Rope","Robe","Rib"],"50":["Lace","Lasso"],
+  "51":["Lot","Lid","Lady","Load","Lute"],"52":["Lion","Line","Lane","Lawn","Loon"],"53":["Lime","Loom","Lam","Limo","Llama"],
+  "54":["Lure","Lair","Lyre","Lower","Liar"],"55":["Lily","Loyal","Lull","Loll"],"56":["Leech","Leash","Ledge","Lush"],
+  "57":["Log","Lake","Lock","Leg"],"58":["Lava","Leaf","Life","Loaf"],"59":["Lip","Lap","Loop"],"60":["Cheese","Jazz"],
+  "61":["Chat","Jet","Chit"],"62":["Chain","Genie","Chin"],"63":["Gem","Chime","Gym","Jam"],"64":["Cherry","Chore"],
+  "65":["Jail","Gel","Jelly"],"66":["Judge"],"67":["Shack","Chick","Shock","Jockey"],"68":["Chef","Shave"],
+  "69":["Ship","Shop","Chap","Sheep","Chip"],"70":["Gas","Kiss","Goose","Case","Cause"],"71":["Cat","Coat","Kite","Goat"],
+  "72":["Coin","Gun","Cone","Cane","Con"],"73":["Game","Gum"],"74":["Car","Core","Crow","Guru"],
+  "75":["Coal","Kale","Gale","Goal","Cola"],"76":["Cage","Cash","Coach","Couch"],"77":["Cake","Cook","Keg","Kick"],
+  "78":["Cave","Coffee","Cuff"],"79":["Cup","Cape","Cop"],"80":["Face","Vase","Phase"],"81":["Fat","Food","Feet","Foot","Fad"],
+  "82":["Fan","Phone","Fun","Fawn","Van"],"83":["Foam","Fume","Fame","Vim"],"84":["Fire","Fair","Fur","Ferry","Ivory"],
+  "85":["Foal","Fowl","Flee","Fool"],"86":["Fish","Fudge","Voyage"],"87":["Fog","Fake","Fig"],"88":["Fife"],
+  "90":["Bus","Base","Boss","Abyss"],"91":["Bat","Bad","Boat","Bead","Abbot"],"92":["Bone","Bun","Ban","Bin","Bean"],
+  "93":["Beam","Bum"],"94":["Bear","Bar","Berry","Bower","Brow"],"95":["Bell","Bull","Ball","Bowl"],
+  "96":["Beach","Beige","Badge","Budge"],"97":["Book","Bag","Bike","Beak","Bug"],"98":["Beef"],"99":["Pipe","Pope","Pub","Baby","Bib"]
+};
+function pegCode(n){ return (n>=0 && n<=99) ? String(n).padStart(2,"0") : null; }
+function defaultPegWord(n){ if(n>=0&&n<=99) return PEGS[n]; if(n>=100&&n<=176) return PEGS100[n]; return "?"; }
+// alternates the user may pick from (never includes the current default word)
+function pegAlts(n){ const c=pegCode(n); if(!c||!ALT_PEGS[c]) return []; const d=(defaultPegWord(n)||"").toLowerCase(); return ALT_PEGS[c].filter(w=>w.toLowerCase()!==d); }
 function pegFor(n){
-  if(n>=0 && n<=9)   return {word:PEGS[n], sounds:"s/z · "+SND[n]}; // zero-padded 0X peg
-  if(n>=10 && n<=99) return {word:PEGS[n], sounds:digitSounds(n)};
-  if(n>=100 && n<=176) return {word:PEGS100[n], sounds:digitSounds(n)};
-  return {word:"?", sounds:digitSounds(n)};
+  let r;
+  if(n>=0 && n<=9)        r={word:PEGS[n], sounds:"s/z · "+SND[n]}; // zero-padded 0X peg
+  else if(n>=10 && n<=99) r={word:PEGS[n], sounds:digitSounds(n)};
+  else if(n>=100 && n<=176) r={word:PEGS100[n], sounds:digitSounds(n)};
+  else r={word:"?", sounds:digitSounds(n)};
+  // a user-chosen image word (same Major-System code) overrides the default everywhere it's shown
+  if(typeof Prog!=="undefined" && Prog && Prog.customPeg && Prog.customPeg[n]) r.word=Prog.customPeg[n];
+  return r;
 }
 // clarifiers for less-obvious pegs
 const NOTE = {12:"a DNA double-helix",30:"a small mouse",43:"a bottle of rum",44:"a red X error mark",54:"a fishing lure",55:"LOL — laughing out loud",79:"a Rubik's Cube",88:"a FIFA soccer star",89:"the FBI",93:"a beam of light",98:"a beehive",99:"the poop emoji",103:"the Tasmanian devil",110:"Adidas shoes",111:"Deadwood — a pile of dead logs",118:"a dead fox",133:"a time machine",138:"the movie",139:"Dumbo the elephant",150:"Tellus, the Roman earth goddess",152:"Bob Dylan",153:"a dilemma — a hard choice",155:"a tell-all book",156:"a deluge — a great flood",157:"talc — talcum powder",163:"the Taj Mahal",165:"a Thai chilli"};
@@ -1377,11 +1432,30 @@ function verseAt(k){ return _vm()[k]; }
 
 /* =================== IMAGE HELPERS (fallback to word/placeholder) =================== */
 function pegImg(kind,n,word,big){
+  // a user-chosen image word has no drawn art — clear the picture, leaving a blank "your own picture" slot
+  if(kind==="num" && typeof Prog!=="undefined" && Prog && Prog.customPeg && Prog.customPeg[n]){
+    const cc = big ? "pegcustom" : "pegcustom pegcustom-sm";
+    return `<div class="${cc}"><span>✎ your picture</span><b>${Prog.customPeg[n]}</b></div>`;
+  }
   const src = kind==="book" ? `/burningbush/images/books/${n}.svg` : `/burningbush/images/pegs/${n}.svg`;
   const c = big ? "pegimg" : "pegimg-sm", ph = big ? "imgph" : "imgph-sm";
   if(kind==="book") return `<img class="${c}" src="${src}" alt="${word}" onerror="this.style.display='none'">`;
   return `<img class="${c}" src="${src}" alt="${word}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
     <div class="${ph}"><span>image coming</span></div>`;
+}
+// The "change the image word" picker: user chooses from Major-System-valid alternates (never freeform).
+function pegPicker(n){
+  const alts=pegAlts(n); const cur=(typeof Prog!=="undefined"&&Prog.customPeg)?Prog.customPeg[n]:null;
+  if(!alts.length && !cur) return "";               // nothing valid to offer
+  const def=defaultPegWord(n), code=pegCode(n);
+  const chips=alts.map(w=>`<button class="pegchip${cur&&cur.toLowerCase()===w.toLowerCase()?" on":""}" data-peg="${w}">${w}</button>`).join("");
+  const reset= cur ? `<button class="pegchip reset" data-peg="">↺ ${def}</button>` : "";
+  const note= cur
+    ? `Using your own word <b class="gold">${cur}</b> — the drawn picture is cleared so you can imagine your own. Every choice still decodes to <b>${code}</b>.`
+    : `Prefer a different picture? Pick one — each still decodes to <b>${code}</b> in the Major System, and choosing it clears the drawn picture so you imagine your own.`;
+  return `<details class="pegedit"${cur?" open":""}><summary>✎ Change the image word</summary>
+    <div class="hint" style="margin:8px 0">${note}</div>
+    <div class="pegopts">${chips}${reset}</div></details>`;
 }
 
 /* =================== SRS (Leitner) + PROGRESS STATE =================== */
@@ -1404,7 +1478,7 @@ function migrateProg(p){
   p.memorized=arr(p.memorized); p.doneSkills=arr(p.doneSkills); p.chosen=obj(p.chosen);
   if(typeof p.onboarded!=="boolean") p.onboarded=!!p.onboarded;
   p.saved=arr(p.saved); p.skipped=arr(p.skipped);               // green (come back later) / red (skip)
-  p.extraKnown=arr(p.extraKnown); p.palaces=arr(p.palaces); p.customBook=obj(p.customBook); p.badges=arr(p.badges); p.customScene=obj(p.customScene); // ad-hoc numbers, palaces, edited book texts, badges, user's own verse scenes
+  p.extraKnown=arr(p.extraKnown); p.palaces=arr(p.palaces); p.customBook=obj(p.customBook); p.badges=arr(p.badges); p.customScene=obj(p.customScene); p.customPeg=obj(p.customPeg); // ad-hoc numbers, palaces, edited book texts, badges, user's own verse scenes, user-chosen image words
   p.palaces=p.palaces.map(pl=>{ if(pl&&typeof pl==="object"){ if(!pl.learnedAt) pl.learnedAt=Date.now(); if(!pl.step) pl.step=1; } return pl; }); // spaced-repetition trail: D0 done at build
   p.verseSR=obj(p.verseSR); (p.memorized||[]).forEach(k=>{ if(!p.verseSR[k]) p.verseSR[k]={learnedAt:Date.now(),step:1}; }); // per-verse SR trail; back-fill existing memorized verses
   p.talents=p.talents||0; p.streak=p.streak||0; p.bestStreak=p.bestStreak||0; p.talentLog=obj(p.talentLog); // Talents (verse-practice points), streaks, per-verse 24h earn log
@@ -1431,7 +1505,7 @@ function mergeProg(a,b){
   m.onboarded=!!(a.onboarded||b.onboarded);
   m.lastReviewDay=(a.lastReviewDay>b.lastReviewDay)?a.lastReviewDay:b.lastReviewDay;
   m.chosen=Object.assign({},b.chosen,a.chosen); m.customBook=Object.assign({},b.customBook,a.customBook);
-  m.customScene=Object.assign({},b.customScene,a.customScene); m.talentLog=Object.assign({},b.talentLog,a.talentLog);
+  m.customScene=Object.assign({},b.customScene,a.customScene); m.customPeg=Object.assign({},b.customPeg,a.customPeg); m.talentLog=Object.assign({},b.talentLog,a.talentLog);
   m.palaces=((a.palaces||[]).length>=(b.palaces||[]).length)?a.palaces:b.palaces;   // keep the fuller palace set
   m.verseSR=mergeSR(a.verseSR,b.verseSR);
   return migrateProg(m);
@@ -2364,8 +2438,11 @@ function renderStep(){
     const decode = decodeSentence(s.n);
     if(s.kind==="book"){
       // one combined scene (image → book) is the only example needed
-      const scene = (typeof REL!=="undefined" && REL[s.n] && REL[s.n].imgToBook) ? REL[s.n].imgToBook
-        : (mb&&mb.t ? mb.t : `The name <b>${bookName(s.n)}</b> sounds like <b>${mb?mb.s:""}</b>; its number image is <b class="gold">${word}</b>.`);
+      // the pre-written example is built around the default image; if the user picked their own word, show a generic example instead
+      const scene = (Prog.customPeg && Prog.customPeg[s.n])
+        ? `Picture your own <b class="gold">${word}</b> tangled into the story of <b>${bookName(s.n)}</b> — make it wild, huge and impossible to forget.`
+        : ((typeof REL!=="undefined" && REL[s.n] && REL[s.n].imgToBook) ? REL[s.n].imgToBook
+        : (mb&&mb.t ? mb.t : `The name <b>${bookName(s.n)}</b> sounds like <b>${mb?mb.s:""}</b>; its number image is <b class="gold">${word}</b>.`));
       const custom = Prog.customBook[s.n] ? `<div class="relbox" style="border:1px solid var(--gold2)"><div class="rl" style="color:var(--gold-ink)">★ My own scene</div>${Prog.customBook[s.n]}</div>` : "";
       const editBtn = `<button class="btn ghost sm" id="lEdit" style="width:100%;margin-top:8px">✏️ ${Prog.customBook[s.n]?"Edit my scene":"Write my own scene"}</button>`;
       body = `<div class="stage">
@@ -2373,6 +2450,7 @@ function renderStep(){
           <div class="tnum">Book ${nn}</div>
           <div class="tline"><span class="tword">${word}</span>${pegImg("num",s.n,word,true)}</div>
           <div class="sounds">sounds: <b>${snd}</b></div></div>
+        ${pegPicker(s.n)}
         <div class="hint" style="text-align:center;margin:10px 0 2px">Write your own scene below to lock it in — here's an example:</div>
         ${editBtn}${custom}
         <div class="teachbox"><b class="gold">Example · image → book:</b> ${scene}<br><br>${decode}</div>
@@ -2384,7 +2462,8 @@ function renderStep(){
           <div class="sounds">sounds: <b>${snd}</b></div>
           <div class="imgwrap">${pegImg(s.kind,s.n,word,true)}</div>
           <div class="bigword">${word}</div></div>
-        <div class="teachbox"><b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${NOTE[s.n]?" ("+NOTE[s.n]+")":""}.<br><br>${decode}</div>
+        ${pegPicker(s.n)}
+        <div class="teachbox"><b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${(!Prog.customPeg[s.n]&&NOTE[s.n])?" ("+NOTE[s.n]+")":""}.<br><br>${decode}</div>
         <button class="btn" id="lNext" style="margin-top:10px">I can see it →</button>`;
     }
   } else if(s.type==="q_n2i"){ // number → image
@@ -2448,6 +2527,12 @@ function wireStep(s){
       const t=prompt(`Your own way to remember ${bookName(s.n)} (book ${s.n}, image "${word}"):`, cur);
       if(t!==null){ if(t.trim()){ Prog.customBook[s.n]=t.trim(); } else { delete Prog.customBook[s.n]; } saveProg(); renderStep(); }
     };
+    // pick a different (Major-System-valid) image word — clears the drawn picture
+    document.querySelectorAll("[data-peg]").forEach(b=>b.onclick=()=>{
+      const w=b.getAttribute("data-peg");
+      if(w){ Prog.customPeg[s.n]=w; } else { delete Prog.customPeg[s.n]; }
+      saveProg(); renderStep();
+    });
     return;
   }
   if(s.type==="choose"){
