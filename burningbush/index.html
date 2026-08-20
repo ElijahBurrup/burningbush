@@ -53,6 +53,7 @@
     --shadow-soft:rgba(0,0,0,.4); --img-shadow:rgba(0,0,0,.45);
     --due:#ff5a5a; --due-glow:rgba(255,90,90,.8);
     --milestone-bg:linear-gradient(135deg,#2a2413,#1a1710);
+    --milestone-c:#a78bfa; --milestone-bg2:linear-gradient(135deg,rgba(167,139,250,.14),rgba(167,139,250,.03));
     --ring-bg:radial-gradient(circle at 35% 30%,rgba(232,201,106,.4),rgba(30,25,60,.9)); --ring-glow:rgba(232,201,106,.22);
     --vidph-bg:linear-gradient(135deg,rgba(232,201,106,.08),rgba(0,0,0,.15));
     --sw-line:rgba(255,255,255,.15); --scrim:rgba(0,0,0,.62);
@@ -319,6 +320,15 @@
   .ed-trash:active{transform:scale(.92)}
   .ed-ta{width:100%;box-sizing:border-box;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-size:15px;line-height:1.5;padding:12px;font-family:inherit;resize:vertical;min-height:120px}
   .ed-ta:focus{outline:none;border-color:var(--gold2)}
+  .menu-row{width:100%;text-align:left;display:flex;align-items:center;gap:10px;margin-top:8px}
+  .menu-row span{font-size:20px;flex:0 0 auto}
+  .tkcount{font-weight:800;font-size:13px;border-radius:999px;padding:4px 10px;background:var(--panel2);color:var(--muted);border:1px solid var(--line);white-space:nowrap}
+  .tkcount.ok{color:var(--good);border-color:var(--good)}
+  .tkcount.bad{color:var(--miss-ink);border-color:var(--miss)}
+  .statrow{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line)}
+  .statrow:last-of-type{border-bottom:none}
+  .statrow .static{font-size:24px;width:30px;text-align:center;color:var(--gold-ink);flex:0 0 auto}
+  .statrow b{color:var(--ink)}
   /* word-for-word typing test */
   .vhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:2px}
   .w4wbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:66px;height:66px;border-radius:16px;border:1.5px solid var(--gold2);background:var(--panel2);color:var(--gold-ink);cursor:pointer;font-weight:800;font-size:10px;line-height:1.05;text-align:center;flex:0 0 auto}
@@ -472,9 +482,9 @@
   .vpsel.correct{border-color:var(--green);background:var(--ok-bg)}
   .vpsel.wrong{border-color:var(--miss-ink);background:var(--no-bg)}
   .milestone{margin:26px 0;background:var(--panel2);border:1px dashed var(--box-line);border-radius:16px;padding:18px;text-align:center;opacity:.72}
-  .milestone.reached{background:var(--milestone-bg);border:1px solid var(--gold);opacity:1}
+  .milestone.reached{background:var(--milestone-bg2);border:1px solid var(--milestone-c);opacity:1}
   .milestone .mtitle{font-size:18px;font-weight:800;color:var(--muted);letter-spacing:.4px;margin:4px 0}
-  .milestone.reached .mtitle{color:var(--gold-ink)}
+  .milestone.reached .mtitle{color:var(--milestone-c)}
   .milestone .msub{font-size:13px;color:var(--muted);line-height:1.5}
   .milestone.reached .msub{color:var(--ink-soft2)}
   .milestone .mnum{font-size:12px;font-weight:700}
@@ -586,6 +596,9 @@
   .phone[data-theme="illumined"] .bignum,.phone[data-theme="illumined"] .bigword{
     background:linear-gradient(180deg,var(--gold-hi),var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent;
     text-shadow:0 0 22px rgba(232,201,106,.3)}
+  /* milestones are violet, not gold — distinct from the gold/blue lesson group headers */
+  .phone[data-theme="illumined"] .milestone .mtitle{background:none;-webkit-text-fill-color:currentColor;color:var(--muted);text-shadow:none}
+  .phone[data-theme="illumined"] .milestone.reached .mtitle{color:var(--milestone-c);text-shadow:0 0 18px rgba(167,139,250,.3)}
   /* cards glow softly */
   .phone[data-theme="illumined"] .card{background:linear-gradient(180deg,rgba(122,162,255,.05),rgba(232,201,106,.03));border:1px solid var(--line);box-shadow:0 0 26px rgba(90,70,160,.12)}
   .phone[data-theme="illumined"] .callout{background:radial-gradient(circle at 50% 0,rgba(232,201,106,.1),rgba(232,201,106,.02));border-color:var(--line)}
@@ -619,7 +632,7 @@
   .phone[data-theme="illumined"] .vbox.ready{border-color:var(--gold-ink);color:var(--gold-hi)}
   .phone[data-theme="illumined"] .biblestrip .bk.on{background:radial-gradient(circle at 35% 30%,#a9c2ff,#4a66c8);box-shadow:0 0 8px rgba(122,162,255,.5);color:#fff}
   /* milestones radiate */
-  .phone[data-theme="illumined"] .milestone.reached{background:radial-gradient(circle at 50% 0,rgba(232,201,106,.2),rgba(232,201,106,.03));border:1px solid var(--gold2);box-shadow:0 0 26px rgba(232,201,106,.22)}
+  .phone[data-theme="illumined"] .milestone.reached{background:radial-gradient(circle at 50% 0,rgba(167,139,250,.22),rgba(167,139,250,.03));border:1px solid var(--milestone-c);box-shadow:0 0 26px rgba(167,139,250,.22)}
   .phone[data-theme="illumined"] .grouphead.grp-gold{background:radial-gradient(circle at 30% 0,var(--gold-hi),var(--gold2))}
   .phone[data-theme="illumined"] .vidph{border-color:var(--gold2);background:radial-gradient(circle at 50% 0,rgba(232,201,106,.12),rgba(0,0,0,.2))}
   .phone[data-theme="illumined"] .stepIcon{filter:drop-shadow(0 0 12px var(--glow))}
@@ -687,7 +700,7 @@
   .phone[data-theme="glass"] .counter .l{color:#cdbf9c;letter-spacing:.06em}
   .phone[data-theme="glass"] .milestone{border:3px solid #0a0a0d;box-shadow:0 0 0 1px #b48a1f;background:linear-gradient(160deg,rgba(74,31,110,.5),transparent)}
   .phone[data-theme="glass"] .milestone.reached{background:radial-gradient(200px 100px at 50% 0,#f7e39a,#b48a1f)}
-  .phone[data-theme="glass"] .milestone.reached .mtitle{color:#2a1e00;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+  .phone[data-theme="glass"] .milestone.reached .mtitle{color:var(--milestone-c);text-shadow:0 1px 2px rgba(0,0,0,.4)}
   .phone[data-theme="glass"] .milestone.reached .msub{color:#4a3810}
 
   /* ============ SCRIPTURE QUEST — youth adventure/RPG, chunky, Luckiest Guy ============ */
@@ -764,7 +777,8 @@
   .phone[data-theme="quest"] .tile small{font-family:var(--font-display2);letter-spacing:1px;font-size:12px;color:#e6cf9e}
   /* treasure-chest milestone banners */
   .phone[data-theme="quest"] .milestone{border:4px solid #4a3414;background:linear-gradient(135deg,#8a7654,#6a5030);color:#f4e4c1;box-shadow:0 5px 0 rgba(0,0,0,.25);opacity:1}
-  .phone[data-theme="quest"] .milestone .mtitle{font-family:var(--font-display2);letter-spacing:1.5px;color:#f4e4c1;text-shadow:1px 1px 0 rgba(0,0,0,.3)}
+  .phone[data-theme="quest"] .milestone .mtitle{font-family:var(--font-display2);letter-spacing:1.5px;color:var(--muted);text-shadow:1px 1px 0 rgba(0,0,0,.3)}
+  .phone[data-theme="quest"] .milestone.reached .mtitle{color:var(--milestone-c)}
   .phone[data-theme="quest"] .milestone.reached{background:linear-gradient(135deg,#ffe066,#ffcf33);border-color:#c99400}
   .phone[data-theme="quest"] .milestone.reached .mtitle{color:#4a3600}
   .phone[data-theme="quest"] .milestone.reached .msub{color:#5a4200}
@@ -796,6 +810,7 @@
     --tile-shadow:#dbe3ec; --ghost-shadow:#dbe3ec; --gold-shadow:#cc9300;
     --disabled-bg:#e4ebf3; --disabled-ink:#aab4c2; --disabled-shadow:#d3dbe5;
     --milestone-bg:linear-gradient(135deg,#fff2c9,#ffe08a); --ring-bg:radial-gradient(circle at 35% 30%,#fff2c9,#ffe08a);
+    --milestone-c:#7c4dff; --milestone-bg2:linear-gradient(135deg,rgba(124,77,255,.12),rgba(124,77,255,.03));
     --radius-card:24px; --radius-btn:18px; --radius-box:14px;
     --font-display:"Baloo 2",cursive;
     background:
@@ -887,7 +902,7 @@
 <div class="phone">
   <div class="skyfx" id="skyfx"></div>
   <div class="topbar">
-    <div class="brand">
+    <div class="brand" id="brandBtn" role="button" title="Support & giving" style="cursor:pointer">
       <div class="logo"><svg viewBox="0 0 48 48" width="26" height="26" aria-label="Burning bush">
         <defs><radialGradient id="flm" cx="50%" cy="38%" r="60%">
           <stop offset="0%" stop-color="#fff3c4"/><stop offset="45%" stop-color="#ffcf4d"/>
@@ -900,7 +915,7 @@
       <div class="brandtext"><b>Burning Bush</b><small>Bible Memory</small></div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
-      <div class="metrics">
+      <div class="metrics" id="statsBtn" role="button" title="What do these mean?" style="cursor:pointer">
         <div class="metric lvl"><span>◆</span><span id="mLvl">0</span></div>
         <div class="metric bk"><span>📖</span><span id="mBk">0</span></div>
         <div class="metric mem"><span>★</span><span id="mMem">0</span></div>
@@ -1021,7 +1036,7 @@
       <div class="prof-sect" style="margin-top:16px">Share &amp; rewards</div>
       <div class="btnrow" style="margin-top:0">
         <button class="btn ghost" id="pShare">📣 Share progress</button>
-        <button class="btn ghost" id="pStore">🛒 Talent Store</button>
+        <button class="btn ghost" id="pStore">💰 Talents Store</button>
       </div>
 
       <div class="prof-sect" style="margin-top:16px">Account</div>
@@ -1086,10 +1101,12 @@
         <div>✦ All 100 Bible-story lessons</div>
         <div>✦ Unlimited bonus memory palaces</div>
       </div>
-      <button class="btn blue" id="payGo" style="width:100%"><span id="payPrice">$25/year</span> · Go Pro</button>
+      <button class="btn blue" id="payYearly" style="width:100%">$25 / year · Go Pro <span style="font-size:11px;font-weight:700;opacity:.85">— best value</span></button>
+      <button class="btn blue" id="payMonthly" style="width:100%;margin-top:8px">$5 / month · Go Pro</button>
       <button class="btn ghost" id="payRestore" style="width:100%;margin-top:8px">I already paid · Restore</button>
+      <button class="btn ghost" id="payHelp" style="width:100%;margin-top:8px">🙏 Can't afford it? Request assistance</button>
       <button class="btn ghost" id="payClose" style="width:100%;margin-top:8px">Maybe later</button>
-      <p class="hint" style="margin-top:12px">Secure checkout by Stripe. Cancel anytime.</p>
+      <p class="hint" style="margin-top:12px">Secure checkout by Stripe. Cancel anytime. A <b>gifted</b> subscription is billed once and does <b>not</b> auto-renew.</p>
       <button id="payCode" style="background:none;border:none;color:var(--muted);text-decoration:underline;font-size:12px;cursor:pointer;margin-top:6px">I have a code</button>
     </div>
   </div>
@@ -1692,6 +1709,7 @@ function migrateProg(p){
   if(!Array.isArray(p.scratchWon)) p.scratchWon=[]; if(typeof p.scratchInit!=="boolean") p.scratchInit=false; // tabs won via scratch-off + one-time back-compat grant
   if(typeof p.fiveVerseHintShown!=="boolean") p.fiveVerseHintShown=false; // one-time "a 5-streak unlocks your palace" nudge
   p.w4w=obj(p.w4w); // per-verse word-for-word practice: {refKey:{count, times:[ts...]}}
+  p.tickets=arr(p.tickets); // support/feedback submissions {type,text,ts,...} — synced to the DB with progress
   p.palaces=p.palaces.map(pl=>{ if(pl&&typeof pl==="object"){ if(!pl.learnedAt) pl.learnedAt=Date.now(); if(!pl.step) pl.step=1; } return pl; }); // spaced-repetition trail: D0 done at build
   p.verseSR=obj(p.verseSR); (p.memorized||[]).forEach(k=>{ if(!p.verseSR[k]) p.verseSR[k]={learnedAt:Date.now(),step:1}; }); // per-verse SR trail; back-fill existing memorized verses
   p.talents=p.talents||0; p.streak=p.streak||0; p.bestStreak=p.bestStreak||0; p.talentLog=obj(p.talentLog); // Talents (verse-practice points), streaks, per-verse 24h earn log
@@ -1722,6 +1740,7 @@ function mergeProg(a,b){
   m.firstWin=!!(a.firstWin||b.firstWin); m.persona=a.persona||b.persona; m.dailyMin=a.dailyMin||b.dailyMin; m.bibleFam=a.bibleFam||b.bibleFam; m.covenant=a.covenant||b.covenant;
   m.scratchWon=uniq(a.scratchWon,b.scratchWon); m.scratchInit=!!(a.scratchInit||b.scratchInit); m.fiveVerseHintShown=!!(a.fiveVerseHintShown||b.fiveVerseHintShown);
   m.w4w=Object.assign({},b.w4w,a.w4w);
+  m.tickets=[...(a.tickets||[]),...(b.tickets||[])].filter((t,i,arr)=>arr.findIndex(x=>x.ts===t.ts&&x.type===t.type)===i); // union by (ts,type)
   m.palaces=((a.palaces||[]).length>=(b.palaces||[]).length)?a.palaces:b.palaces;   // keep the fuller palace set
   m.verseSR=mergeSR(a.verseSR,b.verseSR);
   return migrateProg(m);
@@ -1773,9 +1792,10 @@ const Billing = {
   // ── configure these once your Stripe product exists ──
   cfg: {
     priceLabel: "$25/year",
-    // Paste your Stripe Payment Link here (a hosted $25/year subscription checkout).
-    // Set its post-payment redirect to this app's URL with ?checkout=success appended.
-    checkoutUrl: "",
+    // Paste your Stripe Payment Links here. Each redirect should return to this app with
+    // ?checkout=success (monthly) or ?checkout=success&plan=year appended.
+    checkoutUrl: "",       // yearly ($25/year) — legacy field, still used as the yearly link
+    monthlyUrl: "",        // monthly ($5/month)
     // Optional: Stripe customer-portal link so subscribers can manage/cancel.
     manageUrl: ""
   },
@@ -1787,9 +1807,10 @@ const Billing = {
   // Comp / promo codes that unlock the full app permanently (no expiry).
   codes: ["elijahsentme"],
   redeem(code){ const c=(code||"").trim().toLowerCase().replace(/\s+/g,""); if(Billing.codes.includes(c)){ Store.setJSON("vv_pro",{active:true, plan:"code", since:Date.now(), until:null}); return true; } return false; },
-  startCheckout(){
-    if(!Billing.cfg.checkoutUrl){ toast("Checkout isn't set up yet — add your Stripe link in Billing.cfg."); return; }
-    try{ location.href = Billing.cfg.checkoutUrl; }catch(e){ toast("Couldn't open checkout."); }
+  startCheckout(plan){
+    const url = plan==="monthly" ? Billing.cfg.monthlyUrl : Billing.cfg.checkoutUrl;
+    if(!url){ toast("Checkout isn't set up yet — add your Stripe link in Billing.cfg."); return; }
+    try{ location.href = url; }catch(e){ toast("Couldn't open checkout."); }
   },
   // On app load: if we've returned from a successful Stripe checkout, unlock Pro and tidy the URL.
   // NOTE: this trusts the redirect. For tamper-proof entitlement, verify the session server-side
@@ -3305,7 +3326,7 @@ function openStore(){
   if(!m){ m=document.createElement("div"); m.id="storeModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
   const t=Prog.talents||0, freezeFull=(Prog.freezes||0)>=FREEZE_MAX, canFreeze=t>=120&&!freezeFull, canPeek=t>=40;
   m.innerHTML=`<div class="modal-card">
-    <h2 style="font-size:18px;margin:0 0 4px">🛒 Talent Store</h2>
+    <h2 style="font-size:18px;margin:0 0 4px">💰 Talents Store</h2>
     <p class="hint" style="margin:0 0 12px">You have <b class="gold">🪙 ${t} talents</b>. Spend them on tools that keep you going.</p>
     <div class="storeitem">
       <div class="si-top"><span>🧊 Streak Freeze</span><span class="si-have">have ${Prog.freezes||0}</span></div>
@@ -3884,6 +3905,74 @@ function editText({title, hint, value, onSave}){
   m.style.display="flex"; editor();
 }
 
+/* =================== SUPPORT & GIVING (brand menu) + STATS INFO =================== */
+function wordCount(s){ return ((s||"").trim().match(/\S+/g)||[]).length; }
+function submitTicket(type, data){
+  Prog.tickets.push(Object.assign({type, ts:Date.now(), app:"burningbush", acct:(acct()&&acct().email)||null, ver:location.hostname}, data));
+  Prog.tickets=Prog.tickets.slice(-100); saveProg();
+  try{ if(typeof Auth!=="undefined" && Auth.syncUp) Auth.syncUp(); }catch(e){}   // push to the DB with progress
+}
+function openBrandMenu(){
+  let m=el("brandModal"); if(!m){ m=document.createElement("div"); m.id="brandModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  m.innerHTML=`<div class="modal-card">
+    <div style="text-align:center"><div style="font-size:38px;line-height:1">🔥</div>
+      <h2 style="font-size:19px;margin:6px 0 2px">Burning Bush</h2>
+      <p class="hint" style="margin:0 0 14px">Give, get help, or help us grow.</p></div>
+    <button class="btn ghost menu-row" id="bmDonate"><span>🎁</span> Gift a subscription to someone</button>
+    <button class="btn ghost menu-row" id="bmHelp"><span>🙏</span> Request assistance</button>
+    <button class="btn ghost menu-row" id="bmBug"><span>🐞</span> Report a bug</button>
+    <button class="btn ghost menu-row" id="bmFeat"><span>💡</span> Request a feature</button>
+    <button class="btn" id="bmClose" style="margin-top:12px;width:100%">Close</button></div>`;
+  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("bmClose").onclick=()=>m.style.display="none";
+  el("bmDonate").onclick=()=>{ m.style.display="none"; openTicketForm({type:"donate", title:"🎁 Gift a subscription", intro:"Bless someone with Burning Bush. Tell us their name or email and add a note — we'll follow up to set it up.", recipient:true, placeholder:"A note for them (optional)…"}); };
+  el("bmHelp").onclick=()=>{ m.style.display="none"; openTicketForm({type:"assistance", title:"🙏 Request assistance", intro:"If cost is a barrier, tell us your story. Please share at least 250 words about why you'd like help (up to 500).", minWords:250, maxWords:500, placeholder:"Share why you're asking…"}); };
+  el("bmBug").onclick=()=>{ m.style.display="none"; openTicketForm({type:"bug", title:"🐞 Report a bug", intro:"What went wrong, and what were you doing when it happened?", placeholder:"Describe the bug…"}); };
+  el("bmFeat").onclick=()=>{ m.style.display="none"; openTicketForm({type:"feature", title:"💡 Request a feature", intro:"What would make Burning Bush better for you?", placeholder:"Describe your idea…"}); };
+}
+function openTicketForm(o){
+  let m=el("ticketModal"); if(!m){ m=document.createElement("div"); m.id="ticketModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  const min=o.minWords||0, max=o.maxWords||0;
+  m.innerHTML=`<div class="modal-card">
+    <div class="ed-head"><h2>${o.title}</h2>${min?`<div class="tkcount" id="tkCount">0/${min}</div>`:""}</div>
+    <p class="hint" style="margin:2px 0 10px">${o.intro}</p>
+    ${o.recipient?`<input class="typein" id="tkTo" placeholder="Their name or email" style="width:100%;box-sizing:border-box;margin-bottom:8px">`:""}
+    <textarea class="ed-ta" id="tkTa" placeholder="${o.placeholder||"Type here…"}"></textarea>
+    <div class="btnrow" style="margin-top:12px"><button class="btn ghost" id="tkCancel">Cancel</button><button class="btn" id="tkSend"${min?" disabled":""}>Send</button></div></div>`;
+  m.style.display="flex"; const ta=el("tkTa"); setTimeout(()=>{try{ta.focus();}catch(e){}},40);
+  m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("tkCancel").onclick=()=>m.style.display="none";
+  const upd=()=>{ if(!min) return; let w=wordCount(ta.value);
+    if(max && w>max){ ta.value=ta.value.trim().split(/\s+/).slice(0,max).join(" ")+" "; w=max; }   // cap at max words
+    const cc=el("tkCount"); cc.textContent=w+"/"+min; cc.className="tkcount "+(w>=min?"ok":"bad");
+    el("tkSend").disabled = w<min;
+  };
+  ta.oninput=upd; upd();
+  el("tkSend").onclick=()=>{
+    const text=ta.value.trim(), to=o.recipient?el("tkTo").value.trim():"";
+    if(min && wordCount(text)<min){ toast(`Please write at least ${min} words.`); return; }
+    if(!text && !to){ toast("Please add some details."); return; }
+    const data={text}; if(o.recipient) data.recipient=to;
+    submitTicket(o.type, data); m.style.display="none";
+    toast(o.type==="donate"?"🎁 Thank you! We'll be in touch.":o.type==="assistance"?"🙏 Received — we'll prayerfully review it.":"✅ Thank you — got it!");
+  };
+}
+function openStatsInfo(){
+  let m=el("statsModal"); if(!m){ m=document.createElement("div"); m.id="statsModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  m.innerHTML=`<div class="modal-card">
+    <h2 style="font-size:19px;margin:0 0 12px;text-align:center">Your progress at a glance</h2>
+    <div class="statrow"><span class="static">◆</span><div><b>Level ${Prog.level}</b><div class="hint" style="margin:2px 0 0">The highest number — book, chapter or verse — you can pinpoint. It climbs as you learn more of the Major System.</div></div></div>
+    <div class="statrow"><span class="static">📖</span><div><b>${booksKnown()} book${booksKnown()===1?"":"s"} unlocked</b><div class="hint" style="margin:2px 0 0">Bible books you can address by number — the shelves your verses sit on.</div></div></div>
+    <div class="statrow"><span class="static">★</span><div><b>${Prog.memorized.length} verse${Prog.memorized.length===1?"":"s"} hidden</b><div class="hint" style="margin:2px 0 0">Verses you've built into pictures and can test yourself on.</div></div></div>
+    <button class="btn" id="siStore" style="margin-top:16px;width:100%">💰 Talents Store · <b>${Prog.talents||0}</b> talents</button>
+    <button class="btn ghost" id="siClose" style="margin-top:8px;width:100%">Close</button></div>`;
+  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("siClose").onclick=()=>m.style.display="none";
+  el("siStore").onclick=()=>{ m.style.display="none"; openStore(); };
+}
+if(el("brandBtn")) el("brandBtn").onclick=openBrandMenu;
+if(el("statsBtn")) el("statsBtn").onclick=openStatsInfo;
+
 /* =================== ACCOUNT (login shell) =================== */
 function acct(){ return Store.getJSON("vv_acct",null); }
 function setAcct(a){ Store.setJSON("vv_acct",a); renderAcctBox(); }
@@ -3915,10 +4004,12 @@ function renderAcctBox(){
   if(el("goProBtn")) el("goProBtn").onclick=()=>{ el("themeModal").style.display="none"; openPaywall(); };
 }
 /* ---- paywall ---- */
-function openPaywall(){ const m=el("payModal"); if(!m) return; if(el("payPrice")) el("payPrice").textContent=Billing.cfg.priceLabel; m.style.display="flex"; }
+function openPaywall(){ const m=el("payModal"); if(!m) return; m.style.display="flex"; }
 function closePaywall(){ if(el("payModal")) el("payModal").style.display="none"; }
 function wirePaywall(){
-  if(el("payGo")) el("payGo").onclick=()=>Billing.startCheckout();
+  if(el("payYearly")) el("payYearly").onclick=()=>Billing.startCheckout("yearly");
+  if(el("payMonthly")) el("payMonthly").onclick=()=>Billing.startCheckout("monthly");
+  if(el("payHelp")) el("payHelp").onclick=()=>{ el("payModal").style.display="none"; openTicketForm({type:"assistance", title:"🙏 Request assistance", intro:"If cost is a barrier, tell us your story. Please share at least 250 words about why you'd like help (up to 500).", minWords:250, maxWords:500, placeholder:"Share why you're asking…"}); };
   if(el("payClose")) el("payClose").onclick=closePaywall;
   if(el("payX")) el("payX").onclick=closePaywall;
   if(el("payModal")) el("payModal").onclick=e=>{ if(e.target===el("payModal")) closePaywall(); };
@@ -4814,4 +4905,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260820-133014 -->
+<!-- deploy bb-20260820-134706 -->
