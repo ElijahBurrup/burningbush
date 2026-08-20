@@ -1616,6 +1616,48 @@ function pegPicker(n){
     <div class="pegopts">${chips}${reset}</div></details>`;
 }
 
+/* =================== ONE TEACH-CARD TEMPLATE ===================
+   Every "learn this number / book" card — the Learn path (renderStep) AND the ad-hoc learner
+   (renderAdhoc) — renders through teachCardBody() and is wired through wireTeachCard(). Change the
+   look or copy in ONE place and every teach page updates. Callers only add their own nav button. */
+function teachCardBody(kind, n){
+  const word=pegFor(n).word, snd=pegFor(n).sounds, decode=decodeSentence(n);
+  if(kind==="book"){
+    const mb=MNEM_BOOK[n];
+    const scene = (Prog.customPeg && Prog.customPeg[n])
+      ? `Picture your own <b class="gold">${word}</b> tangled into the story of <b>${bookName(n)}</b> — make it wild, huge and impossible to forget.`
+      : ((typeof REL!=="undefined" && REL[n] && REL[n].imgToBook) ? REL[n].imgToBook
+      : (mb&&mb.t ? mb.t : `The name <b>${bookName(n)}</b> sounds like <b>${mb?mb.s:""}</b>; its number image is <b class="gold">${word}</b>.`));
+    const custom = Prog.customBook[n] ? `<div class="relbox" style="border:1px solid var(--gold2)"><div class="rl" style="color:var(--gold-ink)">★ My own scene</div>${Prog.customBook[n]}</div>` : "";
+    return `<div class="stage">
+        <div class="tline">${pegImg("book",n,bookName(n),true)}<span class="tname">${bookName(n)}</span></div>
+        <button class="btn ghost sm" id="tcBookImg" style="margin:2px auto 6px;display:block">✏️ ${Prog.customBookImg[n]?"Edit my book image":"Write my own book image"}</button>
+        <div class="tnum">Book ${dispNum("book",n)}</div>
+        <div class="tline"><span class="tword">${word}</span>${pegImg("num",n,word,true)}</div>
+        <div class="sounds">sounds: <b>${snd}</b></div></div>
+      ${pegPicker(n)}
+      <div class="hint" style="text-align:center;margin:10px 0 2px">Write your own scene below to lock it in — here's an example:</div>
+      <button class="btn ghost sm" id="tcEdit" style="width:100%;margin-top:8px">✏️ ${Prog.customBook[n]?"Edit my scene":"Write my own scene"}</button>${custom}
+      <div class="teachbox"><b class="gold">Example · image → book:</b> ${scene}<br><br>${decode}</div>`;
+  }
+  return `<div class="stage">
+      <div class="prompt">Learn the picture for number</div>
+      <div class="tnum">${dispNum(kind,n)}</div>
+      <div class="tline"><span class="tword">${word}</span>${pegImg(kind,n,word,true)}</div>
+      <div class="sounds">sounds: <b>${snd}</b></div></div>
+    ${pegPicker(n)}
+    <div class="teachbox"><b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${(!Prog.customPeg[n]&&NOTE[n])?" ("+NOTE[n]+")":""}.<br><br>${decode}</div>`;
+}
+function wireTeachCard(kind, n, rerender){
+  if(el("tcBookImg")) el("tcBookImg").onclick=()=>editText({
+    title:`My image for ${bookName(n)}`, hint:`A word or phrase to picture instead of the default book icon.`,
+    value:Prog.customBookImg[n]||"", onSave:v=>{ if(v){Prog.customBookImg[n]=v;} else {delete Prog.customBookImg[n];} saveProg(); rerender(); }});
+  if(el("tcEdit")) el("tcEdit").onclick=()=>editText({
+    title:`My scene for ${bookName(n)}`, hint:`Your own way to remember ${bookName(n)} (book ${dispNum("book",n)}, image “${pegFor(n).word}”).`,
+    value:Prog.customBook[n]||"", onSave:v=>{ if(v){Prog.customBook[n]=v;} else {delete Prog.customBook[n];} saveProg(); rerender(); }});
+  document.querySelectorAll("[data-peg]").forEach(bt=>bt.onclick=()=>{ const w=bt.getAttribute("data-peg"); if(w){Prog.customPeg[n]=w;} else {delete Prog.customPeg[n];} saveProg(); rerender(); });
+}
+
 /* =================== SRS (Leitner) + PROGRESS STATE =================== */
 const DAY = 86400000;
 const INTERVAL = {1:0,2:1,3:3,4:7,5:21};
@@ -2730,40 +2772,7 @@ function renderStep(){
   let body="";
   const word=itemWord(s.kind,s.n), p=pegFor(s.n), snd=p.sounds;
   if(s.type==="teach"){
-    const mb=MNEM_BOOK[s.n];
-    const nn = s.n<10 ? "0"+s.n : ""+s.n;
-    const decode = decodeSentence(s.n);
-    if(s.kind==="book"){
-      // one combined scene (image → book) is the only example needed
-      // the pre-written example is built around the default image; if the user picked their own word, show a generic example instead
-      const scene = (Prog.customPeg && Prog.customPeg[s.n])
-        ? `Picture your own <b class="gold">${word}</b> tangled into the story of <b>${bookName(s.n)}</b> — make it wild, huge and impossible to forget.`
-        : ((typeof REL!=="undefined" && REL[s.n] && REL[s.n].imgToBook) ? REL[s.n].imgToBook
-        : (mb&&mb.t ? mb.t : `The name <b>${bookName(s.n)}</b> sounds like <b>${mb?mb.s:""}</b>; its number image is <b class="gold">${word}</b>.`));
-      const custom = Prog.customBook[s.n] ? `<div class="relbox" style="border:1px solid var(--gold2)"><div class="rl" style="color:var(--gold-ink)">★ My own scene</div>${Prog.customBook[s.n]}</div>` : "";
-      const editBtn = `<button class="btn ghost sm" id="lEdit" style="width:100%;margin-top:8px">✏️ ${Prog.customBook[s.n]?"Edit my scene":"Write my own scene"}</button>`;
-      body = `<div class="stage">
-          <div class="tline">${pegImg("book",s.n,bookName(s.n),true)}<span class="tname">${bookName(s.n)}</span></div>
-          <button class="btn ghost sm" id="lBookImg" style="margin:2px auto 6px;display:block">✏️ ${Prog.customBookImg[s.n]?"Edit my book image":"Write my own book image"}</button>
-          <div class="tnum">Book ${nn}</div>
-          <div class="tline"><span class="tword">${word}</span>${pegImg("num",s.n,word,true)}</div>
-          <div class="sounds">sounds: <b>${snd}</b></div></div>
-        ${pegPicker(s.n)}
-        <div class="hint" style="text-align:center;margin:10px 0 2px">Write your own scene below to lock it in — here's an example:</div>
-        ${editBtn}${custom}
-        <div class="teachbox"><b class="gold">Example · image → book:</b> ${scene}<br><br>${decode}</div>
-        <button class="btn" id="lNext" style="margin-top:10px">I can see it →</button>`;
-    } else {
-      // same layout language as the book teach card (tnum + tline + peg image) so every lesson matches
-      body = `<div class="stage">
-          <div class="prompt">Learn the picture for number</div>
-          <div class="tnum">${dispNum(s.kind,s.n)}</div>
-          <div class="tline"><span class="tword">${word}</span>${pegImg(s.kind,s.n,word,true)}</div>
-          <div class="sounds">sounds: <b>${snd}</b></div></div>
-        ${pegPicker(s.n)}
-        <div class="teachbox"><b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${(!Prog.customPeg[s.n]&&NOTE[s.n])?" ("+NOTE[s.n]+")":""}.<br><br>${decode}</div>
-        <button class="btn" id="lNext" style="margin-top:10px">I can see it →</button>`;
-    }
+    body = teachCardBody(s.kind, s.n) + `<button class="btn" id="lNext" style="margin-top:10px">I can see it →</button>`;
   } else if(s.type==="q_n2i"){ // number → image
     const w=shuffle([word,...distract(s.kind,s.n,3).map(x=>pegFor(x).word)]);
     body=`<div class="prompt">Which image is number <b>${dispNum(s.kind,s.n)}</b>?</div>
@@ -2820,25 +2829,7 @@ function wireStep(s){
   const word=itemWord(s.kind,s.n);
   if(s.type==="teach"){
     el("lNext").onclick=advance;
-    if(el("lEdit")) el("lEdit").onclick=()=>editText({
-      title:`My scene for ${bookName(s.n)}`,
-      hint:`Your own way to remember ${bookName(s.n)} (book ${dispNum("book",s.n)}, image “${word}”).`,
-      value:Prog.customBook[s.n]||"",
-      onSave:v=>{ if(v){ Prog.customBook[s.n]=v; } else { delete Prog.customBook[s.n]; } saveProg(); renderStep(); }
-    });
-    // write your own image for the BOOK — the text label replaces the default book icon everywhere
-    if(el("lBookImg")) el("lBookImg").onclick=()=>editText({
-      title:`My image for ${bookName(s.n)}`,
-      hint:`A word or phrase to picture instead of the default book icon.`,
-      value:Prog.customBookImg[s.n]||"",
-      onSave:v=>{ if(v){ Prog.customBookImg[s.n]=v; } else { delete Prog.customBookImg[s.n]; } saveProg(); renderStep(); }
-    });
-    // pick a different (Major-System-valid) image word — clears the drawn picture
-    document.querySelectorAll("[data-peg]").forEach(b=>b.onclick=()=>{
-      const w=b.getAttribute("data-peg");
-      if(w){ Prog.customPeg[s.n]=w; } else { delete Prog.customPeg[s.n]; }
-      saveProg(); renderStep();
-    });
+    wireTeachCard(s.kind, s.n, renderStep);   // shared: book-image edit, scene edit, peg picker
     return;
   }
   if(s.type==="choose"){
@@ -3754,17 +3745,8 @@ function renderAdhoc(){
   const pct=Math.round(100*AB.i/AB.steps.length);
   let body="";
   if(s.t==="teach"){
-    const rel = AB.isBook && REL[n] ? relBoxes(n) : "";
-    const hook = AB.isBook
-      ? (MNEM_BOOK[n]&&MNEM_BOOK[n].t
-          ? `<b class="gold">Picture this scene:</b> ${MNEM_BOOK[n].t}`
-          : `The name <b>${bookName(n)}</b> sounds like <b>${MNEM_BOOK[n]?MNEM_BOOK[n].s:""}</b>; its number image is <b class="gold">${word}</b>.`)
-      : `<b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${NOTE[n]?" ("+NOTE[n]+")":""}.${DECODE[n]?`<br><br><b style="color:var(--good)">Read it back → ${dispNum(kind,n)}:</b> ${DECODE[n]}`:""}`;
-    body=`<div class="stage"><div class="prompt">${AB.isBook?"Book "+dispNum("book",n)+" · "+bookName(n):"Learn the picture for number"}</div>
-      <div class="tnum">${dispNum(kind,n)}</div>
-      <div class="tline"><span class="tword">${word}</span>${pegImg(kind,n,word,true)}</div>
-      <div class="sounds">sounds: <b>${p.sounds}</b></div></div>
-      ${rel||`<div class="teachbox">${hook}</div>`}<button class="btn" id="abNext">I can see it →</button>`;
+    // SAME template as the Learn path — one card everywhere
+    body = teachCardBody(kind, n) + `<button class="btn" id="abNext" style="margin-top:10px">I can see it →</button>`;
   } else if(s.t==="q_n2i"){
     const opts=shuffle([word,...distract(kind,n,3).map(x=>pegFor(x).word)]);
     body=`<div class="prompt">Which image is ${AB.isBook?"book "+dispNum("book",n):dispNum(kind,n)}?</div><div class="bignum">${dispNum(kind,n)}</div>
@@ -3776,7 +3758,7 @@ function renderAdhoc(){
   }
   L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="abClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div></div><div id="abBody">${body}</div></div>`;
   el("abClose").onclick=()=>AB.ret();
-  if(s.t==="teach"){ el("abNext").onclick=()=>{ AB.i++; renderAdhoc(); }; return; }
+  if(s.t==="teach"){ el("abNext").onclick=()=>{ AB.i++; renderAdhoc(); }; wireTeachCard(kind, n, renderAdhoc); return; }
   L.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
     if(b.dataset.ok==="1"){ b.classList.add("correct"); L.querySelectorAll("[data-ok]").forEach(x=>x.disabled=true); setTimeout(()=>{ AB.i++; if(AB.i>=AB.steps.length) finishAdhoc(); else renderAdhoc(); },500); }
     else { b.classList.add("wrong"); b.disabled=true; }
@@ -4803,3 +4785,5 @@ function appBack(){
 </script>
 </body>
 </html>
+
+<!-- deploy bb-20260820-124647 -->
