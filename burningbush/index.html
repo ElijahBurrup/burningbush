@@ -25,6 +25,7 @@
     --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --panel3:#252a35; --panel0:#12151b;
     --ink:#e9ecf1; --muted:#9aa3b2; --ink-soft:#d4dae4; --ink-soft2:#cbd2dc;
     --gold:#e3b34a; --gold2:#c9962f; --accent:#5b8cff; --green:#4bbf73; --gray:#5a6270; --line:#2a2f3a;
+    --done1:#57cf83; --done2:#2f9d5a; --done-ink:#06351b; --done-shadow:#1c6e3f; --done-fg:#ffffff;
     --miss:#ff9a9a; --good:#9ff0a0;
     /* inks that sit on colored fills */
     --on-accent:#241a02; --on-blue:#fff; --on-green:#062a12; --on-gray:#e9ecf1;
@@ -180,7 +181,7 @@
     background:var(--panel3);box-shadow:0 6px 0 var(--tile-shadow);transition:transform .05s,box-shadow .05s}
   .tile:active{transform:translateY(3px);box-shadow:0 3px 0 var(--tile-shadow)}
   .tile small{position:absolute;bottom:-19px;font-size:10px;color:var(--muted);white-space:nowrap;font-weight:700}
-  .tile.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 6px 0 var(--gold-shadow)}
+  .tile.gold{background:linear-gradient(135deg,var(--done1),var(--done2));box-shadow:0 6px 0 var(--done-shadow);color:var(--done-ink)}
   .tile.new{background:linear-gradient(135deg,var(--blue),var(--blue2));color:var(--on-blue);box-shadow:0 6px 0 var(--blue-shadow)}
   .tile.gray{background:linear-gradient(135deg,var(--gray1),var(--gray2));color:var(--on-gray);box-shadow:0 6px 0 var(--gray-shadow)}
   .tile.gray::after{content:"⟳";position:absolute;top:-6px;right:-6px;background:var(--gold2);color:var(--on-accent);width:22px;height:22px;border-radius:50%;font-size:13px;display:grid;place-items:center;box-shadow:0 2px 6px var(--shadow-soft)}
@@ -482,9 +483,9 @@
   .vpsel.correct{border-color:var(--green);background:var(--ok-bg)}
   .vpsel.wrong{border-color:var(--miss-ink);background:var(--no-bg)}
   .milestone{margin:26px 0;background:var(--panel2);border:1px dashed var(--box-line);border-radius:16px;padding:18px;text-align:center;opacity:.72}
-  .milestone.reached{background:var(--milestone-bg2);border:1px solid var(--milestone-c);opacity:1}
+  .milestone.reached{background:var(--milestone-bg);border:1px solid var(--gold);opacity:1}
   .milestone .mtitle{font-size:18px;font-weight:800;color:var(--muted);letter-spacing:.4px;margin:4px 0}
-  .milestone.reached .mtitle{color:var(--milestone-c)}
+  .milestone.reached .mtitle{color:var(--gold-ink)}
   .milestone .msub{font-size:13px;color:var(--muted);line-height:1.5}
   .milestone.reached .msub{color:var(--ink-soft2)}
   .milestone .mnum{font-size:12px;font-weight:700}
@@ -596,9 +597,6 @@
   .phone[data-theme="illumined"] .bignum,.phone[data-theme="illumined"] .bigword{
     background:linear-gradient(180deg,var(--gold-hi),var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent;
     text-shadow:0 0 22px rgba(232,201,106,.3)}
-  /* milestones are violet, not gold — distinct from the gold/blue lesson group headers */
-  .phone[data-theme="illumined"] .milestone .mtitle{background:none;-webkit-text-fill-color:currentColor;color:var(--muted);text-shadow:none}
-  .phone[data-theme="illumined"] .milestone.reached .mtitle{color:var(--milestone-c);text-shadow:0 0 18px rgba(167,139,250,.3)}
   /* cards glow softly */
   .phone[data-theme="illumined"] .card{background:linear-gradient(180deg,rgba(122,162,255,.05),rgba(232,201,106,.03));border:1px solid var(--line);box-shadow:0 0 26px rgba(90,70,160,.12)}
   .phone[data-theme="illumined"] .callout{background:radial-gradient(circle at 50% 0,rgba(232,201,106,.1),rgba(232,201,106,.02));border-color:var(--line)}
@@ -623,7 +621,7 @@
   /* skill tiles become glowing orbs */
   .phone[data-theme="illumined"] .tile{background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.14);color:var(--muted);box-shadow:none;border-radius:50%;width:74px;height:74px;font-family:"Playfair Display",serif}
   .phone[data-theme="illumined"] .tile.new{background:radial-gradient(circle at 35% 28%,#a9c2ff,#3f5bbd);color:#eef3ff;border:none;box-shadow:0 0 20px rgba(122,162,255,.5)}
-  .phone[data-theme="illumined"] .tile.gold{background:radial-gradient(circle at 35% 28%,var(--gold-hi),var(--gold2));color:#211906;border:none;box-shadow:0 0 20px var(--glow),inset 0 2px 6px rgba(255,255,255,.5)}
+  .phone[data-theme="illumined"] .tile.gold{background:radial-gradient(circle at 35% 28%,#7fe0a0,#2f9d5a);color:#04301a;border:none;box-shadow:0 0 20px rgba(79,207,123,.45),inset 0 2px 6px rgba(255,255,255,.4)}
   .phone[data-theme="illumined"] .tile.gray{background:linear-gradient(160deg,#e3ca80,#5a4d28);color:#2a2410;border:none;box-shadow:0 4px 14px rgba(0,0,0,.5)}
   .phone[data-theme="illumined"] .tile.locked{background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.16);color:var(--muted)}
   .phone[data-theme="illumined"] .tile small{color:var(--muted)}
@@ -632,8 +630,8 @@
   .phone[data-theme="illumined"] .vbox.ready{border-color:var(--gold-ink);color:var(--gold-hi)}
   .phone[data-theme="illumined"] .biblestrip .bk.on{background:radial-gradient(circle at 35% 30%,#a9c2ff,#4a66c8);box-shadow:0 0 8px rgba(122,162,255,.5);color:#fff}
   /* milestones radiate */
-  .phone[data-theme="illumined"] .milestone.reached{background:radial-gradient(circle at 50% 0,rgba(167,139,250,.22),rgba(167,139,250,.03));border:1px solid var(--milestone-c);box-shadow:0 0 26px rgba(167,139,250,.22)}
-  .phone[data-theme="illumined"] .grouphead.grp-gold{background:radial-gradient(circle at 30% 0,var(--gold-hi),var(--gold2))}
+  .phone[data-theme="illumined"] .milestone.reached{background:radial-gradient(circle at 50% 0,rgba(232,201,106,.2),rgba(232,201,106,.03));border:1px solid var(--gold2);box-shadow:0 0 26px rgba(232,201,106,.22)}
+  .phone[data-theme="illumined"] .grouphead.grp-gold{background:radial-gradient(circle at 30% 0,#57cf83,#2f9d5a);color:#fff}
   .phone[data-theme="illumined"] .vidph{border-color:var(--gold2);background:radial-gradient(circle at 50% 0,rgba(232,201,106,.12),rgba(0,0,0,.2))}
   .phone[data-theme="illumined"] .stepIcon{filter:drop-shadow(0 0 12px var(--glow))}
   .phone[data-theme="illumined"] .dot.on{background:var(--gold-hi);box-shadow:0 0 8px var(--glow)}
@@ -672,7 +670,7 @@
   .phone[data-theme="glass"] .path::before{display:none}
   .phone[data-theme="glass"] .tile{width:66px;height:66px;border-radius:14px;border:3px solid #0a0a0d;box-shadow:0 0 0 1px #b48a1f,0 6px 14px rgba(0,0,0,.5);font-family:"Cinzel",serif;overflow:visible}
   .phone[data-theme="glass"] .tile::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(120deg,rgba(255,255,255,.22),transparent 50%);pointer-events:none}
-  .phone[data-theme="glass"] .tile.gold{background:radial-gradient(circle at 40% 30%,#f7e39a,#b48a1f);color:#2a1e00}
+  .phone[data-theme="glass"] .tile.gold{background:radial-gradient(circle at 40% 30%,#8ee6ab,#2f9d5a);color:#04301a}
   .phone[data-theme="glass"] .tile.new{background:radial-gradient(circle at 40% 30%,#2f5fd4,#1a3a8f);color:#fff}
   .phone[data-theme="glass"] .tile.gray{background:conic-gradient(from 20deg,#e8c25a,#5b420f 30%,#b48a1f 55%,#2f2205 75%,#e8c25a);color:#2a1e00}
   .phone[data-theme="glass"] .tile.locked{background:#201f29;color:#555;box-shadow:0 0 0 1px #33406b}
@@ -690,7 +688,7 @@
   /* section headers = leaded panels + gold-ringed status pill */
   .phone[data-theme="glass"] .grouphead{border:3px solid #0a0a0d;box-shadow:0 0 0 1px #b48a1f;letter-spacing:.08em;overflow:hidden}
   .phone[data-theme="glass"] .grouphead::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.16),transparent 45%);pointer-events:none}
-  .phone[data-theme="glass"] .grouphead.grp-gold{background:linear-gradient(160deg,rgba(232,194,90,.85),rgba(180,138,31,.55));color:#2a1e00}
+  .phone[data-theme="glass"] .grouphead.grp-gold{background:linear-gradient(160deg,rgba(87,207,131,.85),rgba(47,157,90,.6));color:#fff}
   .phone[data-theme="glass"] .grouphead.grp-blue{background:linear-gradient(160deg,rgba(47,95,212,.85),rgba(26,58,143,.6));color:#eef2ff}
   .phone[data-theme="glass"] .grouphead.grp-cracked{background:conic-gradient(from 20deg,#e8c25a,#6b4e12 30%,#b48a1f 55%,#3a2a06 75%,#e8c25a);color:#2a1e00}
   .phone[data-theme="glass"] .grouphead .gmeta{font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:20px;border:1px solid #b48a1f;background:rgba(0,0,0,.4);color:var(--gold-ink)}
@@ -700,7 +698,7 @@
   .phone[data-theme="glass"] .counter .l{color:#cdbf9c;letter-spacing:.06em}
   .phone[data-theme="glass"] .milestone{border:3px solid #0a0a0d;box-shadow:0 0 0 1px #b48a1f;background:linear-gradient(160deg,rgba(74,31,110,.5),transparent)}
   .phone[data-theme="glass"] .milestone.reached{background:radial-gradient(200px 100px at 50% 0,#f7e39a,#b48a1f)}
-  .phone[data-theme="glass"] .milestone.reached .mtitle{color:var(--milestone-c);text-shadow:0 1px 2px rgba(0,0,0,.4)}
+  .phone[data-theme="glass"] .milestone.reached .mtitle{color:#2a1e00;text-shadow:0 1px 0 rgba(255,255,255,.4)}
   .phone[data-theme="glass"] .milestone.reached .msub{color:#4a3810}
 
   /* ============ SCRIPTURE QUEST — youth adventure/RPG, chunky, Luckiest Guy ============ */
@@ -728,12 +726,12 @@
   /* level-node tiles */
   .phone[data-theme="quest"] .tile{border-radius:18px;box-shadow:0 6px 0 #0c1613}
   .phone[data-theme="quest"] .tile:active{box-shadow:0 3px 0 #0c1613}
-  .phone[data-theme="quest"] .tile.gold{background:linear-gradient(180deg,#f9c85a,#c9852f);box-shadow:0 6px 0 #8a5a1e}
+  .phone[data-theme="quest"] .tile.gold{background:linear-gradient(180deg,#6fdc95,#2f9d5a);box-shadow:0 6px 0 #1c6e3f}
   .phone[data-theme="quest"] .tile.new{background:linear-gradient(180deg,#48d6c6,#1f9d90);color:#04211d;box-shadow:0 6px 0 #14675f}
   .phone[data-theme="quest"] .tile.gray{background:linear-gradient(180deg,#8a9585,#5a6357);color:#f5eede}
   .phone[data-theme="quest"] .tile.locked{background:#1b312b;color:#5c6b5e;box-shadow:0 6px 0 #0c1613}
   .phone[data-theme="quest"] .milestone.reached{background:linear-gradient(135deg,#2e4a1f,#1e3315);border:2px solid var(--gold)}
-  .phone[data-theme="quest"] .grouphead.grp-gold{background:linear-gradient(135deg,#f9c85a,#c9852f);color:#3a2405}
+  .phone[data-theme="quest"] .grouphead.grp-gold{background:linear-gradient(135deg,#57cf83,#2f9d5a);color:#fff}
   .phone[data-theme="quest"] code{background:rgba(0,0,0,.3);color:var(--gold-ink)}
   /* quest LAYOUT: skill path as a winding adventure trail with a dotted rope */
   .phone[data-theme="quest"] .path{position:relative;gap:30px;padding-top:4px}
@@ -763,22 +761,21 @@
   /* wooden section signs */
   .phone[data-theme="quest"] .grouphead{border:4px solid;letter-spacing:1.5px;font-size:17px;box-shadow:0 5px 0 rgba(0,0,0,.25);text-shadow:1px 1px 0 rgba(0,0,0,.2)}
   .phone[data-theme="quest"] .grouphead:not(.grp-gold):not(.grp-blue):not(.grp-cracked){background:linear-gradient(135deg,#8a7654,#6a5030);border-color:#4a3414;color:#f4e4c1}
-  .phone[data-theme="quest"] .grouphead.grp-gold{background:linear-gradient(135deg,#ffe066,#ffcf33);border-color:#c99400;color:#5a4200}
+  .phone[data-theme="quest"] .grouphead.grp-gold{background:linear-gradient(135deg,#6fdc95,#2f9d5a);border-color:#145230;color:#fff}
   .phone[data-theme="quest"] .grouphead.grp-blue{background:linear-gradient(135deg,#7fd0f5,#3aa0d8);border-color:#1f6f9c;color:#08344d}
   .phone[data-theme="quest"] .grouphead.grp-cracked{background:linear-gradient(135deg,#e8c96a,#c9a227);border-color:#8a6600;color:#4a3600}
   .phone[data-theme="quest"] .grouphead.grp-cracked::after{content:"⚡ REFRESH";position:absolute;top:-9px;right:12px;background:#ff5a3c;color:#fff;font-family:var(--font-display2);font-size:10px;padding:2px 9px;border-radius:10px;border:2px solid #fff}
   .phone[data-theme="quest"] .grouphead .gmeta{color:inherit;font-family:var(--font-display2)}
   /* map-node tiles */
   .phone[data-theme="quest"] .tile{border-radius:16px;border:4px solid #4a3414;box-shadow:0 6px 0 #2a1e0a}
-  .phone[data-theme="quest"] .tile.gold{background:radial-gradient(circle at 30% 25%,#ffe58a,#ffcf33);border-color:#c99400;box-shadow:0 6px 0 #8a6600;color:#5a4200}
+  .phone[data-theme="quest"] .tile.gold{background:radial-gradient(circle at 30% 25%,#8ee6ab,#3fb56e);border-color:#1c6e3f;box-shadow:0 6px 0 #145230;color:#04301a}
   .phone[data-theme="quest"] .tile.new{background:radial-gradient(circle at 30% 25%,#8fe887,#4caf50);border-color:#2f7d34;box-shadow:0 6px 0 #1e5c22;color:#04310c}
   .phone[data-theme="quest"] .tile.gray{background:repeating-linear-gradient(45deg,#f0d98a,#f0d98a 5px,#c9a227 5px,#c9a227 10px);border-color:#8a6600;box-shadow:0 6px 0 #6a4e00;color:#5a4200}
   .phone[data-theme="quest"] .tile.locked{background:#8a7654;border-color:#4a3414;box-shadow:0 6px 0 #2a1e0a;color:#5a4a35}
   .phone[data-theme="quest"] .tile small{font-family:var(--font-display2);letter-spacing:1px;font-size:12px;color:#e6cf9e}
   /* treasure-chest milestone banners */
   .phone[data-theme="quest"] .milestone{border:4px solid #4a3414;background:linear-gradient(135deg,#8a7654,#6a5030);color:#f4e4c1;box-shadow:0 5px 0 rgba(0,0,0,.25);opacity:1}
-  .phone[data-theme="quest"] .milestone .mtitle{font-family:var(--font-display2);letter-spacing:1.5px;color:var(--muted);text-shadow:1px 1px 0 rgba(0,0,0,.3)}
-  .phone[data-theme="quest"] .milestone.reached .mtitle{color:var(--milestone-c)}
+  .phone[data-theme="quest"] .milestone .mtitle{font-family:var(--font-display2);letter-spacing:1.5px;color:#f4e4c1;text-shadow:1px 1px 0 rgba(0,0,0,.3)}
   .phone[data-theme="quest"] .milestone.reached{background:linear-gradient(135deg,#ffe066,#ffcf33);border-color:#c99400}
   .phone[data-theme="quest"] .milestone.reached .mtitle{color:#4a3600}
   .phone[data-theme="quest"] .milestone.reached .msub{color:#5a4200}
@@ -853,13 +850,13 @@
   .phone[data-theme="buddy"] .grouphead{border:0;color:#fff;padding:14px 16px}
   .phone[data-theme="buddy"] .grouphead:not(.grp-gold):not(.grp-blue):not(.grp-cracked){background:#fff;color:#3a4a5e;box-shadow:0 4px 0 #e5edf2;border:2px solid #eef3f6}
   .phone[data-theme="buddy"] .grouphead.grp-blue{background:linear-gradient(135deg,#5cc6ff,#1cb0f6);box-shadow:0 6px 0 #1899d6}
-  .phone[data-theme="buddy"] .grouphead.grp-gold{background:linear-gradient(135deg,#ffd84d,#ffb300);box-shadow:0 6px 0 #e6a600}
+  .phone[data-theme="buddy"] .grouphead.grp-gold{background:linear-gradient(135deg,#5fd487,#2f9d5a);box-shadow:0 6px 0 #1c6e3f;color:#fff}
   .phone[data-theme="buddy"] .grouphead.grp-cracked{background:linear-gradient(135deg,#e8c96a,#c9a227);box-shadow:0 6px 0 #a5851d}
   .phone[data-theme="buddy"] .grouphead.grp-cracked::after{content:"⚡ NEEDS REFRESH";position:absolute;top:-8px;right:12px;background:#ff4b4b;color:#fff;font-size:9px;font-weight:800;padding:3px 8px;border-radius:20px}
   .phone[data-theme="buddy"] .grouphead .gmeta{color:inherit}
   /* bubbles */
   .phone[data-theme="buddy"] .tile{width:66px;height:60px}
-  .phone[data-theme="buddy"] .tile.gold{background:#ffc800;box-shadow:0 7px 0 #e6a600;color:#7a5b00}
+  .phone[data-theme="buddy"] .tile.gold{background:#43c96f;box-shadow:0 7px 0 #2a9c52;color:#fff}
   .phone[data-theme="buddy"] .tile.new{background:#58cc02;box-shadow:0 7px 0 #46a302;color:#fff}
   .phone[data-theme="buddy"] .tile.gray{background:repeating-linear-gradient(45deg,#f0d98a,#f0d98a 5px,#d9bb55 5px,#d9bb55 10px);box-shadow:0 7px 0 #c9a227;color:#6b5300}
   .phone[data-theme="buddy"] .tile.locked{background:#d2dade;box-shadow:0 7px 0 #a7b2b8;color:#8a97a8}
@@ -880,8 +877,8 @@
   .grouphead.open{border-color:var(--gold2)}
   .grouphead .gmeta{font-size:12px;color:var(--muted);white-space:nowrap;font-weight:700}
   .grouphead.done-all{opacity:.7}
-  .grouphead.grp-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:var(--gold-ink);color:var(--on-accent)}
-  .grouphead.grp-gold .gmeta{color:var(--on-accent)}
+  .grouphead.grp-gold{background:linear-gradient(135deg,var(--done1),var(--done2));border-color:var(--done-shadow);color:var(--done-fg)}
+  .grouphead.grp-gold .gmeta{color:var(--done-fg)}
   .grouphead.grp-blue{background:linear-gradient(135deg,var(--blue),var(--blue2));border-color:var(--accent);color:var(--on-blue)}
   .grouphead.grp-blue .gmeta{color:var(--on-blue)}
   .grouphead.grp-cracked{border-color:var(--gold2);color:var(--on-accent);
@@ -1058,6 +1055,9 @@
       <div class="prof-sect" style="margin-top:18px">Testing</div>
       <button class="btn ghost" id="testScratchBtn" style="width:100%">🎫 Test scratch-off</button>
       <button class="btn ghost" id="testOnboardBtn" style="width:100%;margin-top:8px">🕯️ Test onboarding</button>
+      <button class="btn ghost" id="testLearnDone" style="width:100%;margin-top:8px">🎓 Simulate Learn finished</button>
+      <button class="btn ghost" id="testStoriesDone" style="width:100%;margin-top:8px">📜 Simulate Stories finished</button>
+      <button class="btn ghost" id="testRestore" style="width:100%;margin-top:8px;color:var(--miss-ink);border-color:var(--miss)">↩ Restore my real progress (after a simulation)</button>
 
       <div class="prof-sect" style="margin-top:18px">Badges <span id="badgeCount" style="color:var(--muted);float:right;text-transform:none;letter-spacing:0"></span></div>
       <div id="badgeGrid"></div>
@@ -1166,7 +1166,7 @@ function bustCaches(){ _known=null; _rvc=null; }
 // digits (books/chapters/verses 1-9) use the zero-padded 0X peg.
 const PEGS = ["Sauce","Seed","Sun","Sumo","Sore","Soul","Sushi","Sock","Sofa","Soap","Dice","Dad","DNA","Dime","Door","Doll","Tissue","Toga","TV","Tuba","Nose","Net","Nun","Nemo","Nero","Nail","Nacho","Nike","Knife","Nap","Mouse","Mat","Moon","Mummy","Hammer","Mole","Match","Mic","Movie","Map","Rose","Radio","Rhino","Rum","Error","Reel","Arch","Rock","Roof","Harp","Lasso","Lid","Lion","Limo","Lure","LOL","Leech","Leak","Lava","Lip","Cheese","Cheetah","Genie","Chime","Cherry","Chilli","Judge","Chick","Chef","Ship","Goose","Cat","Gun","Gum","Car","Koala","Cage","Cake","Coffee","Cube","Vase","Foot","Fan","Foam","Fire","Fly","Fish","Fog","FIFA","FBI","Bus","Bat","Piano","Beam","Bear","Apple","Bush","Book","Beehive","Poop"];
 const PEGS100 = {
-100:"Daisies",101:"Toast",102:"Dozen",103:"Tasmanian (Devil)",104:"Taser",105:"Tesla",106:"Dosage",107:"Disc",108:"Adhesive",109:"Teaspoon",110:"Adidas",111:"Deadwood",112:"Tighten",113:"Totem",114:"Tutor",115:"Doodle",116:"Ditch",117:"Hotdog",118:"Dead Fox",119:"Hot Tub",120:"Tennis",121:"Tent",122:"Tuna",123:"Dynamite",124:"Dinner",125:"Tunnel",126:"Tangerine",127:"Tank",128:"Tinfoil",129:"Tenpin",130:"Thames",131:"Tomato",132:"Diamond",133:"Time Machine",134:"Timer",135:"Oatmeal",136:"Damage",137:"Tomcat",138:"The Movie",139:"Dumbo",140:"Dress",141:"Dart",142:"Drone",143:"Tram",144:"Dryer",145:"Drill",146:"Torch",147:"Truck",148:"Trophy",149:"Drop",150:"Tellus",151:"Toilet",152:"Dylan",153:"Dilemma",154:"Tailor",155:"Tell-All (Book)",156:"Deluge",157:"Talc",158:"Tea Leaf",159:"Tulip",160:"Duchess",161:"Hatchet",162:"Audition",163:"Taj Mahal",164:"Teacher",165:"Thai Chilli",166:"Dishwasher",167:"Hitchhiker",168:"Déjà Vu",169:"Touch-Up (Paint)",170:"Tacos",171:"Ticket",172:"Toucan",173:"Dog Mom",174:"Tiger",175:"Tackle",176:"Head Coach"};
+100:"Daisies",101:"Toast",102:"Dozen",103:"Tasmanian (Devil)",104:"Taser",105:"Tesla",106:"Dosage",107:"Disc",108:"Adhesive",109:"Dizzy Bee",110:"Adidas",111:"Deadwood",112:"Tighten",113:"Totem",114:"Tutor",115:"Doodle",116:"Teddy Shoe",117:"Hotdog",118:"Wet Dove",119:"Hot Tub",120:"Tennis",121:"Tent",122:"Downy Hen",123:"Denim",124:"Dinner",125:"Tunnel",126:"Danish",127:"Tank",128:"Hot Knife",129:"Tuna Pie",130:"Thames",131:"Tomato",132:"Domino",133:"Edamame",134:"Timer",135:"Oatmeal",136:"Damage",137:"Tomahawk",138:"The Movie",139:"Dumbo",140:"Dress",141:"Dart",142:"Drone",143:"Tram",144:"Dryer",145:"Drill",146:"Torch",147:"Truck",148:"Trophy",149:"Drop",150:"Tellus",151:"Toilet",152:"Dylan",153:"Dilemma",154:"Tailor",155:"Tell-All (Book)",156:"Deluge",157:"Talc",158:"Tea Leaf",159:"Tulip",160:"Duchess",161:"Digit",162:"Audition",163:"Hot Jam",164:"Teacher",165:"Thai Chilli",166:"Dutch Shoe",167:"Woodchuck",168:"Déjà Vu",169:"Touch-Up (Paint)",170:"Tacos",171:"Ticket",172:"Toucan",173:"Dog Home",174:"Tiger",175:"Tackle",176:"Head Coach"};
 // DECODE HOOKS — read the number back OUT of the image, by a vivid count feature.
 const DECODE = {
 1:"A single lone seed sprouts one straight stem shooting up like the number 1 — one seed, Seed = 1.",
@@ -2051,12 +2051,6 @@ function renderJourney(){
           <button class="btn blue" id="jReview" style="margin:0;flex:0 0 auto">Review now →</button></div>`; }
       return `<div class="card center" style="margin-bottom:12px"><div style="font-weight:800;color:var(--good)">✓ You're caught up today</div>${streak?`<div style="margin-top:4px">${streak} — come back tomorrow to keep it alive</div>`:`<div class="hint" style="margin-top:4px">Memorize a verse and review it daily to start a streak.</div>`}<div class="hint" style="margin-top:4px">${weekLine}</div></div>`;
     })()}
-    <div class="counters">
-      <div class="counter"><div class="v">${[...knownNumbers()].filter(n=>n>=1&&n<=176).length}</div><div class="l">numbers mastered</div></div>
-      <div class="counter"><div class="v">${booksKnown()}</div><div class="l">books unlocked</div></div>
-      <div class="counter"><div class="v" style="font-size:18px">${Prog.memorized.length}/${reachableVerseCount().toLocaleString()}</div><div class="l">verses you can memorize</div></div>
-      <div class="counter"><div class="v">${sealedCount()}</div><div class="l">verses sealed 👑</div></div>
-    </div>
     <div class="card"><h2 style="font-size:16px">The whole Bible</h2>
       <p class="hint">Blue = books you can already address. Tap a book to browse its chapters.</p>
       <div class="otnt-label">Old Testament <span>books 1–39</span></div>
@@ -2333,16 +2327,14 @@ function gemCountsHtml(){
     `<div class="gemcount"><div class="gc-n">${c[k]||0}<span>/${t[k]||0}</span></div><div class="gc-l">${GEM_CATS[k]}</div></div>`).join("")+`</div>`;
 }
 function renderMilestone(m){
-  const reached=m.reached();
-  return `<div class="milestone ${reached?"reached":""}">
-    <div style="font-size:26px">${reached?m.e:"🔒"}</div>
+  if(!m.reached()) return "";   // a milestone stays hidden until it's earned, then it appears in gold
+  return `<div class="milestone reached">
+    <div style="font-size:26px">${m.e}</div>
     <div class="mtitle">${m.t}</div>
     <div class="msub">${m.c}<br><br>${m.d}</div>
-    ${reached&&m.counts?gemCountsHtml():""}
-    <div class="mnum" style="margin-top:10px">${reached
-      ? (m.stories ? `<b class="gold">${storiesLearned()}</b> of 100 stories learned`
-                   : `<b class="gold">${reachableGems()}</b> of ${totalGems()} heart-verses within your reach`)
-      : `<span class="muted">Locked — keep climbing to reach this checkpoint</span>`}</div></div>`;
+    ${m.counts?gemCountsHtml():""}
+    <div class="mnum" style="margin-top:10px">${m.stories ? `<b class="gold">${storiesLearned()}</b> of 100 stories learned`
+                   : `<b class="gold">${reachableGems()}</b> of ${totalGems()} heart-verses within your reach`}</div></div>`;
 }
 // The next lesson to work on: first unlocked, not-yet-done skill in path order (a "blue" tile).
 // Prefer the main path; fall back to optional skills only if the main path is complete.
@@ -2526,14 +2518,9 @@ function renderStories(){
   const groups=[]; UNITS.forEach((U,ui)=>{ if(U.story) groups.push({U,ui}); });
   let doneCount=0, readyCount=0, total=0;
   groups.forEach(({U,ui})=>U.skills.forEach((sk,si)=>{ total++; if(Prog.doneSkills.includes(sk.id)) doneCount++; else if(skillUnlocked(ui,si)) readyCount++; }));
-  if(storyExpanded===null){ storyExpanded=new Set(); const g0=groups.find(({U,ui})=>U.skills.some((sk,si)=>!Prog.doneSkills.includes(sk.id)&&skillUnlocked(ui,si))); if(g0) storyExpanded.add(g0.ui); } // open the first group with something ready
+  if(storyExpanded===null){ storyExpanded=new Set(); }   // all story groups collapsed on entry
   let html=`<h2>Bible Stories</h2>
     <p class="lead">100 key stories. Each unlocks the moment you can address its opening verse — learn where it begins, and it joins your daily review.</p>
-    <div class="counters">
-      <div class="counter"><div class="v">${doneCount}</div><div class="l">stories located</div></div>
-      <div class="counter"><div class="v">${readyCount}</div><div class="l">ready to learn now</div></div>
-      <div class="counter"><div class="v">${total}</div><div class="l">total stories</div></div>
-    </div>
     ${readyCount===0&&doneCount<total?`<p class="hint">Learn more chapter &amp; verse numbers in <b class="gold">Learn</b> to unlock stories — a story opens as soon as you can address its book, chapter &amp; verse.</p>`:""}`;
   groups.forEach(({U,ui})=>{
     const done=U.skills.filter(sk=>Prog.doneSkills.includes(sk.id)).length, tot=U.skills.length;
@@ -4278,6 +4265,17 @@ if(el("pStore")) el("pStore").onclick=()=>{ el("themeModal").style.display="none
 if(el("resetBtn")) el("resetBtn").onclick=resetAllProgress;
 if(el("testScratchBtn")) el("testScratchBtn").onclick=()=>{ el("themeModal").style.display="none"; ScratchSim.begin(); };
 if(el("testOnboardBtn")) el("testOnboardBtn").onclick=()=>{ el("themeModal").style.display="none"; Onboard.preview(); };
+function simComplete(which){
+  if(!Store.get("vv_simbak")) Store.setJSON("vv_simbak", Prog);   // snapshot real progress once
+  UNITS.forEach(U=>{ const isStory=!!U.story; if((which==="learn")!==isStory) U.skills.forEach(sk=>{ if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id); }); });
+  if(which==="learn"){ Prog.scratchWon=["verse","palace","journey","stories"]; if(!Prog.palaces.filter(Boolean).length) Prog.palaces=[{place:"My house",stations:["a"],learnedAt:1,step:1}]; }
+  recomputeLevel(); bustCaches(); saveProg();
+  el("themeModal").style.display="none"; toast("🧪 Simulation applied — Profile → Restore to undo.");
+  show(which==="learn"?"learn":"stories");
+}
+if(el("testLearnDone")) el("testLearnDone").onclick=()=>simComplete("learn");
+if(el("testStoriesDone")) el("testStoriesDone").onclick=()=>simComplete("stories");
+if(el("testRestore")) el("testRestore").onclick=()=>{ const bak=Store.getJSON("vv_simbak",null); if(!bak){ toast("No simulation active."); return; } Prog=migrateProg(bak); Store.setJSON(PROG_KEY,Prog); Store.remove("vv_simbak"); bustCaches(); recomputeLevel(); el("themeModal").style.display="none"; toast("Restored your real progress."); show("learn"); };
 function resetAllProgress(){
   if(!confirm("Start over as a brand-new user?\n\nThis wipes ALL progress on this device — lessons, verses, palaces, streaks — and signs you out.\n\nTip: Export a backup first (you can Restore it later).")) return;
   [PROG_KEY, SRS_KEY, PROG_KEY+"_bak", SRS_KEY+"_bak", "vv_token", "vv_acct"].forEach(k=>{ try{ Store.remove(k); }catch(e){} localStorage.removeItem(k); });
@@ -4905,4 +4903,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260820-134706 -->
+<!-- deploy bb-20260820-143002 -->
