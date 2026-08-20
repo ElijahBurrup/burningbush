@@ -212,7 +212,8 @@
   .pegedit summary{cursor:pointer;padding:10px 2px;font-weight:700;color:var(--accent);list-style:none}
   .pegedit summary::-webkit-details-marker{display:none}
   .pegopts{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:12px}
-  .pegchip{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:700;font-size:15px;cursor:pointer}
+  .pegchip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 6px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:700;font-size:15px;cursor:pointer}
+  .pegchip .pegchip-img{width:30px;height:30px;object-fit:contain;flex:0 0 auto}
   .pegchip.on{border-color:var(--gold2);color:var(--gold-ink)}
   .pegchip.reset{border-style:dashed;color:var(--muted)}
   .pegcustom{width:112px;height:112px;border:2px dashed var(--line);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);text-align:center;padding:6px;box-sizing:border-box}
@@ -338,6 +339,13 @@
   .w4wbtn.w4wsm{width:50px;height:50px;font-size:9px;border-radius:12px}
   .w4wbtn.w4wsm span{font-size:17px}
   /* learned-verse page: word-for-word rectangle (label left, X/10 count pill right) + SR block */
+  .lv-ref{text-align:center;font-weight:800;font-size:28px;line-height:1.1;color:var(--ink);margin:2px 0 12px;letter-spacing:.2px}
+  .lv-ref .lv-ref-cv{color:var(--gold-ink)}
+  .lv-triple{display:flex;justify-content:center;gap:10px;margin:0 0 14px}
+  .lv-triple .lv-cell{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:10px 6px}
+  .lv-triple .lv-cell-k{font-size:11px;font-weight:800;color:var(--gold-ink);text-transform:uppercase;letter-spacing:.4px}
+  .lv-triple .lv-cell-w{font-size:13px;font-weight:700;color:var(--ink)}
+  .lv-triple .pegimg-sm,.lv-triple .imgph-sm{width:72px;height:72px}
   .lv-versetext{font-size:16px;line-height:1.5;color:var(--ink);text-align:center;margin:6px 0 16px}
   .mastered-ribbon{display:block;text-align:center;font-weight:800;font-size:13px;color:var(--on-accent);background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:999px;padding:6px 14px;margin:0 0 12px}
   .w4w-rect{display:flex;align-items:center;justify-content:space-between;width:100%;gap:10px;padding:16px 18px;border-radius:16px;border:1.5px solid var(--gold2);background:var(--panel2);color:var(--gold-ink);cursor:pointer;font-weight:800;font-size:16px}
@@ -389,6 +397,9 @@
   .pegimg{width:150px;height:150px;object-fit:contain;filter:drop-shadow(0 4px 10px var(--img-shadow))}
   .imgph{width:150px;height:150px;display:none;align-items:center;justify-content:center;flex-direction:column;gap:3px;color:var(--muted);font-size:11px;text-align:center}
   .imgwrap{display:grid;place-items:center;margin:6px 0}
+  .chpeg{display:flex;flex-direction:column;align-items:center;gap:2px;margin:6px 0 10px}
+  .chpeg .pegimg,.chpeg .imgph{width:96px;height:96px}
+  .chpeg-w{font-size:14px;font-weight:700;color:var(--ink)}
   .pegimg-sm{width:104px;height:104px;object-fit:contain;filter:drop-shadow(0 3px 7px var(--shadow-soft))}
   .imgph-sm{width:104px;height:104px;display:none;align-items:center;justify-content:center;flex-direction:column;color:var(--muted);font-size:10px;text-align:center}
   .srflash{animation:srpop .4s cubic-bezier(.2,.8,.2,1)}
@@ -1277,6 +1288,9 @@ const ALT_PEGS = {
   "96":["Beach","Beige","Badge","Budge"],"97":["Book","Bag","Bike","Beak","Bug"],"98":["Beef"],"99":["Pipe","Pope","Pub","Baby","Bib"]
 };
 function pegCode(n){ return (n>=0 && n<=99) ? String(n).padStart(2,"0") : null; }
+function pegWordSlug(w){ let s=(w||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+  if(/^(con|prn|aux|nul|com[0-9]|lpt[0-9])$/.test(s)) s+="_";  // Windows reserves these device names as filenames
+  return s; } // alternate-word icon lookup: images/pegs/words/<slug>.svg
 function defaultPegWord(n){ if(n>=0&&n<=99) return PEGS[n]; if(n>=100&&n<=176) return PEGS100[n]; return "?"; }
 // alternates the user may pick from (never includes the current default word)
 function pegAlts(n){ const c=pegCode(n); if(!c||!ALT_PEGS[c]) return []; const d=(defaultPegWord(n)||"").toLowerCase(); return ALT_PEGS[c].filter(w=>w.toLowerCase()!==d); }
@@ -1637,10 +1651,12 @@ function verseAt(k){ return _vm()[k]; }
 
 /* =================== IMAGE HELPERS (fallback to word/placeholder) =================== */
 function pegImg(kind,n,word,big){
-  // a user-chosen image word has no drawn art — clear the picture, leaving a blank "your own picture" slot
+  // a user-chosen alternate image word — load its own drawn icon; fall back to the word as text if missing
   if(kind==="num" && typeof Prog!=="undefined" && Prog && Prog.customPeg && Prog.customPeg[n]){
-    const cc = big ? "pegcustom" : "pegcustom pegcustom-sm";
-    return `<div class="${cc}"><span>✎ your picture</span><b>${Prog.customPeg[n]}</b></div>`;
+    const w=Prog.customPeg[n], slug=pegWordSlug(w);
+    const c = big ? "pegimg" : "pegimg-sm", ph = big ? "imgph" : "imgph-sm";
+    return `<img class="${c}" src="/burningbush/images/pegs/words/${slug}.svg" alt="${w}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="${ph}"><span>${w}</span></div>`;
   }
   // a user-written image for a Bible book replaces the default book icon with their text label
   if(kind==="book" && typeof Prog!=="undefined" && Prog && Prog.customBookImg && Prog.customBookImg[n]){
@@ -1658,11 +1674,11 @@ function pegPicker(n){
   const alts=pegAlts(n); const cur=(typeof Prog!=="undefined"&&Prog.customPeg)?Prog.customPeg[n]:null;
   if(!alts.length && !cur) return "";               // nothing valid to offer
   const def=defaultPegWord(n), code=pegCode(n);
-  const chips=alts.map(w=>`<button class="pegchip${cur&&cur.toLowerCase()===w.toLowerCase()?" on":""}" data-peg="${w}">${w}</button>`).join("");
+  const chips=alts.map(w=>{ const slug=pegWordSlug(w); return `<button class="pegchip${cur&&cur.toLowerCase()===w.toLowerCase()?" on":""}" data-peg="${w}"><img class="pegchip-img" src="/burningbush/images/pegs/words/${slug}.svg" alt="" loading="lazy" onerror="this.remove()">${w}</button>`; }).join("");
   const reset= cur ? `<button class="pegchip reset" data-peg="">↺ ${def}</button>` : "";
   const note= cur
-    ? `Using your own word <b class="gold">${cur}</b> — the drawn picture is cleared so you can imagine your own. Every choice still decodes to <b>${code}</b>.`
-    : `Prefer a different picture? Pick one — each still decodes to <b>${code}</b> in the Major System, and choosing it clears the drawn picture so you imagine your own.`;
+    ? `Showing <b class="gold">${cur}</b> — every choice has its own picture and still decodes to <b>${code}</b> in the Major System.`
+    : `Prefer a different picture? Pick one — each has its own drawn image and still decodes to <b>${code}</b> in the Major System.`;
   return `<details class="pegedit"${cur?" open":""}><summary>✎ Change the image word</summary>
     <div class="hint" style="margin:8px 0">${note}</div>
     <div class="pegopts">${chips}${reset}</div></details>`;
@@ -2148,6 +2164,7 @@ function renderChapterScreen(bn,c){
     <div class="card">
       <span class="screenkind vs">✒️ VERSES · ${bookName(bn)} ${c}</span>
       <h2 style="margin:0 0 2px;font-size:20px">${bookName(bn)} ${c}<span class="muted" style="font-size:14px;font-weight:600">:1–${verseCount(bn,c)}</span></h2>
+      <div class="chpeg">${pegImg("num",c,pegFor(c).word,true)}<div class="chpeg-w">Chapter ${pad2(c)} = <b class="gold">${pegFor(c).word}</b></div></div>
       <div class="muted" style="font-size:13px;margin-bottom:8px">${verseCount(bn,c)} verses — small squares</div>
       <div class="vlegend">
         <span><b style="background:var(--gold2);border-color:var(--gold-ink)"></b>ready</span>
@@ -3757,15 +3774,17 @@ function renderLearnedVerse(b,c,v,ret){
   const V=el("verse"); show("verse");
   const vkey=refKey(b,c,v), cnt=w4wCount(vkey), mastered=cnt>=10, o=verseSRobj(vkey);
   const hasPrev=v>1, hasNext=v<verseCount(b,c), text=kjvText(b,c,v)||"";
-  V.innerHTML=`<div class="qhead"><button class="lclose" id="lvClose">✕</button>
-      <div style="font-weight:800;flex:1;text-align:center">${bookName(b)} ${c}:${v}</div><div style="width:24px"></div></div>
+  const cell=(kindLbl,n)=>`<div class="lv-cell"><div class="lv-cell-k">${kindLbl}</div>${pegImg("num",n,pegFor(n).word)}<div class="lv-cell-w">${pegFor(n).word}</div></div>`;
+  V.innerHTML=`<div class="qhead"><button class="lclose" id="lvClose">✕</button><div style="flex:1"></div><div style="width:24px"></div></div>
     <div class="card">
-      <div class="navrow" style="margin:0 0 12px">
+      <div class="navrow" style="margin:0 0 10px">
         <button class="btn ghost sm" id="lvPrev" ${hasPrev?"":"disabled"}>← v${v-1}</button>
         <span class="muted" style="font-size:12px;font-weight:700">verse ${v} of ${verseCount(b,c)}</span>
         <button class="btn ghost sm" id="lvNext" ${hasNext?"":"disabled"}>v${v+1} →</button>
       </div>
       ${mastered?`<div class="mastered-ribbon">★ Mastered — recited word-for-word ${cnt}×</div>`:""}
+      <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
+      <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
       <div class="lv-versetext">${text}</div>
       <button class="w4w-rect ${mastered?"done":""}" id="lvWord">
         <span class="w4w-rect-lbl">📖 Learn Word for Word</span>
@@ -5078,4 +5097,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260820-162220 -->
+<!-- deploy bb-20260820-183857 -->
