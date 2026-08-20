@@ -170,8 +170,8 @@
   .decor-mascot svg{flex:none}
   .decor-speech{background:var(--decor-speech-bg);border:3px solid var(--decor-speech-line);border-radius:20px;padding:10px 14px;font-family:var(--font-display);font-weight:600;font-size:14px;color:var(--decor-speech-ink);position:relative;flex:1}
   .decor-speech::after{content:"";position:absolute;bottom:-12px;left:40px;border:8px solid transparent;border-top-color:var(--decor-speech-bg)}
-  .decor-ctabar{position:sticky;bottom:-24px;margin:18px -16px -24px;padding:12px 16px 16px;display:flex;align-items:flex-end;gap:10px;z-index:15;background:var(--decor-bar-fade)}
-  .decor-ctabar .btn{flex:1;margin:0}
+  .decor-ctabar{position:sticky;bottom:-24px;margin:18px -16px -24px;padding:12px 16px 16px;display:flex;align-items:flex-end;gap:10px;z-index:15;background:var(--decor-bar-fade);pointer-events:none}
+  .decor-ctabar .btn{flex:1;margin:0;pointer-events:auto}
   .decor-flag{position:absolute;top:-24px;left:50%;transform:translateX(-50%);white-space:nowrap;z-index:3;font-family:var(--font-display2);font-size:11px;font-weight:800;letter-spacing:1px;padding:3px 12px;border-radius:10px;background:var(--miss);color:var(--on-blue);border:2px solid var(--panel)}
   .decor-pin{position:absolute;top:-46px;left:50%;transform:translateX(-50%);font-size:24px;z-index:4}
   .tile{width:78px;height:78px;border-radius:var(--radius-tile);display:grid;place-items:center;cursor:pointer;
@@ -1158,7 +1158,10 @@ function decodeSentence(n){ const w=pegFor(n).word, nn=(n>=0&&n<10?"0"+n:""+n), 
   return `Use the Major System to decode <b class="gold">${(w||"").toUpperCase()}</b> to <b class="gold">${nn}</b> because ${parts.join(ds.length>2?", ":" and ")}.`; }
 // number pegs are two-digit (00–99): show low peg numbers zero-padded ("01","02","03") so the
 // two-consonant peg words (Seed 01, Sun 02, Sumo 03) read correctly. Books/sounds stay single-digit.
-function dispNum(kind,n){ return (kind!=="book" && n>=0 && n<10) ? "0"+n : ""+n; }
+// ALL numbers display as two digits (05, not 5) — books, chapters, verses, pegs. Only atomic
+// Major-System SOUNDS (0–9) stay single-digit, since there each digit IS the sound.
+function dispNum(kind,n){ return (kind!=="sound" && n>=0 && n<10) ? "0"+n : ""+n; }
+function pad2(n){ return (n>=0 && n<10) ? "0"+n : ""+n; }   // two-digit for a raw book/chapter/verse number
 /* ---- alternate image words for the "change the image word" picker ----
    Each list is Major-System verified (tools/gen-alt-pegs.js): every word decodes to the same
    two-digit code, so a user can swap Soap→Soup for 09 but never Cat (71). Generated, do not hand-edit. */
@@ -1924,7 +1927,7 @@ function renderJourney(){
   updateMetrics();
   if(!Prog.onboarded){ renderOnboard(); return; }
   const J=el("journey");
-  const stripFor=(a,z)=>{ let s=""; for(let b=a;b<=z;b++) s+=`<div class="bk ${knownNum(b)?"on":""}" data-book="${b}" title="${bookName(b)}">${b}</div>`; return s; };
+  const stripFor=(a,z)=>{ let s=""; for(let b=a;b<=z;b++) s+=`<div class="bk ${knownNum(b)?"on":""}" data-book="${b}" title="${bookName(b)}">${pad2(b)}</div>`; return s; };
   J.innerHTML=`
     <h2>Your Journey</h2>
     <p class="lead">Master number images to unlock books, chapters and verses across the whole Bible.</p>
@@ -1967,7 +1970,7 @@ function renderBookScreen(bn){
   for(let c=1;c<=chapCount(bn);c++){
     const ready = knownNum(bn) && knownNum(c);   // chapter you can address
     const story = SS.c.has(bn+":"+c);
-    chips+=`<div class="chapbox ${ready?"ready":"locked"}" data-chap="${c}"><span class="ck">CH</span><span class="cn">${c}</span>${story?`<span class="storymark" title="A Bible story begins in this chapter">📖</span>`:""}</div>`;
+    chips+=`<div class="chapbox ${ready?"ready":"locked"}" data-chap="${c}"><span class="ck">CH</span><span class="cn">${pad2(c)}</span>${story?`<span class="storymark" title="A Bible story begins in this chapter">📖</span>`:""}</div>`;
   }
   const prevB=bn>1?bn-1:null, nextB=bn<66?bn+1:null;
   J.innerHTML=`
@@ -1983,7 +1986,7 @@ function renderBookScreen(bn){
       <div style="display:flex;gap:12px;align-items:center">
         <div>${pegImg("book",bn,w,false)}</div>
         <div><h2 style="margin:0;font-size:20px">${bookName(bn)}</h2>
-          <div class="muted" style="font-size:13px">Book ${bn} · image “${w}” · tap a chapter</div></div>
+          <div class="muted" style="font-size:13px">Book ${pad2(bn)} · image “${w}” · tap a chapter</div></div>
       </div>
       <div class="vlegend" style="margin-top:10px"><span><b style="background:var(--gold2);border-color:var(--gold-ink)"></b>chapters you can memorize</span><span><b style="background:#20242e;border-color:#3a4150"></b>not ready yet</span><span>📖 a story begins here</span></div>
       <div class="chapboxes">${chips}</div>
@@ -1996,7 +1999,7 @@ function renderChapterScreen(bn,c){
   const J=el("journey"), SS=storyStarts();
   let boxes="";
   for(let v=1;v<=verseCount(bn,c);v++){ const story=SS.v.has(bn+":"+c+":"+v);
-    boxes+=`<div class="vbox ${verseState(bn,c,v)}" data-v="${v}">${v}${story?`<span class="storymark" title="A Bible story begins here">📖</span>`:""}</div>`; }
+    boxes+=`<div class="vbox ${verseState(bn,c,v)}" data-v="${v}">${pad2(v)}${story?`<span class="storymark" title="A Bible story begins here">📖</span>`:""}</div>`; }
   const prevC=c>1?c-1:null, nextC=c<chapCount(bn)?c+1:null;
   J.innerHTML=`
     <div class="navrow">
@@ -2246,7 +2249,7 @@ function nextSkillLabel(){
   const sk=UNITS[nb.ui].skills[nb.si];
   if(sk.kind==="sound") return "the sound key — build any number's picture yourself";
   if(sk.kind==="palace") return "your first memory palace — a home for the verses you now hold";
-  if(sk.kind==="book") return `${bookName(sk.items[0])} (book ${sk.items[0]})`;
+  if(sk.kind==="book") return `${bookName(sk.items[0])} (book ${dispNum("book",sk.items[0])})`;
   if(sk.kind==="num"){ const n=sk.items[0]; return `${PEGS[n]} (${n<10?"0"+n:n})`; }
   return sk.label;
 }
@@ -2374,9 +2377,9 @@ function startStoryLesson(sk, host, ret){
   const s=sk.story, bn=bookNum(s.b), bp=pegFor(bn), cp=pegFor(s.c), vp=pegFor(s.v);
   ST={sk,i:0,host:host||"learn",ret:ret||renderPath,steps:[
     {ic:"📖",lb:"The story",ti:s.n,tx:`This story begins at <b class="gold">${s.b} ${s.c}:${s.v}</b>. To always find it, turn that address into three pictures.`},
-    {ic:"📕",lb:`Book ${bn}`,ti:`${s.b} = "${bp.word}"`,tx:`Book <b>${bn}</b> → <b>${bp.sounds}</b> → a <b>${bp.word}</b>.`,img:["book",bn,bp.word]},
-    {ic:"📗",lb:`Chapter ${s.c}`,ti:`Chapter ${s.c} = "${cp.word}"`,tx:`Chapter <b>${s.c}</b> → <b>${cp.sounds}</b> → a <b>${cp.word}</b>.`,img:["num",s.c,cp.word]},
-    {ic:"📘",lb:`Verse ${s.v}`,ti:`Verse ${s.v} = "${vp.word}"`,tx:`Verse <b>${s.v}</b> → <b>${vp.sounds}</b> → a <b>${vp.word}</b>.`,img:["num",s.v,vp.word]},
+    {ic:"📕",lb:`Book ${pad2(bn)}`,ti:`${s.b} = "${bp.word}"`,tx:`Book <b>${pad2(bn)}</b> → <b>${bp.sounds}</b> → a <b>${bp.word}</b>.`,img:["book",bn,bp.word]},
+    {ic:"📗",lb:`Chapter ${pad2(s.c)}`,ti:`Chapter ${pad2(s.c)} = "${cp.word}"`,tx:`Chapter <b>${pad2(s.c)}</b> → <b>${cp.sounds}</b> → a <b>${cp.word}</b>.`,img:["num",s.c,cp.word]},
+    {ic:"📘",lb:`Verse ${pad2(s.v)}`,ti:`Verse ${pad2(s.v)} = "${vp.word}"`,tx:`Verse <b>${pad2(s.v)}</b> → <b>${vp.sounds}</b> → a <b>${vp.word}</b>.`,img:["num",s.v,vp.word]},
     {ic:"🔗",lb:"Link it",ti:s.n,tx:`See <b>${s.n}</b> unfold among the <b>${bp.word}</b>, the <b>${cp.word}</b> and the <b>${vp.word}</b> — that scene is <b class="gold">${s.b} ${s.c}:${s.v}</b>.`}
   ]};
   renderStoryStep();
@@ -2735,13 +2738,13 @@ function renderStep(){
       <div class="opts">${w.map(o=>`<button class="opt" data-ans="${o===s.n?1:0}">${dispNum(s.kind,o)}</button>`).join("")}</div>`;
   } else if(s.type==="q_n2b"){ // number → book
     const w=shuffle([bookName(s.n),...distract("book",s.n,3).map(bookName)]);
-    body=`<div class="prompt">Which book is book <b>${s.n}</b>?</div>
-      <div class="bignum">${s.n}</div>
+    body=`<div class="prompt">Which book is book <b>${dispNum("book",s.n)}</b>?</div>
+      <div class="bignum">${dispNum("book",s.n)}</div>
       <div class="opts">${w.map(o=>`<button class="opt" data-ans="${o===bookName(s.n)?1:0}">${o}</button>`).join("")}</div>`;
   } else if(s.type==="q_b2n"){ // book → number
     const w=shuffle([s.n,...distract("book",s.n,3)]);
     body=`<div class="prompt">Which number is <b class="gold">${bookName(s.n)}</b>?</div>
-      <div class="opts" style="margin-top:16px">${w.map(o=>`<button class="opt" data-ans="${o===s.n?1:0}">${o}</button>`).join("")}</div>`;
+      <div class="opts" style="margin-top:16px">${w.map(o=>`<button class="opt" data-ans="${o===s.n?1:0}">${dispNum("book",o)}</button>`).join("")}</div>`;
   } else if(s.type==="q_i2b"){ // image → book
     const w=shuffle([bookName(s.n),...distract("book",s.n,3).map(bookName)]);
     body=`<div class="prompt">Which book has the <b>${word}</b> image?</div>
@@ -3309,17 +3312,17 @@ function renderNumTest(){
   const V=el("verse"); if(NT.i>=NT.qs.length) return finishNumberTest();
   const q=NT.qs[NT.i], n=q.n, word=pegFor(n).word, pct=Math.round(100*NT.i/NT.qs.length);
   let prompt="", stimulus="", options=[], correct;
-  if(q.type==="q_n2i"){ prompt="Which image is this number?"; stimulus=`<div class="bignum">${dispNum("num",n)}</div><div class="sounds">${pegFor(n).sounds}</div>`;
+  if(q.type==="q_n2i"){ prompt=`Which image is number <b class="gold">${dispNum("num",n)}</b>?`; stimulus=`<div class="bignum">${dispNum("num",n)}</div><div class="sounds">${pegFor(n).sounds}</div>`;
     correct=word; options=shuffle([word,...distract("num",n,3).map(x=>pegFor(x).word)]); }
-  else if(q.type==="q_i2n"){ prompt="Which number is this image?"; stimulus=`<div class="imgwrap">${pegImg("num",n,word,true)}</div>`;
+  else if(q.type==="q_i2n"){ prompt=`Which number is the <b class="gold">${word}</b>?`; stimulus=`<div class="imgwrap">${pegImg("num",n,word,true)}</div><div class="bigword">${word}</div>`;
     correct=dispNum("num",n); options=shuffle([n,...distract("num",n,3)]).map(x=>dispNum("num",x)); }
-  else if(q.type==="q_n2b"){ prompt="Which book is this number?"; stimulus=`<div class="bignum">${n}</div>`;
+  else if(q.type==="q_n2b"){ prompt=`Which book is number <b class="gold">${dispNum("book",n)}</b>?`; stimulus=`<div class="bignum">${dispNum("book",n)}</div>`;
     correct=bookName(n); options=shuffle([bookName(n),...distract("book",n,3).map(bookName)]); }
-  else if(q.type==="q_b2n"){ prompt="Which number is this book?"; stimulus=`<div class="bigword">${bookName(n)}</div>`;
-    correct=String(n); options=shuffle([n,...distract("book",n,3)]).map(String); }
-  else if(q.type==="q_i2b"){ prompt="Which book has this image?"; stimulus=`<div class="imgwrap">${pegImg("num",n,word,true)}</div><div class="bigword">${word}</div>`;
+  else if(q.type==="q_b2n"){ prompt=`Which number is <b class="gold">${bookName(n)}</b>?`; stimulus=`<div class="bigword">${bookName(n)}</div>`;
+    correct=dispNum("book",n); options=shuffle([n,...distract("book",n,3)]).map(x=>dispNum("book",x)); }
+  else if(q.type==="q_i2b"){ prompt=`Which book has the <b class="gold">${word}</b> image?`; stimulus=`<div class="imgwrap">${pegImg("num",n,word,true)}</div><div class="bigword">${word}</div>`;
     correct=bookName(n); options=shuffle([bookName(n),...distract("book",n,3).map(bookName)]); }
-  else { prompt="Which image is this book?"; stimulus=`<div class="bigword">${bookName(n)}</div>`;
+  else { prompt=`Which image is <b class="gold">${bookName(n)}</b>?`; stimulus=`<div class="bigword">${bookName(n)}</div>`;
     correct=word; options=shuffle([word,...distract("book",n,3).map(x=>pegFor(x).word)]); }
   V.innerHTML=`<div class="qhead"><button class="lclose" id="ntClose">✕</button>
       <div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>
@@ -3605,9 +3608,9 @@ function startSceneWalk(s){
   const bn=bookNum(s.b), bp=pegFor(bn), cp=pegFor(s.c), vp=pegFor(s.v);
   wSteps=[
     {icon:"📖",label:`${s.b} ${s.c}:${s.v}`,title:`${s.b} ${s.c}:${s.v}`,text:`<span style="font-size:17px;line-height:1.6">"${s.text}"</span><br><br><span class="muted">Read it once. Now let's turn the address and the idea into pictures you can't forget.</span>`},
-    {icon:"📕",label:`Book ${bn}`,title:`${s.b} = "${bp.word}"`,text:`Book <b>${bn}</b> → sounds <b>${bp.sounds}</b> → a <b>${bp.word}</b>. This is the shelf the whole verse sits on.`},
-    {icon:"📗",label:`Chapter ${s.c}`,title:`Chapter ${s.c} = "${cp.word}"`,text:`Chapter <b>${s.c}</b> → <b>${cp.sounds}</b> → a <b>${cp.word}</b>. A separate picture — never mashed with the verse.`},
-    {icon:"📘",label:`Verse ${s.v}`,title:`Verse ${s.v} = "${vp.word}"`,text:`Verse <b>${s.v}</b> → <b>${vp.sounds}</b> → a <b>${vp.word}</b>. Three pictures now hold the address ${bn}·${s.c}·${s.v}.`},
+    {icon:"📕",label:`Book ${pad2(bn)}`,title:`${s.b} = "${bp.word}"`,text:`Book <b>${pad2(bn)}</b> → sounds <b>${bp.sounds}</b> → a <b>${bp.word}</b>. This is the shelf the whole verse sits on.`},
+    {icon:"📗",label:`Chapter ${pad2(s.c)}`,title:`Chapter ${pad2(s.c)} = "${cp.word}"`,text:`Chapter <b>${pad2(s.c)}</b> → <b>${cp.sounds}</b> → a <b>${cp.word}</b>. A separate picture — never mashed with the verse.`},
+    {icon:"📘",label:`Verse ${pad2(s.v)}`,title:`Verse ${pad2(s.v)} = "${vp.word}"`,text:`Verse <b>${pad2(s.v)}</b> → <b>${vp.sounds}</b> → a <b>${vp.word}</b>. Three pictures now hold the address ${pad2(bn)}·${pad2(s.c)}·${pad2(s.v)}.`},
     {icon:"🕯️",label:"The meaning",title:s.concept||"Picture the meaning",text:s.scene||(s.concept?`Picture the idea — <b>${s.concept}</b> — happening right where your three number-images stand. Weave <b>${bp.word}</b>, <b>${cp.word}</b> and <b>${vp.word}</b> into one vivid, unforgettable scene.`:`Weave <b>${bp.word}</b>, <b>${cp.word}</b> and <b>${vp.word}</b> together with what this verse means into one vivid, unforgettable scene.`), why:s.elements},
     {icon:"🔗",label:"Link it",title:"Run the scene once",text:`<b>${bp.word}</b> → <b>${cp.word}</b> → <b>${vp.word}</b> → the scene. Play it forward once and feel it click.`}
   ];
@@ -3740,7 +3743,7 @@ document.querySelectorAll(".subnav button").forEach(b=>b.onclick=()=>{
 function buildNumGrid(){
   let g="";
   for(let n=1;n<=176;n++){ const p=pegFor(n),w=p.word,d=defOf(w),nt=NOTE[n]||"",cust=Prog.customPeg&&Prog.customPeg[n];
-    g+=`<div class="cellcard${cellOpen.has(n)?" open":""}" data-n="${n}"><div class="n">${n}</div><div class="w">${w}</div><div class="s">${p.sounds}</div>
+    g+=`<div class="cellcard${cellOpen.has(n)?" open":""}" data-n="${n}"><div class="n">${dispNum("num",n)}</div><div class="w">${w}</div><div class="s">${p.sounds}</div>
       <div class="mnem"><div class="imgwrap">${pegImg("num",n,w,false)}</div>
       <div class="mnem-def"><span class="w2">${w}</span>${(!cust&&d)?" — "+d:(!cust&&nt?" — "+nt:"")}</div>
       ${(!cust&&DECODE[n])?`<div class="mnem-def" style="margin-top:6px"><b style="color:var(--good)">Image → ${n}:</b> ${DECODE[n]}</div>`:""}
@@ -3750,10 +3753,10 @@ function buildNumGrid(){
 function buildBookTable(){
   let bt="";
   BOOKS.forEach((name,i)=>{ const n=i+1,p=pegFor(n),w=p.word,mb=MNEM_BOOK[n]||{s:"",t:""},cust=Prog.customPeg&&Prog.customPeg[n];
-    bt+=`<tr class="brow" data-n="${n}"><td class="k">${n}</td><td><b class="gold">${w}</b></td><td>${name}</td></tr>`;
+    bt+=`<tr class="brow" data-n="${n}"><td class="k">${pad2(n)}</td><td><b class="gold">${w}</b></td><td>${name}</td></tr>`;
     bt+=`<tr class="bdetail" id="bd${n}" style="display:${bookOpen.has(n)?"table-row":"none"}"><td colspan="3">
       <div class="imgwrap">${pegImg("book",n,w,false)}</div>
-      <div class="mnem-def">Book <b class="gold">${n}</b> → number image <b class="gold">${w}</b> (${p.sounds})</div>
+      <div class="mnem-def">Book <b class="gold">${pad2(n)}</b> → number image <b class="gold">${w}</b> (${p.sounds})</div>
       ${cust?"":`<div class="mnem-def" style="margin-top:6px"><span class="sound">${mb.t?mb.t:("Name sounds like: "+mb.s)}</span></div>`}
       ${pegPicker(n)}</td></tr>`; });
   el("booksBody").innerHTML=bt;
@@ -3803,8 +3806,9 @@ async function shareProgress(ref,verseText){
 function toast(msg){
   let t=document.getElementById("vvToast");
   if(!t){ t=document.createElement("div"); t.id="vvToast";
-    t.style.cssText="position:absolute;left:50%;bottom:78px;transform:translateX(-50%);background:#12151b;color:#e9ecf1;border:1px solid var(--line);padding:11px 16px;border-radius:12px;font-size:13px;z-index:70;max-width:88%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.5)";
+    t.style.cssText="position:absolute;left:50%;bottom:78px;transform:translateX(-50%);background:#12151b;color:#e9ecf1;border:1px solid var(--line);padding:11px 16px;border-radius:12px;font-size:13px;z-index:70;max-width:88%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:none;opacity:0";
     document.querySelector(".phone").appendChild(t); }
+  // pointer-events:none is CRITICAL — an opacity:0 toast still swallows taps on the buttons beneath it
   t.textContent=msg; t.style.opacity="1";
   clearTimeout(t._h); t._h=setTimeout(()=>t.style.opacity="0",2600);
 }
