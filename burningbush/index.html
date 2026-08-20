@@ -219,6 +219,42 @@
   .pegcustom.pegcustom-sm{width:56px;height:56px;border-width:1.5px;gap:0}
   .pegcustom.pegcustom-sm span{display:none}
   .pegcustom.pegcustom-sm b{font-size:12px}
+  /* ---- First-run onboarding overlay (token-only; works in all themes) ---- */
+  #obov{position:absolute;inset:0;z-index:120;display:none;background:var(--bg);overflow:hidden}
+  #obov.on{display:block}
+  #obscroll{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:30px 22px;box-sizing:border-box;text-align:center}
+  #obov .obwrap{width:100%;max-width:420px;margin:auto 0}
+  #obov .obbar{height:6px;border-radius:999px;background:var(--panel2);overflow:hidden;margin-bottom:26px}
+  #obov .obbar span{display:block;height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:999px;transition:width .5s ease}
+  #obov .obflame{font-size:56px;line-height:1;filter:drop-shadow(0 0 22px var(--gold2));animation:obglow 2.6s ease-in-out infinite}
+  @keyframes obglow{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.08);opacity:1}}
+  #obov h2{font-family:var(--font-display);font-size:28px;line-height:1.15;margin:14px 0 6px;color:var(--ink)}
+  #obov .oblead{font-size:16.5px;line-height:1.5;color:var(--ink-soft);margin:0 auto 8px;max-width:22em}
+  #obov .obverse{font-style:italic;color:var(--ink);font-size:16px;line-height:1.5;margin:10px auto;max-width:24em}
+  #obov .obref{font-size:20px;font-weight:800;color:var(--gold-ink);margin:6px 0}
+  #obov .obscene{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:14px 16px;font-size:15px;line-height:1.55;color:var(--ink-soft);text-align:left;margin:14px 0}
+  #obov .obseeds{display:flex;justify-content:center;gap:14px;margin:18px 0}
+  #obov .obseeds img{width:76px;height:76px;filter:drop-shadow(0 0 12px var(--gold2))}
+  #obov .obdecode{font-size:22px;font-weight:800;color:var(--ink);letter-spacing:.04em;margin:6px 0}
+  #obov .obdecode b{color:var(--gold-ink)}
+  #obov .btn{margin-top:16px}
+  #obov .oblink{display:inline-block;margin-top:14px;background:none;border:none;color:var(--muted);text-decoration:underline;font-size:14px;cursor:pointer}
+  #obov .obopts{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+  #obov .obopt{padding:15px 16px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:600;font-size:16px;text-align:left;cursor:pointer;line-height:1.35;transition:transform .08s}
+  #obov .obopt:active{transform:scale(.98)}
+  #obov .obopt.correct{border-color:var(--good);background:color-mix(in srgb,var(--good) 16%,var(--panel))}
+  #obov .obopt.wrong{border-color:var(--miss);opacity:.7}
+  #obov .obfade{font-size:20px;line-height:1.7;color:var(--ink);margin:14px auto;max-width:24em}
+  #obov .obfade .w{transition:opacity .35s,filter .35s}
+  #obov .obfade .w.gone{opacity:0;filter:blur(3px)}
+  #obov .obhint{font-size:13.5px;color:var(--muted);margin-top:8px}
+  #obov .obpill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-ink);background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:5px 12px;margin-bottom:10px}
+  .goalpost{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:2px 0 14px}
+  .goalpost .gp-row{display:flex;gap:10px;align-items:baseline;padding:3px 0;font-size:14.5px;line-height:1.4}
+  .goalpost .gp-row+.gp-row{border-top:1px solid var(--line)}
+  .goalpost .gp-k{flex:0 0 58px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+  .goalpost .gp-v{flex:1;color:var(--ink-soft);font-weight:600}
+  .goalpost .gp-v.gold{color:var(--gold-ink);font-weight:800}
   .sounds{text-align:center;color:var(--muted);font-size:15px;margin-bottom:8px}
   .teachbox{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;line-height:1.55;font-size:14px}
   .opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
@@ -844,6 +880,9 @@
     <button data-tab="palace"><span class="tabbadge"></span><span class="ic">🏛️</span>Palace</button>
     <button data-tab="journey"><span class="ic">🗺️</span>Journey</button>
   </div>
+
+  <!-- First-run guided onboarding: a full-screen overlay above all app chrome. Content injected by the Onboard module. -->
+  <div id="obov" aria-hidden="true"><div id="obscroll"></div></div>
 
   <div class="modal" id="themeModal" style="display:none">
     <div class="modal-card">
@@ -1479,6 +1518,9 @@ function migrateProg(p){
   if(typeof p.onboarded!=="boolean") p.onboarded=!!p.onboarded;
   p.saved=arr(p.saved); p.skipped=arr(p.skipped);               // green (come back later) / red (skip)
   p.extraKnown=arr(p.extraKnown); p.palaces=arr(p.palaces); p.customBook=obj(p.customBook); p.badges=arr(p.badges); p.customScene=obj(p.customScene); p.customPeg=obj(p.customPeg); // ad-hoc numbers, palaces, edited book texts, badges, user's own verse scenes, user-chosen image words
+  if(typeof p.firstWin!=="boolean") p.firstWin=false; // completed the 90-second "first verse hidden" onboarding win
+  if(!("persona" in p)) p.persona=null; if(!("dailyMin" in p)) p.dailyMin=null; if(!("bibleFam" in p)) p.bibleFam=null; // intake answers (tailor copy/goalpost/pacing)
+  if(!("covenant" in p)) p.covenant=null; // ISO date the user made the daily-memory resolve
   p.palaces=p.palaces.map(pl=>{ if(pl&&typeof pl==="object"){ if(!pl.learnedAt) pl.learnedAt=Date.now(); if(!pl.step) pl.step=1; } return pl; }); // spaced-repetition trail: D0 done at build
   p.verseSR=obj(p.verseSR); (p.memorized||[]).forEach(k=>{ if(!p.verseSR[k]) p.verseSR[k]={learnedAt:Date.now(),step:1}; }); // per-verse SR trail; back-fill existing memorized verses
   p.talents=p.talents||0; p.streak=p.streak||0; p.bestStreak=p.bestStreak||0; p.talentLog=obj(p.talentLog); // Talents (verse-practice points), streaks, per-verse 24h earn log
@@ -1506,6 +1548,7 @@ function mergeProg(a,b){
   m.lastReviewDay=(a.lastReviewDay>b.lastReviewDay)?a.lastReviewDay:b.lastReviewDay;
   m.chosen=Object.assign({},b.chosen,a.chosen); m.customBook=Object.assign({},b.customBook,a.customBook);
   m.customScene=Object.assign({},b.customScene,a.customScene); m.customPeg=Object.assign({},b.customPeg,a.customPeg); m.talentLog=Object.assign({},b.talentLog,a.talentLog);
+  m.firstWin=!!(a.firstWin||b.firstWin); m.persona=a.persona||b.persona; m.dailyMin=a.dailyMin||b.dailyMin; m.bibleFam=a.bibleFam||b.bibleFam; m.covenant=a.covenant||b.covenant;
   m.palaces=((a.palaces||[]).length>=(b.palaces||[]).length)?a.palaces:b.palaces;   // keep the fuller palace set
   m.verseSR=mergeSR(a.verseSR,b.verseSR);
   return migrateProg(m);
@@ -2048,12 +2091,32 @@ function nextBlueSkill(){
   for(const f of flat){ if(!isStory(f) && !Prog.doneSkills.includes(f.id) && skillUnlocked(f.ui,f.si)) return f; }
   return null;
 }
+// The Learn header "goalpost": where you are, what's next, and the far promise — always visible so
+// the destination is never a mystery. Replaces the old curriculum paragraph + placeholder video.
+function nextSkillLabel(){
+  const nb=nextBlueSkill(); if(!nb) return null;
+  const sk=UNITS[nb.ui].skills[nb.si];
+  if(sk.kind==="sound") return "the sound key — build any number's picture yourself";
+  if(sk.kind==="palace") return "your first memory palace — a home for the verses you now hold";
+  if(sk.kind==="book") return `${bookName(sk.items[0])} (book ${sk.items[0]})`;
+  if(sk.kind==="num"){ const n=sk.items[0]; return `${PEGS[n]} (${n<10?"0"+n:n})`; }
+  return sk.label;
+}
+function goalpostCard(){
+  const pics=Prog.doneSkills.filter(id=>/^(num|book):/.test(id)).length;
+  const verses=Prog.memorized.length;
+  const nx=nextSkillLabel();
+  const g=Prog.persona?PERSONA_GOAL[Prog.persona]:null;
+  return `<div class="goalpost">
+    <div class="gp-row"><span class="gp-k">You hold</span><span class="gp-v">${pics} picture${pics===1?"":"s"} · ${verses} verse${verses===1?"":"s"}</span></div>
+    ${nx?`<div class="gp-row"><span class="gp-k">Next</span><span class="gp-v gold">${nx}</span></div>`:""}
+    ${(g&&g.ref)?`<div class="gp-row"><span class="gp-k">Ahead</span><span class="gp-v">${g.ref} — <i>"${g.text}"</i></span></div>`:""}
+  </div>`;
+}
 function renderPath(focus){
   updateMetrics();
   const L=el("learn");
-  let html=`<h2>Learn</h2><p class="lead">The Torah first, then the New Testament, then a <b class="gold">balanced climb</b> — every round pairs a few Old Testament books with a New Testament one, so both advance together.</p>
-    <div class="vidph"><div class="play">▶</div><div class="vt">Video: How Burning Bush works</div><div class="vs">Placeholder — a 90-second intro to the Major System and what you're about to learn</div></div>
-    <div class="legend"><span><b style="background:var(--gold)"></b>gold · strong</span><span><b style="background:var(--gray1)"></b>gray · practice</span><span><b style="background:var(--blue2)"></b>new</span><span><b style="background:var(--panel2)"></b>locked</span></div>`;
+  let html=`<h2>Learn</h2>${goalpostCard()}`;
   if(expandedUnits===null) expandedUnits=new Set(); // start with every group collapsed
   // Opening Learn from the bottom menu: minimize everything, open only the unit holding the
   // next blue lesson, and scroll to it.
@@ -4007,8 +4070,227 @@ wirePaywall();
 renderAcctBox();
 recomputeLevel();
 updateMetrics();
-show("learn");   // land on the Learn path (this also auto-completes onboarding — no intro-scene carousel)
-if(!acct()){ if(!Store.get("vv_skiplogin")) el("loginModal").style.display="flex"; }
+/* =================== FIRST-RUN GUIDED ONBOARDING ===================
+   Goal: in ~2 minutes a stranger memorizes Genesis 1:1 AND reads its address out of a picture —
+   before any sign-up, system, or lecture. Then we know them (3 questions), reveal the code, and
+   ask for an account only once there is something to protect. Runs in the #obov overlay above all
+   app chrome; gated behind !Prog.onboarded so returning users never see it. */
+const PERSONA_CLOSE = {
+  peace:"We'll walk toward verses you can stand on when the water rises.",
+  roots:"We'll build roots — book by book — until the whole counsel of God is open to you.",
+  shepherd:"We'll get you to the 100 great stories fast: located, learned, ready to tell.",
+  proof:"We won't ask you to trust the method. In a few days, we'll prove it to you."
+};
+const PERSONA_GOAL = {
+  peace:{ref:"Exodus 14:14", text:"The LORD shall fight for you, and ye shall hold your peace."},
+  roots:{ref:"Joshua 1:8", text:"This book of the law shall not depart out of thy mouth."},
+  shepherd:{ref:"Deuteronomy 6:7", text:"Teach them diligently unto thy children."},
+  proof:{ref:null, text:"a test — name the book for any number 1–10, and recite three verses cold."}
+};
+const Onboard = (()=>{
+  const ov=el("obov"), host=el("obscroll");
+  let i=0, steps=[];
+  const pct=()=> Math.round(100*i/(steps.length-1));
+  const bar=()=>`<div class="obbar"><span style="width:${pct()}%"></span></div>`;
+  const seedRow=(nums)=> `<div class="obseeds">${nums.map(n=>pegImg("num",n,PEGS[n],false)).join("")}</div>`;
+  function paint(){
+    const s=steps[i];
+    host.innerHTML=`<div class="obwrap">${s.top!==false?bar():""}${s.html()}</div>`;
+    host.scrollTop=0;
+    s.wire && s.wire();
+  }
+  const go=(n)=>{ i=Math.max(0,Math.min(steps.length-1,n)); paint(); };
+  const next=()=>go(i+1);
+  function finish(){ Prog.onboarded=true; if(!Prog.firstWin) Prog.firstWin=true; saveProg(); ov.classList.remove("on"); ov.setAttribute("aria-hidden","true"); show("learn"); }
+  function toLogin(){ finish(); el("loginModal").style.display="flex"; }
+
+  // ---- the steps (a linear spine; the quiz waits in place until answered) ----
+  const G=SCENES[0];   // Genesis 1:1 — the universal first win
+  steps=[
+   {top:false, html:()=>`
+     <div class="obflame">🔥</div>
+     <h2>Take off your shoes —<br>this is holy ground.</h2>
+     <p class="oblead">You're about to hide God's Word in your heart, and know exactly where every verse lives.</p>
+     <button class="btn" id="obA">Show me →</button>
+     <div><button class="oblink" id="obSignin">I already have an account</button></div>`,
+    wire:()=>{ el("obA").onclick=next; el("obSignin").onclick=toLogin; }},
+
+   {html:()=>`
+     <span class="obpill">Here's where we're going</span>
+     <h2>Your first verse — in two minutes.</h2>
+     <p class="oblead">You'll memorize it word for word, <i>and</i> its place in the Bible, so deeply you could find it years from now.</p>
+     <p class="oblead">No sign-up. No lesson. Just look.</p>
+     <button class="btn" id="obA">I'm ready →</button>`,
+    wire:()=>{ el("obA").onclick=next; }},
+
+   {html:()=>`
+     <span class="obpill">Watch it become vivid</span>
+     ${seedRow([1,1,1])}
+     <div class="obref">${G.b} ${G.c}:${G.v}</div>
+     <p class="obverse">"${G.text}"</p>
+     <div class="obscene"><b class="gold">See it:</b> ${G.scene}</div>
+     <button class="btn" id="obA">I can see it →</button>`,
+    wire:()=>{ el("obA").onclick=next; }},
+
+   {html:()=>`
+     <h2>Did you notice the three seeds?</h2>
+     ${seedRow([1,1,1])}
+     <p class="oblead">They aren't decoration. In Burning Bush, a <b class="gold">seed means the number 1</b>.</p>
+     <div class="obdecode">🌱🌱🌱 → <b>1 · 1 · 1</b></div>
+     <p class="oblead">Book 1 · Chapter 1 · Verse 1 — that's <b class="gold">Genesis 1:1</b>, the very first words of the Bible. You just read a verse's address straight out of a picture.</p>
+     <button class="btn" id="obA">Wait — really? →</button>`,
+    wire:()=>{ el("obA").onclick=next; }},
+
+   {html:()=>`
+     <span class="obpill">Prove it — the address</span>
+     ${seedRow([1,1,1])}
+     <p class="oblead">A friend asks: <i>"Where does the Bible say God created the heaven and the earth?"</i></p>
+     <div class="obopts" id="obQ">
+       <button class="obopt" data-ok="1">Genesis 1:1</button>
+       <button class="obopt" data-ok="0">John 1:1</button>
+       <button class="obopt" data-ok="0">Genesis 2:4</button>
+       <button class="obopt" data-ok="0">Exodus 1:1</button></div>
+     <div id="obFb"></div>`,
+    wire:()=>{ document.querySelectorAll("#obQ .obopt").forEach(b=>b.onclick=()=>{
+       document.querySelectorAll("#obQ .obopt").forEach(x=>x.disabled=true);
+       if(b.dataset.ok==="1"){ b.classList.add("correct");
+         el("obFb").innerHTML=`<p class="oblead" style="margin-top:14px"><b class="gold">Seed. Seed. Seed.</b> You read it out of the scene — no lists, no flashcards.</p><button class="btn" id="obA">Keep going →</button>`;
+       } else { b.classList.add("wrong");
+         document.querySelectorAll("#obQ .obopt").forEach(x=>{ if(x.dataset.ok==="1"){x.classList.add("correct");x.disabled=true;} });
+         el("obFb").innerHTML=`<p class="oblead" style="margin-top:14px">Close — but look at the seeds: <b class="gold">1 · 1 · 1</b>. Genesis 1:1.</p><button class="btn" id="obA">I see it →</button>`;
+       }
+       el("obA").onclick=next;
+     }); }},
+
+   {html:()=>{ const words=(kjvText(G.b,G.c,G.v)||G.text).split(/\s+/).filter(Boolean);
+     return `<span class="obpill">Now the words</span>
+     <h2>Say it as it turns to light.</h2>
+     <p class="obhint">Read Genesis 1:1 aloud (or in your heart). Tap to let the words fade.</p>
+     <div class="obfade" id="obFade">${words.map((w,k)=>`<span class="w" data-k="${k}">${w}</span>`).join(" ")}</div>
+     <button class="btn" id="obA">Fade the words →</button>`; },
+    wire:()=>{ const ws=[...document.querySelectorAll("#obFade .w")]; let stage=0;
+      const total=ws.length;
+      el("obA").onclick=()=>{ stage++; const hide=Math.round(total*Math.min(1,stage*0.34));
+        const order=ws.map((_,k)=>k).sort((a,b)=>((a*7)%total)-((b*7)%total));
+        const gone=new Set(order.slice(0,hide)); ws.forEach((w,k)=>w.classList.toggle("gone",gone.has(k)));
+        if(hide>=total){ el("obA").textContent="I said it from memory →"; el("obA").onclick=next; }
+        else el("obA").textContent="Keep fading →";
+      };
+    }},
+
+   {html:()=>`
+     <div class="obflame">🔥</div>
+     <h2>Your first verse is hidden in your heart.</h2>
+     <p class="oblead">And you know exactly where it lives — <b class="gold">Genesis 1:1</b> — from a picture of seeds and Light.</p>
+     <p class="obverse">"Thy word have I hid in mine heart, that I might not sin against thee." — Psalm 119:11</p>
+     <p class="oblead">This is the first seed. There are two more scenes waiting — and a secret hidden inside all three.</p>
+     <button class="btn" id="obA">Keep going →</button>`,
+    wire:()=>{ if(!Prog.firstWin){ Prog.firstWin=true; saveProg(); } el("obA").onclick=next; }},
+
+   {html:()=>`
+     <span class="obpill">Make it your own</span>
+     <h2>One resolve.</h2>
+     <p class="obverse">"Thy word have I hid in mine heart."</p>
+     <p class="oblead">Make the psalmist's resolve your own:</p>
+     <p class="oblead"><b class="gold">"I will hide a little of God's Word in my heart, daily."</b></p>
+     <button class="btn" id="obA">This is my resolve</button>
+     <div><button class="oblink" id="obSkip">Not yet</button></div>`,
+    wire:()=>{ el("obA").onclick=()=>{ Prog.covenant=new Date().toISOString().slice(0,10); saveProg(); next(); }; el("obSkip").onclick=next; }},
+
+   {html:()=>`
+     <span class="obpill">Let us know you</span>
+     <h2>Three quick questions.</h2>
+     <p class="oblead">So this journey fits the life you actually live.</p>
+     <button class="btn" id="obA">Begin →</button>`,
+    wire:()=>{ el("obA").onclick=next; }},
+
+   {html:()=>`
+     <h2>What brings you to hide God's Word in your heart?</h2>
+     <div class="obopts" id="obQ">
+       <button class="obopt" data-v="peace">I need His peace — life has been heavy.</button>
+       <button class="obopt" data-v="roots">I want deeper roots — my walk with God needs them.</button>
+       <button class="obopt" data-v="shepherd">I teach or lead others — my family, a class, a church.</button>
+       <button class="obopt" data-v="proof">I've tried to memorize Scripture before. It never sticks.</button></div>`,
+    wire:()=>{ document.querySelectorAll("#obQ .obopt").forEach(b=>b.onclick=()=>{ Prog.persona=b.dataset.v; saveProg(); next(); }); }},
+
+   {html:()=>`
+     <h2>How much time can you honestly give each day?</h2>
+     <p class="obhint">Honest beats heroic. God multiplies small seeds.</p>
+     <div class="obopts" id="obQ">
+       <button class="obopt" data-v="3">3 minutes — a mustard seed</button>
+       <button class="obopt" data-v="10">10 minutes — a daily walk</button>
+       <button class="obopt" data-v="20">20 or more — I'm all in</button></div>`,
+    wire:()=>{ document.querySelectorAll("#obQ .obopt").forEach(b=>b.onclick=()=>{ Prog.dailyMin=+b.dataset.v; saveProg(); next(); }); }},
+
+   {html:()=>`
+     <h2>How familiar is the Bible to you?</h2>
+     <div class="obopts" id="obQ">
+       <button class="obopt" data-v="new">I'm fairly new to it</button>
+       <button class="obopt" data-v="some">I know my way around</button>
+       <button class="obopt" data-v="deep">I've walked with it for years</button></div>`,
+    wire:()=>{ document.querySelectorAll("#obQ .obopt").forEach(b=>b.onclick=()=>{ Prog.bibleFam=b.dataset.v; saveProg(); next(); }); }},
+
+   {html:()=>{ const g=PERSONA_GOAL[Prog.persona]||PERSONA_GOAL.roots, c=PERSONA_CLOSE[Prog.persona]||PERSONA_CLOSE.roots;
+     return `<div class="obflame">🔥</div>
+     <h2>Then here is your path.</h2>
+     <p class="oblead">${c}</p>
+     ${g.ref?`<div class="obscene" style="text-align:center"><div class="obref">${g.ref}</div><p class="obverse" style="margin:4px 0 0">"${g.text}"</p><div class="obhint">Your goalpost — it unlocks naturally as you climb.</div></div>`:`<div class="obscene" style="text-align:center"><p class="oblead" style="margin:0">Your goalpost: ${g.text}</p></div>`}
+     <button class="btn" id="obA">Show me the secret →</button>`; },
+    wire:()=>{ el("obA").onclick=next; }},
+
+   {html:()=>{ const S=SCENES[1];   // Deuteronomy 5:1 — Soul·Soul·Seed = 5·5·1
+     return `<span class="obpill">Scene 2</span>
+     ${seedRow([5,5,1])}
+     <div class="obref">${S.b} ${S.c}:${S.v}</div>
+     <p class="obverse">"${S.text.length>150?S.text.slice(0,150)+'…':S.text}"</p>
+     <div class="obdecode">Soul · Soul · Seed → <b>5 · 5 · 1</b></div>
+     <p class="oblead">Two souls and a seed — book <b>5</b> (Deuteronomy), chapter <b>5</b>, verse <b>1</b>.</p>
+     <button class="btn" id="obA">Next scene →</button>`; },
+    wire:()=>{ el("obA").onclick=next; }},
+
+   {html:()=>{ const S=SCENES[2];   // Exodus 5:1 — Sun·Soul·Seed = 2·5·1
+     return `<span class="obpill">Scene 3</span>
+     ${seedRow([2,5,1])}
+     <div class="obref">${S.b} ${S.c}:${S.v}</div>
+     <p class="obverse">"${S.text.length>150?S.text.slice(0,150)+'…':S.text}"</p>
+     <div class="obdecode">Sun · Soul · Seed → <b>2 · 5 · 1</b></div>
+     <p class="oblead">A sun, a soul, a seed — <b class="gold">Exodus 5:1</b>. Three scenes, three addresses, all read from pictures.</p>
+     <button class="btn" id="obA">So what's the secret? →</button>`; },
+    wire:()=>{ el("obA").onclick=next; }},
+
+   {html:()=>`
+     <div class="obflame">🔑</div>
+     <h2>Here's the secret.</h2>
+     <p class="oblead">Every object in those scenes was quietly a <b class="gold">number</b>. The seed, the sun, the soul — each one is a book, chapter, or verse in disguise.</p>
+     <p class="oblead">But how will you know the picture for <b>7</b>? Or <b>40</b>? There's a simple key — and <b class="gold">you already hold half of it</b>. Learn it, and you can read <i>any</i> address in Scripture, and build your own.</p>
+     <button class="btn" id="obA">Teach me the key →</button>`,
+    wire:()=>{ el("obA").onclick=next; }},
+
+   {html:()=>`
+     <div class="obflame">🔥</div>
+     <h2>Your first verse is hidden. Let's never lose it.</h2>
+     <p class="oblead">A free account keeps <b class="gold">Genesis 1:1</b> — and every verse you hide from here — safe on your phone, tablet, and computer.</p>
+     <button class="btn" id="obSave">Keep my progress safe</button>
+     <div><button class="oblink" id="obGuest">Continue as guest</button></div>
+     <div><button class="oblink" id="obSignin">Already have an account? Sign in</button></div>`,
+    wire:()=>{ el("obSave").onclick=toLogin; el("obSignin").onclick=toLogin;
+      el("obGuest").onclick=()=>{ Store.set("vv_skiplogin","1"); finish(); }; }}
+  ];
+
+  return {
+    start(){ if(acct()){ Prog.onboarded=true; saveProg(); return; }   // signed-in users skip the intro
+      i=0; ov.classList.add("on"); ov.setAttribute("aria-hidden","false"); paint(); },
+    active(){ return ov.classList.contains("on"); }
+  };
+})();
+
+/* ---- boot routing: brand-new users get the guided intro; everyone else lands on Learn (no login wall) ---- */
+if(!Prog.onboarded){
+  Onboard.start();
+  if(!Onboard.active()) show("learn");   // (signed-in edge case handled inside start())
+} else {
+  show("learn");   // returning user — straight to the path, no gate
+}
 
 /* ---- Android / browser back button = in-app back (one screen per press); at the Learn home, back again exits ---- */
 function appBack(){
