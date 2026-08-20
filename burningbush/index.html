@@ -258,7 +258,7 @@
   /* ---- bottom-nav scratch-off tickets: a Willy-Wonka golden ticket ---- */
   .tabbar button{position:relative}
   .tabbar button .tik{display:none}
-  .tabbar button.ticket{opacity:1;filter:none;pointer-events:none;padding:6px 4px}
+  .tabbar button.ticket{opacity:1;filter:none;pointer-events:auto;padding:6px 4px}
   .tabbar button.ticket .ic,.tabbar button.ticket .lbl{display:none}
   .tabbar button.ticket .tik{
     display:flex;align-items:center;justify-content:center;
@@ -307,6 +307,9 @@
   #simov .sctitle{font-family:var(--font-display);font-size:23px;color:var(--gold-ink);margin:6px 0 6px}
   #simov .scsub{font-size:14px;color:var(--ink-soft);line-height:1.5}
   #simov .btn{margin-top:16px;width:100%}
+  .reqrow{display:flex;gap:8px;align-items:baseline;padding:8px 2px;font-size:15px;line-height:1.4;border-bottom:1px solid var(--line);color:var(--ink)}
+  .reqrow:last-child{border-bottom:none}
+  #simov .reqrow{color:var(--ink-soft)}
   .sounds{text-align:center;color:var(--muted);font-size:15px;margin-bottom:8px}
   .teachbox{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;line-height:1.55;font-size:14px}
   .opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
@@ -1556,6 +1559,11 @@ function pegImg(kind,n,word,big){
     const cc = big ? "pegcustom" : "pegcustom pegcustom-sm";
     return `<div class="${cc}"><span>✎ your picture</span><b>${Prog.customPeg[n]}</b></div>`;
   }
+  // a user-written image for a Bible book replaces the default book icon with their text label
+  if(kind==="book" && typeof Prog!=="undefined" && Prog && Prog.customBookImg && Prog.customBookImg[n]){
+    const cc = big ? "pegcustom" : "pegcustom pegcustom-sm";
+    return `<div class="${cc}"><span>✎ my image</span><b>${Prog.customBookImg[n]}</b></div>`;
+  }
   const src = kind==="book" ? `/burningbush/images/books/${n}.svg` : `/burningbush/images/pegs/${n}.svg`;
   const c = big ? "pegimg" : "pegimg-sm", ph = big ? "imgph" : "imgph-sm";
   if(kind==="book") return `<img class="${c}" src="${src}" alt="${word}" onerror="this.style.display='none'">`;
@@ -1597,11 +1605,12 @@ function migrateProg(p){
   p.memorized=arr(p.memorized); p.doneSkills=arr(p.doneSkills); p.chosen=obj(p.chosen);
   if(typeof p.onboarded!=="boolean") p.onboarded=!!p.onboarded;
   p.saved=arr(p.saved); p.skipped=arr(p.skipped);               // green (come back later) / red (skip)
-  p.extraKnown=arr(p.extraKnown); p.palaces=arr(p.palaces); p.customBook=obj(p.customBook); p.badges=arr(p.badges); p.customScene=obj(p.customScene); p.customPeg=obj(p.customPeg); // ad-hoc numbers, palaces, edited book texts, badges, user's own verse scenes, user-chosen image words
+  p.extraKnown=arr(p.extraKnown); p.palaces=arr(p.palaces); p.customBook=obj(p.customBook); p.badges=arr(p.badges); p.customScene=obj(p.customScene); p.customPeg=obj(p.customPeg); p.customBookImg=obj(p.customBookImg); // ad-hoc numbers, palaces, edited book scenes, badges, user's own verse scenes, user-chosen number words, user-written book images
   if(typeof p.firstWin!=="boolean") p.firstWin=false; // completed the 90-second "first verse hidden" onboarding win
   if(!("persona" in p)) p.persona=null; if(!("dailyMin" in p)) p.dailyMin=null; if(!("bibleFam" in p)) p.bibleFam=null; // intake answers (tailor copy/goalpost/pacing)
   if(!("covenant" in p)) p.covenant=null; // ISO date the user made the daily-memory resolve
   if(!Array.isArray(p.scratchWon)) p.scratchWon=[]; if(typeof p.scratchInit!=="boolean") p.scratchInit=false; // tabs won via scratch-off + one-time back-compat grant
+  if(typeof p.fiveVerseHintShown!=="boolean") p.fiveVerseHintShown=false; // one-time "a 5-streak unlocks your palace" nudge
   p.palaces=p.palaces.map(pl=>{ if(pl&&typeof pl==="object"){ if(!pl.learnedAt) pl.learnedAt=Date.now(); if(!pl.step) pl.step=1; } return pl; }); // spaced-repetition trail: D0 done at build
   p.verseSR=obj(p.verseSR); (p.memorized||[]).forEach(k=>{ if(!p.verseSR[k]) p.verseSR[k]={learnedAt:Date.now(),step:1}; }); // per-verse SR trail; back-fill existing memorized verses
   p.talents=p.talents||0; p.streak=p.streak||0; p.bestStreak=p.bestStreak||0; p.talentLog=obj(p.talentLog); // Talents (verse-practice points), streaks, per-verse 24h earn log
@@ -1628,9 +1637,9 @@ function mergeProg(a,b){
   m.onboarded=!!(a.onboarded||b.onboarded);
   m.lastReviewDay=(a.lastReviewDay>b.lastReviewDay)?a.lastReviewDay:b.lastReviewDay;
   m.chosen=Object.assign({},b.chosen,a.chosen); m.customBook=Object.assign({},b.customBook,a.customBook);
-  m.customScene=Object.assign({},b.customScene,a.customScene); m.customPeg=Object.assign({},b.customPeg,a.customPeg); m.talentLog=Object.assign({},b.talentLog,a.talentLog);
+  m.customScene=Object.assign({},b.customScene,a.customScene); m.customPeg=Object.assign({},b.customPeg,a.customPeg); m.customBookImg=Object.assign({},b.customBookImg,a.customBookImg); m.talentLog=Object.assign({},b.talentLog,a.talentLog);
   m.firstWin=!!(a.firstWin||b.firstWin); m.persona=a.persona||b.persona; m.dailyMin=a.dailyMin||b.dailyMin; m.bibleFam=a.bibleFam||b.bibleFam; m.covenant=a.covenant||b.covenant;
-  m.scratchWon=uniq(a.scratchWon,b.scratchWon); m.scratchInit=!!(a.scratchInit||b.scratchInit);
+  m.scratchWon=uniq(a.scratchWon,b.scratchWon); m.scratchInit=!!(a.scratchInit||b.scratchInit); m.fiveVerseHintShown=!!(a.fiveVerseHintShown||b.fiveVerseHintShown);
   m.palaces=((a.palaces||[]).length>=(b.palaces||[]).length)?a.palaces:b.palaces;   // keep the fuller palace set
   m.verseSR=mergeSR(a.verseSR,b.verseSR);
   return migrateProg(m);
@@ -1833,16 +1842,41 @@ const NT5=[40,41,42,43,44];   // the first five New Testament books (Matthew–A
 function nt5Done(){ return NT5.every(n=>knownNum(n)); }
 const SCRATCH_LADDER=[
   {tab:"verse",   icon:"📖", name:"Verses",          desc:"Choose what to hide in your heart — suggested verses, topics, and daily review.", gate:()=>foundationsDone(),
-     earn:"completing the Foundation — books 1–5 and Matthew", next:`Memorize <b>5 verses</b> and hit a <b>5-answer streak</b> in the verse test to earn your next scratch-off ${GTIK}`},
+     reqs:[{label:"Finish the Foundation — books 1–5 &amp; Matthew", done:()=>foundationsDone()}]},
   {tab:"palace",  icon:"🏛️", name:"Memory Palaces",  desc:"Build your own palaces — walk a familiar place and leave a verse at each spot.",  gate:()=>Prog.memorized.length>=5 && (Prog.bestStreak||0)>=5,
-     earn:"memorizing 5 verses and hitting a 5-answer streak in the verse test", next:`Reach <b>15 verses &amp; 3 palaces</b> to earn your next scratch-off ${GTIK}`},
+     reqs:[{label:"Memorize 5 verses", done:()=>Prog.memorized.length>=5, prog:()=>`${Math.min(5,Prog.memorized.length)}/5`},
+           {label:"Hit a 5-answer streak in the verse test", done:()=>(Prog.bestStreak||0)>=5, prog:()=>`best ${Prog.bestStreak||0}/5`}]},
   {tab:"journey", icon:"🗺️", name:"Your Journey",    desc:"See the whole Bible open before you — every book, chapter and verse you can reach.", gate:()=>Prog.memorized.length>=15 && palaceCount()>=3,
-     earn:"reaching 15 verses and 3 palaces", next:`Reach <b>25 verses, 5 palaces &amp; the first 5 New Testament books</b> for your final scratch-off ${GTIK}`},
+     reqs:[{label:"Memorize 15 verses", done:()=>Prog.memorized.length>=15, prog:()=>`${Math.min(15,Prog.memorized.length)}/15`},
+           {label:"Build 3 memory palaces", done:()=>palaceCount()>=3, prog:()=>`${Math.min(3,palaceCount())}/3`}]},
   {tab:"stories", icon:"📜", name:"Bible Stories",   desc:"100 of the Bible's great stories — located, learned, and ready to tell.",         gate:()=>Prog.memorized.length>=25 && palaceCount()>=5 && nt5Done(),
-     earn:"reaching 25 verses, 5 palaces, and learning the first 5 New Testament books (Matthew–Acts)", next:"You've unlocked every feature — the whole app is yours. 🔥"}
+     reqs:[{label:"Memorize 25 verses", done:()=>Prog.memorized.length>=25, prog:()=>`${Math.min(25,Prog.memorized.length)}/25`},
+           {label:"Build 5 memory palaces", done:()=>palaceCount()>=5, prog:()=>`${Math.min(5,palaceCount())}/5`},
+           {label:"Learn the first 5 New Testament books (Matthew–Acts)", done:()=>nt5Done(), prog:()=>`${NT5.filter(n=>knownNum(n)).length}/5`}]}
 ];
 function tabWon(t){ return t==="learn" || (Prog.scratchWon||[]).includes(t); }
 function tabUnlocked(tab){ return tabWon(tab); }
+// short one-line summary of a rung's requirements (for the post-claim toast)
+function reqsSummary(i){ const L=SCRATCH_LADDER[i]; if(!L) return "You've unlocked every feature — the whole app is yours! 🔥"; return "🎫 Next ticket: "+L.reqs.map(r=>r.label.replace(/&amp;/g,"&")).join(" · "); }
+// the requirements popup — shown when the user taps a locked golden ticket, or hits a milestone toward one
+function showScratchReqs(){
+  const i=SCRATCH_LADDER.findIndex(r=>!tabWon(r.tab));
+  if(i<0){ toast("Every feature is unlocked — the whole app is yours 🔥"); return; }
+  const L=SCRATCH_LADDER[i], earned=L.gate();
+  const bullets=L.reqs.map(r=>{ const ok=r.done(); return `<div class="reqrow">${ok?"✅":"⬜"} <span>${r.label}${r.prog?` <b class="muted" style="font-weight:700">${r.prog()}</b>`:""}</span></div>`; }).join("");
+  let m=el("reqsModal"); if(!m){ m=document.createElement("div"); m.id="reqsModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  m.innerHTML=`<div class="modal-card" style="text-align:center">
+    <div style="font-size:38px;line-height:1">🎫</div>
+    <h2 style="font-size:20px;margin:6px 0 2px">${earned?"Your golden ticket is ready!":"Earn a golden ticket"}</h2>
+    <p class="hint" style="margin:0 0 14px">${earned?"You've met the requirements — scratch it off to reveal what you've unlocked.":"Complete these to earn a scratch-off:"}</p>
+    <div style="text-align:left;max-width:300px;margin:0 auto">${bullets}</div>
+    ${earned?`<button class="btn" id="reqScratch" style="margin-top:16px;width:100%">Scratch it now 🎫</button>`:""}
+    <button class="btn ghost" id="reqClose" style="margin-top:8px;width:100%">Close</button></div>`;
+  m.style.display="flex";
+  m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("reqClose").onclick=()=>m.style.display="none";
+  if(el("reqScratch")) el("reqScratch").onclick=()=>{ m.style.display="none"; Scratch.open(i); };
+}
 // the next unwon ladder rung whose milestone is met (or -1). Robust to out-of-order back-compat grants.
 function pendingScratchRung(){ for(let i=0;i<SCRATCH_LADDER.length;i++){ const r=SCRATCH_LADDER[i]; if(!tabWon(r.tab) && r.gate()) return i; } return -1; }
 let scratchOffered=-1, scratchSimActive=false;
@@ -1857,6 +1891,10 @@ function updateTabLocks(){
   });
   if(!scratchSimActive && pend>=0 && pend!==scratchOffered){ scratchOffered=pend; setTimeout(()=>toast("🎫 You earned a scratch-off! Tap a flashing golden ticket below 👇"),450); }
   if(pend<0) scratchOffered=-1;
+  // once the user has 5 verses, remind them a 5-answer streak in the verse test unlocks the next ticket
+  if(!scratchSimActive && Prog.memorized.length>=5 && (Prog.bestStreak||0)<5 && !tabWon("palace") && !Prog.fiveVerseHintShown){
+    Prog.fiveVerseHintShown=true; saveProg(); setTimeout(showScratchReqs, 500);
+  }
 }
 
 /* =================== ROUTING =================== */
@@ -1876,8 +1914,8 @@ function show(tab){
   paintTheme();
 }
 document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
-  if(b.classList.contains("pending")){ const p=pendingScratchRung(); if(p>=0) Scratch.open(p); return; }  // a flashing ticket → open the scratch card
-  if(b.classList.contains("locked")) return;                                                             // idle ticket, not yet earned
+  if(b.classList.contains("pending")){ const p=pendingScratchRung(); if(p>=0){ Scratch.open(p); return; } }  // a flashing ticket → open the scratch card
+  if(b.classList.contains("ticket")){ showScratchReqs(); return; }                                          // any golden ticket → show how to earn a scratch-off
   show(b.dataset.tab);
 });
 
@@ -2665,6 +2703,7 @@ function renderStep(){
       const editBtn = `<button class="btn ghost sm" id="lEdit" style="width:100%;margin-top:8px">✏️ ${Prog.customBook[s.n]?"Edit my scene":"Write my own scene"}</button>`;
       body = `<div class="stage">
           <div class="tline">${pegImg("book",s.n,bookName(s.n),true)}<span class="tname">${bookName(s.n)}</span></div>
+          <button class="btn ghost sm" id="lBookImg" style="margin:2px auto 6px;display:block">✏️ ${Prog.customBookImg[s.n]?"Edit my book image":"Write my own book image"}</button>
           <div class="tnum">Book ${nn}</div>
           <div class="tline"><span class="tword">${word}</span>${pegImg("num",s.n,word,true)}</div>
           <div class="sounds">sounds: <b>${snd}</b></div></div>
@@ -2744,6 +2783,12 @@ function wireStep(s){
       const cur=Prog.customBook[s.n]||"";
       const t=prompt(`Your own way to remember ${bookName(s.n)} (book ${s.n}, image "${word}"):`, cur);
       if(t!==null){ if(t.trim()){ Prog.customBook[s.n]=t.trim(); } else { delete Prog.customBook[s.n]; } saveProg(); renderStep(); }
+    };
+    // write your own image for the BOOK — the text label replaces the default book icon everywhere
+    if(el("lBookImg")) el("lBookImg").onclick=()=>{
+      const cur=Prog.customBookImg[s.n]||"";
+      const t=prompt(`Write your own image for ${bookName(s.n)} — a word or phrase to picture. It replaces the default book icon:`, cur);
+      if(t!==null){ if(t.trim()){ Prog.customBookImg[s.n]=t.trim(); } else { delete Prog.customBookImg[s.n]; } saveProg(); renderStep(); }
     };
     // pick a different (Major-System-valid) image word — clears the drawn picture
     document.querySelectorAll("[data-peg]").forEach(b=>b.onclick=()=>{
@@ -4467,7 +4512,7 @@ const Scratch = (()=>{
       if(!sim && document.querySelector(".view.active")?.id==="learn") renderPath();   // reveal a newly-unlocked Learn lesson (e.g. the palace)
       if(btn){ btn.classList.add("justwon"); setTimeout(()=>btn.classList.remove("justwon"),700); }
       if(sim && opts.onClaimed) opts.onClaimed(rung);
-      else setTimeout(()=>toast(L.next.replace(/<[^>]+>/g,"")), 500);
+      else setTimeout(()=>toast(reqsSummary(rung+1)), 500);
     });
   }
   el("scClaim").onclick=claim;
@@ -4514,8 +4559,11 @@ const ScratchSim = (()=>{
     el("simIcon").textContent=L.icon;
     el("simTitle").textContent=`${L.name} unlocked!`;
     // reveal how THIS one was earned, and how to earn the NEXT scratch-off — but never what the next one is (that's the surprise)
-    el("simMsg").innerHTML=`<div style="margin:4px 0 10px">In the real app, you earn this by <b class="gold">${L.earn}</b>.</div>`
-      + (nx ? `<div>${L.next}</div><div style="margin-top:8px;font-size:13px;color:var(--muted)">What's inside the next ticket is a surprise — you'll find out when you scratch it.</div>` : `<div>That's every feature unlocked — the whole app is yours! 🔥</div>`);
+    el("simMsg").innerHTML = nx
+      ? `<div style="margin-bottom:8px">To earn your next golden ticket ${GTIK}:</div>`
+        + nx.reqs.map(r=>`<div class="reqrow">⬜ <span>${r.label}</span></div>`).join("")
+        + `<div style="margin-top:10px;font-size:13px;color:var(--muted)">What's inside is a surprise — you'll find out when you scratch it.</div>`
+      : `<div>That's every feature unlocked — the whole app is yours! 🔥</div>`;
     el("simNext").style.display = nx ? "" : "none";
     el("simNext").textContent = nx ? "Scratch the next one →" : "";
     el("simExit").textContent = nx ? "Exit simulation" : "Finish & exit";
