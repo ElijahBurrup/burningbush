@@ -316,6 +316,27 @@
   .ed-trash:active{transform:scale(.92)}
   .ed-ta{width:100%;box-sizing:border-box;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-size:15px;line-height:1.5;padding:12px;font-family:inherit;resize:vertical;min-height:120px}
   .ed-ta:focus{outline:none;border-color:var(--gold2)}
+  /* word-for-word typing test */
+  .vhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:2px}
+  .w4wbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:66px;height:66px;border-radius:16px;border:1.5px solid var(--gold2);background:var(--panel2);color:var(--gold-ink);cursor:pointer;font-weight:800;font-size:10px;line-height:1.05;text-align:center;flex:0 0 auto}
+  .w4wbtn span{font-size:22px;line-height:1}
+  .w4wbtn:active{transform:scale(.95)}
+  .fadeverse .w.blank{cursor:pointer}
+  .fadeverse .w.blank.peek{color:var(--gold-ink);font-weight:800}
+  .ttcount{min-width:46px;text-align:center;font-weight:800;font-size:13px;border-radius:999px;padding:4px 10px;background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
+  .ttcount.ttgood{color:var(--good);border-color:var(--good)}
+  .ttcount.ttbad{color:var(--miss-ink);border-color:var(--miss)}
+  .ttdisplay{min-height:52px;font-size:18px;line-height:1.6;text-align:center;margin:12px 0;color:var(--ink)}
+  .ttdisplay .ttdone{color:var(--good);font-weight:700}
+  .ttdisplay .ttcur{font-weight:800}
+  .ttdisplay .ttcur.good{color:var(--gold-ink)}
+  .ttdisplay .ttcur.bad{color:var(--miss-ink)}
+  .tt-in{width:100%;box-sizing:border-box;text-align:center}
+  .tt-in.wrong{border-color:var(--miss);color:var(--miss-ink)}
+  .tt-in.good{border-color:var(--good)}
+  .ttwin .ttburst{font-size:64px;animation:ttpop .7s ease}
+  @keyframes ttpop{0%{transform:scale(.2) rotate(-18deg);opacity:0}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+  .ttlock{margin-top:12px;font-size:14px;color:var(--ink-soft);background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
   .sounds{text-align:center;color:var(--muted);font-size:15px;margin-bottom:8px}
   .teachbox{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;line-height:1.55;font-size:14px}
   .opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
@@ -1621,6 +1642,7 @@ function migrateProg(p){
   if(!("covenant" in p)) p.covenant=null; // ISO date the user made the daily-memory resolve
   if(!Array.isArray(p.scratchWon)) p.scratchWon=[]; if(typeof p.scratchInit!=="boolean") p.scratchInit=false; // tabs won via scratch-off + one-time back-compat grant
   if(typeof p.fiveVerseHintShown!=="boolean") p.fiveVerseHintShown=false; // one-time "a 5-streak unlocks your palace" nudge
+  p.w4w=obj(p.w4w); // per-verse word-for-word practice: {refKey:{count, times:[ts...]}}
   p.palaces=p.palaces.map(pl=>{ if(pl&&typeof pl==="object"){ if(!pl.learnedAt) pl.learnedAt=Date.now(); if(!pl.step) pl.step=1; } return pl; }); // spaced-repetition trail: D0 done at build
   p.verseSR=obj(p.verseSR); (p.memorized||[]).forEach(k=>{ if(!p.verseSR[k]) p.verseSR[k]={learnedAt:Date.now(),step:1}; }); // per-verse SR trail; back-fill existing memorized verses
   p.talents=p.talents||0; p.streak=p.streak||0; p.bestStreak=p.bestStreak||0; p.talentLog=obj(p.talentLog); // Talents (verse-practice points), streaks, per-verse 24h earn log
@@ -1650,6 +1672,7 @@ function mergeProg(a,b){
   m.customScene=Object.assign({},b.customScene,a.customScene); m.customPeg=Object.assign({},b.customPeg,a.customPeg); m.customBookImg=Object.assign({},b.customBookImg,a.customBookImg); m.talentLog=Object.assign({},b.talentLog,a.talentLog);
   m.firstWin=!!(a.firstWin||b.firstWin); m.persona=a.persona||b.persona; m.dailyMin=a.dailyMin||b.dailyMin; m.bibleFam=a.bibleFam||b.bibleFam; m.covenant=a.covenant||b.covenant;
   m.scratchWon=uniq(a.scratchWon,b.scratchWon); m.scratchInit=!!(a.scratchInit||b.scratchInit); m.fiveVerseHintShown=!!(a.fiveVerseHintShown||b.fiveVerseHintShown);
+  m.w4w=Object.assign({},b.w4w,a.w4w);
   m.palaces=((a.palaces||[]).length>=(b.palaces||[]).length)?a.palaces:b.palaces;   // keep the fuller palace set
   m.verseSR=mergeSR(a.verseSR,b.verseSR);
   return migrateProg(m);
@@ -1840,7 +1863,15 @@ function updateMetrics(){
   if(palTab) palTab.classList.toggle("hasdue", palacesDueCount()>0);   // red dot when a palace is due
   const vsTab=document.querySelector('.tabbar button[data-tab="verse"]');
   if(vsTab) vsTab.classList.toggle("hasdue", versesDueCount()>0);      // red dot when a verse is due for review
+  updateAppBadge();
   updateTabLocks();
+}
+// Home-screen icon badge: show the count of spaced-repetition items due today (installed PWA).
+function updateAppBadge(){
+  try{
+    const due=(versesDueCount?versesDueCount():0)+(palacesDueCount?palacesDueCount():0);
+    if("setAppBadge" in navigator){ due>0 ? navigator.setAppBadge(due) : navigator.clearAppBadge(); }
+  }catch(e){}
 }
 /* Progressive unlock via SCRATCH-OFFS. New users have only Learn; each feature is won by
    scratching a lottery ticket earned at a milestone, then it flies down into the nav (in order:
@@ -3065,7 +3096,7 @@ function renderVerse(){
     el("vBack").onclick=()=>{ vView="hub"; renderVerse(); document.querySelector(".content").scrollTop=0; };
     V.querySelectorAll("[data-bk]").forEach(h=>h.onclick=()=>{ const [sec,bn]=h.dataset.bk.split(":"); const set=vBook[sec]; const n=+bn; set.has(n)?set.delete(n):set.add(n); reVerse(); });
     V.querySelectorAll("[data-topic]").forEach(h=>h.onclick=()=>{ const ti=+h.dataset.topic; vTopic.has(ti)?vTopic.delete(ti):vTopic.add(ti); reVerse(); });
-    if(el("memFade")) el("memFade").onclick=()=>{ const m=mem[Math.floor(Math.random()*mem.length)]; startTextFade(m[0],m[1],m[2]); };
+    if(el("memFade")) el("memFade").onclick=()=>{ const m=mem[Math.floor(Math.random()*mem.length)]; startWordForWord(m[0],m[1],m[2]); };
     V.querySelectorAll("[data-vb]").forEach(b=>b.onclick=()=>{ const [x,y,z]=b.dataset.vb.split(":").map(Number); verseScroll=document.querySelector(".content").scrollTop; openVerseWizard(x,y,z,backToVerse); });
     paintTheme(); return;
   }
@@ -3073,7 +3104,8 @@ function renderVerse(){
   // ---- HUB: six big buttons; review last ----
   const due=versesDueCount();
   const reviewLabel=due?`🔔 Review ${due} verse${due>1?"s":""} due now`:(mem.length?`🎯 Test my verses (${mem.length})`:`🎯 Test my verses`);
-  V.innerHTML=`<h2>Verses</h2>
+  V.innerHTML=`<div class="vhead"><h2 style="margin:0">Verses</h2>
+      <button class="w4wbtn" id="vWord" title="Word-for-word practice"><span>📖</span>Word<br>for word</button></div>
     <p class="lead">Pick what to work on — build verses into pictures, then test what you've hidden in your heart.</p>
     <div class="versehub">
       <button class="vhub sq" data-view="sugg"><span class="vi">✨</span><span>Suggested</span><small>${suggReach} in reach</small></button>
@@ -3084,6 +3116,12 @@ function renderVerse(){
       <button class="vhub wide review" id="vMemTest"><span class="vi">🎯</span><span>${reviewLabel}</span></button>
     </div>`;
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
+  if(el("vWord")) el("vWord").onclick=()=>{
+    if(!mem.length){ toast("Memorize a verse first — tap Suggested!"); return; }
+    const avail=mem.filter(m=>!w4wLocked(refKey(m[0],m[1],m[2])));
+    const pool=avail.length?avail:mem, pick=pool[Math.floor(Math.random()*pool.length)];
+    startWordForWord(pick[0],pick[1],pick[2],()=>{ vView="hub"; renderVerse(); });
+  };
   el("vNumTest").onclick=()=> knownNumbers().size>=2 ? startNumberTest() : toast("Learn a few numbers first in the Learn tab!");
   el("vMemTest").onclick=()=> mem.length ? startMemTest() : toast("Memorize a verse first — tap Suggested!");
   paintTheme();
@@ -3363,14 +3401,14 @@ function finishNumberTest(){
 }
 function memTestRender(){
   const V=el("verse"), b=memTestCur[0], c=memTestCur[1], v=memTestCur[2], k=knownNumbers();
-  let books=""; for(let bb=1;bb<=66;bb++) if(k.has(bb)||bb===b) books+=`<option value="${bb}">${bookName(bb)}</option>`;   // always include the correct book
-  const nums=(max,force)=>{ let o=""; for(let n=1;n<=max;n++) if(k.has(n)||n===force) o+=`<option value="${n}">${n}</option>`; return o; }; // force = the correct answer, always selectable
+  let books=`<option value="" selected>— book —</option>`; for(let bb=1;bb<=66;bb++) if(k.has(bb)||bb===b) books+=`<option value="${bb}">${bookName(bb)}</option>`;   // always include the correct book; starts blank
+  const nums=(max,force,lbl)=>{ let o=`<option value="" selected>— ${lbl} —</option>`; for(let n=1;n<=max;n++) if(k.has(n)||n===force) o+=`<option value="${n}">${dispNum("num",n)}</option>`; return o; }; // force = the correct answer, always selectable
   V.innerHTML=`<div class="qhead"><button class="lclose" id="mtClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Test yourself</div><div style="width:24px"></div></div>
     <div class="card">${testHUD()}<p class="lead" style="margin-bottom:8px">Which verse is this? Choose its book, chapter and verse.</p>
       <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${kjvText(b,c,v)}"</div>
       <label class="vplabel">Book</label><select class="vpsel" id="mtB">${books}</select>
-      <label class="vplabel">Chapter</label><select class="vpsel" id="mtC">${nums(150,c)}</select>
-      <label class="vplabel">Verse</label><select class="vpsel" id="mtV">${nums(176,v)}</select>
+      <label class="vplabel">Chapter</label><select class="vpsel" id="mtC">${nums(150,c,"chapter")}</select>
+      <label class="vplabel">Verse</label><select class="vpsel" id="mtV">${nums(176,v,"verse")}</select>
       <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):`3 tries, then I'll reveal the answer.`}</div>
       <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
       ${Prog.hints>0?`<button class="btn ghost sm" id="mtPeek" style="margin-top:8px;width:100%">🔎 Reveal the book (1 peek · ${Prog.hints} left)</button>`:""}
@@ -3387,6 +3425,7 @@ function memTestRender(){
   const nextBtn=()=>`<button class="btn" id="mtNext" style="margin-top:10px">${memArr().length>1?"Next verse →":"Done"}</button>`;
   const goNext=nextMemVerse;   // session decides: next due SR verse → complete banner → palaces → free practice
   el("mtCheck").onclick=()=>{
+    if(!el("mtB").value || !el("mtC").value || !el("mtV").value){ el("mtWarn").textContent="Pick a book, chapter and verse."; return; }
     const ok=(+el("mtB").value===b && +el("mtC").value===c && +el("mtV").value===v);
     if(ok){ // flash green, auto-advance to next verse
       const firstTry=memTestWrong===0, kk=refKey(b,c,v);
@@ -3568,16 +3607,17 @@ function vpStart(){
 }
 function vpRender(){
   const V=el("verse"), s=vpCur, L=Prog.level;
-  let books=""; for(let b=1;b<=L;b++) books+=`<option value="${b}">${bookName(b)}</option>`;
-  let nums=""; for(let n=1;n<=L;n++) nums+=`<option value="${n}">${n}</option>`;
+  const blank=l=>`<option value="" selected>— ${l} —</option>`;   // dropdowns start blank; user must choose
+  let books=blank("book"); for(let b=1;b<=L;b++) books+=`<option value="${b}">${bookName(b)}</option>`;
+  let numsC=blank("chapter"), numsV=blank("verse"); for(let n=1;n<=L;n++){ numsC+=`<option value="${n}">${dispNum("num",n)}</option>`; numsV+=`<option value="${n}">${dispNum("num",n)}</option>`; }
   V.innerHTML=`<div class="qhead"><button class="lclose" id="vpClose">✕</button>
       <div style="font-weight:800;flex:1;text-align:center">Verse Practice 1</div><div style="width:24px"></div></div>
     <div class="card">${testHUD()}
       <p class="lead" style="margin-bottom:8px">Which verse is this? Choose the book, chapter and verse — only what you've learned is shown.</p>
       <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${s.text}"</div>
       <label class="vplabel">Book</label><select class="vpsel" id="vpB">${books}</select>
-      <label class="vplabel">Chapter</label><select class="vpsel" id="vpC">${nums}</select>
-      <label class="vplabel">Verse</label><select class="vpsel" id="vpV">${nums}</select>
+      <label class="vplabel">Chapter</label><select class="vpsel" id="vpC">${numsC}</select>
+      <label class="vplabel">Verse</label><select class="vpsel" id="vpV">${numsV}</select>
       <div class="hint" id="vpWarn" style="margin-top:10px;text-align:center">${vpWrong>0?warnText(vpWrong):`3 tries, then I'll reveal the answer.`}</div>
       <button class="btn" id="vpCheck" style="margin-top:8px">Check</button>
       <div id="vpFb"></div>
@@ -3588,6 +3628,7 @@ function vpRender(){
 }
 function vpCheck(){
   const s=vpCur, bn=bookNum(s.b);
+  if(!el("vpB").value || !el("vpC").value || !el("vpV").value){ el("vpWarn").textContent="Pick a book, chapter and verse."; return; }
   const b=+el("vpB").value, c=+el("vpC").value, v=+el("vpV").value;
   const ok=(b===bn && c===s.c && v===s.v);
   gradeKey(`vp:${refKey(bn,s.c,s.v)}`, ok?"good":"miss");
@@ -3657,8 +3698,8 @@ function renderWalk(){
   // the user's own scene (shown on the meaning step) + editable field on the last step
   const mySceneShow = (isMeaning && myScene) ? `<div class="why" style="border-left-color:var(--gold2)"><b class="gold">Your scene:</b><br>${myScene}</div>` : "";
   const sceneField = last ? `<div style="margin-top:14px;text-align:left">
-      <label class="hint" style="display:block;margin-bottom:6px">✍️ Your own scene for this verse (optional)</label>
-      <textarea id="wScene" rows="3" placeholder="Describe the picture you imagined…" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:11px;font-size:14px;font-family:inherit;resize:vertical">${myScene.replace(/</g,"&lt;")}</textarea>
+      ${myScene?`<div class="relbox" style="border:1px solid var(--gold2)"><div class="rl" style="color:var(--gold-ink)">★ My own scene</div>${myScene}</div>`:""}
+      <button class="btn ghost" id="wSceneEdit" style="width:100%;margin-top:8px">✏️ ${myScene?"Edit my scene":"Write my own scene"}</button>
     </div>` : "";
   const btns = wIdx===0
     ? `${arrows}<button class="btn" id="wNext" ${canLearn?"":"disabled"}>Next → learn it</button>
@@ -3681,8 +3722,15 @@ function renderWalk(){
     <div class="dots">${wSteps.map((_,i)=>`<div class="dot ${i<=wIdx?"on":""}"></div>`).join("")}</div>
     ${btns}</div>`;
   const saveScene=()=>{ const t=el("wScene"); if(t){ const v=t.value.trim(); if(v) Prog.customScene[vkey]=v; else delete Prog.customScene[vkey]; saveProg(); } };
+  // edit the verse scene with the same pretty editor + trash-can as the book-image editor
+  if(el("wSceneEdit")) el("wSceneEdit").onclick=()=>editText({
+    title:`My scene for ${curScene.b} ${curScene.c}:${curScene.v}`,
+    hint:"Describe the picture you imagined for this verse.",
+    value:Prog.customScene[vkey]||"",
+    onSave:v=>{ if(v){ Prog.customScene[vkey]=v; } else { delete Prog.customScene[vkey]; } saveProg(); renderWalk(); }
+  });
   if(el("wClose")) el("wClose").onclick=()=>walkReturn();
-  if(el("wFade")) el("wFade").onclick=()=>startTextFade(cbn,curScene.c,curScene.v,()=>openVerseWizard(cbn,curScene.c,curScene.v,walkReturn));
+  if(el("wFade")) el("wFade").onclick=()=>startWordForWord(cbn,curScene.c,curScene.v,()=>openVerseWizard(cbn,curScene.c,curScene.v,walkReturn));
   V.querySelectorAll("[data-learn]").forEach(b=>b.onclick=()=>{ const n=+b.dataset.learn, isBook=b.dataset.book==="1", ret=walkReturn;
     startAdhocLearn(n,isBook,()=>openVerseWizard(cbn,curScene.c,curScene.v,ret)); });
   if(el("wVPrev")) el("wVPrev").onclick=()=>{ if(hasPrev) openVerseWizard(cbn,curScene.c,curScene.v-1,walkReturn); };
@@ -4162,6 +4210,7 @@ function startTextFade(b,c,v,retFn){
   TF={b,c,v,words,stage:0,ret:document.querySelector(".view.active").id,retFn:retFn||null};
   renderTextFade();
 }
+function blankForm(w){ return `${w[0]}${"_".repeat(Math.max(1,w.replace(/[^a-zA-Z]/g,"").length-1))}`; }
 function renderTextFade(){
   const host=el(TF.ret)||el("verse");
   // stage 0 = full; each stage hides ~20% more, last stage all hidden
@@ -4171,23 +4220,109 @@ function renderTextFade(){
   const order=TF.words.map((_,i)=>i).sort((a,b)=>((a*7)%TF.words.length)-((b*7)%TF.words.length));
   const hidden=new Set(order.slice(0,hideCount));
   const html=TF.words.map((w,i)=>hidden.has(i)
-    ? `<span class="w blank">${w[0]}${"_".repeat(Math.max(1,w.replace(/[^a-zA-Z]/g,"").length-1))}</span>`
+    ? `<span class="w blank" data-wi="${i}">${blankForm(w)}</span>`
     : `<span class="w">${w}</span>`).join(" ");
   const done=hideCount>=TF.words.length;
   host.innerHTML=`<div class="qhead"><button class="lclose" id="tfClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Word-for-word</div><div style="width:24px"></div></div>
     <div class="card">
       <div style="font-weight:800;color:var(--gold-ink);text-align:center">${bookName(TF.b)} ${TF.c}:${TF.v}</div>
       <div class="fadeverse">${html}</div>
-      <p class="hint" style="text-align:center">${done?"Now recite the whole verse from memory — then reveal to check.":"Read it aloud. Each step hides more words; keep reciting the full verse."}</p>
+      <p class="hint" style="text-align:center">${done?"Now recite the whole verse from memory — then type it to lock it in.":"Read it aloud. Each step hides more words. <b>Tap any blank to peek</b> for 2 seconds."}</p>
       <div class="btnrow">
         <button class="btn ghost" id="tfReveal">Reveal all</button>
-        <button class="btn" id="tfNext">${done?"Recite ✓ done":"Hide more →"}</button></div>
+        <button class="btn" id="tfNext">${done?"Type it from memory →":"Hide more →"}</button></div>
     </div>`;
   el("tfClose").onclick=()=>backFromTF();
   el("tfReveal").onclick=()=>{ TF.stage=0; renderTextFade(); };
-  el("tfNext").onclick=()=>{ if(done){ backFromTF(); } else { TF.stage++; renderTextFade(); } };
+  el("tfNext").onclick=()=>{ if(done){ startTypeTest(TF.b,TF.c,TF.v,TF.retFn); } else { TF.stage++; renderTextFade(); } };
+  // tap a blank to peek at the word for 2 seconds, then it hides again
+  host.querySelectorAll(".w.blank").forEach(sp=>sp.onclick=()=>{
+    if(sp._peeking) return; sp._peeking=true; const wi=+sp.dataset.wi, full=TF.words[wi];
+    sp.textContent=full; sp.classList.add("peek");
+    setTimeout(()=>{ sp.textContent=blankForm(full); sp.classList.remove("peek"); sp._peeking=false; }, 2000);
+  });
 }
 function backFromTF(){ const r=TF.ret, fn=TF.retFn; TF=null; if(fn) fn(); else show(r); }
+
+/* =================== WORD-FOR-WORD TYPING TEST + rate limit =================== */
+const W4W_HR=3600000, W4W_DAY=86400000, W4W_MAX_PER_DAY=3;
+function w4wNextAllowed(vkey){ const r=Prog.w4w&&Prog.w4w[vkey]; if(!r||!r.times||!r.times.length) return 0;
+  const now=Date.now(), recent=r.times.filter(t=>now-t<W4W_DAY), last=Math.max.apply(null,r.times);
+  return last + (recent.length>=W4W_MAX_PER_DAY ? W4W_DAY : 2*W4W_HR); }
+function w4wLocked(vkey){ return Date.now() < w4wNextAllowed(vkey); }
+function w4wRecord(vkey){ Prog.w4w=Prog.w4w||{}; const r=Prog.w4w[vkey]=Prog.w4w[vkey]||{count:0,times:[]}; r.count++; r.times.push(Date.now()); r.times=r.times.slice(-30); saveProg(); return r; }
+function fmtWhen(ts){ const d=new Date(ts), now=new Date(); const sameDay=d.toDateString()===now.toDateString();
+  let h=d.getHours(), m=d.getMinutes(), ap=h>=12?"PM":"AM"; h=h%12||12; const t=`${h}:${String(m).padStart(2,"0")} ${ap}`;
+  return sameDay ? `today at ${t}` : (d.getTime()-now.getTime()<2*W4W_DAY ? `tomorrow at ${t}` : d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+` at ${t}`); }
+function normWord(s){ return (s||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
+
+// launch the full word-for-word session for a verse (peek-fade → typing test), respecting the lock
+function startWordForWord(b,c,v,ret){
+  const vkey=refKey(b,c,v);
+  if(w4wLocked(vkey)){ show("verse"); w4wLockScreen(b,c,v,ret); return; }
+  startTextFade(b,c,v,ret);
+}
+function w4wLockScreen(b,c,v,ret){
+  const V=el("verse"), r=Prog.w4w[refKey(b,c,v)]||{count:0};
+  V.innerHTML=`<div class="qhead"><button class="lclose" id="w4wClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Word-for-word</div><div style="width:24px"></div></div>
+    <div class="card center">
+      <div style="font-size:44px">⏳</div>
+      <h2 style="font-size:20px;margin:8px 0 2px">Nicely done — rest a bit</h2>
+      <div style="font-weight:800;color:var(--gold-ink);margin:2px 0">${bookName(b)} ${c}:${v}</div>
+      <p class="lead" style="margin:8px 0">You've completed <b class="gold">${Math.min(r.count,10)} of 10</b> word-for-word practices on this verse.</p>
+      <p class="lead" style="margin:0"><b>Next practice unlocks ${fmtWhen(w4wNextAllowed(refKey(b,c,v)))}.</b> Spacing your reps is what moves a verse into long-term memory.</p>
+      <button class="btn" id="w4wBack" style="margin-top:16px">Back to Verses</button></div>`;
+  el("w4wClose").onclick=()=>ret?ret():renderVerse(); el("w4wBack").onclick=()=>ret?ret():renderVerse();
+}
+
+let TT=null;
+function startTypeTest(b,c,v,ret){ const words=(kjvText(b,c,v)||"").split(/\s+/).filter(Boolean);
+  TT={b,c,v,ret,words,idx:0,wrong:false}; renderTypeTest(); }
+function renderTypeTest(){
+  const V=el("verse"), total=TT.words.length, done=TT.idx;
+  const committed=TT.words.slice(0,done).join(" ");
+  const counterCls=TT.wrong?"ttbad":(done>0?"ttgood":"");
+  V.innerHTML=`<div class="qhead"><button class="lclose" id="ttClose">✕</button>
+      <div style="font-weight:800;flex:1;text-align:center">Type it word-for-word</div>
+      <div class="ttcount ${counterCls}" id="ttCount">${done}/${total}</div></div>
+    <div class="card">
+      <div style="font-weight:800;color:var(--gold-ink);text-align:center">${bookName(TT.b)} ${TT.c}:${TT.v}</div>
+      <div class="ttdisplay"><span class="ttdone">${committed}</span>${done<total?` <span class="ttcur" id="ttCur"></span>`:""}</div>
+      <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type the next word…">
+      <p class="hint" style="text-align:center;margin-top:8px">Type the verse from memory, one word at a time. A wrong letter turns red — backspace to fix it.</p>
+    </div>`;
+  el("ttClose").onclick=()=>{ const r=TT.ret; TT=null; r?r():renderVerse(); };
+  const inp=el("ttIn"); setTimeout(()=>{ try{inp.focus();}catch(e){} }, 60);
+  inp.oninput=()=>{
+    const expected=TT.words[TT.idx]; if(expected===undefined) return;
+    const nexp=normWord(expected), ncur=normWord(inp.value);
+    const cur=el("ttCur"); if(cur) cur.textContent=inp.value;
+    if(ncur===nexp){                                 // word complete & correct → commit, advance
+      TT.idx++; TT.wrong=false; inp.value="";
+      if(TT.idx>=total){ typeTestComplete(); return; }
+      renderTypeTest();
+    } else {
+      const wrong = !nexp.startsWith(ncur);           // typed something that can't become the word
+      TT.wrong=wrong;
+      inp.classList.toggle("wrong", wrong); inp.classList.toggle("good", !wrong && ncur.length>0);
+      if(cur) cur.className="ttcur "+(wrong?"bad":"good");
+      const cc=el("ttCount"); if(cc) cc.className="ttcount "+(wrong?"ttbad":(TT.idx>0?"ttgood":""));
+    }
+  };
+}
+function typeTestComplete(){
+  const b=TT.b,c=TT.c,v=TT.v,ret=TT.ret, vkey=refKey(b,c,v);
+  const r=w4wRecord(vkey); reviewVerseSR(vkey); refreshHUD&&refreshHUD();
+  const V=el("verse");
+  V.innerHTML=`<div class="card center ttwin">
+      <div class="ttburst">🎉</div>
+      <h2 style="font-size:22px;margin:6px 0 2px">You did it!</h2>
+      <div style="font-weight:800;color:var(--gold-ink);margin:2px 0">${bookName(b)} ${c}:${v}</div>
+      <p class="lead" style="margin:10px 0 4px">${bookName(b)} ${c}:${v} — Word for Word Practice<br><b class="gold" style="font-size:20px">${Math.min(r.count,10)} of 10 complete</b></p>
+      <div class="ttlock">🔒 Next practice locked until <b>${fmtWhen(w4wNextAllowed(vkey))}</b></div>
+      <button class="btn" id="ttDone" style="margin-top:16px">Amen — done</button></div>`;
+  el("ttDone").onclick=()=>{ ret?ret():renderVerse(); };
+}
 
 /* =================== MEMORY PALACE (Method of Loci) =================== */
 // Pre-built palaces for SEQUENCES the Major System handles poorly (ordered lists).
