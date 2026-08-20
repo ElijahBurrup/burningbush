@@ -1565,7 +1565,7 @@ function pegImg(kind,n,word,big){
   // a user-written image for a Bible book replaces the default book icon with their text label
   if(kind==="book" && typeof Prog!=="undefined" && Prog && Prog.customBookImg && Prog.customBookImg[n]){
     const cc = big ? "pegcustom" : "pegcustom pegcustom-sm";
-    return `<div class="${cc}"><span>✎ my image</span><b>${Prog.customBookImg[n]}</b></div>`;
+    return `<div class="${cc}"><span>Picture</span><b>${Prog.customBookImg[n]}</b></div>`;
   }
   const src = kind==="book" ? `/burningbush/images/books/${n}.svg` : `/burningbush/images/pegs/${n}.svg`;
   const c = big ? "pegimg" : "pegimg-sm", ph = big ? "imgph" : "imgph-sm";
