@@ -3474,25 +3474,56 @@ document.querySelectorAll(".subnav button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".tab").forEach(t=>t.style.display="none");
   el("tab-"+b.dataset.tab).style.display="block";
 });
-(function(){
+function buildNumGrid(){
   let g="";
-  for(let n=1;n<=176;n++){ const p=pegFor(n),w=p.word,d=defOf(w),nt=NOTE[n]||"";
-    g+=`<div class="cellcard" data-n="${n}"><div class="n">${n}</div><div class="w">${w}</div><div class="s">${p.sounds}</div>
+  for(let n=1;n<=176;n++){ const p=pegFor(n),w=p.word,d=defOf(w),nt=NOTE[n]||"",cust=Prog.customPeg&&Prog.customPeg[n];
+    g+=`<div class="cellcard${cellOpen.has(n)?" open":""}" data-n="${n}"><div class="n">${n}</div><div class="w">${w}</div><div class="s">${p.sounds}</div>
       <div class="mnem"><div class="imgwrap">${pegImg("num",n,w,false)}</div>
-      <div class="mnem-def"><span class="w2">${w}</span>${d?" — "+d:(nt?" — "+nt:"")}</div>
-      ${DECODE[n]?`<div class="mnem-def" style="margin-top:6px"><b style="color:var(--good)">Image → ${n}:</b> ${DECODE[n]}</div>`:""}</div></div>`; }
+      <div class="mnem-def"><span class="w2">${w}</span>${(!cust&&d)?" — "+d:(!cust&&nt?" — "+nt:"")}</div>
+      ${(!cust&&DECODE[n])?`<div class="mnem-def" style="margin-top:6px"><b style="color:var(--good)">Image → ${n}:</b> ${DECODE[n]}</div>`:""}
+      ${pegPicker(n)}</div></div>`; }
   el("numGrid").innerHTML=g;
-  el("numGrid").addEventListener("click",e=>{ const c=e.target.closest(".cellcard"); if(c) c.classList.toggle("open"); });
+}
+function buildBookTable(){
   let bt="";
-  BOOKS.forEach((name,i)=>{ const n=i+1,p=pegFor(n),w=p.word,d=defOf(w),mb=MNEM_BOOK[n]||{s:"",t:""};
+  BOOKS.forEach((name,i)=>{ const n=i+1,p=pegFor(n),w=p.word,mb=MNEM_BOOK[n]||{s:"",t:""},cust=Prog.customPeg&&Prog.customPeg[n];
     bt+=`<tr class="brow" data-n="${n}"><td class="k">${n}</td><td><b class="gold">${w}</b></td><td>${name}</td></tr>`;
-    bt+=`<tr class="bdetail" id="bd${n}" style="display:none"><td colspan="3">
+    bt+=`<tr class="bdetail" id="bd${n}" style="display:${bookOpen.has(n)?"table-row":"none"}"><td colspan="3">
       <div class="imgwrap">${pegImg("book",n,w,false)}</div>
       <div class="mnem-def">Book <b class="gold">${n}</b> → number image <b class="gold">${w}</b> (${p.sounds})</div>
-      <div class="mnem-def" style="margin-top:6px"><span class="sound">${mb.t?mb.t:("Name sounds like: "+mb.s)}</span></div></td></tr>`; });
+      ${cust?"":`<div class="mnem-def" style="margin-top:6px"><span class="sound">${mb.t?mb.t:("Name sounds like: "+mb.s)}</span></div>`}
+      ${pegPicker(n)}</td></tr>`; });
   el("booksBody").innerHTML=bt;
-  el("booksBody").addEventListener("click",e=>{ const r=e.target.closest(".brow"); if(!r) return;
-    const dd=el("bd"+r.dataset.n); dd.style.display=dd.style.display==="none"?"table-row":"none"; });
+}
+const cellOpen=new Set(), bookOpen=new Set();
+(function(){
+  buildNumGrid();
+  el("numGrid").addEventListener("click",e=>{
+    if(e.target.closest(".pegedit")) return;           // clicks inside the word-picker never collapse the card
+    const c=e.target.closest(".cellcard"); if(!c) return;
+    const n=+c.dataset.n; if(cellOpen.has(n)) cellOpen.delete(n); else cellOpen.add(n);
+    c.classList.toggle("open");
+  });
+  buildBookTable();
+  el("booksBody").addEventListener("click",e=>{
+    if(e.target.closest(".pegedit")) return;
+    const r=e.target.closest(".brow"); if(!r) return;
+    const n=+r.dataset.n, dd=el("bd"+n);
+    if(dd.style.display==="none"){ dd.style.display="table-row"; bookOpen.add(n); } else { dd.style.display="none"; bookOpen.delete(n); }
+  });
+  // shared: pick a Major-System-valid image word straight from either reference table
+  document.getElementById("tab-numbers")?.addEventListener("click",tablePegPick);
+  document.getElementById("tab-books")?.addEventListener("click",tablePegPick);
+  function tablePegPick(e){
+    const b=e.target.closest(".pegchip"); if(!b) return;
+    e.stopPropagation();
+    const card=b.closest(".cellcard"), bd=b.closest(".bdetail");
+    const id = card ? +card.dataset.n : (bd ? +bd.id.slice(2) : NaN);
+    if(!Number.isFinite(id)) return;
+    const w=b.getAttribute("data-peg");
+    if(w){ Prog.customPeg[id]=w; } else { delete Prog.customPeg[id]; }
+    saveProg(); buildNumGrid(); buildBookTable();
+  }
 })();
 
 /* =================== SOCIAL SHARE =================== */
