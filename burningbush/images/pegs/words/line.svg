@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Line (clothesline with hanging shirt) -->
+<defs><linearGradient id="g_line" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g fill="url(#g_line)" stroke="#0e2c1d" stroke-width="2">
+<rect x="16" y="26" width="5" height="54" rx="2"/>
+<rect x="75" y="26" width="5" height="54" rx="2"/>
+</g>
+<path d="M18 30 Q48 44 78 30" fill="none" stroke="#0e2c1d" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M38 38 L34 44 L38 46 L38 60 L52 60 L52 46 L56 44 L52 38 L48 41 L42 41 Z" fill="url(#g_line)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<rect x="40" y="35" width="3" height="5" fill="#0e2c1d"/><rect x="47" y="35" width="3" height="5" fill="#0e2c1d"/>
+</svg>

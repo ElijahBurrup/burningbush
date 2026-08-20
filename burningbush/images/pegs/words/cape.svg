@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_cape" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8556a"/><stop offset="1" stop-color="#9c1c31"/></linearGradient></defs>
+<path d="M34 22 q14 -7 28 0 l-3 9 q10 27 13 41 l-15 -6 q-11 6 -24 0 l-15 6 q3 -14 13 -41 Z" fill="url(#g_cape)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M34 22 q14 8 28 0 M45 32 l-4 38 M55 32 l3 36" fill="none" stroke="#0e2c1d" stroke-width="1.5" opacity=".45"/>
+</svg>

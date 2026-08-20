@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Lute (string instrument) -->
+<defs><linearGradient id="g_lute" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<path d="M40 44 Q30 52 34 66 Q38 82 52 82 Q66 82 66 66 Q68 52 58 44 Z" fill="url(#g_lute)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="49" cy="64" r="5" fill="none" stroke="#0e2c1d" stroke-width="1.6"/>
+<rect x="45" y="16" width="8" height="34" fill="url(#g_lute)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M45 16 L38 8 L46 8 L53 16 Z" fill="url(#g_lute)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<g stroke="#0e2c1d" stroke-width="1" opacity=".5"><path d="M47 18 V60"/><path d="M49 18 V60"/><path d="M51 18 V60"/></g>
+</svg>

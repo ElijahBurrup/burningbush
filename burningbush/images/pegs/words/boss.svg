@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Boss : person in shirt with necktie -->
+<defs>
+<linearGradient id="g_boss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<circle cx="48" cy="26" r="14" fill="url(#g_boss)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M22 82 q0 -26 26 -26 q26 0 26 26 z" fill="url(#g_boss)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M42 57 l6 6 6 -6" fill="none" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M48 63 l-4 6 4 12 4 -12 z" fill="#0e2c1d"/>
+</svg>

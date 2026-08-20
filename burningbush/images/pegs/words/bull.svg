@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Bull : head with horns and nose ring -->
+<defs>
+<linearGradient id="g_bull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M22 34 q-12 -6 -14 -18 q16 2 22 14 z" fill="url(#g_bull)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M74 34 q12 -6 14 -18 q-16 2 -22 14 z" fill="url(#g_bull)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M24 34 q0 -14 24 -14 q24 0 24 14 q0 30 -24 40 q-24 -10 -24 -40 z" fill="url(#g_bull)" stroke="#0e2c1d" stroke-width="2"/>
+<ellipse cx="48" cy="60" rx="15" ry="11" fill="url(#g_bull)" stroke="#0e2c1d" stroke-width="2"/>
+<circle cx="40" cy="44" r="3" fill="#0e2c1d"/>
+<circle cx="56" cy="44" r="3" fill="#0e2c1d"/>
+<circle cx="42" cy="60" r="2.5" fill="#0e2c1d"/>
+<circle cx="54" cy="60" r="2.5" fill="#0e2c1d"/>
+<path d="M48 65 a6 6 0 1 0 0 12" fill="none" stroke="#0e2c1d" stroke-width="2"/>
+</svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_taffy" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<path d="M34 48 L20 39 L23 48 L20 57 Z" fill="url(#g_taffy)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M62 48 L76 39 L73 48 L76 57 Z" fill="url(#g_taffy)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<rect x="32" y="38" width="32" height="20" rx="7" fill="url(#g_taffy)" stroke="#0e2c1d" stroke-width="2"/>
+<line x1="40" y1="44" x2="56" y2="44" stroke="#fff" stroke-width="2.5" opacity=".5" stroke-linecap="round"/>
+</svg>

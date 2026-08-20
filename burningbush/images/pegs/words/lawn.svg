@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Lawn (grass) -->
+<defs><linearGradient id="g_lawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9db78"/><stop offset=".5" stop-color="#5fae34"/><stop offset="1" stop-color="#2f7a1e"/></linearGradient></defs>
+<path d="M14 68 Q48 56 82 68 L82 78 L14 78 Z" fill="url(#g_lawn)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<g fill="none" stroke="#2f7a1e" stroke-width="3" stroke-linecap="round">
+<path d="M24 66 Q22 54 20 48"/>
+<path d="M32 64 Q34 52 36 46"/>
+<path d="M42 62 Q40 50 40 44"/>
+<path d="M52 62 Q54 50 56 46"/>
+<path d="M62 63 Q60 52 58 46"/>
+<path d="M70 65 Q72 54 74 48"/>
+</g>
+</svg>

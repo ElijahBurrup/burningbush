@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Mule: donkey head with long ears -->
+<defs>
+<linearGradient id="gmule" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M32 30 q-4 -14 4 -16 q6 -1 6 13 Z" fill="url(#gmule)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M64 30 q4 -14 -4 -16 q-6 -1 -6 13 Z" fill="url(#gmule)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M34 34 q14 -10 28 0 q6 8 4 22 q-2 14 -18 14 t-18 -14 q-2 -14 4 -22 Z" fill="url(#gmule)" stroke="#0e2c1d" stroke-width="2"/>
+<ellipse cx="48" cy="62" rx="12" ry="9" fill="#c39a5f" stroke="#0e2c1d" stroke-width="2"/>
+<circle cx="40" cy="46" r="2.4" fill="#0e2c1d"/><circle cx="56" cy="46" r="2.4" fill="#0e2c1d"/>
+<circle cx="43" cy="62" r="1.8" fill="#0e2c1d"/><circle cx="53" cy="62" r="1.8" fill="#0e2c1d"/>
+</svg>

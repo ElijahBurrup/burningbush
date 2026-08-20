@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Rim: wheel with tire -->
+<defs>
+<linearGradient id="grim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<circle cx="48" cy="48" r="30" fill="#2a2a2a" stroke="#0e2c1d" stroke-width="2"/>
+<circle cx="48" cy="48" r="21" fill="url(#grim)" stroke="#0e2c1d" stroke-width="2"/>
+<g stroke="#0e2c1d" stroke-width="2.4" stroke-linecap="round"><path d="M48 30 V48 M48 48 L63 58 M48 48 L33 58 M48 48 L64 40 M48 48 L32 40"/></g>
+<circle cx="48" cy="48" r="6" fill="url(#grim)" stroke="#0e2c1d" stroke-width="2"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_spa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<ellipse cx="44" cy="72" rx="19" ry="7" fill="url(#g_spa)" stroke="#0e2c1d" stroke-width="2"/>
+<ellipse cx="44" cy="60" rx="15" ry="6" fill="url(#g_spa)" stroke="#0e2c1d" stroke-width="2"/>
+<ellipse cx="44" cy="49" rx="11" ry="5" fill="url(#g_spa)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M60 42 q11 -6 15 -20 q-15 3 -19 15 z" fill="#7cae52" stroke="#0e2c1d" stroke-width="1.8" stroke-linejoin="round"/>
+<path d="M60 42 q4 -8 12 -15" fill="none" stroke="#0e2c1d" stroke-width="1.4" opacity=".5"/>
+<g stroke="#9fc8e8" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8">
+<path d="M34 40 q4 -5 0 -10"/>
+<path d="M44 37 q4 -5 0 -10"/>
+</g>
+</svg>

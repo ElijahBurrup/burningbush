@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Reef (coral reef) -->
+<defs><linearGradient id="g_reef" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g fill="url(#g_reef)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round">
+<path d="M40 78 Q32 60 30 48 Q28 40 34 40 Q30 30 38 30 Q40 22 44 30 Q50 26 48 36 Q54 34 50 44 Q54 56 52 78 Z"/>
+<path d="M60 78 Q66 62 66 52 Q72 50 68 42 Q74 42 70 34 Q66 28 62 36 Q58 44 60 54 Q56 66 56 78 Z"/>
+</g>
+<path d="M14 80 q10 -4 20 0 q10 4 20 0 q10 -4 20 0" fill="none" stroke="#0e2c1d" stroke-width="1.6" opacity=".4"/>
+</svg>

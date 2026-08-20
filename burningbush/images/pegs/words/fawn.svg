@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_fawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8a55e"/><stop offset="1" stop-color="#b46a2c"/></linearGradient></defs>
+<path d="M32 36 q-8 -8 -4 -18 q11 3 14 14 Z" fill="url(#g_fawn)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M64 36 q8 -8 4 -18 q-11 3 -14 14 Z" fill="url(#g_fawn)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M48 30 q16 0 16 22 q0 20 -16 26 q-16 -6 -16 -26 q0 -22 16 -22 Z" fill="url(#g_fawn)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="40" cy="48" r="3" fill="#0e2c1d"/><circle cx="56" cy="48" r="3" fill="#0e2c1d"/>
+<path d="M43 64 q5 4 10 0" fill="none" stroke="#0e2c1d" stroke-width="2" stroke-linecap="round"/>
+<ellipse cx="48" cy="62" rx="4" ry="3" fill="#0e2c1d"/>
+<g fill="#fff" opacity=".7"><circle cx="35" cy="40" r="1.6"/><circle cx="61" cy="40" r="1.6"/><circle cx="38" cy="56" r="1.4"/></g>
+</svg>

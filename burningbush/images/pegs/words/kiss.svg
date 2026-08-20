@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs>
+<linearGradient id="g_kiss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6f88"/><stop offset="1" stop-color="#c11f42"/></linearGradient>
+</defs>
+<path d="M48 40 Q40 28 28 32 Q18 36 24 46 Q34 60 48 66 Q62 60 72 46 Q78 36 68 32 Q56 28 48 40 Z" fill="url(#g_kiss)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M24 46 Q48 54 72 46" fill="none" stroke="#0e2c1d" stroke-width="2" stroke-linecap="round"/>
+<path d="M40 40 Q48 46 56 40" fill="none" stroke="#0e2c1d" stroke-width="1.6" opacity=".5"/>
+</svg>

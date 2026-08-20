@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs>
+<linearGradient id="g_jam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<linearGradient id="j_jam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8506a"/><stop offset="1" stop-color="#a51830"/></linearGradient>
+</defs>
+<rect x="32" y="18" width="32" height="12" rx="3" fill="url(#g_jam)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M30 30 H66 V72 Q66 78 60 78 H36 Q30 78 30 72 Z" fill="url(#j_jam)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<rect x="37" y="46" width="22" height="16" rx="2" fill="#ffe9a8" stroke="#0e2c1d" stroke-width="1.6" opacity=".92"/>
+</svg>

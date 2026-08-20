@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs>
+<linearGradient id="g_loaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M16 62 Q16 34 48 34 Q80 34 80 62 L80 66 Q80 72 74 72 L22 72 Q16 72 16 66 Z" fill="url(#g_loaf)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<g stroke="#0e2c1d" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"><path d="M36 44 l-7 12"/><path d="M50 42 l-7 13"/><path d="M64 44 l-7 12"/></g>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Maid: cap and apron -->
+<defs>
+<linearGradient id="gmaid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M24 82 q0 -26 24 -26 t24 26 Z" fill="url(#gmaid)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M40 58 q8 8 16 0 l3 24 h-22 Z" fill="#fff5e0" stroke="#0e2c1d" stroke-width="2"/>
+<circle cx="48" cy="40" r="13" fill="url(#gmaid)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M34 34 q14 -12 28 0 q-6 -3 -14 -3 t-14 3 Z" fill="#fff5e0" stroke="#0e2c1d" stroke-width="2"/>
+<circle cx="43" cy="41" r="1.8" fill="#0e2c1d"/><circle cx="53" cy="41" r="1.8" fill="#0e2c1d"/>
+<path d="M44 47 q4 3 8 0" fill="none" stroke="#0e2c1d" stroke-width="1.6" stroke-linecap="round"/>
+</svg>
