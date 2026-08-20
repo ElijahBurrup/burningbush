@@ -4449,10 +4449,11 @@ const ScratchSim = (()=>{
     const L=SCRATCH_LADDER[i], nx=SCRATCH_LADDER[i+1];
     el("simIcon").textContent=L.icon;
     el("simTitle").textContent=`${L.name} unlocked!`;
-    el("simMsg").innerHTML=`<div style="margin:4px 0 10px">In the real app, you earn <b class="gold">${L.name}</b> by ${L.earn}.</div>`
-      + (nx ? `<div>Next up: <b class="gold">${nx.name}</b> — earned by ${nx.earn}.</div>` : `<div>That's every feature unlocked — the whole app! 🔥</div>`);
+    // reveal how THIS one was earned, and how to earn the NEXT scratch-off — but never what the next one is (that's the surprise)
+    el("simMsg").innerHTML=`<div style="margin:4px 0 10px">In the real app, you earn this by <b class="gold">${L.earn}</b>.</div>`
+      + (nx ? `<div>${L.next}</div><div style="margin-top:8px;font-size:13px;color:var(--muted)">What's inside the next ticket is a surprise — you'll find out when you scratch it.</div>` : `<div>That's every feature unlocked — the whole app is yours! 🔥</div>`);
     el("simNext").style.display = nx ? "" : "none";
-    el("simNext").textContent = nx ? `Simulate ${nx.name} →` : "";
+    el("simNext").textContent = nx ? "Scratch the next one →" : "";
     el("simExit").textContent = nx ? "Exit simulation" : "Finish & exit";
     el("simov").classList.add("on"); el("simov").setAttribute("aria-hidden","false");
   }
