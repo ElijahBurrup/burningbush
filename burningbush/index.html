@@ -337,6 +337,15 @@
   .w4wbtn:active{transform:scale(.95)}
   .w4wbtn.w4wsm{width:50px;height:50px;font-size:9px;border-radius:12px}
   .w4wbtn.w4wsm span{font-size:17px}
+  /* learned-verse page: word-for-word rectangle (label left, X/10 count pill right) + SR block */
+  .lv-versetext{font-size:16px;line-height:1.5;color:var(--ink);text-align:center;margin:6px 0 16px}
+  .mastered-ribbon{display:block;text-align:center;font-weight:800;font-size:13px;color:var(--on-accent);background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:999px;padding:6px 14px;margin:0 0 12px}
+  .w4w-rect{display:flex;align-items:center;justify-content:space-between;width:100%;gap:10px;padding:16px 18px;border-radius:16px;border:1.5px solid var(--gold2);background:var(--panel2);color:var(--gold-ink);cursor:pointer;font-weight:800;font-size:16px}
+  .w4w-rect:active{transform:scale(.99)}
+  .w4w-rect .w4w-rect-count{min-width:56px;text-align:center;font-size:15px;border-radius:999px;padding:6px 12px;background:var(--gold);color:var(--on-accent)}
+  .w4w-rect.done{border-color:var(--gold);background:linear-gradient(135deg,var(--panel2),var(--gold2))}
+  .lv-sr{margin-top:18px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px 10px}
+  .lv-sr .lv-sr-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--gold-ink);font-weight:800;text-align:center;margin-bottom:10px}
   .fadeverse .w.blank{cursor:pointer}
   .fadeverse .w.blank.peek{color:var(--gold-ink);font-weight:800}
   .ttcount{min-width:46px;text-align:center;font-weight:800;font-size:13px;border-radius:999px;padding:4px 10px;background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
@@ -3051,7 +3060,8 @@ function verseRow(b,c,v,st,star){
       trail = `<div style="margin-top:6px">${srTrailHTML(o)}<span class="muted" style="font-size:11px;margin-left:8px">${statusTxt}${streakNote}</span></div>`;
     }
   }
-  return `<div class="vrow clkrow" data-vb="${b}:${c}:${v}"><div class="vt"><b class="gold">${star?"✨ ":""}${bookName(b)} ${c}:${v}${srBadge}</b><div class="muted">${t.length>56?t.slice(0,56).replace(/\s+\S*$/,"")+"…":t}</div>${trail}</div><div>${st==="mem"?'<span style="color:var(--good);font-weight:800">✓</span>':'→'}</div></div>`;
+  const mst = (st==="mem" && w4wMastered(refKey(b,c,v))) ? '★ ' : '';
+  return `<div class="vrow clkrow" data-vb="${b}:${c}:${v}"><div class="vt"><b class="gold">${star?"✨ ":""}${mst}${bookName(b)} ${c}:${v}${srBadge}</b><div class="muted">${t.length>56?t.slice(0,56).replace(/\s+\S*$/,"")+"…":t}</div>${trail}</div><div>${st==="mem"?'<span style="color:var(--good);font-weight:800">✓</span>':'→'}</div></div>`;
 }
 function suggestedVerses(){
   // all curated heart-verses, not yet memorized/skipped; reachable ones first
@@ -3735,7 +3745,43 @@ function startSceneWalk(s){
 let walkReturn=renderVerse; // where to go on save/skip/finish
 function markSaved(){ const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.skipped=Prog.skipped.filter(x=>x!==k); if(!Prog.saved.includes(k))Prog.saved.push(k); saveProg(); }
 function markSkipped(){ const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.saved=Prog.saved.filter(x=>x!==k); if(!Prog.skipped.includes(k))Prog.skipped.push(k); saveProg(); }
-function openVerseWizard(b,c,v,ret){ const vo=verseObj(b,c,v); walkReturn=ret||renderVerse; show("verse"); curScene=vo; startSceneWalk(vo); }
+function openVerseWizard(b,c,v,ret){
+  walkReturn=ret||renderVerse;
+  // an already-learned verse opens a focused review page: no learning/save/skip — just word-for-word + its SR trail
+  if(Prog.memorized.includes(refKey(b,c,v))){ renderLearnedVerse(b,c,v,walkReturn); return; }
+  const vo=verseObj(b,c,v); show("verse"); curScene=vo; startSceneWalk(vo);
+}
+// A memorized verse's home: verse text, a "Learn Word for Word" rectangle (X/10, where 10 = Mastered),
+// and its spaced-repetition trail at the bottom. No learning steps, save or skip.
+function renderLearnedVerse(b,c,v,ret){
+  const V=el("verse"); show("verse");
+  const vkey=refKey(b,c,v), cnt=w4wCount(vkey), mastered=cnt>=10, o=verseSRobj(vkey);
+  const hasPrev=v>1, hasNext=v<verseCount(b,c), text=kjvText(b,c,v)||"";
+  V.innerHTML=`<div class="qhead"><button class="lclose" id="lvClose">✕</button>
+      <div style="font-weight:800;flex:1;text-align:center">${bookName(b)} ${c}:${v}</div><div style="width:24px"></div></div>
+    <div class="card">
+      <div class="navrow" style="margin:0 0 12px">
+        <button class="btn ghost sm" id="lvPrev" ${hasPrev?"":"disabled"}>← v${v-1}</button>
+        <span class="muted" style="font-size:12px;font-weight:700">verse ${v} of ${verseCount(b,c)}</span>
+        <button class="btn ghost sm" id="lvNext" ${hasNext?"":"disabled"}>v${v+1} →</button>
+      </div>
+      ${mastered?`<div class="mastered-ribbon">★ Mastered — recited word-for-word ${cnt}×</div>`:""}
+      <div class="lv-versetext">${text}</div>
+      <button class="w4w-rect ${mastered?"done":""}" id="lvWord">
+        <span class="w4w-rect-lbl">📖 Learn Word for Word</span>
+        <span class="w4w-rect-count">${cnt}/10${mastered?" ✓":""}</span>
+      </button>
+      ${mastered?"":`<p class="hint" style="text-align:center;margin:8px 0 0">Recite it word-for-word 10× to <b class="gold">master</b> this verse.</p>`}
+      <div class="lv-sr">
+        <div class="lv-sr-lbl">Spaced repetition</div>
+        ${o?srTrailHTML(o):`<p class="hint" style="text-align:center;margin:0">This verse joins your review trail as you practice it.</p>`}
+      </div>
+    </div>`;
+  el("lvClose").onclick=()=>ret?ret():renderVerse();
+  el("lvPrev").onclick=()=>{ if(hasPrev) openVerseWizard(b,c,v-1,ret); };
+  el("lvNext").onclick=()=>{ if(hasNext) openVerseWizard(b,c,v+1,ret); };
+  el("lvWord").onclick=()=>startWordForWord(b,c,v,()=>renderLearnedVerse(b,c,v,ret));
+}
 function renderWalk(){
   const V=el("verse"), s=wSteps[wIdx], last=wIdx===wSteps.length-1;
   const canLearn = reachable(bookNum(curScene.b),curScene.c,curScene.v);
@@ -4441,6 +4487,8 @@ function w4wNextAllowed(vkey){ const r=Prog.w4w&&Prog.w4w[vkey]; if(!r||!r.times
   return last + (recent.length>=W4W_MAX_PER_DAY ? W4W_DAY : 2*W4W_HR); }
 function w4wLocked(vkey){ return Date.now() < w4wNextAllowed(vkey); }
 function w4wRecord(vkey){ Prog.w4w=Prog.w4w||{}; const r=Prog.w4w[vkey]=Prog.w4w[vkey]||{count:0,times:[]}; r.count++; r.times.push(Date.now()); r.times=r.times.slice(-30); saveProg(); return r; }
+function w4wCount(vkey){ const r=Prog.w4w&&Prog.w4w[vkey]; return (r&&r.count)||0; }
+function w4wMastered(vkey){ return w4wCount(vkey)>=10; }   // 10 word-for-word recitations = a verse "Mastered", a tier above memorized
 function fmtWhen(ts){ const d=new Date(ts), now=new Date(); const sameDay=d.toDateString()===now.toDateString();
   let h=d.getHours(), m=d.getMinutes(), ap=h>=12?"PM":"AM"; h=h%12||12; const t=`${h}:${String(m).padStart(2,"0")} ${ap}`;
   return sameDay ? `today at ${t}` : (d.getTime()-now.getTime()<2*W4W_DAY ? `tomorrow at ${t}` : d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+` at ${t}`); }
@@ -4467,7 +4515,7 @@ function w4wLockScreen(b,c,v,ret){
 
 let TT=null;
 function startTypeTest(b,c,v,ret){ const words=(kjvText(b,c,v)||"").split(/\s+/).filter(Boolean);
-  TT={b,c,v,ret,words,idx:0,wrong:false,wrongWord:null}; renderTypeTest(); }
+  TT={b,c,v,ret,words,idx:0,wrong:false,wrongWord:null,hintUsed:false}; renderTypeTest(); }
 function renderTypeTest(){
   const V=el("verse"), total=TT.words.length, done=TT.idx;
   const committed=TT.words.slice(0,done).join(" ");
@@ -4482,6 +4530,7 @@ function renderTypeTest(){
       <div class="ttdisplay"><span class="ttdone">${committed}</span>${wrongTop||(done||TT.wrongWord?"":`<span style="color:var(--muted)">your words appear here as you go…</span>`)}</div>
       <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type word ${done+1}…">
       <p class="hint" style="text-align:center;margin-top:8px">Each word jumps to the top the moment you finish it — <b>green</b> if right, <b>red</b> if wrong (then it clears to retry).</p>
+      <button class="btn ghost sm" id="ttHint" style="width:100%;margin-top:2px">🔎 Reveal a letter${TT.hintUsed?" · used — you'll retype it clean":""}</button>
     </div>`;
   el("ttClose").onclick=()=>{ const r=TT.ret; TT=null; r?r():renderVerse(); };
   const inp=el("ttIn"); setTimeout(()=>{ try{inp.focus();}catch(e){} }, 60);
@@ -4505,16 +4554,38 @@ function renderTypeTest(){
     inp.classList.toggle("wrong", wrong); inp.classList.toggle("good", !wrong && ncur.length>0);
     if(ncur.length>=nexp.length) commitWord();   // word finished → judge it automatically
   };
+  // letter hint: reveal the next correct letter of the current word. Using it even once taints the run —
+  // the verse must be completed with NO hints, so on completion it blanks out and starts over.
+  if(el("ttHint")) el("ttHint").onclick=()=>{
+    const expected=TT.words[TT.idx]; if(expected===undefined) return;
+    TT.hintUsed=true;
+    inp.value=expected.slice(0, inp.value.length+1);
+    try{inp.focus();}catch(e){}
+    inp.dispatchEvent(new Event("input"));   // re-judge (may complete the word if fully revealed)
+  };
 }
 function typeTestComplete(){
   const b=TT.b,c=TT.c,v=TT.v,ret=TT.ret, vkey=refKey(b,c,v);
-  const r=w4wRecord(vkey); reviewVerseSR(vkey); refreshHUD&&refreshHUD();
   const V=el("verse");
+  if(TT.hintUsed){   // a hint was used → this attempt doesn't count; blank out and retype it clean
+    V.innerHTML=`<div class="card center">
+        <div style="font-size:44px">🔎</div>
+        <h2 style="font-size:20px;margin:8px 0 2px">So close!</h2>
+        <div style="font-weight:800;color:var(--gold-ink);margin:2px 0">${bookName(b)} ${c}:${v}</div>
+        <p class="lead" style="margin:10px 0">You peeked at a letter this time. To make it count, type the whole verse once <b>with no hints</b>.</p>
+        <button class="btn" id="ttRetry" style="margin-top:6px">Type it again — no hints</button>
+        <button class="btn ghost" id="ttGiveUp" style="margin-top:8px">Maybe later</button></div>`;
+    el("ttRetry").onclick=()=>startTypeTest(b,c,v,ret);
+    el("ttGiveUp").onclick=()=>{ ret?ret():renderVerse(); };
+    return;
+  }
+  const r=w4wRecord(vkey); reviewVerseSR(vkey); refreshHUD&&refreshHUD();
+  const justMastered=r.count===10, mastered=r.count>=10;
   V.innerHTML=`<div class="card center ttwin">
-      <div class="ttburst">🎉</div>
-      <h2 style="font-size:22px;margin:6px 0 2px">You did it!</h2>
+      <div class="ttburst">${justMastered?"👑":"🎉"}</div>
+      <h2 style="font-size:22px;margin:6px 0 2px">${justMastered?"Verse Mastered!":"You did it!"}</h2>
       <div style="font-weight:800;color:var(--gold-ink);margin:2px 0">${bookName(b)} ${c}:${v}</div>
-      <p class="lead" style="margin:10px 0 4px">${bookName(b)} ${c}:${v} — Word for Word Practice<br><b class="gold" style="font-size:20px">${Math.min(r.count,10)} of 10 complete</b></p>
+      <p class="lead" style="margin:10px 0 4px">${bookName(b)} ${c}:${v} — Word for Word Practice<br><b class="gold" style="font-size:20px">${Math.min(r.count,10)} of 10 complete</b>${mastered?`<br><span class="gold">★ Mastered${r.count>10?` · ${r.count}×`:""}</span>`:""}</p>
       <div class="ttlock">🔒 Next practice locked until <b>${fmtWhen(w4wNextAllowed(vkey))}</b></div>
       <button class="btn" id="ttDone" style="margin-top:16px">Amen — done</button></div>`;
   el("ttDone").onclick=()=>{ ret?ret():renderVerse(); };
@@ -5007,4 +5078,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260820-152228 -->
+<!-- deploy bb-20260820-160110 -->
