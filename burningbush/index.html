@@ -310,6 +310,12 @@
   .reqrow{display:flex;gap:8px;align-items:baseline;padding:8px 2px;font-size:15px;line-height:1.4;border-bottom:1px solid var(--line);color:var(--ink)}
   .reqrow:last-child{border-bottom:none}
   #simov .reqrow{color:var(--ink-soft)}
+  .ed-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:2px}
+  .ed-head h2{font-size:18px;margin:0}
+  .ed-trash{background:var(--panel2);border:1px solid var(--line);font-size:19px;cursor:pointer;padding:6px 9px;border-radius:10px;line-height:1;color:var(--miss-ink)}
+  .ed-trash:active{transform:scale(.92)}
+  .ed-ta{width:100%;box-sizing:border-box;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-size:15px;line-height:1.5;padding:12px;font-family:inherit;resize:vertical;min-height:120px}
+  .ed-ta:focus{outline:none;border-color:var(--gold2)}
   .sounds{text-align:center;color:var(--muted);font-size:15px;margin-bottom:8px}
   .teachbox{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;line-height:1.55;font-size:14px}
   .opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
@@ -1008,6 +1014,7 @@
 
       <div class="prof-sect" style="margin-top:18px">Testing</div>
       <button class="btn ghost" id="testScratchBtn" style="width:100%">🎫 Test scratch-off</button>
+      <button class="btn ghost" id="testOnboardBtn" style="width:100%;margin-top:8px">🕯️ Test onboarding</button>
 
       <div class="prof-sect" style="margin-top:18px">Badges <span id="badgeCount" style="color:var(--muted);float:right;text-transform:none;letter-spacing:0"></span></div>
       <div id="badgeGrid"></div>
@@ -2716,12 +2723,12 @@ function renderStep(){
         <div class="teachbox"><b class="gold">Example · image → book:</b> ${scene}<br><br>${decode}</div>
         <button class="btn" id="lNext" style="margin-top:10px">I can see it →</button>`;
     } else {
+      // same layout language as the book teach card (tnum + tline + peg image) so every lesson matches
       body = `<div class="stage">
-          <div class="prompt">Learn the picture for</div>
-          <div class="bignum">${dispNum(s.kind,s.n)}</div>
-          <div class="sounds">sounds: <b>${snd}</b></div>
-          <div class="imgwrap">${pegImg(s.kind,s.n,word,true)}</div>
-          <div class="bigword">${word}</div></div>
+          <div class="prompt">Learn the picture for number</div>
+          <div class="tnum">${dispNum(s.kind,s.n)}</div>
+          <div class="tline"><span class="tword">${word}</span>${pegImg(s.kind,s.n,word,true)}</div>
+          <div class="sounds">sounds: <b>${snd}</b></div></div>
         ${pegPicker(s.n)}
         <div class="teachbox"><b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${(!Prog.customPeg[s.n]&&NOTE[s.n])?" ("+NOTE[s.n]+")":""}.<br><br>${decode}</div>
         <button class="btn" id="lNext" style="margin-top:10px">I can see it →</button>`;
@@ -2782,17 +2789,19 @@ function wireStep(s){
   const word=itemWord(s.kind,s.n);
   if(s.type==="teach"){
     el("lNext").onclick=advance;
-    if(el("lEdit")) el("lEdit").onclick=()=>{
-      const cur=Prog.customBook[s.n]||"";
-      const t=prompt(`Your own way to remember ${bookName(s.n)} (book ${s.n}, image "${word}"):`, cur);
-      if(t!==null){ if(t.trim()){ Prog.customBook[s.n]=t.trim(); } else { delete Prog.customBook[s.n]; } saveProg(); renderStep(); }
-    };
+    if(el("lEdit")) el("lEdit").onclick=()=>editText({
+      title:`My scene for ${bookName(s.n)}`,
+      hint:`Your own way to remember ${bookName(s.n)} (book ${dispNum("book",s.n)}, image “${word}”).`,
+      value:Prog.customBook[s.n]||"",
+      onSave:v=>{ if(v){ Prog.customBook[s.n]=v; } else { delete Prog.customBook[s.n]; } saveProg(); renderStep(); }
+    });
     // write your own image for the BOOK — the text label replaces the default book icon everywhere
-    if(el("lBookImg")) el("lBookImg").onclick=()=>{
-      const cur=Prog.customBookImg[s.n]||"";
-      const t=prompt(`Write your own image for ${bookName(s.n)} — a word or phrase to picture. It replaces the default book icon:`, cur);
-      if(t!==null){ if(t.trim()){ Prog.customBookImg[s.n]=t.trim(); } else { delete Prog.customBookImg[s.n]; } saveProg(); renderStep(); }
-    };
+    if(el("lBookImg")) el("lBookImg").onclick=()=>editText({
+      title:`My image for ${bookName(s.n)}`,
+      hint:`A word or phrase to picture instead of the default book icon.`,
+      value:Prog.customBookImg[s.n]||"",
+      onSave:v=>{ if(v){ Prog.customBookImg[s.n]=v; } else { delete Prog.customBookImg[s.n]; } saveProg(); renderStep(); }
+    });
     // pick a different (Major-System-valid) image word — clears the drawn picture
     document.querySelectorAll("[data-peg]").forEach(b=>b.onclick=()=>{
       const w=b.getAttribute("data-peg");
@@ -3703,13 +3712,14 @@ function renderAdhoc(){
           ? `<b class="gold">Picture this scene:</b> ${MNEM_BOOK[n].t}`
           : `The name <b>${bookName(n)}</b> sounds like <b>${MNEM_BOOK[n]?MNEM_BOOK[n].s:""}</b>; its number image is <b class="gold">${word}</b>.`)
       : `<b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${NOTE[n]?" ("+NOTE[n]+")":""}.${DECODE[n]?`<br><br><b style="color:var(--good)">Read it back → ${dispNum(kind,n)}:</b> ${DECODE[n]}`:""}`;
-    body=`<div class="stage"><div class="prompt">${AB.isBook?"Book "+n+" · "+bookName(n):"Learn the picture for"}</div>
-      <div class="bignum">${dispNum(kind,n)}</div><div class="sounds">sounds: <b>${p.sounds}</b></div>
-      <div class="imgwrap">${pegImg(kind,n,word,true)}</div><div class="bigword">${word}</div></div>
+    body=`<div class="stage"><div class="prompt">${AB.isBook?"Book "+dispNum("book",n)+" · "+bookName(n):"Learn the picture for number"}</div>
+      <div class="tnum">${dispNum(kind,n)}</div>
+      <div class="tline"><span class="tword">${word}</span>${pegImg(kind,n,word,true)}</div>
+      <div class="sounds">sounds: <b>${p.sounds}</b></div></div>
       ${rel||`<div class="teachbox">${hook}</div>`}<button class="btn" id="abNext">I can see it →</button>`;
   } else if(s.t==="q_n2i"){
     const opts=shuffle([word,...distract(kind,n,3).map(x=>pegFor(x).word)]);
-    body=`<div class="prompt">Which image is ${AB.isBook?"book "+n:dispNum(kind,n)}?</div><div class="bignum">${dispNum(kind,n)}</div>
+    body=`<div class="prompt">Which image is ${AB.isBook?"book "+dispNum("book",n):dispNum(kind,n)}?</div><div class="bignum">${dispNum(kind,n)}</div>
       <div class="opts">${opts.map(o=>`<button class="opt" data-ok="${o===word?1:0}">${o}</button>`).join("")}</div>`;
   } else {
     const opts=shuffle([n,...distract(kind,n,3)]);
@@ -3811,6 +3821,35 @@ function toast(msg){
   // pointer-events:none is CRITICAL — an opacity:0 toast still swallows taps on the buttons beneath it
   t.textContent=msg; t.style.opacity="1";
   clearTimeout(t._h); t._h=setTimeout(()=>t.style.opacity="0",2600);
+}
+// A pretty in-app text editor (replaces the browser's ugly prompt) with a trash-can "clear all".
+function editText({title, hint, value, onSave}){
+  let m=el("editModal"); if(!m){ m=document.createElement("div"); m.id="editModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  const esc=s=>(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const close=()=>{ m.style.display="none"; };
+  function editor(){
+    m.innerHTML=`<div class="modal-card">
+      <div class="ed-head"><h2>${title}</h2><button class="ed-trash" id="edTrash" title="Clear all" aria-label="Clear all">🗑️</button></div>
+      ${hint?`<p class="hint" style="margin:2px 0 10px">${hint}</p>`:""}
+      <textarea class="ed-ta" id="edTa" placeholder="Write it here…">${esc(value)}</textarea>
+      <div class="btnrow" style="margin-top:12px"><button class="btn ghost" id="edCancel">Cancel</button><button class="btn" id="edSave">Save</button></div></div>`;
+    const ta=el("edTa"); setTimeout(()=>{ try{ta.focus();}catch(e){} },40);
+    el("edCancel").onclick=close;
+    el("edSave").onclick=()=>{ const v=ta.value.trim(); close(); onSave(v); };
+    el("edTrash").onclick=()=>{ value=el("edTa").value; confirmClear(); };
+  }
+  function confirmClear(){
+    m.innerHTML=`<div class="modal-card" style="text-align:center">
+      <div style="font-size:40px;line-height:1">🗑️</div>
+      <h2 style="font-size:19px;margin:10px 0 4px">Clear all?</h2>
+      <p class="hint" style="margin:0 0 16px">Are you sure you want to clear everything you wrote here? This can't be undone.</p>
+      <button class="btn ghost" id="edYes" style="width:100%;color:var(--miss-ink);border-color:var(--miss)">Yes, clear all</button>
+      <button class="btn" id="edNo" style="width:100%;margin-top:8px">Keep editing</button></div>`;
+    el("edYes").onclick=()=>{ close(); onSave(""); };
+    el("edNo").onclick=editor;
+  }
+  m.onclick=e=>{ if(e.target===m) close(); };
+  m.style.display="flex"; editor();
 }
 
 /* =================== ACCOUNT (login shell) =================== */
@@ -4101,6 +4140,7 @@ if(el("pShare")) el("pShare").onclick=()=>shareProgress(null);
 if(el("pStore")) el("pStore").onclick=()=>{ el("themeModal").style.display="none"; openStore(); };
 if(el("resetBtn")) el("resetBtn").onclick=resetAllProgress;
 if(el("testScratchBtn")) el("testScratchBtn").onclick=()=>{ el("themeModal").style.display="none"; ScratchSim.begin(); };
+if(el("testOnboardBtn")) el("testOnboardBtn").onclick=()=>{ el("themeModal").style.display="none"; Onboard.preview(); };
 function resetAllProgress(){
   if(!confirm("Start over as a brand-new user?\n\nThis wipes ALL progress on this device — lessons, verses, palaces, streaks — and signs you out.\n\nTip: Export a backup first (you can Restore it later).")) return;
   [PROG_KEY, SRS_KEY, PROG_KEY+"_bak", SRS_KEY+"_bak", "vv_token", "vv_acct"].forEach(k=>{ try{ Store.remove(k); }catch(e){} localStorage.removeItem(k); });
@@ -4315,8 +4355,12 @@ const Onboard = (()=>{
   }
   const go=(n)=>{ i=Math.max(0,Math.min(steps.length-1,n)); paint(); };
   const next=()=>go(i+1);
-  function finish(){ Prog.onboarded=true; if(!Prog.firstWin) Prog.firstWin=true; saveProg(); ov.classList.remove("on"); ov.setAttribute("aria-hidden","true"); show("learn"); }
-  function toLogin(){ finish(); el("loginModal").style.display="flex"; }
+  let previewSnap=null;   // when previewing from Profile, restore real progress on exit
+  function finish(){
+    if(previewSnap){ Object.assign(Prog, previewSnap); previewSnap=null; saveProg(); ov.classList.remove("on"); ov.setAttribute("aria-hidden","true"); show("learn"); toast("Onboarding preview ended — your progress is unchanged."); return; }
+    Prog.onboarded=true; if(!Prog.firstWin) Prog.firstWin=true; saveProg(); ov.classList.remove("on"); ov.setAttribute("aria-hidden","true"); show("learn");
+  }
+  function toLogin(){ if(previewSnap){ finish(); return; } finish(); el("loginModal").style.display="flex"; }
 
   // ---- the steps (a linear spine; the quiz waits in place until answered) ----
   const G=SCENES[0];   // Genesis 1:1 — the universal first win
@@ -4474,6 +4518,8 @@ const Onboard = (()=>{
   return {
     start(){ if(acct()){ Prog.onboarded=true; saveProg(); return; }   // signed-in users skip the intro
       i=0; ov.classList.add("on"); ov.setAttribute("aria-hidden","false"); paint(); },
+    preview(){ previewSnap={onboarded:Prog.onboarded,persona:Prog.persona,dailyMin:Prog.dailyMin,bibleFam:Prog.bibleFam,covenant:Prog.covenant,firstWin:Prog.firstWin};
+      i=0; ov.classList.add("on"); ov.setAttribute("aria-hidden","false"); paint(); },   // replay the intro without touching real progress
     active(){ return ov.classList.contains("on"); }
   };
 })();
