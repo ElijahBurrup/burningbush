@@ -289,6 +289,14 @@
   #scov .scfoil{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:none}
   #scov .scfoil.gone{transition:opacity .5s ease;opacity:0;pointer-events:none}
   #scov .btn{margin-top:16px}
+  #simov{position:absolute;inset:0;z-index:145;display:none;background:var(--scrim)}
+  #simov.on{display:flex;align-items:center;justify-content:center;padding:22px}
+  #simov .scwrap{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;text-align:center;box-shadow:0 22px 60px var(--scrim)}
+  #simov .simbanner{font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--gold-ink);background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;display:inline-block;margin-bottom:14px}
+  #simov .scicon{font-size:54px;line-height:1;filter:drop-shadow(0 0 14px var(--gold2))}
+  #simov .sctitle{font-family:var(--font-display);font-size:23px;color:var(--gold-ink);margin:6px 0 6px}
+  #simov .scsub{font-size:14px;color:var(--ink-soft);line-height:1.5}
+  #simov .btn{margin-top:16px;width:100%}
   .sounds{text-align:center;color:var(--muted);font-size:15px;margin-bottom:8px}
   .teachbox{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;line-height:1.55;font-size:14px}
   .opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
@@ -921,13 +929,25 @@
   <!-- Scratch-off ceremony: big center card the user scratches to reveal a newly-unlocked feature. -->
   <div id="scov" aria-hidden="true">
     <div class="scwrap">
-      <div class="sctitle">🎟️ You earned a scratch-off!</div>
+      <div class="sctitle" id="scTitle">🎟️ You earned a scratch-off!</div>
       <div class="scsub">Scratch the ticket to reveal what you've unlocked.</div>
       <div class="scticket">
         <div class="scprize"><div class="scicon" id="scIcon">🎁</div><div class="scname" id="scName"></div><div class="scdesc" id="scDesc"></div></div>
         <canvas class="scfoil" id="scFoil"></canvas>
       </div>
       <button class="btn" id="scClaim" style="display:none">Claim &amp; unlock →</button>
+    </div>
+  </div>
+
+  <!-- Simulation bridge: between/after scratch-offs during the "Test scratch-off" walkthrough. -->
+  <div id="simov" aria-hidden="true">
+    <div class="scwrap">
+      <div class="simbanner">🧪 Simulation — your real progress is untouched</div>
+      <div class="scicon" id="simIcon">📖</div>
+      <div class="sctitle" id="simTitle"></div>
+      <div class="scsub" id="simMsg"></div>
+      <button class="btn" id="simNext">Simulate next →</button>
+      <button class="btn ghost" id="simExit" style="margin-top:8px;width:100%">Exit simulation</button>
     </div>
   </div>
 
@@ -1800,29 +1820,29 @@ function foundationsDone(){ return [1,2,3,4,5,40].every(n=>knownNum(n)) && Prog.
 function palaceCount(){ return (Prog.palaces||[]).filter(Boolean).length; }
 const SCRATCH_LADDER=[
   {tab:"verse",   icon:"📖", name:"Verses",          desc:"Choose what to hide in your heart — suggested verses, topics, and daily review.", gate:()=>foundationsDone(),
-     next:"Memorize <b>5 verses</b> to earn your next scratch-off 🎟️"},
+     earn:"completing the Foundation — books 1–5, Matthew, and your first palace", next:"Memorize <b>5 verses</b> to earn your next scratch-off 🎟️"},
   {tab:"palace",  icon:"🏛️", name:"Memory Palaces",  desc:"Build your own palaces — walk a familiar place and leave a verse at each spot.",  gate:()=>Prog.memorized.length>=5,
-     next:"Reach <b>15 verses &amp; 3 palaces</b> to earn your next scratch-off 🎟️"},
+     earn:"memorizing 5 verses", next:"Reach <b>15 verses &amp; 3 palaces</b> to earn your next scratch-off 🎟️"},
   {tab:"journey", icon:"🗺️", name:"Your Journey",    desc:"See the whole Bible open before you — every book, chapter and verse you can reach.", gate:()=>Prog.memorized.length>=15 && palaceCount()>=3,
-     next:"Reach <b>25 verses &amp; 5 palaces</b> for your final scratch-off 🎟️"},
+     earn:"reaching 15 verses and 3 palaces", next:"Reach <b>25 verses &amp; 5 palaces</b> for your final scratch-off 🎟️"},
   {tab:"stories", icon:"📜", name:"Bible Stories",   desc:"100 of the Bible's great stories — located, learned, and ready to tell.",         gate:()=>Prog.memorized.length>=25 && palaceCount()>=5,
-     next:"You've unlocked every feature — the whole app is yours. 🔥"}
+     earn:"reaching 25 verses and 5 palaces", next:"You've unlocked every feature — the whole app is yours. 🔥"}
 ];
 function tabWon(t){ return t==="learn" || (Prog.scratchWon||[]).includes(t); }
 function tabUnlocked(tab){ return tabWon(tab); }
 // the next unwon ladder rung whose milestone is met (or -1). Robust to out-of-order back-compat grants.
 function pendingScratchRung(){ for(let i=0;i<SCRATCH_LADDER.length;i++){ const r=SCRATCH_LADDER[i]; if(!tabWon(r.tab) && r.gate()) return i; } return -1; }
-let scratchOffered=-1;
+let scratchOffered=-1, scratchSimActive=false;
 function updateTabLocks(){
   const pend=pendingScratchRung();
   document.querySelectorAll(".tabbar button").forEach(b=>{
     const won=tabWon(b.dataset.tab);
     b.classList.toggle("won", won);
     b.classList.toggle("locked", !won);
-    b.classList.toggle("ticket", !won);                 // locked tabs render as scratch-off tickets
-    b.classList.toggle("pending", !won && pend>=0);     // every ticket flashes while a scratch is available
+    b.classList.toggle("ticket", !won);                                    // locked tabs render as scratch-off tickets
+    b.classList.toggle("pending", !won && (scratchSimActive || pend>=0));   // tickets flash while a scratch is available (or during a sim)
   });
-  if(pend>=0 && pend!==scratchOffered){ scratchOffered=pend; setTimeout(()=>toast("🎟️ You earned a scratch-off! Tap a flashing ticket below 👇"),450); }
+  if(!scratchSimActive && pend>=0 && pend!==scratchOffered){ scratchOffered=pend; setTimeout(()=>toast("🎟️ You earned a scratch-off! Tap a flashing ticket below 👇"),450); }
   if(pend<0) scratchOffered=-1;
 }
 
@@ -3968,13 +3988,7 @@ el("impBtn").onclick=()=>el("impFile").click();
 if(el("pShare")) el("pShare").onclick=()=>shareProgress(null);
 if(el("pStore")) el("pStore").onclick=()=>{ el("themeModal").style.display="none"; openStore(); };
 if(el("resetBtn")) el("resetBtn").onclick=resetAllProgress;
-if(el("testScratchBtn")) el("testScratchBtn").onclick=()=>{
-  // fire the next unwon scratch-off, ignoring the milestone gate (testing only)
-  let rung=SCRATCH_LADDER.findIndex(r=>!tabWon(r.tab));
-  if(rung<0){ toast("Every feature is already unlocked 🔥"); return; }
-  el("themeModal").style.display="none";
-  Scratch.open(rung);
-};
+if(el("testScratchBtn")) el("testScratchBtn").onclick=()=>{ el("themeModal").style.display="none"; ScratchSim.begin(); };
 function resetAllProgress(){
   if(!confirm("Start over as a brand-new user?\n\nThis wipes ALL progress on this device — lessons, verses, palaces, streaks — and signs you out.\n\nTip: Export a backup first (you can Restore it later).")) return;
   [PROG_KEY, SRS_KEY, PROG_KEY+"_bak", SRS_KEY+"_bak", "vv_token", "vv_acct"].forEach(k=>{ try{ Store.remove(k); }catch(e){} localStorage.removeItem(k); });
@@ -4358,7 +4372,7 @@ const Onboard = (()=>{
 const Scratch = (()=>{
   const ov=el("scov"), foil=el("scFoil"), ctx=foil.getContext("2d");
   const GRID=8; const cells=new Set();   // coverage grid — reveal once enough of the ticket is scratched
-  let rung=-1, revealed=false, drawing=false, dpr=1;
+  let rung=-1, revealed=false, drawing=false, dpr=1, opts={};
   function fitCanvas(){
     const box=foil.parentElement.getBoundingClientRect();
     dpr=Math.min(3, window.devicePixelRatio||1);
@@ -4380,14 +4394,16 @@ const Scratch = (()=>{
     const gx=Math.min(GRID-1,Math.max(0,Math.floor(p.x/(foil.width/GRID)))), gy=Math.min(GRID-1,Math.max(0,Math.floor(p.y/(foil.height/GRID))));
     cells.add(gy*GRID+gx);
     if(cells.size/(GRID*GRID) > 0.42) reveal(); }
-  function claim(){ if(!revealed) return; const L=SCRATCH_LADDER[rung];
+  function claim(){ if(!revealed) return; const L=SCRATCH_LADDER[rung], sim=!!opts.sim;
     ov.classList.remove("on"); ov.setAttribute("aria-hidden","true");
     const btn=document.querySelector(`.tabbar button[data-tab="${L.tab}"]`);
     flyToNav(L.icon, btn, ()=>{
-      if(!Prog.scratchWon.includes(L.tab)) Prog.scratchWon.push(L.tab);
-      saveProg(); updateTabLocks();
+      if(!Prog.scratchWon.includes(L.tab)) Prog.scratchWon.push(L.tab);   // in a sim this is temporary (restored on exit); real runs persist
+      if(!sim) saveProg();
+      updateTabLocks();
       if(btn){ btn.classList.add("justwon"); setTimeout(()=>btn.classList.remove("justwon"),700); }
-      setTimeout(()=>toast(L.next.replace(/<[^>]+>/g,"")), 500);
+      if(sim && opts.onClaimed) opts.onClaimed(rung);
+      else setTimeout(()=>toast(L.next.replace(/<[^>]+>/g,"")), 500);
     });
   }
   el("scClaim").onclick=claim;
@@ -4395,7 +4411,8 @@ const Scratch = (()=>{
   ["mousemove","touchmove"].forEach(ev=>foil.addEventListener(ev,scratch,{passive:false}));
   ["mouseup","touchend","touchcancel","mouseleave"].forEach(ev=>foil.addEventListener(ev,()=>{drawing=false;}));
   return {
-    open(r){ rung=r; revealed=false; cells.clear(); const L=SCRATCH_LADDER[r];
+    open(r, o){ rung=r; opts=o||{}; revealed=false; cells.clear(); const L=SCRATCH_LADDER[r];
+      el("scTitle").innerHTML=(opts.title||"🎟️ You earned a scratch-off!");
       el("scIcon").textContent=L.icon; el("scName").textContent=L.name; el("scDesc").innerHTML=L.desc;
       el("scClaim").style.display="none"; foil.classList.remove("gone");
       ov.classList.add("on"); ov.setAttribute("aria-hidden","false");
@@ -4417,6 +4434,40 @@ function flyToNav(iconChar, targetBtn, done){
   }));
   setTimeout(()=>{ fly.remove(); done&&done(); }, 950);
 }
+
+/* =================== SCRATCH-OFF SIMULATION (Profile → Test scratch-off) ===================
+   Walks all four scratch-offs in order — each: "you earned one" → scratch → "how to earn the real one" +
+   [Simulate next] / [Exit]. Temporarily empties scratchWon so the whole nav is tickets; restores on exit. */
+const ScratchSim = (()=>{
+  let realWon=null, i=0;
+  function openRung(){
+    el("simov").classList.remove("on");
+    const L=SCRATCH_LADDER[i];
+    Scratch.open(i, {sim:true, title:`🧪 Simulation · ${i+1} of ${SCRATCH_LADDER.length}`, onClaimed:bridge});
+  }
+  function bridge(){
+    const L=SCRATCH_LADDER[i], nx=SCRATCH_LADDER[i+1];
+    el("simIcon").textContent=L.icon;
+    el("simTitle").textContent=`${L.name} unlocked!`;
+    el("simMsg").innerHTML=`<div style="margin:4px 0 10px">In the real app, you earn <b class="gold">${L.name}</b> by ${L.earn}.</div>`
+      + (nx ? `<div>Next up: <b class="gold">${nx.name}</b> — earned by ${nx.earn}.</div>` : `<div>That's every feature unlocked — the whole app! 🔥</div>`);
+    el("simNext").style.display = nx ? "" : "none";
+    el("simNext").textContent = nx ? `Simulate ${nx.name} →` : "";
+    el("simExit").textContent = nx ? "Exit simulation" : "Finish & exit";
+    el("simov").classList.add("on"); el("simov").setAttribute("aria-hidden","false");
+  }
+  function end(){ scratchSimActive=false;
+    el("simov").classList.remove("on"); el("scov").classList.remove("on");
+    if(realWon){ Prog.scratchWon=realWon; saveProg(); }   // restore real state — the sim never persisted anything
+    realWon=null; scratchOffered=-1; updateTabLocks();
+    toast("Simulation ended — your real progress is unchanged.");
+  }
+  el("simNext").onclick=()=>{ if(i<SCRATCH_LADDER.length-1){ i++; openRung(); } else end(); };
+  el("simExit").onclick=end;
+  return {
+    begin(){ realWon=Prog.scratchWon.slice(); scratchSimActive=true; Prog.scratchWon=[]; scratchOffered=-1; updateTabLocks(); i=0; openRung(); }
+  };
+})();
 
 /* ---- boot routing: brand-new users get the guided intro; everyone else lands on Learn (no login wall) ---- */
 if(!Prog.onboarded){
