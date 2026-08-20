@@ -275,6 +275,16 @@
   @keyframes tikflash{0%,100%{transform:translateY(0);filter:drop-shadow(0 0 1px var(--gold2))}50%{transform:translateY(-3px);filter:drop-shadow(0 0 10px var(--gold2)) brightness(1.12)}}
   .tabbar button.won.justwon .ic{animation:tabpop .6s ease}
   @keyframes tabpop{0%{transform:scale(.3);opacity:0}55%{transform:scale(1.28)}100%{transform:scale(1)}}
+  /* inline golden-ticket badge for criteria text */
+  .gtik{display:inline-block;width:26px;height:15px;vertical-align:-3px;margin:0 2px;border-radius:3px;background:linear-gradient(135deg,var(--gold-hi,var(--gold)) 0%,var(--gold) 45%,var(--gold2) 100%);box-shadow:inset 0 0 0 1px var(--gold-ink);/*raw-ok*/
+    -webkit-mask:radial-gradient(circle 2.5px at left 50%,#0000 98%,#000) left/50.5% 100% no-repeat,radial-gradient(circle 2.5px at right 50%,#0000 98%,#000) right/50.5% 100% no-repeat;/*raw-ok*/
+    mask:radial-gradient(circle 2.5px at left 50%,#0000 98%,#000) left/50.5% 100% no-repeat,radial-gradient(circle 2.5px at right 50%,#0000 98%,#000) right/50.5% 100% no-repeat;/*raw-ok*/ }
+  /* Learn-path scratch-off tile (the palace lesson hidden behind a golden ticket) */
+  .tile.tickettile{background:linear-gradient(140deg,var(--gold-hi,var(--gold)),var(--gold2));border:none;box-shadow:inset 0 0 0 2px var(--gold-ink),inset 0 0 0 4px var(--gold-hi,var(--gold)),0 6px 0 var(--tile-shadow);color:var(--gold-ink);cursor:pointer}
+  .tile.tickettile small{color:var(--gold-ink);font-weight:800}
+  .tile.tickettile .tikface{font-size:26px;filter:drop-shadow(0 1px 0 var(--gold-hi,var(--gold)))}
+  .tile.tickettile.pending{animation:tikflash 1.1s ease-in-out infinite}
+  .tile.tickettile.locked{opacity:.6;filter:grayscale(.35)}
   /* ---- scratch-off ceremony overlay ---- */
   #scov{position:absolute;inset:0;z-index:140;display:none;background:var(--scrim)}
   #scov.on{display:flex;align-items:center;justify-content:center;padding:22px}
@@ -929,7 +939,7 @@
   <!-- Scratch-off ceremony: big center card the user scratches to reveal a newly-unlocked feature. -->
   <div id="scov" aria-hidden="true">
     <div class="scwrap">
-      <div class="sctitle" id="scTitle">🎟️ You earned a scratch-off!</div>
+      <div class="sctitle" id="scTitle">🎫 You earned a scratch-off!</div>
       <div class="scsub">Scratch the ticket to reveal what you've unlocked.</div>
       <div class="scticket">
         <div class="scprize"><div class="scicon" id="scIcon">🎁</div><div class="scname" id="scName"></div><div class="scdesc" id="scDesc"></div></div>
@@ -1816,17 +1826,20 @@ function updateMetrics(){
 /* Progressive unlock via SCRATCH-OFFS. New users have only Learn; each feature is won by
    scratching a lottery ticket earned at a milestone, then it flies down into the nav (in order:
    Verse → Palace → Journey → Stories). Foundation = books 1-5 + Matthew + first palace. */
-function foundationsDone(){ return [1,2,3,4,5,40].every(n=>knownNum(n)) && Prog.doneSkills.includes("palace:0"); }
+function foundationsDone(){ return [1,2,3,4,5,40].every(n=>knownNum(n)); }   // Torah + Matthew (palace is earned later)
 function palaceCount(){ return (Prog.palaces||[]).filter(Boolean).length; }
+const GTIK='<span class="gtik" role="img" aria-label="golden ticket"></span>';   // inline golden-ticket badge for criteria text
+const NT5=[40,41,42,43,44];   // the first five New Testament books (Matthew–Acts) — Mark+ are Pro
+function nt5Done(){ return NT5.every(n=>knownNum(n)); }
 const SCRATCH_LADDER=[
   {tab:"verse",   icon:"📖", name:"Verses",          desc:"Choose what to hide in your heart — suggested verses, topics, and daily review.", gate:()=>foundationsDone(),
-     earn:"completing the Foundation — books 1–5, Matthew, and your first palace", next:"Memorize <b>5 verses</b> to earn your next scratch-off 🎟️"},
-  {tab:"palace",  icon:"🏛️", name:"Memory Palaces",  desc:"Build your own palaces — walk a familiar place and leave a verse at each spot.",  gate:()=>Prog.memorized.length>=5,
-     earn:"memorizing 5 verses", next:"Reach <b>15 verses &amp; 3 palaces</b> to earn your next scratch-off 🎟️"},
+     earn:"completing the Foundation — books 1–5 and Matthew", next:`Memorize <b>5 verses</b> and hit a <b>5-answer streak</b> in the verse test to earn your next scratch-off ${GTIK}`},
+  {tab:"palace",  icon:"🏛️", name:"Memory Palaces",  desc:"Build your own palaces — walk a familiar place and leave a verse at each spot.",  gate:()=>Prog.memorized.length>=5 && (Prog.bestStreak||0)>=5,
+     earn:"memorizing 5 verses and hitting a 5-answer streak in the verse test", next:`Reach <b>15 verses &amp; 3 palaces</b> to earn your next scratch-off ${GTIK}`},
   {tab:"journey", icon:"🗺️", name:"Your Journey",    desc:"See the whole Bible open before you — every book, chapter and verse you can reach.", gate:()=>Prog.memorized.length>=15 && palaceCount()>=3,
-     earn:"reaching 15 verses and 3 palaces", next:"Reach <b>25 verses &amp; 5 palaces</b> for your final scratch-off 🎟️"},
-  {tab:"stories", icon:"📜", name:"Bible Stories",   desc:"100 of the Bible's great stories — located, learned, and ready to tell.",         gate:()=>Prog.memorized.length>=25 && palaceCount()>=5,
-     earn:"reaching 25 verses and 5 palaces", next:"You've unlocked every feature — the whole app is yours. 🔥"}
+     earn:"reaching 15 verses and 3 palaces", next:`Reach <b>25 verses, 5 palaces &amp; the first 5 New Testament books</b> for your final scratch-off ${GTIK}`},
+  {tab:"stories", icon:"📜", name:"Bible Stories",   desc:"100 of the Bible's great stories — located, learned, and ready to tell.",         gate:()=>Prog.memorized.length>=25 && palaceCount()>=5 && nt5Done(),
+     earn:"reaching 25 verses, 5 palaces, and learning the first 5 New Testament books (Matthew–Acts)", next:"You've unlocked every feature — the whole app is yours. 🔥"}
 ];
 function tabWon(t){ return t==="learn" || (Prog.scratchWon||[]).includes(t); }
 function tabUnlocked(tab){ return tabWon(tab); }
@@ -1842,7 +1855,7 @@ function updateTabLocks(){
     b.classList.toggle("ticket", !won);                                    // locked tabs render as scratch-off tickets
     b.classList.toggle("pending", !won && (scratchSimActive || pend>=0));   // tickets flash while a scratch is available (or during a sim)
   });
-  if(!scratchSimActive && pend>=0 && pend!==scratchOffered){ scratchOffered=pend; setTimeout(()=>toast("🎟️ You earned a scratch-off! Tap a flashing ticket below 👇"),450); }
+  if(!scratchSimActive && pend>=0 && pend!==scratchOffered){ scratchOffered=pend; setTimeout(()=>toast("🎫 You earned a scratch-off! Tap a flashing golden ticket below 👇"),450); }
   if(pend<0) scratchOffered=-1;
 }
 
@@ -2054,11 +2067,16 @@ function buildUnits(){
     {id:"snd:0-4",label:"Sounds 0–4",kind:"sound",items:[0,1,2,3,4]},
     {id:"snd:5-9",label:"Sounds 5–9",kind:"sound",items:[5,6,7,8,9]}
   ]});
-  // 1) The Foundation — ONE track: the Torah (books 1-5) + Matthew (40) + your first memory palace.
-  units.push({name:"The Foundation · Torah, Matthew &amp; a palace", torahEnd:true, foundationEnd:true, skills:[
+  // 1) The Foundation — the Torah (books 1-5) + Matthew (40). Completing this earns the first
+  //    scratch-off (Verses). The memory palace is NOT here — it's earned later, after 5 verses.
+  units.push({name:"The Foundation · Torah &amp; Matthew", torahEnd:true, foundationEnd:true, skills:[
     ...range(1,5).map(d=>({id:"num:"+d,label:PEGS[d],kind:"num",items:[d]})),
-    bk(40),
-    {id:"palace:0",label:"My palace",kind:"palace",items:[0]}
+    bk(40)
+  ]});
+  // 2) Your Memory Palace — the palace lesson lives here but is HIDDEN behind a scratch-off in the
+  //    Learn menu until the user earns it (memorize 5 verses). Optional so it never blocks the climb.
+  units.push({name:"Your Memory Palace", palaceUnit:true, skills:[
+    {id:"palace:0",label:"My palace",kind:"palace",optional:true,items:[0]}
   ]});
   // Optional bonus palaces get appended to the end of each later section (never block progress).
   let _palaceSlot=1;
@@ -2124,7 +2142,7 @@ function skillUnlocked(ui,si){
 /* ---- milestone checkpoints (grey until reached, then gold) ---- */
 const MILESTONES=[
  {after:"The Foundation", reached:()=>foundationsDone(), e:"🕯️", t:"Foundations Laid",
-  c:"The Torah (Genesis–Deuteronomy), Matthew, and your first memory palace are complete — you've earned your first scratch-off 🎟️. Tap a flashing ticket in the menu to reveal what it unlocks.",
+  c:`The Torah (Genesis–Deuteronomy) and Matthew are complete — you've earned your first scratch-off ${GTIK}. Tap a flashing golden ticket in the menu to reveal what it unlocks.`,
   d:"The story of creation and the life of Jesus are open to you — you can already stand on foundational promises, commands, and identity verses."},
  {after:"Round 4 ", reached:()=>Prog.level>=MILESTONE, counts:true, e:"🏆", t:"Bible Power Unlocked",
   c:`You can pinpoint any book, chapter &amp; verse from 1–${MILESTONE} — one huge contiguous span of Scripture.`,
@@ -2194,10 +2212,22 @@ function nextSkillLabel(){
   if(sk.kind==="num"){ const n=sk.items[0]; return `${PEGS[n]} (${n<10?"0"+n:n})`; }
   return sk.label;
 }
+// The goalpost "Next" follows the scratch-off funnel so new users aren't pointed at the still-hidden climb.
+function nextFocus(){
+  if(pendingScratchRung()>=0) return "scratch your golden ticket 🎫 in the menu";
+  if(!tabWon("verse")) return nextSkillLabel() || "complete the Foundation";
+  if(!tabWon("palace")){
+    const v=Prog.memorized.length, s=Prog.bestStreak||0;
+    if(v<5) return `memorize ${5-v} more verse${5-v===1?"":"s"} toward your Memory Palace`;
+    if(s<5) return "hit a 5-answer streak in the verse test to unlock your palace";
+    return "scratch your golden ticket 🎫";
+  }
+  return nextSkillLabel() || "keep climbing the Word";
+}
 function goalpostCard(){
   const pics=Prog.doneSkills.filter(id=>/^(num|book):/.test(id)).length;
   const verses=Prog.memorized.length;
-  const nx=nextSkillLabel();
+  const nx=nextFocus();
   const g=Prog.persona?PERSONA_GOAL[Prog.persona]:null;
   return `<div class="goalpost">
     <div class="gp-row"><span class="gp-k">You hold</span><span class="gp-v">${pics} picture${pics===1?"":"s"} · ${verses} verse${verses===1?"":"s"}</span></div>
@@ -2215,30 +2245,57 @@ function renderPath(focus){
   let focusTile=null;
   if(focus){ const nb=nextBlueSkill(); if(nb){ expandedUnits=new Set([nb.ui]); focusTile=nb; } }
   html+=`<p class="hint" style="margin:2px 0 10px">Tap a group to open it.</p>`;
+  // Keep the page SMALL and focused: reveal only up to the current frontier, and never past the
+  // Memory-Palace scratch-off until it's won. Once every feature is unlocked, show the whole path.
+  const palaceUnitIdx=UNITS.findIndex(U=>U.palaceUnit);
+  const allWon=SCRATCH_LADDER.every(r=>tabWon(r.tab));
+  const palaceRung=SCRATCH_LADDER.findIndex(r=>r.tab==="palace");
+  let revealMax;
+  if(allWon){ for(let i=UNITS.length-1;i>=0;i--){ if(!UNITS[i].story){ revealMax=i; break; } } }
+  else {
+    revealMax=0;
+    for(let i=0;i<UNITS.length;i++){ const U=UNITS[i]; if(U.story) break;
+      const doneAll=U.skills.every(sk=>sk.optional||Prog.doneSkills.includes(sk.id));
+      revealMax=i; if(!doneAll) break; }
+    if(!tabWon("palace") && palaceUnitIdx>=0) revealMax=Math.min(revealMax, palaceUnitIdx);
+  }
+  let truncated=false;
   UNITS.forEach((U,ui)=>{
     if(U.story) return;   // stories live in their own tab now, not the Learn path
+    if(ui>revealMax){ truncated=true; return; }   // hidden until the user climbs to it
     const total=U.skills.length, done=U.skills.filter(sk=>Prog.doneSkills.includes(sk.id)).length;
     const golds=U.skills.filter(sk=>skillColor(sk,true)==="gold").length, allDone=done===total, allGold=golds===total;
     // all gold → gold; fully learned but decayed (not practiced in a while) → cracked gold; partly learned → blue
     const grp = allGold ? "grp-gold" : (allDone ? "grp-cracked" : (done>0 ? "grp-blue" : ""));
-    const open=expandedUnits.has(ui);
+    // the Memory-Palace unit is hidden behind a golden ticket until won — force it open so the ticket shows
+    const palaceLocked = U.palaceUnit && !tabWon("palace");
+    const open=expandedUnits.has(ui) || palaceLocked;
     if(U.firstStory) html+=`<div class="storydivider">📖 Bible Stories<span>where every great story begins — book · chapter · verse</span></div>`;
     html+=`<div class="unit">
       <button class="grouphead ${open?"open":""} ${grp}" data-grp="${ui}">
-        <span>${U.name}</span><span class="gmeta">${done}/${total} ${open?"▾":"▸"}</span></button>`;
+        <span>${U.name}</span><span class="gmeta">${palaceLocked?"🔒":done+"/"+total} ${open?"▾":"▸"}</span></button>`;
     if(open){
       html+=`<div class="path" style="margin-top:16px">`;
       U.skills.forEach((sk,si)=>{
+        const isPalace=sk.kind==="palace";
+        // a palace lesson stays hidden behind a golden scratch-off ticket until the palace is won
+        if(isPalace && !tabWon("palace")){
+          const earned=SCRATCH_LADDER[palaceRung].gate();
+          html+=`<button class="tile tickettile ${earned?"pending":"locked"}" data-palaceticket="1">
+            <span class="tikface">🎫</span><small>${earned?"Scratch to unlock!":"Memory Palace"}</small></button>`;
+          return;
+        }
         const unlocked=skillUnlocked(ui,si), color=skillColor(sk,unlocked), d=Prog.doneSkills.includes(sk.id)?"done":"";
         const pro=skillPaywalled(sk);
-        const isStory=sk.kind==="story", isPalace=sk.kind==="palace";
+        const isStory=sk.kind==="story";
         const label = (isStory||isPalace||sk.kind==="book") ? sk.label : (sk.items.length===1?`${sk.items[0]} · ${sk.label}`:sk.label);
         const face = isStory ? "📖" : (isPalace ? "🏛️" : (sk.items.length===1?sk.items[0]:"★"));
         html+=`<button class="tile ${color} ${d} ${pro?"pro":""}" data-ui="${ui}" data-si="${si}" ${(color==="locked"&&!pro)?"disabled":""}>
           ${pro?`<span class="lockbadge">🔒</span>`:""}${face}<small>${label}</small></button>`;
       });
       html+=`</div>`;
-      if(!U.story && !U.palace){
+      if(palaceLocked) html+=`<div class="hint" style="text-align:center;margin:10px 0 0">${SCRATCH_LADDER[palaceRung].gate()?"You've earned it — scratch the ticket above! 🎫":"Memorize 5 verses and hit a 5-answer streak in the verse test to earn this."}</div>`;
+      if(!U.story && !U.palaceUnit){
         const unitPaid=U.skills.some(isPaidSkill) && !Billing.isPro(); // any paid content locks "test out"
         html+=`<div style="text-align:center;margin-top:22px"><button class="btn sm ghost" data-cq="${ui}" ${unitPaid?`data-prolock="1"`:""}>${unitPaid?"🔒 ":"⚡ "}Chapter quiz · test out</button>
         <div class="hint" style="margin:6px 0 0">${unitPaid?"Unlock the full Bible to test out of this section.":"Ace it (100%) to turn the whole section gold. One wrong answer ends it."}</div></div>`;
@@ -2247,13 +2304,19 @@ function renderPath(focus){
     html+=`</div>`;
     MILESTONES.forEach(m=>{ if(U.name.startsWith(m.after)) html+=renderMilestone(m); });
   });
+  if(truncated) html+=`<div class="hint" style="text-align:center;margin:14px 0 4px;opacity:.8">🔒 More of your path unlocks as you earn scratch-offs ${GTIK}</div>`;
   L.innerHTML=html;
   L.querySelectorAll("[data-grp]").forEach(h=>h.onclick=()=>{ const ui=+h.dataset.grp; expandedUnits.has(ui)?expandedUnits.delete(ui):expandedUnits.add(ui); renderPath(); });
   L.querySelectorAll("[data-cq]").forEach(b=>b.onclick=()=>{ if(b.dataset.prolock){ openPaywall(); return; } startChapterQuiz(+b.dataset.cq); });
-  L.querySelectorAll(".tile").forEach(t=>t.onclick=()=>{
+  L.querySelectorAll(".tile:not(.tickettile)").forEach(t=>t.onclick=()=>{
     if(t.classList.contains("pro")){ openPaywall(); return; }
     if(t.classList.contains("locked")) return;
     startLesson(UNITS[+t.dataset.ui].skills[+t.dataset.si]);
+  });
+  L.querySelectorAll("[data-palaceticket]").forEach(t=>t.onclick=()=>{
+    const rung=SCRATCH_LADDER.findIndex(r=>r.tab==="palace");
+    if(SCRATCH_LADDER[rung].gate()) Scratch.open(rung);
+    else toast("Memorize 5 verses and hit a 5-answer streak in the verse test to unlock the Memory Palace 🎫");
   });
   if(focusTile){
     const tile=L.querySelector(`.tile[data-ui="${focusTile.ui}"][data-si="${focusTile.si}"]`);
@@ -4401,6 +4464,7 @@ const Scratch = (()=>{
       if(!Prog.scratchWon.includes(L.tab)) Prog.scratchWon.push(L.tab);   // in a sim this is temporary (restored on exit); real runs persist
       if(!sim) saveProg();
       updateTabLocks();
+      if(!sim && document.querySelector(".view.active")?.id==="learn") renderPath();   // reveal a newly-unlocked Learn lesson (e.g. the palace)
       if(btn){ btn.classList.add("justwon"); setTimeout(()=>btn.classList.remove("justwon"),700); }
       if(sim && opts.onClaimed) opts.onClaimed(rung);
       else setTimeout(()=>toast(L.next.replace(/<[^>]+>/g,"")), 500);
@@ -4412,7 +4476,7 @@ const Scratch = (()=>{
   ["mouseup","touchend","touchcancel","mouseleave"].forEach(ev=>foil.addEventListener(ev,()=>{drawing=false;}));
   return {
     open(r, o){ rung=r; opts=o||{}; revealed=false; cells.clear(); const L=SCRATCH_LADDER[r];
-      el("scTitle").innerHTML=(opts.title||"🎟️ You earned a scratch-off!");
+      el("scTitle").innerHTML=(opts.title||"🎫 You earned a scratch-off!");
       el("scIcon").textContent=L.icon; el("scName").textContent=L.name; el("scDesc").innerHTML=L.desc;
       el("scClaim").style.display="none"; foil.classList.remove("gone");
       ov.classList.add("on"); ov.setAttribute("aria-hidden","false");
