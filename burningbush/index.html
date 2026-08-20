@@ -118,7 +118,7 @@
   }
   .tabbar button{flex:1;background:none;border:none;color:var(--muted);padding:10px 4px 12px;
     font-size:11px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
-  .tabbar button .ic{font-size:20px;line-height:1}
+  .tabbar button .ic{font-size:23px;line-height:1}
   .tabbar button.on{color:var(--gold-ink)}
   .tabbar button.locked{opacity:.3;pointer-events:none;filter:grayscale(.7)}
   .tabbar button.tabflash{color:var(--gold-ink)}
@@ -249,6 +249,9 @@
   #obov .obfade .w.gone{opacity:0;filter:blur(3px)}
   #obov .obhint{font-size:13.5px;color:var(--muted);margin-top:8px}
   #obov .obpill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-ink);background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:5px 12px;margin-bottom:10px}
+  #obov .obback{position:absolute;top:12px;left:12px;width:40px;height:40px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);font-size:20px;font-weight:800;cursor:pointer;z-index:3;line-height:1}
+  #obov .obback:active{transform:scale(.92)}
+  #obov .obpickone{font-size:13px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:6px 0 0}
   .goalpost{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:2px 0 14px}
   .goalpost .gp-row{display:flex;gap:10px;align-items:baseline;padding:3px 0;font-size:14.5px;line-height:1.4}
   .goalpost .gp-row+.gp-row{border-top:1px solid var(--line)}
@@ -262,7 +265,7 @@
   .tabbar button.ticket .ic,.tabbar button.ticket .lbl{display:none}
   .tabbar button.ticket .tik{
     display:flex;align-items:center;justify-content:center;
-    width:min(94%, 78px);aspect-ratio:1.85;border-radius:8px;
+    width:min(84%, 64px);aspect-ratio:1.8;border-radius:8px;
     background:linear-gradient(135deg,var(--gold-hi,var(--gold)) 0%,var(--gold) 42%,var(--gold2) 100%);
     box-shadow:inset 0 0 0 1.5px var(--gold-ink),inset 0 0 0 3.5px var(--gold-hi,var(--gold)),0 2px 5px var(--scrim);
     /* scalloped ticket ends — mask alpha only, not theme colors: raw-ok */
@@ -321,6 +324,8 @@
   .w4wbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:66px;height:66px;border-radius:16px;border:1.5px solid var(--gold2);background:var(--panel2);color:var(--gold-ink);cursor:pointer;font-weight:800;font-size:10px;line-height:1.05;text-align:center;flex:0 0 auto}
   .w4wbtn span{font-size:22px;line-height:1}
   .w4wbtn:active{transform:scale(.95)}
+  .w4wbtn.w4wsm{width:50px;height:50px;font-size:9px;border-radius:12px}
+  .w4wbtn.w4wsm span{font-size:17px}
   .fadeverse .w.blank{cursor:pointer}
   .fadeverse .w.blank.peek{color:var(--gold-ink);font-weight:800}
   .ttcount{min-width:46px;text-align:center;font-weight:800;font-size:13px;border-radius:999px;padding:4px 10px;background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
@@ -488,6 +493,8 @@
   .theme-opt .sw{width:44px;height:44px;border-radius:10px;flex:none;border:1px solid var(--sw-line)}
   .theme-opt .tn{font-weight:800;font-size:15px} .theme-opt .td{font-size:12px;color:var(--muted)}
   .prof-sect{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--gold-ink);font-weight:800;margin-bottom:8px}
+  .prof-sect.prof-collapsible{cursor:pointer;padding:8px 10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;margin-bottom:6px;user-select:none}
+  .prof-sect .prof-caret{display:inline-block;width:14px;color:var(--muted)}
   .badgecat{font-size:12px;font-weight:800;color:var(--gold-ink);margin:14px 0 8px}
   .badgecat .muted{font-weight:600}
   .badgegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -1999,6 +2006,8 @@ function show(tab){
 document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
   if(b.classList.contains("pending")){ const p=pendingScratchRung(); if(p>=0){ Scratch.open(p); return; } }  // a flashing ticket → open the scratch card
   if(b.classList.contains("ticket")){ showScratchReqs(); return; }                                          // any golden ticket → show how to earn a scratch-off
+  // tapping Verse while already in a Verse sub-view backs out to the main hub (a second tap = home)
+  if(b.dataset.tab==="verse" && document.querySelector(".view.active")?.id==="verse" && typeof vView!=="undefined" && vView!=="hub"){ vView="hub"; }
   show(b.dataset.tab);
 });
 
@@ -2345,6 +2354,7 @@ function nextFocus(){
   }
   return nextSkillLabel() || "keep climbing the Word";
 }
+function videoPlaceholder(title, sub){ return `<div class="vidph"><div class="play">▶</div><div class="vt">${title}</div><div class="vs">${sub}</div></div>`; }
 function goalpostCard(){
   const pics=Prog.doneSkills.filter(id=>/^(num|book):/.test(id)).length;
   const verses=Prog.memorized.length;
@@ -3078,7 +3088,7 @@ function renderVerse(){
               +(open?(vs.length?`<div class="vlist">`+vs.map(a=>verseRow(a[0],a[1],a[2],"go")).join("")+`</div>`:`<p class="hint" style="margin:4px 0 8px">None in your range yet — learn more numbers.</p>`):"");
           }).join("");
     } else if(vView==="mem"){ title="★ Memorized verses";
-      body=mem.length?`<div class="btnrow" style="margin-top:0"><button class="btn ghost" id="memFade">Recite word-for-word</button></div><p class="hint" style="margin:8px 0">Tap a book, then a verse to rebuild it.</p>`+bookGroupedList(mem,"mem")
+      body=mem.length?`<p class="hint" style="margin:2px 0 8px">Tap a book, then a verse to rebuild it or practice it word-for-word.</p>`+bookGroupedList(mem,"mem")
         :`<p class="hint">Verses you finish building show up here.</p>`;
     } else if(vView==="saved"){ title="🔖 Saved for later";
       body=saved.length?bookGroupedList(saved,"saved"):`<p class="hint">Tap "Save · come back later" on any verse and it lands here.</p>`;
@@ -3087,7 +3097,6 @@ function renderVerse(){
     el("vBack").onclick=()=>{ vView="hub"; renderVerse(); document.querySelector(".content").scrollTop=0; };
     V.querySelectorAll("[data-bk]").forEach(h=>h.onclick=()=>{ const [sec,bn]=h.dataset.bk.split(":"); const set=vBook[sec]; const n=+bn; set.has(n)?set.delete(n):set.add(n); reVerse(); });
     V.querySelectorAll("[data-topic]").forEach(h=>h.onclick=()=>{ const ti=+h.dataset.topic; vTopic.has(ti)?vTopic.delete(ti):vTopic.add(ti); reVerse(); });
-    if(el("memFade")) el("memFade").onclick=()=>{ const m=mem[Math.floor(Math.random()*mem.length)]; startWordForWord(m[0],m[1],m[2]); };
     V.querySelectorAll("[data-vb]").forEach(b=>b.onclick=()=>{ const [x,y,z]=b.dataset.vb.split(":").map(Number); verseScroll=document.querySelector(".content").scrollTop; openVerseWizard(x,y,z,backToVerse); });
     paintTheme(); return;
   }
@@ -3095,8 +3104,7 @@ function renderVerse(){
   // ---- HUB: six big buttons; review last ----
   const due=versesDueCount();
   const reviewLabel=due?`🔔 Review ${due} verse${due>1?"s":""} due now`:(mem.length?`🎯 Test my verses (${mem.length})`:`🎯 Test my verses`);
-  V.innerHTML=`<div class="vhead"><h2 style="margin:0">Verses</h2>
-      <button class="w4wbtn" id="vWord" title="Word-for-word practice"><span>📖</span>Word<br>for word</button></div>
+  V.innerHTML=`<h2>Verses</h2>
     <p class="lead">Pick what to work on — build verses into pictures, then test what you've hidden in your heart.</p>
     <div class="versehub">
       <button class="vhub sq" data-view="sugg"><span class="vi">✨</span><span>Suggested</span><small>${suggReach} in reach</small></button>
@@ -3107,12 +3115,6 @@ function renderVerse(){
       <button class="vhub wide review" id="vMemTest"><span class="vi">🎯</span><span>${reviewLabel}</span></button>
     </div>`;
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
-  if(el("vWord")) el("vWord").onclick=()=>{
-    if(!mem.length){ toast("Memorize a verse first — tap Suggested!"); return; }
-    const avail=mem.filter(m=>!w4wLocked(refKey(m[0],m[1],m[2])));
-    const pool=avail.length?avail:mem, pick=pool[Math.floor(Math.random()*pool.length)];
-    startWordForWord(pick[0],pick[1],pick[2],()=>{ vView="hub"; renderVerse(); });
-  };
   el("vNumTest").onclick=()=> knownNumbers().size>=2 ? startNumberTest() : toast("Learn a few numbers first in the Learn tab!");
   el("vMemTest").onclick=()=> mem.length ? startMemTest() : toast("Memorize a verse first — tap Suggested!");
   paintTheme();
@@ -3698,15 +3700,15 @@ function renderWalk(){
        <div class="btnrow" style="margin-top:10px">
          <button class="btn ghost" id="wSave" style="border-color:var(--green);color:#9ff0a0">Save · come back later</button>
          <button class="btn ghost" id="wSkip" style="border-color:var(--miss-ink);color:#ff9a9a">Skip</button></div>
-       <button class="btn ghost" id="wFade" style="margin-top:10px;border-color:var(--accent);color:#a9c2ff">📖 Word-for-word practice</button>
        ${alreadyMem?"":`<button class="btn ghost" id="wKnow" style="margin-top:10px;border-color:var(--gold2);color:var(--gold-ink)">✓ I already know this — add to my test verses</button>`}`
     : `${sceneField}<div class="btnrow" style="margin-top:14px">
          <button class="btn ghost" id="wPrev">← Back</button>
          <button class="btn" id="wNext">${last?"Done ✓":"Next →"}</button></div>`;
   const head = wIdx===0
-    ? `<div class="qhead"><button class="lclose" id="wClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Learn a verse</div><div style="width:24px"></div></div>` : "";
+    ? `<div class="qhead"><button class="lclose" id="wClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Learn a verse</div><button class="w4wbtn w4wsm" id="wWord" title="Word-for-word practice"><span>📖</span>W4W</button></div>` : "";
   V.innerHTML=`<div class="card">
     ${head}
+    ${wIdx===0?videoPlaceholder("Video: How to create a verse scene","Placeholder — how to turn a verse's book·chapter·verse into three pictures woven into one unforgettable scene. (Add your video here.)"):""}
     <div class="stage"><div class="stepIcon">${s.icon}</div>
       <div class="steplabel">${s.label}</div><div class="steptitle">${s.title}</div>
       <div class="steptext">${s.text}</div>${whyHtml}${mySceneShow}</div>
@@ -3721,7 +3723,7 @@ function renderWalk(){
     onSave:v=>{ if(v){ Prog.customScene[vkey]=v; } else { delete Prog.customScene[vkey]; } saveProg(); renderWalk(); }
   });
   if(el("wClose")) el("wClose").onclick=()=>walkReturn();
-  if(el("wFade")) el("wFade").onclick=()=>startWordForWord(cbn,curScene.c,curScene.v,()=>openVerseWizard(cbn,curScene.c,curScene.v,walkReturn));
+  if(el("wWord")) el("wWord").onclick=()=>startWordForWord(cbn,curScene.c,curScene.v,()=>openVerseWizard(cbn,curScene.c,curScene.v,walkReturn));
   V.querySelectorAll("[data-learn]").forEach(b=>b.onclick=()=>{ const n=+b.dataset.learn, isBook=b.dataset.book==="1", ret=walkReturn;
     startAdhocLearn(n,isBook,()=>openVerseWizard(cbn,curScene.c,curScene.v,ret)); });
   if(el("wVPrev")) el("wVPrev").onclick=()=>{ if(hasPrev) openVerseWizard(cbn,curScene.c,curScene.v-1,walkReturn); };
@@ -4163,7 +4165,21 @@ function renderReminder(){
   el("remOn").onchange=async()=>{ if(el("remOn").checked) await Reminders.enable(); else await Reminders.disable(); renderReminder(); };
   el("remTime").onchange=async()=>{ Prog.reminder.time=el("remTime").value||"20:00"; saveProg(); if(Prog.reminder.on) await Reminders.schedule(); };
 }
-el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); renderReminder(); el("backupMsg").innerHTML=""; el("themeModal").style.display="flex"; };
+el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); renderReminder(); el("backupMsg").innerHTML=""; el("themeModal").style.display="flex"; initProfileCollapse(); };
+// Make each profile subheader a collapsible section; all collapsed each time the menu opens.
+function initProfileCollapse(){
+  const card=el("themeModal").querySelector(".modal-card"); if(!card) return;
+  [...card.querySelectorAll(".prof-sect")].forEach(sec=>{
+    const group=[]; let sib=sec.nextElementSibling;
+    while(sib && !sib.classList.contains("prof-sect") && sib.id!=="themeClose"){ group.push(sib); sib=sib.nextElementSibling; }
+    if(!sec.querySelector(".prof-caret")) sec.insertAdjacentHTML("afterbegin", `<span class="prof-caret">▸</span> `);
+    sec.classList.add("prof-collapsible");
+    const caret=sec.querySelector(".prof-caret");
+    const setOpen=(open)=>{ group.forEach(g=>g.style.display=open?"":"none"); caret.textContent=open?"▾":"▸"; };
+    setOpen(false);   // collapsed on entry
+    sec.onclick=()=> setOpen(group.length ? group[0].style.display==="none" : false);
+  });
+}
 el("expBtn").onclick=exportBackup;
 el("impBtn").onclick=()=>el("impFile").click();
 if(el("pShare")) el("pShare").onclick=()=>shareProgress(null);
@@ -4259,37 +4275,42 @@ function w4wLockScreen(b,c,v,ret){
 
 let TT=null;
 function startTypeTest(b,c,v,ret){ const words=(kjvText(b,c,v)||"").split(/\s+/).filter(Boolean);
-  TT={b,c,v,ret,words,idx:0,wrong:false}; renderTypeTest(); }
+  TT={b,c,v,ret,words,idx:0,wrong:false,wrongWord:null}; renderTypeTest(); }
 function renderTypeTest(){
   const V=el("verse"), total=TT.words.length, done=TT.idx;
   const committed=TT.words.slice(0,done).join(" ");
   const counterCls=TT.wrong?"ttbad":(done>0?"ttgood":"");
+  // the top shows only COMMITTED (green) words — plus, briefly, a wrong attempt in red for the current word
+  const wrongTop = TT.wrongWord ? ` <span class="ttcur bad">${TT.wrongWord.replace(/</g,"&lt;")}</span>` : "";
   V.innerHTML=`<div class="qhead"><button class="lclose" id="ttClose">✕</button>
       <div style="font-weight:800;flex:1;text-align:center">Type it word-for-word</div>
       <div class="ttcount ${counterCls}" id="ttCount">${done}/${total}</div></div>
     <div class="card">
       <div style="font-weight:800;color:var(--gold-ink);text-align:center">${bookName(TT.b)} ${TT.c}:${TT.v}</div>
-      <div class="ttdisplay"><span class="ttdone">${committed}</span>${done<total?` <span class="ttcur" id="ttCur"></span>`:""}</div>
-      <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type the next word…">
-      <p class="hint" style="text-align:center;margin-top:8px">Type the verse from memory, one word at a time. A wrong letter turns red — backspace to fix it.</p>
+      <div class="ttdisplay"><span class="ttdone">${committed}</span>${wrongTop||(done||TT.wrongWord?"":`<span style="color:var(--muted)">your words appear here as you go…</span>`)}</div>
+      <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type word ${done+1}, then press space…">
+      <p class="hint" style="text-align:center;margin-top:8px">Type each word, then press <b>space</b>. A wrong word clears so you can try again.</p>
     </div>`;
   el("ttClose").onclick=()=>{ const r=TT.ret; TT=null; r?r():renderVerse(); };
   const inp=el("ttIn"); setTimeout(()=>{ try{inp.focus();}catch(e){} }, 60);
-  inp.oninput=()=>{
+  const commitWord=()=>{
     const expected=TT.words[TT.idx]; if(expected===undefined) return;
-    const nexp=normWord(expected), ncur=normWord(inp.value);
-    const cur=el("ttCur"); if(cur) cur.textContent=inp.value;
-    if(ncur===nexp){                                 // word complete & correct → commit, advance
-      TT.idx++; TT.wrong=false; inp.value="";
+    const typed=inp.value.trim(); if(!typed) return;
+    if(normWord(typed)===normWord(expected)){          // correct → commit to the top (green), advance
+      TT.idx++; TT.wrong=false; TT.wrongWord=null; inp.value="";
       if(TT.idx>=total){ typeTestComplete(); return; }
       renderTypeTest();
-    } else {
-      const wrong = !nexp.startsWith(ncur);           // typed something that can't become the word
-      TT.wrong=wrong;
-      inp.classList.toggle("wrong", wrong); inp.classList.toggle("good", !wrong && ncur.length>0);
-      if(cur) cur.className="ttcur "+(wrong?"bad":"good");
-      const cc=el("ttCount"); if(cc) cc.className="ttcount "+(wrong?"ttbad":(TT.idx>0?"ttgood":""));
+    } else {                                            // wrong → show it red at top, clear the box to retry
+      TT.wrong=true; TT.wrongWord=typed; inp.value=""; renderTypeTest();
     }
+  };
+  inp.onkeydown=(e)=>{ if(e.key===" " || e.key==="Enter"){ e.preventDefault(); commitWord(); } };
+  // last word has no trailing space: also commit the instant it matches exactly
+  inp.oninput=()=>{
+    const expected=TT.words[TT.idx]; if(expected===undefined) return;
+    if(TT.idx===total-1 && normWord(inp.value)===normWord(expected)){ commitWord(); return; }
+    const nexp=normWord(expected), ncur=normWord(inp.value), wrong=ncur.length>0 && !nexp.startsWith(ncur);
+    inp.classList.toggle("wrong", wrong); inp.classList.toggle("good", !wrong && ncur.length>0);
   };
 }
 function typeTestComplete(){
@@ -4321,6 +4342,7 @@ function renderPalace(){
   const mine=(Prog.palaces||[]).map((p,i)=>[p,i]).filter(x=>x[0]);
   const due=palacesDueCount();
   P.innerHTML=`<h2>Memory Palace</h2>
+    ${videoPlaceholder("Video: What is a Memory Palace?","Placeholder — the method of loci, and why walking a familiar place makes an ordered list stick. (Add your video here.)")}
     <p class="lead">A <b>palace</b> is for sequences — walk a familiar place and leave each item at a spot. Do it once and the order sticks.</p>
     <div class="vidph"><div class="play">▶</div><div class="vt">Video: How spaced repetition locks memory in</div><div class="vs">Placeholder — why reviewing at D0, D1, D3, D7, D16 &amp; D30 moves a palace into long-term memory. (Add your video here.)</div></div>
     <p class="hint" style="margin:-4px 0 12px">Each palace has a <b class="gold">spaced-repetition trail</b> — walk it again on day 0, 1, 3, 7, 16 and 30. We'll nudge you when a review is due.</p>
@@ -4466,8 +4488,10 @@ const Onboard = (()=>{
   const seedRow=(nums)=> `<div class="obseeds">${nums.map(n=>pegImg("num",n,PEGS[n],false)).join("")}</div>`;
   function paint(){
     const s=steps[i];
-    host.innerHTML=`<div class="obwrap">${s.top!==false?bar():""}${s.html()}</div>`;
+    const back = i>0 ? `<button class="obback" id="obBack" aria-label="Back">←</button>` : "";
+    host.innerHTML=`<div class="obwrap">${back}${s.top!==false?bar():""}${s.html()}</div>`;
     host.scrollTop=0;
+    if(el("obBack")) el("obBack").onclick=()=>go(i-1);
     s.wire && s.wire();
   }
   const go=(n)=>{ i=Math.max(0,Math.min(steps.length-1,n)); paint(); };
@@ -4503,7 +4527,7 @@ const Onboard = (()=>{
      ${seedRow([1,1,1])}
      <div class="obref">${G.b} ${G.c}:${G.v}</div>
      <p class="obverse">"${G.text}"</p>
-     <div class="obscene"><b class="gold">See it:</b> ${G.scene}</div>
+     <div class="obscene"><b class="gold">See it:</b> Out of the dark, God's Light bursts and spins the whole earth into being — and cradled in that Light float <b>three glowing seeds</b>, the very first seeds of everything.</div>
      <button class="btn" id="obA">I can see it →</button>`,
     wire:()=>{ el("obA").onclick=next; }},
 
@@ -4558,7 +4582,7 @@ const Onboard = (()=>{
      <h2>Your first verse is hidden in your heart.</h2>
      <p class="oblead">And you know exactly where it lives — <b class="gold">Genesis 1:1</b> — from a picture of seeds and Light.</p>
      <p class="obverse">"Thy word have I hid in mine heart, that I might not sin against thee." — Psalm 119:11</p>
-     <p class="oblead">This is the first seed. There are two more scenes waiting — and a secret hidden inside all three.</p>
+     <p class="oblead">Later, a <b class="gold">Word-for-Word</b> practice will have you type it from memory — one word at a time — until it's truly yours. But first, the secret hidden in those seeds…</p>
      <button class="btn" id="obA">Keep going →</button>`,
     wire:()=>{ if(!Prog.firstWin){ Prog.firstWin=true; saveProg(); } el("obA").onclick=next; }},
 
@@ -4581,6 +4605,7 @@ const Onboard = (()=>{
 
    {html:()=>`
      <h2>What brings you to hide God's Word in your heart?</h2>
+     <p class="obpickone">Pick one 👇</p>
      <div class="obopts" id="obQ">
        <button class="obopt" data-v="peace">I need His peace — life has been heavy.</button>
        <button class="obopt" data-v="roots">I want deeper roots — my walk with God needs them.</button>
@@ -4591,6 +4616,7 @@ const Onboard = (()=>{
    {html:()=>`
      <h2>How much time can you honestly give each day?</h2>
      <p class="obhint">Honest beats heroic. God multiplies small seeds.</p>
+     <p class="obpickone">Pick one 👇</p>
      <div class="obopts" id="obQ">
        <button class="obopt" data-v="3">3 minutes — a mustard seed</button>
        <button class="obopt" data-v="10">10 minutes — a daily walk</button>
@@ -4599,6 +4625,7 @@ const Onboard = (()=>{
 
    {html:()=>`
      <h2>How familiar is the Bible to you?</h2>
+     <p class="obpickone">Pick one 👇</p>
      <div class="obopts" id="obQ">
        <button class="obopt" data-v="new">I'm fairly new to it</button>
        <button class="obopt" data-v="some">I know my way around</button>
@@ -4617,7 +4644,8 @@ const Onboard = (()=>{
      <div class="obflame">🔑</div>
      <h2>Here's the secret.</h2>
      <p class="oblead">Those three seeds weren't decoration — each one was quietly the <b class="gold">number 1</b>. Every scene in Burning Bush hides a verse's address the same way: pictures that are secretly book, chapter, and verse.</p>
-     <p class="oblead">But how will you know the picture for <b>7</b>? Or <b>40</b>? There's a simple key — and <b class="gold">you already hold half of it</b>. Learn it, and you can read <i>any</i> address in Scripture, and build your own.</p>
+     <p class="oblead">But how will you know the picture for <b>7</b>? Or <b>40</b>? There's a simple key — the <b class="gold">Major System</b> — and <b class="gold">you already hold half of it</b>.</p>
+     ${videoPlaceholder("Video: The Major System in 90 seconds","Placeholder — how ten sounds turn any number into a picture. (Add your video here.)")}
      <button class="btn" id="obA">Teach me the key →</button>`,
     wire:()=>{ el("obA").onclick=next; }},
 
@@ -4786,4 +4814,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260820-124647 -->
+<!-- deploy bb-20260820-133014 -->
