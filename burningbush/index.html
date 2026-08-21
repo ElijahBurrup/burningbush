@@ -917,6 +917,7 @@
   .relbox:nth-child(odd) .rl{color:var(--gold-ink)}
   .grouphead{width:100%;position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--grp-radius);box-shadow:var(--grp-shadow);padding:13px 15px;cursor:pointer;color:var(--ink);font-weight:800;font-size:13.5px;text-align:left}
   .grouphead.open{border-color:var(--gold2)}
+  .grouphead .ghead-ic{display:inline-block;margin-right:9px;font-size:1.15em;line-height:1;vertical-align:-1px}
   .grouphead .gmeta{font-size:12px;color:var(--muted);white-space:nowrap;font-weight:700}
   .grouphead.done-all{opacity:.7}
   .grouphead.grp-gold{background:linear-gradient(135deg,var(--done1),var(--done2));border-color:var(--done-shadow);color:var(--done-fg)}
@@ -2272,28 +2273,30 @@ function buildUnits(){
   const bk=n=>({id:"book:"+n,label:bookName(n),kind:"book",items:[n]});
   const units=[];
   const vid=(k)=>({id:VIDEOS[k].skill, label:VIDEOS[k].title, kind:"video", vkey:k, optional:true, items:[]});
+  const ROUND_ICONS=["👣","🥾","🛤️","🌄","⛰️","🧗","🏔️","🚩","🦅","🌟","🎖️","🏆","👑"];   // ascending climb, Round 1→13
+  const STORY_ICONS=["🍎","⭐","🧥","🌊","📜","🎺","🌾","👑","🔥","🌪️","🦁","👶","🕊️","🍞","🌱","🐑","💰","✝️","⛪","🌅"]; // one per story section
   // 0) The Code — the Major System video first, then the sound↔digit map drilled both ways.
-  units.push({name:"The Code · Major System sounds", skills:[
+  units.push({name:"The Code · Major System sounds", ic:"🔢", skills:[
     vid("major"),
     {id:"snd:0-4",label:"Sounds 0–4",kind:"sound",items:[0,1,2,3,4]},
     {id:"snd:5-9",label:"Sounds 5–9",kind:"sound",items:[5,6,7,8,9]}
   ]});
   // 1) The Foundation — the Torah (books 1-5) + Matthew (40). Completing this earns the first
   //    scratch-off (Verses). The memory palace is NOT here — it's earned later, after 5 verses.
-  units.push({name:"The Foundation · Torah &amp; Matthew", torahEnd:true, foundationEnd:true, skills:[
+  units.push({name:"The Foundation · Torah &amp; Matthew", ic:"🧱", torahEnd:true, foundationEnd:true, skills:[
     ...range(1,5).map(d=>({id:"num:"+d,label:PEGS[d],kind:"num",items:[d]})),
     bk(40)
   ]});
   // 1b) Learn Verses — watch the scene-building video, then go memorize verses in the Verse tab.
-  units.push({name:"Learn Verses", videoTrack:true, skills:[ vid("verse") ]});
+  units.push({name:"Learn Verses", ic:"🎬", videoTrack:true, skills:[ vid("verse") ]});
   // 2) Your Memory Palace — video first, then create one (the create lesson is hidden behind a
   //    scratch-off until earned; memorize 5 verses). Optional so it never blocks the climb.
-  units.push({name:"Your Memory Palace", palaceUnit:true, skills:[
+  units.push({name:"Your Memory Palace", ic:"🏰", palaceUnit:true, skills:[
     vid("palace"),
     {id:"palace:0",label:"My palace",kind:"palace",optional:true,items:[0]}
   ]});
   // 2b) Spaced Repetition — watch the video, then practice from the Verse tab.
-  units.push({name:"Spaced Repetition", videoTrack:true, skills:[ vid("sr") ]});
+  units.push({name:"Spaced Repetition", ic:"🔁", videoTrack:true, skills:[ vid("sr") ]});
   // Optional bonus palaces get appended to the end of each later section (never block progress).
   let _palaceSlot=1;
   const addOptPalace=(u)=>{ u.skills.push({id:"palace:"+_palaceSlot,label:"Bonus palace",kind:"palace",optional:true,items:[_palaceSlot]}); _palaceSlot++; return u; };
@@ -2310,20 +2313,20 @@ function buildUnits(){
     const otN=skills.slice(0,ntStart).map(s=>s.items[0]);
     const ntN=skills.slice(ntStart).map(s=>s.items[0]);
     const label=`Round ${r} · ${rng(otN)}${ntN.length?(otN.length?" + ":"")+rng(ntN):""}`;
-    units.push(addOptPalace({name:label, skills}));
+    units.push(addOptPalace({name:label, ic:ROUND_ICONS[r-1], skills}));
   }
   // 4) Round 13 — the remaining number pegs (67-176) as batch tiles, for chapter/verse numbers
   //    beyond the 66 books. Psalms reaches chapter 150; Psalm 119 reaches verse 176 (the Bible's highest).
   const numBatches=[[67,75]];
   for(let a=76;a<=156;a+=10) numBatches.push([a,a+9]);  // 76–85, 86–95, … 156–165
   numBatches.push([166,176]);                           // the finish
-  units.push(addOptPalace({name:"Round 13 · Remaining numbers (67–176)",
+  units.push(addOptPalace({name:"Round 13 · Remaining numbers (67–176)", ic:ROUND_ICONS[12],
     skills: numBatches.map(([a,b])=>({id:`peg:${a}`,label:`${a}–${b}`,kind:"num",items:range(a,b)}))}));
   // 5) Bible Stories — 20 themed sections of 5, learned after the numbers.
   let sgid=0;
   STORY_GROUPS.forEach((g,gi)=>{
     const skills=g.s.map(st=>{ const id=sgid++; return {id:"story:"+id,label:st[0],kind:"story",items:[id],story:{n:st[0],b:st[1],c:st[2],v:st[3]}}; });
-    units.push({name:g.t, story:true, firstStory:gi===0, skills});
+    units.push({name:g.t, ic:STORY_ICONS[gi], story:true, firstStory:gi===0, skills});
   });
   return units;
 }
@@ -2526,7 +2529,7 @@ function renderPath(focus){
     if(U.firstStory) html+=`<div class="storydivider">📖 Bible Stories<span>where every great story begins — book · chapter · verse</span></div>`;
     html+=`<div class="unit">
       <button class="grouphead ${open?"open":""} ${grp}" data-grp="${ui}">
-        <span>${U.name}</span><span class="gmeta">${palaceLocked?"🔒":done+"/"+total} ${open?"▾":"▸"}</span></button>`;
+        <span>${U.ic?`<span class="ghead-ic">${U.ic}</span>`:""}${U.name}</span><span class="gmeta">${palaceLocked?"🔒":done+"/"+total} ${open?"▾":"▸"}</span></button>`;
     if(open){
       html+=`<div class="path" style="margin-top:16px">`;
       U.skills.forEach((sk,si)=>{
@@ -2645,7 +2648,7 @@ function renderStories(){
     const done=U.skills.filter(sk=>Prog.doneSkills.includes(sk.id)).length, tot=U.skills.length;
     const ready=U.skills.some((sk,si)=>!Prog.doneSkills.includes(sk.id)&&skillUnlocked(ui,si));
     const open=storyExpanded.has(ui), grp=done===tot?"grp-gold":(ready?"grp-blue":"");
-    html+=`<div class="unit"><button class="grouphead ${open?"open":""} ${grp}" data-sgrp="${ui}"><span>${U.name}</span><span class="gmeta">${done}/${tot} ${open?"▾":"▸"}</span></button>`;
+    html+=`<div class="unit"><button class="grouphead ${open?"open":""} ${grp}" data-sgrp="${ui}"><span>${U.ic?`<span class="ghead-ic">${U.ic}</span>`:""}${U.name}</span><span class="gmeta">${done}/${tot} ${open?"▾":"▸"}</span></button>`;
     if(open){ html+=`<div class="vlist" style="margin-top:10px">`;
       // sort by reachability: the highest number (book, chapter OR verse) sinks to the bottom, so 4:1 comes before 2:7
       const ord=U.skills.map((sk,si)=>({sk,si})).sort((a,b)=>storyReachKey(a.sk)-storyReachKey(b.sk)||a.si-b.si);
@@ -5148,4 +5151,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-082116 -->
+<!-- deploy bb-20260821-082633 -->
