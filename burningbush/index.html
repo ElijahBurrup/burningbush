@@ -3632,9 +3632,13 @@ function memTestRender(){
       <label class="vplabel">Book</label><select class="vpsel" id="mtB">${books}</select>
       <label class="vplabel">Chapter</label><select class="vpsel" id="mtC">${nums(150,c,"chapter")}</select>
       <label class="vplabel">Verse</label><select class="vpsel" id="mtV">${nums(176,v,"verse")}</select>
-      <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):`3 tries, then I'll reveal the answer.`}</div>
+      <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):`Your 🔥 streak stays safe — it only breaks if you miss 3 times in a row.`}</div>
       <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
-      ${Prog.hints>0?`<button class="btn ghost sm" id="mtPeek" style="margin-top:8px;width:100%">🔎 Reveal the book (1 peek · ${Prog.hints} left)</button>`:""}
+      ${Prog.hints>0?`<div class="peekrow" style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn ghost sm" data-peek="b" style="flex:1">🔎 Book</button>
+        <button class="btn ghost sm" data-peek="c" style="flex:1">🔎 Chapter</button>
+        <button class="btn ghost sm" data-peek="v" style="flex:1">🔎 Verse</button>
+      </div><div class="hint" style="text-align:center;margin-top:5px">Peek at any one part — ${Prog.hints} peek${Prog.hints===1?"":"s"} left. Answer right and your streak still counts.</div>`:""}
       <button class="btn ghost sm" id="mtForgot" style="margin-top:8px;width:100%">🤔 I forgot this — re-encode later</button>
       <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)"><div class="hint" style="text-align:center;margin-bottom:6px">This verse's memory trail (D0…D30)</div>${srTrailHTML(verseSRobj(refKey(b,c,v))||{step:1,learnedAt:Date.now()})}</div>
       <div id="mtFb"></div></div>`;
@@ -3663,9 +3667,10 @@ function memTestRender(){
         el("szNo").onclick=goNext;
       } else setTimeout(goNext, 900);
     } else {
-      memTestWrong++; bumpStreak(false); markAnswer(refKey(b,c,v),false); saveProg(); refreshHUD();
+      memTestWrong++; markAnswer(refKey(b,c,v),false); saveProg(); refreshHUD();   // a miss no longer breaks the streak — only 3-in-a-row does
       sels.forEach(s=>{ s.classList.add("wrong"); s.classList.remove("correct"); });
-      if(memTestWrong>=3){ // auto-reveal the answer
+      if(memTestWrong>=3){ // three misses in a row → streak breaks and the app supplies the answer
+        bumpStreak(false); refreshHUD();
         el("mtB").value=b; el("mtC").value=c; el("mtV").value=v;
         sels.forEach(s=>{ s.classList.remove("wrong"); s.disabled=true; }); el("mtCheck").disabled=true; el("mtWarn").textContent="";
         el("mtFb").innerHTML=`<div class="feedback no" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Here's the answer 👇</div><div class="sub">This is <b class="gold">${bookName(b)} ${c}:${v}</b>. Take a moment, then keep going.</div>${nextBtn()}</div>`;
@@ -3687,12 +3692,19 @@ function memTestRender(){
   el("mtC").addEventListener("change",()=>{ el("mtC").classList.remove("wrong"); el("mtFb").innerHTML=""; repop(); });
   el("mtV").addEventListener("change",()=>{ el("mtV").classList.remove("wrong"); el("mtFb").innerHTML=""; });
   repop();   // scope the dropdowns to the initially-selected book on first render
-  if(el("mtPeek")) el("mtPeek").onclick=()=>{                 // spend a Peek token to reveal just the book
-    if((Prog.hints||0)<=0) return; Prog.hints--; spendTalents(3); saveProg();
-    el("mtB").value=b; repop(); el("mtB").classList.add("correct");
-    el("mtPeek").disabled=true; el("mtPeek").textContent="🔎 Book revealed — now the chapter & verse";
-    toast("🔎 Book revealed");
-  };
+  // Peek tokens reveal the ONE part you choose (book, chapter or verse). Peeking never breaks your streak;
+  // answer the rest correctly and it still counts.
+  V.querySelectorAll("[data-peek]").forEach(btn=>btn.onclick=()=>{
+    if((Prog.hints||0)<=0 || btn.disabled) return;
+    Prog.hints--; spendTalents(3); saveProg(); refreshHUD();
+    const which=btn.dataset.peek;
+    if(which==="b"){ el("mtB").value=b; repop(); el("mtB").classList.add("correct"); el("mtB").disabled=true; }
+    else if(which==="c"){ el("mtC").value=c; el("mtC").classList.add("correct"); el("mtC").disabled=true; repop(); el("mtC").value=c; el("mtC").disabled=true; el("mtC").classList.add("correct"); }
+    else { el("mtV").value=v; el("mtV").classList.add("correct"); el("mtV").disabled=true; }
+    btn.disabled=true; btn.style.opacity=".5";
+    if((Prog.hints||0)<=0) V.querySelectorAll("[data-peek]").forEach(x=>{ x.disabled=true; x.style.opacity=".5"; });
+    toast(which==="b"?"🔎 Book revealed":which==="c"?"🔎 Chapter revealed":"🔎 Verse revealed");
+  });
 }
 function warnText(wrong){ const left=3-wrong; return `${left} more ${left===1?"try":"tries"} before the answer is revealed.`; }
 function maxBook(){ let m=0; Prog.memorized.forEach(r=>m=Math.max(m,+r.split(":")[0])); return m; }
@@ -3864,9 +3876,10 @@ function vpCheck(){
     el("vpFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${s.b} ${s.c}:${s.v}</b> · ${talentMsg(pts)}</div></div>`;
     setTimeout(goNext, 900);
   } else {
-    vpWrong++; bumpStreak(false); saveProg(); refreshHUD();
+    vpWrong++; saveProg(); refreshHUD();   // a miss no longer breaks the streak — only 3-in-a-row does
     sels.forEach(x=>{ x.classList.add("wrong"); x.classList.remove("correct"); });
-    if(vpWrong>=3){ // auto-reveal
+    if(vpWrong>=3){ // three misses in a row → streak breaks and the app supplies the answer
+      bumpStreak(false); refreshHUD();
       el("vpB").value=bn; el("vpC").value=s.c; el("vpV").value=s.v;
       sels.forEach(x=>{ x.classList.remove("wrong"); x.disabled=true; }); el("vpCheck").disabled=true; el("vpWarn").textContent="";
       el("vpFb").innerHTML=`<div class="feedback no" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Here's the answer 👇</div><div class="sub">This is <b class="gold">${s.b} ${s.c}:${s.v}</b> — ${bp.word} · ${cp.word} · ${vp.word}.</div><button class="btn" id="vpNext" style="margin-top:10px">${practiceable().length>1?"Next verse →":"Done"}</button></div>`;
@@ -5229,4 +5242,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-084045 -->
+<!-- deploy bb-20260821-084629 -->
