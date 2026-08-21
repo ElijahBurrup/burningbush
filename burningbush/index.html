@@ -2259,13 +2259,18 @@ function renderJourney(){
       <div class="otnt-label" style="margin-top:8px">New Testament <span>books 40–66</span></div>
       <div class="biblestrip nt">${stripFor(40,66)}</div>
       <div class="bible-drop" id="bibleSearchDrop" style="display:none">
-        <input id="bibleSearchIn" class="typein" type="text" inputmode="search" placeholder="Search a book…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="bb_book_filter" data-form-type="other" data-1p-ignore data-lpignore="true" aria-autocomplete="none">
+        <input id="bibleSearchIn" class="typein" inputmode="text" placeholder="Tap to search a book…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-1p-ignore data-lpignore="true" readonly>
         <div class="bible-drop-list">${range(1,66).map(n=>`<button class="bible-drop-item" data-jump="${n}"><b>${pad2(n)}</b> · ${bookName(n)}</button>`).join("")}</div>
       </div>
     </div>`;
   J.querySelectorAll("[data-book]").forEach(c=>c.onclick=()=>renderBookScreen(+c.dataset.book));
-  if(el("bibleSearchBtn")) el("bibleSearchBtn").onclick=(e)=>{ e.stopPropagation(); const d=el("bibleSearchDrop"), open=d.style.display!=="none"; d.style.display=open?"none":"block"; if(!open){ const inp=el("bibleSearchIn"); if(inp){ inp.value=""; inp.dispatchEvent(new Event("input")); setTimeout(()=>{try{inp.focus();}catch(e){}},40); } } };
-  if(el("bibleSearchIn")) el("bibleSearchIn").oninput=()=>{ const q=el("bibleSearchIn").value.trim().toLowerCase(); J.querySelectorAll(".bible-drop-item").forEach(it=>{ it.style.display=(!q||it.textContent.toLowerCase().includes(q))?"":"none"; }); };
+  if(el("bibleSearchBtn")) el("bibleSearchBtn").onclick=(e)=>{ e.stopPropagation(); const d=el("bibleSearchDrop"), open=d.style.display!=="none"; d.style.display=open?"none":"block"; if(!open){ const inp=el("bibleSearchIn"); if(inp){ inp.value=""; inp.dispatchEvent(new Event("input")); } } };  // no programmatic focus — the field is readonly until the user taps it (kills the iOS AutoFill bar)
+  if(el("bibleSearchIn")){ const bsi=el("bibleSearchIn");
+    // readonly-until-tap: iOS won't attach its AutoFill (key/card/pin) accessory bar to a field that was readonly; we drop readonly the instant the user taps so the keyboard still opens
+    const unlock=()=>{ if(bsi.hasAttribute("readonly")) bsi.removeAttribute("readonly"); };
+    ["pointerdown","touchstart","mousedown"].forEach(ev=>bsi.addEventListener(ev,unlock,{passive:true}));
+    bsi.oninput=()=>{ const q=bsi.value.trim().toLowerCase(); J.querySelectorAll(".bible-drop-item").forEach(it=>{ it.style.display=(!q||it.textContent.toLowerCase().includes(q))?"":"none"; }); };
+  }
   J.querySelectorAll("[data-jump]").forEach(it=>it.onclick=()=>renderBookScreen(+it.dataset.jump));
   if(el("jReview")) el("jReview").onclick=()=>{ show("verse"); startMemTest(); };   // jump straight into today's review
   paintTheme();
@@ -5626,4 +5631,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-151333 -->
+<!-- deploy bb-20260821-151922 -->
