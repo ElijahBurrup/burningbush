@@ -1121,6 +1121,7 @@
       <button class="btn ghost" id="testLearnDone" style="width:100%;margin-top:8px">🎓 Simulate Learn finished</button>
       <button class="btn ghost" id="testStoriesDone" style="width:100%;margin-top:8px">📜 Simulate Stories finished</button>
       <button class="btn ghost" id="testUnpaid" style="width:100%;margin-top:8px">🆓 Simulate unpaid user</button>
+      <button class="btn ghost" id="testTalent" style="width:100%;margin-top:8px">🪙 Preview talent animation</button>
       <button class="btn ghost" id="testRestore" style="width:100%;margin-top:8px;color:var(--miss-ink);border-color:var(--miss)">↩ Restore my real progress (after a simulation)</button>
 
       <div id="bugReportsWrap" style="display:none">
@@ -4587,6 +4588,10 @@ function simComplete(which){
 }
 if(el("testLearnDone")) el("testLearnDone").onclick=()=>simComplete("learn");
 if(el("testStoriesDone")) el("testStoriesDone").onclick=()=>simComplete("stories");
+if(el("testTalent")) el("testTalent").onclick=()=>{   // pure-visual demo: plays the coin animation without changing the real total
+  el("themeModal").style.display="none";
+  setTimeout(()=>talentBurst(40), 180);
+};
 if(el("testUnpaid")) el("testUnpaid").onclick=()=>{
   if(Billing.isPro()){ Billing.revoke(); bustCaches(); el("themeModal").style.display="none"; toast("🆓 Now simulating an unpaid (free) user — Pro content is locked."); show("learn"); }
   else { Billing.grant(12); bustCaches(); el("themeModal").style.display="none"; toast("✨ Pro access restored."); show("learn"); }
@@ -5242,4 +5247,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-084629 -->
+<!-- deploy bb-20260821-102348 -->
