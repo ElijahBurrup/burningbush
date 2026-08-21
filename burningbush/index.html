@@ -2131,6 +2131,7 @@ const views=document.querySelectorAll(".view");
 function show(tab){
   // leaving the intro via a tab tap = onboarding is done; stamp it so Journey doesn't re-show the intro from step 0 (state desync)
   if(!Prog.onboarded && tab!=="journey"){ Prog.onboarded=true; saveProg(); }
+  try{ if(["learn","verse","palace","journey","stories"].includes(tab)) Store.set("vv_tab", tab); }catch(e){}  // remember the tab so a page refresh returns here
   views.forEach(v=>v.classList.toggle("active",v.id===tab));
   document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   document.querySelector(".content").scrollTop=0;
@@ -5411,12 +5412,14 @@ const ScratchSim = (()=>{
   };
 })();
 
-/* ---- boot routing: brand-new users get the guided intro; everyone else lands on Learn (no login wall) ---- */
+/* ---- boot routing: brand-new users get the guided intro; everyone else lands where they left off ---- */
+const TABS=["learn","verse","palace","journey","stories"];
+const bootTab=(()=>{ try{ const t=Store.get("vv_tab",null); return TABS.includes(t)?t:"learn"; }catch(e){ return "learn"; } })();
 if(!Prog.onboarded){
   Onboard.start();
-  if(!Onboard.active()) show("learn");   // (signed-in edge case handled inside start())
+  if(!Onboard.active()) show(bootTab);   // (signed-in edge case handled inside start())
 } else {
-  show("learn");   // returning user — straight to the path, no gate
+  show(bootTab);   // returning user / page refresh — back to the tab they were on
 }
 
 /* ---- Android / browser back button = in-app back (one screen per press); at the Learn home, back again exits ---- */
@@ -5448,4 +5451,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-111341 -->
+<!-- deploy bb-20260821-112127 -->
