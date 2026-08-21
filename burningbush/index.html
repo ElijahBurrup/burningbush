@@ -1094,11 +1094,12 @@
       <p class="hint" style="margin:0 0 8px">Wipe all progress and begin as a brand-new user. <b>Export a backup first</b> — you can Restore it later.</p>
       <button class="btn ghost" id="resetBtn" style="width:100%;color:var(--miss-ink);border-color:var(--miss)">♻️ Reset all progress</button>
 
-      <div class="prof-sect" style="margin-top:18px">Testing</div>
+      <div class="prof-sect" style="margin-top:18px">Admin</div>
       <button class="btn ghost" id="testScratchBtn" style="width:100%">🎫 Test scratch-off</button>
       <button class="btn ghost" id="testOnboardBtn" style="width:100%;margin-top:8px">🕯️ Test onboarding</button>
       <button class="btn ghost" id="testLearnDone" style="width:100%;margin-top:8px">🎓 Simulate Learn finished</button>
       <button class="btn ghost" id="testStoriesDone" style="width:100%;margin-top:8px">📜 Simulate Stories finished</button>
+      <button class="btn ghost" id="testUnpaid" style="width:100%;margin-top:8px">🆓 Simulate unpaid user</button>
       <button class="btn ghost" id="testRestore" style="width:100%;margin-top:8px;color:var(--miss-ink);border-color:var(--miss)">↩ Restore my real progress (after a simulation)</button>
 
       <div id="bugReportsWrap" style="display:none">
@@ -4423,6 +4424,7 @@ function renderReminder(){
 }
 el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); renderReminder(); el("backupMsg").innerHTML="";
   if(el("bugReportsWrap")) el("bugReportsWrap").style.display = (typeof Auth!=="undefined" && Auth.isAdmin()) ? "" : "none";
+  if(el("testUnpaid")) el("testUnpaid").textContent = Billing.isPro() ? "🆓 Simulate unpaid user" : "✨ Restore Pro access";
   el("themeModal").style.display="flex"; initProfileCollapse(); };
 // Make each profile subheader a collapsible section; all collapsed each time the menu opens.
 function initProfileCollapse(){
@@ -4492,6 +4494,10 @@ function simComplete(which){
 }
 if(el("testLearnDone")) el("testLearnDone").onclick=()=>simComplete("learn");
 if(el("testStoriesDone")) el("testStoriesDone").onclick=()=>simComplete("stories");
+if(el("testUnpaid")) el("testUnpaid").onclick=()=>{
+  if(Billing.isPro()){ Billing.revoke(); bustCaches(); el("themeModal").style.display="none"; toast("🆓 Now simulating an unpaid (free) user — Pro content is locked."); show("learn"); }
+  else { Billing.grant(12); bustCaches(); el("themeModal").style.display="none"; toast("✨ Pro access restored."); show("learn"); }
+};
 if(el("testRestore")) el("testRestore").onclick=()=>{ const bak=Store.getJSON("vv_simbak",null); if(!bak){ toast("No simulation active."); return; } Prog=migrateProg(bak); Store.setJSON(PROG_KEY,Prog); Store.remove("vv_simbak"); bustCaches(); recomputeLevel(); el("themeModal").style.display="none"; toast("Restored your real progress."); show("learn"); };
 function resetAllProgress(){
   if(!confirm("Start over as a brand-new user?\n\nThis wipes ALL progress on this device — lessons, verses, palaces, streaks — and signs you out.\n\nTip: Export a backup first (you can Restore it later).")) return;
@@ -4885,7 +4891,7 @@ const Onboard = (()=>{
          el("obFb").innerHTML=`<p class="oblead" style="margin-top:14px"><b class="gold">Seed. Seed. Seed.</b> You read it out of the scene — no lists, no flashcards.</p><button class="btn" id="obA">Keep going →</button>`;
        } else { b.classList.add("wrong");
          document.querySelectorAll("#obQ .obopt").forEach(x=>{ if(x.dataset.ok==="1"){x.classList.add("correct");x.disabled=true;} });
-         el("obFb").innerHTML=`<p class="oblead" style="margin-top:14px">Close — but look at the seeds: <b class="gold">1 · 1 · 1</b>. Genesis 1:1.</p><button class="btn" id="obA">I see it →</button>`;
+         el("obFb").innerHTML=`<p class="oblead" style="margin-top:14px">Close — but look at the seeds: <b class="gold">01 · 01 · 01</b>. Genesis 1:1.</p><button class="btn" id="obA">I see it →</button>`;
        }
        el("obA").onclick=next;
      }); }},
@@ -4972,9 +4978,8 @@ const Onboard = (()=>{
    {html:()=>`
      <div class="obflame">🔑</div>
      <h2>Here's the secret.</h2>
-     <p class="oblead">Those three seeds weren't decoration — each one was quietly the <b class="gold">number 1</b>. Every scene in Burning Bush hides a verse's address the same way: pictures that are secretly book, chapter, and verse.</p>
-     <p class="oblead">But how will you know the picture for <b>7</b>? Or <b>40</b>? There's a simple key — the <b class="gold">Major System</b> — and <b class="gold">you already hold half of it</b>.</p>
-     ${videoPlaceholder("Video: The Major System in 90 seconds","Placeholder — how ten sounds turn any number into a picture. (Add your video here.)")}
+     <p class="oblead">Those three seeds weren't decoration — each one was quietly the <b class="gold">number 01</b>. Every scene in Burning Bush hides a verse's address the same way: pictures that are secretly book, chapter, and verse.</p>
+     <p class="oblead">But how will you know the picture for <b>07</b>? Or <b>40</b>? There's a simple key — the <b class="gold">Major System</b> — and we'll build it together, just <b class="gold">a few minutes a day</b>.</p>
      <button class="btn" id="obA">Teach me the key →</button>`,
     wire:()=>{ el("obA").onclick=next; }},
 
@@ -5143,4 +5148,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-081610 -->
+<!-- deploy bb-20260821-082116 -->
