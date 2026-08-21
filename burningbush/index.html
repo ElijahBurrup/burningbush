@@ -2114,6 +2114,20 @@ function updateTabLocks(){
 /* =================== ROUTING =================== */
 const el=id=>document.getElementById(id);
 const views=document.querySelectorAll(".view");
+// Keep password managers (and browser autofill) from popping up on ordinary text fields — palace names,
+// verse scenes, location boxes, etc. Only the real login fields (in #loginModal) accept credential autofill.
+(function guardAutofill(){
+  const mark=root=>{ if(!root||!root.querySelectorAll) return;
+    const list = root.matches && root.matches("input,textarea") ? [root] : [];
+    root.querySelectorAll && root.querySelectorAll("input,textarea").forEach(t=>list.push(t));
+    list.forEach(t=>{ if(t.closest && t.closest("#loginModal")) return; if(t.type==="password"||t.type==="email") return;
+      if(!t.getAttribute("autocomplete")) t.setAttribute("autocomplete","off");
+      t.setAttribute("data-1p-ignore","true"); t.setAttribute("data-lpignore","true"); t.setAttribute("data-form-type","other"); });
+  };
+  const phone=document.querySelector(".phone")||document.body;
+  mark(phone);
+  try{ new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{ if(n.nodeType===1) mark(n); }))).observe(phone,{childList:true,subtree:true}); }catch(e){}
+})();
 function show(tab){
   // leaving the intro via a tab tap = onboarding is done; stamp it so Journey doesn't re-show the intro from step 0 (state desync)
   if(!Prog.onboarded && tab!=="journey"){ Prog.onboarded=true; saveProg(); }
@@ -3387,10 +3401,9 @@ function flyToMetric(targetId, glyph, count, startDelay){
   };
   startDelay ? setTimeout(run,startDelay) : run();
 }
-function testHUD(){ return `<div id="testHud" style="display:flex;justify-content:space-around;font-size:12px;font-weight:800;margin:0 0 10px">
-  <span class="gold">🪙 ${Prog.talents||0} talents</span>
-  <span style="color:var(--accent)">🔥 streak ${Prog.streak||0}</span>
-  <span class="muted">best ${Prog.bestStreak||0}</span></div>`; }
+function testHUD(){ return `<div id="testHud" style="display:flex;justify-content:center;gap:28px;margin:0 0 12px">
+  <span style="display:inline-flex;align-items:center;gap:7px;font-size:17px;font-weight:800;color:var(--accent)"><span style="font-size:23px;line-height:1">🔥</span>Streak ${Prog.streak||0}</span>
+  <span style="display:inline-flex;align-items:center;gap:7px;font-size:17px;font-weight:800;color:var(--gold-ink)"><span style="font-size:23px;line-height:1">🏆</span>Best ${Prog.bestStreak||0}</span></div>`; }
 function refreshHUD(){ const h=el("testHud"); if(h) h.outerHTML=testHUD(); }
 function talentMsg(pts){ return pts<0 ? `<span class="muted">already earned today — streak still counts!</span>` : `<b class="gold">+${pts} talents</b> · streak ${Prog.streak}`; }
 // A verse-test session runs in two phases:
@@ -3676,8 +3689,11 @@ function memTestRender(){
     <div class="card">${testHUD()}<p class="lead" style="margin-bottom:8px">Which verse is this? Choose its book, chapter and verse.</p>
       <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${kjvText(b,c,v)}"</div>
       <label class="vplabel">Book</label><select class="vpsel" id="mtB">${books}</select>
-      <label class="vplabel">Chapter</label><select class="vpsel" id="mtC">${nums(150,c,"chapter")}</select>
-      <label class="vplabel">Verse</label><select class="vpsel" id="mtV">${nums(176,v,"verse")}</select>
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <div style="flex:1;min-width:0"><label class="vplabel">Chapter</label><select class="vpsel" id="mtC">${nums(150,c,"chapter")}</select></div>
+        <div style="font-weight:800;font-size:24px;color:var(--muted);padding:0 0 8px">:</div>
+        <div style="flex:1;min-width:0"><label class="vplabel">Verse</label><select class="vpsel" id="mtV">${nums(176,v,"verse")}</select></div>
+      </div>
       <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):`Your 🔥 streak stays safe — it only breaks if you miss 3 times in a row.`}</div>
       <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
       ${Prog.hints>0?`<div class="peekrow" style="display:flex;gap:6px;margin-top:8px">
@@ -3730,9 +3746,9 @@ function memTestRender(){
   // scope Chapter to the selected book's chapter count, and Verse to that chapter's verse count (both ∩ known numbers) — no more "chapter 150" for a 1-chapter book
   function repop(){
     const bb=+el("mtB").value||0, cMax=chapCount(bb)||150, curC=+el("mtC").value;
-    el("mtC").innerHTML=nums(cMax,c); if((k.has(curC)||curC===c)&&curC<=cMax) el("mtC").value=curC;
+    el("mtC").innerHTML=nums(cMax,c,"chapter"); if((k.has(curC)||curC===c)&&curC<=cMax) el("mtC").value=curC;
     const cc=+el("mtC").value||0, vMax=verseCount(bb,cc)||176, curV=+el("mtV").value;
-    el("mtV").innerHTML=nums(vMax,v); if((k.has(curV)||curV===v)&&curV<=vMax) el("mtV").value=curV;
+    el("mtV").innerHTML=nums(vMax,v,"verse"); if((k.has(curV)||curV===v)&&curV<=vMax) el("mtV").value=curV;
   }
   el("mtB").addEventListener("change",()=>{ el("mtB").classList.remove("wrong"); el("mtFb").innerHTML=""; repop(); });
   el("mtC").addEventListener("change",()=>{ el("mtC").classList.remove("wrong"); el("mtFb").innerHTML=""; repop(); });
@@ -3897,8 +3913,11 @@ function vpRender(){
       <p class="lead" style="margin-bottom:8px">Which verse is this? Choose the book, chapter and verse — only what you've learned is shown.</p>
       <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${s.text}"</div>
       <label class="vplabel">Book</label><select class="vpsel" id="vpB">${books}</select>
-      <label class="vplabel">Chapter</label><select class="vpsel" id="vpC">${numsC}</select>
-      <label class="vplabel">Verse</label><select class="vpsel" id="vpV">${numsV}</select>
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <div style="flex:1;min-width:0"><label class="vplabel">Chapter</label><select class="vpsel" id="vpC">${numsC}</select></div>
+        <div style="font-weight:800;font-size:24px;color:var(--muted);padding:0 0 8px">:</div>
+        <div style="flex:1;min-width:0"><label class="vplabel">Verse</label><select class="vpsel" id="vpV">${numsV}</select></div>
+      </div>
       <div class="hint" id="vpWarn" style="margin-top:10px;text-align:center">${vpWrong>0?warnText(vpWrong):`3 tries, then I'll reveal the answer.`}</div>
       <button class="btn" id="vpCheck" style="margin-top:8px">Check</button>
       <div id="vpFb"></div>
@@ -5343,4 +5362,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-105315 -->
+<!-- deploy bb-20260821-105853 -->
