@@ -207,6 +207,7 @@
   .tline{display:flex;align-items:center;justify-content:center;gap:16px;margin:6px 0}
   .tline .pegimg,.tline .imgph,.tline .pegimg-sm,.tline .imgph-sm{width:112px;height:112px}
   .tline .tname,.tline .tword{font-size:30px;font-weight:800;color:var(--ink)}
+  .bookimg-note{text-align:center;font-size:13px;color:var(--muted);margin:0 0 4px}.bookimg-note b{color:var(--gold-ink)}
   .tnum{font-size:52px;font-weight:900;text-align:center;line-height:1.05;margin:2px 0;letter-spacing:.5px;color:var(--gold-ink)}
   .pegedit{margin:8px 0;border:1px solid var(--line);border-radius:12px;background:var(--panel2);padding:0 12px}
   .pegedit summary{cursor:pointer;padding:10px 2px;font-weight:700;color:var(--accent);list-style:none}
@@ -1658,11 +1659,8 @@ function pegImg(kind,n,word,big){
     return `<img class="${c}" src="/burningbush/images/pegs/words/${slug}.svg" alt="${w}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="${ph}"><span>${w}</span></div>`;
   }
-  // a user-written image for a Bible book replaces the default book icon with their text label
-  if(kind==="book" && typeof Prog!=="undefined" && Prog && Prog.customBookImg && Prog.customBookImg[n]){
-    const cc = big ? "pegcustom" : "pegcustom pegcustom-sm";
-    return `<div class="${cc}"><span>Picture</span><b>${Prog.customBookImg[n]}</b></div>`;
-  }
+  // The drawn book icon ALWAYS renders (every book has one). A user's own book-image words are shown
+  // as a caption beside the icon by the caller (teachCardBody) — they never replace the icon.
   const src = kind==="book" ? `/burningbush/images/books/${n}.svg` : `/burningbush/images/pegs/${n}.svg`;
   const c = big ? "pegimg" : "pegimg-sm", ph = big ? "imgph" : "imgph-sm";
   if(kind==="book") return `<img class="${c}" src="${src}" alt="${word}" onerror="this.style.display='none'">`;
@@ -1697,8 +1695,10 @@ function teachCardBody(kind, n){
       : ((typeof REL!=="undefined" && REL[n] && REL[n].imgToBook) ? REL[n].imgToBook
       : (mb&&mb.t ? mb.t : `The name <b>${bookName(n)}</b> sounds like <b>${mb?mb.s:""}</b>; its number image is <b class="gold">${word}</b>.`));
     const custom = Prog.customBook[n] ? `<div class="relbox" style="border:1px solid var(--gold2)"><div class="rl" style="color:var(--gold-ink)">★ My own scene</div>${Prog.customBook[n]}</div>` : "";
+    const bookImgNote = Prog.customBookImg[n] ? `<div class="bookimg-note">✎ Your book image: <b>${Prog.customBookImg[n]}</b></div>` : "";
     return `<div class="stage">
         <div class="tline">${pegImg("book",n,bookName(n),true)}<span class="tname">${bookName(n)}</span></div>
+        ${bookImgNote}
         <button class="btn ghost sm" id="tcBookImg" style="margin:2px auto 6px;display:block">✏️ ${Prog.customBookImg[n]?"Edit my book image":"Write my own book image"}</button>
         <div class="tnum">Book ${dispNum("book",n)}</div>
         <div class="tline"><span class="tword">${word}</span>${pegImg("num",n,word,true)}</div>
@@ -5097,4 +5097,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260820-183857 -->
+<!-- deploy bb-20260820-210847 -->
