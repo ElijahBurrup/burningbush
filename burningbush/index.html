@@ -508,7 +508,7 @@
   /* CHAPTERS render as big gold "CH" cards; VERSES stay small number squares — unmistakably different screens */
   .chapboxes{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:12px 0 4px}
   .chapbox{position:relative;aspect-ratio:1.1;border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;background:var(--cell2-bg);border:2px solid var(--box-line);color:var(--muted);font-weight:800}
-  .chapbox.ready{background:var(--chapready-bg);border-color:var(--gold2);color:var(--gold-ink)}
+  .chapbox.ready{border-color:var(--gold2);color:var(--gold-ink)}   /* outlined: dark center + gold border (was a filled panel) */
   .chapbox.locked{opacity:.5;cursor:default}
   .chapbox .ck{font-size:9px;letter-spacing:1.5px;opacity:.75}
   .chapbox .cn{font-size:21px;line-height:1}
@@ -520,7 +520,7 @@
   .navrow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
   .navrow .btn.sm{width:auto}
   .vlegend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:4px 0 14px}
-  .vlegend span b{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px;background:var(--cell2-bg)}
+  .vlegend span b{display:inline-block;box-sizing:border-box;width:13px;height:13px;border-radius:3px;vertical-align:-2px;margin-right:4px;background:var(--cell2-bg);border:2px solid var(--line)}   /* outlined swatches — match the outlined cells */
   .biblestrip{display:grid;grid-template-columns:repeat(11,1fr);gap:3px;margin-top:6px}
   .bible-search-btn{background:var(--panel3);border:1px solid var(--line);border-radius:10px;width:34px;height:34px;font-size:16px;cursor:pointer;color:var(--ink);flex:0 0 auto;display:grid;place-items:center}
   .bible-search-btn:active{transform:scale(.94)}
@@ -530,7 +530,7 @@
   .bible-drop-item{text-align:left;background:none;border:none;color:var(--ink);font-weight:700;font-size:14px;padding:9px 10px;border-radius:8px;cursor:pointer}
   .bible-drop-item b{color:var(--gold-ink)}
   .bible-drop-item:active{background:var(--panel2)}
-  .biblestrip .bk{aspect-ratio:1.35;border-radius:4px;background:var(--cell-bg);font-size:8px;display:grid;place-items:center;color:var(--cell-ink)}
+  .biblestrip .bk{aspect-ratio:1.12;border-radius:6px;background:var(--cell-bg);font-size:12px;font-weight:700;display:grid;place-items:center;color:var(--cell-ink)}
   .biblestrip .bk.on{background:var(--accent);color:var(--on-blue);font-weight:800}
 
   /* ---- foundations reuse ---- */
@@ -2240,8 +2240,7 @@ function renderJourney(){
       return `<div class="card" style="padding:11px 14px;margin-bottom:9px;text-align:center"><div style="font-weight:800;color:var(--good)">✓ You're caught up today</div><div class="hint" style="margin-top:3px">${streak?streak+" · ":""}${weekLine}</div></div>`;
     })()}
     <div class="card" style="margin-top:0;position:relative;padding:12px 14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="font-size:15px;margin:0">The whole Bible</h2><button class="bible-search-btn" id="bibleSearchBtn" title="Jump to a book">🔍</button></div>
-      <p class="hint" style="margin:3px 0 7px">Blue = books you can address. Tap one, or 🔍 to jump.</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><h2 style="font-size:15px;margin:0">The whole Bible</h2><button class="bible-search-btn" id="bibleSearchBtn" title="Jump to a book">🔍</button></div>
       <div class="otnt-label">Old Testament <span>books 1–39</span></div>
       <div class="biblestrip">${stripFor(1,39)}</div>
       <div class="otnt-label" style="margin-top:8px">New Testament <span>books 40–66</span></div>
@@ -2289,7 +2288,7 @@ function renderBookScreen(bn){
         <div><h2 style="margin:0;font-size:20px">${bookName(bn)}</h2>
           <div class="muted" style="font-size:13px">Book ${pad2(bn)} · image “${w}” · tap a chapter</div></div>
       </div>
-      <div class="vlegend" style="margin-top:10px"><span><b style="background:var(--gold2);border-color:var(--gold-ink)"></b>chapters you can memorize</span><span><b style="background:#20242e;border-color:#3a4150"></b>not ready yet</span><span>📖 a story begins here</span></div>
+      <div class="vlegend" style="margin-top:10px"><span><b style="border-color:var(--gold2)"></b>chapters you can memorize</span><span><b></b>not ready yet</span><span>📖 a story begins here</span></div>
       <div class="chapboxes">${chips}</div>
     </div>`;
   el("bkBack").onclick=renderJourney;
@@ -2316,11 +2315,11 @@ function renderChapterScreen(bn,c){
       <div class="chpeg">${pegImg("num",c,pegFor(c).word,true)}<div class="chpeg-w">Chapter ${pad2(c)} = <b class="gold">${pegFor(c).word}</b></div></div>
       <div class="muted" style="font-size:13px;margin-bottom:8px">${verseCount(bn,c)} verses — small squares</div>
       <div class="vlegend">
-        <span><b style="background:var(--gold2);border-color:var(--gold-ink)"></b>ready</span>
-        <span><b style="background:var(--green);border-color:var(--green)"></b>suggested / saved</span>
-        <span><b style="background:var(--miss);border-color:var(--miss-ink)"></b>skip</span>
-        <span><b style="background:#20242e;border-color:#3a4150"></b>not ready</span>
-        <span><b style="background:var(--gold);border-color:var(--gold-ink)"></b>learned</span>
+        <span><b style="border-color:var(--gold2)"></b>ready</span>
+        <span><b style="border-color:var(--green)"></b>suggested / saved</span>
+        <span><b style="border-color:var(--miss-ink)"></b>skip</span>
+        <span><b></b>not ready</span>
+        <span><b style="background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:var(--gold-ink)"></b>learned</span>
         <span>📖 a story begins here</span>
       </div>
       <p class="hint">Tap a verse to memorize it.</p>
@@ -4298,14 +4297,15 @@ function renderWalk(){
   // ---- scene phase: place it in a palace room + write the scene ----
   const palaces=(Prog.palaces||[]).map((p,i)=>[p,i]).filter(x=>x[0]);
   const loc=(Prog.verseLoc&&Prog.verseLoc[vkey])||{};
-  const selP = (loc.p!=null && palaces.some(x=>x[1]===loc.p)) ? loc.p : (palaces.length?palaces[0][1]:null);
+  const selP = (loc.p!=null && palaces.some(x=>x[1]===loc.p)) ? loc.p : null;   // blank by default; the saved palace when there is one
   const roomsFor=(pi)=>{ const p=Prog.palaces[pi]; return (p&&Array.isArray(p.stations))?p.stations:[]; };
+  const roomOpts=(pi)=>`<option value="" ${loc.room?"":"selected"}>— room / spot —</option>`+roomsFor(pi).map(r=>`<option ${r===loc.room?"selected":""}>${r}</option>`).join("");
   const palaceSel = palaces.length
-    ? `<label class="vplabel">Which palace?</label><select class="vpsel" id="wPalace">${palaces.map(x=>`<option value="${x[1]}" ${x[1]===selP?"selected":""}>${x[0].place}</option>`).join("")}</select>
-       <label class="vplabel">Which room / spot?</label><select class="vpsel" id="wRoom">${roomsFor(selP).map(r=>`<option ${r===loc.room?"selected":""}>${r}</option>`).join("")||`<option value="">(add rooms to this palace first)</option>`}</select>`
+    ? `<select class="vpsel" id="wPalace" style="text-align:center;text-align-last:center"><option value="" ${selP==null?"selected":""}>— palace —</option>${palaces.map(x=>`<option value="${x[1]}" ${x[1]===selP?"selected":""}>${x[0].place}</option>`).join("")}</select>
+       <label class="vplabel" style="text-align:center;display:block;margin-top:10px">Which room / spot?</label><select class="vpsel" id="wRoom" style="text-align:center;text-align-last:center">${selP!=null?roomOpts(selP):`<option value="" selected>— room / spot —</option>`}</select>`
     : `<div class="hint" style="margin:2px 0 10px">You don't have a memory palace yet — build one in the <b>Palace</b> tab. For now, just describe where your scene happens.</div>`;
   V.innerHTML=`<div class="card">
-      <div class="lv-topbar" style="margin:0 0 6px"><button class="lclose" id="wClose" style="margin:0">✕</button></div>
+      <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose" id="wClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">${palaces.length?"Which palace?":"Write your scene"}</div><span style="width:22px;flex:0 0 22px"></span></div>
       ${palaceSel}
       <div class="lv-ref" style="font-size:20px;margin:8px 0 4px">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
       <div class="lv-triple lv-triple-sm">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
@@ -4317,13 +4317,14 @@ function renderWalk(){
   if(el("wClose")) el("wClose").onclick=()=> sceneBackfill ? (sceneBackfill=false, sceneCancel()) : walkReturn();
   if(el("wBack")){ if(sceneBackfill){ el("wBack").textContent="✕ Cancel"; el("wBack").onclick=()=>{ sceneBackfill=false; sceneCancel(); }; }
     else el("wBack").onclick=()=>{ wPhase="visual"; renderWalk(); }; }
-  if(el("wPalace")) el("wPalace").onchange=()=>{ const pi=+el("wPalace").value, rs=roomsFor(pi);
-    el("wRoom").innerHTML=rs.map(r=>`<option>${r}</option>`).join("")||`<option value="">(add rooms to this palace first)</option>`; };
-  setTimeout(()=>{ try{el("wScene").focus();}catch(e){} }, 60);
+  if(el("wPalace")) el("wPalace").onchange=()=>{ const val=el("wPalace").value;
+    if(val===""){ el("wRoom").innerHTML=`<option value="" selected>— room / spot —</option>`; return; }
+    const rs=roomsFor(+val); el("wRoom").innerHTML=`<option value="" selected>— room / spot —</option>`+(rs.map(r=>`<option>${r}</option>`).join("")||`<option value="">(add rooms to this palace first)</option>`); };
   const finish=()=>{
     const text=(el("wScene").value||"").trim();
     if(text) Prog.customScene[vkey]=text; else delete Prog.customScene[vkey];
-    if(el("wPalace")){ Prog.verseLoc=Prog.verseLoc||{}; Prog.verseLoc[vkey]={p:+el("wPalace").value, room:(el("wRoom")?el("wRoom").value:"")}; }
+    if(el("wPalace")){ Prog.verseLoc=Prog.verseLoc||{}; const pv=el("wPalace").value;   // blank palace → don't record a bogus location
+      if(pv!=="") Prog.verseLoc[vkey]={p:+pv, room:(el("wRoom")?el("wRoom").value:"")}; else delete Prog.verseLoc[vkey]; }
     saveProg(); addMemorized(curScene); sceneBackfill=false; walkReturn();
   };
   if(el("wDone")) el("wDone").onclick=()=>{
@@ -5606,4 +5607,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-142054 -->
+<!-- deploy bb-20260821-143020 -->
