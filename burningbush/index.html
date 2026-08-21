@@ -506,9 +506,15 @@
   .vpsel:focus{border-color:var(--gold2);outline:none}
   .vpsel.correct{border-color:var(--green);background:var(--ok-bg)}
   .vpsel.wrong{border-color:var(--miss-ink);background:var(--no-bg)}
-  .milestone{margin:26px 0;background:var(--panel2);border:1px dashed var(--box-line);border-radius:16px;padding:18px;text-align:center;opacity:.72}
+  .milestone{margin:22px 0;background:var(--panel2);border:1px dashed var(--box-line);border-radius:16px;overflow:hidden;opacity:.72}
   .milestone.reached{background:var(--milestone-bg);border:1px solid var(--gold);opacity:1}
-  .milestone .mtitle{font-size:18px;font-weight:800;color:var(--muted);letter-spacing:.4px;margin:4px 0}
+  .milestone>.ms-summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:11px;padding:15px 16px}
+  .milestone>.ms-summary::-webkit-details-marker{display:none}
+  .milestone .ms-e{font-size:24px;line-height:1;flex:0 0 auto}
+  .milestone .ms-caret{color:var(--gold-ink);font-size:13px;transition:transform .25s ease;flex:0 0 auto}
+  .milestone[open] .ms-caret{transform:rotate(90deg)}
+  .milestone .ms-detail{padding:2px 18px 18px;text-align:center}
+  .milestone .mtitle{flex:1;text-align:left;font-size:17px;font-weight:800;color:var(--muted);letter-spacing:.3px}
   .milestone.reached .mtitle{color:var(--gold-ink)}
   .milestone .msub{font-size:13px;color:var(--muted);line-height:1.5}
   .milestone.reached .msub{color:var(--ink-soft2)}
@@ -1761,6 +1767,7 @@ function migrateProg(p){
   if(!("covenant" in p)) p.covenant=null; // ISO date the user made the daily-memory resolve
   if(!Array.isArray(p.scratchWon)) p.scratchWon=[]; if(typeof p.scratchInit!=="boolean") p.scratchInit=false; // tabs won via scratch-off + one-time back-compat grant
   if(typeof p.fiveVerseHintShown!=="boolean") p.fiveVerseHintShown=false; // one-time "a 5-streak unlocks your palace" nudge
+  p.msSeen=obj(p.msSeen); // milestones the user has already seen expanded (collapsed thereafter)
   p.w4w=obj(p.w4w); // per-verse word-for-word practice: {refKey:{count, times:[ts...]}}
   p.tickets=arr(p.tickets); // support/feedback submissions {type,text,ts,...} — synced to the DB with progress
   p.palaces=p.palaces.map(pl=>{ if(pl&&typeof pl==="object"){ if(!pl.learnedAt) pl.learnedAt=Date.now(); if(!pl.step) pl.step=1; } return pl; }); // spaced-repetition trail: D0 done at build
@@ -2417,13 +2424,18 @@ function gemCountsHtml(){
 }
 function renderMilestone(m){
   if(!m.reached()) return "";   // a milestone stays hidden until it's earned, then it appears in gold
-  return `<div class="milestone reached">
-    <div style="font-size:26px">${m.e}</div>
-    <div class="mtitle">${m.t}</div>
-    <div class="msub">${m.c}<br><br>${m.d}</div>
-    ${m.counts?gemCountsHtml():""}
-    <div class="mnum" style="margin-top:10px">${m.stories ? `<b class="gold">${storiesLearned()}</b> of 100 stories learned`
-                   : `<b class="gold">${reachableGems()}</b> of ${totalGems()} heart-verses within your reach`}</div></div>`;
+  Prog.msSeen = Prog.msSeen || {};
+  const firstTime = !Prog.msSeen[m.t];           // celebrate it expanded the first time; collapsed forever after
+  if(firstTime){ Prog.msSeen[m.t]=Date.now(); saveProg(); }
+  const num = m.stories ? `<b class="gold">${storiesLearned()}</b> of 100 stories learned`
+                        : `<b class="gold">${reachableGems()}</b> of ${totalGems()} heart-verses within your reach`;
+  return `<details class="milestone reached"${firstTime?" open":""}>
+    <summary class="ms-summary"><span class="ms-e">${m.e}</span><span class="mtitle">${m.t}</span><span class="ms-caret">▸</span></summary>
+    <div class="ms-detail">
+      <div class="msub">${m.c}<br><br>${m.d}</div>
+      ${m.counts?gemCountsHtml():""}
+      <div class="mnum" style="margin-top:10px">${num}</div>
+    </div></details>`;
 }
 // The next lesson to work on: first unlocked, not-yet-done skill in path order (a "blue" tile).
 // Prefer the main path; fall back to optional skills only if the main path is complete.
@@ -2494,7 +2506,7 @@ function goalpostCard(){
 function renderPath(focus){
   updateMetrics();
   const L=el("learn");
-  let html=`<h2>Learn</h2>${goalpostCard()}`;
+  let html=`<h2>Learn</h2>`;
   if(expandedUnits===null) expandedUnits=new Set(); // start with every group collapsed
   // Opening Learn from the bottom menu: minimize everything, open only the unit holding the
   // next blue lesson, and scroll to it.
@@ -5151,4 +5163,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-082633 -->
+<!-- deploy bb-20260821-083041 -->
