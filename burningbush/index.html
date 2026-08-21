@@ -146,12 +146,12 @@
   .btnrow{display:flex;gap:10px;margin-top:12px}
   /* verse hub — large square launcher buttons (2-col grid) + full-width test/review bars */
   .versehub{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
-  .vhub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:16px 12px;font-size:15px;font-weight:800;color:var(--ink);cursor:pointer;text-align:center}
+  .vhub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:18px 12px;font-size:17px;font-weight:800;color:var(--ink);cursor:pointer;text-align:center}
   .vhub.sq{aspect-ratio:1.1}
-  .vhub .vi{font-size:30px;line-height:1}
-  .vhub small{font-size:12px;font-weight:700;color:var(--muted)}
-  .vhub.wide{grid-column:1/-1;flex-direction:row;gap:12px;aspect-ratio:auto;padding:16px}
-  .vhub.wide .vi{font-size:22px}
+  .vhub .vi{font-size:40px;line-height:1}
+  .vhub small{font-size:13px;font-weight:700;color:var(--muted)}
+  .vhub.wide{grid-column:1/-1;flex-direction:row;gap:14px;aspect-ratio:auto;padding:18px}
+  .vhub.wide .vi{font-size:28px}
   .vhub:active{transform:scale(.98)}
   .vhub.review{background:linear-gradient(135deg,var(--blue),var(--blue2));color:var(--on-blue);border:none;box-shadow:0 4px 0 var(--blue-shadow)}
   .vhub.review small{color:var(--on-blue)}
@@ -599,6 +599,10 @@
   #navBanner.show{opacity:1;transform:translateX(-50%) translateY(0)}
   .placechip{display:block;width:100%;text-align:left;background:var(--panel2);border:2px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:9px;color:var(--ink);font-weight:700;font-size:15px;cursor:pointer}
   .placechip:active{border-color:var(--gold2)}
+  .ideahead{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px}
+  .idealist{display:flex;flex-wrap:wrap;gap:8px}
+  .ideachip{background:var(--panel2);border:1px solid var(--gold2);border-radius:999px;padding:8px 14px;color:var(--gold-ink);font-weight:700;font-size:14px;cursor:pointer}
+  .ideachip:active{background:var(--gold-soft)}
   .stationlist{margin:10px 0}
   .stationlist .st{display:flex;justify-content:space-between;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:7px;font-size:14px}
   .stationlist .st .rm{color:var(--miss-ink);cursor:pointer;font-weight:800;padding:0 4px}
@@ -2656,7 +2660,7 @@ function renderStories(){
   S.querySelectorAll("[data-story]").forEach(r=>r.onclick=()=>{ const [ui,si]=r.dataset.story.split(":").map(Number); startStoryLesson(UNITS[ui].skills[si],"stories",renderStories); });
 }
 /* ---- Memory Palace builder (build 3 personal palaces) ---- */
-const PALACE_PLACES=["My house","My school / workplace","A previous home","A friend's or relative's house","My daily commute / route","My church"];
+const PALACE_IDEAS=["A Home","A Commute","A Business","A Church","A School"];   // inspiration prompts on the naming page
 /* ---- palace spaced-repetition trail: review at D0, D1, D3, D7, D16, D30 ---- */
 const SR_TRAIL=[0,1,3,7,16,30]; // checkpoint days. Intervals are RELATIVE: each completed review restarts the clock to the NEXT gap,
 // so a backlog only ever advances ONE checkpoint at a time (fall 3 days behind and D1+D3 due → doing it counts as D1, then D3 waits 2 more days).
@@ -2754,31 +2758,26 @@ function startNewPalace(){ // build an extra palace from the Palace tab
 }
 function renderPalaceBuild(){
   const L=el(PB.host), title=PB.slot===0?"Build your first palace":"Build a palace";
-  if(PB.stage===0){ // intro + video + why
+  if(PB.stage===0){ // name the palace (a real page, not a popup) — with idea prompts underneath
     L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="pbClose">✕</button><div style="font-weight:800;flex:1;text-align:center">${title}</div><div style="width:24px"></div></div>
       <div class="card">
-        <div class="vidph"><div class="play">▶</div><div class="vt">Video: What is a Memory Palace?</div><div class="vs">Placeholder — explains the method of loci and why it works</div></div>
-        <h2 style="font-size:19px;margin:6px 0 4px">Build a place you already know</h2>
-        <p class="lead">A memory palace is a real location you know by heart. You'll place things you want to remember — in order — at spots along a familiar walk. Because you already know the route, the order sticks. Let's build yours.</p>
-        <button class="btn" id="pbGo">Choose my place →</button></div></div>`;
-    el("pbClose").onclick=PB.ret; el("pbGo").onclick=()=>{ PB.stage=1; renderPalaceBuild(); };
-    return;
-  }
-  if(PB.stage===1){ // pick place
-    L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="pbClose">✕</button><div style="font-weight:800;flex:1;text-align:center">${title}</div><div style="width:24px"></div></div>
-      <div class="card"><h2 style="font-size:18px">Which place will this palace be?</h2>
-        <p class="hint">Pick somewhere you can walk in your mind with your eyes closed.</p>
-        ${PALACE_PLACES.map(p=>`<button class="placechip" data-place="${p}">${p}</button>`).join("")}
-        <button class="placechip" data-place="__custom">✏️ Custom — type my own…</button></div></div>`;
+        <h2 style="font-size:19px;margin:2px 0 4px">Name your palace</h2>
+        <p class="hint">Choose a real place you know by heart — you'll walk through it in your mind to store things in order.</p>
+        <input class="typein" id="pbName" placeholder="e.g. My childhood home" value="${(PB.place||"").replace(/"/g,"&quot;")}" style="text-align:left;font-size:16px;padding:13px;width:100%;box-sizing:border-box">
+        <div class="ideahead">Need inspiration? Tap an idea:</div>
+        <div class="idealist">${PALACE_IDEAS.map(p=>`<button class="ideachip" data-idea="${p}">${p}</button>`).join("")}</div>
+        <button class="btn" id="pbNameGo" style="margin-top:16px" ${PB.place?"":"disabled"}>Next → add locations</button>
+      </div></div>`;
     el("pbClose").onclick=PB.ret;
-    L.querySelectorAll("[data-place]").forEach(b=>b.onclick=()=>{
-      if(b.dataset.place==="__custom"){ const t=prompt("Name your place (e.g. Grandma's house):"); if(!t) return; PB.place=t.trim(); }
-      else PB.place=b.dataset.place;
-      PB.stage=2; renderPalaceBuild();
-    });
+    const nameIn=el("pbName"), go=el("pbNameGo");
+    const sync=()=>{ go.disabled = !(nameIn.value||"").trim(); };
+    nameIn.oninput=sync;
+    L.querySelectorAll("[data-idea]").forEach(b=>b.onclick=()=>{ nameIn.value=b.dataset.idea; sync(); nameIn.focus(); });
+    go.onclick=()=>{ const v=(nameIn.value||"").trim(); if(!v) return; PB.place=v; PB.stage=1; renderPalaceBuild(); };
+    setTimeout(()=>{ try{nameIn.focus();}catch(e){} },50);
     return;
   }
-  // stage 2: add stations (walk through, type each location)
+  // stage 1: add stations (walk through, type each location)
   const min=5, n=PB.stations.length;
   L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="pbClose">✕</button><div style="font-weight:800;flex:1;text-align:center">${PB.place}</div><div style="width:24px"></div></div>
     <div class="card">
@@ -5145,4 +5144,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-074419 -->
+<!-- deploy bb-20260821-075458 -->
