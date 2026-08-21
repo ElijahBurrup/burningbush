@@ -2575,7 +2575,10 @@ function renderPath(focus){
   });
   if(focusTile){
     const tile=L.querySelector(`.tile[data-ui="${focusTile.ui}"][data-si="${focusTile.si}"]`);
-    if(tile){ tile.classList.add("focusnext"); requestAnimationFrame(()=>tile.scrollIntoView({behavior:"smooth",block:"center"})); }
+    if(tile) tile.classList.add("focusnext");
+    // pin the current round's header to the very top of the scroll area (just under the sticky menu)
+    const head=L.querySelector(`[data-grp="${focusTile.ui}"]`);
+    if(head) requestAnimationFrame(()=>{ const c=document.querySelector(".content"); if(c){ const cr=c.getBoundingClientRect(), hr=head.getBoundingClientRect(); c.scrollTop += (hr.top-cr.top)-8; } });
   }
   paintTheme();
 }
@@ -5142,4 +5145,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-074137 -->
+<!-- deploy bb-20260821-074419 -->
