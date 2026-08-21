@@ -104,9 +104,14 @@
   .brandtext{display:flex;flex-direction:column;line-height:1.05}
   .brand b{font-size:16px;letter-spacing:.2px}
   .brandtext small{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
-  .metrics{display:flex;gap:12px}
-  .metric{display:flex;align-items:center;gap:4px;font-weight:800;font-size:14px}
-  .metric span{font-size:15px}
+  .metrics{display:flex;gap:12px;align-items:flex-start}
+  .metric{display:flex;flex-direction:column;align-items:center;gap:1px;font-weight:800;font-size:13px;line-height:1;min-width:26px}
+  .metric span:first-child{font-size:16px}
+  .metric span:last-child{font-size:13px;font-variant-numeric:tabular-nums}
+  #talMetric span:last-child{font-size:15px;color:var(--gold-ink)}
+  #talMetric.talpulse{animation:talpulse .4s ease}
+  @keyframes talpulse{0%,100%{transform:scale(1)}45%{transform:scale(1.28)}}
+  #talMetric.talspend span:last-child{color:var(--miss-ink)}
   .metric.lvl{color:var(--gold-ink)} .metric.mem{color:var(--good)} .metric.bk{color:var(--accent)}
 
   .content{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:18px 16px 24px;-webkit-overflow-scrolling:touch}
@@ -405,6 +410,15 @@
   .imgph-sm{width:104px;height:104px;display:none;align-items:center;justify-content:center;flex-direction:column;color:var(--muted);font-size:10px;text-align:center}
   .srflash{animation:srpop .4s cubic-bezier(.2,.8,.2,1)}
   .srcount{font-size:52px;font-weight:900;color:var(--gold-ink);line-height:1;margin:2px 0 6px}
+  /* talent reward: a big coin blooms center, a stream flies to the top counter */
+  .talfx{position:absolute;inset:0;z-index:120;pointer-events:none;overflow:visible}
+  .talbig{position:absolute;transform:translate(-50%,-50%) scale(.2);opacity:0;transition:transform .45s cubic-bezier(.2,1.5,.4,1),opacity .3s;text-align:center;z-index:2}
+  .talbig.pop{transform:translate(-50%,-50%) scale(1);opacity:1}
+  .talbig.gone{opacity:0;transform:translate(-50%,-50%) scale(1.4)}
+  .talcoin{font-size:76px;/*raw-ok*/filter:drop-shadow(0 8px 18px rgba(0,0,0,.45))}
+  .talplus{font-weight:900;font-size:28px;color:var(--gold-ink);margin-top:-4px;/*raw-ok*/text-shadow:0 2px 6px rgba(0,0,0,.35)}
+  .talstream{position:absolute;font-size:24px;margin:-12px 0 0 -12px;will-change:transform,opacity;z-index:1}
+  @media (prefers-reduced-motion: reduce){ .talfx{display:none} }
   @keyframes srbtnflash{0%,100%{transform:translateY(0);box-shadow:0 0 0 0 var(--gold-soft)}50%{transform:translateY(-3px);box-shadow:0 0 0 6px var(--gold-soft)}}
   .vhub.srbtn-flash{animation:srbtnflash .7s ease-in-out infinite;outline:2px solid var(--gold)}
   @keyframes srpop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
@@ -962,7 +976,7 @@
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <div class="metrics" id="statsBtn" role="button" title="What do these mean?" style="cursor:pointer">
-        <div class="metric lvl"><span>◆</span><span id="mLvl">0</span></div>
+        <div class="metric lvl" id="talMetric"><span>🪙</span><span id="mTal">0</span></div>
         <div class="metric bk"><span>📖</span><span id="mBk">0</span></div>
         <div class="metric mem"><span>★</span><span id="mMem">0</span></div>
       </div>
@@ -1990,8 +2004,10 @@ function reachable(b,c,v){ const k=knownNumbers(); return k.has(b)&&k.has(c)&&k.
 function refKey(b,c,v){ return `${b}:${c}:${v}`; }
 function recomputeLevel(){ const k=knownNumbers(); let L=0; while(k.has(L+1)) L++; Prog.level=L; saveProg(); }
 function booksKnown(){ const k=knownNumbers(); let n=0; for(let b=1;b<=66;b++) if(k.has(b)) n++; return n; }
+const TALENT_CAP=9999;   // above this the counter shows ∞; the true total keeps counting internally
+function talDisp(n){ return (n>TALENT_CAP) ? "∞" : String(n); }
 function updateMetrics(){
-  el("mLvl").textContent=Prog.level;
+  if(el("mTal")) el("mTal").textContent=talDisp(Prog.talents||0);
   el("mBk").textContent=booksKnown();
   el("mMem").textContent=Prog.memorized.length;
   const palTab=document.querySelector('.tabbar button[data-tab="palace"]');
@@ -3064,7 +3080,7 @@ function passChapter(){
   U.skills.forEach(sk=>{ if(sk.kind==="palace"||sk.kind==="story") return;   // don't "complete" a palace/story the user never actually built
     if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id);
     sk.items.forEach(n=>gradeKey(`sk:${sk.kind}:${n}`,"good")); });   // mark every node gold
-  bustCaches(); recomputeLevel(); saveProg(); updateMetrics(); checkBadges(); LZ=null;
+  bustCaches(); recomputeLevel(); saveProg(); updateMetrics(); earnTalents(20); checkBadges(); LZ=null;
   el("learn").innerHTML=`<div class="card center"><div style="font-size:52px">💯</div>
     <h2>Perfect — chapter mastered!</h2>
     <p class="lead">100% on the chapter quiz. Every node in this section is now <b class="gold">gold</b> — you tested out.</p>
@@ -3076,8 +3092,9 @@ function finishLesson(){
   const sk=LZ.sk;
   const rk=v=>refKey(bookNum(v.b),v.c,v.v);
   const before=new Set(allVerses().filter(v=>reachable(bookNum(v.b),v.c,v.v)).map(rk));
-  if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id);
-  bustCaches(); recomputeLevel(); saveProg(); updateMetrics(); checkBadges();
+  const wasNew=!Prog.doneSkills.includes(sk.id);
+  if(wasNew) Prog.doneSkills.push(sk.id);
+  bustCaches(); recomputeLevel(); saveProg(); updateMetrics(); if(wasNew) earnTalents(5); checkBadges();
   const newly=allVerses().filter(v=>reachable(bookNum(v.b),v.c,v.v) && !before.has(rk(v)));
   let msg="";
   if(sk.kind==="num" && sk.items.length===1 && sk.items[0]===Prog.level && Prog.level>=1)
@@ -3273,8 +3290,56 @@ function awardTalents(k, firstTry){
   const now=Date.now(), last=(Prog.talentLog[k]||0);
   if(now-last < 86400000) return -1;            // already earned on this verse in the last 24h
   const pts=firstTry?10:5;
-  Prog.talents=(Prog.talents||0)+pts; Prog.talentLog[k]=now;
+  Prog.talentLog[k]=now; earnTalents(pts);
   return pts;
+}
+// The single place talents are gained — the true total keeps counting; the display flips to ∞ past 9999.
+function earnTalents(delta){
+  if(!(delta>0)) return;
+  Prog.talents=(Prog.talents||0)+delta; saveProg();
+  talentBurst(delta);
+}
+// Talents are reduced when a hint is used (verse review, word-for-word). Never below 0.
+function spendTalents(n){
+  n=Math.max(0,Math.round(n)); if(!n) return;
+  Prog.talents=Math.max(0,(Prog.talents||0)-n); saveProg(); updateMetrics();
+  const el2=el("talMetric"); if(el2){ el2.classList.add("talspend"); setTimeout(()=>el2.classList.remove("talspend"),700); }
+}
+// The reward moment: a big coin blooms in the center, a stream flies to the 🪙 counter, and the number climbs.
+function talentBurst(delta){
+  const target=el("mTal"), metric=el("talMetric");
+  const phone=document.querySelector(".phone");
+  const end=Prog.talents||0, start=Math.max(0,end-delta);
+  if(!phone||!target){ updateMetrics(); return; }
+  const pr=phone.getBoundingClientRect(), tr=target.getBoundingClientRect();
+  const cx=pr.width/2, cy=pr.height*0.40;
+  const tx=(tr.left-pr.left)+tr.width/2, ty=(tr.top-pr.top)+tr.height/2;
+  const layer=document.createElement("div"); layer.className="talfx"; phone.appendChild(layer);
+  const big=document.createElement("div"); big.className="talbig"; big.style.left=cx+"px"; big.style.top=cy+"px";
+  big.innerHTML=`<div class="talcoin">🪙</div><div class="talplus">+${delta}</div>`;
+  layer.appendChild(big);
+  requestAnimationFrame(()=>big.classList.add("pop"));
+  setTimeout(()=>big.classList.add("gone"),650);
+  const N=Math.min(16,Math.max(6,delta));
+  for(let i=0;i<N;i++){
+    const c=document.createElement("div"); c.className="talstream"; c.textContent="🪙";
+    c.style.left=cx+"px"; c.style.top=cy+"px";
+    const jx=Math.random()*70-35, jy=Math.random()*44-18, delay=300+i*40;
+    layer.appendChild(c);
+    requestAnimationFrame(()=>{ c.style.transform=`translate(${jx}px,${jy}px)`;
+      requestAnimationFrame(()=>{ c.style.transition=`transform .6s cubic-bezier(.5,.02,.4,1) ${delay}ms, opacity .25s ${delay+430}ms`;
+        c.style.transform=`translate(${tx-cx}px,${ty-cy}px) scale(.45)`; c.style.opacity="0"; }); });
+  }
+  setTimeout(()=>layer.remove(),300+N*40+900);
+  // counter climb, synced to when coins start landing
+  const t0=performance.now(), dur=Math.max(650,Math.min(1400,delta*40));
+  target.textContent=talDisp(start);
+  function tick(now){ const p=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-p,2);
+    target.textContent=talDisp(Math.round(start+(end-start)*e));
+    if(metric){ metric.classList.add("talpulse"); }
+    if(p<1) requestAnimationFrame(tick);
+    else { target.textContent=talDisp(end); if(metric) setTimeout(()=>metric.classList.remove("talpulse"),260); updateMetrics(); } }
+  setTimeout(()=>requestAnimationFrame(tick),260);
 }
 function testHUD(){ return `<div id="testHud" style="display:flex;justify-content:space-around;font-size:12px;font-weight:800;margin:0 0 10px">
   <span class="gold">🪙 ${Prog.talents||0} talents</span>
@@ -3453,7 +3518,7 @@ function weekDaysNow(){ return (Prog.weekKey===weekKeyOf(new Date())) ? (Prog.we
 function creditWeek(){ const wk=weekKeyOf(new Date());
   if(Prog.weekKey!==wk){ Prog.weekKey=wk; Prog.weekDays=0; Prog.weekGoalHit=false; }   // new week → reset
   Prog.weekDays=(Prog.weekDays||0)+1;                                                    // creditToday already runs once/day
-  if(Prog.weekDays>=5 && !Prog.weekGoalHit){ Prog.weekGoalHit=true; Prog.talents=(Prog.talents||0)+100; setTimeout(()=>toast("⭐ Perfect Week — +100 talents!"),700); }
+  if(Prog.weekDays>=5 && !Prog.weekGoalHit){ Prog.weekGoalHit=true; setTimeout(()=>{ earnTalents(100); toast("⭐ Perfect Week — +100 talents!"); },700); }
 }
 // ---- Verse mastery tiers: make the D0…D30 SR trail visible & rewarding (Bronze→Silver→Gold→Sealed) ----
 const VTIERS=[{min:6,name:"Sealed",icon:"👑"},{min:5,name:"Gold",icon:"🥇"},{min:3,name:"Silver",icon:"🥈"},{min:1,name:"Bronze",icon:"🥉"}];
@@ -3623,7 +3688,7 @@ function memTestRender(){
   el("mtV").addEventListener("change",()=>{ el("mtV").classList.remove("wrong"); el("mtFb").innerHTML=""; });
   repop();   // scope the dropdowns to the initially-selected book on first render
   if(el("mtPeek")) el("mtPeek").onclick=()=>{                 // spend a Peek token to reveal just the book
-    if((Prog.hints||0)<=0) return; Prog.hints--; saveProg();
+    if((Prog.hints||0)<=0) return; Prog.hints--; spendTalents(3); saveProg();
     el("mtB").value=b; repop(); el("mtB").classList.add("correct");
     el("mtPeek").disabled=true; el("mtPeek").textContent="🔎 Book revealed — now the chapter & verse";
     toast("🔎 Book revealed");
@@ -3690,7 +3755,7 @@ function nextBadge(){ const c=Prog.memorized.length; return BADGES.filter(b=>b.c
 function checkBadges(){
   const newly=[];
   BADGES.forEach(b=>{ if(b.have() && !Prog.badges.includes(b.id)){ Prog.badges.push(b.id); newly.push(b); } });
-  if(newly.length){ saveProg(); showBadgeModal(newly[newly.length-1]); }
+  if(newly.length){ saveProg(); earnTalents(25*newly.length); showBadgeModal(newly[newly.length-1]); }
 }
 function showBadgeModal(b){
   let m=document.getElementById("badgeModal");
@@ -3709,7 +3774,7 @@ function showBadgeModal(b){
 function addMemorized(s){
   const k=refKey(bookNum(s.b),s.c,s.v);
   Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k); // once learned, drop from saved/skip
-  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); saveProg(); updateMetrics(); checkBadges(); }
+  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); saveProg(); updateMetrics(); earnTalents(15); checkBadges(); }
   else saveProg();
 }
 // "I forgot this": pull a verse OUT of memorized so it returns to the pool to re-encode later.
@@ -4142,7 +4207,7 @@ function openStatsInfo(){
   let m=el("statsModal"); if(!m){ m=document.createElement("div"); m.id="statsModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
   m.innerHTML=`<div class="modal-card">
     <h2 style="font-size:19px;margin:0 0 12px;text-align:center">Your progress at a glance</h2>
-    <div class="statrow"><span class="static">◆</span><div><b>Level ${Prog.level}</b><div class="hint" style="margin:2px 0 0">The highest number — book, chapter or verse — you can pinpoint. It climbs as you learn more of the Major System.</div></div></div>
+    <div class="statrow"><span class="static">🪙</span><div><b>${talDisp(Prog.talents||0)} talents</b><div class="hint" style="margin:2px 0 0">Earn talents for everything you accomplish — finishing lessons, memorizing verses, streaks, badges and spaced-repetition reviews. Spend them in the Talents Store. Past 9,999 they show as ∞.</div></div></div>
     <div class="statrow"><span class="static">📖</span><div><b>${booksKnown()} book${booksKnown()===1?"":"s"} unlocked</b><div class="hint" style="margin:2px 0 0">Bible books you can address by number — the shelves your verses sit on.</div></div></div>
     <div class="statrow"><span class="static">★</span><div><b>${Prog.memorized.length} verse${Prog.memorized.length===1?"":"s"} hidden</b><div class="hint" style="margin:2px 0 0">Verses you've built into pictures and can test yourself on.</div></div></div>
     <button class="btn" id="siStore" style="margin-top:16px;width:100%">💰 Talents Store · <b>${Prog.talents||0}</b> talents</button>
@@ -4647,6 +4712,7 @@ function renderTypeTest(){
   // the verse must be completed with NO hints, so on completion it blanks out and starts over.
   if(el("ttHint")) el("ttHint").onclick=()=>{
     const expected=TT.words[TT.idx]; if(expected===undefined) return;
+    if(!TT.hintCharged){ TT.hintCharged=true; spendTalents(3); }   // a hint costs talents (once per session)
     TT.hintUsed=true;
     inp.value=expected.slice(0, inp.value.length+1);
     try{inp.focus();}catch(e){}
@@ -5163,4 +5229,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-083041 -->
+<!-- deploy bb-20260821-084045 -->
