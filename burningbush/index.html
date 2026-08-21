@@ -379,6 +379,12 @@
   .mem-backfill{display:flex;align-items:center;gap:12px;justify-content:space-between;background:var(--panel2);border:1px dashed var(--gold2);border-radius:14px;padding:12px 14px;margin:0 0 12px}
   .mem-backfill-t{font-size:13px;line-height:1.4;color:var(--ink)}
   .mem-backfill .btn{width:auto;flex:0 0 auto;white-space:nowrap;margin:0}
+  .lv-topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px}
+  .lv-navcluster{display:flex;align-items:center;gap:9px}
+  .lv-navpair{display:flex;gap:5px}
+  .lv-navbtn{min-width:40px;height:34px;padding:0 9px;border-radius:10px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);font-weight:800;font-size:15px;line-height:1;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+  .lv-navbtn:disabled{opacity:.3;cursor:default}
+  .lv-navpair.mem .lv-navbtn{color:var(--gold-ink);border-color:var(--gold2)}
   .fadeverse .w.blank{cursor:pointer}
   .fadeverse .w.blank.peek{color:var(--gold-ink);font-weight:800}
   .ttcount{min-width:46px;text-align:center;font-weight:800;font-size:13px;border-radius:999px;padding:4px 10px;background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
@@ -4172,13 +4178,25 @@ function renderLearnedVerse(b,c,v,ret){
   const V=el("verse"); show("verse");
   const vkey=refKey(b,c,v), cnt=w4wCount(vkey), mastered=cnt>=10, o=verseSRobj(vkey);
   const hasPrev=v>1, hasNext=v<verseCount(b,c), text=kjvText(b,c,v)||"";
+  // prev/next MEMORIZED verse (canonical book→chapter→verse order) — separate from adjacent-Bible-verse nav below
+  const memOrder=(Prog.memorized||[]).map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2])).sort((A,B)=>A[0]-B[0]||A[1]-B[1]||A[2]-B[2]);
+  const curIdx=memOrder.findIndex(a=>a[0]===b&&a[1]===c&&a[2]===v);
+  const mPrev=curIdx>0?memOrder[curIdx-1]:null, mNext=(curIdx>=0&&curIdx<memOrder.length-1)?memOrder[curIdx+1]:null;
+  const refShort=a=>`${bookName(a[0])} ${a[1]}:${a[2]}`;
   const cell=(kindLbl,n)=>`<div class="lv-cell"><div class="lv-cell-k">${kindLbl}</div>${pegImg("num",n,pegFor(n).word)}<div class="lv-cell-w">${pegFor(n).word}</div></div>`;
-  V.innerHTML=`<div class="qhead"><button class="lclose" id="lvClose">✕</button><div style="flex:1"></div><div style="width:24px"></div></div>
-    <div class="card">
-      <div class="navrow" style="margin:0 0 10px">
-        <button class="btn ghost sm" id="lvPrev" ${hasPrev?"":"disabled"}>← v${v-1}</button>
-        <span class="muted" style="font-size:12px;font-weight:700">verse ${v} of ${verseCount(b,c)}</span>
-        <button class="btn ghost sm" id="lvNext" ${hasNext?"":"disabled"}>v${v+1} →</button>
+  V.innerHTML=`<div class="card">
+      <div class="lv-topbar">
+        <button class="lclose" id="lvClose" style="margin:0">✕</button>
+        <div class="lv-navcluster">
+          <div class="lv-navpair mem">
+            <button class="lv-navbtn" id="lvMemPrev" ${mPrev?"":"disabled"} title="${mPrev?"Previous memorized verse · "+refShort(mPrev):"No earlier memorized verse"}">★‹</button>
+            <button class="lv-navbtn" id="lvMemNext" ${mNext?"":"disabled"} title="${mNext?"Next memorized verse · "+refShort(mNext):"No later memorized verse"}">›★</button>
+          </div>
+          <div class="lv-navpair verse">
+            <button class="lv-navbtn" id="lvPrev" ${hasPrev?"":"disabled"} title="Previous verse (v${v-1})">‹</button>
+            <button class="lv-navbtn" id="lvNext" ${hasNext?"":"disabled"} title="Next verse (v${v+1})">›</button>
+          </div>
+        </div>
       </div>
       ${mastered?`<div class="mastered-ribbon">★ Mastered — recited word-for-word ${cnt}×</div>`:""}
       <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
@@ -4199,6 +4217,8 @@ function renderLearnedVerse(b,c,v,ret){
   el("lvClose").onclick=()=>ret?ret():renderVerse();
   el("lvPrev").onclick=()=>{ if(hasPrev) openVerseWizard(b,c,v-1,ret); };
   el("lvNext").onclick=()=>{ if(hasNext) openVerseWizard(b,c,v+1,ret); };
+  if(mPrev) el("lvMemPrev").onclick=()=>openVerseWizard(mPrev[0],mPrev[1],mPrev[2],ret);
+  if(mNext) el("lvMemNext").onclick=()=>openVerseWizard(mNext[0],mNext[1],mNext[2],ret);
   el("lvWord").onclick=()=>startWordForWord(b,c,v,()=>renderLearnedVerse(b,c,v,ret));
   el("lvForgot").onclick=()=>confirmForgetVerse(b,c,v, ()=>renderLearnedVerse(b,c,v,ret), ret);
   if(el("lvScene")) el("lvScene").onclick=()=>editVerseScene(b,c,v, ()=>renderLearnedVerse(b,c,v,ret), ()=>renderLearnedVerse(b,c,v,ret));
@@ -5574,4 +5594,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-132953 -->
+<!-- deploy bb-20260821-134444 -->
