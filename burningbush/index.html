@@ -104,14 +104,20 @@
   .brandtext{display:flex;flex-direction:column;line-height:1.05}
   .brand b{font-size:16px;letter-spacing:.2px}
   .brandtext small{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
-  .metrics{display:flex;gap:12px;align-items:flex-start}
-  .metric{display:flex;flex-direction:column;align-items:center;gap:1px;font-weight:800;font-size:13px;line-height:1;min-width:26px}
-  .metric span:first-child{font-size:16px}
-  .metric span:last-child{font-size:13px;font-variant-numeric:tabular-nums}
-  #talMetric span:last-child{font-size:15px;color:var(--gold-ink)}
-  #talMetric.talpulse{animation:talpulse .4s ease}
-  @keyframes talpulse{0%,100%{transform:scale(1)}45%{transform:scale(1.28)}}
-  #talMetric.talspend span:last-child{color:var(--miss-ink)}
+  .hudrow{display:flex;align-items:center;gap:7px}
+  .hudset{display:flex;gap:7px;cursor:pointer}
+  .hudsq{width:44px;height:44px;border-radius:12px;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-weight:800;line-height:1;box-shadow:0 2px 0 var(--scrim);padding:0}
+  .hudsq .hi{font-size:17px;line-height:1}
+  .hudsq .hn{font-size:12.5px;font-variant-numeric:tabular-nums;margin-top:2px}
+  .hudsq.tal{background:linear-gradient(150deg,var(--gold),var(--gold2));color:var(--on-accent)}
+  .hudsq.bk{background:linear-gradient(150deg,var(--blue),var(--blue2));color:var(--on-blue)}
+  .hudsq.mem{background:linear-gradient(150deg,var(--green-hi),var(--green));color:var(--on-green)}
+  .hudsq.set{background:var(--panel3);color:var(--ink);border:1px solid var(--line)}
+  .hudsq.set .hi{font-size:20px}
+  .hudsq:active{transform:translateY(1px)}
+  .talpulse{animation:talpulse .42s ease}
+  @keyframes talpulse{0%,100%{transform:scale(1)}45%{transform:scale(1.22)}}
+  .hudsq.talspend .hn{color:var(--miss-ink)}
   .metric.lvl{color:var(--gold-ink)} .metric.mem{color:var(--good)} .metric.bk{color:var(--accent)}
 
   .content{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:18px 16px 24px;-webkit-overflow-scrolling:touch}
@@ -974,13 +980,13 @@
       </svg></div>
       <div class="brandtext"><b>Burning Bush</b><small>Bible Memory</small></div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px">
-      <div class="metrics" id="statsBtn" role="button" title="What do these mean?" style="cursor:pointer">
-        <div class="metric lvl" id="talMetric"><span>🪙</span><span id="mTal">0</span></div>
-        <div class="metric bk"><span>📖</span><span id="mBk">0</span></div>
-        <div class="metric mem"><span>★</span><span id="mMem">0</span></div>
+    <div class="hudrow">
+      <div class="hudset" id="statsBtn" role="button" title="What do these mean?">
+        <div class="hudsq tal" id="talMetric"><span class="hi">🪙</span><span class="hn" id="mTal">0</span></div>
+        <div class="hudsq bk" id="bkMetric"><span class="hi">📖</span><span class="hn" id="mBk">0</span></div>
+        <div class="hudsq mem" id="memMetric"><span class="hi">★</span><span class="hn" id="mMem">0</span></div>
       </div>
-      <button class="themebtn" id="themeBtn" title="Profile">⚙️</button>
+      <button class="hudsq set" id="themeBtn" title="Profile"><span class="hi">⚙️</span></button>
     </div>
   </div>
 
@@ -1122,6 +1128,7 @@
       <button class="btn ghost" id="testStoriesDone" style="width:100%;margin-top:8px">📜 Simulate Stories finished</button>
       <button class="btn ghost" id="testUnpaid" style="width:100%;margin-top:8px">🆓 Simulate unpaid user</button>
       <button class="btn ghost" id="testTalent" style="width:100%;margin-top:8px">🪙 Preview talent animation</button>
+      <button class="btn ghost" id="testAdd500" style="width:100%;margin-top:8px">🪙 Add 500 talents</button>
       <button class="btn ghost" id="testRestore" style="width:100%;margin-top:8px;color:var(--miss-ink);border-color:var(--miss)">↩ Restore my real progress (after a simulation)</button>
 
       <div id="bugReportsWrap" style="display:none">
@@ -1171,8 +1178,13 @@
         <div>✦ All 100 Bible-story lessons</div>
         <div>✦ Unlimited bonus memory palaces</div>
       </div>
+      <div class="hint" style="margin:0 0 8px;font-weight:700">💳 A subscription unlocks the <b class="gold">entire app, forever</b>:</div>
       <button class="btn blue" id="payYearly" style="width:100%">$25 / year · Go Pro <span style="font-size:11px;font-weight:700;opacity:.85">— best value</span></button>
       <button class="btn blue" id="payMonthly" style="width:100%;margin-top:8px">$5 / month · Go Pro</button>
+      <div id="payLessonWrap" style="display:none;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
+        <div class="hint" style="margin:0 0 8px">Not ready to subscribe? Spend talents to open <b class="gold">just this one lesson</b> (talents unlock a single lesson only — they don't unlock the app):</div>
+        <button class="btn" id="payLesson" style="width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--on-accent)">🪙 Unlock this lesson · 500 talents</button>
+      </div>
       <button class="btn ghost" id="payRestore" style="width:100%;margin-top:8px">I already paid · Restore</button>
       <button class="btn ghost" id="payHelp" style="width:100%;margin-top:8px">🙏 Can't afford it? Request assistance</button>
       <button class="btn ghost" id="payClose" style="width:100%;margin-top:8px">Maybe later</button>
@@ -1777,6 +1789,7 @@ function migrateProg(p){
   if(typeof p.onboarded!=="boolean") p.onboarded=!!p.onboarded;
   p.saved=arr(p.saved); p.skipped=arr(p.skipped);               // green (come back later) / red (skip)
   p.extraKnown=arr(p.extraKnown); p.palaces=arr(p.palaces); p.customBook=obj(p.customBook); p.badges=arr(p.badges); p.customScene=obj(p.customScene); p.customPeg=obj(p.customPeg); p.customBookImg=obj(p.customBookImg); // ad-hoc numbers, palaces, edited book scenes, badges, user's own verse scenes, user-chosen number words, user-written book images
+  p.lessonUnlocks=arr(p.lessonUnlocks); // individual paid lessons unlocked with talents (500 each) instead of subscribing
   if(typeof p.firstWin!=="boolean") p.firstWin=false; // completed the 90-second "first verse hidden" onboarding win
   if(!("persona" in p)) p.persona=null; if(!("dailyMin" in p)) p.dailyMin=null; if(!("bibleFam" in p)) p.bibleFam=null; // intake answers (tailor copy/goalpost/pacing)
   if(!("covenant" in p)) p.covenant=null; // ISO date the user made the daily-memory resolve
@@ -1805,7 +1818,7 @@ function mergeProg(a,b){
   const uniq=(x,y)=>[...new Set([...(x||[]),...(y||[])])];
   const m=JSON.parse(JSON.stringify(a));
   m.memorized=uniq(a.memorized,b.memorized); m.doneSkills=uniq(a.doneSkills,b.doneSkills);
-  m.badges=uniq(a.badges,b.badges); m.extraKnown=uniq(a.extraKnown,b.extraKnown); m.freezeAwards=uniq(a.freezeAwards,b.freezeAwards);
+  m.badges=uniq(a.badges,b.badges); m.extraKnown=uniq(a.extraKnown,b.extraKnown); m.freezeAwards=uniq(a.freezeAwards,b.freezeAwards); m.lessonUnlocks=uniq(a.lessonUnlocks,b.lessonUnlocks);
   m.saved=uniq(a.saved,b.saved).filter(k=>!m.memorized.includes(k)); m.skipped=uniq(a.skipped,b.skipped).filter(k=>!m.memorized.includes(k));
   ["talents","streak","bestStreak","dayStreak","bestDayStreak","freezes","hints","level"].forEach(f=>m[f]=Math.max(a[f]||0,b[f]||0)); // keep the higher
   m.onboarded=!!(a.onboarded||b.onboarded);
@@ -1858,7 +1871,7 @@ const FREE_SKILLS = new Set([
 function isFreeSkill(sk){ return FREE_SKILLS.has(sk.id); }
 function isPaidSkill(sk){ return !isFreeSkill(sk); }
 // Is a given skill locked behind the paywall for THIS user right now?
-function skillPaywalled(sk){ return isPaidSkill(sk) && !Billing.isPro(); }
+function skillPaywalled(sk){ return isPaidSkill(sk) && !Billing.isPro() && !((Prog.lessonUnlocks||[]).includes(sk.id)); }
 
 // Single choke-point for the subscription. Web uses Stripe; the mobile app must use the
 // App Store / Play in-app purchase instead (stores forbid Stripe for digital goods) — only
@@ -2007,10 +2020,17 @@ function recomputeLevel(){ const k=knownNumbers(); let L=0; while(k.has(L+1)) L+
 function booksKnown(){ const k=knownNumbers(); let n=0; for(let b=1;b<=66;b++) if(k.has(b)) n++; return n; }
 const TALENT_CAP=9999;   // above this the counter shows ∞; the true total keeps counting internally
 function talDisp(n){ return (n>TALENT_CAP) ? "∞" : String(n); }
+let _hudBk=null, _hudMem=null;
 function updateMetrics(){
+  const bk=booksKnown(), mem=Prog.memorized.length;
   if(el("mTal")) el("mTal").textContent=talDisp(Prog.talents||0);
-  el("mBk").textContent=booksKnown();
-  el("mMem").textContent=Prog.memorized.length;
+  if(el("mBk")) el("mBk").textContent=bk;
+  if(el("mMem")) el("mMem").textContent=mem;
+  // fly an icon up to the counter whenever books unlocked / verses memorized grows — in order (skip the first paint)
+  let _seq=0;
+  if(_hudBk!==null && bk>_hudBk){ flyToMetric("bkMetric","📖", bk-_hudBk, 0); _seq=600; }
+  if(_hudMem!==null && mem>_hudMem) flyToMetric("memMetric","★", mem-_hudMem, _seq);
+  _hudBk=bk; _hudMem=mem;
   const palTab=document.querySelector('.tabbar button[data-tab="palace"]');
   if(palTab) palTab.classList.toggle("hasdue", palacesDueCount()>0);   // red dot when a palace is due
   const vsTab=document.querySelector('.tabbar button[data-tab="verse"]');
@@ -2600,7 +2620,7 @@ function renderPath(focus){
   L.querySelectorAll("[data-grp]").forEach(h=>h.onclick=()=>{ const ui=+h.dataset.grp; expandedUnits.has(ui)?expandedUnits.delete(ui):expandedUnits.add(ui); renderPath(); });
   L.querySelectorAll("[data-cq]").forEach(b=>b.onclick=()=>{ if(b.dataset.prolock){ openPaywall(); return; } startChapterQuiz(+b.dataset.cq); });
   L.querySelectorAll(".tile:not(.tickettile):not(.video)").forEach(t=>t.onclick=()=>{
-    if(t.classList.contains("pro")){ openPaywall(); return; }
+    if(t.classList.contains("pro")){ openPaywall(UNITS[+t.dataset.ui].skills[+t.dataset.si]); return; }
     if(t.classList.contains("locked")) return;
     startLesson(UNITS[+t.dataset.ui].skills[+t.dataset.si]);
   });
@@ -2838,7 +2858,7 @@ function renderPalaceBuild(){
   };
 }
 function startLesson(sk){
-  if(skillPaywalled(sk)) return openPaywall();   // Pro-only content
+  if(skillPaywalled(sk)) return openPaywall(sk);   // Pro-only content — offer whole-app subscription or a single-lesson talent unlock
   if(sk.kind==="palace") return startPalaceLesson(sk);
   if(sk.kind==="story") return startStoryLesson(sk);
   if(sk.kind==="sound"){
@@ -3341,6 +3361,30 @@ function talentBurst(delta){
     if(p<1) requestAnimationFrame(tick);
     else { target.textContent=talDisp(end); if(metric) setTimeout(()=>metric.classList.remove("talpulse"),260); updateMetrics(); } }
   setTimeout(()=>requestAnimationFrame(tick),260);
+}
+// a lighter version of the coin burst for the books/verses counters — a few glyphs stream up, then the square pulses
+function flyToMetric(targetId, glyph, count, startDelay){
+  const target=el(targetId), phone=document.querySelector(".phone");
+  if(!target||!phone) return;
+  const run=()=>{
+    const pr=phone.getBoundingClientRect(), tr=target.getBoundingClientRect();
+    const cx=pr.width/2, cy=pr.height*0.42;
+    const tx=(tr.left-pr.left)+tr.width/2, ty=(tr.top-pr.top)+tr.height/2;
+    const layer=document.createElement("div"); layer.className="talfx"; phone.appendChild(layer);
+    const N=Math.min(9,Math.max(4,count*3));
+    for(let i=0;i<N;i++){
+      const c=document.createElement("div"); c.className="talstream"; c.textContent=glyph;
+      c.style.left=cx+"px"; c.style.top=cy+"px";
+      const jx=Math.random()*54-27, jy=Math.random()*30-15, delay=100+i*45;
+      layer.appendChild(c);
+      requestAnimationFrame(()=>{ c.style.transform=`translate(${jx}px,${jy}px)`;
+        requestAnimationFrame(()=>{ c.style.transition=`transform .55s cubic-bezier(.5,.02,.4,1) ${delay}ms, opacity .25s ${delay+380}ms`;
+          c.style.transform=`translate(${tx-cx}px,${ty-cy}px) scale(.5)`; c.style.opacity="0"; }); });
+    }
+    setTimeout(()=>layer.remove(), 100+N*45+800);
+    setTimeout(()=>{ target.classList.add("talpulse"); setTimeout(()=>target.classList.remove("talpulse"),420); }, 470);
+  };
+  startDelay ? setTimeout(run,startDelay) : run();
 }
 function testHUD(){ return `<div id="testHud" style="display:flex;justify-content:space-around;font-size:12px;font-weight:800;margin:0 0 10px">
   <span class="gold">🪙 ${Prog.talents||0} talents</span>
@@ -4264,12 +4308,32 @@ function renderAcctBox(){
   if(el("goProBtn")) el("goProBtn").onclick=()=>{ el("themeModal").style.display="none"; openPaywall(); };
 }
 /* ---- paywall ---- */
-function openPaywall(){ const m=el("payModal"); if(!m) return; m.style.display="flex"; }
+let payTargetSkill=null;
+function openPaywall(sk){ const m=el("payModal"); if(!m) return;
+  payTargetSkill = (sk && sk.id && sk.kind!=="story") ? sk : null;   // stories/chapter-quiz can't be single-lesson bought
+  const wrap=el("payLessonWrap"), btn=el("payLesson");
+  if(wrap && btn){
+    if(payTargetSkill){ wrap.style.display=""; const t=Prog.talents||0, afford=t>=500;
+      btn.disabled=!afford; btn.style.opacity=afford?"1":".6";
+      btn.textContent = afford ? "🪙 Unlock this lesson · 500 talents" : `🪙 Need 500 talents — you have ${talDisp(t)}`;
+    } else wrap.style.display="none";
+  }
+  m.style.display="flex";
+}
 function closePaywall(){ if(el("payModal")) el("payModal").style.display="none"; }
 function wirePaywall(){
   if(el("payYearly")) el("payYearly").onclick=()=>Billing.startCheckout("yearly");
   if(el("payMonthly")) el("payMonthly").onclick=()=>Billing.startCheckout("monthly");
   if(el("payHelp")) el("payHelp").onclick=()=>{ el("payModal").style.display="none"; openTicketForm({type:"assistance", title:"🙏 Request assistance", intro:"If cost is a barrier, tell us your story. Please share at least 250 words about why you'd like help (up to 500).", minWords:250, maxWords:500, placeholder:"Share why you're asking…"}); };
+  if(el("payLesson")) el("payLesson").onclick=()=>{
+    if(!payTargetSkill) return;
+    if((Prog.talents||0)<500){ toast(`You need 500 talents — you have ${talDisp(Prog.talents||0)}.`); return; }
+    spendTalents(500);
+    Prog.lessonUnlocks=Prog.lessonUnlocks||[]; if(!Prog.lessonUnlocks.includes(payTargetSkill.id)) Prog.lessonUnlocks.push(payTargetSkill.id);
+    saveProg();
+    const sk=payTargetSkill; payTargetSkill=null; closePaywall(); toast("🪙 Lesson unlocked!");
+    startLesson(sk);
+  };
   if(el("payClose")) el("payClose").onclick=closePaywall;
   if(el("payX")) el("payX").onclick=closePaywall;
   if(el("payModal")) el("payModal").onclick=e=>{ if(e.target===el("payModal")) closePaywall(); };
@@ -4591,6 +4655,10 @@ if(el("testStoriesDone")) el("testStoriesDone").onclick=()=>simComplete("stories
 if(el("testTalent")) el("testTalent").onclick=()=>{   // pure-visual demo: plays the coin animation without changing the real total
   el("themeModal").style.display="none";
   setTimeout(()=>talentBurst(40), 180);
+};
+if(el("testAdd500")) el("testAdd500").onclick=()=>{   // admin: actually grant 500 talents (with the earn animation)
+  el("themeModal").style.display="none";
+  setTimeout(()=>earnTalents(500), 180);
 };
 if(el("testUnpaid")) el("testUnpaid").onclick=()=>{
   if(Billing.isPro()){ Billing.revoke(); bustCaches(); el("themeModal").style.display="none"; toast("🆓 Now simulating an unpaid (free) user — Pro content is locked."); show("learn"); }
@@ -5247,4 +5315,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-102348 -->
+<!-- deploy bb-20260821-103601 -->
