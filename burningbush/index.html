@@ -3401,6 +3401,19 @@ function flyToMetric(targetId, glyph, count, startDelay){
   };
   startDelay ? setTimeout(run,startDelay) : run();
 }
+// a gentle "one less" indicator: the square softly pulses and a single glyph drifts down and fades (never harsh/red)
+function metricDown(targetId, glyph){
+  const target=el(targetId), phone=document.querySelector(".phone");
+  if(!target||!phone) return;
+  const pr=phone.getBoundingClientRect(), tr=target.getBoundingClientRect();
+  const sx=(tr.left-pr.left)+tr.width/2, sy=(tr.top-pr.top)+tr.height-4;
+  const layer=document.createElement("div"); layer.className="talfx"; phone.appendChild(layer);
+  const c=document.createElement("div"); c.className="talstream"; c.textContent=glyph; c.style.left=sx+"px"; c.style.top=sy+"px"; c.style.opacity=".85";
+  layer.appendChild(c);
+  requestAnimationFrame(()=>{ c.style.transition="transform .85s ease-in, opacity .85s ease-in"; c.style.transform="translate(0,44px) scale(.55) rotate(18deg)"; c.style.opacity="0"; });
+  target.classList.add("talpulse"); setTimeout(()=>target.classList.remove("talpulse"),420);
+  setTimeout(()=>layer.remove(),1000);
+}
 function testHUD(){ return `<div id="testHud" style="display:flex;justify-content:center;gap:28px;margin:0 0 12px">
   <span style="display:inline-flex;align-items:center;gap:7px;font-size:17px;font-weight:800;color:var(--accent)"><span style="font-size:23px;line-height:1">🔥</span>Streak ${Prog.streak||0}</span>
   <span style="display:inline-flex;align-items:center;gap:7px;font-size:17px;font-weight:800;color:var(--gold-ink)"><span style="font-size:23px;line-height:1">🏆</span>Best ${Prog.bestStreak||0}</span></div>`; }
@@ -3706,9 +3719,12 @@ function memTestRender(){
       <div id="mtFb"></div></div>`;
   el("mtClose").onclick=renderVerse;
   el("mtForgot").onclick=()=>{
-    forgotVerse(b,c,v); bumpStreak(false); refreshHUD();
-    toast(`Moved “${bookName(b)} ${c}:${v}” to Saved for later to re-encode.`);
-    setTimeout(goNext, 350);
+    const kk=refKey(b,c,v);
+    const scene=(Prog.customScene&&Prog.customScene[kk])||"";
+    const loc=(Prog.verseLoc&&Prog.verseLoc[kk])||{};
+    const palaceName=(loc.p!=null && Prog.palaces[loc.p])?Prog.palaces[loc.p].place:"";
+    forgotVerse(b,c,v); bumpStreak(false); updateMetrics(); metricDown("memMetric","★"); refreshHUD();
+    showForgotReview(b,c,v,scene,palaceName,loc.room||"", goNext);
   };
   const sels=[el("mtB"),el("mtC"),el("mtV")];
   const nextBtn=()=>`<button class="btn" id="mtNext" style="margin-top:10px">${memArr().length>1?"Next verse →":"Done"}</button>`;
@@ -3861,6 +3877,27 @@ function forgotVerse(b,c,v){
   if(Prog.verseSR) delete Prog.verseSR[k];               // drop its spaced-repetition trail
   if(SRS[k]){ delete SRS[k]; save(SRS_KEY,SRS); }        // drop its review strength
   saveProg(); updateMetrics(); checkBadges();
+}
+// A warm "no worries" screen after forgetting a verse — replays their own scene (palace + room), or nudges
+// them to write one next time if it was blank. Never scolds; frames re-encoding as normal, healthy practice.
+function showForgotReview(b,c,v,scene,palaceName,room,onDone){
+  const V=el("verse"), ref=`${bookName(b)} ${c}:${v}`;
+  const locLine = (palaceName||room)
+    ? `<div class="hint" style="margin:0 0 8px">📍 <b class="gold">${room||"a spot"}</b>${palaceName?` in <b class="gold">${palaceName}</b>`:""}</div>` : "";
+  const body = scene
+    ? `${locLine}<div class="relbox" style="border:1px solid var(--gold2);text-align:left"><div class="rl" style="color:var(--gold-ink)">★ Your scene</div>${scene}</div>
+       <p class="hint" style="margin:12px 0 0">Run it through your mind once more — then rebuild it fresh from <b>Saved</b> whenever you're ready.</p>`
+    : `<p class="lead" style="margin:6px 0 0">No worries — it's tucked into your <b>Saved</b> list to rebuild.</p>
+       <div class="teachbox" style="margin-top:12px;text-align:left"><b class="gold">Tip:</b> you didn't write a scene for this one. Jotting your own picture — and placing it in a palace room — makes a verse far harder to forget. Give it a scene next time and watch it stick.</div>`;
+  V.innerHTML=`<div class="qhead"><button class="lclose" id="fgClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Re-encode later</div><div style="width:24px"></div></div>
+    <div class="card center">
+      <div style="font-size:42px">🌱</div>
+      <h2 style="font-size:20px;margin:6px 0 2px">Every verse takes a few passes</h2>
+      <div style="font-weight:800;color:var(--gold-ink);margin:2px 0 12px">${ref}</div>
+      ${body}
+      <button class="btn" id="fgGo" style="margin-top:16px">Got it — keep going →</button>
+    </div>`;
+  el("fgClose").onclick=onDone; el("fgGo").onclick=onDone;
 }
 
 // ---- Verse Practice 1: show text, pick book/chapter/verse from known-only dropdowns ----
@@ -5362,4 +5399,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-105853 -->
+<!-- deploy bb-20260821-110455 -->
