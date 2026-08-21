@@ -1796,6 +1796,7 @@ function migrateProg(p){
   if(!Array.isArray(p.scratchWon)) p.scratchWon=[]; if(typeof p.scratchInit!=="boolean") p.scratchInit=false; // tabs won via scratch-off + one-time back-compat grant
   if(typeof p.fiveVerseHintShown!=="boolean") p.fiveVerseHintShown=false; // one-time "a 5-streak unlocks your palace" nudge
   p.msSeen=obj(p.msSeen); // milestones the user has already seen expanded (collapsed thereafter)
+  p.verseLoc=obj(p.verseLoc); // where each verse's scene lives: {refKey:{p:palaceIndex, room}}
   p.w4w=obj(p.w4w); // per-verse word-for-word practice: {refKey:{count, times:[ts...]}}
   p.tickets=arr(p.tickets); // support/feedback submissions {type,text,ts,...} — synced to the DB with progress
   p.palaces=p.palaces.map(pl=>{ if(pl&&typeof pl==="object"){ if(!pl.learnedAt) pl.learnedAt=Date.now(); if(!pl.step) pl.step=1; } return pl; }); // spaced-repetition trail: D0 done at build
@@ -1824,7 +1825,7 @@ function mergeProg(a,b){
   m.onboarded=!!(a.onboarded||b.onboarded);
   m.lastReviewDay=(a.lastReviewDay>b.lastReviewDay)?a.lastReviewDay:b.lastReviewDay;
   m.chosen=Object.assign({},b.chosen,a.chosen); m.customBook=Object.assign({},b.customBook,a.customBook);
-  m.customScene=Object.assign({},b.customScene,a.customScene); m.customPeg=Object.assign({},b.customPeg,a.customPeg); m.customBookImg=Object.assign({},b.customBookImg,a.customBookImg); m.talentLog=Object.assign({},b.talentLog,a.talentLog);
+  m.customScene=Object.assign({},b.customScene,a.customScene); m.customPeg=Object.assign({},b.customPeg,a.customPeg); m.customBookImg=Object.assign({},b.customBookImg,a.customBookImg); m.talentLog=Object.assign({},b.talentLog,a.talentLog); m.verseLoc=Object.assign({},b.verseLoc,a.verseLoc); m.msSeen=Object.assign({},b.msSeen,a.msSeen);
   m.firstWin=!!(a.firstWin||b.firstWin); m.persona=a.persona||b.persona; m.dailyMin=a.dailyMin||b.dailyMin; m.bibleFam=a.bibleFam||b.bibleFam; m.covenant=a.covenant||b.covenant;
   m.scratchWon=uniq(a.scratchWon,b.scratchWon); m.scratchInit=!!(a.scratchInit||b.scratchInit); m.fiveVerseHintShown=!!(a.fiveVerseHintShown||b.fiveVerseHintShown);
   m.w4w=Object.assign({},b.w4w,a.w4w);
@@ -3935,18 +3936,25 @@ function vpCheck(){
     }
   }
 }
-function startSceneWalk(s){
-  const bn=bookNum(s.b), bp=pegFor(bn), cp=pegFor(s.c), vp=pegFor(s.v);
-  wSteps=[
-    {icon:"📖",label:`${s.b} ${s.c}:${s.v}`,title:`${s.b} ${s.c}:${s.v}`,text:`<span style="font-size:17px;line-height:1.6">"${s.text}"</span><br><br><span class="muted">Read it once. Now let's turn the address and the idea into pictures you can't forget.</span>`},
-    {icon:"📕",label:`Book ${pad2(bn)}`,title:`${s.b} = "${bp.word}"`,text:`Book <b>${pad2(bn)}</b> → sounds <b>${bp.sounds}</b> → a <b>${bp.word}</b>. This is the shelf the whole verse sits on.`},
-    {icon:"📗",label:`Chapter ${pad2(s.c)}`,title:`Chapter ${pad2(s.c)} = "${cp.word}"`,text:`Chapter <b>${pad2(s.c)}</b> → <b>${cp.sounds}</b> → a <b>${cp.word}</b>. A separate picture — never mashed with the verse.`},
-    {icon:"📘",label:`Verse ${pad2(s.v)}`,title:`Verse ${pad2(s.v)} = "${vp.word}"`,text:`Verse <b>${pad2(s.v)}</b> → <b>${vp.sounds}</b> → a <b>${vp.word}</b>. Three pictures now hold the address ${pad2(bn)}·${pad2(s.c)}·${pad2(s.v)}.`},
-    {icon:"🕯️",label:"The meaning",title:s.concept||"Picture the meaning",text:s.scene||(s.concept?`Picture the idea — <b>${s.concept}</b> — happening right where your three number-images stand. Weave <b>${bp.word}</b>, <b>${cp.word}</b> and <b>${vp.word}</b> into one vivid, unforgettable scene.`:`Weave <b>${bp.word}</b>, <b>${cp.word}</b> and <b>${vp.word}</b> together with what this verse means into one vivid, unforgettable scene.`), why:s.elements},
-    {icon:"🔗",label:"Link it",title:"Run the scene once",text:`<b>${bp.word}</b> → <b>${cp.word}</b> → <b>${vp.word}</b> → the scene. Play it forward once and feel it click.`}
-  ];
-  wIdx=0; renderWalk();
-}
+let wPhase="visual";   // the Learn-a-verse wizard: "visual" (see it) → "scene" (write & place it)
+// Gentle, rotating nudges when someone tries to finish without writing their scene (writing IS the learning).
+const SCENE_NUDGES=[
+  "You'll remember it far better if you picture and write your scene. Leave it blank anyway?",
+  "In a hurry? \"Be still, and know that I am God.\" Take ten seconds to jot your visual.",
+  "The scene is where the verse sticks. Skip writing it this time?",
+  "Your own picture beats any we could give you. Sure you want to leave it empty?",
+  "\"Whatsoever things are lovely… think on these things.\" Want to write your scene first?",
+  "A verse without a scene fades fast. Leave it blank for now?",
+  "Even one wild sentence makes this verse yours. Skip it anyway?",
+  "\"Write the vision, and make it plain.\" Jot your scene before you go?",
+  "Ninety seconds now saves you re-learning it later. Leave it blank?",
+  "Picture it once, keep it forever. Skip the scene this time?",
+  "The Word hidden in your heart starts with a picture. Leave it empty?",
+  "Your imagination is the glue that holds it. Sure you want to skip your scene?",
+  "\"Let the word of Christ dwell in you richly.\" Give it a home — write your scene?",
+  "Slow down and see it. A blank scene is a verse half-learned — skip anyway?"
+];
+function startSceneWalk(s){ curScene=s; wPhase="visual"; renderWalk(); }
 let walkReturn=renderVerse; // where to go on save/skip/finish
 function markSaved(){ const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.skipped=Prog.skipped.filter(x=>x!==k); if(!Prog.saved.includes(k))Prog.saved.push(k); saveProg(); }
 function markSkipped(){ const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.saved=Prog.saved.filter(x=>x!==k); if(!Prog.skipped.includes(k))Prog.skipped.push(k); saveProg(); }
@@ -3990,74 +3998,94 @@ function renderLearnedVerse(b,c,v,ret){
   el("lvWord").onclick=()=>startWordForWord(b,c,v,()=>renderLearnedVerse(b,c,v,ret));
 }
 function renderWalk(){
-  const V=el("verse"), s=wSteps[wIdx], last=wIdx===wSteps.length-1;
-  const canLearn = reachable(bookNum(curScene.b),curScene.c,curScene.v);
-  let whyHtml="";
-  if(s.why) whyHtml=`<div class="why"><b>Why this scene:</b><br>`+s.why.map(e=>`• <b>${e[0]}</b> → ${e[1]}`).join("<br>")+`</div>`;
-  const cbn=bookNum(curScene.b), hasPrev=curScene.v>1, hasNext=curScene.v<verseCount(cbn,curScene.c);
-  const arrows = wIdx===0
-    ? `<div class="navrow" style="margin:0 0 10px">
-         <button class="btn ghost sm" id="wVPrev" ${hasPrev?"":"disabled"}>← v${curScene.v-1}</button>
-         <span class="muted" style="font-size:12px;font-weight:700">verse ${curScene.v} of ${verseCount(cbn,curScene.c)}</span>
-         <button class="btn ghost sm" id="wVNext" ${hasNext?"":"disabled"}>v${curScene.v+1} →</button>
-       </div>` : "";
-  const alreadyMem=Prog.memorized.includes(refKey(cbn,curScene.c,curScene.v));
-  // which pieces are missing → offer to learn each right here
-  const missing=[];
-  if(!knownNum(cbn)) missing.push({n:cbn,book:true,lbl:`Book ${cbn}: ${bookName(cbn)}`});
-  if(!knownNum(curScene.c)) missing.push({n:curScene.c,book:false,lbl:`Chapter number ${curScene.c}`});
-  if(!knownNum(curScene.v) && curScene.v!==curScene.c) missing.push({n:curScene.v,book:false,lbl:`Verse number ${curScene.v}`});
-  const missHtml = (wIdx===0 && !canLearn)
-    ? `<div style="margin-top:10px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px">
-         <div class="hint" style="margin:0 0 8px">You're missing ${missing.length} image${missing.length>1?"s":""} for this verse. Learn each to unlock it:</div>
-         ${missing.map((m,i)=>`<button class="btn ghost sm" style="width:100%;margin-bottom:6px;border-color:var(--gold2);color:var(--gold-ink)" data-learn="${m.n}" data-book="${m.book?1:0}">📚 Learn ${m.lbl}</button>`).join("")}
-       </div>` : "";
-  const vkey=refKey(cbn,curScene.c,curScene.v);
-  const isMeaning=(s.icon==="🕯️"), myScene=Prog.customScene[vkey]||"";
-  // the user's own scene (shown on the meaning step) + editable field on the last step
-  const mySceneShow = (isMeaning && myScene) ? `<div class="why" style="border-left-color:var(--gold2)"><b class="gold">Your scene:</b><br>${myScene}</div>` : "";
-  const sceneField = last ? `<div style="margin-top:14px;text-align:left">
-      ${myScene?`<div class="relbox" style="border:1px solid var(--gold2)"><div class="rl" style="color:var(--gold-ink)">★ My own scene</div>${myScene}</div>`:""}
-      <button class="btn ghost" id="wSceneEdit" style="width:100%;margin-top:8px">✏️ ${myScene?"Edit my scene":"Write my own scene"}</button>
-    </div>` : "";
-  const btns = wIdx===0
-    ? `${arrows}<button class="btn" id="wNext" ${canLearn?"":"disabled"}>Next → learn it</button>
-       ${missHtml}
-       <div class="btnrow" style="margin-top:10px">
-         <button class="btn ghost" id="wSave" style="border-color:var(--green);color:#9ff0a0">Save · come back later</button>
-         <button class="btn ghost" id="wSkip" style="border-color:var(--miss-ink);color:#ff9a9a">Skip</button></div>
-       ${alreadyMem?"":`<button class="btn ghost" id="wKnow" style="margin-top:10px;border-color:var(--gold2);color:var(--gold-ink)">✓ I already know this — add to my test verses</button>`}`
-    : `${sceneField}<div class="btnrow" style="margin-top:14px">
-         <button class="btn ghost" id="wPrev">← Back</button>
-         <button class="btn" id="wNext">${last?"Done ✓":"Next →"}</button></div>`;
-  const head = wIdx===0
-    ? `<div class="qhead"><button class="lclose" id="wClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Learn a verse</div><button class="w4wbtn w4wsm" id="wWord" title="Word-for-word practice"><span>📖</span>W4W</button></div>` : "";
-  V.innerHTML=`<div class="card">
-    ${head}
-    <div class="stage"><div class="stepIcon">${s.icon}</div>
-      <div class="steplabel">${s.label}</div><div class="steptitle">${s.title}</div>
-      <div class="steptext">${s.text}</div>${whyHtml}${mySceneShow}</div>
-    <div class="dots">${wSteps.map((_,i)=>`<div class="dot ${i<=wIdx?"on":""}"></div>`).join("")}</div>
-    ${btns}</div>`;
-  const saveScene=()=>{ const t=el("wScene"); if(t){ const v=t.value.trim(); if(v) Prog.customScene[vkey]=v; else delete Prog.customScene[vkey]; saveProg(); } };
-  // edit the verse scene with the same pretty editor + trash-can as the book-image editor
-  if(el("wSceneEdit")) el("wSceneEdit").onclick=()=>editText({
-    title:`My scene for ${curScene.b} ${curScene.c}:${curScene.v}`,
-    hint:"Describe the picture you imagined for this verse.",
-    value:Prog.customScene[vkey]||"",
-    onSave:v=>{ if(v){ Prog.customScene[vkey]=v; } else { delete Prog.customScene[vkey]; } saveProg(); renderWalk(); }
-  });
+  const V=el("verse");
+  const b=bookNum(curScene.b), c=curScene.c, v=curScene.v, vkey=refKey(b,c,v);
+  const bp=pegFor(b), cp=pegFor(c), vp=pegFor(v);
+  const canLearn=reachable(b,c,v), hasPrev=v>1, hasNext=v<verseCount(b,c);
+  const cell=(lbl,n)=>`<div class="lv-cell"><div class="lv-cell-k">${lbl}</div>${pegImg("num",n,pegFor(n).word)}<div class="lv-cell-w">${pegFor(n).word}</div></div>`;
+
+  if(wPhase==="visual"){
+    const missing=[];
+    if(!knownNum(b)) missing.push({n:b,book:true,lbl:`Book ${b}: ${bookName(b)}`});
+    if(!knownNum(c)) missing.push({n:c,book:false,lbl:`Chapter number ${c}`});
+    if(!knownNum(v) && v!==c) missing.push({n:v,book:false,lbl:`Verse number ${v}`});
+    const missHtml = `<div style="margin-top:12px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px">
+        <div class="hint" style="margin:0 0 8px">You're missing ${missing.length} image${missing.length>1?"s":""} for this verse. Learn each to unlock it:</div>
+        ${missing.map(m=>`<button class="btn ghost sm" style="width:100%;margin-bottom:6px;border-color:var(--gold2);color:var(--gold-ink)" data-learn="${m.n}" data-book="${m.book?1:0}">📚 Learn ${m.lbl}</button>`).join("")}</div>`;
+    V.innerHTML=`<div class="qhead"><button class="lclose" id="wClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Learn this verse</div><button class="w4wbtn w4wsm" id="wWord" title="Word-for-word practice"><span>📖</span>W4W</button></div>
+      <div class="card">
+        <div class="navrow" style="margin:0 0 8px">
+          <button class="btn ghost sm" id="wVPrev" ${hasPrev?"":"disabled"}>← v${v-1}</button>
+          <span class="muted" style="font-size:12px;font-weight:700">verse ${v} of ${verseCount(b,c)}</span>
+          <button class="btn ghost sm" id="wVNext" ${hasNext?"":"disabled"}>v${v+1} →</button>
+        </div>
+        <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
+        <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
+        <div class="lv-versetext">"${curScene.text}"</div>
+        <div class="teachbox"><b class="gold">Now picture it.</b> Weave <b>${bp.word}</b>, <b>${cp.word}</b> and <b>${vp.word}</b> — and what this verse means — into one <b>action-packed scene</b>, set in a room of one of your memory palaces.</div>
+        ${canLearn?`<button class="btn" id="wToScene" style="margin-top:12px">Save Visual →</button>`:missHtml}
+        <div class="btnrow" style="margin-top:8px"><button class="btn ghost" id="wSave" style="flex:1">Save for later</button><button class="btn ghost" id="wSkip" style="flex:1">Skip</button></div>
+        <button class="btn ghost" id="wKnow" style="width:100%;margin-top:8px;border-color:var(--gold2);color:var(--gold-ink)">✓ I already know this — add to my test verses</button>
+      </div>`;
+    if(el("wClose")) el("wClose").onclick=()=>walkReturn();
+    if(el("wWord")) el("wWord").onclick=()=>startWordForWord(b,c,v,()=>openVerseWizard(b,c,v,walkReturn));
+    if(el("wVPrev")) el("wVPrev").onclick=()=>{ if(hasPrev) openVerseWizard(b,c,v-1,walkReturn); };
+    if(el("wVNext")) el("wVNext").onclick=()=>{ if(hasNext) openVerseWizard(b,c,v+1,walkReturn); };
+    V.querySelectorAll("[data-learn]").forEach(x=>x.onclick=()=>{ const n=+x.dataset.learn, isBook=x.dataset.book==="1"; startAdhocLearn(n,isBook,()=>openVerseWizard(b,c,v,walkReturn)); });
+    if(el("wToScene")) el("wToScene").onclick=()=>{ wPhase="scene"; renderWalk(); };
+    if(el("wSave")) el("wSave").onclick=()=>{ markSaved(); walkReturn(); };
+    if(el("wSkip")) el("wSkip").onclick=()=>{ markSkipped(); walkReturn(); };
+    if(el("wKnow")) el("wKnow").onclick=()=>{ Prog.saved=Prog.saved.filter(x=>x!==vkey); Prog.skipped=Prog.skipped.filter(x=>x!==vkey); addMemorized(curScene); toast("Added to your memorized & test verses ✓"); walkReturn(); };
+    return;
+  }
+
+  // ---- scene phase: place it in a palace room + write the scene ----
+  const palaces=(Prog.palaces||[]).map((p,i)=>[p,i]).filter(x=>x[0]);
+  const loc=(Prog.verseLoc&&Prog.verseLoc[vkey])||{};
+  const selP = (loc.p!=null && palaces.some(x=>x[1]===loc.p)) ? loc.p : (palaces.length?palaces[0][1]:null);
+  const roomsFor=(pi)=>{ const p=Prog.palaces[pi]; return (p&&Array.isArray(p.stations))?p.stations:[]; };
+  const palaceSel = palaces.length
+    ? `<label class="vplabel">Which palace?</label><select class="vpsel" id="wPalace">${palaces.map(x=>`<option value="${x[1]}" ${x[1]===selP?"selected":""}>${x[0].place}</option>`).join("")}</select>
+       <label class="vplabel">Which room / spot?</label><select class="vpsel" id="wRoom">${roomsFor(selP).map(r=>`<option ${r===loc.room?"selected":""}>${r}</option>`).join("")||`<option value="">(add rooms to this palace first)</option>`}</select>`
+    : `<div class="hint" style="margin:2px 0 10px">You don't have a memory palace yet — build one in the <b>Palace</b> tab. For now, just describe where your scene happens.</div>`;
+  V.innerHTML=`<div class="qhead"><button class="lclose" id="wClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Write your scene</div><div style="width:24px"></div></div>
+    <div class="card">
+      <div class="lv-ref" style="font-size:23px;margin-bottom:6px">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
+      <p class="hint" style="text-align:center;margin:0 0 12px">Set <b class="gold">${bp.word} · ${cp.word} · ${vp.word}</b> and the verse's meaning into one action-packed scene.</p>
+      ${palaceSel}
+      <label class="vplabel">Your scene</label>
+      <textarea class="ed-ta" id="wScene" placeholder="e.g. In the kitchen, a giant ${bp.word} smashes into a ${cp.word} while a ${vp.word} …">${(Prog.customScene[vkey]||"").replace(/</g,"&lt;")}</textarea>
+      <div class="btnrow" style="margin-top:12px"><button class="btn ghost" id="wBack" style="flex:0 0 96px">← Back</button><button class="btn" id="wDone">Done ✓</button></div>
+    </div>`;
   if(el("wClose")) el("wClose").onclick=()=>walkReturn();
-  if(el("wWord")) el("wWord").onclick=()=>startWordForWord(cbn,curScene.c,curScene.v,()=>openVerseWizard(cbn,curScene.c,curScene.v,walkReturn));
-  V.querySelectorAll("[data-learn]").forEach(b=>b.onclick=()=>{ const n=+b.dataset.learn, isBook=b.dataset.book==="1", ret=walkReturn;
-    startAdhocLearn(n,isBook,()=>openVerseWizard(cbn,curScene.c,curScene.v,ret)); });
-  if(el("wVPrev")) el("wVPrev").onclick=()=>{ if(hasPrev) openVerseWizard(cbn,curScene.c,curScene.v-1,walkReturn); };
-  if(el("wVNext")) el("wVNext").onclick=()=>{ if(hasNext) openVerseWizard(cbn,curScene.c,curScene.v+1,walkReturn); };
-  if(el("wKnow")) el("wKnow").onclick=()=>{ const k=refKey(cbn,curScene.c,curScene.v); Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k); addMemorized(curScene); toast("Added to your memorized & test verses ✓"); walkReturn(); };
-  if(el("wPrev")) el("wPrev").onclick=()=>{ saveScene(); if(wIdx>0){wIdx--;renderWalk();} };
-  if(el("wSave")) el("wSave").onclick=()=>{ markSaved(); walkReturn(); };
-  if(el("wSkip")) el("wSkip").onclick=()=>{ markSkipped(); walkReturn(); };
-  el("wNext").onclick=()=>{ if(el("wNext").disabled) return; if(!last){wIdx++;renderWalk();} else { saveScene(); addMemorized(curScene); walkReturn(); } };
+  if(el("wBack")) el("wBack").onclick=()=>{ wPhase="visual"; renderWalk(); };
+  if(el("wPalace")) el("wPalace").onchange=()=>{ const pi=+el("wPalace").value, rs=roomsFor(pi);
+    el("wRoom").innerHTML=rs.map(r=>`<option>${r}</option>`).join("")||`<option value="">(add rooms to this palace first)</option>`; };
+  setTimeout(()=>{ try{el("wScene").focus();}catch(e){} }, 60);
+  const finish=()=>{
+    const text=(el("wScene").value||"").trim();
+    if(text) Prog.customScene[vkey]=text; else delete Prog.customScene[vkey];
+    if(el("wPalace")){ Prog.verseLoc=Prog.verseLoc||{}; Prog.verseLoc[vkey]={p:+el("wPalace").value, room:(el("wRoom")?el("wRoom").value:"")}; }
+    saveProg(); addMemorized(curScene); walkReturn();
+  };
+  if(el("wDone")) el("wDone").onclick=()=>{
+    if(!(el("wScene").value||"").trim()){ confirmBlankScene(finish); return; }
+    finish();
+  };
+}
+// Encourage (never block) writing the scene — writing it IS the learning.
+function confirmBlankScene(onSkip){
+  const msg=SCENE_NUDGES[Math.floor(Math.random()*SCENE_NUDGES.length)];
+  let m=el("blankSceneModal"); if(!m){ m=document.createElement("div"); m.id="blankSceneModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  m.innerHTML=`<div class="modal-card center" style="max-width:320px">
+    <div style="font-size:38px">✍️</div>
+    <p class="lead" style="font-size:14.5px;margin:10px 0 16px">${msg}</p>
+    <button class="btn" id="bsWrite" style="width:100%">I'll write it</button>
+    <button class="btn ghost" id="bsSkip" style="width:100%;margin-top:8px">Skip for now</button></div>`;
+  m.style.display="flex";
+  m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("bsWrite").onclick=()=>{ m.style.display="none"; try{el("wScene").focus();}catch(e){} };
+  el("bsSkip").onclick=()=>{ m.style.display="none"; onSkip(); };
 }
 
 /* ---- ad-hoc learn a single number/book from the verse screen (unlocks it) ---- */
@@ -5315,4 +5343,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-103601 -->
+<!-- deploy bb-20260821-105315 -->
