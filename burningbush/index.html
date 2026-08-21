@@ -1165,7 +1165,7 @@
       <button class="btn ghost loginbtn" id="btnGoogle"><span>🔵</span> Continue with Google</button>
       <div class="ordiv"><span>or with email</span></div>
       <input class="typein" id="loginEmail" type="email" placeholder="you@email.com" autocomplete="email" style="text-align:left;font-size:15px;padding:13px">
-      <input class="typein" id="loginPass" type="password" placeholder="password (6+ characters)" autocomplete="current-password" style="text-align:left;font-size:15px;padding:13px;margin-top:8px">
+      <input class="typein" id="loginPass" type="text" placeholder="password (6+ characters)" autocomplete="off" style="text-align:left;font-size:15px;padding:13px;margin-top:8px">
       <div class="btnrow" style="margin-top:10px;gap:8px">
         <button class="btn ghost" id="btnSignin" style="flex:1">Sign in</button>
         <button class="btn" id="btnCreate" style="flex:1">Create account</button>
@@ -2159,6 +2159,15 @@ const views=document.querySelectorAll(".view");
   window.addEventListener("resize", ()=>{ place(); schedule(); });
   try{ new MutationObserver(schedule).observe(content,{childList:true,subtree:true,characterData:true}); }catch(e){}
 })();
+// The login password is a REAL password field (masked + credential autofill) ONLY while the sign-in modal is
+// open. When it's closed the field is plain text, so no password field exists in the DOM — which stops iOS/
+// Safari from popping its "AutoFill Passwords" bar over ordinary boxes (word-for-word typing, scenes, etc.).
+function setLoginModal(open){
+  const m=el("loginModal"); if(!m) return;
+  m.style.display = open ? "flex" : "none";
+  const pw=el("loginPass");
+  if(pw){ pw.type = open ? "password" : "text"; pw.setAttribute("autocomplete", open ? "current-password" : "off"); }
+}
 function show(tab){
   // leaving the intro via a tab tap = onboarding is done; stamp it so Journey doesn't re-show the intro from step 0 (state desync)
   if(!Prog.onboarded && tab!=="journey"){ Prog.onboarded=true; saveProg(); }
@@ -3369,9 +3378,9 @@ function bumpStreak(correct){
     ANS_FREEZE.forEach(m=>{ if(Prog.streak===m) grantFreeze("ans"+m, `${m} correct in a row`); }); }
   else Prog.streak=0;
 }
-function awardTalents(k, firstTry){
+function awardTalents(k, firstTry, ignoreCap){
   const now=Date.now(), last=(Prog.talentLog[k]||0);
-  if(now-last < 86400000) return -1;            // already earned on this verse in the last 24h
+  if(!ignoreCap && now-last < 86400000) return -1;   // free practice: one payout per verse per 24h (SR reviews bypass this)
   const pts=firstTry?10:5;
   Prog.talentLog[k]=now; earnTalents(pts);
   return pts;
@@ -3597,9 +3606,11 @@ function finishDue(){ if(MS && MS.dueWork) doneForToday(); else practiceNext(tru
 function doneForToday(){
   const V=el("verse");
   const wd=weekDaysNow();
+  const gotBonus = MS && MS.dueWork && !MS._bonusGiven;
+  if(gotBonus){ MS._bonusGiven=true; earnTalents(20); }   // reward for completing today's spaced-repetition review
   V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🌿</div>
     <h2 class="gold">You're done for today</h2>
-    <p class="lead">Everything due is locked back in.${Prog.dayStreak>0?` <b class="gold">🔥 ${Prog.dayStreak}-day streak</b> — come back tomorrow to keep it alive.`:""}${Prog.freezes>0?` <span class="muted">🧊 ${Prog.freezes} Streak Freeze${Prog.freezes>1?"s":""} banked.</span>`:""}</p>
+    <p class="lead">Everything due is locked back in.${gotBonus?` <b class="gold">+20 🪙 for finishing your review!</b>`:""}${Prog.dayStreak>0?` <b class="gold">🔥 ${Prog.dayStreak}-day streak</b> — come back tomorrow to keep it alive.`:""}${Prog.freezes>0?` <span class="muted">🧊 ${Prog.freezes} Streak Freeze${Prog.freezes>1?"s":""} banked.</span>`:""}</p>
     <div class="hint" style="margin:2px 0 4px">This week: ${"●".repeat(Math.min(wd,5))}${"○".repeat(Math.max(0,5-wd))} ${wd}/5${Prog.weekGoalHit?" ⭐":""}</div>
     ${reviewedThisSession.length?`<div style="margin-top:14px;text-align:left"><div class="prof-sect" style="margin-bottom:8px">Where these verses stand · D0…D30</div>${reviewedThisSession.slice(0,8).map(k=>{const p=k.split(":").map(Number),o=verseSRobj(k)||{step:1,learnedAt:Date.now()};return `<div style="margin:0 0 10px"><div class="gold" style="font-weight:700;font-size:13px;margin-bottom:3px">${bookName(p[0])} ${p[1]}:${p[2]}</div>${srTrailHTML(o)}</div>`;}).join("")}</div>`:""}
     ${encourageHTML()}
@@ -3782,7 +3793,7 @@ function memTestRender(){
     const ok=(+el("mtB").value===b && +el("mtC").value===c && +el("mtV").value===v);
     if(ok){ // flash green, auto-advance to next verse
       const firstTry=memTestWrong===0, kk=refKey(b,c,v);
-      bumpStreak(true); reviewVerseSR(kk); const cr=markAnswer(kk,true,firstTry); const pts=awardTalents(kk, firstTry); saveProg(); refreshHUD(); checkBadges();
+      bumpStreak(true); reviewVerseSR(kk); const cr=markAnswer(kk,true,firstTry); const pts=awardTalents(kk, firstTry, MS && MS.phase==="sr"); saveProg(); refreshHUD(); checkBadges();
       if(!reviewedThisSession.includes(kk)) reviewedThisSession.push(kk);   // remember what we reviewed → show trails at the end
       creditToday();   // a real recall = showing up today (idempotent per day; credits SR & free practice alike, never a no-recall open)
       sels.forEach(s=>s.classList.add("correct")); el("mtCheck").disabled=true; el("mtWarn").textContent="";
@@ -4468,7 +4479,7 @@ function renderAcctBox(){
         <div class="muted" style="font-size:11px">via ${prov}${unverified?" · unverified":""} · ☁ synced</div></div>
         <button class="btn sm ghost" id="signOut">Sign out</button></div>`
     : `<button class="btn" id="signInBtn">Sign in / Create account</button>`) + verifyRow + proRow;
-  if(el("signInBtn")) el("signInBtn").onclick=()=>{ el("themeModal").style.display="none"; el("loginModal").style.display="flex"; };
+  if(el("signInBtn")) el("signInBtn").onclick=()=>{ el("themeModal").style.display="none"; setLoginModal(true); };
   if(el("resendVerify")) el("resendVerify").onclick=()=>{ Auth.resendVerification().then(()=>toast("Verification email sent.")).catch(()=>toast("Couldn't send right now.")); };
   if(el("signOut")) el("signOut").onclick=()=>{ if(typeof Auth!=="undefined" && Auth.loggedIn()){ Auth.signOut(); toast("Signed out."); } else { Store.remove("vv_acct"); renderAcctBox(); } };
   if(el("goProBtn")) el("goProBtn").onclick=()=>{ el("themeModal").style.display="none"; openPaywall(); };
@@ -4538,7 +4549,7 @@ function wireLogin(){
 
   // Arrived from a password-reset email (?reset=TOKEN) → show a "set a new password" form instead of sign-in.
   if(Auth._resetToken){
-    el("loginModal").style.display="flex";
+    setLoginModal(true);
     if(el("loginNote")) el("loginNote").innerHTML="";
     if(el("loginEmail")) el("loginEmail").style.display="none";
     ["btnCreate","btnForgot","loginSkip"].forEach(id=>{ if(el(id)) el(id).style.display="none"; });
@@ -4554,7 +4565,7 @@ function wireLogin(){
   }
 
   if(el("loginNote")) el("loginNote").innerHTML = "Create a free <b>Kingdom Builders</b> account to back up your progress to the cloud and restore it on any device. One login works across all our apps.";
-  const done=(t)=>{ el("loginModal").style.display="none"; Store.remove("vv_skiplogin"); toast(t); };
+  const done=(t)=>{ setLoginModal(false); Store.remove("vv_skiplogin"); toast(t); };
 
   if(el("btnSignin")) el("btnSignin").onclick=()=>{
     if(!okEmail(email())) return msg("Enter a valid email.");
@@ -4572,8 +4583,8 @@ function wireLogin(){
     if(!okEmail(email())) return msg("Type your email above first, then tap Forgot password.");
     Auth.resetPassword(email()).then(()=>msg("If that email has an account, a reset link is on its way — check your inbox.",true)).catch(e=>msg(e.message)); };
 
-  el("loginSkip").onclick=()=>{ el("loginModal").style.display="none"; Store.set("vv_skiplogin","1"); };
-  el("loginModal").onclick=e=>{ if(e.target===el("loginModal")) el("loginModal").style.display="none"; };
+  el("loginSkip").onclick=()=>{ setLoginModal(false); Store.set("vv_skiplogin","1"); };
+  el("loginModal").onclick=e=>{ if(e.target===el("loginModal")) setLoginModal(false); };
 }
 
 /* =================== THEMES =================== */
@@ -5169,7 +5180,7 @@ const Onboard = (()=>{
     if(previewSnap){ Object.assign(Prog, previewSnap); previewSnap=null; saveProg(); ov.classList.remove("on"); ov.setAttribute("aria-hidden","true"); show("learn"); toast("Onboarding preview ended — your progress is unchanged."); return; }
     Prog.onboarded=true; if(!Prog.firstWin) Prog.firstWin=true; saveProg(); ov.classList.remove("on"); ov.setAttribute("aria-hidden","true"); show("learn");
   }
-  function toLogin(){ if(previewSnap){ finish(); return; } finish(); el("loginModal").style.display="flex"; }
+  function toLogin(){ if(previewSnap){ finish(); return; } finish(); setLoginModal(true); }
 
   // ---- the steps (a linear spine; the quiz waits in place until answered) ----
   const G=SCENES[0];   // Genesis 1:1 — the universal first win
@@ -5483,4 +5494,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-113615 -->
+<!-- deploy bb-20260821-114950 -->
