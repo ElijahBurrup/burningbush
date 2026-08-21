@@ -3899,6 +3899,32 @@ function showForgotReview(b,c,v,scene,palaceName,room,onDone){
     </div>`;
   el("fgClose").onclick=onDone; el("fgGo").onclick=onDone;
 }
+// From a memorized verse: replay their scene first as a memory jog, then let them keep it or re-encode it.
+function confirmForgetVerse(b,c,v,retKeep,retGone){
+  const V=el("verse"), vkey=refKey(b,c,v), ref=`${bookName(b)} ${c}:${v}`;
+  const scene=(Prog.customScene&&Prog.customScene[vkey])||"";
+  const loc=(Prog.verseLoc&&Prog.verseLoc[vkey])||{};
+  const palaceName=(loc.p!=null && Prog.palaces[loc.p])?Prog.palaces[loc.p].place:"";
+  const locLine=(palaceName||loc.room)?`<div class="hint" style="margin:0 0 8px">📍 <b class="gold">${loc.room||"a spot"}</b>${palaceName?` in <b class="gold">${palaceName}</b>`:""}</div>`:"";
+  const reminder = scene
+    ? `${locLine}<div class="relbox" style="border:1px solid var(--gold2);text-align:left"><div class="rl" style="color:var(--gold-ink)">★ Your scene</div>${scene}</div>`
+    : `<p class="hint" style="margin:6px 0 0">You didn't write a scene for this one — picturing your own would make it much easier to keep.</p>`;
+  V.innerHTML=`<div class="qhead"><button class="lclose" id="cfClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Still remember it?</div><div style="width:24px"></div></div>
+    <div class="card center">
+      <div style="font-size:40px">🤔</div>
+      <h2 style="font-size:20px;margin:6px 0 2px">Take one more look</h2>
+      <div style="font-weight:800;color:var(--gold-ink);margin:2px 0 12px">${ref}</div>
+      ${reminder}
+      <button class="btn" id="cfKeep" style="margin-top:16px">😊 Got it — keep this verse</button>
+      <button class="btn ghost" id="cfForget" style="margin-top:8px;border-color:var(--miss-ink);color:var(--miss-ink)">↺ Re-encode it later</button>
+    </div>`;
+  el("cfClose").onclick=retKeep; el("cfKeep").onclick=retKeep;
+  el("cfForget").onclick=()=>{
+    forgotVerse(b,c,v); updateMetrics(); metricDown("memMetric","★");
+    toast(`Moved “${ref}” to Saved to rebuild.`);
+    (retGone||renderVerse)();
+  };
+}
 
 // ---- Verse Practice 1: show text, pick book/chapter/verse from known-only dropdowns ----
 let vpCur=null;
@@ -4047,11 +4073,13 @@ function renderLearnedVerse(b,c,v,ret){
         <div class="lv-sr-lbl">Spaced repetition</div>
         ${o?srTrailHTML(o):`<p class="hint" style="text-align:center;margin:0">This verse joins your review trail as you practice it.</p>`}
       </div>
+      <button class="btn ghost" id="lvForgot" style="width:100%;margin-top:14px;font-size:13px;color:var(--muted)">🤔 I forgot this — re-encode later</button>
     </div>`;
   el("lvClose").onclick=()=>ret?ret():renderVerse();
   el("lvPrev").onclick=()=>{ if(hasPrev) openVerseWizard(b,c,v-1,ret); };
   el("lvNext").onclick=()=>{ if(hasNext) openVerseWizard(b,c,v+1,ret); };
   el("lvWord").onclick=()=>startWordForWord(b,c,v,()=>renderLearnedVerse(b,c,v,ret));
+  el("lvForgot").onclick=()=>confirmForgetVerse(b,c,v, ()=>renderLearnedVerse(b,c,v,ret), ret);
 }
 function renderWalk(){
   const V=el("verse");
@@ -5399,4 +5427,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-110455 -->
+<!-- deploy bb-20260821-111018 -->
