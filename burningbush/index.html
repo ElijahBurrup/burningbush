@@ -210,8 +210,7 @@
   .lesson{display:flex;flex-direction:column;min-height:100%}
   .lbar{height:12px;border-radius:99px;background:var(--panel2);overflow:hidden;margin-bottom:6px}
   .lbar > span{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--green-hi));transition:width .3s}
-  .lclose{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0 6px}
-  .lclose.lclose-red{color:var(--miss-ink)}   /* red ✕ on screens that pair it with a green ✓ save */
+  .lclose{background:none;border:none;color:var(--miss-ink);font-size:22px;cursor:pointer;padding:0 6px}   /* the close ✕ is red app-wide */
   .lsave{width:34px;height:34px;flex:0 0 34px;border-radius:10px;border:1.5px solid var(--green);background:var(--green-soft);color:var(--good);font-size:19px;font-weight:900;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0;margin:0}
   .lsave:disabled{opacity:.32;cursor:default}
   .lsave:active{transform:scale(.93)}
@@ -536,6 +535,14 @@
   .bible-drop-item:active{background:var(--panel2)}
   .biblestrip .bk{aspect-ratio:1.12;border-radius:6px;background:var(--cell-bg);font-size:12px;font-weight:700;display:grid;place-items:center;color:var(--cell-ink)}
   .biblestrip .bk.on{background:var(--accent);color:var(--on-blue);font-weight:800}
+  /* Journey fills the screen (no scroll) and the book tiles grow to fill the height → numbers as big as possible */
+  #journey.view.active{display:flex;flex-direction:column;height:100%}
+  #journey > h2{flex:0 0 auto}
+  .biblecard{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+  .biblecard .biblestrip{min-height:0;grid-auto-rows:1fr}
+  .biblecard .biblestrip.ot{flex:4 1 0}   /* 4 rows of books → proportional flex keeps tile height equal to NT */
+  .biblecard .biblestrip.nt{flex:3 1 0}   /* 3 rows of books */
+  .biblecard .bk{aspect-ratio:auto;height:auto;min-height:0;font-size:clamp(13px,4.4vw,20px)}
 
   /* ---- foundations reuse ---- */
   .subnav{display:flex;gap:6px;margin-bottom:16px}
@@ -2162,6 +2169,7 @@ const views=document.querySelectorAll(".view");
     root.querySelectorAll && root.querySelectorAll("input,textarea").forEach(t=>list.push(t));
     list.forEach(t=>{ if(t.closest && t.closest("#loginModal")) return; if(t.type==="password"||t.type==="email") return;
       if(!t.getAttribute("autocomplete")) t.setAttribute("autocomplete","off");
+      t.setAttribute("autocorrect","off"); t.setAttribute("autocapitalize","off"); t.setAttribute("spellcheck","false");
       t.setAttribute("data-1p-ignore","true"); t.setAttribute("data-lpignore","true"); t.setAttribute("data-form-type","other"); });
   };
   const phone=document.querySelector(".phone")||document.body;
@@ -2243,14 +2251,14 @@ function renderJourney(){
           <button class="btn blue" id="jReview" style="margin:0;flex:0 0 auto;width:auto;padding:10px 16px;white-space:nowrap">Review →</button></div>`; }
       return `<div class="card" style="padding:11px 14px;margin-bottom:9px;text-align:center"><div style="font-weight:800;color:var(--good)">✓ You're caught up today</div><div class="hint" style="margin-top:3px">${streak?streak+" · ":""}${weekLine}</div></div>`;
     })()}
-    <div class="card" style="margin-top:0;position:relative;padding:12px 14px">
+    <div class="card biblecard" style="margin-top:0;position:relative;padding:12px 14px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><h2 style="font-size:15px;margin:0">The whole Bible</h2><button class="bible-search-btn" id="bibleSearchBtn" title="Jump to a book">🔍</button></div>
       <div class="otnt-label">Old Testament <span>books 1–39</span></div>
-      <div class="biblestrip">${stripFor(1,39)}</div>
+      <div class="biblestrip ot">${stripFor(1,39)}</div>
       <div class="otnt-label" style="margin-top:8px">New Testament <span>books 40–66</span></div>
-      <div class="biblestrip">${stripFor(40,66)}</div>
+      <div class="biblestrip nt">${stripFor(40,66)}</div>
       <div class="bible-drop" id="bibleSearchDrop" style="display:none">
-        <input id="bibleSearchIn" class="typein" placeholder="Search a book…" autocomplete="off">
+        <input id="bibleSearchIn" class="typein" type="text" inputmode="search" placeholder="Search a book…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="bb_book_filter" data-form-type="other" data-1p-ignore data-lpignore="true" aria-autocomplete="none">
         <div class="bible-drop-list">${range(1,66).map(n=>`<button class="bible-drop-item" data-jump="${n}"><b>${pad2(n)}</b> · ${bookName(n)}</button>`).join("")}</div>
       </div>
     </div>`;
@@ -5617,4 +5625,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-150158 -->
+<!-- deploy bb-20260821-151014 -->
