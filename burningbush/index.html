@@ -3532,7 +3532,8 @@ function startMemTest(){
   const due=mem.map(a=>a.join(":")).filter(k=>verseDue(k));   // verses whose next SR checkpoint has come due
   const anyDue = numDue.length>0 || due.length>0 || palacesDueCount()>0;
   if(!mem.length && !anyDue){ renderVerse(); return; }
-  MS={ phase:"start", numQueue:numDue.slice(), srQueue:due.slice(), dueWork:anyDue };
+  // shuffle each group so items aren't quizzed in the fixed order they were learned (numbers ascending, verses in memorized order)
+  MS={ phase:"start", numQueue:shuffle(numDue.slice()), srQueue:shuffle(due.slice()), dueWork:anyDue };
   if(anyDue) srBanner("start");       // combined counter → Begin → numbers → verses → palaces → practice
   else practiceNext(true);            // nothing due → straight to free practice (skip the "done for today" moment)
 }
@@ -3727,10 +3728,12 @@ function openStore(){
     saveProg(); updateMetrics(); openStore();
   });
 }
-function runDuePalaces(done){                   // walk each due palace in turn (in the Verses view), then continue
-  const slot=(Prog.palaces||[]).findIndex(p=>p&&palaceDue(p));
-  if(slot<0){ done(); return; }
-  startPalacePractice(slot,"verse",()=>runDuePalaces(done), done);   // ✕ during the queue → skip remaining palaces, go straight to practice
+function runDuePalaces(done, queue){            // walk each due palace in turn (in the Verses view), then continue
+  if(!queue) queue=shuffle((Prog.palaces||[]).map((p,i)=>i).filter(i=>Prog.palaces[i]&&palaceDue(Prog.palaces[i]))); // shuffled once, not slot order
+  while(queue.length && !(Prog.palaces[queue[0]]&&palaceDue(Prog.palaces[queue[0]]))) queue.shift();               // drop any already cleared
+  if(!queue.length){ done(); return; }
+  const slot=queue.shift();
+  startPalacePractice(slot,"verse",()=>runDuePalaces(done,queue), done);   // ✕ during the queue → skip remaining palaces, go straight to practice
 }
 
 /* =================== NUMBERS TEST — 15 Qs translating number ↔ image ↔ book =================== */
@@ -5570,4 +5573,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-130619 -->
+<!-- deploy bb-20260821-132457 -->
