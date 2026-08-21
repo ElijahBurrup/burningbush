@@ -527,8 +527,9 @@
   .biblestrip{display:grid;grid-template-columns:repeat(11,1fr);gap:3px;margin-top:6px}
   .bible-search-btn{background:var(--panel3);border:1px solid var(--line);border-radius:10px;width:34px;height:34px;font-size:16px;cursor:pointer;color:var(--ink);flex:0 0 auto;display:grid;place-items:center}
   .bible-search-btn:active{transform:scale(.94)}
-  .bible-drop{position:absolute;top:46px;right:14px;width:230px;max-width:calc(100% - 28px);max-height:280px;overflow:auto;background:var(--panel);border:1px solid var(--gold2);border-radius:12px;box-shadow:0 14px 34px var(--scrim);z-index:55;padding:8px}
-  .bible-drop .typein{width:100%;box-sizing:border-box;font-size:14px;padding:9px;margin:0 0 6px;text-align:left}
+  /* When open, the search floats to the TOP-RIGHT of the screen so the book list gets the whole area above the keyboard */
+  .bible-drop{position:fixed;top:calc(env(safe-area-inset-top) + 58px);right:10px;left:auto;width:280px;max-width:calc(100% - 20px);max-height:calc(100dvh - 74px);overflow:auto;background:var(--panel);border:1px solid var(--gold2);border-radius:14px;box-shadow:0 16px 44px var(--scrim);z-index:120;padding:8px}
+  .bible-drop .typein{position:sticky;top:0;z-index:2;width:100%;box-sizing:border-box;font-size:15px;padding:11px;margin:0 0 6px;text-align:left;background:var(--panel2)}
   .bible-drop-list{display:flex;flex-direction:column;gap:2px}
   .bible-drop-item{text-align:left;background:none;border:none;color:var(--ink);font-weight:700;font-size:14px;padding:9px 10px;border-radius:8px;cursor:pointer}
   .bible-drop-item b{color:var(--gold-ink)}
@@ -5625,4 +5626,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-151014 -->
+<!-- deploy bb-20260821-151333 -->
