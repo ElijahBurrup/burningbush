@@ -211,6 +211,10 @@
   .lbar{height:12px;border-radius:99px;background:var(--panel2);overflow:hidden;margin-bottom:6px}
   .lbar > span{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--green-hi));transition:width .3s}
   .lclose{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0 6px}
+  .lclose.lclose-red{color:var(--miss-ink)}   /* red ✕ on screens that pair it with a green ✓ save */
+  .lsave{width:34px;height:34px;flex:0 0 34px;border-radius:10px;border:1.5px solid var(--green);background:var(--green-soft);color:var(--good);font-size:19px;font-weight:900;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0;margin:0}
+  .lsave:disabled{opacity:.32;cursor:default}
+  .lsave:active{transform:scale(.93)}
   .qhead{display:flex;align-items:center;gap:10px;margin-bottom:16px}
   .prompt{font-size:15px;color:var(--muted);font-weight:700;margin:6px 0 4px;text-transform:uppercase;letter-spacing:.5px}
   .bignum{font-size:76px;font-weight:800;text-align:center;letter-spacing:1px;margin:10px 0}
@@ -2915,7 +2919,7 @@ function renderPalaceBuild(){
   const L=el(PB.host), title=PB.slot===0?"Build your first palace":"Build a palace";
   if(PB.stage===0){ // name the palace (a real page, not a popup) — with idea prompts underneath
     L.innerHTML=`<div class="lesson"><div class="card">
-        <div class="lv-topbar"><button class="lclose" id="pbClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:16px">Name your palace</div><span style="width:22px;flex:0 0 22px"></span></div>
+        <div class="lv-topbar"><button class="lclose lclose-red" id="pbClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:16px">Name your palace</div><button class="lsave" id="pbNameGoTop" title="Next → add locations" ${PB.place?"":"disabled"}>✓</button></div>
         <p class="hint">Choose a real place you know by heart — you'll walk through it in your mind to store things in order.</p>
         <input class="typein" id="pbName" placeholder="e.g. My childhood home" value="${(PB.place||"").replace(/"/g,"&quot;")}" style="text-align:left;font-size:16px;padding:13px;width:100%;box-sizing:border-box">
         <div class="ideahead">Need inspiration? Tap an idea:</div>
@@ -2923,18 +2927,19 @@ function renderPalaceBuild(){
         <button class="btn" id="pbNameGo" style="margin-top:16px" ${PB.place?"":"disabled"}>Next → add locations</button>
       </div></div>`;
     el("pbClose").onclick=PB.ret;
-    const nameIn=el("pbName"), go=el("pbNameGo");
-    const sync=()=>{ go.disabled = !(nameIn.value||"").trim(); };
+    const nameIn=el("pbName"), go=el("pbNameGo"), goTop=el("pbNameGoTop");
+    const sync=()=>{ const empty=!(nameIn.value||"").trim(); go.disabled=empty; if(goTop) goTop.disabled=empty; };
     nameIn.oninput=sync;
     L.querySelectorAll("[data-idea]").forEach(b=>b.onclick=()=>{ nameIn.value=b.dataset.idea; sync(); nameIn.focus(); });
-    go.onclick=()=>{ const v=(nameIn.value||"").trim(); if(!v) return; PB.place=v; PB.stage=1; renderPalaceBuild(); };
+    const goAction=()=>{ const v=(nameIn.value||"").trim(); if(!v) return; PB.place=v; PB.stage=1; renderPalaceBuild(); };
+    go.onclick=goAction; if(goTop) goTop.onclick=goAction;   // green ✓ = same as "Next → add locations"
     setTimeout(()=>{ try{nameIn.focus();}catch(e){} },50);
     return;
   }
   // stage 1: add stations (walk through, type each location)
   const min=5, n=PB.stations.length;
   L.innerHTML=`<div class="lesson"><div class="card">
-      <div class="lv-topbar"><button class="lclose" id="pbClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">Walk through “${PB.place}”</div><span style="width:22px;flex:0 0 22px"></span></div>
+      <div class="lv-topbar"><button class="lclose lclose-red" id="pbClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">Walk through “${PB.place}”</div><button class="lsave" id="pbDoneTop" title="Complete palace" ${n>=min?"":"disabled"}>✓</button></div>
       <p class="lead">Type each spot along your route, <b>in the order you'd walk past them</b> (e.g. front door → hallway → kitchen sink → couch…). Add at least ${min}.</p>
       <div class="btnrow" style="margin-top:0"><input class="typein" id="pbIn" placeholder="Next location…" style="text-align:left;font-size:15px;padding:12px"><button class="btn sm" id="pbAdd" style="width:auto">Add</button></div>
       <div class="stationlist">${PB.stations.map((s,i)=>`<div class="st"><span><b class="gold">${i+1}.</b> ${s}</span><span class="rm" data-rm="${i}">✕</span></div>`).join("")||`<p class="hint">No locations yet — add your first stop.</p>`}</div>
@@ -2946,7 +2951,7 @@ function renderPalaceBuild(){
   el("pbIn").addEventListener("keydown",e=>{ if(e.key==="Enter") addStation(); });
   el("pbIn").focus();
   L.querySelectorAll("[data-rm]").forEach(x=>x.onclick=()=>{ PB.stations.splice(+x.dataset.rm,1); renderPalaceBuild(); });
-  el("pbDone").onclick=()=>{ if(PB.stations.length<min) return;
+  const donePalace=()=>{ if(PB.stations.length<min) return;
     Prog.palaces[PB.slot]={place:PB.place, stations:PB.stations.slice(), learnedAt:Date.now(), step:1};
     const id="palace:"+PB.slot; if(!Prog.doneSkills.includes(id)) Prog.doneSkills.push(id);
     gradeKey("sk:palace:"+PB.slot,"good"); saveProg(); updateMetrics(); checkBadges();
@@ -2956,6 +2961,8 @@ function renderPalaceBuild(){
       <button class="btn" id="pbFin">Done</button></div>`;
     el("pbFin").onclick=ret; PB=null;
   };
+  el("pbDone").onclick=donePalace;
+  if(el("pbDoneTop")) el("pbDoneTop").onclick=donePalace;   // green ✓ = same as "Complete palace"
 }
 function startLesson(sk){
   if(skillPaywalled(sk)) return openPaywall(sk);   // Pro-only content — offer whole-app subscription or a single-lesson talent unlock
@@ -4302,7 +4309,7 @@ function renderWalk(){
        <label class="vplabel" style="text-align:center;display:block;margin-top:10px">Which room / spot?</label><select class="vpsel" id="wRoom" style="text-align:center;text-align-last:center">${selP!=null?roomOpts(selP):`<option value="" selected>— room / spot —</option>`}</select>`
     : `<div class="hint" style="margin:2px 0 10px">You don't have a memory palace yet — build one in the <b>Palace</b> tab. For now, just describe where your scene happens.</div>`;
   V.innerHTML=`<div class="card">
-      <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose" id="wClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">${palaces.length?"Which palace?":"Write your scene"}</div><span style="width:22px;flex:0 0 22px"></span></div>
+      <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="wClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">${palaces.length?"Which palace?":"Write your scene"}</div><button class="lsave" id="wDoneTop" title="Save & done">✓</button></div>
       ${palaceSel}
       <div class="lv-ref" style="font-size:20px;margin:8px 0 4px">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
       <div class="lv-triple lv-triple-sm">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
@@ -4324,10 +4331,9 @@ function renderWalk(){
       if(pv!=="") Prog.verseLoc[vkey]={p:+pv, room:(el("wRoom")?el("wRoom").value:"")}; else delete Prog.verseLoc[vkey]; }
     saveProg(); addMemorized(curScene); sceneBackfill=false; walkReturn();
   };
-  if(el("wDone")) el("wDone").onclick=()=>{
-    if(!(el("wScene").value||"").trim()){ confirmBlankScene(finish); return; }
-    finish();
-  };
+  const doneAction=()=>{ if(!(el("wScene").value||"").trim()){ confirmBlankScene(finish); return; } finish(); };
+  if(el("wDone")) el("wDone").onclick=doneAction;
+  if(el("wDoneTop")) el("wDoneTop").onclick=doneAction;   // green ✓ in the top bar = same as Done (no scrolling)
 }
 // Encourage (never block) writing the scene — writing it IS the learning.
 function confirmBlankScene(onSkip){
@@ -5611,4 +5617,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-144926 -->
+<!-- deploy bb-20260821-150158 -->
