@@ -391,7 +391,7 @@
   .ttcount{min-width:46px;text-align:center;font-weight:800;font-size:13px;border-radius:999px;padding:4px 10px;background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
   .ttcount.ttgood{color:var(--good);border-color:var(--good)}
   .ttcount.ttbad{color:var(--miss-ink);border-color:var(--miss)}
-  .ttdisplay{min-height:52px;font-size:18px;line-height:1.6;text-align:center;margin:12px 0;color:var(--ink)}
+  .ttdisplay{height:86px;overflow-y:auto;font-size:18px;line-height:1.6;text-align:center;margin:12px 0;color:var(--ink)}   /* FIXED height so committed words never push the input/buttons — the box scrolls internally */
   .ttdisplay .ttdone{color:var(--good);font-weight:700}
   .ttdisplay .ttcur{font-weight:800}
   .ttdisplay .ttcur.good{color:var(--gold-ink)}
@@ -2915,8 +2915,7 @@ function renderPalaceBuild(){
   const L=el(PB.host), title=PB.slot===0?"Build your first palace":"Build a palace";
   if(PB.stage===0){ // name the palace (a real page, not a popup) — with idea prompts underneath
     L.innerHTML=`<div class="lesson"><div class="card">
-        <div class="lv-topbar"><button class="lclose" id="pbClose" style="margin:0">✕</button></div>
-        <h2 style="font-size:19px;margin:2px 0 4px">Name your palace</h2>
+        <div class="lv-topbar"><button class="lclose" id="pbClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:16px">Name your palace</div><span style="width:22px;flex:0 0 22px"></span></div>
         <p class="hint">Choose a real place you know by heart — you'll walk through it in your mind to store things in order.</p>
         <input class="typein" id="pbName" placeholder="e.g. My childhood home" value="${(PB.place||"").replace(/"/g,"&quot;")}" style="text-align:left;font-size:16px;padding:13px;width:100%;box-sizing:border-box">
         <div class="ideahead">Need inspiration? Tap an idea:</div>
@@ -2935,8 +2934,7 @@ function renderPalaceBuild(){
   // stage 1: add stations (walk through, type each location)
   const min=5, n=PB.stations.length;
   L.innerHTML=`<div class="lesson"><div class="card">
-      <div class="lv-topbar"><button class="lclose" id="pbClose" style="margin:0">✕</button></div>
-      <h2 style="font-size:18px">Walk through “${PB.place}”</h2>
+      <div class="lv-topbar"><button class="lclose" id="pbClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">Walk through “${PB.place}”</div><span style="width:22px;flex:0 0 22px"></span></div>
       <p class="lead">Type each spot along your route, <b>in the order you'd walk past them</b> (e.g. front door → hallway → kitchen sink → couch…). Add at least ${min}.</p>
       <div class="btnrow" style="margin-top:0"><input class="typein" id="pbIn" placeholder="Next location…" style="text-align:left;font-size:15px;padding:12px"><button class="btn sm" id="pbAdd" style="width:auto">Add</button></div>
       <div class="stationlist">${PB.stations.map((s,i)=>`<div class="st"><span><b class="gold">${i+1}.</b> ${s}</span><span class="rm" data-rm="${i}">✕</span></div>`).join("")||`<p class="hint">No locations yet — add your first stop.</p>`}</div>
@@ -4986,8 +4984,7 @@ function renderTextFade(){
     : `<span class="w">${w}</span>`).join(" ");
   const done=hideCount>=TF.words.length;
   host.innerHTML=`<div class="card">
-      <div class="lv-topbar"><button class="lclose" id="tfClose" style="margin:0">✕</button></div>
-      <div style="font-weight:800;color:var(--gold-ink);text-align:center">${bookName(TF.b)} ${TF.c}:${TF.v}</div>
+      <div class="lv-topbar"><button class="lclose" id="tfClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(TF.b)} ${TF.c}:${TF.v}</div><span style="width:22px;flex:0 0 22px"></span></div>
       <div class="fadeverse">${html}</div>
       <p class="hint" style="text-align:center">${done?"Now recite the whole verse from memory — then type it to lock it in.":"Read it aloud. Each step hides more words. <b>Tap any blank to peek</b> for 2 seconds."}</p>
       <div class="btnrow">
@@ -5043,30 +5040,39 @@ let TT=null;
 function startTypeTest(b,c,v,ret){ const words=(kjvText(b,c,v)||"").split(/\s+/).filter(Boolean);
   TT={b,c,v,ret,words,idx:0,wrong:false,wrongWord:null,hintUsed:false}; renderTypeTest(); }
 function renderTypeTest(){
-  const V=el("verse"), total=TT.words.length, done=TT.idx;
-  const committed=TT.words.slice(0,done).join(" ");
-  const counterCls=TT.wrong?"ttbad":(done>0?"ttgood":"");
-  // the top shows only COMMITTED (green) words — plus, briefly, a wrong attempt in red for the current word
-  const wrongTop = TT.wrongWord ? ` <span class="ttcur bad">${TT.wrongWord.replace(/</g,"&lt;")}</span>` : "";
+  const V=el("verse"), total=TT.words.length;
+  // Build the shell ONCE. From here on we mutate only the top display + counter in place — the input element
+  // is never recreated, so focus and the on-screen keyboard hold steady (no flashing, no jump).
   V.innerHTML=`<div class="card">
-      <div class="lv-topbar"><button class="lclose" id="ttClose" style="margin:0">✕</button><div class="ttcount ${counterCls}" id="ttCount">${done}/${total}</div></div>
-      <div style="font-weight:800;color:var(--gold-ink);text-align:center">${bookName(TT.b)} ${TT.c}:${TT.v}</div>
-      <div class="ttdisplay"><span class="ttdone">${committed}</span>${wrongTop||(done||TT.wrongWord?"":`<span style="color:var(--muted)">your words appear here as you go…</span>`)}</div>
-      <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type word ${done+1}…">
+      <div class="lv-topbar"><button class="lclose" id="ttClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(TT.b)} ${TT.c}:${TT.v}</div><div class="ttcount" id="ttCount">0/${total}</div></div>
+      <div class="ttdisplay" id="ttDisplay"></div>
+      <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type word 1…">
       <p class="hint" style="text-align:center;margin-top:8px">Each word jumps to the top the moment you finish it — <b>green</b> if right, <b>red</b> if wrong (then it clears to retry).</p>
-      <button class="btn ghost sm" id="ttHint" style="width:100%;margin-top:2px">🔎 Reveal a letter${TT.hintUsed?" · used — you'll retype it clean":""}</button>
+      <button class="btn ghost sm" id="ttHint" style="width:100%;margin-top:2px">🔎 Reveal a letter</button>
     </div>`;
+  const inp=el("ttIn"), disp=el("ttDisplay"), cnt=el("ttCount"), hintBtn=el("ttHint");
   el("ttClose").onclick=()=>{ const r=TT.ret; TT=null; r?r():renderVerse(); };
-  const inp=el("ttIn"); setTimeout(()=>{ try{inp.focus();}catch(e){} }, 60);
+  // repaint ONLY the committed-words area + counter + placeholder (leaves the input/keyboard untouched)
+  const paintTop=()=>{
+    const done=TT.idx, committed=TT.words.slice(0,done).join(" ");
+    const wrongTop = TT.wrongWord ? ` <span class="ttcur bad">${TT.wrongWord.replace(/</g,"&lt;")}</span>` : "";
+    disp.innerHTML=`<span class="ttdone">${committed}</span>`+(wrongTop||(done||TT.wrongWord?"":`<span style="color:var(--muted)">your words appear here as you go…</span>`));
+    disp.scrollTop=disp.scrollHeight;                                  // keep the newest words visible inside the fixed box
+    cnt.textContent=`${done}/${total}`; cnt.className="ttcount "+(TT.wrong?"ttbad":(done>0?"ttgood":""));
+    inp.placeholder=`type word ${done+1}…`;
+    hintBtn.innerHTML=`🔎 Reveal a letter${TT.hintUsed?" · used — you'll retype it clean":""}`;
+  };
+  paintTop();
+  setTimeout(()=>{ try{inp.focus();}catch(e){} }, 60);                 // focus ONCE, at start; never re-focus per word
   const commitWord=()=>{
     const expected=TT.words[TT.idx]; if(expected===undefined) return;
     const typed=inp.value.trim(); if(!typed) return;
     if(normWord(typed)===normWord(expected)){          // correct → commit to the top (green), advance
-      TT.idx++; TT.wrong=false; TT.wrongWord=null; inp.value="";
+      TT.idx++; TT.wrong=false; TT.wrongWord=null; inp.value=""; inp.classList.remove("good","wrong");
       if(TT.idx>=total){ typeTestComplete(); return; }
-      renderTypeTest();
+      paintTop();
     } else {                                            // wrong → show it red at top, clear the box to retry
-      TT.wrong=true; TT.wrongWord=typed; inp.value=""; renderTypeTest();
+      TT.wrong=true; TT.wrongWord=typed; inp.value=""; inp.classList.remove("good","wrong"); paintTop();
     }
   };
   // no space/enter needed: the moment the typed word is as long as the target, it jumps to the top
@@ -5074,13 +5080,14 @@ function renderTypeTest(){
   inp.onkeydown=(e)=>{ if(e.key===" "){ e.preventDefault(); } };
   inp.oninput=()=>{
     const expected=TT.words[TT.idx]; if(expected===undefined) return;
+    if(TT.wrongWord){ TT.wrongWord=null; TT.wrong=false; paintTop(); }   // typing again clears the red word (in place)
     const nexp=normWord(expected), ncur=normWord(inp.value.replace(/\s+/g,"")), wrong=ncur.length>0 && !nexp.startsWith(ncur);
     inp.classList.toggle("wrong", wrong); inp.classList.toggle("good", !wrong && ncur.length>0);
     if(ncur.length>=nexp.length) commitWord();   // word finished → judge it automatically
   };
   // letter hint: reveal the next correct letter of the current word. Using it even once taints the run —
   // the verse must be completed with NO hints, so on completion it blanks out and starts over.
-  if(el("ttHint")) el("ttHint").onclick=()=>{
+  if(hintBtn) hintBtn.onclick=()=>{
     const expected=TT.words[TT.idx]; if(expected===undefined) return;
     if(!TT.hintCharged){ TT.hintCharged=true; spendTalents(3); }   // a hint costs talents (once per session)
     TT.hintUsed=true;
@@ -5604,4 +5611,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-144346 -->
+<!-- deploy bb-20260821-144926 -->
