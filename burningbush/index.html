@@ -3802,8 +3802,9 @@ function memTestRender(){
   const V=el("verse"), b=memTestCur[0], c=memTestCur[1], v=memTestCur[2], k=knownNumbers();
   let books=`<option value="" selected>— book —</option>`; for(let bb=1;bb<=66;bb++) if(k.has(bb)||bb===b) books+=`<option value="${bb}">${bookName(bb)}</option>`;   // always include the correct book; starts blank
   const nums=(max,force,lbl)=>{ let o=`<option value="" selected>— ${lbl} —</option>`; for(let n=1;n<=max;n++) if(k.has(n)||n===force) o+=`<option value="${n}">${dispNum("num",n)}</option>`; return o; }; // force = the correct answer, always selectable
-  V.innerHTML=`<div class="qhead"><button class="lclose" id="mtClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Test yourself</div><div style="width:24px"></div></div>
-    <div class="card">${testHUD()}<p class="lead" style="margin-bottom:8px">Which verse is this? Choose its book, chapter and verse.</p>
+  V.innerHTML=`<div class="card" style="position:relative">
+      <button class="lclose" id="mtClose" style="position:absolute;left:10px;top:12px;margin:0;z-index:2">✕</button>
+      ${testHUD()}
       <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${kjvText(b,c,v)}"</div>
       <label class="vplabel">Book</label><select class="vpsel" id="mtB">${books}</select>
       <div style="display:flex;gap:8px;align-items:flex-end">
@@ -3811,7 +3812,7 @@ function memTestRender(){
         <div style="font-weight:800;font-size:24px;color:var(--muted);padding:0 0 8px">:</div>
         <div style="flex:1;min-width:0"><label class="vplabel">Verse</label><select class="vpsel" id="mtV">${nums(176,v,"verse")}</select></div>
       </div>
-      <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):`Your 🔥 streak stays safe — it only breaks if you miss 3 times in a row.`}</div>
+      <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):""}</div>
       <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
       <div class="peekrow" style="display:flex;gap:6px;margin-top:8px">
         <button class="btn ghost sm" data-peek="b" style="flex:1">🔎 Book</button>
@@ -5573,4 +5574,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-132457 -->
+<!-- deploy bb-20260821-132953 -->
