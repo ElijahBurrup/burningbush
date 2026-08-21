@@ -4083,15 +4083,15 @@ function openBrandMenu(){
     <div style="text-align:center"><div style="font-size:38px;line-height:1">🔥</div>
       <h2 style="font-size:19px;margin:6px 0 2px">Burning Bush</h2>
       <p class="hint" style="margin:0 0 14px">Give, get help, or help us grow.</p></div>
-    <button class="btn ghost menu-row" id="bmDonate"><span>🎁</span> Gift a subscription to someone</button>
-    <button class="btn ghost menu-row" id="bmHelp"><span>🙏</span> Request assistance</button>
-    <button class="btn ghost menu-row" id="bmBug"><span>🐞</span> Report a bug</button>
-    <button class="btn ghost menu-row" id="bmFeat"><span>💡</span> Request a feature</button>
+    <button class="btn ghost menu-row" id="bmDonate"><span>🎁</span> Gift a Subscription</button>
+    <button class="btn ghost menu-row" id="bmHelp"><span>🙏</span> Request Subscription Help</button>
+    <button class="btn ghost menu-row" id="bmBug"><span>🐞</span> Report Bug</button>
+    <button class="btn ghost menu-row" id="bmFeat"><span>💡</span> Request Feature</button>
     <button class="btn" id="bmClose" style="margin-top:12px;width:100%">Close</button></div>`;
   m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("bmClose").onclick=()=>m.style.display="none";
   el("bmDonate").onclick=()=>{ m.style.display="none"; openTicketForm({type:"donate", title:"🎁 Gift a subscription", intro:"Bless someone with Burning Bush. Tell us their name or email and add a note — we'll follow up to set it up.", recipient:true, placeholder:"A note for them (optional)…"}); };
-  el("bmHelp").onclick=()=>{ m.style.display="none"; openTicketForm({type:"assistance", title:"🙏 Request assistance", intro:"If cost is a barrier, tell us your story. Please share at least 250 words about why you'd like help (up to 500).", minWords:250, maxWords:500, placeholder:"Share why you're asking…"}); };
+  el("bmHelp").onclick=()=>{ m.style.display="none"; openTicketForm({type:"assistance", title:"🙏 Request Subscription Help", intro:"If cost is a barrier, tell us your story. Please share at least 250 words about why you'd like help (up to 500).", minWords:250, maxWords:500, placeholder:"Share why you're asking…"}); };
   el("bmBug").onclick=()=>{ m.style.display="none"; openTicketForm({type:"bug", title:"🐞 Report a bug", intro:"What went wrong, and what were you doing when it happened?", placeholder:"Describe the bug…"}); };
   el("bmFeat").onclick=()=>{ m.style.display="none"; openTicketForm({type:"feature", title:"💡 Request a feature", intro:"What would make Burning Bush better for you?", placeholder:"Describe your idea…"}); };
 }
@@ -5143,4 +5143,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-080953 -->
+<!-- deploy bb-20260821-081610 -->
