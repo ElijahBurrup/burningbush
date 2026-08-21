@@ -536,14 +536,30 @@
   .bible-drop-item:active{background:var(--panel2)}
   .biblestrip .bk{aspect-ratio:1.12;border-radius:6px;background:var(--cell-bg);font-size:12px;font-weight:700;display:grid;place-items:center;color:var(--cell-ink)}
   .biblestrip .bk.on{background:var(--accent);color:var(--on-blue);font-weight:800}
-  /* Journey fills the screen (no scroll) and the book tiles grow to fill the height → numbers as big as possible */
-  #journey.view.active{display:flex;flex-direction:column;height:100%}
-  #journey > h2{flex:0 0 auto}
-  .biblecard{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
-  .biblecard .biblestrip{min-height:0;grid-auto-rows:1fr}
-  .biblecard .biblestrip.ot{flex:4 1 0}   /* 4 rows of books → proportional flex keeps tile height equal to NT */
-  .biblecard .biblestrip.nt{flex:3 1 0}   /* 3 rows of books */
-  .biblecard .bk{aspect-ratio:auto;height:auto;min-height:0;font-size:clamp(13px,4.4vw,20px)}
+  /* NUMBER view (.jfill): Journey fills the screen (no scroll) and tiles grow to fill the height → numbers as big as possible */
+  #journey.jfill.view.active{display:flex;flex-direction:column;height:100%}
+  #journey.jfill > h2{flex:0 0 auto}
+  #journey.jfill .biblecard{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+  #journey.jfill .biblecard .biblestrip{min-height:0;grid-auto-rows:1fr}
+  #journey.jfill .biblecard .biblestrip.ot{flex:4 1 0}   /* 4 rows of books → proportional flex keeps tile height equal to NT */
+  #journey.jfill .biblecard .biblestrip.nt{flex:3 1 0}   /* 3 rows of books */
+  #journey.jfill .biblecard .bk{aspect-ratio:auto;height:auto;min-height:0;font-size:clamp(13px,4.4vw,20px)}
+  /* view toggle (# / number-image / book-image / name), left of the search icon */
+  .bible-viewtoggle{display:flex;gap:2px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:2px}
+  .bvt{background:none;border:none;color:var(--muted);font-size:12px;font-weight:800;min-width:24px;height:27px;border-radius:7px;cursor:pointer;display:grid;place-items:center;padding:0 4px;line-height:1}
+  .bvt.on{background:var(--accent);color:var(--on-blue)}
+  /* IMAGE views (number-image / book-image): 5 columns, image + small number caption, page scrolls */
+  .biblestrip.mode-img{grid-template-columns:repeat(5,1fr);grid-auto-rows:auto}
+  .biblestrip .bk.bk-img{aspect-ratio:auto;display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 4px 3px;background:var(--cell-bg)}
+  .bk-img .bkimg-wrap{width:100%;aspect-ratio:1;display:grid;place-items:center;overflow:hidden}
+  .bk-img .bkimg-wrap .pegimg-sm,.bk-img .bkimg-wrap .imgph-sm,.bk-img .bkimg-wrap img{width:100%;height:100%;object-fit:contain}
+  .bk-img .bkimg-n{font-size:11px;font-weight:800;color:var(--cell-ink)}
+  .biblestrip .bk.bk-img:not(.on){opacity:.4}
+  .biblestrip .bk.bk-img.on{background:var(--cell-bg);outline:2px solid var(--accent);outline-offset:-2px}
+  .biblestrip .bk.bk-img.on .bkimg-n{color:var(--accent)}
+  /* NAME view: 2 columns, full book names, page scrolls */
+  .biblestrip.mode-name{grid-template-columns:repeat(2,1fr);grid-auto-rows:auto}
+  .biblestrip .bk.bk-name{aspect-ratio:auto;min-height:44px;padding:9px 8px;font-size:13.5px;line-height:1.15;text-align:center;font-weight:800;border-radius:9px}
 
   /* ---- foundations reuse ---- */
   .subnav{display:flex;gap:6px;margin-bottom:16px}
@@ -2235,11 +2251,24 @@ document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
 });
 
 /* =================== JOURNEY (onboarding + mastery grid) =================== */
+let bibleView="num";   // whole-Bible tile display: num | numimg | bookimg | name
 function renderJourney(){
   updateMetrics();
   if(!Prog.onboarded){ renderOnboard(); return; }
   const J=el("journey");
-  const stripFor=(a,z)=>{ let s=""; for(let b=a;b<=z;b++) s+=`<div class="bk ${knownNum(b)?"on":""}" data-book="${b}" title="${bookName(b)}">${pad2(b)}</div>`; return s; };
+  try{ bibleView = Store.get("vv_bibleview","num")||"num"; }catch(e){}
+  const mode = bibleView, jfill = mode==="num";   // num view fills the screen (no scroll); the others can scroll
+  const stripClass = jfill ? "" : (mode==="name" ? "mode-name" : "mode-img");
+  const bookCell=(b)=>{ const on = knownNum(b)?"on":"";
+    if(mode==="numimg"||mode==="bookimg"){ const img = mode==="numimg" ? pegImg("num",b,pegFor(b).word) : pegImg("book",b,pegFor(b).word,false);
+      return `<div class="bk bk-img ${on}" data-book="${b}" title="${bookName(b)}"><div class="bkimg-wrap">${img}</div><span class="bkimg-n">${pad2(b)}</span></div>`; }
+    if(mode==="name") return `<div class="bk bk-name ${on}" data-book="${b}" title="${bookName(b)}">${bookName(b)}</div>`;
+    return `<div class="bk ${on}" data-book="${b}" title="${bookName(b)}">${pad2(b)}</div>`;
+  };
+  const stripFor=(a,z)=>{ let s=""; for(let b=a;b<=z;b++) s+=bookCell(b); return s; };
+  el("journey").classList.toggle("jfill", jfill);
+  const VMODES=[["num","#","Book number"],["numimg","🔢","Number image"],["bookimg","📖","Book image"],["name","Aa","Book name"]];
+  const viewToggle=`<div class="bible-viewtoggle">${VMODES.map(m=>`<button class="bvt ${mode===m[0]?"on":""}" data-vmode="${m[0]}" title="${m[2]}">${m[1]}</button>`).join("")}</div>`;
   J.innerHTML=`
     <h2 style="margin:0 0 6px">Your Journey</h2>
     ${(function(){ // daily habit hook — kept compact so the whole page fits without scrolling
@@ -2253,17 +2282,18 @@ function renderJourney(){
       return `<div class="card" style="padding:11px 14px;margin-bottom:9px;text-align:center"><div style="font-weight:800;color:var(--good)">✓ You're caught up today</div><div class="hint" style="margin-top:3px">${streak?streak+" · ":""}${weekLine}</div></div>`;
     })()}
     <div class="card biblecard" style="margin-top:0;position:relative;padding:12px 14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><h2 style="font-size:15px;margin:0">The whole Bible</h2><button class="bible-search-btn" id="bibleSearchBtn" title="Jump to a book">🔍</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><h2 style="font-size:15px;margin:0">The whole Bible</h2><div style="display:flex;gap:6px;align-items:center">${viewToggle}<button class="bible-search-btn" id="bibleSearchBtn" title="Jump to a book">🔍</button></div></div>
       <div class="otnt-label">Old Testament <span>books 1–39</span></div>
-      <div class="biblestrip ot">${stripFor(1,39)}</div>
+      <div class="biblestrip ot ${stripClass}">${stripFor(1,39)}</div>
       <div class="otnt-label" style="margin-top:8px">New Testament <span>books 40–66</span></div>
-      <div class="biblestrip nt">${stripFor(40,66)}</div>
+      <div class="biblestrip nt ${stripClass}">${stripFor(40,66)}</div>
       <div class="bible-drop" id="bibleSearchDrop" style="display:none">
         <input id="bibleSearchIn" class="typein" inputmode="text" placeholder="Tap to search a book…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-1p-ignore data-lpignore="true" readonly>
         <div class="bible-drop-list">${range(1,66).map(n=>`<button class="bible-drop-item" data-jump="${n}"><b>${pad2(n)}</b> · ${bookName(n)}</button>`).join("")}</div>
       </div>
     </div>`;
   J.querySelectorAll("[data-book]").forEach(c=>c.onclick=()=>renderBookScreen(+c.dataset.book));
+  J.querySelectorAll("[data-vmode]").forEach(btn=>btn.onclick=()=>{ bibleView=btn.dataset.vmode; try{Store.set("vv_bibleview",bibleView);}catch(e){} renderJourney(); });
   if(el("bibleSearchBtn")) el("bibleSearchBtn").onclick=(e)=>{ e.stopPropagation(); const d=el("bibleSearchDrop"), open=d.style.display!=="none"; d.style.display=open?"none":"block"; if(!open){ const inp=el("bibleSearchIn"); if(inp){ inp.value=""; inp.dispatchEvent(new Event("input")); } } };  // no programmatic focus — the field is readonly until the user taps it (kills the iOS AutoFill bar)
   if(el("bibleSearchIn")){ const bsi=el("bibleSearchIn");
     // readonly-until-tap: iOS won't attach its AutoFill (key/card/pin) accessory bar to a field that was readonly; we drop readonly the instant the user taps so the keyboard still opens
@@ -5631,4 +5661,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-151922 -->
+<!-- deploy bb-20260821-152541 -->
