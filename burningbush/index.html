@@ -2773,10 +2773,11 @@ const PALACE_IDEAS=["A Home","A Commute","A Business","A Church","A School"];   
 /* ---- palace spaced-repetition trail: review at D0, D1, D3, D7, D16, D30 ---- */
 const SR_TRAIL=[0,1,3,7,16,30]; // checkpoint days. Intervals are RELATIVE: each completed review restarts the clock to the NEXT gap,
 // so a backlog only ever advances ONE checkpoint at a time (fall 3 days behind and D1+D3 due → doing it counts as D1, then D3 waits 2 more days).
+const SR_GRACE=60*60*1000;   // pull in anything due within the next hour so near-due items batch together (23h ≈ 24h)
 function srDueAt(o){ const step=o.step||1; return o.dueAt!=null ? o.dueAt : (o.learnedAt||0)+SR_TRAIL[step]*DAY; } // legacy saves without dueAt fall back to cumulative day
 // index of the checkpoint currently due (its dueAt has passed and it isn't done yet), else -1
 function srDueIndex(o){ if(!o||!o.learnedAt) return -1; const step=o.step||1; if(step>=SR_TRAIL.length) return -1;
-  return Date.now() >= srDueAt(o) ? step : -1; }
+  return (Date.now()+SR_GRACE) >= srDueAt(o) ? step : -1; }
 // complete the one due checkpoint, then restart the counter to the NEXT gap only (never skip ahead over a backlog)
 function srAdvance(o){ const di=srDueIndex(o); if(di<0) return false; o.step=di+1;
   o.dueAt = o.step<SR_TRAIL.length ? Date.now()+(SR_TRAIL[o.step]-SR_TRAIL[o.step-1])*DAY : null; return true; }
@@ -2792,7 +2793,7 @@ function verseSRobj(k){ return (Prog.verseSR||{})[k]; }
 function verseDue(k){ const o=verseSRobj(k); return !!o && srDueIndex(o)>=0; }
 function versesDueCount(){ const sr=Prog.verseSR||{}; return (Prog.memorized||[]).filter(k=>{ const o=sr[k]; return o && srDueIndex(o)>=0; }).length; }
 // numbers that have entered the Leitner review cycle and whose next review has come due
-function numbersDueList(){ const now=Date.now(), out=[]; knownNumbers().forEach(n=>{ if(n<1||n>176) return; const st=SRS['sk:num:'+n]; if(st && typeof st.box==='number' && st.due<=now) out.push(n); }); return out.sort((a,b)=>a-b); }
+function numbersDueList(){ const now=Date.now()+SR_GRACE, out=[]; knownNumbers().forEach(n=>{ if(n<1||n>176) return; const st=SRS['sk:num:'+n]; if(st && typeof st.box==='number' && st.due<=now) out.push(n); }); return out.sort((a,b)=>a-b); }
 function numbersDueCount(){ return numbersDueList().length; }
 function reviewDueCount(){ return numbersDueCount()+versesDueCount()+palacesDueCount(); }   // everything due for spaced repetition today
 function newSR(){ return {learnedAt:Date.now(), step:1, dueAt:Date.now()+(SR_TRAIL[1]-SR_TRAIL[0])*DAY}; } // D0 done at learn, D1 due in 1 day
@@ -5494,4 +5495,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-114950 -->
+<!-- deploy bb-20260821-115153 -->
