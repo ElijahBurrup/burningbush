@@ -3159,6 +3159,21 @@ function finishLesson(){
 function reachableScenes(){ return SCENES.filter(s=>reachable(bookNum(s.b),s.c,s.v)); }
 let curScene=null, wSteps=[], wIdx=0;
 let memTestCur=null, memTestRecent=[], memTestWrong=0, reviewedThisSession=[];
+const HINT_COSTS=[25,50,75];   // escalating talent cost for the 1st, 2nd, 3rd hint on the SAME verse
+let memHintUses=0;
+// A generic "spend talents?" confirm used before revealing a paid hint.
+function confirmSpend(title, sub, onYes){
+  let m=el("spendModal"); if(!m){ m=document.createElement("div"); m.id="spendModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  m.innerHTML=`<div class="modal-card center" style="max-width:320px">
+    <div style="font-size:38px">🪙</div>
+    <p class="lead" style="font-size:15px;margin:10px 0 4px">${title}</p>
+    <p class="hint" style="margin:0 0 16px">${sub}</p>
+    <button class="btn" id="spYes" style="width:100%">Yes, use my talents</button>
+    <button class="btn ghost" id="spNo" style="width:100%;margin-top:8px">Cancel</button></div>`;
+  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("spYes").onclick=()=>{ m.style.display="none"; onYes(); };
+  el("spNo").onclick=()=>{ m.style.display="none"; };
+}
 const vSec={sugg:false, topics:false, mem:false, saved:false}; // sections start minimized
 function verseRow(b,c,v,st,star){
   const t=kjvText(b,c,v);
@@ -3452,7 +3467,7 @@ function startNumberReview(nums, ret){
   const qs=nums.map(n=>({n, type: pick((n<=66 && withBook.length>=1) ? ["q_n2i","q_i2n","q_n2b","q_b2n"] : ["q_n2i","q_i2n"]) }));
   NT={qs, i:0, ok:0, wrong:0, ret}; renderNumTest();
 }
-function askVerse(key){ memTestCur=key.split(":").map(Number); memTestWrong=0; memTestRender(); }
+function askVerse(key){ memTestCur=key.split(":").map(Number); memTestWrong=0; memHintUses=0; memTestRender(); }
 function nextMemVerse(){                       // the "go to next" hook fired after each answered verse
   if(MS && MS.phase==="sr"){
     while(MS.srQueue.length && !verseDue(MS.srQueue[0])) MS.srQueue.shift(); // drop any already cleared
@@ -3709,11 +3724,12 @@ function memTestRender(){
       </div>
       <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):`Your 🔥 streak stays safe — it only breaks if you miss 3 times in a row.`}</div>
       <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
-      ${Prog.hints>0?`<div class="peekrow" style="display:flex;gap:6px;margin-top:8px">
+      <div class="peekrow" style="display:flex;gap:6px;margin-top:8px">
         <button class="btn ghost sm" data-peek="b" style="flex:1">🔎 Book</button>
         <button class="btn ghost sm" data-peek="c" style="flex:1">🔎 Chapter</button>
         <button class="btn ghost sm" data-peek="v" style="flex:1">🔎 Verse</button>
-      </div><div class="hint" style="text-align:center;margin-top:5px">Peek at any one part — ${Prog.hints} peek${Prog.hints===1?"":"s"} left. Answer right and your streak still counts.</div>`:""}
+      </div>
+      <div class="hint" id="mtHintCost" style="text-align:center;margin-top:5px">Stuck? Peek at one part for <b class="gold">${HINT_COSTS[Math.min(memHintUses,2)]} 🪙</b> — the cost rises to 50 then 75 on this verse. Answer right and your streak still counts.</div>
       <button class="btn ghost sm" id="mtForgot" style="margin-top:8px;width:100%">🤔 I forgot this — re-encode later</button>
       <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)"><div class="hint" style="text-align:center;margin-bottom:6px">This verse's memory trail (D0…D30)</div>${srTrailHTML(verseSRobj(refKey(b,c,v))||{step:1,learnedAt:Date.now()})}</div>
       <div id="mtFb"></div></div>`;
@@ -3770,18 +3786,23 @@ function memTestRender(){
   el("mtC").addEventListener("change",()=>{ el("mtC").classList.remove("wrong"); el("mtFb").innerHTML=""; repop(); });
   el("mtV").addEventListener("change",()=>{ el("mtV").classList.remove("wrong"); el("mtFb").innerHTML=""; });
   repop();   // scope the dropdowns to the initially-selected book on first render
-  // Peek tokens reveal the ONE part you choose (book, chapter or verse). Peeking never breaks your streak;
-  // answer the rest correctly and it still counts.
+  // Peek reveals the ONE part you choose (book/chapter/verse) for talents — 25, then 50, then 75 on the same
+  // verse. Confirm before spending. Peeking never breaks your streak; answer the rest right and it still counts.
   V.querySelectorAll("[data-peek]").forEach(btn=>btn.onclick=()=>{
-    if((Prog.hints||0)<=0 || btn.disabled) return;
-    Prog.hints--; spendTalents(3); saveProg(); refreshHUD();
-    const which=btn.dataset.peek;
-    if(which==="b"){ el("mtB").value=b; repop(); el("mtB").classList.add("correct"); el("mtB").disabled=true; }
-    else if(which==="c"){ el("mtC").value=c; el("mtC").classList.add("correct"); el("mtC").disabled=true; repop(); el("mtC").value=c; el("mtC").disabled=true; el("mtC").classList.add("correct"); }
-    else { el("mtV").value=v; el("mtV").classList.add("correct"); el("mtV").disabled=true; }
-    btn.disabled=true; btn.style.opacity=".5";
-    if((Prog.hints||0)<=0) V.querySelectorAll("[data-peek]").forEach(x=>{ x.disabled=true; x.style.opacity=".5"; });
-    toast(which==="b"?"🔎 Book revealed":which==="c"?"🔎 Chapter revealed":"🔎 Verse revealed");
+    if(btn.disabled) return;
+    const which=btn.dataset.peek, cost=HINT_COSTS[Math.min(memHintUses,2)];
+    const partName=which==="b"?"book":which==="c"?"chapter":"verse";
+    if((Prog.talents||0)<cost){ toast(`That hint costs ${cost} talents — you have ${talDisp(Prog.talents||0)}.`); return; }
+    confirmSpend(`Reveal the ${partName} for <b class="gold">${cost} 🪙</b>?`,
+      `You'll have ${talDisp(Math.max(0,(Prog.talents||0)-cost))} talents left. Answer the rest right and your streak still counts.`, ()=>{
+      spendTalents(cost); memHintUses++;
+      if(which==="b"){ el("mtB").value=b; repop(); el("mtB").classList.add("correct"); el("mtB").disabled=true; }
+      else if(which==="c"){ el("mtC").value=c; repop(); el("mtC").value=c; el("mtC").disabled=true; el("mtC").classList.add("correct"); }
+      else { el("mtV").value=v; el("mtV").classList.add("correct"); el("mtV").disabled=true; }
+      btn.disabled=true; btn.style.opacity=".5";
+      const cl=el("mtHintCost"); if(cl) cl.innerHTML=`Next peek: <b class="gold">${HINT_COSTS[Math.min(memHintUses,2)]} 🪙</b>. Answer right and your streak still counts.`;
+      toast(which==="b"?"🔎 Book revealed":which==="c"?"🔎 Chapter revealed":"🔎 Verse revealed");
+    });
   });
 }
 function warnText(wrong){ const left=3-wrong; return `${left} more ${left===1?"try":"tries"} before the answer is revealed.`; }
@@ -5427,4 +5448,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-111018 -->
+<!-- deploy bb-20260821-111341 -->
