@@ -371,6 +371,14 @@
   .w4w-rect.done{border-color:var(--gold);background:linear-gradient(135deg,var(--panel2),var(--gold2))}
   .lv-sr{margin-top:18px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px 10px}
   .lv-sr .lv-sr-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--gold-ink);font-weight:800;text-align:center;margin-bottom:10px}
+  .lv-scene{margin-top:14px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .lv-scene-empty{border-style:dashed;border-color:var(--gold2)}
+  .lv-scene-h{font-weight:800;color:var(--gold-ink);font-size:14px;margin-bottom:4px}
+  .lv-scene-loc{font-size:12.5px;color:var(--muted);font-weight:700;margin-bottom:8px}
+  .lv-scene-txt{font-size:14.5px;line-height:1.5;color:var(--ink);font-style:italic}
+  .mem-backfill{display:flex;align-items:center;gap:12px;justify-content:space-between;background:var(--panel2);border:1px dashed var(--gold2);border-radius:14px;padding:12px 14px;margin:0 0 12px}
+  .mem-backfill-t{font-size:13px;line-height:1.4;color:var(--ink)}
+  .mem-backfill .btn{width:auto;flex:0 0 auto;white-space:nowrap;margin:0}
   .fadeverse .w.blank{cursor:pointer}
   .fadeverse .w.blank.peek{color:var(--gold-ink);font-weight:800}
   .ttcount{min-width:46px;text-align:center;font-weight:800;font-size:13px;border-radius:999px;padding:4px 10px;background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
@@ -3357,7 +3365,7 @@ function renderVerse(){
 
   // ---- sub-list pages (opened from a hub button; each has a back button) ----
   if(vView!=="hub"){
-    let title="", body="";
+    let title="", body="", memBare=[];
     if(vView==="sugg"){ title="✨ Suggested to memorize";
       body=`<p class="hint">Every book you've unlocked — tap one to open its suggested heart-verses.</p>`
         +(unlockedBooks.length?unlockedBooks.map(bn=>{ const list=suggGroups[bn]||[], open=vBook.sugg.has(bn);
@@ -3371,7 +3379,9 @@ function renderVerse(){
               +(open?(vs.length?`<div class="vlist">`+vs.map(a=>verseRow(a[0],a[1],a[2],"go")).join("")+`</div>`:`<p class="hint" style="margin:4px 0 8px">None in your range yet — learn more numbers.</p>`):"");
           }).join("");
     } else if(vView==="mem"){ title="★ Memorized verses";
-      body=mem.length?`<p class="hint" style="margin:2px 0 8px">Tap a book, then a verse to rebuild it or practice it word-for-word.</p>`+bookGroupedList(mem,"mem")
+      memBare=mem.filter(a=>{ const k=a.join(":"); const loc=Prog.verseLoc&&Prog.verseLoc[k]; const sc=((Prog.customScene&&Prog.customScene[k])||"").trim(); return !sc && !(loc&&loc.p!=null); });
+      const nudge = memBare.length ? `<div class="mem-backfill"><div class="mem-backfill-t"><b>🏛️ ${memBare.length} verse${memBare.length>1?"s":""}</b> ${memBare.length>1?"don't":"doesn't"} have a memory scene yet — give ${memBare.length>1?"them":"it"} a palace &amp; room so ${memBare.length>1?"they":"it"} stick${memBare.length>1?"":"s"}.</div><button class="btn sm" id="memBackfill">Add ${memBare.length>1?"scenes":"a scene"} →</button></div>` : "";
+      body=mem.length? nudge+`<p class="hint" style="margin:2px 0 8px">Tap a book, then a verse to rebuild it, add a scene, or practice it word-for-word.</p>`+bookGroupedList(mem,"mem")
         :`<p class="hint">Verses you finish building show up here.</p>`;
     } else if(vView==="saved"){ title="🔖 Saved for later";
       body=saved.length?bookGroupedList(saved,"saved"):`<p class="hint">Tap "Save · come back later" on any verse and it lands here.</p>`;
@@ -3381,6 +3391,7 @@ function renderVerse(){
     V.querySelectorAll("[data-bk]").forEach(h=>h.onclick=()=>{ const [sec,bn]=h.dataset.bk.split(":"); const set=vBook[sec]; const n=+bn; set.has(n)?set.delete(n):set.add(n); reVerse(); });
     V.querySelectorAll("[data-topic]").forEach(h=>h.onclick=()=>{ const ti=+h.dataset.topic; vTopic.has(ti)?vTopic.delete(ti):vTopic.add(ti); reVerse(); });
     V.querySelectorAll("[data-vb]").forEach(b=>b.onclick=()=>{ const [x,y,z]=b.dataset.vb.split(":").map(Number); verseScroll=document.querySelector(".content").scrollTop; openVerseWizard(x,y,z,backToVerse); });
+    if(el("memBackfill")) el("memBackfill").onclick=()=>{ const f=memBare[0]; if(!f) return; const back=()=>{ vView="mem"; renderVerse(); document.querySelector(".content").scrollTop=0; }; editVerseScene(f[0],f[1],f[2], back, back); };
     paintTheme(); return;
   }
 
@@ -4132,7 +4143,16 @@ const SCENE_NUDGES=[
   "\"Let the word of Christ dwell in you richly.\" Give it a home — write your scene?",
   "Slow down and see it. A blank scene is a verse half-learned — skip anyway?"
 ];
-function startSceneWalk(s){ curScene=s; wPhase="visual"; renderWalk(); }
+function startSceneWalk(s){ curScene=s; wPhase="visual"; sceneBackfill=false; renderWalk(); }
+// Backfill: let an ALREADY-memorized verse jump straight to the scene editor (skip the learn/visual phase).
+// doneRet runs after saving; cancelRet runs if they back out without saving.
+let sceneBackfill=false, sceneCancel=null;
+function editVerseScene(b,c,v, doneRet, cancelRet){
+  curScene=verseObj(b,c,v);
+  walkReturn = doneRet || (()=>renderLearnedVerse(b,c,v));
+  sceneCancel = cancelRet || walkReturn;
+  sceneBackfill=true; wPhase="scene"; show("verse"); renderWalk();
+}
 let walkReturn=renderVerse; // where to go on save/skip/finish
 function markSaved(){ const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.skipped=Prog.skipped.filter(x=>x!==k); if(!Prog.saved.includes(k))Prog.saved.push(k); saveProg(); }
 function markSkipped(){ const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.saved=Prog.saved.filter(x=>x!==k); if(!Prog.skipped.includes(k))Prog.skipped.push(k); saveProg(); }
@@ -4169,6 +4189,7 @@ function renderLearnedVerse(b,c,v,ret){
         <div class="lv-sr-lbl">Spaced repetition</div>
         ${o?srTrailHTML(o):`<p class="hint" style="text-align:center;margin:0">This verse joins your review trail as you practice it.</p>`}
       </div>
+      ${lvSceneBlock(vkey)}
       <button class="btn ghost" id="lvForgot" style="width:100%;margin-top:14px;font-size:13px;color:var(--muted)">🤔 I forgot this — re-encode later</button>
     </div>`;
   el("lvClose").onclick=()=>ret?ret():renderVerse();
@@ -4176,6 +4197,28 @@ function renderLearnedVerse(b,c,v,ret){
   el("lvNext").onclick=()=>{ if(hasNext) openVerseWizard(b,c,v+1,ret); };
   el("lvWord").onclick=()=>startWordForWord(b,c,v,()=>renderLearnedVerse(b,c,v,ret));
   el("lvForgot").onclick=()=>confirmForgetVerse(b,c,v, ()=>renderLearnedVerse(b,c,v,ret), ret);
+  if(el("lvScene")) el("lvScene").onclick=()=>editVerseScene(b,c,v, ()=>renderLearnedVerse(b,c,v,ret), ()=>renderLearnedVerse(b,c,v,ret));
+}
+// The verse's memory scene, shown on its detail page: a read-out with an Edit button if it has one,
+// or an invitation to add one (the backfill path for verses learned before palaces/scenes existed).
+function lvSceneBlock(vkey){
+  const loc=(Prog.verseLoc&&Prog.verseLoc[vkey])||{};
+  const scText=((Prog.customScene&&Prog.customScene[vkey])||"").trim();
+  const pHas = loc.p!=null && Prog.palaces && Prog.palaces[loc.p];
+  const locLine = pHas ? (Prog.palaces[loc.p].place + (loc.room?` · ${loc.room}`:"")) : "";
+  if(scText || pHas){
+    return `<div class="lv-scene">
+      <div class="lv-scene-h">🏛️ Your memory scene</div>
+      ${locLine?`<div class="lv-scene-loc">${locLine}</div>`:""}
+      ${scText?`<div class="lv-scene-txt">“${scText.replace(/</g,"&lt;")}”</div>`:`<p class="hint" style="margin:2px 0 0">No words yet — add a line to make it vivid.</p>`}
+      <button class="btn ghost sm" id="lvScene" style="width:100%;margin-top:10px">✏️ Edit scene</button>
+    </div>`;
+  }
+  return `<div class="lv-scene lv-scene-empty">
+    <div class="lv-scene-h">🏛️ Give this verse a home</div>
+    <p class="hint" style="margin:6px 0 10px">Pin it to a room in one of your memory palaces and jot a quick scene — that's what locks it in.</p>
+    <button class="btn" id="lvScene" style="width:100%">➕ Add memory scene</button>
+  </div>`;
 }
 function renderWalk(){
   const V=el("verse");
@@ -4238,8 +4281,9 @@ function renderWalk(){
       <textarea class="ed-ta" id="wScene" placeholder="e.g. In the kitchen, a giant ${bp.word} smashes into a ${cp.word} while a ${vp.word} …">${(Prog.customScene[vkey]||"").replace(/</g,"&lt;")}</textarea>
       <div class="btnrow" style="margin-top:12px"><button class="btn ghost" id="wBack" style="flex:0 0 96px">← Back</button><button class="btn" id="wDone">Done ✓</button></div>
     </div>`;
-  if(el("wClose")) el("wClose").onclick=()=>walkReturn();
-  if(el("wBack")) el("wBack").onclick=()=>{ wPhase="visual"; renderWalk(); };
+  if(el("wClose")) el("wClose").onclick=()=> sceneBackfill ? (sceneBackfill=false, sceneCancel()) : walkReturn();
+  if(el("wBack")){ if(sceneBackfill){ el("wBack").textContent="✕ Cancel"; el("wBack").onclick=()=>{ sceneBackfill=false; sceneCancel(); }; }
+    else el("wBack").onclick=()=>{ wPhase="visual"; renderWalk(); }; }
   if(el("wPalace")) el("wPalace").onchange=()=>{ const pi=+el("wPalace").value, rs=roomsFor(pi);
     el("wRoom").innerHTML=rs.map(r=>`<option>${r}</option>`).join("")||`<option value="">(add rooms to this palace first)</option>`; };
   setTimeout(()=>{ try{el("wScene").focus();}catch(e){} }, 60);
@@ -4247,7 +4291,7 @@ function renderWalk(){
     const text=(el("wScene").value||"").trim();
     if(text) Prog.customScene[vkey]=text; else delete Prog.customScene[vkey];
     if(el("wPalace")){ Prog.verseLoc=Prog.verseLoc||{}; Prog.verseLoc[vkey]={p:+el("wPalace").value, room:(el("wRoom")?el("wRoom").value:"")}; }
-    saveProg(); addMemorized(curScene); walkReturn();
+    saveProg(); addMemorized(curScene); sceneBackfill=false; walkReturn();
   };
   if(el("wDone")) el("wDone").onclick=()=>{
     if(!(el("wScene").value||"").trim()){ confirmBlankScene(finish); return; }
@@ -5526,4 +5570,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-120533 -->
+<!-- deploy bb-20260821-130619 -->
