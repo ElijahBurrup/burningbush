@@ -385,6 +385,7 @@
   .lv-navbtn{min-width:40px;height:34px;padding:0 9px;border-radius:10px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);font-weight:800;font-size:15px;line-height:1;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
   .lv-navbtn:disabled{opacity:.3;cursor:default}
   .lv-navpair.mem .lv-navbtn{color:var(--gold-ink);border-color:var(--gold2)}
+  .lv-navbtn.wlbl{min-width:auto;font-size:12.5px;padding:0 9px;white-space:nowrap}
   .fadeverse .w.blank{cursor:pointer}
   .fadeverse .w.blank.peek{color:var(--gold-ink);font-weight:800}
   .ttcount{min-width:46px;text-align:center;font-weight:800;font-size:13px;border-radius:999px;padding:4px 10px;background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
@@ -4172,32 +4173,49 @@ function openVerseWizard(b,c,v,ret){
   if(Prog.memorized.includes(refKey(b,c,v))){ renderLearnedVerse(b,c,v,walkReturn); return; }
   const vo=verseObj(b,c,v); show("verse"); curScene=vo; startSceneWalk(vo);
 }
+// ---- shared verse-navigation top bar (used by both the learned-verse page and the learn wizard) ----
+function chapCount(b){ try{ return window.KJV[b-1].length; }catch(e){ return 0; } }
+function adjVerse(b,c,v,dir){   // previous/next verse in whole-Bible order (crosses chapter & book), or null at the ends
+  if(dir>0){ if(v<verseCount(b,c)) return [b,c,v+1]; if(c<chapCount(b)) return [b,c+1,1]; if(b<66) return [b+1,1,1]; return null; }
+  if(v>1) return [b,c,v-1]; if(c>1) return [b,c-1,verseCount(b,c-1)]; if(b>1){ const pb=b-1,pc=chapCount(pb); return [pb,pc,verseCount(pb,pc)]; } return null;
+}
+function bookAbbr(n){ const nm=bookName(n); const m=nm.match(/^(\d)\s*(.*)$/); return m?(m[1]+m[2].slice(0,3)):nm.slice(0,3); }
+function refShort(a){ return `${bookName(a[0])} ${a[1]}:${a[2]}`; }
+function navVerseLabel(t,curB,curC,dir){ const ar=dir>0?"›":"‹"; if(!t) return ar; const [tb,tc,tv]=t;
+  const core = (tb!==curB)?`${bookAbbr(tb)} ${tc}:${tv}` : (tc!==curC)?`${tc}:${tv}` : `v${tv}`;   // show book/chapter when they change so the label reveals a book/chapter move
+  return dir>0?`${core} ${ar}`:`${ar} ${core}`; }
+function verseNavBar(b,c,v,closeId){
+  const memOrder=(Prog.memorized||[]).map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2])).sort((A,B)=>A[0]-B[0]||A[1]-B[1]||A[2]-B[2]);
+  let mPrev=null,mNext=null; for(const a of memOrder){ const d=a[0]-b||a[1]-c||a[2]-v; if(d<0) mPrev=a; else if(d>0){ mNext=a; break; } }
+  const bPrev=adjVerse(b,c,v,-1), bNext=adjVerse(b,c,v,1);
+  const html=`<div class="lv-topbar">
+      <button class="lclose" id="${closeId}" style="margin:0">✕</button>
+      <div class="lv-navcluster">
+        <div class="lv-navpair mem">
+          <button class="lv-navbtn" data-nav="mprev" ${mPrev?"":"disabled"} title="${mPrev?"Previous memorized verse · "+refShort(mPrev):"No earlier memorized verse"}">★‹</button>
+          <button class="lv-navbtn" data-nav="mnext" ${mNext?"":"disabled"} title="${mNext?"Next memorized verse · "+refShort(mNext):"No later memorized verse"}">›★</button>
+        </div>
+        <div class="lv-navpair verse">
+          <button class="lv-navbtn wlbl" data-nav="vprev" ${bPrev?"":"disabled"} title="Previous verse">${navVerseLabel(bPrev,b,c,-1)}</button>
+          <button class="lv-navbtn wlbl" data-nav="vnext" ${bNext?"":"disabled"} title="Next verse">${navVerseLabel(bNext,b,c,1)}</button>
+        </div>
+      </div></div>`;
+  return {html,mPrev,mNext,bPrev,bNext};
+}
+function wireVerseNav(scopeEl, nav, ret){   // buttons route through openVerseWizard so memorized→learned page, others→wizard
+  const map={mprev:nav.mPrev,mnext:nav.mNext,vprev:nav.bPrev,vnext:nav.bNext};
+  scopeEl.querySelectorAll("[data-nav]").forEach(btn=>{ const t=map[btn.dataset.nav]; if(t) btn.onclick=()=>openVerseWizard(t[0],t[1],t[2],ret); });
+}
 // A memorized verse's home: verse text, a "Learn Word for Word" rectangle (X/10, where 10 = Mastered),
 // and its spaced-repetition trail at the bottom. No learning steps, save or skip.
 function renderLearnedVerse(b,c,v,ret){
   const V=el("verse"); show("verse");
   const vkey=refKey(b,c,v), cnt=w4wCount(vkey), mastered=cnt>=10, o=verseSRobj(vkey);
-  const hasPrev=v>1, hasNext=v<verseCount(b,c), text=kjvText(b,c,v)||"";
-  // prev/next MEMORIZED verse (canonical book→chapter→verse order) — separate from adjacent-Bible-verse nav below
-  const memOrder=(Prog.memorized||[]).map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2])).sort((A,B)=>A[0]-B[0]||A[1]-B[1]||A[2]-B[2]);
-  const curIdx=memOrder.findIndex(a=>a[0]===b&&a[1]===c&&a[2]===v);
-  const mPrev=curIdx>0?memOrder[curIdx-1]:null, mNext=(curIdx>=0&&curIdx<memOrder.length-1)?memOrder[curIdx+1]:null;
-  const refShort=a=>`${bookName(a[0])} ${a[1]}:${a[2]}`;
+  const text=kjvText(b,c,v)||"";
+  const nav=verseNavBar(b,c,v,"lvClose");
   const cell=(kindLbl,n)=>`<div class="lv-cell"><div class="lv-cell-k">${kindLbl}</div>${pegImg("num",n,pegFor(n).word)}<div class="lv-cell-w">${pegFor(n).word}</div></div>`;
   V.innerHTML=`<div class="card">
-      <div class="lv-topbar">
-        <button class="lclose" id="lvClose" style="margin:0">✕</button>
-        <div class="lv-navcluster">
-          <div class="lv-navpair mem">
-            <button class="lv-navbtn" id="lvMemPrev" ${mPrev?"":"disabled"} title="${mPrev?"Previous memorized verse · "+refShort(mPrev):"No earlier memorized verse"}">★‹</button>
-            <button class="lv-navbtn" id="lvMemNext" ${mNext?"":"disabled"} title="${mNext?"Next memorized verse · "+refShort(mNext):"No later memorized verse"}">›★</button>
-          </div>
-          <div class="lv-navpair verse">
-            <button class="lv-navbtn" id="lvPrev" ${hasPrev?"":"disabled"} title="Previous verse (v${v-1})">‹</button>
-            <button class="lv-navbtn" id="lvNext" ${hasNext?"":"disabled"} title="Next verse (v${v+1})">›</button>
-          </div>
-        </div>
-      </div>
+      ${nav.html}
       ${mastered?`<div class="mastered-ribbon">★ Mastered — recited word-for-word ${cnt}×</div>`:""}
       <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
       <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
@@ -4215,10 +4233,7 @@ function renderLearnedVerse(b,c,v,ret){
       <button class="btn ghost" id="lvForgot" style="width:100%;margin-top:14px;font-size:13px;color:var(--muted)">🤔 I forgot this — re-encode later</button>
     </div>`;
   el("lvClose").onclick=()=>ret?ret():renderVerse();
-  el("lvPrev").onclick=()=>{ if(hasPrev) openVerseWizard(b,c,v-1,ret); };
-  el("lvNext").onclick=()=>{ if(hasNext) openVerseWizard(b,c,v+1,ret); };
-  if(mPrev) el("lvMemPrev").onclick=()=>openVerseWizard(mPrev[0],mPrev[1],mPrev[2],ret);
-  if(mNext) el("lvMemNext").onclick=()=>openVerseWizard(mNext[0],mNext[1],mNext[2],ret);
+  wireVerseNav(V, nav, ret);
   el("lvWord").onclick=()=>startWordForWord(b,c,v,()=>renderLearnedVerse(b,c,v,ret));
   el("lvForgot").onclick=()=>confirmForgetVerse(b,c,v, ()=>renderLearnedVerse(b,c,v,ret), ret);
   if(el("lvScene")) el("lvScene").onclick=()=>editVerseScene(b,c,v, ()=>renderLearnedVerse(b,c,v,ret), ()=>renderLearnedVerse(b,c,v,ret));
@@ -4259,13 +4274,9 @@ function renderWalk(){
     const missHtml = `<div style="margin-top:12px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px">
         <div class="hint" style="margin:0 0 8px">You're missing ${missing.length} image${missing.length>1?"s":""} for this verse. Learn each to unlock it:</div>
         ${missing.map(m=>`<button class="btn ghost sm" style="width:100%;margin-bottom:6px;border-color:var(--gold2);color:var(--gold-ink)" data-learn="${m.n}" data-book="${m.book?1:0}">📚 Learn ${m.lbl}</button>`).join("")}</div>`;
-    V.innerHTML=`<div class="qhead"><button class="lclose" id="wClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Learn this verse</div><button class="w4wbtn w4wsm" id="wWord" title="Word-for-word practice"><span>📖</span>W4W</button></div>
-      <div class="card">
-        <div class="navrow" style="margin:0 0 8px">
-          <button class="btn ghost sm" id="wVPrev" ${hasPrev?"":"disabled"}>← v${v-1}</button>
-          <span class="muted" style="font-size:12px;font-weight:700">verse ${v} of ${verseCount(b,c)}</span>
-          <button class="btn ghost sm" id="wVNext" ${hasNext?"":"disabled"}>v${v+1} →</button>
-        </div>
+    const verseNavNow=verseNavBar(b,c,v,"wClose");
+    V.innerHTML=`<div class="card">
+        ${verseNavNow.html}
         <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
         <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
         <div class="lv-versetext">"${curScene.text}"</div>
@@ -4275,9 +4286,7 @@ function renderWalk(){
         <button class="btn ghost" id="wKnow" style="width:100%;margin-top:8px;border-color:var(--gold2);color:var(--gold-ink)">✓ I already know this — add to my test verses</button>
       </div>`;
     if(el("wClose")) el("wClose").onclick=()=>walkReturn();
-    if(el("wWord")) el("wWord").onclick=()=>startWordForWord(b,c,v,()=>openVerseWizard(b,c,v,walkReturn));
-    if(el("wVPrev")) el("wVPrev").onclick=()=>{ if(hasPrev) openVerseWizard(b,c,v-1,walkReturn); };
-    if(el("wVNext")) el("wVNext").onclick=()=>{ if(hasNext) openVerseWizard(b,c,v+1,walkReturn); };
+    wireVerseNav(V, verseNavNow, walkReturn);
     V.querySelectorAll("[data-learn]").forEach(x=>x.onclick=()=>{ const n=+x.dataset.learn, isBook=x.dataset.book==="1"; startAdhocLearn(n,isBook,()=>openVerseWizard(b,c,v,walkReturn)); });
     if(el("wToScene")) el("wToScene").onclick=()=>{ wPhase="scene"; renderWalk(); };
     if(el("wSave")) el("wSave").onclick=()=>{ markSaved(); walkReturn(); };
@@ -4295,12 +4304,12 @@ function renderWalk(){
     ? `<label class="vplabel">Which palace?</label><select class="vpsel" id="wPalace">${palaces.map(x=>`<option value="${x[1]}" ${x[1]===selP?"selected":""}>${x[0].place}</option>`).join("")}</select>
        <label class="vplabel">Which room / spot?</label><select class="vpsel" id="wRoom">${roomsFor(selP).map(r=>`<option ${r===loc.room?"selected":""}>${r}</option>`).join("")||`<option value="">(add rooms to this palace first)</option>`}</select>`
     : `<div class="hint" style="margin:2px 0 10px">You don't have a memory palace yet — build one in the <b>Palace</b> tab. For now, just describe where your scene happens.</div>`;
-  V.innerHTML=`<div class="qhead"><button class="lclose" id="wClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Write your scene</div><div style="width:24px"></div></div>
-    <div class="card">
-      <div class="lv-ref" style="font-size:20px;margin-bottom:4px">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
+  V.innerHTML=`<div class="card">
+      <div class="lv-topbar" style="margin:0 0 6px"><button class="lclose" id="wClose" style="margin:0">✕</button></div>
+      ${palaceSel}
+      <div class="lv-ref" style="font-size:20px;margin:8px 0 4px">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
       <div class="lv-triple lv-triple-sm">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
       <div class="lv-versetext" style="font-size:13.5px;line-height:1.45;margin:0 0 12px">"${curScene.text}"</div>
-      ${palaceSel}
       <label class="vplabel">Your scene</label>
       <textarea class="ed-ta" id="wScene" placeholder="e.g. In the kitchen, a giant ${bp.word} smashes into a ${cp.word} while a ${vp.word} …">${(Prog.customScene[vkey]||"").replace(/</g,"&lt;")}</textarea>
       <div class="btnrow" style="margin-top:12px"><button class="btn ghost" id="wBack" style="flex:0 0 96px">← Back</button><button class="btn" id="wDone">Done ✓</button></div>
@@ -5097,13 +5106,16 @@ function typeTestComplete(){
     el("ttGiveUp").onclick=()=>{ ret?ret():renderVerse(); };
     return;
   }
-  const r=w4wRecord(vkey); reviewVerseSR(vkey); refreshHUD&&refreshHUD();
+  const r=w4wRecord(vkey); reviewVerseSR(vkey);
   const justMastered=r.count===10, mastered=r.count>=10;
+  const w4wReward = 10 + (justMastered?40:0);   // +10 per recitation, +40 bonus the run they master it
+  earnTalents(w4wReward); refreshHUD&&refreshHUD();
   V.innerHTML=`<div class="card center ttwin">
       <div class="ttburst">${justMastered?"👑":"🎉"}</div>
       <h2 style="font-size:22px;margin:6px 0 2px">${justMastered?"Verse Mastered!":"You did it!"}</h2>
       <div style="font-weight:800;color:var(--gold-ink);margin:2px 0">${bookName(b)} ${c}:${v}</div>
       <p class="lead" style="margin:10px 0 4px">${bookName(b)} ${c}:${v} — Word for Word Practice<br><b class="gold" style="font-size:20px">${Math.min(r.count,10)} of 10 complete</b>${mastered?`<br><span class="gold">★ Mastered${r.count>10?` · ${r.count}×`:""}</span>`:""}</p>
+      <div style="font-weight:800;color:var(--gold-ink);margin:2px 0 2px">+${w4wReward} 🪙${justMastered?" · mastery bonus!":""}</div>
       <div class="ttlock">🔒 Next practice locked until <b>${fmtWhen(w4wNextAllowed(vkey))}</b></div>
       <button class="btn" id="ttDone" style="margin-top:16px">Amen — done</button></div>`;
   el("ttDone").onclick=()=>{ ret?ret():renderVerse(); };
@@ -5594,4 +5606,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-134444 -->
+<!-- deploy bb-20260821-142054 -->
