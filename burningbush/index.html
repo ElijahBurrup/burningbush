@@ -431,9 +431,9 @@
   .talstream{position:absolute;font-size:24px;margin:-12px 0 0 -12px;will-change:transform,opacity;z-index:1}
   @media (prefers-reduced-motion: reduce){ .talfx{display:none} }
   /* "there's more below" cue: content dissolves into the background + a faint chevron; fades to nothing at the bottom */
-  #scrollcue{position:absolute;left:0;right:0;height:54px;pointer-events:none;z-index:40;
-    background:linear-gradient(to bottom, transparent, var(--bg) 80%);
-    display:flex;align-items:flex-end;justify-content:center;padding-bottom:7px;opacity:0;transition:opacity .3s ease}
+  #scrollcue{position:absolute;height:52px;pointer-events:none;z-index:65;border-radius:0 0 16px 16px;
+    background:linear-gradient(to bottom, transparent, var(--cue-bg, var(--bg)) 82%);
+    display:flex;align-items:flex-end;justify-content:center;padding-bottom:7px;opacity:0;transition:opacity .25s ease}
   #scrollcue .sc-chev{font-size:22px;line-height:1;color:var(--muted);opacity:.5;font-weight:800}
   #scrollcue.cue-bob .sc-chev{animation:scbob 1.5s ease-in-out infinite}
   @keyframes scbob{0%,100%{transform:translateY(-1px);opacity:.35}50%{transform:translateY(4px);opacity:.8}}
@@ -507,7 +507,15 @@
   .vlegend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:4px 0 14px}
   .vlegend span b{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px;background:var(--cell2-bg)}
   .biblestrip{display:grid;grid-template-columns:repeat(11,1fr);gap:3px;margin-top:6px}
-  .biblestrip .bk{aspect-ratio:1;border-radius:4px;background:var(--cell-bg);font-size:8px;display:grid;place-items:center;color:var(--cell-ink)}
+  .bible-search-btn{background:var(--panel3);border:1px solid var(--line);border-radius:10px;width:34px;height:34px;font-size:16px;cursor:pointer;color:var(--ink);flex:0 0 auto;display:grid;place-items:center}
+  .bible-search-btn:active{transform:scale(.94)}
+  .bible-drop{position:absolute;top:46px;right:14px;width:230px;max-width:calc(100% - 28px);max-height:280px;overflow:auto;background:var(--panel);border:1px solid var(--gold2);border-radius:12px;box-shadow:0 14px 34px var(--scrim);z-index:55;padding:8px}
+  .bible-drop .typein{width:100%;box-sizing:border-box;font-size:14px;padding:9px;margin:0 0 6px;text-align:left}
+  .bible-drop-list{display:flex;flex-direction:column;gap:2px}
+  .bible-drop-item{text-align:left;background:none;border:none;color:var(--ink);font-weight:700;font-size:14px;padding:9px 10px;border-radius:8px;cursor:pointer}
+  .bible-drop-item b{color:var(--gold-ink)}
+  .bible-drop-item:active{background:var(--panel2)}
+  .biblestrip .bk{aspect-ratio:1.35;border-radius:4px;background:var(--cell-bg);font-size:8px;display:grid;place-items:center;color:var(--cell-ink)}
   .biblestrip .bk.on{background:var(--accent);color:var(--on-blue);font-weight:800}
 
   /* ---- foundations reuse ---- */
@@ -2144,20 +2152,28 @@ const views=document.querySelectorAll(".view");
 // A whisper-quiet "more below" affordance used app-wide: the content fades into the background at the bottom
 // edge (with a faint bobbing chevron) whenever there's more to scroll, and vanishes the instant you reach the end.
 (function scrollCue(){
-  const content=document.querySelector(".content"), phone=document.querySelector(".phone"), tabbar=document.querySelector(".tabbar");
-  if(!content||!phone) return;
+  const phone=document.querySelector(".phone"); if(!phone) return;
+  const content=document.querySelector(".content");
   const cue=document.createElement("div"); cue.id="scrollcue"; cue.setAttribute("aria-hidden","true"); cue.innerHTML='<span class="sc-chev">⌄</span>';
   phone.appendChild(cue);
-  const place=()=>{ cue.style.bottom=((tabbar&&tabbar.offsetHeight)||60)+"px"; };
-  let raf=0;
-  const update=()=>{ raf=0; const rem=content.scrollHeight-content.clientHeight-content.scrollTop;
+  // whichever scroll area is active right now — an open modal's card takes priority over the page content
+  const activeScroller=()=>{ let best=null, bz=-1;
+    document.querySelectorAll(".modal").forEach(m=>{ if(getComputedStyle(m).display==="none") return; const card=m.querySelector(".modal-card"); if(!card) return; const z=+getComputedStyle(m).zIndex||60; if(z>=bz){ bz=z; best=card; } });
+    return {el: best||content, modal: !!best}; };
+  let raf=0, bound=null;
+  const update=()=>{ raf=0; const {el:sc, modal}=activeScroller(); if(!sc){ cue.style.opacity="0"; return; }
+    if(bound!==sc){ if(bound) bound.removeEventListener("scroll", schedule); sc.addEventListener("scroll", schedule, {passive:true}); bound=sc; }
+    const rem=sc.scrollHeight-sc.clientHeight-sc.scrollTop;
+    const pr=phone.getBoundingClientRect(), sr=sc.getBoundingClientRect();
+    cue.style.left=(sr.left-pr.left)+"px"; cue.style.width=sr.width+"px"; cue.style.top=(sr.bottom-pr.top-52)+"px";
+    cue.style.setProperty("--cue-bg", modal?"var(--panel)":"var(--bg)");
     cue.style.opacity = rem>10 ? String(Math.min(1, rem/70)) : "0";
-    cue.classList.toggle("cue-bob", rem>60 && content.scrollTop<8); };   // gentle bob only when unscrolled with lots below
+    cue.classList.toggle("cue-bob", rem>60 && sc.scrollTop<8); };   // gentle bob only when unscrolled with lots below
   const schedule=()=>{ if(!raf) raf=requestAnimationFrame(update); };
-  place(); schedule();
-  content.addEventListener("scroll", schedule, {passive:true});
-  window.addEventListener("resize", ()=>{ place(); schedule(); });
-  try{ new MutationObserver(schedule).observe(content,{childList:true,subtree:true,characterData:true}); }catch(e){}
+  schedule();
+  if(content) content.addEventListener("scroll", schedule, {passive:true});
+  window.addEventListener("resize", schedule);
+  try{ new MutationObserver(schedule).observe(phone,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["style"]}); }catch(e){}
 })();
 // The login password is a REAL password field (masked + credential autofill) ONLY while the sign-in modal is
 // open. When it's closed the field is plain text, so no password field exists in the DOM — which stops iOS/
@@ -2197,24 +2213,33 @@ function renderJourney(){
   const J=el("journey");
   const stripFor=(a,z)=>{ let s=""; for(let b=a;b<=z;b++) s+=`<div class="bk ${knownNum(b)?"on":""}" data-book="${b}" title="${bookName(b)}">${pad2(b)}</div>`; return s; };
   J.innerHTML=`
-    <h2 style="margin:0 0 8px">Your Journey</h2>
-    ${(function(){ // daily habit hook: the first thing you see is today's review + your streak
+    <h2 style="margin:0 0 6px">Your Journey</h2>
+    ${(function(){ // daily habit hook — kept compact so the whole page fits without scrolling
       const dueV=versesDueCount(), dueP=palacesDueCount(), td=dueV+dueP;
-      const streak=(Prog.dayStreak>0?`<span class="gold" style="font-weight:800">🔥 ${Prog.dayStreak}-day streak</span>`:"")+(Prog.freezes>0?`<span title="Streak Freezes — auto-save a missed day" style="margin-left:8px;font-weight:800">🧊 ${Prog.freezes}</span>`:"");
-      const wd=weekDaysNow(), weekLine=`This week: ${"●".repeat(Math.min(wd,5))}${"○".repeat(Math.max(0,5-wd))} ${wd}/5${Prog.weekGoalHit?" ⭐ Perfect Week!":""}`;
+      const streak=(Prog.dayStreak>0?`<span class="gold" style="font-weight:800">🔥 ${Prog.dayStreak}-day</span>`:"")+(Prog.freezes>0?`<span title="Streak Freezes — auto-save a missed day" style="margin-left:6px;font-weight:800">🧊 ${Prog.freezes}</span>`:"");
+      const wd=weekDaysNow(), weekLine=`${"●".repeat(Math.min(wd,5))}${"○".repeat(Math.max(0,5-wd))} ${wd}/5${Prog.weekGoalHit?" ⭐":""}`;
       if(td>0){ const bits=[]; if(dueV) bits.push(`${dueV} verse${dueV>1?"s":""}`); if(dueP) bits.push(`${dueP} palace${dueP>1?"s":""}`);
-        return `<div class="card" style="border:1px solid var(--gold2);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
-          <div><div style="font-weight:800">🔔 ${bits.join(" · ")} due today</div>${streak?`<div style="margin-top:3px">${streak}</div>`:""}<div class="hint" style="margin-top:2px">${weekLine}</div></div>
-          <button class="btn blue" id="jReview" style="margin:0;flex:0 0 auto">Review now →</button></div>`; }
-      return `<div class="card center" style="margin-bottom:12px"><div style="font-weight:800;color:var(--good)">✓ You're caught up today</div>${streak?`<div style="margin-top:4px">${streak} — come back tomorrow to keep it alive</div>`:`<div class="hint" style="margin-top:4px">Memorize a verse and review it daily to start a streak.</div>`}<div class="hint" style="margin-top:4px">${weekLine}</div></div>`;
+        return `<div class="card" style="border:1px solid var(--gold2);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;margin-bottom:9px">
+          <div style="min-width:0"><div style="font-weight:800;font-size:14px">🔔 ${bits.join(" · ")} due today</div><div class="hint" style="margin-top:2px">${streak?streak+" · ":""}${weekLine}</div></div>
+          <button class="btn blue" id="jReview" style="margin:0;flex:0 0 auto;width:auto;padding:10px 16px;white-space:nowrap">Review →</button></div>`; }
+      return `<div class="card" style="padding:11px 14px;margin-bottom:9px;text-align:center"><div style="font-weight:800;color:var(--good)">✓ You're caught up today</div><div class="hint" style="margin-top:3px">${streak?streak+" · ":""}${weekLine}</div></div>`;
     })()}
-    <div class="card" style="margin-top:10px"><h2 style="font-size:15px;margin:0 0 2px">The whole Bible</h2>
-      <p class="hint" style="margin:0 0 8px">Blue = books you can already address. Tap one to browse chapters.</p>
+    <div class="card" style="margin-top:0;position:relative;padding:12px 14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="font-size:15px;margin:0">The whole Bible</h2><button class="bible-search-btn" id="bibleSearchBtn" title="Jump to a book">🔍</button></div>
+      <p class="hint" style="margin:3px 0 7px">Blue = books you can address. Tap one, or 🔍 to jump.</p>
       <div class="otnt-label">Old Testament <span>books 1–39</span></div>
       <div class="biblestrip">${stripFor(1,39)}</div>
-      <div class="otnt-label" style="margin-top:10px">New Testament <span>books 40–66</span></div>
-      <div class="biblestrip">${stripFor(40,66)}</div></div>`;
+      <div class="otnt-label" style="margin-top:8px">New Testament <span>books 40–66</span></div>
+      <div class="biblestrip">${stripFor(40,66)}</div>
+      <div class="bible-drop" id="bibleSearchDrop" style="display:none">
+        <input id="bibleSearchIn" class="typein" placeholder="Search a book…" autocomplete="off">
+        <div class="bible-drop-list">${range(1,66).map(n=>`<button class="bible-drop-item" data-jump="${n}"><b>${pad2(n)}</b> · ${bookName(n)}</button>`).join("")}</div>
+      </div>
+    </div>`;
   J.querySelectorAll("[data-book]").forEach(c=>c.onclick=()=>renderBookScreen(+c.dataset.book));
+  if(el("bibleSearchBtn")) el("bibleSearchBtn").onclick=(e)=>{ e.stopPropagation(); const d=el("bibleSearchDrop"), open=d.style.display!=="none"; d.style.display=open?"none":"block"; if(!open){ const inp=el("bibleSearchIn"); if(inp){ inp.value=""; inp.dispatchEvent(new Event("input")); setTimeout(()=>{try{inp.focus();}catch(e){}},40); } } };
+  if(el("bibleSearchIn")) el("bibleSearchIn").oninput=()=>{ const q=el("bibleSearchIn").value.trim().toLowerCase(); J.querySelectorAll(".bible-drop-item").forEach(it=>{ it.style.display=(!q||it.textContent.toLowerCase().includes(q))?"":"none"; }); };
+  J.querySelectorAll("[data-jump]").forEach(it=>it.onclick=()=>renderBookScreen(+it.dataset.jump));
   if(el("jReview")) el("jReview").onclick=()=>{ show("verse"); startMemTest(); };   // jump straight into today's review
   paintTheme();
 }
@@ -2776,8 +2801,12 @@ const SR_TRAIL=[0,1,3,7,16,30]; // checkpoint days. Intervals are RELATIVE: each
 const SR_GRACE=60*60*1000;   // pull in anything due within the next hour so near-due items batch together (23h ≈ 24h)
 function srDueAt(o){ const step=o.step||1; return o.dueAt!=null ? o.dueAt : (o.learnedAt||0)+SR_TRAIL[step]*DAY; } // legacy saves without dueAt fall back to cumulative day
 // index of the checkpoint currently due (its dueAt has passed and it isn't done yet), else -1
+function endOfToday(){ const d=new Date(); d.setHours(23,59,59,999); return d.getTime(); }
 function srDueIndex(o){ if(!o||!o.learnedAt) return -1; const step=o.step||1; if(step>=SR_TRAIL.length) return -1;
-  return (Date.now()+SR_GRACE) >= srDueAt(o) ? step : -1; }
+  const due=srDueAt(o), gap=SR_TRAIL[step]-SR_TRAIL[step-1];   // the interval that led to this review
+  // a 1-day review gets only a 1-hour grace; every longer review pulls in anything due later the SAME calendar day
+  const limit = gap<=1 ? Date.now()+SR_GRACE : endOfToday();
+  return limit>=due ? step : -1; }
 // complete the one due checkpoint, then restart the counter to the NEXT gap only (never skip ahead over a backlog)
 function srAdvance(o){ const di=srDueIndex(o); if(di<0) return false; o.step=di+1;
   o.dueAt = o.step<SR_TRAIL.length ? Date.now()+(SR_TRAIL[o.step]-SR_TRAIL[o.step-1])*DAY : null; return true; }
@@ -2793,7 +2822,9 @@ function verseSRobj(k){ return (Prog.verseSR||{})[k]; }
 function verseDue(k){ const o=verseSRobj(k); return !!o && srDueIndex(o)>=0; }
 function versesDueCount(){ const sr=Prog.verseSR||{}; return (Prog.memorized||[]).filter(k=>{ const o=sr[k]; return o && srDueIndex(o)>=0; }).length; }
 // numbers that have entered the Leitner review cycle and whose next review has come due
-function numbersDueList(){ const now=Date.now()+SR_GRACE, out=[]; knownNumbers().forEach(n=>{ if(n<1||n>176) return; const st=SRS['sk:num:'+n]; if(st && typeof st.box==='number' && st.due<=now) out.push(n); }); return out.sort((a,b)=>a-b); }
+function numbersDueList(){ const soon=Date.now()+SR_GRACE, eod=endOfToday(), out=[]; knownNumbers().forEach(n=>{ if(n<1||n>176) return; const st=SRS['sk:num:'+n]; if(!st || typeof st.box!=='number') return;
+  const gap=INTERVAL[st.box]||0, limit = gap<=1 ? soon : eod;   // 1-day boxes get 1-hour grace; longer boxes batch the whole calendar day
+  if(st.due<=limit) out.push(n); }); return out.sort((a,b)=>a-b); }
 function numbersDueCount(){ return numbersDueList().length; }
 function reviewDueCount(){ return numbersDueCount()+versesDueCount()+palacesDueCount(); }   // everything due for spaced repetition today
 function newSR(){ return {learnedAt:Date.now(), step:1, dueAt:Date.now()+(SR_TRAIL[1]-SR_TRAIL[0])*DAY}; } // D0 done at learn, D1 due in 1 day
@@ -5495,4 +5526,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-115153 -->
+<!-- deploy bb-20260821-120533 -->
