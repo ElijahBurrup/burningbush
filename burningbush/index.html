@@ -358,6 +358,11 @@
   .lv-triple .lv-cell-k{font-size:11px;font-weight:800;color:var(--gold-ink);text-transform:uppercase;letter-spacing:.4px}
   .lv-triple .lv-cell-w{font-size:13px;font-weight:700;color:var(--ink)}
   .lv-triple .pegimg-sm,.lv-triple .imgph-sm{width:72px;height:72px}
+  .lv-triple.lv-triple-sm{gap:8px;margin-bottom:10px}
+  .lv-triple-sm .lv-cell{padding:6px 4px}
+  .lv-triple-sm .lv-cell-k{font-size:10px}
+  .lv-triple-sm .lv-cell-w{font-size:11px}
+  .lv-triple-sm .pegimg-sm,.lv-triple-sm .imgph-sm{width:50px;height:50px}
   .lv-versetext{font-size:16px;line-height:1.5;color:var(--ink);text-align:center;margin:6px 0 16px}
   .mastered-ribbon{display:block;text-align:center;font-weight:800;font-size:13px;color:var(--on-accent);background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:999px;padding:6px 14px;margin:0 0 12px}
   .w4w-rect{display:flex;align-items:center;justify-content:space-between;width:100%;gap:10px;padding:16px 18px;border-radius:16px;border:1.5px solid var(--gold2);background:var(--panel2);color:var(--gold-ink);cursor:pointer;font-weight:800;font-size:16px}
@@ -425,6 +430,14 @@
   .talplus{font-weight:900;font-size:28px;color:var(--gold-ink);margin-top:-4px;/*raw-ok*/text-shadow:0 2px 6px rgba(0,0,0,.35)}
   .talstream{position:absolute;font-size:24px;margin:-12px 0 0 -12px;will-change:transform,opacity;z-index:1}
   @media (prefers-reduced-motion: reduce){ .talfx{display:none} }
+  /* "there's more below" cue: content dissolves into the background + a faint chevron; fades to nothing at the bottom */
+  #scrollcue{position:absolute;left:0;right:0;height:54px;pointer-events:none;z-index:40;
+    background:linear-gradient(to bottom, transparent, var(--bg) 80%);
+    display:flex;align-items:flex-end;justify-content:center;padding-bottom:7px;opacity:0;transition:opacity .3s ease}
+  #scrollcue .sc-chev{font-size:22px;line-height:1;color:var(--muted);opacity:.5;font-weight:800}
+  #scrollcue.cue-bob .sc-chev{animation:scbob 1.5s ease-in-out infinite}
+  @keyframes scbob{0%,100%{transform:translateY(-1px);opacity:.35}50%{transform:translateY(4px);opacity:.8}}
+  @media (prefers-reduced-motion: reduce){ #scrollcue .sc-chev{animation:none} }
   @keyframes srbtnflash{0%,100%{transform:translateY(0);box-shadow:0 0 0 0 var(--gold-soft)}50%{transform:translateY(-3px);box-shadow:0 0 0 6px var(--gold-soft)}}
   .vhub.srbtn-flash{animation:srbtnflash .7s ease-in-out infinite;outline:2px solid var(--gold)}
   @keyframes srpop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
@@ -2127,6 +2140,24 @@ const views=document.querySelectorAll(".view");
   const phone=document.querySelector(".phone")||document.body;
   mark(phone);
   try{ new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{ if(n.nodeType===1) mark(n); }))).observe(phone,{childList:true,subtree:true}); }catch(e){}
+})();
+// A whisper-quiet "more below" affordance used app-wide: the content fades into the background at the bottom
+// edge (with a faint bobbing chevron) whenever there's more to scroll, and vanishes the instant you reach the end.
+(function scrollCue(){
+  const content=document.querySelector(".content"), phone=document.querySelector(".phone"), tabbar=document.querySelector(".tabbar");
+  if(!content||!phone) return;
+  const cue=document.createElement("div"); cue.id="scrollcue"; cue.setAttribute("aria-hidden","true"); cue.innerHTML='<span class="sc-chev">⌄</span>';
+  phone.appendChild(cue);
+  const place=()=>{ cue.style.bottom=((tabbar&&tabbar.offsetHeight)||60)+"px"; };
+  let raf=0;
+  const update=()=>{ raf=0; const rem=content.scrollHeight-content.clientHeight-content.scrollTop;
+    cue.style.opacity = rem>10 ? String(Math.min(1, rem/70)) : "0";
+    cue.classList.toggle("cue-bob", rem>60 && content.scrollTop<8); };   // gentle bob only when unscrolled with lots below
+  const schedule=()=>{ if(!raf) raf=requestAnimationFrame(update); };
+  place(); schedule();
+  content.addEventListener("scroll", schedule, {passive:true});
+  window.addEventListener("resize", ()=>{ place(); schedule(); });
+  try{ new MutationObserver(schedule).observe(content,{childList:true,subtree:true,characterData:true}); }catch(e){}
 })();
 function show(tab){
   // leaving the intro via a tab tap = onboarding is done; stamp it so Journey doesn't re-show the intro from step 0 (state desync)
@@ -4156,8 +4187,9 @@ function renderWalk(){
     : `<div class="hint" style="margin:2px 0 10px">You don't have a memory palace yet — build one in the <b>Palace</b> tab. For now, just describe where your scene happens.</div>`;
   V.innerHTML=`<div class="qhead"><button class="lclose" id="wClose">✕</button><div style="font-weight:800;flex:1;text-align:center">Write your scene</div><div style="width:24px"></div></div>
     <div class="card">
-      <div class="lv-ref" style="font-size:23px;margin-bottom:6px">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
-      <p class="hint" style="text-align:center;margin:0 0 12px">Set <b class="gold">${bp.word} · ${cp.word} · ${vp.word}</b> and the verse's meaning into one action-packed scene.</p>
+      <div class="lv-ref" style="font-size:20px;margin-bottom:4px">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
+      <div class="lv-triple lv-triple-sm">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
+      <div class="lv-versetext" style="font-size:13.5px;line-height:1.45;margin:0 0 12px">"${curScene.text}"</div>
       ${palaceSel}
       <label class="vplabel">Your scene</label>
       <textarea class="ed-ta" id="wScene" placeholder="e.g. In the kitchen, a giant ${bp.word} smashes into a ${cp.word} while a ${vp.word} …">${(Prog.customScene[vkey]||"").replace(/</g,"&lt;")}</textarea>
@@ -5451,4 +5483,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-112127 -->
+<!-- deploy bb-20260821-113615 -->
