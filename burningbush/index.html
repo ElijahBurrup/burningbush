@@ -4672,10 +4672,8 @@ function renderPalace(){
   const mine=(Prog.palaces||[]).map((p,i)=>[p,i]).filter(x=>x[0]);
   const due=palacesDueCount();
   P.innerHTML=`<h2>Memory Palace</h2>
-    ${videoPlaceholder("Video: What is a Memory Palace?","Placeholder — the method of loci, and why walking a familiar place makes an ordered list stick. (Add your video here.)")}
     <p class="lead">A <b>palace</b> is for sequences — walk a familiar place and leave each item at a spot. Do it once and the order sticks.</p>
-    <div class="vidph"><div class="play">▶</div><div class="vt">Video: How spaced repetition locks memory in</div><div class="vs">Placeholder — why reviewing at D0, D1, D3, D7, D16 &amp; D30 moves a palace into long-term memory. (Add your video here.)</div></div>
-    <p class="hint" style="margin:-4px 0 12px">Each palace has a <b class="gold">spaced-repetition trail</b> — walk it again on day 0, 1, 3, 7, 16 and 30. We'll nudge you when a review is due.</p>
+    <p class="hint" style="margin:2px 0 12px">Each palace has a <b class="gold">spaced-repetition trail</b> — walk it again on day 0, 1, 3, 7, 16 and 30. We'll nudge you when a review is due.</p>
     <button class="btn" id="palAdd" style="width:100%">➕ Build a new palace</button>
     ${mine.length?`<div class="prof-sect" style="margin-top:16px">My palaces${due?` <span style="color:#ff8a8a;text-transform:none;letter-spacing:0;font-weight:800">· ${due} due</span>`:""}</div>`+mine.map(([p,i])=>{
         const pdue=palaceDue(p), pdone=palaceTrailDone(p), status=pdue?`<span style="color:#ff8a8a;font-weight:800">● Review due now</span>`:(pdone?`<span class="gold">✓ Trail complete</span>`:`Next review in ${srHuman(palaceNextReviewMs(p))}`);
@@ -5144,4 +5142,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260820-235525 -->
+<!-- deploy bb-20260821-074137 -->
