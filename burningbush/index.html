@@ -617,14 +617,20 @@
   .mtfield.open{border-color:var(--gold2)}
   .mtfield.peeked{border-color:var(--green);color:var(--good)}
   .mtfield.wrongflash{animation:mtwrong .5s ease;border-color:var(--miss-ink)}
+  .mtfield.correctflash{border-color:var(--green);background:var(--ok-bg);color:var(--good);animation:mtok .6s ease}
+  @keyframes mtok{0%{transform:scale(1)}40%{transform:scale(1.03)}100%{transform:scale(1)}}
+  .mt-correctflash{box-shadow:0 0 0 3px var(--green),0 0 26px var(--green-soft)!important;transition:box-shadow .2s}
   .mtfield:disabled{cursor:default}
-  .mtpicker{background:var(--panel);border:2px solid var(--gold2);border-radius:12px;padding:8px;margin-top:6px}
-  .mtsearch{width:100%;box-sizing:border-box;font-size:15px;padding:10px;margin:0 0 6px;text-align:left}
-  .mtradiolist{display:flex;flex-direction:column;gap:2px;max-height:230px;overflow-y:auto}
-  .mtradio{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:none;color:var(--ink);font-weight:700;font-size:15px;padding:11px 8px;border-radius:9px;cursor:pointer}
-  .mtradio:active{background:var(--panel2)}
-  .mtradio .rdot{flex:0 0 18px;width:18px;height:18px;border-radius:50%;border:2px solid var(--line);box-sizing:border-box}
-  .mtradio.sel{color:var(--accent)}
+  /* centered picker overlay — page never scrolls; the sheet scrolls internally if huge */
+  .mtoverlay{position:fixed;inset:0;z-index:130;place-items:center;background:var(--scrim);padding:16px}
+  .mtsheet{width:min(360px,92vw);max-height:78vh;overflow-y:auto;background:var(--panel);border:2px solid var(--gold2);border-radius:16px;padding:12px 12px 14px;box-shadow:0 20px 60px var(--scrim)}
+  .mtsheet-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .mtsheet-h b{font-size:15px;color:var(--gold-ink)}
+  .mtradiolist{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}
+  .mtradio{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:var(--panel2);border:2px solid var(--line);color:var(--ink);font-weight:700;font-size:14px;padding:12px 10px;border-radius:10px;cursor:pointer;line-height:1.15}
+  .mtradio:active{transform:scale(.97)}
+  .mtradio .rdot{flex:0 0 16px;width:16px;height:16px;border-radius:50%;border:2px solid var(--line);box-sizing:border-box}
+  .mtradio.sel{color:var(--accent);border-color:var(--accent)}
   .mtradio.sel .rdot{border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--accent)}
   .mtsquares{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;max-height:172px;overflow-y:auto}
   .mtsq{aspect-ratio:1;border-radius:8px;background:var(--cell-bg);border:2px solid var(--line);color:var(--ink);font-size:13px;font-weight:800;cursor:pointer;display:grid;place-items:center;padding:0}
@@ -3950,12 +3956,35 @@ function finishNumberTest(){
 }
 let mtSel={b:0,c:0,v:0}, mtLock=false;   // current picks; mtLock freezes the board after the answer is revealed
 const MT_BOOKCHOICES=8;                   // book multiple-choice count — the most that fits without scrolling
+// look-alike / sound-alike books that always appear together as decoys to trick the eye (e.g. 2 Corinthians ↔ 2 Chronicles)
+const BOOK_CONF_GROUPS=[
+  [46,13],[47,14],[45,13,14],   // Corinthians ↔ Chronicles (by number), Romans near Chronicles
+  [9,10,11,12],                 // 1&2 Samuel / 1&2 Kings
+  [50,57],                      // Philippians / Philemon
+  [21,49],                      // Ecclesiastes / Ephesians
+  [7,65],                       // Judges / Jude
+  [54,55,56],                   // 1&2 Timothy / Titus
+  [52,53,54,55],                // Thessalonians / Timothy
+  [6,18,29,32,43,62,63,64],     // Joshua, Job, Joel, Jonah, John, 1–3 John
+  [4,16,34],                    // Numbers, Nehemiah, Nahum
+  [33,39,40,41],                // Micah, Malachi, Matthew, Mark
+  [28,35,37,58],                // Hosea, Habakkuk, Haggai, Hebrews
+  [36,38],                      // Zephaniah / Zechariah
+  [3,25,42],                    // Leviticus, Lamentations, Luke
+  [8,45,66],                    // Ruth, Romans, Revelation
+  [60,61],                      // 1&2 Peter
+  [24,25,26],                   // Jeremiah, Lamentations, Ezekiel
+];
+const BOOK_CONF={};
+BOOK_CONF_GROUPS.forEach(g=>g.forEach(n=>{ BOOK_CONF[n]=BOOK_CONF[n]||new Set(); g.forEach(m=>{ if(m!==n) BOOK_CONF[n].add(m); }); }));
 function memTestRender(){
   const V=el("verse"), b=memTestCur[0], c=memTestCur[1], v=memTestCur[2], k=knownNumbers();
   mtSel={b:0,c:0,v:0}; mtLock=false;
-  // book multiple choice: the correct book + plausible decoys (known books first, padded from all 66), shuffled
-  const known=[]; for(let bb=1;bb<=66;bb++) if(k.has(bb)&&bb!==b) known.push(bb); shuffle(known);
-  let decoys=known.slice(0,MT_BOOKCHOICES-1);
+  // book choices for the picker: the correct book + a short set of decoys. Look-alike books (confusables) always come first.
+  let decoys=[];
+  shuffle([...(BOOK_CONF[b]||[])]).forEach(x=>{ if(x!==b && decoys.length<MT_BOOKCHOICES-1 && !decoys.includes(x)) decoys.push(x); });  // always include the trap look-alikes
+  const known=[]; for(let bb=1;bb<=66;bb++) if(k.has(bb)&&bb!==b&&!decoys.includes(bb)) known.push(bb); shuffle(known);
+  known.forEach(x=>{ if(decoys.length<MT_BOOKCHOICES-1) decoys.push(x); });
   if(decoys.length<MT_BOOKCHOICES-1){ const pool=[]; for(let bb=1;bb<=66;bb++) if(bb!==b&&!decoys.includes(bb)) pool.push(bb); shuffle(pool); while(decoys.length<MT_BOOKCHOICES-1&&pool.length) decoys.push(pool.pop()); }
   const bookOpts=shuffle([b,...decoys]);
   V.innerHTML=`<div class="card" style="position:relative">
@@ -3964,16 +3993,18 @@ function memTestRender(){
       <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${kjvText(b,c,v)}"</div>
       <label class="vplabel">Book</label>
       <button type="button" class="mtfield" id="mtFieldB">— book —</button>
-      <div class="mtpicker" id="mtPickB" style="display:none">
-        <input class="typein mtsearch" id="mtBookSearch" inputmode="text" placeholder="Type to filter books…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-1p-ignore data-lpignore="true" readonly>
-        <div class="mtradiolist" id="mtBookList"></div>
-      </div>
       <label class="vplabel" style="margin-top:10px">Chapter</label>
       <button type="button" class="mtfield" id="mtFieldC">— chapter —</button>
-      <div class="mtpicker" id="mtPickC" style="display:none"><div class="mtsquares" id="mtChapGrid"></div></div>
       <label class="vplabel" style="margin-top:8px">Verse</label>
       <button type="button" class="mtfield" id="mtFieldV">— verse —</button>
-      <div class="mtpicker" id="mtPickV" style="display:none"><div class="mtsquares" id="mtVerseGrid"></div></div>
+      <div class="mtoverlay" id="mtOverlay" style="display:none">
+        <div class="mtsheet">
+          <div class="mtsheet-h"><b id="mtSheetTitle">Which book?</b><button class="lclose" id="mtSheetClose" style="margin:0">✕</button></div>
+          <div class="mtradiolist" id="mtBookList" style="display:none"></div>
+          <div class="mtsquares" id="mtChapGrid" style="display:none"></div>
+          <div class="mtsquares" id="mtVerseGrid" style="display:none"></div>
+        </div>
+      </div>
       <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):""}</div>
       <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
       <div class="peekrow" style="display:flex;gap:6px;margin-top:8px">
@@ -3999,36 +4030,33 @@ function memTestRender(){
   // ---- pickers: tap a field to open its picker. Book = filtered radio list; chapter/verse = compact number grid. ----
   const chapMax=()=> mtSel.b?chapCount(mtSel.b):150;
   const verseMax=()=> (mtSel.b&&mtSel.c)?verseCount(mtSel.b,mtSel.c):176;
-  let mtBookQuery="";
-  const bookList=[]; for(let bb=1;bb<=66;bb++) if(k.has(bb)||bb===b) bookList.push(bb);   // known books + the answer, filtered by search
   const paintFields=()=>{
     const setF=(id,val,txt)=>{ const f=el(id); if(!f) return; f.textContent = val?txt:f.dataset.ph; f.classList.toggle("filled",!!val); f.disabled=mtLock; };
     el("mtFieldB").dataset.ph="— book —"; el("mtFieldC").dataset.ph="— chapter —"; el("mtFieldV").dataset.ph="— verse —";
     setF("mtFieldB",mtSel.b,bookName(mtSel.b)); setF("mtFieldC",mtSel.c,pad2(mtSel.c)); setF("mtFieldV",mtSel.v,pad2(mtSel.v));
   };
-  const paintBookList=()=>{ const q=mtBookQuery.trim().toLowerCase();
-    const rows=bookList.filter(bb=>!q||bookName(bb).toLowerCase().includes(q));
-    el("mtBookList").innerHTML=rows.map(bb=>`<button type="button" class="mtradio ${mtSel.b===bb?"sel":""}" data-bk="${bb}"><span class="rdot"></span>${bookName(bb)}</button>`).join("")||`<div class="hint" style="margin:6px 4px">No match.</div>`;
-    el("mtBookList").querySelectorAll("[data-bk]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.b=+x.dataset.bk; mtSel.c=0; mtSel.v=0; el("mtFb").innerHTML=""; closePicks(); paintFields(); paintChap(); paintVerse(); }); };
+  const paintBookList=()=>{ el("mtBookList").innerHTML=bookOpts.map(bb=>`<button type="button" class="mtradio ${mtSel.b===bb?"sel":""}" data-bk="${bb}"><span class="rdot"></span>${bookName(bb)}</button>`).join("");
+    el("mtBookList").querySelectorAll("[data-bk]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.b=+x.dataset.bk; mtSel.c=0; mtSel.v=0; el("mtFb").innerHTML=""; closePicks(); paintFields(); }); };
   const paintChap=()=>{ let s=""; const mx=chapMax(); for(let n=1;n<=mx;n++) if(k.has(n)||n===c) s+=`<button class="mtsq ${mtSel.c===n?"sel":""}" data-cn="${n}" ${mtLock?"disabled":""}>${pad2(n)}</button>`;
     el("mtChapGrid").innerHTML=s||`<div class="hint" style="grid-column:1/-1;margin:0">Learn more numbers to pick a chapter.</div>`;
-    el("mtChapGrid").querySelectorAll("[data-cn]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.c=+x.dataset.cn; mtSel.v=0; el("mtFb").innerHTML=""; closePicks(); paintFields(); paintVerse(); }); };
+    el("mtChapGrid").querySelectorAll("[data-cn]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.c=+x.dataset.cn; mtSel.v=0; el("mtFb").innerHTML=""; closePicks(); paintFields(); }); };
   const paintVerse=()=>{ let s=""; const mx=verseMax(); for(let n=1;n<=mx;n++) if(k.has(n)||n===v) s+=`<button class="mtsq ${mtSel.v===n?"sel":""}" data-vn="${n}" ${mtLock?"disabled":""}>${pad2(n)}</button>`;
     el("mtVerseGrid").innerHTML=s||`<div class="hint" style="grid-column:1/-1;margin:0">Learn more numbers to pick a verse.</div>`;
     el("mtVerseGrid").querySelectorAll("[data-vn]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.v=+x.dataset.vn; el("mtFb").innerHTML=""; closePicks(); paintFields(); }); };
-  const closePicks=()=>{ ["mtPickB","mtPickC","mtPickV"].forEach(id=>{const e=el(id);if(e)e.style.display="none";}); ["mtFieldB","mtFieldC","mtFieldV"].forEach(id=>{const e=el(id);if(e)e.classList.remove("open");}); };
-  const openPick=(which)=>{ if(mtLock) return; const open = el(which.pick).style.display!=="none"; closePicks(); if(open) return;
-    el(which.pick).style.display="block"; el(which.field).classList.add("open");
-    if(which.paint) which.paint();
-    if(which.field==="mtFieldB"){ const bs=el("mtBookSearch"); if(bs){ bs.value=""; mtBookQuery=""; paintBookList(); } } };
-  el("mtFieldB").onclick=()=>openPick({field:"mtFieldB",pick:"mtPickB",paint:paintBookList});
-  el("mtFieldC").onclick=()=>{ if(!mtSel.b){ toast("Pick a book first."); } openPick({field:"mtFieldC",pick:"mtPickC",paint:paintChap}); };
-  el("mtFieldV").onclick=()=>{ if(!mtSel.c){ toast("Pick a chapter first."); } openPick({field:"mtFieldV",pick:"mtPickV",paint:paintVerse}); };
-  // book search: readonly-until-tap (kills iOS AutoFill bar), then filters the list
-  const bs=el("mtBookSearch"); if(bs){ const unlock=()=>{ if(bs.hasAttribute("readonly")) bs.removeAttribute("readonly"); };
-    ["pointerdown","touchstart","mousedown"].forEach(ev=>bs.addEventListener(ev,unlock,{passive:true}));
-    bs.oninput=()=>{ mtBookQuery=bs.value; paintBookList(); }; }
-  const paintAll=()=>{ paintFields(); paintBookList(); paintChap(); paintVerse(); };
+  // pickers open in a CENTERED overlay (page never scrolls) — one grid shown at a time
+  const closePicks=()=>{ el("mtOverlay").style.display="none"; ["mtFieldB","mtFieldC","mtFieldV"].forEach(id=>el(id).classList.remove("open")); };
+  const openPick=(field,title,gridId,paint)=>{ if(mtLock) return;
+    const already = el("mtOverlay").style.display!=="none" && el(field).classList.contains("open");
+    closePicks(); if(already) return;
+    ["mtBookList","mtChapGrid","mtVerseGrid"].forEach(id=>el(id).style.display="none");
+    paint(); el(gridId).style.display=""; el("mtSheetTitle").textContent=title; el(field).classList.add("open");
+    el("mtOverlay").style.display="grid"; };
+  el("mtFieldB").onclick=()=>openPick("mtFieldB","Which book?","mtBookList",paintBookList);
+  el("mtFieldC").onclick=()=>{ if(!mtSel.b){ toast("Pick a book first."); return; } openPick("mtFieldC","Which chapter?","mtChapGrid",paintChap); };
+  el("mtFieldV").onclick=()=>{ if(!mtSel.c){ toast("Pick a chapter first."); return; } openPick("mtFieldV","Which verse?","mtVerseGrid",paintVerse); };
+  el("mtSheetClose").onclick=closePicks;
+  el("mtOverlay").onclick=(e)=>{ if(e.target===el("mtOverlay")) closePicks(); };   // tap backdrop to close
+  const paintAll=()=>{ paintFields(); };
   paintFields();
   el("mtCheck").onclick=()=>{
     if(mtLock) return;
@@ -4040,6 +4068,8 @@ function memTestRender(){
       if(!reviewedThisSession.includes(kk)) reviewedThisSession.push(kk);   // remember what we reviewed → show trails at the end
       creditToday();   // a real recall = showing up today (idempotent per day; credits SR & free practice alike, never a no-recall open)
       mtLock=true; paintAll(); el("mtCheck").disabled=true; el("mtWarn").textContent="";
+      const card=V.querySelector(".card"); if(card){ card.classList.add("mt-correctflash"); setTimeout(()=>card.classList.remove("mt-correctflash"),900); }   // flash the whole practice card green
+      ["mtFieldB","mtFieldC","mtFieldV"].forEach(id=>{const e=el(id);if(e)e.classList.add("correctflash");});
       el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}</div></div>`;
       if(cr>=5 && cr%5===0){   // every 5 clean recalls in a row → offer to rest this verse for 14 days (re-offered if declined earlier)
         el("mtFb").innerHTML+=`<div class="feedback ok" style="position:static;margin:10px -20px -20px;border-radius:0"><div class="sub" style="margin-bottom:8px">🎯 That's 5 in a row! Rest this verse for <b>14 days</b>?</div><div class="btnrow" style="margin:0"><button class="btn" id="szYes" style="margin:0">Snooze 14 days</button><button class="btn ghost" id="szNo" style="margin:0">Keep reviewing</button></div></div>`;
@@ -5311,13 +5341,73 @@ function typeTestComplete(){
 
 /* =================== MEMORY PALACE (Method of Loci) =================== */
 // Pre-built palaces for SEQUENCES the Major System handles poorly (ordered lists).
+// Ready-made palaces: each is ONE familiar room walked in order, its standard items pre-loaded with a useful Bible list.
 const PALACES=[
- {id:"fruit",icon:"🍇",name:"Fruit of the Spirit",ref:"Galatians 5:22–23",place:"Walk through your KITCHEN",
-  stations:[["Front door","LOVE — a giant red heart on the door"],["Doormat","JOY — you bounce for joy on it"],["Kitchen sink","PEACE — calm still water filling it"],["Stove","LONGSUFFERING (patience) — a pot slowly simmering"],["Fridge","GENTLENESS — you close it softly, no slam"],["Counter","GOODNESS — a fresh-baked good loaf"],["Pantry","FAITH — a shelf you trust holds firm"],["Kitchen table","MEEKNESS — a bowed, humble chair"],["Trash can","TEMPERANCE (self-control) — you resist tossing food, control yourself"]]},
- {id:"beatitudes",icon:"⛰️",name:"The Beatitudes",ref:"Matthew 5:3–10",place:"Climb a MOUNTAIN path",
-  stations:[["The trailhead","Poor in spirit — empty pockets turned out"],["First bench","They that mourn — a weeping figure comforted"],["A meek deer","The meek — inherits the whole meadow"],["A dry spring","Hunger & thirst for righteousness — filled to overflowing"],["A helping hand","The merciful — pulls you up, obtains mercy"],["A clear pool","Pure in heart — you see God reflected"],["A broken fence mended","Peacemakers — called children of God"],["A storm at the peak","Persecuted — yet the kingdom is theirs"]]},
- {id:"armor",icon:"🛡️",name:"The Armor of God",ref:"Ephesians 6:14–17",place:"Suit up head-to-toe",
-  stations:[["Waist","Belt of TRUTH"],["Chest","Breastplate of RIGHTEOUSNESS"],["Feet","Shoes of the GOSPEL of peace"],["Arm","Shield of FAITH"],["Head","Helmet of SALVATION"],["Hand","Sword of the SPIRIT — the word of God"]]}
+ {id:"ten",icon:"📜",name:"The Ten Commandments",ref:"Exodus 20:3–17",place:"Walk through your KITCHEN",
+  stations:[
+   ["Front door","1 — No other gods before Me: a giant '1' on the door; only God may knock"],
+   ["Refrigerator","2 — No idols: you refuse to bow to a golden statue chilling inside"],
+   ["Stove","3 — Don't misuse God's name: you never curse when the pot boils over"],
+   ["Sink","4 — Keep the Sabbath holy: dishes rest, water still — one day off"],
+   ["Microwave","5 — Honor father & mother: a family photo warmed on its door"],
+   ["Counter","6 — Do not murder: the big knife stays in its block, untouched"],
+   ["Pantry","7 — Do not commit adultery: the door stays shut, faithful to what's inside"],
+   ["Kitchen table","8 — Do not steal: no one swipes food from the shared table"],
+   ["Trash can","9 — Do not lie: only truth goes in, no false wrappers"],
+   ["Coffee maker","10 — Do not covet: content with your own cup, not your neighbor's"]
+  ]},
+ {id:"fruit",icon:"🍇",name:"Fruit of the Spirit",ref:"Galatians 5:22–23",place:"Walk through your LIVING ROOM",
+  stations:[
+   ["Front door","LOVE — a giant red heart on the door"],
+   ["Couch","JOY — you bounce on the cushions for joy"],
+   ["Coffee table","PEACE — a still, unspilled glass of water"],
+   ["TV","PATIENCE — a very slow show you wait through"],
+   ["Bookshelf","KINDNESS — every book gently shelved, none bent"],
+   ["Fireplace","GOODNESS — a warm, good glow fills the room"],
+   ["Lamp","FAITHFULNESS — it turns on every time, never fails"],
+   ["Window","GENTLENESS — you open it softly, no slam"],
+   ["Rug","SELF-CONTROL — you wipe your feet, hold back the mess"]
+  ]},
+ {id:"beatitudes",icon:"🛏️",name:"The Beatitudes",ref:"Matthew 5:3–10",place:"Walk through your BEDROOM",
+  stations:[
+   ["Door","Poor in spirit — empty pockets turned out as you enter"],
+   ["Bed","They that mourn — you weep into the pillow and are comforted"],
+   ["Nightstand","The meek — a small humble lamp inherits the whole room's light"],
+   ["Dresser","Hunger & thirst for righteousness — drawers filled to overflowing"],
+   ["Closet","The merciful — a coat you give away, and mercy returns"],
+   ["Mirror","Pure in heart — you look and see God clearly"],
+   ["Window","Peacemakers — you mend the cracked pane, called a child of God"],
+   ["Ceiling light","Persecuted — the bulb burns hot, yet the kingdom is yours"]
+  ]},
+ {id:"armor",icon:"🛡️",name:"The Armor of God",ref:"Ephesians 6:14–17",place:"Walk through your BATHROOM",
+  stations:[
+   ["Door","Belt of TRUTH — you cinch your robe tight before entering"],
+   ["Sink","Breastplate of RIGHTEOUSNESS — you scrub your chest clean and upright"],
+   ["Mirror","Shoes of the GOSPEL of peace — you check your feet, ready to go"],
+   ["Toilet","Shield of FAITH — the lid guards you from every fiery dart"],
+   ["Bathtub","Helmet of SALVATION — you dunk your head, saved in the water"],
+   ["Towel rack","Sword of the SPIRIT — you draw a towel like a blade, the Word in hand"]
+  ]},
+ {id:"lords",icon:"🙏",name:"The Lord's Prayer",ref:"Matthew 6:9–13",place:"Walk through your HOME OFFICE",
+  stations:[
+   ["Desk","Our Father in heaven — you look up from your work"],
+   ["Nameplate","Hallowed be Your name — the name is polished, honored"],
+   ["Calendar","Your kingdom come, Your will be done — every day marked for the King"],
+   ["Lunch bag","Give us this day our daily bread — today's meal on the desk"],
+   ["Shredder","Forgive us our debts — old bills shredded, debts erased"],
+   ["Door lock","Lead us not into temptation — you lock temptation out"],
+   ["Window","Deliver us from evil — you shut it against the storm"]
+  ]},
+ {id:"creation",icon:"🌍",name:"The Seven Days of Creation",ref:"Genesis 1",place:"Walk through your BACKYARD",
+  stations:[
+   ["Porch light","Day 1 — LIGHT: you flip the switch, 'Let there be light'"],
+   ["The sky","Day 2 — SKY & WATERS: clouds split from the pond below"],
+   ["Garden bed","Day 3 — LAND & PLANTS: dry ground and sprouting seeds"],
+   ["Sundial","Day 4 — SUN, MOON & STARS: light-markers for the seasons"],
+   ["Bird feeder & pond","Day 5 — BIRDS & FISH: they fill the air and water"],
+   ["Doghouse","Day 6 — ANIMALS & MANKIND: creatures roam, and you, made in His image"],
+   ["Hammock","Day 7 — REST: you lie back — the work is very good"]
+  ]}
 ];
 function renderPalace(){
   const P=el("palace");
@@ -5807,4 +5897,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260822-084007 -->
+<!-- deploy bb-20260822-084917 -->
