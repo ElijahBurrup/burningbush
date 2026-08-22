@@ -418,6 +418,16 @@
   .teachbox{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;line-height:1.55;font-size:14px}
   .opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
   .opt{background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;text-align:left;color:var(--ink)}
+  /* Numbers & Books test: keep the whole question — stimulus + all 4 answers — visible without scrolling */
+  .numtest .prompt{margin:2px 0 2px}
+  .numtest-stim .bignum{font-size:58px;margin:4px 0}
+  .numtest-stim .bigword{font-size:30px;margin:4px 0}
+  .numtest-stim .sounds{font-size:13px;margin-bottom:4px}
+  .numtest-stim .imgwrap{margin:2px 0}
+  .numtest-stim .imgwrap .pegimg,.numtest-stim .imgwrap .imgph{width:104px;height:104px}
+  .numtest .opts{gap:8px;margin-top:6px}
+  .numtest .opt{padding:12px 14px}
+  @media (max-height:700px){ .numtest-stim .imgwrap .pegimg,.numtest-stim .imgwrap .imgph{width:84px;height:84px} .numtest-stim .bignum{font-size:48px} .numtest .opt{padding:10px 13px;font-size:15px} }
   .opt:active{border-color:var(--gold2)}
   .opt.correct{border-color:var(--green);background:var(--ok-bg)}
   .opt.wrong{border-color:var(--miss-ink);background:var(--no-bg)}
@@ -3892,8 +3902,8 @@ function renderNumTest(){
   V.innerHTML=`<div class="qhead"><button class="lclose" id="ntClose">✕</button>
       <div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>
       <div style="font-size:12px;color:var(--muted);font-weight:700;margin-left:8px">${NT.i+1}/${NT.qs.length}</div></div>
-    <div class="card"><div class="prompt">${prompt}</div>
-      <div style="text-align:center;margin:6px 0 10px">${stimulus}</div>
+    <div class="card numtest"><div class="prompt">${prompt}</div>
+      <div class="numtest-stim" style="text-align:center;margin:4px 0 8px">${stimulus}</div>
       <div class="opts">${options.map(o=>`<button class="opt" data-ok="${o===correct?1:0}">${o}</button>`).join("")}</div>
       <div id="ntFb"></div></div>`;
   el("ntClose").onclick=renderVerse;
@@ -5753,4 +5763,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260822-082158 -->
+<!-- deploy bb-20260822-082634 -->
