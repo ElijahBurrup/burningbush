@@ -341,6 +341,14 @@
   .ed-ta{width:100%;box-sizing:border-box;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-size:15px;line-height:1.5;padding:12px;font-family:inherit;resize:vertical;min-height:120px}
   .ed-ta:focus{outline:none;border-color:var(--gold2)}
   .menu-row{width:100%;text-align:left;display:flex;align-items:center;gap:10px;margin-top:8px}
+  /* install dialog */
+  .inst-tabs{display:flex;gap:8px;margin-bottom:12px}
+  .inst-tab{flex:1;background:var(--panel2);border:2px solid var(--line);border-radius:12px;padding:12px 8px;font-weight:800;font-size:14px;color:var(--ink);cursor:pointer}
+  .inst-tab.on{border-color:var(--gold2);background:var(--gold-soft);color:var(--gold-ink)}
+  .inst-lead{font-size:14px;margin:0 0 10px;text-align:center}
+  .inst-steps{margin:2px 0 0;padding-left:22px;font-size:14px;line-height:1.6}
+  .inst-steps li{margin-bottom:7px}
+  .inst-ic{display:inline-block;font-size:15px}
   .menu-row span{font-size:20px;flex:0 0 auto}
   .tkcount{font-weight:800;font-size:13px;border-radius:999px;padding:4px 10px;background:var(--panel2);color:var(--muted);border:1px solid var(--line);white-space:nowrap}
   .tkcount.ok{color:var(--good);border-color:var(--good)}
@@ -610,9 +618,12 @@
   .vpsel.correct{border-color:var(--green);background:var(--ok-bg)}
   .vpsel.wrong{border-color:var(--miss-ink);background:var(--no-bg)}
   /* verse-quiz pickers: book = multiple choice, chapter/verse = number squares */
-  /* tap-to-open dropdown field (looks like a select) */
-  .mtfield{width:100%;text-align:left;background:var(--panel2);border:2px solid var(--line);border-radius:12px;padding:14px;font-size:16px;font-weight:700;color:var(--muted);cursor:pointer;position:relative;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239aa3b2' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+  /* tap-to-open dropdown field + its peek eye */
+  .mtfieldrow{display:flex;gap:6px;align-items:stretch}
+  .mtfield{width:100%;text-align:left;background:var(--panel2);border:2px solid var(--line);border-radius:12px;padding:13px;font-size:15.5px;font-weight:700;color:var(--muted);cursor:pointer;position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mtpeek{flex:0 0 44px;width:44px;background:var(--panel2);border:2px solid var(--gold2);border-radius:12px;font-size:19px;color:var(--gold-ink);cursor:pointer;display:grid;place-items:center;padding:0}
+  .mtpeek:disabled{opacity:.4;cursor:default}
+  .mtpeek:active{transform:scale(.93)}
   .mtfield.filled{color:var(--ink)}
   .mtfield.open{border-color:var(--gold2)}
   .mtfield.peeked{border-color:var(--green);color:var(--good)}
@@ -1227,6 +1238,9 @@
 
       <div class="prof-sect" style="margin-top:16px">Reference library</div>
       <button class="btn ghost" id="refBtn" style="width:100%">📚 The Major System, number pegs &amp; the 66 books</button>
+
+      <div class="prof-sect" style="margin-top:16px">Get the app</div>
+      <button class="btn ghost" id="pInstall" style="width:100%">📲 Install on your phone (home-screen app)</button>
 
       <div class="prof-sect" style="margin-top:16px">Share &amp; rewards</div>
       <div class="btnrow" style="margin-top:0">
@@ -3992,11 +4006,12 @@ function memTestRender(){
       ${testHUD()}
       <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${kjvText(b,c,v)}"</div>
       <label class="vplabel">Book</label>
-      <button type="button" class="mtfield" id="mtFieldB">— book —</button>
-      <label class="vplabel" style="margin-top:10px">Chapter</label>
-      <button type="button" class="mtfield" id="mtFieldC">— chapter —</button>
-      <label class="vplabel" style="margin-top:8px">Verse</label>
-      <button type="button" class="mtfield" id="mtFieldV">— verse —</button>
+      <div class="mtfieldrow"><button type="button" class="mtfield" id="mtFieldB" style="flex:1">— book —</button><button type="button" class="mtpeek" data-peek="b" title="Peek — costs talents">👁️</button></div>
+      <div style="display:flex;gap:8px;align-items:flex-end;margin-top:10px">
+        <div style="flex:1;min-width:0"><label class="vplabel" style="margin:0 0 6px">Chapter</label><div class="mtfieldrow"><button type="button" class="mtfield" id="mtFieldC" style="flex:1">— chapter —</button><button type="button" class="mtpeek" data-peek="c" title="Peek — costs talents">👁️</button></div></div>
+        <div style="font-weight:800;font-size:22px;color:var(--muted);padding-bottom:13px">:</div>
+        <div style="flex:1;min-width:0"><label class="vplabel" style="margin:0 0 6px">Verse</label><div class="mtfieldrow"><button type="button" class="mtfield" id="mtFieldV" style="flex:1">— verse —</button><button type="button" class="mtpeek" data-peek="v" title="Peek — costs talents">👁️</button></div></div>
+      </div>
       <div class="mtoverlay" id="mtOverlay" style="display:none">
         <div class="mtsheet">
           <div class="mtsheet-h"><b id="mtSheetTitle">Which book?</b><button class="lclose" id="mtSheetClose" style="margin:0">✕</button></div>
@@ -4007,12 +4022,7 @@ function memTestRender(){
       </div>
       <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):""}</div>
       <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
-      <div class="peekrow" style="display:flex;gap:6px;margin-top:8px">
-        <button class="btn ghost sm" data-peek="b" style="flex:1">🔎 Book</button>
-        <button class="btn ghost sm" data-peek="c" style="flex:1">🔎 Chapter</button>
-        <button class="btn ghost sm" data-peek="v" style="flex:1">🔎 Verse</button>
-      </div>
-      <div class="hint" id="mtHintCost" style="text-align:center;margin-top:5px">Stuck? Peek at one part for <b class="gold">${HINT_COSTS[Math.min(memHintUses,2)]} 🪙</b> — the cost rises to 50 then 75 on this verse. Answer right and your streak still counts.</div>
+      <div class="hint" id="mtHintCost" style="text-align:center;margin-top:8px">Stuck? Tap the 👁️ on a box to peek for <b class="gold">${HINT_COSTS[Math.min(memHintUses,2)]} 🪙</b> — the cost rises to 50 then 75 on this verse. Answer right and your streak still counts.</div>
       <button class="btn ghost sm" id="mtForgot" style="margin-top:8px;width:100%">🤔 I forgot this — re-encode later</button>
       <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)"><div class="hint" style="text-align:center;margin-bottom:6px">This verse's memory trail (D0…D30)</div>${srTrailHTML(verseSRobj(refKey(b,c,v))||{step:1,learnedAt:Date.now()})}</div>
       <div id="mtFb"></div></div>`;
@@ -4032,7 +4042,7 @@ function memTestRender(){
   const verseMax=()=> (mtSel.b&&mtSel.c)?verseCount(mtSel.b,mtSel.c):176;
   const paintFields=()=>{
     const setF=(id,val,txt)=>{ const f=el(id); if(!f) return; f.textContent = val?txt:f.dataset.ph; f.classList.toggle("filled",!!val); f.disabled=mtLock; };
-    el("mtFieldB").dataset.ph="— book —"; el("mtFieldC").dataset.ph="— chapter —"; el("mtFieldV").dataset.ph="— verse —";
+    el("mtFieldB").dataset.ph="— book —"; el("mtFieldC").dataset.ph="— pick —"; el("mtFieldV").dataset.ph="— pick —";
     setF("mtFieldB",mtSel.b,bookName(mtSel.b)); setF("mtFieldC",mtSel.c,pad2(mtSel.c)); setF("mtFieldV",mtSel.v,pad2(mtSel.v));
   };
   const paintBookList=()=>{ el("mtBookList").innerHTML=bookOpts.map(bb=>`<button type="button" class="mtradio ${mtSel.b===bb?"sel":""}" data-bk="${bb}"><span class="rdot"></span>${bookName(bb)}</button>`).join("");
@@ -4042,7 +4052,8 @@ function memTestRender(){
     el("mtChapGrid").querySelectorAll("[data-cn]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.c=+x.dataset.cn; mtSel.v=0; el("mtFb").innerHTML=""; closePicks(); paintFields(); }); };
   const paintVerse=()=>{ let s=""; const mx=verseMax(); for(let n=1;n<=mx;n++) if(k.has(n)||n===v) s+=`<button class="mtsq ${mtSel.v===n?"sel":""}" data-vn="${n}" ${mtLock?"disabled":""}>${pad2(n)}</button>`;
     el("mtVerseGrid").innerHTML=s||`<div class="hint" style="grid-column:1/-1;margin:0">Learn more numbers to pick a verse.</div>`;
-    el("mtVerseGrid").querySelectorAll("[data-vn]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.v=+x.dataset.vn; el("mtFb").innerHTML=""; closePicks(); paintFields(); }); };
+    el("mtVerseGrid").querySelectorAll("[data-vn]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.v=+x.dataset.vn; el("mtFb").innerHTML=""; closePicks(); paintFields();
+      if(mtSel.b&&mtSel.c&&mtSel.v) setTimeout(()=>{ if(el("mtCheck")&&!mtLock) el("mtCheck").click(); },260); }); };   // all three chosen → auto-Check (saves a tap)
   // pickers open in a CENTERED overlay (page never scrolls) — one grid shown at a time
   const closePicks=()=>{ el("mtOverlay").style.display="none"; ["mtFieldB","mtFieldC","mtFieldV"].forEach(id=>el(id).classList.remove("open")); };
   const openPick=(field,title,gridId,paint)=>{ if(mtLock) return;
@@ -4713,12 +4724,44 @@ function submitTicket(type, data){
   Prog.tickets=Prog.tickets.slice(-100); saveProg();
   try{ if(typeof Auth!=="undefined" && Auth.syncUp) Auth.syncUp(); }catch(e){}   // push to the DB with progress
 }
+/* ---- Install / Get the App (PWA — add to home screen) ---- */
+let bbInstallPrompt=null;                 // Android/Chrome native install event, captured when the browser offers it
+window.addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); bbInstallPrompt=e; });
+window.addEventListener("appinstalled",()=>{ bbInstallPrompt=null; toast("✓ Installed — open Burning Bush from your home screen!"); });
+function isStandalone(){ return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone===true; }
+function devicePlatform(){ const ua=navigator.userAgent||""; if(/iPhone|iPad|iPod/i.test(ua)) return "ios"; if(/Android/i.test(ua)) return "android"; return "other"; }
+function isSafari(){ const ua=navigator.userAgent||""; return /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS|Chrome|Android/i.test(ua); }
+function openInstallDialog(){
+  let m=el("installModal"); if(!m){ m=document.createElement("div"); m.id="installModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  const plat=devicePlatform();
+  const iosSteps=`<ol class="inst-steps"><li>Open this page in <b>Safari</b>${isSafari()||plat!=="ios"?"":" (you're in another browser right now)"}.</li><li>Tap the <b>Share</b> button <span class="inst-ic">⬆️</span> at the bottom.</li><li>Choose <b>Add to Home Screen</b> <span class="inst-ic">➕</span>.</li><li>Tap <b>Add</b> — Burning Bush lands on your home screen like an app.</li></ol>`;
+  const andSteps=`<ol class="inst-steps"><li>Open this page in <b>Chrome</b>.</li><li>Tap the menu <span class="inst-ic">⋮</span> (top-right).</li><li>Choose <b>Install app</b> / <b>Add to Home screen</b>.</li><li>Confirm — it installs like a normal app.</li></ol>`;
+  const body=(which)=>{
+    if(which==="android" && bbInstallPrompt) return `<p class="inst-lead">One tap and it installs like a normal app.</p><button class="btn" id="instNow" style="width:100%">📲 Install now</button><p class="hint" style="text-align:center;margin-top:8px">Prefer manual? ${andSteps}</p>`;
+    return which==="ios"?iosSteps:andSteps;
+  };
+  m.innerHTML=`<div class="modal-card">
+    <div style="text-align:center"><div style="font-size:38px;line-height:1">📲</div>
+      <h2 style="font-size:19px;margin:6px 0 2px">Get Burning Bush on your phone</h2>
+      ${isStandalone()?`<p class="hint" style="margin:8px 0 0">✓ You've already installed it — you're running the app now. Enjoy!</p>`
+      :`<p class="hint" style="margin:0 0 12px">Install it to your home screen and use it like a native app — offline-friendly and full-screen.</p>
+      <div class="inst-tabs"><button class="inst-tab ${plat!=="android"?"on":""}" data-plat="ios">🍎 iPhone / iPad</button><button class="inst-tab ${plat==="android"?"on":""}" data-plat="android">🤖 Android</button></div>
+      <div id="instBody" style="text-align:left">${body(plat==="android"?"android":"ios")}</div>
+      <div class="callout" style="margin-top:12px;text-align:left"><b>🔑 Same data everywhere.</b> Log in with your account and your progress syncs across your phone, computer, and this website.</div>`}
+    <button class="btn ${isStandalone()?"":"ghost"}" id="instClose" style="margin-top:14px;width:100%">Close</button></div>`;
+  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("instClose").onclick=()=>m.style.display="none";
+  const wireNow=()=>{ const b=el("instNow"); if(b) b.onclick=async()=>{ if(!bbInstallPrompt) return; bbInstallPrompt.prompt(); try{ await bbInstallPrompt.userChoice; }catch(e){} bbInstallPrompt=null; m.style.display="none"; }; };
+  wireNow();
+  m.querySelectorAll("[data-plat]").forEach(t=>t.onclick=()=>{ m.querySelectorAll(".inst-tab").forEach(x=>x.classList.remove("on")); t.classList.add("on"); el("instBody").innerHTML=body(t.dataset.plat); wireNow(); });
+}
 function openBrandMenu(){
   let m=el("brandModal"); if(!m){ m=document.createElement("div"); m.id="brandModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
   m.innerHTML=`<div class="modal-card">
     <div style="text-align:center"><div style="font-size:38px;line-height:1">🔥</div>
       <h2 style="font-size:19px;margin:6px 0 2px">Burning Bush</h2>
       <p class="hint" style="margin:0 0 14px">Give, get help, or help us grow.</p></div>
+    ${isStandalone()?"":`<button class="btn menu-row" id="bmInstall" style="border:none"><span>📲</span> Get the App (install on your phone)</button>`}
     <button class="btn ghost menu-row" id="bmDonate"><span>🎁</span> Gift a Subscription</button>
     <button class="btn ghost menu-row" id="bmHelp"><span>🙏</span> Request Subscription Help</button>
     <button class="btn ghost menu-row" id="bmBug"><span>🐞</span> Report Bug</button>
@@ -4726,6 +4769,7 @@ function openBrandMenu(){
     <button class="btn" id="bmClose" style="margin-top:12px;width:100%">Close</button></div>`;
   m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("bmClose").onclick=()=>m.style.display="none";
+  if(el("bmInstall")) el("bmInstall").onclick=()=>{ m.style.display="none"; openInstallDialog(); };
   el("bmDonate").onclick=()=>{ m.style.display="none"; openTicketForm({type:"donate", title:"🎁 Gift a subscription", intro:"Bless someone with Burning Bush. Tell us their name or email and add a note — we'll follow up to set it up.", recipient:true, placeholder:"A note for them (optional)…"}); };
   el("bmHelp").onclick=()=>{ m.style.display="none"; openTicketForm({type:"assistance", title:"🙏 Request Subscription Help", intro:"If cost is a barrier, tell us your story. Please share at least 250 words about why you'd like help (up to 500).", minWords:250, maxWords:500, placeholder:"Share why you're asking…"}); };
   el("bmBug").onclick=()=>{ m.style.display="none"; openTicketForm({type:"bug", title:"🐞 Report a bug", intro:"What went wrong, and what were you doing when it happened?", placeholder:"Describe the bug…"}); };
@@ -5100,6 +5144,7 @@ el("expBtn").onclick=exportBackup;
 el("impBtn").onclick=()=>el("impFile").click();
 if(el("pShare")) el("pShare").onclick=()=>shareProgress(null);
 if(el("pStore")) el("pStore").onclick=()=>{ el("themeModal").style.display="none"; openStore(); };
+if(el("pInstall")) el("pInstall").onclick=()=>{ el("themeModal").style.display="none"; openInstallDialog(); };
 if(el("resetBtn")) el("resetBtn").onclick=resetAllProgress;
 if(el("testScratchBtn")) el("testScratchBtn").onclick=()=>{ el("themeModal").style.display="none"; ScratchSim.begin(); };
 if(el("testOnboardBtn")) el("testOnboardBtn").onclick=()=>{ el("themeModal").style.display="none"; Onboard.preview(); };
@@ -5897,4 +5942,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260822-084917 -->
+<!-- deploy bb-20260822-085930 -->
