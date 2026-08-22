@@ -619,11 +619,11 @@
   .vpsel.wrong{border-color:var(--miss-ink);background:var(--no-bg)}
   /* verse-quiz pickers: book = multiple choice, chapter/verse = number squares */
   /* tap-to-open dropdown field + its peek eye */
-  .mtfieldrow{display:flex;gap:6px;align-items:stretch}
-  .mtfield{width:100%;text-align:left;background:var(--panel2);border:2px solid var(--line);border-radius:12px;padding:13px;font-size:15.5px;font-weight:700;color:var(--muted);cursor:pointer;position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .mtpeek{flex:0 0 44px;width:44px;background:var(--panel2);border:2px solid var(--gold2);border-radius:12px;font-size:19px;color:var(--gold-ink);cursor:pointer;display:grid;place-items:center;padding:0}
-  .mtpeek:disabled{opacity:.4;cursor:default}
-  .mtpeek:active{transform:scale(.93)}
+  .mtfieldwrap{position:relative}
+  .mtfield{width:100%;text-align:left;background:var(--panel2);border:2px solid var(--line);border-radius:12px;padding:14px 40px 14px 14px;font-size:16px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mtpeek{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:26px;height:26px;background:none;border:none;font-size:14px;color:var(--gold-ink);cursor:pointer;display:grid;place-items:center;padding:0;border-radius:7px;z-index:2;opacity:.85}
+  .mtpeek:disabled{opacity:.3;cursor:default}
+  .mtpeek:active{transform:translateY(-50%) scale(.86)}
   .mtfield.filled{color:var(--ink)}
   .mtfield.open{border-color:var(--gold2)}
   .mtfield.peeked{border-color:var(--green);color:var(--good)}
@@ -4006,11 +4006,11 @@ function memTestRender(){
       ${testHUD()}
       <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${kjvText(b,c,v)}"</div>
       <label class="vplabel">Book</label>
-      <div class="mtfieldrow"><button type="button" class="mtfield" id="mtFieldB" style="flex:1">— book —</button><button type="button" class="mtpeek" data-peek="b" title="Peek — costs talents">👁️</button></div>
+      <div class="mtfieldwrap"><button type="button" class="mtfield" id="mtFieldB">— book —</button><button type="button" class="mtpeek" data-peek="b" title="Peek — costs talents">👁️</button></div>
       <div style="display:flex;gap:8px;align-items:flex-end;margin-top:10px">
-        <div style="flex:1;min-width:0"><label class="vplabel" style="margin:0 0 6px">Chapter</label><div class="mtfieldrow"><button type="button" class="mtfield" id="mtFieldC" style="flex:1">— chapter —</button><button type="button" class="mtpeek" data-peek="c" title="Peek — costs talents">👁️</button></div></div>
+        <div style="flex:1;min-width:0"><label class="vplabel" style="margin:0 0 6px">Chapter</label><div class="mtfieldwrap"><button type="button" class="mtfield" id="mtFieldC">— chapter —</button><button type="button" class="mtpeek" data-peek="c" title="Peek — costs talents">👁️</button></div></div>
         <div style="font-weight:800;font-size:22px;color:var(--muted);padding-bottom:13px">:</div>
-        <div style="flex:1;min-width:0"><label class="vplabel" style="margin:0 0 6px">Verse</label><div class="mtfieldrow"><button type="button" class="mtfield" id="mtFieldV" style="flex:1">— verse —</button><button type="button" class="mtpeek" data-peek="v" title="Peek — costs talents">👁️</button></div></div>
+        <div style="flex:1;min-width:0"><label class="vplabel" style="margin:0 0 6px">Verse</label><div class="mtfieldwrap"><button type="button" class="mtfield" id="mtFieldV">— verse —</button><button type="button" class="mtpeek" data-peek="v" title="Peek — costs talents">👁️</button></div></div>
       </div>
       <div class="mtoverlay" id="mtOverlay" style="display:none">
         <div class="mtsheet">
@@ -4053,7 +4053,8 @@ function memTestRender(){
   const paintVerse=()=>{ let s=""; const mx=verseMax(); for(let n=1;n<=mx;n++) if(k.has(n)||n===v) s+=`<button class="mtsq ${mtSel.v===n?"sel":""}" data-vn="${n}" ${mtLock?"disabled":""}>${pad2(n)}</button>`;
     el("mtVerseGrid").innerHTML=s||`<div class="hint" style="grid-column:1/-1;margin:0">Learn more numbers to pick a verse.</div>`;
     el("mtVerseGrid").querySelectorAll("[data-vn]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.v=+x.dataset.vn; el("mtFb").innerHTML=""; closePicks(); paintFields();
-      if(mtSel.b&&mtSel.c&&mtSel.v) setTimeout(()=>{ if(el("mtCheck")&&!mtLock) el("mtCheck").click(); },260); }); };   // all three chosen → auto-Check (saves a tap)
+      // auto-Check only on the FIRST attempt — after a miss, retries need a deliberate Check tap so fixing values doesn't keep re-firing
+      if(mtSel.b&&mtSel.c&&mtSel.v && memTestWrong===0) setTimeout(()=>{ if(el("mtCheck")&&!mtLock && memTestWrong===0) el("mtCheck").click(); },260); }); };
   // pickers open in a CENTERED overlay (page never scrolls) — one grid shown at a time
   const closePicks=()=>{ el("mtOverlay").style.display="none"; ["mtFieldB","mtFieldC","mtFieldV"].forEach(id=>el(id).classList.remove("open")); };
   const openPick=(field,title,gridId,paint)=>{ if(mtLock) return;
@@ -5942,4 +5943,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260822-085930 -->
+<!-- deploy bb-20260822-090844 -->
