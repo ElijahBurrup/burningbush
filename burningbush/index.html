@@ -734,7 +734,13 @@
   .tabbar button.hasdue .tabbadge{display:block}
   .station{display:flex;gap:12px;align-items:flex-start;background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--gold2);border-radius:12px;padding:13px;margin-bottom:10px}
   .station .snum{width:26px;height:26px;border-radius:50%;background:var(--gold);color:var(--on-accent);display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
-  .station .sbody b{color:var(--gold-ink)} .station .sbody{font-size:14px;line-height:1.5}
+  .station .sbody b{color:var(--gold-ink)} .station .sbody{font-size:14px;line-height:1.5;flex:1;min-width:0}
+  .station.st-used{background:var(--ok-bg);border-color:var(--green);border-left-color:var(--green);cursor:pointer}
+  .station.st-used .snum{background:var(--green);color:var(--on-green)}
+  .station.st-unused{background:var(--no-bg);border-color:var(--miss-ink);border-left-color:var(--miss-ink)}
+  .station.st-unused .snum{background:var(--miss-ink);color:var(--no-bg)}
+  .station .st-verse{display:block;margin-top:3px;font-size:12.5px;font-weight:800;color:var(--good)}
+  .station .st-eye{font-size:16px;align-self:center;flex:none}
   .vidph{border:1px dashed var(--gold2);border-radius:14px;padding:22px;text-align:center;background:var(--vidph-bg);margin:12px 0}
   .vidph .play{width:52px;height:52px;border-radius:50%;background:var(--gold);color:var(--on-accent);display:grid;place-items:center;font-size:22px;margin:0 auto 8px}
   .vidph .vt{font-weight:800;font-size:15px} .vidph .vs{font-size:12px;color:var(--muted);margin-top:3px}
@@ -755,9 +761,12 @@
   .stationlist{margin:10px 0}
   .stationlist .st{display:flex;justify-content:space-between;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:7px;font-size:14px}
   .stationlist .st .rm{color:var(--miss-ink);cursor:pointer;font-weight:800;padding:0 4px}
-  .stationlist .st.has-verse{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green);cursor:pointer}   /* a location that stores a verse — tap the number to open it */
-  .stationlist .st-go{background:none;border:none;min-width:24px;padding:0 2px;cursor:pointer;color:var(--green);font-weight:800;text-align:right}
-  .stationlist .st-go b{color:var(--green)}
+  /* location shading: green = stores a verse, red = free spot */
+  .stationlist .st.st-used{background:var(--ok-bg);border-color:var(--green);cursor:pointer}
+  .stationlist .st.st-unused{background:var(--no-bg);border-color:var(--miss-ink)}
+  .stationlist .st.st-used .peLoc,.stationlist .st.st-unused .peLoc{background:transparent}
+  .stationlist .st-go{background:none;border:none;min-width:24px;padding:0 2px;cursor:pointer;color:var(--good);font-weight:800;text-align:right}
+  .stationlist .st-go b{color:var(--good)}
   .stationlist .st .peEye{color:var(--green)!important;font-size:16px}
   .stationlist .st.st-flash{animation:stflash 1.4s ease}
   @keyframes stflash{0%,100%{background:var(--panel2)}25%,55%{background:var(--ok-bg,rgba(75,191,115,.18))}}
@@ -5491,13 +5500,17 @@ function renderMyPalace(i){
         <p class="hint" style="text-align:center;margin:10px 0 0">${status}</p>
       </div>
       <button class="btn blue" id="palPractice" style="width:100%">${due?"🎯 Review now (due)":"🎯 Practice this palace"}</button>
-      <p class="hint" style="text-align:center;margin:8px 0 12px">Try to recall each stop from memory first — the list below is the answer key.</p>
-      ${p.stations.map((s,idx)=>`<div class="station"><div class="snum">${idx+1}</div><div class="sbody">${s}</div></div>`).join("")}
+      <p class="hint" style="text-align:center;margin:8px 0 10px">🟢 = a verse is stored here (tap to open it) · 🔴 = free spot</p>
+      ${p.stations.map((s,idx)=>{ const vk=versesAtLoc(i,s), used=vk.length;
+        const refs=vk.map(k=>{const a=k.split(":").map(Number);return bookName(a[0])+" "+a[1]+":"+a[2];}).join(", ");
+        return `<div class="station ${used?"st-used":"st-unused"}" ${used?`data-govr="${vk[0]}"`:""}><div class="snum">${idx+1}</div><div class="sbody">${s}${used?`<div class="st-verse">📖 ${refs}</div>`:""}</div>${used?`<span class="st-eye">👁️</span>`:""}</div>`;
+      }).join("")}
       <button class="btn ghost" id="palEdit" style="width:100%;margin-top:12px">✏️ Edit locations</button>
     </div>`;
   el("palBack").onclick=renderPalace;
   el("palPractice").onclick=()=>startPalacePractice(i,"palace",()=>renderMyPalace(i));
   el("palEdit").onclick=()=>startPalaceEdit(i);
+  P.querySelectorAll("[data-govr]").forEach(x=>x.onclick=()=>{ const [b,c,v]=x.dataset.govr.split(":").map(Number); const back=()=>renderMyPalace(i); editVerseScene(b,c,v, back, back); });
 }
 /* ---- edit an existing palace: rename, edit/reorder/add/remove locations ---- */
 let PE=null;
@@ -5520,8 +5533,8 @@ function renderPalaceEdit(){
       <div class="hint" style="margin-bottom:6px">Locations — in the order you walk them. Edit the text, use ↑ ↓ to reorder, ✕ to remove.</div>
       <div class="stationlist">
         ${PE.stations.map((s,i)=>{ const hasV=versesAtLoc(PE.slot,s).length;
-          return `<div class="st ${hasV?"has-verse":""}" style="gap:6px" data-si-row="${i}">
-            ${hasV?`<button class="st-go" data-eye="${i}" title="Open the verse stored here"><b>${i+1}.</b></button>`:`<b class="gold" style="min-width:20px;text-align:right">${i+1}.</b>`}
+          return `<div class="st ${hasV?"st-used":"st-unused"}" style="gap:6px" data-si-row="${i}">
+            ${hasV?`<button class="st-go" data-eye="${i}" title="Open the verse stored here"><b>${i+1}.</b></button>`:`<b style="min-width:20px;text-align:right;color:var(--miss-ink)">${i+1}.</b>`}
             <input class="typein peLoc" data-si="${i}" style="flex:1;text-align:left;font-size:14px;padding:9px">
             ${hasV?`<span class="rm peEye" data-eye="${i}" title="View the ${hasV>1?hasV+" verses":"verse"} stored here" style="color:var(--green)">👁️</span>`:""}
             <span class="rm" data-up="${i}" title="Move up" style="color:var(--muted)">↑</span>
@@ -5944,4 +5957,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260822-091230 -->
+<!-- deploy bb-20260822-092741 -->
