@@ -37,6 +37,7 @@
     --blue-glow:rgba(109,155,255,.55); --blue-glow0:rgba(109,155,255,0);
     --gold-shadow:#9c7522; --gold-soft:rgba(232,201,106,.14); --accent-soft:rgba(91,140,255,.14);
     --green-hi:#6fe08f; --green-soft:rgba(75,191,115,.16); --green-ink:#8fe0a8; --green-line:#2e6b45;
+    --sg-hi:#5f8cff; --sg-lo:#141d3f; --sg-fg:#ffffff;   /* story-section gradient: light→dark across sections (per-theme below) */
     --gray1:#6b7480; --gray2:#4c545f; --gray-shadow:#333a44;
     /* state backgrounds (quiz feedback / selection) */
     --ok-bg:#16281a; --no-bg:#2a1418; --sel-bg:#182236;
@@ -163,6 +164,8 @@
   .vhub small{font-size:13px;font-weight:700;color:var(--muted)}
   .vhub.wide{grid-column:1/-1;flex-direction:row;gap:14px;aspect-ratio:auto;padding:13px}
   .vhub.wide .vi{font-size:28px}
+  .vi-bounce{display:inline-block;animation:vibounce 1.8s ease-in-out infinite;transform-origin:center bottom}
+  @keyframes vibounce{0%,72%,100%{transform:translateY(0) rotate(0)}80%{transform:translateY(-6px) rotate(-12deg)}88%{transform:translateY(-3px) rotate(10deg)}94%{transform:translateY(0) rotate(0)}}
   .vhub:active{transform:scale(.98)}
   .vhub.review{background:linear-gradient(135deg,var(--blue),var(--blue2));color:var(--on-blue);border:none;box-shadow:0 4px 0 var(--blue-shadow)}
   .vhub.review small{color:var(--on-blue)}
@@ -399,6 +402,12 @@
   .ttdisplay .ttcur{font-weight:800}
   .ttdisplay .ttcur.good{color:var(--gold-ink)}
   .ttdisplay .ttcur.bad{color:var(--miss-ink)}
+  .tt-tryagain{display:inline-block;font-size:14px;font-weight:800;color:var(--miss-ink);background:var(--no-bg,rgba(255,120,120,.15));border:1px solid var(--miss-ink);border-radius:999px;padding:2px 10px;margin-left:4px;vertical-align:middle;animation:ttflash .5s ease}
+  @keyframes ttflash{0%{transform:scale(.6);opacity:0}45%{transform:scale(1.12);opacity:1}100%{transform:scale(1);opacity:1}}
+  .srcountflash{gap:4px}
+  .srcount-big{font-size:82px;font-weight:900;color:var(--gold-ink);line-height:1;animation:srcpop .5s cubic-bezier(.2,1.4,.5,1)}
+  .srcount-lbl{font-size:16px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+  @keyframes srcpop{0%{transform:scale(.4);opacity:0}55%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
   .tt-in{width:100%;box-sizing:border-box;text-align:center}
   .tt-in.wrong{border-color:var(--miss);color:var(--miss-ink)}
   .tt-in.good{border-color:var(--good)}
@@ -590,6 +599,17 @@
   .vpsel:focus{border-color:var(--gold2);outline:none}
   .vpsel.correct{border-color:var(--green);background:var(--ok-bg)}
   .vpsel.wrong{border-color:var(--miss-ink);background:var(--no-bg)}
+  /* verse-quiz pickers: book = multiple choice, chapter/verse = number squares */
+  .mtbooks{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+  .mtbookopt{background:var(--panel2);border:2px solid var(--line);color:var(--ink);border-radius:11px;padding:11px 8px;font-size:14px;font-weight:800;cursor:pointer;text-align:center;line-height:1.15}
+  .mtbookopt.sel{border-color:var(--accent);background:var(--sel-bg,rgba(91,140,255,.16));color:var(--ink)}
+  .mtbookopt:disabled{cursor:default}
+  .mtsquares{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;max-height:172px;overflow-y:auto}
+  .mtsq{aspect-ratio:1;border-radius:8px;background:var(--cell-bg);border:2px solid var(--line);color:var(--ink);font-size:13px;font-weight:800;cursor:pointer;display:grid;place-items:center;padding:0}
+  .mtsq.sel{border-color:var(--accent);background:var(--accent);color:var(--on-blue)}
+  .mtsq:disabled{cursor:default}
+  .wrongflash{animation:mtwrong .5s ease}
+  @keyframes mtwrong{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}60%{transform:translateX(5px)}}
   .milestone{margin:22px 0;background:var(--panel2);border:1px dashed var(--box-line);border-radius:16px;overflow:hidden;opacity:.72}
   .milestone.reached{background:var(--milestone-bg);border:1px solid var(--gold);opacity:1}
   .milestone>.ms-summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:11px;padding:15px 16px}
@@ -696,12 +716,17 @@
   .stationlist{margin:10px 0}
   .stationlist .st{display:flex;justify-content:space-between;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:7px;font-size:14px}
   .stationlist .st .rm{color:var(--miss-ink);cursor:pointer;font-weight:800;padding:0 4px}
+  .stationlist .st.has-verse{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green)}   /* a location that stores a verse */
+  .stationlist .st .peEye{color:var(--green)!important;font-size:16px}
+  .stationlist .st.st-flash{animation:stflash 1.4s ease}
+  @keyframes stflash{0%,100%{background:var(--panel2)}25%,55%{background:var(--ok-bg,rgba(75,191,115,.18))}}
 
   /* ======================= THEMES ======================= */
   /* ---------- ILLUMINED NIGHT (full treatment) ---------- */
   .phone[data-theme="illumined"]{
     --bg:#0b0b18;--panel:#16143a;--panel2:#1c1a44;--panel3:#262353;--ink:#efeafc;--muted:#9c9ac2;
     --gold:#e8c96a;--gold2:#b8933f;--accent:#7aa2ff;--green:#7fe0a0;--miss:#ff9ab0;--line:rgba(232,201,106,.22);
+    --sg-hi:#7aa2ff;--sg-lo:#1a2450;--sg-fg:#ffffff;
     --gold-hi:#ffe9a8;--glow:rgba(232,201,106,.5);
     background:radial-gradient(700px 400px at 50% -8%,rgba(70,60,150,.5),transparent 55%),linear-gradient(180deg,#14142e,#0d0d20 60%,#0a0a18);
     border-color:rgba(232,201,106,.28);
@@ -772,6 +797,7 @@
 
   /* ============ STAINED GLASS — cathedral leaded-glass, jewel tones, Cinzel ============ */
   .phone[data-theme="glass"]{--bg:#0a0b14;--panel:#141726;--panel2:#1b1f33;--panel3:#252b45;--ink:#eef0f6;--muted:#98a0bd;--gold:#e8c96a;--gold2:#b8912f;--accent:#4f7fe0;--green:#3fae7a;--miss:#d05a72;--line:#33406b;
+    --sg-hi:#5a8ae6;--sg-lo:#101a3e;--sg-fg:#eef2ff;
     --radius-card:10px;--radius-box:6px;--radius-pill:8px;
     --font-body:"EB Garamond",Georgia,serif;--font-cap:"Cormorant Garamond",serif;
     background:
@@ -806,7 +832,7 @@
   .phone[data-theme="glass"] .tile.new{background:radial-gradient(circle at 40% 30%,#2f5fd4,#1a3a8f);color:#fff}
   .phone[data-theme="glass"] .tile.gray{background:conic-gradient(from 20deg,#e8c25a,#5b420f 30%,#b48a1f 55%,#2f2205 75%,#e8c25a);color:#2a1e00}
   .phone[data-theme="glass"] .tile.locked{background:#201f29;color:#555;box-shadow:0 0 0 1px #33406b}
-  .phone[data-theme="glass"] .tile small{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-family:"Cormorant Garamond",serif;font-style:italic;font-size:11px;color:#cdbf9c}
+  .phone[data-theme="glass"] .tile small{position:absolute;bottom:-23px;left:50%;transform:translateX(-50%);font-family:"Cormorant Garamond",serif;font-style:italic;font-size:15px;font-weight:600;color:#dccfa8}
   .phone[data-theme="glass"] .tile.focusnext{animation:glasspulse 2s infinite}
   @keyframes glasspulse{0%,100%{box-shadow:0 0 0 1px var(--gold2),0 0 0 var(--blue-glow0)}50%{box-shadow:0 0 0 1px var(--gold2),0 0 22px var(--blue-glow)}}
   /* per-book JEWEL chips — deterministic 5-hue cycle over the whole-Bible strip */
@@ -821,7 +847,8 @@
   .phone[data-theme="glass"] .grouphead{border:3px solid #0a0a0d;box-shadow:0 0 0 1px #b48a1f;letter-spacing:.08em;overflow:hidden}
   .phone[data-theme="glass"] .grouphead::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.16),transparent 45%);pointer-events:none}
   .phone[data-theme="glass"] .grouphead.grp-gold{background:linear-gradient(160deg,rgba(87,207,131,.85),rgba(47,157,90,.6));color:#fff}
-  .phone[data-theme="glass"] .grouphead.grp-blue{background:linear-gradient(160deg,rgba(47,95,212,.85),rgba(26,58,143,.6));color:#eef2ff}
+  .phone[data-theme="glass"] .grouphead.grp-blue:not(.story-grad){background:linear-gradient(160deg,rgba(47,95,212,.85),rgba(26,58,143,.6));color:#eef2ff}
+  .phone[data-theme="glass"] .grouphead.story-grad:not(.grp-gold){background:color-mix(in srgb, var(--sg-hi), var(--sg-lo) calc(var(--t,0) * 100%));color:var(--sg-fg)}
   .phone[data-theme="glass"] .grouphead.grp-cracked{background:conic-gradient(from 20deg,#e8c25a,#6b4e12 30%,#b48a1f 55%,#3a2a06 75%,#e8c25a);color:#2a1e00}
   .phone[data-theme="glass"] .grouphead .gmeta{font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:20px;border:1px solid #b48a1f;background:rgba(0,0,0,.4);color:var(--gold-ink)}
   /* emerald stat panels + amethyst/leaded milestones */
@@ -835,6 +862,7 @@
 
   /* ============ SCRIPTURE QUEST — youth adventure/RPG, chunky, Luckiest Guy ============ */
   .phone[data-theme="quest"]{--bg:#122320;--panel:#1b312b;--panel2:#213a33;--panel3:#2b4a41;--ink:#f5eede;--muted:#a6b3a5;--gold:#f4b942;--gold2:#c9852f;--accent:#2ec4b6;--green:#4caf50;--miss:#e76f51;--line:#2d4640;
+    --sg-hi:#5fc98a;--sg-lo:#123a24;--sg-fg:#f2fff0;
     --radius-card:20px;--radius-box:14px;
     background:
       radial-gradient(150% 55% at 50% 114%,#20543c 0%,transparent 55%),
@@ -892,7 +920,8 @@
   .phone[data-theme="quest"] .biblestrip .bk.on{background:radial-gradient(circle at 30% 25%,#ffe58a,#ffcf33);border-color:#c99400;color:#5a4200;box-shadow:0 3px 0 #c99400}
   /* wooden section signs */
   .phone[data-theme="quest"] .grouphead{border:4px solid;letter-spacing:1.5px;font-size:17px;box-shadow:0 5px 0 rgba(0,0,0,.25);text-shadow:1px 1px 0 rgba(0,0,0,.2)}
-  .phone[data-theme="quest"] .grouphead:not(.grp-gold):not(.grp-blue):not(.grp-cracked){background:linear-gradient(135deg,#8a7654,#6a5030);border-color:#4a3414;color:#f4e4c1}
+  .phone[data-theme="quest"] .grouphead:not(.grp-gold):not(.grp-blue):not(.grp-cracked):not(.story-grad){background:linear-gradient(135deg,#8a7654,#6a5030);border-color:#4a3414;color:#f4e4c1}
+  .phone[data-theme="quest"] .grouphead.story-grad:not(.grp-gold){background:color-mix(in srgb, var(--sg-hi), var(--sg-lo) calc(var(--t,0) * 100%));border-color:#123a24;color:var(--sg-fg)}
   .phone[data-theme="quest"] .grouphead.grp-gold{background:linear-gradient(135deg,#6fdc95,#2f9d5a);border-color:#145230;color:#fff}
   .phone[data-theme="quest"] .grouphead.grp-blue{background:linear-gradient(135deg,#7fd0f5,#3aa0d8);border-color:#1f6f9c;color:#08344d}
   .phone[data-theme="quest"] .grouphead.grp-cracked{background:linear-gradient(135deg,#e8c96a,#c9a227);border-color:#8a6600;color:#4a3600}
@@ -922,6 +951,7 @@
      (things not expressible as a token value) remains as component rules. */
   .phone[data-theme="buddy"]{
     --bg:#eaf4ff; --panel:#ffffff; --panel2:#f0f5fb; --panel3:#e4ebf3; --panel0:#eef5ff;
+    --sg-hi:#6fa8ff; --sg-lo:#22499b; --sg-fg:#ffffff;
     --ink:#3a4a5e; --muted:#8a97a8; --ink-soft:#4a5a6e; --ink-soft2:#5a6675;
     --gold:#ffb800; --gold2:#e0a600; --gold-ink:#a06f00; --accent:#1cb0f6;
     --green:#58cc02; --good:#3f9e00; --green-ink:#3f9e00; --green-line:#8ccf5a;
@@ -980,8 +1010,9 @@
   .phone[data-theme="buddy"] .counter:nth-child(4) .v{color:#46a302}
   /* section headers → fat colored cards + NEEDS REFRESH ribbon */
   .phone[data-theme="buddy"] .grouphead{border:0;color:#fff;padding:14px 16px}
-  .phone[data-theme="buddy"] .grouphead:not(.grp-gold):not(.grp-blue):not(.grp-cracked){background:#fff;color:#3a4a5e;box-shadow:0 4px 0 #e5edf2;border:2px solid #eef3f6}
-  .phone[data-theme="buddy"] .grouphead.grp-blue{background:linear-gradient(135deg,#5cc6ff,#1cb0f6);box-shadow:0 6px 0 #1899d6}
+  .phone[data-theme="buddy"] .grouphead:not(.grp-gold):not(.grp-blue):not(.grp-cracked):not(.story-grad){background:#fff;color:#3a4a5e;box-shadow:0 4px 0 #e5edf2;border:2px solid #eef3f6}
+  .phone[data-theme="buddy"] .grouphead.grp-blue:not(.story-grad){background:linear-gradient(135deg,#5cc6ff,#1cb0f6);box-shadow:0 6px 0 #1899d6}
+  .phone[data-theme="buddy"] .grouphead.story-grad:not(.grp-gold){background:color-mix(in srgb, var(--sg-hi), var(--sg-lo) calc(var(--t,0) * 100%));color:var(--sg-fg);box-shadow:0 5px 0 rgba(0,0,0,.12);border:0}
   .phone[data-theme="buddy"] .grouphead.grp-gold{background:linear-gradient(135deg,#5fd487,#2f9d5a);box-shadow:0 6px 0 #1c6e3f;color:#fff}
   .phone[data-theme="buddy"] .grouphead.grp-cracked{background:linear-gradient(135deg,#e8c96a,#c9a227);box-shadow:0 6px 0 #a5851d}
   .phone[data-theme="buddy"] .grouphead.grp-cracked::after{content:"⚡ NEEDS REFRESH";position:absolute;top:-8px;right:12px;background:#ff4b4b;color:#fff;font-size:9px;font-weight:800;padding:3px 8px;border-radius:20px}
@@ -1014,6 +1045,10 @@
   .grouphead.grp-gold .gmeta{color:var(--done-fg)}
   .grouphead.grp-blue{background:linear-gradient(135deg,var(--blue),var(--blue2));border-color:var(--accent);color:var(--on-blue)}
   .grouphead.grp-blue .gmeta{color:var(--on-blue)}
+  /* Bible-story section headers form a light→dark series (per-theme colors via --sg-hi/--sg-lo); completed (gold) still wins */
+  .grouphead.story-grad:not(.grp-gold){background:var(--sg-lo);background:color-mix(in srgb, var(--sg-hi), var(--sg-lo) calc(var(--t,0) * 100%));border-color:transparent;color:var(--sg-fg)}
+  .grouphead.story-grad:not(.grp-gold) .gmeta{color:var(--sg-fg);opacity:.92}
+  .grouphead.story-grad:not(.grp-gold) .ghead-ic{/*raw-ok*/filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
   .grouphead.grp-cracked{border-color:var(--gold2);color:var(--on-accent);
     background:linear-gradient(112deg,transparent 0 45%,rgba(0,0,0,.5) 45% 48.5%,rgba(255,255,255,.35) 48.5% 51.5%,rgba(0,0,0,.5) 51.5% 55%,transparent 55%),linear-gradient(135deg,var(--gold2),var(--gold-shadow));}
   .grouphead.grp-cracked .gmeta{color:var(--on-accent)}
@@ -2749,7 +2784,7 @@ function renderPath(focus){
       });
       html+=`</div>`;
       if(palaceLocked) html+=`<div class="hint" style="text-align:center;margin:10px 0 0">${SCRATCH_LADDER[palaceRung].gate()?"You've earned it — scratch the ticket above! 🎫":"Memorize 5 verses and hit a 5-answer streak in the verse test to earn this."}</div>`;
-      if(!U.story && !U.palaceUnit){
+      if(!U.story && !U.palaceUnit && !U.videoTrack){   // no "test out" on the video-only sections (Learn Verses, Spaced Repetition)
         const unitPaid=U.skills.some(isPaidSkill) && !Billing.isPro(); // any paid content locks "test out"
         html+=`<div style="text-align:center;margin-top:22px"><button class="btn sm ghost" data-cq="${ui}" ${unitPaid?`data-prolock="1"`:""}>${unitPaid?"🔒 ":"⚡ "}Chapter quiz · test out</button>
         <div class="hint" style="margin:6px 0 0">${unitPaid?"Unlock the full Bible to test out of this section.":"Ace it (100%) to turn the whole section gold. One wrong answer ends it."}</div></div>`;
@@ -2836,11 +2871,12 @@ function renderStories(){
   let html=`<h2>Bible Stories</h2>
     <p class="lead">100 key stories. Each unlocks the moment you can address its opening verse — learn where it begins, and it joins your daily review.</p>
     ${readyCount===0&&doneCount<total?`<p class="hint">Learn more chapter &amp; verse numbers in <b class="gold">Learn</b> to unlock stories — a story opens as soon as you can address its book, chapter &amp; verse.</p>`:""}`;
-  groups.forEach(({U,ui})=>{
+  groups.forEach(({U,ui},gi)=>{
     const done=U.skills.filter(sk=>Prog.doneSkills.includes(sk.id)).length, tot=U.skills.length;
     const ready=U.skills.some((sk,si)=>!Prog.doneSkills.includes(sk.id)&&skillUnlocked(ui,si));
     const open=storyExpanded.has(ui), grp=done===tot?"grp-gold":(ready?"grp-blue":"");
-    html+=`<div class="unit"><button class="grouphead ${open?"open":""} ${grp}" data-sgrp="${ui}"><span>${U.ic?`<span class="ghead-ic">${U.ic}</span>`:""}${U.name}</span><span class="gmeta">${done}/${tot} ${open?"▾":"▸"}</span></button>`;
+    const frac=groups.length>1?(gi/(groups.length-1)).toFixed(3):0;   // 0 (lightest) → 1 (darkest) across the story sections
+    html+=`<div class="unit"><button class="grouphead story-grad ${open?"open":""} ${grp}" data-sgrp="${ui}" style="--t:${frac}"><span>${U.ic?`<span class="ghead-ic">${U.ic}</span>`:""}${U.name}</span><span class="gmeta">${done}/${tot} ${open?"▾":"▸"}</span></button>`;
     if(open){ html+=`<div class="vlist" style="margin-top:10px">`;
       // sort by reachability: the highest number (book, chapter OR verse) sinks to the bottom, so 4:1 comes before 2:7
       const ord=U.skills.map((sk,si)=>({sk,si})).sort((a,b)=>storyReachKey(a.sk)-storyReachKey(b.sk)||a.si-b.si);
@@ -3453,7 +3489,7 @@ function renderVerse(){
   // ---- HUB: six big buttons; review last ----
   const dueAll=reviewDueCount();   // numbers + verses + palaces due for spaced repetition today
   const reviewVi=dueAll?"🔁":"🎯";
-  const reviewLabel=dueAll?`Spaced Repetition · ${dueAll} due`:(mem.length?`Practice my verses (${mem.length})`:`Practice my verses`);
+  const reviewLabel=dueAll?`Spaced Repetition · ${dueAll} due`:(mem.length?`Practice Verses (${mem.length})`:`Practice Verses`);
   V.innerHTML=`<h2>Verses</h2>
     <p class="lead">Pick what to work on — build verses into pictures, then test what you've hidden in your heart.</p>
     <div class="versehub">
@@ -3461,7 +3497,7 @@ function renderVerse(){
       <button class="vhub sq" data-view="topics"><span class="vi">📚</span><span>Topics</span><small>${TOPICS.length}</small></button>
       <button class="vhub sq" data-view="mem"><span class="vi">★</span><span>Memorized</span><small>${mem.length}</small></button>
       <button class="vhub sq" data-view="saved"><span class="vi">🔖</span><span>Saved</span><small>${saved.length}</small></button>
-      <button class="vhub wide" id="vNumTest"><span class="vi">🔢</span><span>Test my Numbers &amp; Books</span></button>
+      <button class="vhub wide" id="vNumTest"><span class="vi vi-bounce">🎲</span><span>Test Numbers &amp; Books</span></button>
       <button class="vhub wide review" id="vMemTest"><span class="vi">${reviewVi}</span><span>${reviewLabel}</span></button>
     </div>`;
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
@@ -3611,7 +3647,7 @@ function askVerse(key){ memTestCur=key.split(":").map(Number); memTestWrong=0; m
 function nextMemVerse(){                       // the "go to next" hook fired after each answered verse
   if(MS && MS.phase==="sr"){
     while(MS.srQueue.length && !verseDue(MS.srQueue[0])) MS.srQueue.shift(); // drop any already cleared
-    if(MS.srQueue.length){ askVerse(MS.srQueue.shift()); return; }
+    if(MS.srQueue.length){ const k=MS.srQueue.shift(); srFlash(()=>askVerse(k)); return; }   // flash count, then ask the next due verse
     srBanner("complete"); return;              // all due verses handled → complete banner → palaces → practice
   }
   practiceNext(false);
@@ -3667,6 +3703,21 @@ function showGrowthEncouragement(){
     if(!anyAskable){ (Prog.memorized||[]).forEach(k=>{ const o=vsr(k); if(o&&o.sz>now){ o.sz=0; o.dueAt=Math.min(o.dueAt||now,now); } }); saveProg(); } // "review anyway" wakes rested verses so there's something to do
     deckRoundReset(); practiceNext(true);
   };
+}
+// how many spaced-repetition items are still to come this session: numbers left + verses left + palaces due (palaces counted, NOT their rooms)
+function srRemaining(){
+  let n=0;
+  if(NT && NT.ret) n += Math.max(0, NT.qs.length - NT.i);   // number questions not yet asked
+  if(MS && MS.srQueue) n += MS.srQueue.length;              // verses still queued
+  n += palacesDueCount();                                   // due palaces (one each, not per-room)
+  return n;
+}
+// big centered "N left" flash shown BETWEEN spaced-repetition questions, then continues via cb
+function srFlash(cb){
+  const left=srRemaining();
+  if(left<=0){ cb(); return; }
+  el("verse").innerHTML=`<div class="card center srflash srcountflash"><div class="srcount-big">${left}</div><div class="srcount-lbl">${left===1?"1 left":left+" left"}</div></div>`;
+  setTimeout(cb, 720);
 }
 function srBanner(kind){
   const V=el("verse");
@@ -3784,11 +3835,13 @@ function openStore(){
   });
 }
 function runDuePalaces(done, queue){            // walk each due palace in turn (in the Verses view), then continue
+  const firstCall=!queue;
   if(!queue) queue=shuffle((Prog.palaces||[]).map((p,i)=>i).filter(i=>Prog.palaces[i]&&palaceDue(Prog.palaces[i]))); // shuffled once, not slot order
   while(queue.length && !(Prog.palaces[queue[0]]&&palaceDue(Prog.palaces[queue[0]]))) queue.shift();               // drop any already cleared
   if(!queue.length){ done(); return; }
   const slot=queue.shift();
-  startPalacePractice(slot,"verse",()=>runDuePalaces(done,queue), done);   // ✕ during the queue → skip remaining palaces, go straight to practice
+  const go=()=>startPalacePractice(slot,"verse",()=>runDuePalaces(done,queue), done);   // ✕ during the queue → skip remaining palaces, go straight to practice
+  if(firstCall) go(); else srFlash(go);   // flash the remaining count between palace walks (first one follows its own prompt)
 }
 
 /* =================== NUMBERS TEST — 15 Qs translating number ↔ image ↔ book =================== */
@@ -3796,17 +3849,29 @@ function runDuePalaces(done, queue){            // walk each due palace in turn 
 function strengthen(k){ const st=cardState(k), now=Date.now(); st.box=Math.min((st.box||1)+2,5); st.due=now+INTERVAL[st.box]*DAY; SRS[k]=st; save(SRS_KEY,SRS); }
 function strengthenNumber(n){ strengthen(`sk:num:${n}`); if(n>=1&&n<=66) strengthen(`sk:book:${n}`); }
 let NT=null;
-function startNumberTest(){
-  const known=[...knownNumbers()].filter(n=>n>=1&&n<=176);
-  if(known.length<2){ toast("Learn a few number images first!"); return; }
-  const withBook=known.filter(n=>n<=66);
+// known numbers ordered MOST-RECENTLY-learned first (by completion order in doneSkills)
+function recentKnownNumbers(){
+  const seen=new Set(), out=[], byId={};
+  UNITS.forEach(U=>U.skills.forEach(sk=>{ byId[sk.id]=sk; }));
+  for(let i=(Prog.doneSkills||[]).length-1;i>=0;i--){ const sk=byId[Prog.doneSkills[i]];
+    if(sk && (sk.kind==="num"||sk.kind==="book")) sk.items.forEach(n=>{ if(n>=1&&n<=176&&!seen.has(n)){ seen.add(n); out.push(n); } }); }
+  [...knownNumbers()].forEach(n=>{ if(n>=1&&n<=176&&!seen.has(n)){ seen.add(n); out.push(n); } });   // safety: append any not captured
+  return out;
+}
+function startNumberTest(round){
+  round=round||1;
+  const recent=recentKnownNumbers();
+  if(recent.length<2){ toast("Learn a few number images first!"); return; }
+  const pool = round===1 ? recent.slice(0,10) : recent.slice(10);   // round 1 = most recent 10; round 2+ = the rest
+  if(!pool.length){ toast(round>1?"No older numbers left to review — great job!":"Learn a few number images first!"); return; }
+  const withBook=pool.filter(n=>n<=66);
   const qs=[];
   for(let i=0;i<15;i++){
-    const n=known[Math.floor(Math.random()*known.length)];
+    const n=pool[Math.floor(Math.random()*pool.length)];
     const types = (n<=66 && withBook.length>=4) ? ["q_n2i","q_i2n","q_n2b","q_b2n","q_i2b","q_b2i"] : ["q_n2i","q_i2n"];
     qs.push({n, type:pick(types)});
   }
-  NT={qs, i:0, ok:0, wrong:0}; renderNumTest();
+  NT={qs, i:0, ok:0, wrong:0, round, hasMore: round===1 && recent.length>10}; renderNumTest();
 }
 function renderNumTest(){
   const V=el("verse"); if(NT.i>=NT.qs.length) return finishNumberTest();
@@ -3837,7 +3902,10 @@ function renderNumTest(){
     if(b.dataset.ok==="1"){                       // correct → green, strengthen, next
       b.classList.add("correct"); V.querySelectorAll("[data-ok]").forEach(x=>x.disabled=true);
       NT.ok++; strengthenNumber(n);
-      setTimeout(()=>{ NT.i++; renderNumTest(); }, 550);
+      setTimeout(()=>{ NT.i++;
+        if(NT && NT.ret && NT.i<NT.qs.length) srFlash(renderNumTest);   // daily review → flash the count between number questions
+        else renderNumTest();
+      }, 550);
     } else {                                       // wrong → red, stay to retry
       b.classList.add("wrong"); b.disabled=true; NT.wrong++;
       gradeKey(`sk:num:${n}`,"miss");
@@ -3847,26 +3915,32 @@ function renderNumTest(){
 function finishNumberTest(){
   updateMetrics();
   if(NT && NT.ret){ const ret=NT.ret; NT=null; ret(); return; }   // part of the daily review → flow into verses
+  const hasMore=NT&&NT.hasMore, round=(NT&&NT.round)||1;
   el("verse").innerHTML=`<div class="card center"><div style="font-size:52px">🔢</div>
-    <h2>Numbers test complete!</h2>
-    <p class="lead">${NT.ok} answered${NT.wrong?` · ${NT.wrong} retr${NT.wrong===1?"y":"ies"}`:" — flawless!"}. The ones you nailed just got <b class="gold">stronger</b> — they'll stay gold longer.</p>
-    <div class="btnrow"><button class="btn" id="ntAgain">Test again</button><button class="btn ghost" id="ntDone">Done</button></div></div>`;
-  el("ntAgain").onclick=startNumberTest; el("ntDone").onclick=renderVerse; NT=null;
+    <h2>${round>1?"Round complete!":"Recent numbers done!"}</h2>
+    <p class="lead">${NT.ok} answered${NT.wrong?` · ${NT.wrong} retr${NT.wrong===1?"y":"ies"}`:" — flawless!"}. ${round>1?"":"You just drilled your <b class=\"gold\">10 most recently learned</b> numbers &amp; books."} The ones you nailed got <b class="gold">stronger</b> — they'll stay gold longer.</p>
+    <div class="btnrow">${hasMore?`<button class="btn blue" id="ntMore">Round 2 → older ones</button>`:`<button class="btn" id="ntAgain">Test again</button>`}<button class="btn ghost" id="ntDone">Done</button></div></div>`;
+  if(el("ntMore")) el("ntMore").onclick=()=>startNumberTest(2);
+  if(el("ntAgain")) el("ntAgain").onclick=()=>startNumberTest(1);
+  el("ntDone").onclick=renderVerse; NT=null;
 }
+let mtSel={b:0,c:0,v:0}, mtLock=false;   // current picks; mtLock freezes the board after the answer is revealed
+const MT_BOOKCHOICES=8;                   // book multiple-choice count — the most that fits without scrolling
 function memTestRender(){
   const V=el("verse"), b=memTestCur[0], c=memTestCur[1], v=memTestCur[2], k=knownNumbers();
-  let books=`<option value="" selected>— book —</option>`; for(let bb=1;bb<=66;bb++) if(k.has(bb)||bb===b) books+=`<option value="${bb}">${bookName(bb)}</option>`;   // always include the correct book; starts blank
-  const nums=(max,force,lbl)=>{ let o=`<option value="" selected>— ${lbl} —</option>`; for(let n=1;n<=max;n++) if(k.has(n)||n===force) o+=`<option value="${n}">${dispNum("num",n)}</option>`; return o; }; // force = the correct answer, always selectable
+  mtSel={b:0,c:0,v:0}; mtLock=false;
+  // book multiple choice: the correct book + plausible decoys (known books first, padded from all 66), shuffled
+  const known=[]; for(let bb=1;bb<=66;bb++) if(k.has(bb)&&bb!==b) known.push(bb); shuffle(known);
+  let decoys=known.slice(0,MT_BOOKCHOICES-1);
+  if(decoys.length<MT_BOOKCHOICES-1){ const pool=[]; for(let bb=1;bb<=66;bb++) if(bb!==b&&!decoys.includes(bb)) pool.push(bb); shuffle(pool); while(decoys.length<MT_BOOKCHOICES-1&&pool.length) decoys.push(pool.pop()); }
+  const bookOpts=shuffle([b,...decoys]);
   V.innerHTML=`<div class="card" style="position:relative">
       <button class="lclose" id="mtClose" style="position:absolute;left:10px;top:12px;margin:0;z-index:2">✕</button>
       ${testHUD()}
       <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${kjvText(b,c,v)}"</div>
-      <label class="vplabel">Book</label><select class="vpsel" id="mtB">${books}</select>
-      <div style="display:flex;gap:8px;align-items:flex-end">
-        <div style="flex:1;min-width:0"><label class="vplabel">Chapter</label><select class="vpsel" id="mtC">${nums(150,c,"chapter")}</select></div>
-        <div style="font-weight:800;font-size:24px;color:var(--muted);padding:0 0 8px">:</div>
-        <div style="flex:1;min-width:0"><label class="vplabel">Verse</label><select class="vpsel" id="mtV">${nums(176,v,"verse")}</select></div>
-      </div>
+      <label class="vplabel">Book</label><div class="mtbooks" id="mtBookGrid"></div>
+      <label class="vplabel" style="margin-top:10px">Chapter</label><div class="mtsquares" id="mtChapGrid"></div>
+      <label class="vplabel" style="margin-top:8px">Verse</label><div class="mtsquares" id="mtVerseGrid"></div>
       <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):""}</div>
       <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
       <div class="peekrow" style="display:flex;gap:6px;margin-top:8px">
@@ -3887,18 +3961,31 @@ function memTestRender(){
     forgotVerse(b,c,v); bumpStreak(false); updateMetrics(); metricDown("memMetric","★"); refreshHUD();
     showForgotReview(b,c,v,scene,palaceName,loc.room||"", goNext);
   };
-  const sels=[el("mtB"),el("mtC"),el("mtV")];
   const nextBtn=()=>`<button class="btn" id="mtNext" style="margin-top:10px">${memArr().length>1?"Next verse →":"Done"}</button>`;
   const goNext=nextMemVerse;   // session decides: next due SR verse → complete banner → palaces → free practice
+  // ---- pickers: book = multiple choice, chapter & verse = number squares (like the whole-Bible picker) ----
+  const chapMax=()=> mtSel.b?chapCount(mtSel.b):150;
+  const verseMax=()=> (mtSel.b&&mtSel.c)?verseCount(mtSel.b,mtSel.c):176;
+  const paintBooks=()=>{ el("mtBookGrid").innerHTML=bookOpts.map(bb=>`<button class="mtbookopt ${mtSel.b===bb?"sel":""}" data-bk="${bb}" ${mtLock?"disabled":""}>${bookName(bb)}</button>`).join("");
+    el("mtBookGrid").querySelectorAll("[data-bk]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.b=+x.dataset.bk; mtSel.c=0; mtSel.v=0; el("mtFb").innerHTML=""; paintBooks(); paintChap(); paintVerse(); }); };
+  const paintChap=()=>{ let s=""; const mx=chapMax(); for(let n=1;n<=mx;n++) if(k.has(n)||n===c) s+=`<button class="mtsq ${mtSel.c===n?"sel":""}" data-cn="${n}" ${mtLock?"disabled":""}>${pad2(n)}</button>`;
+    el("mtChapGrid").innerHTML=s||`<div class="hint" style="grid-column:1/-1;margin:0">Learn more numbers to pick a chapter.</div>`;
+    el("mtChapGrid").querySelectorAll("[data-cn]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.c=+x.dataset.cn; mtSel.v=0; el("mtFb").innerHTML=""; paintChap(); paintVerse(); }); };
+  const paintVerse=()=>{ let s=""; const mx=verseMax(); for(let n=1;n<=mx;n++) if(k.has(n)||n===v) s+=`<button class="mtsq ${mtSel.v===n?"sel":""}" data-vn="${n}" ${mtLock?"disabled":""}>${pad2(n)}</button>`;
+    el("mtVerseGrid").innerHTML=s||`<div class="hint" style="grid-column:1/-1;margin:0">Learn more numbers to pick a verse.</div>`;
+    el("mtVerseGrid").querySelectorAll("[data-vn]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.v=+x.dataset.vn; el("mtFb").innerHTML=""; paintVerse(); }); };
+  const paintAll=()=>{ paintBooks(); paintChap(); paintVerse(); };
+  paintAll();
   el("mtCheck").onclick=()=>{
-    if(!el("mtB").value || !el("mtC").value || !el("mtV").value){ el("mtWarn").textContent="Pick a book, chapter and verse."; return; }
-    const ok=(+el("mtB").value===b && +el("mtC").value===c && +el("mtV").value===v);
-    if(ok){ // flash green, auto-advance to next verse
+    if(mtLock) return;
+    if(!mtSel.b || !mtSel.c || !mtSel.v){ el("mtWarn").textContent="Pick a book, chapter and verse."; return; }
+    const ok=(mtSel.b===b && mtSel.c===c && mtSel.v===v);
+    if(ok){ // green, auto-advance to next verse
       const firstTry=memTestWrong===0, kk=refKey(b,c,v);
       bumpStreak(true); reviewVerseSR(kk); const cr=markAnswer(kk,true,firstTry); const pts=awardTalents(kk, firstTry, MS && MS.phase==="sr"); saveProg(); refreshHUD(); checkBadges();
       if(!reviewedThisSession.includes(kk)) reviewedThisSession.push(kk);   // remember what we reviewed → show trails at the end
       creditToday();   // a real recall = showing up today (idempotent per day; credits SR & free practice alike, never a no-recall open)
-      sels.forEach(s=>s.classList.add("correct")); el("mtCheck").disabled=true; el("mtWarn").textContent="";
+      mtLock=true; paintAll(); el("mtCheck").disabled=true; el("mtWarn").textContent="";
       el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}</div></div>`;
       if(cr>=5 && cr%5===0){   // every 5 clean recalls in a row → offer to rest this verse for 14 days (re-offered if declined earlier)
         el("mtFb").innerHTML+=`<div class="feedback ok" style="position:static;margin:10px -20px -20px;border-radius:0"><div class="sub" style="margin-bottom:8px">🎯 That's 5 in a row! Rest this verse for <b>14 days</b>?</div><div class="btnrow" style="margin:0"><button class="btn" id="szYes" style="margin:0">Snooze 14 days</button><button class="btn ghost" id="szNo" style="margin:0">Keep reviewing</button></div></div>`;
@@ -3907,11 +3994,11 @@ function memTestRender(){
       } else setTimeout(goNext, 900);
     } else {
       memTestWrong++; markAnswer(refKey(b,c,v),false); saveProg(); refreshHUD();   // a miss no longer breaks the streak — only 3-in-a-row does
-      sels.forEach(s=>{ s.classList.add("wrong"); s.classList.remove("correct"); });
+      el("mtBookGrid").classList.add("wrongflash"); el("mtChapGrid").classList.add("wrongflash"); el("mtVerseGrid").classList.add("wrongflash");
+      setTimeout(()=>{ ["mtBookGrid","mtChapGrid","mtVerseGrid"].forEach(id=>{const e=el(id);if(e)e.classList.remove("wrongflash");}); },500);
       if(memTestWrong>=3){ // three misses in a row → streak breaks and the app supplies the answer
         bumpStreak(false); refreshHUD();
-        el("mtB").value=b; el("mtC").value=c; el("mtV").value=v;
-        sels.forEach(s=>{ s.classList.remove("wrong"); s.disabled=true; }); el("mtCheck").disabled=true; el("mtWarn").textContent="";
+        mtSel={b,c,v}; mtLock=true; paintAll(); el("mtCheck").disabled=true; el("mtWarn").textContent="";
         el("mtFb").innerHTML=`<div class="feedback no" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Here's the answer 👇</div><div class="sub">This is <b class="gold">${bookName(b)} ${c}:${v}</b>. Take a moment, then keep going.</div>${nextBtn()}</div>`;
         el("mtNext").onclick=goNext;
       } else {
@@ -3920,30 +4007,19 @@ function memTestRender(){
       }
     }
   };
-  // scope Chapter to the selected book's chapter count, and Verse to that chapter's verse count (both ∩ known numbers) — no more "chapter 150" for a 1-chapter book
-  function repop(){
-    const bb=+el("mtB").value||0, cMax=chapCount(bb)||150, curC=+el("mtC").value;
-    el("mtC").innerHTML=nums(cMax,c,"chapter"); if((k.has(curC)||curC===c)&&curC<=cMax) el("mtC").value=curC;
-    const cc=+el("mtC").value||0, vMax=verseCount(bb,cc)||176, curV=+el("mtV").value;
-    el("mtV").innerHTML=nums(vMax,v,"verse"); if((k.has(curV)||curV===v)&&curV<=vMax) el("mtV").value=curV;
-  }
-  el("mtB").addEventListener("change",()=>{ el("mtB").classList.remove("wrong"); el("mtFb").innerHTML=""; repop(); });
-  el("mtC").addEventListener("change",()=>{ el("mtC").classList.remove("wrong"); el("mtFb").innerHTML=""; repop(); });
-  el("mtV").addEventListener("change",()=>{ el("mtV").classList.remove("wrong"); el("mtFb").innerHTML=""; });
-  repop();   // scope the dropdowns to the initially-selected book on first render
   // Peek reveals the ONE part you choose (book/chapter/verse) for talents — 25, then 50, then 75 on the same
   // verse. Confirm before spending. Peeking never breaks your streak; answer the rest right and it still counts.
   V.querySelectorAll("[data-peek]").forEach(btn=>btn.onclick=()=>{
-    if(btn.disabled) return;
+    if(btn.disabled||mtLock) return;
     const which=btn.dataset.peek, cost=HINT_COSTS[Math.min(memHintUses,2)];
     const partName=which==="b"?"book":which==="c"?"chapter":"verse";
     if((Prog.talents||0)<cost){ toast(`That hint costs ${cost} talents — you have ${talDisp(Prog.talents||0)}.`); return; }
     confirmSpend(`Reveal the ${partName} for <b class="gold">${cost} 🪙</b>?`,
       `You'll have ${talDisp(Math.max(0,(Prog.talents||0)-cost))} talents left. Answer the rest right and your streak still counts.`, ()=>{
       spendTalents(cost); memHintUses++;
-      if(which==="b"){ el("mtB").value=b; repop(); el("mtB").classList.add("correct"); el("mtB").disabled=true; }
-      else if(which==="c"){ el("mtC").value=c; repop(); el("mtC").value=c; el("mtC").disabled=true; el("mtC").classList.add("correct"); }
-      else { el("mtV").value=v; el("mtV").classList.add("correct"); el("mtV").disabled=true; }
+      if(which==="b"){ mtSel.b=b; paintAll(); }
+      else if(which==="c"){ mtSel.c=c; paintChap(); paintVerse(); }
+      else { mtSel.v=v; paintVerse(); }
       btn.disabled=true; btn.style.opacity=".5";
       const cl=el("mtHintCost"); if(cl) cl.innerHTML=`Next peek: <b class="gold">${HINT_COSTS[Math.min(memHintUses,2)]} 🪙</b>. Answer right and your streak still counts.`;
       toast(which==="b"?"🔎 Book revealed":which==="c"?"🔎 Chapter revealed":"🔎 Verse revealed");
@@ -4350,7 +4426,8 @@ function renderWalk(){
   const roomOpts=(pi)=>`<option value="" ${loc.room?"":"selected"}>— room / spot —</option>`+roomsFor(pi).map(r=>`<option ${r===loc.room?"selected":""}>${r}</option>`).join("");
   const palaceSel = palaces.length
     ? `<select class="vpsel" id="wPalace" style="text-align:center;text-align-last:center"><option value="" ${selP==null?"selected":""}>— palace —</option>${palaces.map(x=>`<option value="${x[1]}" ${x[1]===selP?"selected":""}>${x[0].place}</option>`).join("")}</select>
-       <label class="vplabel" style="text-align:center;display:block;margin-top:10px">Which room / spot?</label><select class="vpsel" id="wRoom" style="text-align:center;text-align-last:center">${selP!=null?roomOpts(selP):`<option value="" selected>— room / spot —</option>`}</select>`
+       <label class="vplabel" style="text-align:center;display:block;margin-top:10px">Which room / spot?</label>
+       <div style="display:flex;gap:6px;align-items:center"><select class="vpsel" id="wRoom" style="flex:1;text-align:center;text-align-last:center">${selP!=null?roomOpts(selP):`<option value="" selected>— room / spot —</option>`}</select><button class="lsave" id="wRoomEye" title="Open this location in your palace" style="border-color:var(--green);color:var(--green);background:var(--ok-bg,rgba(75,191,115,.14))">👁️</button></div>`
     : `<div class="hint" style="margin:2px 0 10px">You don't have a memory palace yet — build one in the <b>Palace</b> tab. For now, just describe where your scene happens.</div>`;
   V.innerHTML=`<div class="card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="wClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">${palaces.length?"Which palace?":"Write your scene"}</div><button class="lsave" id="wDoneTop" title="Save & done">✓</button></div>
@@ -4368,6 +4445,8 @@ function renderWalk(){
   if(el("wPalace")) el("wPalace").onchange=()=>{ const val=el("wPalace").value;
     if(val===""){ el("wRoom").innerHTML=`<option value="" selected>— room / spot —</option>`; return; }
     const rs=roomsFor(+val); el("wRoom").innerHTML=`<option value="" selected>— room / spot —</option>`+(rs.map(r=>`<option>${r}</option>`).join("")||`<option value="">(add rooms to this palace first)</option>`); };
+  if(el("wRoomEye")) el("wRoomEye").onclick=()=>{ const pv=el("wPalace")?el("wPalace").value:""; if(pv===""){ toast("Pick a palace first."); return; }
+    const room=el("wRoom")?el("wRoom").value:""; sceneBackfill=false; show("palace"); startPalaceEdit(+pv, room||null); };   // 👁️ jump to this location in the palace editor
   const finish=()=>{
     const text=(el("wScene").value||"").trim();
     if(text) Prog.customScene[vkey]=text; else delete Prog.customScene[vkey];
@@ -5096,16 +5175,16 @@ function renderTypeTest(){
   V.innerHTML=`<div class="card">
       <div class="lv-topbar"><button class="lclose" id="ttClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(TT.b)} ${TT.c}:${TT.v}</div><div class="ttcount" id="ttCount">0/${total}</div></div>
       <div class="ttdisplay" id="ttDisplay"></div>
+      <button class="btn ghost sm" id="ttHint" style="width:100%;margin:0 0 8px">🔎 Reveal a letter</button>
       <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type word 1…">
       <p class="hint" style="text-align:center;margin-top:8px">Each word jumps to the top the moment you finish it — <b>green</b> if right, <b>red</b> if wrong (then it clears to retry).</p>
-      <button class="btn ghost sm" id="ttHint" style="width:100%;margin-top:2px">🔎 Reveal a letter</button>
     </div>`;
   const inp=el("ttIn"), disp=el("ttDisplay"), cnt=el("ttCount"), hintBtn=el("ttHint");
   el("ttClose").onclick=()=>{ const r=TT.ret; TT=null; r?r():renderVerse(); };
   // repaint ONLY the committed-words area + counter + placeholder (leaves the input/keyboard untouched)
   const paintTop=()=>{
     const done=TT.idx, committed=TT.words.slice(0,done).join(" ");
-    const wrongTop = TT.wrongWord ? ` <span class="ttcur bad">${TT.wrongWord.replace(/</g,"&lt;")}</span>` : "";
+    const wrongTop = TT.wrongWord ? ` <span class="ttcur bad">${TT.wrongWord.replace(/</g,"&lt;")}</span> <span class="tt-tryagain">↻ Try again</span>` : "";
     disp.innerHTML=`<span class="ttdone">${committed}</span>`+(wrongTop||(done||TT.wrongWord?"":`<span style="color:var(--muted)">your words appear here as you go…</span>`));
     disp.scrollTop=disp.scrollHeight;                                  // keep the newest words visible inside the fixed box
     cnt.textContent=`${done}/${total}`; cnt.className="ttcount "+(TT.wrong?"ttbad":(done>0?"ttgood":""));
@@ -5231,7 +5310,10 @@ function renderMyPalace(i){
 }
 /* ---- edit an existing palace: rename, edit/reorder/add/remove locations ---- */
 let PE=null;
-function startPalaceEdit(i){ const p=Prog.palaces[i]; if(!p) return; PE={slot:i, place:p.place, stations:p.stations.slice()}; renderPalaceEdit(); }
+// memorized verses whose scene is stored at this palace slot + room (matched by the room's text)
+function versesAtLoc(slot, room){ const out=[], vl=Prog.verseLoc||{};
+  Object.keys(vl).forEach(k=>{ const l=vl[k]; if(l && l.p===slot && (l.room||"")===room && (Prog.memorized||[]).includes(k)) out.push(k); }); return out; }
+function startPalaceEdit(i, scrollRoom){ const p=Prog.palaces[i]; if(!p) return; PE={slot:i, place:p.place, stations:p.stations.slice(), scrollRoom:scrollRoom||null}; renderPalaceEdit(); }
 function syncPE(){ // pull the current field values into PE before a structural re-render
   const P=el("palace"); const nm=P.querySelector("#peName"); if(nm) PE.place=nm.value;
   P.querySelectorAll(".peLoc").forEach(inp=>{ PE.stations[+inp.dataset.si]=inp.value; });
@@ -5246,13 +5328,15 @@ function renderPalaceEdit(){
       <input class="typein" id="peName" style="text-align:left;font-size:15px;padding:12px;margin-bottom:14px">
       <div class="hint" style="margin-bottom:6px">Locations — in the order you walk them. Edit the text, use ↑ ↓ to reorder, ✕ to remove.</div>
       <div class="stationlist">
-        ${PE.stations.map((s,i)=>`<div class="st" style="gap:6px">
+        ${PE.stations.map((s,i)=>{ const hasV=versesAtLoc(PE.slot,s).length;
+          return `<div class="st ${hasV?"has-verse":""}" style="gap:6px" data-si-row="${i}">
             <b class="gold" style="min-width:20px;text-align:right">${i+1}.</b>
             <input class="typein peLoc" data-si="${i}" style="flex:1;text-align:left;font-size:14px;padding:9px">
+            ${hasV?`<span class="rm peEye" data-eye="${i}" title="View the ${hasV>1?hasV+" verses":"verse"} stored here" style="color:var(--green)">👁️</span>`:""}
             <span class="rm" data-up="${i}" title="Move up" style="color:var(--muted)">↑</span>
             <span class="rm" data-down="${i}" title="Move down" style="color:var(--muted)">↓</span>
             <span class="rm" data-rm="${i}" title="Remove">✕</span>
-          </div>`).join("")||`<p class="hint">No locations — add one below.</p>`}
+          </div>`; }).join("")||`<p class="hint">No locations — add one below.</p>`}
       </div>
       <div class="btnrow" style="margin-top:8px"><input class="typein" id="peIn" placeholder="Add a location…" style="text-align:left;font-size:15px;padding:12px"><button class="btn sm" id="peAdd" style="width:auto">Add</button></div>
       <button class="btn" id="peSave" style="margin-top:12px">Save changes</button>
@@ -5264,6 +5348,14 @@ function renderPalaceEdit(){
   P.querySelectorAll("[data-up]").forEach(x=>x.onclick=()=>{ syncPE(); const i=+x.dataset.up; if(i>0){ const t=PE.stations[i-1]; PE.stations[i-1]=PE.stations[i]; PE.stations[i]=t; } renderPalaceEdit(); });
   P.querySelectorAll("[data-down]").forEach(x=>x.onclick=()=>{ syncPE(); const i=+x.dataset.down; if(i<PE.stations.length-1){ const t=PE.stations[i+1]; PE.stations[i+1]=PE.stations[i]; PE.stations[i]=t; } renderPalaceEdit(); });
   P.querySelectorAll("[data-rm]").forEach(x=>x.onclick=()=>{ syncPE(); PE.stations.splice(+x.dataset.rm,1); renderPalaceEdit(); });
+  // 👁️ view the verse stored at this location → its scene-edit screen; returning lands back here, scrolled to it
+  P.querySelectorAll("[data-eye]").forEach(x=>x.onclick=()=>{ syncPE(); const i=+x.dataset.eye, room=PE.stations[i], slot=PE.slot;
+    const vk=versesAtLoc(slot,room); if(!vk.length) return; const [b,c,v]=vk[0].split(":").map(Number);
+    const back=()=>{ show("palace"); startPalaceEdit(slot, room); };
+    editVerseScene(b,c,v, back, back); });
+  // scroll the requested location to center after a round-trip from its scene
+  if(PE.scrollRoom!=null){ const idx=PE.stations.indexOf(PE.scrollRoom); PE.scrollRoom=null;
+    if(idx>=0){ const row=P.querySelector(`[data-si-row="${idx}"]`); if(row) requestAnimationFrame(()=>{ try{ row.scrollIntoView({block:"center"}); row.classList.add("st-flash"); setTimeout(()=>row.classList.remove("st-flash"),1400); }catch(e){} }); } }
   const add=()=>{ syncPE(); const v=(el("peIn").value||"").trim(); if(!v) return; PE.stations.push(v); renderPalaceEdit(); requestAnimationFrame(()=>el("peIn").focus()); };
   el("peAdd").onclick=add;
   el("peIn").addEventListener("keydown",e=>{ if(e.key==="Enter") add(); });
@@ -5661,4 +5753,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260821-152541 -->
+<!-- deploy bb-20260822-082158 -->
