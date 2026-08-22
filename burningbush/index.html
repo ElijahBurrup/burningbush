@@ -3920,18 +3920,19 @@ function startNumberTest(round){
 function renderNumTest(){
   const V=el("verse"); if(NT.i>=NT.qs.length) return finishNumberTest();
   const q=NT.qs[NT.i], n=q.n, word=pegFor(n).word, pct=Math.round(100*NT.i/NT.qs.length);
+  // TEXT-ONLY questions — the cue (number, image NAME, or book name) is shown once as text; the prompt never repeats it and no drawn image is used
   let prompt="", stimulus="", options=[], correct;
-  if(q.type==="q_n2i"){ prompt=`Which image is number <b class="gold">${dispNum("num",n)}</b>?`; stimulus=`<div class="bignum">${dispNum("num",n)}</div><div class="sounds">${pegFor(n).sounds}</div>`;
+  if(q.type==="q_n2i"){ prompt=`Which image is this number?`; stimulus=`<div class="bignum">${dispNum("num",n)}</div><div class="sounds">${pegFor(n).sounds}</div>`;
     correct=word; options=shuffle([word,...distract("num",n,3).map(x=>pegFor(x).word)]); }
-  else if(q.type==="q_i2n"){ prompt=`Which number is the <b class="gold">${word}</b>?`; stimulus=`<div class="imgwrap">${pegImg("num",n,word,true)}</div><div class="bigword">${word}</div>`;
+  else if(q.type==="q_i2n"){ prompt=`Which number is this image?`; stimulus=`<div class="bigword">${word}</div>`;
     correct=dispNum("num",n); options=shuffle([n,...distract("num",n,3)]).map(x=>dispNum("num",x)); }
-  else if(q.type==="q_n2b"){ prompt=`Which book is number <b class="gold">${dispNum("book",n)}</b>?`; stimulus=`<div class="bignum">${dispNum("book",n)}</div>`;
+  else if(q.type==="q_n2b"){ prompt=`Which book is this number?`; stimulus=`<div class="bignum">${dispNum("book",n)}</div>`;
     correct=bookName(n); options=shuffle([bookName(n),...distract("book",n,3).map(bookName)]); }
-  else if(q.type==="q_b2n"){ prompt=`Which number is <b class="gold">${bookName(n)}</b>?`; stimulus=`<div class="bigword">${bookName(n)}</div>`;
+  else if(q.type==="q_b2n"){ prompt=`Which number is this book?`; stimulus=`<div class="bigword">${bookName(n)}</div>`;
     correct=dispNum("book",n); options=shuffle([n,...distract("book",n,3)]).map(x=>dispNum("book",x)); }
-  else if(q.type==="q_i2b"){ prompt=`Which book has the <b class="gold">${word}</b> image?`; stimulus=`<div class="imgwrap">${pegImg("num",n,word,true)}</div><div class="bigword">${word}</div>`;
+  else if(q.type==="q_i2b"){ prompt=`Which book has this image?`; stimulus=`<div class="bigword">${word}</div>`;
     correct=bookName(n); options=shuffle([bookName(n),...distract("book",n,3).map(bookName)]); }
-  else { prompt=`Which image is <b class="gold">${bookName(n)}</b>?`; stimulus=`<div class="bigword">${bookName(n)}</div>`;
+  else { prompt=`Which image is this book?`; stimulus=`<div class="bigword">${bookName(n)}</div>`;
     correct=word; options=shuffle([word,...distract("book",n,3).map(x=>pegFor(x).word)]); }
   V.innerHTML=`<div class="qhead"><button class="lclose" id="ntClose">✕</button>
       <div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>
@@ -5943,4 +5944,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260822-090844 -->
+<!-- deploy bb-20260822-091230 -->
