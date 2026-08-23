@@ -3426,13 +3426,13 @@ let memTestCur=null, memTestRecent=[], memTestWrong=0, reviewedThisSession=[];
 const HINT_COSTS=[25,50,75];   // escalating talent cost for the 1st, 2nd, 3rd hint on the SAME verse
 let memHintUses=0;
 // A generic "spend talents?" confirm used before revealing a paid hint.
-function confirmSpend(title, sub, onYes){
+function confirmSpend(title, sub, onYes, opts){ opts=opts||{};
   let m=el("spendModal"); if(!m){ m=document.createElement("div"); m.id="spendModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
   m.innerHTML=`<div class="modal-card center" style="max-width:320px">
-    <div style="font-size:38px">🪙</div>
+    <div style="font-size:38px">${opts.icon||"🪙"}</div>
     <p class="lead" style="font-size:15px;margin:10px 0 4px">${title}</p>
     <p class="hint" style="margin:0 0 16px">${sub}</p>
-    <button class="btn" id="spYes" style="width:100%">Yes, use my talents</button>
+    <button class="btn" id="spYes" style="width:100%">${opts.yes||"Yes, use my talents"}</button>
     <button class="btn ghost" id="spNo" style="width:100%;margin-top:8px">Cancel</button></div>`;
   m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("spYes").onclick=()=>{ m.style.display="none"; onYes(); };
@@ -4138,10 +4138,17 @@ function memTestRender(){
       <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):""}</div>
       <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
       <div class="hint" id="mtHintCost" style="text-align:center;margin-top:8px">Stuck? Tap the 👁️ on a box to peek for <b class="gold">${HINT_COSTS[Math.min(memHintUses,2)]} 🪙</b> — the cost rises to 50 then 75 on this verse. Answer right and your streak still counts.</div>
-      <button class="btn ghost sm" id="mtForgot" style="margin-top:8px;width:100%">🤔 I forgot this — re-encode later</button>
+      <div class="btnrow" style="margin-top:8px;gap:6px"><button class="btn ghost sm" id="mtReview" style="flex:1;margin:0">🖼️ Review my scene</button><button class="btn ghost sm" id="mtForgot" style="flex:1;margin:0">🤔 I forgot this</button></div>
       <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)"><div class="hint" style="text-align:center;margin-bottom:6px">This verse's memory trail (D0…D30)</div>${srTrailHTML(verseSRobj(refKey(b,c,v))||{step:1,learnedAt:Date.now()})}</div>
       <div id="mtFb"></div></div>`;
   el("mtClose").onclick=renderVerse;
+  // Review the saved scene FROM the test — this reveals the answer, so it resets the streak to 0
+  el("mtReview").onclick=()=>{ if(mtLock) return;
+    confirmSpend("Review your saved scene?", "It shows this verse's answer — your 🔥 streak will reset to <b>0</b>. You'll come right back to this verse afterward.", ()=>{
+      Prog.streak=0; saveProg(); refreshHUD(); updateMetrics();
+      const backToTest=()=>{ askVerse(refKey(b,c,v)); };
+      editVerseScene(b,c,v, backToTest, backToTest);
+    }, {icon:"🖼️", yes:"Review it — reset streak"}); };
   el("mtForgot").onclick=()=>{
     const kk=refKey(b,c,v);
     const scene=(Prog.customScene&&Prog.customScene[kk])||"";
@@ -4190,14 +4197,16 @@ function memTestRender(){
     if(!mtSel.b || !mtSel.c || !mtSel.v){ el("mtWarn").textContent="Pick a book, chapter and verse."; return; }
     const ok=(mtSel.b===b && mtSel.c===c && mtSel.v===v);
     if(ok){ // green, auto-advance to next verse
-      const firstTry=memTestWrong===0, kk=refKey(b,c,v);
-      bumpStreak(true); reviewVerseSR(kk); const cr=markAnswer(kk,true,firstTry); const pts=awardTalents(kk, firstTry, MS && MS.phase==="sr"); saveProg(); refreshHUD(); checkBadges();
+      const firstTry=memTestWrong===0, kk=refKey(b,c,v), peeked=memHintUses>0;
+      if(peeked){ if(Prog.streak>(Prog.bestStreak||0)) Prog.bestStreak=Prog.streak; }   // peeked → streak is PRESERVED but not increased
+      else bumpStreak(true);
+      reviewVerseSR(kk); const cr=markAnswer(kk,true,firstTry); const pts=awardTalents(kk, firstTry, MS && MS.phase==="sr"); saveProg(); refreshHUD(); checkBadges();
       if(!reviewedThisSession.includes(kk)) reviewedThisSession.push(kk);   // remember what we reviewed → show trails at the end
       creditToday();   // a real recall = showing up today (idempotent per day; credits SR & free practice alike, never a no-recall open)
       mtLock=true; paintAll(); el("mtCheck").disabled=true; el("mtWarn").textContent="";
       const card=V.querySelector(".card"); if(card){ card.classList.add("mt-correctflash"); setTimeout(()=>card.classList.remove("mt-correctflash"),900); }   // flash the whole practice card green
       ["mtFieldB","mtFieldC","mtFieldV"].forEach(id=>{const e=el(id);if(e)e.classList.add("correctflash");});
-      el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}</div></div>`;
+      el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}${peeked?` · <span style="opacity:.85">🔥 streak held (peek used)</span>`:""}</div></div>`;
       if(cr>=5 && cr%5===0){   // every 5 clean recalls in a row → offer to rest this verse for 14 days (re-offered if declined earlier)
         el("mtFb").innerHTML+=`<div class="feedback ok" style="position:static;margin:10px -20px -20px;border-radius:0"><div class="sub" style="margin-bottom:8px">🎯 That's 5 in a row! Rest this verse for <b>14 days</b>?</div><div class="btnrow" style="margin:0"><button class="btn" id="szYes" style="margin:0">Snooze 14 days</button><button class="btn ghost" id="szNo" style="margin:0">Keep reviewing</button></div></div>`;
         el("szYes").onclick=()=>{ snoozeVerse(kk); toast("😴 Resting for 14 days"); goNext(); };
@@ -6075,4 +6084,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260823-081301 -->
+<!-- deploy bb-20260823-081738 -->
