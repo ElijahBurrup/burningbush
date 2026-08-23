@@ -213,7 +213,7 @@
   .lesson{display:flex;flex-direction:column;min-height:100%}
   .lbar{height:12px;border-radius:99px;background:var(--panel2);overflow:hidden;margin-bottom:6px}
   .lbar > span{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--green-hi));transition:width .3s}
-  .lclose{background:none;border:none;color:var(--miss-ink);font-size:22px;cursor:pointer;padding:0 6px}   /* the close ✕ is red app-wide */
+  .lclose{width:34px;height:34px;flex:0 0 34px;border-radius:10px;border:1.5px solid var(--miss-ink);background:var(--no-bg);color:var(--miss-ink);font-size:17px;font-weight:900;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0}   /* red ✕ in a square, matching the green ✓ */
   .lsave{width:34px;height:34px;flex:0 0 34px;border-radius:10px;border:1.5px solid var(--green);background:var(--green-soft);color:var(--good);font-size:19px;font-weight:900;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0;margin:0}
   .lsave:disabled{opacity:.32;cursor:default}
   .lsave:active{transform:scale(.93)}
@@ -338,7 +338,7 @@
   .ed-head h2{font-size:18px;margin:0}
   .ed-trash{background:var(--panel2);border:1px solid var(--line);font-size:19px;cursor:pointer;padding:6px 9px;border-radius:10px;line-height:1;color:var(--miss-ink)}
   .ed-trash:active{transform:scale(.92)}
-  .ed-ta{width:100%;box-sizing:border-box;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-size:15px;line-height:1.5;padding:12px;font-family:inherit;resize:vertical;min-height:120px}
+  .ed-ta{width:100%;box-sizing:border-box;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-size:15px;line-height:1.5;padding:12px;font-family:inherit;resize:none;overflow:hidden;min-height:96px}
   .ed-ta:focus{outline:none;border-color:var(--gold2)}
   .menu-row{width:100%;text-align:left;display:flex;align-items:center;gap:10px;margin-top:8px}
   /* install dialog */
@@ -617,6 +617,11 @@
   .vpsel:focus{border-color:var(--gold2);outline:none}
   .vpsel.correct{border-color:var(--green);background:var(--ok-bg)}
   .vpsel.wrong{border-color:var(--miss-ink);background:var(--no-bg)}
+  /* room dropdown with a mini palace icon tucked inside on the right (jumps to the palace) */
+  .wroomwrap{position:relative}
+  .wroom-sel{padding-right:64px!important;background-position:right 12px center}
+  .wroom-go{position:absolute;right:38px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:18px;cursor:pointer;padding:2px 4px;z-index:2;opacity:.9;line-height:1}
+  .wroom-go:active{transform:translateY(-50%) scale(.88)}
   /* verse-quiz pickers: book = multiple choice, chapter/verse = number squares */
   /* tap-to-open dropdown field + its peek eye */
   .mtfieldwrap{position:relative}
@@ -717,6 +722,10 @@
   .fadeverse .blank{border-bottom:2px solid var(--gold2);color:var(--gold-ink);padding:0 2px}
   /* palace */
   .palace-card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;cursor:pointer}
+  .palace-card.pal-full{background:var(--ok-bg);border-color:var(--green)}
+  .palace-card.pal-partial{background:var(--no-bg);border-color:var(--miss-ink)}
+  .pal-fill-tag{font-size:12.5px;font-weight:800}
+  .pal-fill-tag.full{color:var(--good)} .pal-fill-tag.partial{color:var(--miss-ink)}
   .palace-card h3{margin:0 0 3px;font-size:16px} .palace-card p{margin:0;font-size:12.5px;color:var(--muted)}
   /* spaced-repetition trail */
   .srtrail{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:nowrap}
@@ -874,7 +883,8 @@
   .phone[data-theme="glass"] code{background:rgba(0,0,0,.4);color:var(--gold-ink)}
   /* ---- glass PROTOTYPE MATCH (design-03): jewel chips, glass-orb grid, leaded pills ---- */
   /* Learn path = a wrapped grid of leaded glass ORBS (not a cord) */
-  .phone[data-theme="glass"] .path{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:44px 12px;padding-bottom:30px}
+  .phone[data-theme="glass"] .path{display:grid;grid-template-columns:repeat(3,1fr);justify-items:center;align-items:start;gap:46px 8px;padding-bottom:30px}   /* max 3 lesson tiles per row, larger */
+  .phone[data-theme="glass"] .tile{width:82px;height:82px}
   .phone[data-theme="glass"] .path::before{display:none}
   .phone[data-theme="glass"] .tile{width:66px;height:66px;border-radius:14px;border:3px solid #0a0a0d;box-shadow:0 0 0 1px #b48a1f,0 6px 14px rgba(0,0,0,.5);font-family:"Cinzel",serif;overflow:visible}
   .phone[data-theme="glass"] .tile::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(120deg,rgba(255,255,255,.22),transparent 50%);pointer-events:none}
@@ -882,7 +892,7 @@
   .phone[data-theme="glass"] .tile.new{background:radial-gradient(circle at 40% 30%,#2f5fd4,#1a3a8f);color:#fff}
   .phone[data-theme="glass"] .tile.gray{background:conic-gradient(from 20deg,#e8c25a,#5b420f 30%,#b48a1f 55%,#2f2205 75%,#e8c25a);color:#2a1e00}
   .phone[data-theme="glass"] .tile.locked{background:#201f29;color:#555;box-shadow:0 0 0 1px #33406b}
-  .phone[data-theme="glass"] .tile small{position:absolute;top:calc(100% + 5px);left:50%;transform:translateX(-50%);width:74px;white-space:normal;word-break:break-word;line-height:1.08;text-align:center;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14.5px;font-weight:600;color:#dccfa8}
+  .phone[data-theme="glass"] .tile small{position:absolute;top:calc(100% + 5px);left:50%;transform:translateX(-50%);width:96px;white-space:normal;overflow-wrap:break-word;word-break:normal;hyphens:auto;line-height:1.08;text-align:center;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14.5px;font-weight:600;color:#dccfa8}
   .phone[data-theme="glass"] .tile.focusnext{animation:glasspulse 2s infinite}
   @keyframes glasspulse{0%,100%{box-shadow:0 0 0 1px var(--gold2),0 0 0 var(--blue-glow0)}50%{box-shadow:0 0 0 1px var(--gold2),0 0 22px var(--blue-glow)}}
   /* per-book JEWEL chips — deterministic 5-hue cycle over the whole-Bible strip */
@@ -4533,7 +4543,7 @@ function renderWalk(){
   const palaceSel = palaces.length
     ? `<select class="vpsel" id="wPalace" style="text-align:center;text-align-last:center"><option value="" ${selP==null?"selected":""}>— palace —</option>${palaces.map(x=>`<option value="${x[1]}" ${x[1]===selP?"selected":""}>${x[0].place}</option>`).join("")}</select>
        <label class="vplabel" style="text-align:center;display:block;margin-top:10px">Which room / spot?</label>
-       <div style="display:flex;gap:6px;align-items:center"><select class="vpsel" id="wRoom" style="flex:1;text-align:center;text-align-last:center">${selP!=null?roomOpts(selP):`<option value="" selected>— room / spot —</option>`}</select><button class="lsave" id="wRoomEye" title="Open this location in your palace" style="border-color:var(--green);color:var(--green);background:var(--ok-bg,rgba(75,191,115,.14))">👁️</button></div>`
+       <div class="wroomwrap"><select class="vpsel wroom-sel" id="wRoom" style="text-align:center;text-align-last:center">${selP!=null?roomOpts(selP):`<option value="" selected>— room / spot —</option>`}</select><button type="button" class="wroom-go" id="wRoomEye" title="Open this location in your palace">🏛️</button></div>`
     : `<div class="hint" style="margin:2px 0 10px">You don't have a memory palace yet — build one in the <b>Palaces</b> tab. For now, just describe where your scene happens.</div>`;
   V.innerHTML=`<div class="card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="wClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">${palaces.length?"Which palace?":"Write your scene"}</div><button class="lsave" id="wDoneTop" title="Save & done">✓</button></div>
@@ -4563,6 +4573,10 @@ function renderWalk(){
   const doneAction=()=>{ if(!(el("wScene").value||"").trim()){ confirmBlankScene(finish); return; } finish(); };
   if(el("wDone")) el("wDone").onclick=doneAction;
   if(el("wDoneTop")) el("wDoneTop").onclick=doneAction;   // green ✓ in the top bar = same as Done (no scrolling)
+  // auto-grow the scene box so it never needs its own scrollbar (grows AND shrinks with the text)
+  const ta=el("wScene");
+  if(ta){ const grow=()=>{ ta.style.height="auto"; ta.style.height=Math.max(96, ta.scrollHeight)+"px"; }; ta.addEventListener("input",grow); requestAnimationFrame(grow); }
+  document.querySelector(".content").scrollTop=0;   // Save Visual → start the entry screen at the top
 }
 // Encourage (never block) writing the scene — writing it IS the learning.
 function confirmBlankScene(onSkip){
@@ -5472,12 +5486,20 @@ function renderPalace(){
   P.innerHTML=`<h2>Memory Palace</h2>
     <p class="lead" style="margin-bottom:12px">A <b>palace</b> is for sequences — walk a familiar place and leave each item at a spot. Do it once and the order sticks.</p>
     <button class="btn" id="palAdd" style="width:100%">➕ Build a new palace</button>
-    ${mine.length?`<div class="prof-sect" style="margin-top:16px">My palaces${due?` <span style="color:#ff8a8a;text-transform:none;letter-spacing:0;font-weight:800">· ${due} due</span>`:""}</div>`+mine.map(([p,i])=>{
-        const pdue=palaceDue(p), pdone=palaceTrailDone(p), status=pdue?`<span style="color:#ff8a8a;font-weight:800">● Review due now</span>`:(pdone?`<span class="gold">✓ Trail complete</span>`:`Next review in ${srHuman(palaceNextReviewMs(p))}`);
-        return `<div class="palace-card" data-mine="${i}"><h3>🏛️ ${p.place}${pdue?`<span class="due-dot"></span>`:""}</h3>
-          <p>${p.stations.length} locations · ${status}</p>
-          <div style="margin-top:12px">${srTrailHTML(p)}</div></div>`;
-      }).join(""):""}
+    ${mine.length?`<div class="prof-sect" style="margin-top:16px">My palaces${due?` <span style="color:#ff8a8a;text-transform:none;letter-spacing:0;font-weight:800">· ${due} due</span>`:""}</div>`+(()=>{
+        // fill status: full = every location holds a verse (green); partial = some but not all (red, sorted to top); none = default
+        const stat=mine.map(([p,i])=>{ const used=p.stations.filter(s=>versesAtLoc(i,s).length).length, total=p.stations.length;
+          return {p,i,used,total,fill: total>0&&used===total?"full":(used>0?"partial":"none")}; });
+        const ord={partial:0,full:1,none:2}; stat.sort((a,b)=>ord[a.fill]-ord[b.fill]);
+        return stat.map(({p,i,used,total,fill})=>{
+          const pdue=palaceDue(p), pdone=palaceTrailDone(p), status=pdue?`<span style="color:#ff8a8a;font-weight:800">● Review due now</span>`:(pdone?`<span class="gold">✓ Trail complete</span>`:`Next review in ${srHuman(palaceNextReviewMs(p))}`);
+          const fillLbl = fill==="full"?`<span class="pal-fill-tag full">🟢 Full — every spot holds a verse</span>`:(fill==="partial"?`<span class="pal-fill-tag partial">🔴 ${used}/${total} spots filled</span>`:`<span class="pal-fill-tag">${total} empty spots</span>`);
+          return `<div class="palace-card ${fill==="full"?"pal-full":(fill==="partial"?"pal-partial":"")}" data-mine="${i}"><h3>🏛️ ${p.place}${pdue?`<span class="due-dot"></span>`:""}</h3>
+            <p style="margin-bottom:4px">${fillLbl}</p>
+            <p>${p.stations.length} locations · ${status}</p>
+            <div style="margin-top:12px">${srTrailHTML(p)}</div></div>`;
+        }).join("");
+      })():""}
     <div class="prof-sect" style="margin-top:16px">Ready-made palaces</div>
     ${PALACES.map(p=>`<div class="palace-card" data-pal="${p.id}"><h3>${p.icon} ${p.name}</h3><p>${p.ref} · ${p.stations.length} stations</p></div>`).join("")}
     <div class="callout" style="margin-top:14px"><b>How to use it:</b> open one, close your eyes, and walk the place in order. Each spot hands you the next item. Come back and walk it again tomorrow.</div>`;
@@ -5957,4 +5979,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260822-092741 -->
+<!-- deploy bb-20260823-080238 -->
