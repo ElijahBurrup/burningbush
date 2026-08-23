@@ -339,6 +339,11 @@
   .ed-trash{background:var(--panel2);border:1px solid var(--line);font-size:19px;cursor:pointer;padding:6px 9px;border-radius:10px;line-height:1;color:var(--miss-ink)}
   .ed-trash:active{transform:scale(.92)}
   .ed-ta{width:100%;box-sizing:border-box;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-size:15px;line-height:1.5;padding:12px;font-family:inherit;resize:none;overflow:hidden;min-height:96px}
+  .mic-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;margin-top:8px;padding:11px;border-radius:12px;border:2px solid var(--gold2);background:var(--panel2);color:var(--gold-ink);font-weight:800;font-size:14px;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none}
+  .mic-btn .mic-ic{font-size:19px;line-height:1}
+  .mic-btn.rec{border-color:var(--miss-ink);color:var(--miss-ink);background:var(--no-bg);animation:micpulse 1s infinite}
+  .mic-btn.rec .mic-lbl::after{content:" — listening…"}
+  @keyframes micpulse{0%,100%{box-shadow:0 0 0 0 var(--no-bg)}50%{/*raw-ok*/box-shadow:0 0 0 5px rgba(255,120,120,.18)}}
   .ed-ta:focus{outline:none;border-color:var(--gold2)}
   .menu-row{width:100%;text-align:left;display:flex;align-items:center;gap:10px;margin-top:8px}
   /* install dialog */
@@ -4657,6 +4662,7 @@ function renderWalk(){
       <div class="lv-versetext" style="font-size:13.5px;line-height:1.45;margin:0 0 12px">"${curScene.text}"</div>
       <label class="vplabel">Your scene</label>
       <textarea class="ed-ta" id="wScene" placeholder="e.g. In the kitchen, a giant ${bp.word} smashes into a ${cp.word} while a ${vp.word} …">${(Prog.customScene[vkey]||"").replace(/</g,"&lt;")}</textarea>
+      <button type="button" class="mic-btn" id="wMic"><span class="mic-ic">🎤</span><span class="mic-lbl">Hold to speak your scene</span></button>
       <div class="btnrow" style="margin-top:12px"><button class="btn ghost" id="wBack" style="flex:0 0 96px">← Back</button><button class="btn" id="wDone">Done ✓</button></div>
     </div>`;
   if(el("wClose")) el("wClose").onclick=()=> sceneBackfill ? (sceneBackfill=false, sceneCancel()) : walkReturn();
@@ -4680,7 +4686,43 @@ function renderWalk(){
   // auto-grow the scene box so it never needs its own scrollbar (grows AND shrinks with the text)
   const ta=el("wScene");
   if(ta){ const grow=()=>{ ta.style.height="auto"; ta.style.height=Math.max(96, ta.scrollHeight)+"px"; }; ta.addEventListener("input",grow); requestAnimationFrame(grow); }
+  wireSceneMic();   // hold-to-talk voice dictation for the scene
   document.querySelector(".content").scrollTop=0;   // Save Visual → start the entry screen at the top
+}
+/* ---- Hold-to-talk voice dictation for the scene (Web Speech API — Chrome/Android, Safari/iOS 14.5+) ---- */
+function wireSceneMic(){
+  const ta=el("wScene"), btn=el("wMic"); if(!ta||!btn) return;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ btn.style.display="none"; return; }   // no voice support on this browser → typing only
+  let rec=null, baseText="", live=false;
+  const start=()=>{ if(live) return; live=true;
+    try{ rec=new SR(); }catch(e){ btn.style.display="none"; live=false; return; }
+    rec.lang="en-US"; rec.interimResults=true; rec.continuous=true;
+    baseText=ta.value; if(baseText && !/\s$/.test(baseText)) baseText+=" ";
+    rec.onresult=(ev)=>{ let out=""; for(let i=0;i<ev.results.length;i++) out+=ev.results[i][0].transcript; ta.value=baseText+out; ta.dispatchEvent(new Event("input")); };
+    rec.onend=()=>{ live=false; btn.classList.remove("rec"); baseText=ta.value; };
+    rec.onerror=(e)=>{ live=false; btn.classList.remove("rec"); if(e.error==="not-allowed"||e.error==="service-not-allowed") openMicHelp(); else if(e.error==="no-speech") toast("Didn't catch that — hold and speak again."); };
+    try{ rec.start(); btn.classList.add("rec"); }catch(e){ live=false; btn.classList.remove("rec"); }
+  };
+  const stop=()=>{ if(rec){ try{ rec.stop(); }catch(e){} } btn.classList.remove("rec"); live=false; };
+  btn.addEventListener("pointerdown",e=>{ e.preventDefault(); start(); });
+  ["pointerup","pointerleave","pointercancel"].forEach(ev=>btn.addEventListener(ev,e=>{ e.preventDefault(); stop(); }));
+}
+function openMicHelp(){
+  const m=el("micHelpModal")||(()=>{ const d=document.createElement("div"); d.id="micHelpModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const plat=(typeof devicePlatform==="function")?devicePlatform():"other";
+  const ios=`<ol class="inst-steps"><li>Open your iPhone <b>Settings</b>.</li><li>Scroll to <b>Safari</b> (or the browser you're using).</li><li>Tap <b>Microphone</b> → choose <b>Ask</b> or <b>Allow</b>.</li><li>Return here and <b>hold the mic</b> again — tap <b>Allow</b> if prompted.</li></ol>`;
+  const android=`<ol class="inst-steps"><li>Tap the <b>lock</b> / tune icon at the left of the address bar.</li><li>Tap <b>Permissions</b> → <b>Microphone</b> → <b>Allow</b>.</li><li>(Or Settings → Site settings → Microphone → Allow.)</li><li>Return here and <b>hold the mic</b> again.</li></ol>`;
+  const body=(which)=> which==="ios"?ios:android;
+  m.innerHTML=`<div class="modal-card">
+    <div style="text-align:center"><div style="font-size:36px">🎤</div><h2 style="font-size:18px;margin:6px 0 2px">Allow microphone</h2>
+    <p class="hint" style="margin:0 0 12px">To speak your scene, your browser needs microphone permission.</p></div>
+    <div class="inst-tabs"><button class="inst-tab ${plat!=="android"?"on":""}" data-mplat="ios">🍎 iPhone</button><button class="inst-tab ${plat==="android"?"on":""}" data-mplat="android">🤖 Android</button></div>
+    <div id="micHelpBody" style="text-align:left">${body(plat==="android"?"android":"ios")}</div>
+    <button class="btn" id="micHelpClose" style="width:100%;margin-top:12px">Got it</button></div>`;
+  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("micHelpClose").onclick=()=>m.style.display="none";
+  m.querySelectorAll("[data-mplat]").forEach(t=>t.onclick=()=>{ m.querySelectorAll(".inst-tab").forEach(x=>x.classList.remove("on")); t.classList.add("on"); el("micHelpBody").innerHTML=body(t.dataset.mplat); });
 }
 // Encourage (never block) writing the scene — writing it IS the learning.
 function confirmBlankScene(onSkip){
@@ -6084,4 +6126,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260823-081738 -->
+<!-- deploy bb-20260823-082145 -->
