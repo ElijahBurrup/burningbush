@@ -157,12 +157,12 @@
   .btn.sm{width:auto;padding:10px 16px;font-size:13px;border-radius:11px;box-shadow:none}
   .btnrow{display:flex;gap:10px;margin-top:12px}
   /* verse hub — large square launcher buttons (2-col grid) + full-width test/review bars */
-  .versehub{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+  .versehub{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
   .vhub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px;font-size:17px;font-weight:800;color:var(--ink);cursor:pointer;text-align:center}
-  .vhub.sq{aspect-ratio:1.25}
+  .vhub.sq{aspect-ratio:1.55}
   .vhub .vi{font-size:40px;line-height:1}
   .vhub small{font-size:13px;font-weight:700;color:var(--muted)}
-  .vhub.wide{grid-column:1/-1;flex-direction:row;gap:14px;aspect-ratio:auto;padding:13px}
+  .vhub.wide{grid-column:1/-1;flex-direction:row;gap:14px;aspect-ratio:auto;padding:11px}
   .vhub.wide .vi{font-size:28px}
   .vi-bounce{display:inline-block;animation:vibounce 1.8s ease-in-out infinite;transform-origin:center bottom}
   @keyframes vibounce{0%,72%,100%{transform:translateY(0) rotate(0)}80%{transform:translateY(-6px) rotate(-12deg)}88%{transform:translateY(-3px) rotate(10deg)}94%{transform:translateY(0) rotate(0)}}
@@ -349,6 +349,33 @@
   .inst-steps{margin:2px 0 0;padding-left:22px;font-size:14px;line-height:1.6}
   .inst-steps li{margin-bottom:7px}
   .inst-ic{display:inline-block;font-size:15px}
+  /* daily goal bar (top of Verses) */
+  .goalbar{display:flex;align-items:center;gap:11px;background:var(--panel2);border:1px solid var(--gold2);border-radius:14px;padding:8px 13px;margin-bottom:8px;cursor:pointer}
+  .goalbar .gb-ic{font-size:22px;line-height:1;flex:none}
+  .goalbar .gb-mid{flex:1;min-width:0}
+  .goalbar .gb-title{font-weight:800;font-size:13.5px}
+  .goalbar .gb-dots{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+  .goalbar .gb-dot{width:11px;height:11px;border-radius:50%;background:var(--panel3);border:1px solid var(--line)}
+  .goalbar .gb-dot.on{background:var(--gold);border-color:var(--gold-ink)}
+  .goalbar .gb-count{font-weight:900;font-size:18px;color:var(--gold-ink);font-variant-numeric:tabular-nums;flex:none}
+  /* goal flash (node path) */
+  .goalflash{position:absolute;inset:0;display:grid;place-items:center;z-index:125;pointer-events:none;opacity:0;transition:opacity .25s}
+  .goalflash.show{opacity:1}
+  .gf-card{background:var(--panel);border:2px solid var(--gold2);border-radius:18px;padding:18px 22px;text-align:center;box-shadow:0 18px 50px var(--scrim)}
+  .gf-title{font-weight:800;color:var(--gold-ink);margin-bottom:12px}
+  .gf-nodes{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;max-width:280px}
+  .gf-node{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;background:var(--panel3);border:2px solid var(--line);color:var(--muted)}
+  .gf-node.done{background:var(--gold);border-color:var(--gold-ink);color:var(--on-accent)}
+  .gf-node.just{background:var(--green);border-color:var(--green);color:var(--on-green);animation:gfpop .5s cubic-bezier(.2,1.5,.5,1)}
+  @keyframes gfpop{0%{transform:scale(.3)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+  .gf-sub{margin-top:12px;font-weight:800;color:var(--muted)}
+  /* goal settings */
+  .goal-nums{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .goal-num{background:var(--panel2);border:2px solid var(--line);border-radius:10px;padding:12px 0;font-weight:800;font-size:16px;color:var(--ink);cursor:pointer}
+  .goal-num.on{border-color:var(--gold2);background:var(--gold-soft);color:var(--gold-ink)}
+  .goal-dayrow{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .goal-dayname{width:42px;font-weight:800;font-size:13px;color:var(--muted)}
+  .goal-daysel{flex:1}
   .menu-row span{font-size:20px;flex:0 0 auto}
   .tkcount{font-weight:800;font-size:13px;border-radius:999px;padding:4px 10px;background:var(--panel2);color:var(--muted);border:1px solid var(--line);white-space:nowrap}
   .tkcount.ok{color:var(--good);border-color:var(--good)}
@@ -2197,7 +2224,8 @@ function updateMetrics(){
   const palTab=document.querySelector('.tabbar button[data-tab="palace"]');
   if(palTab) palTab.classList.toggle("hasdue", palacesDueCount()>0);   // red dot when a palace is due
   const vsTab=document.querySelector('.tabbar button[data-tab="verse"]');
-  if(vsTab) vsTab.classList.toggle("hasdue", (versesDueCount()+numbersDueCount())>0);   // red dot when a verse or number is due for review
+  const verseUnlocked=(Prog.scratchWon||[]).includes("verse");
+  if(vsTab) vsTab.classList.toggle("hasdue", (versesDueCount()+numbersDueCount())>0 || (verseUnlocked && !goalMet()));   // dot until the daily goal is met (or a review is due)
   updateAppBadge();
   updateTabLocks();
 }
@@ -3366,6 +3394,7 @@ function finishLesson(){
   const wasNew=!Prog.doneSkills.includes(sk.id);
   if(wasNew) Prog.doneSkills.push(sk.id);
   bustCaches(); recomputeLevel(); saveProg(); updateMetrics(); if(wasNew) earnTalents(5); checkBadges();
+  if(wasNew && (sk.kind==="num"||sk.kind==="book")) bumpGoal();   // learning a new number/book image counts toward today's goal
   const newly=allVerses().filter(v=>reachable(bookNum(v.b),v.c,v.v) && !before.has(rk(v)));
   let msg="";
   if(sk.kind==="num" && sk.items.length===1 && sk.items[0]===Prog.level && Prog.level>=1)
@@ -3553,17 +3582,20 @@ function renderVerse(){
   const dueAll=reviewDueCount();   // numbers + verses + palaces due for spaced repetition today
   const reviewVi=dueAll?"🔁":"🎯";
   const reviewLabel=dueAll?`Spaced Repetition · ${dueAll} due`:(mem.length?`Practice Verses (${mem.length})`:`Practice Verses`);
-  V.innerHTML=`<h2>Verses</h2>
-    <p class="lead">Pick what to work on — build verses into pictures, then test what you've hidden in your heart.</p>
+  V.innerHTML=`<div class="goalbar" id="goalBtn">${goalBarHTML()}</div>
+    <h2 style="margin:2px 0 8px">Verses</h2>
     <div class="versehub">
       <button class="vhub sq" data-view="sugg"><span class="vi">✨</span><span>Suggested</span><small>${suggReach} in reach</small></button>
       <button class="vhub sq" data-view="topics"><span class="vi">📚</span><span>Topics</span><small>${TOPICS.length}</small></button>
       <button class="vhub sq" data-view="mem"><span class="vi">★</span><span>Memorized</span><small>${mem.length}</small></button>
       <button class="vhub sq" data-view="saved"><span class="vi">🔖</span><span>Saved</span><small>${saved.length}</small></button>
+      <button class="vhub wide" id="vW4W"><span class="vi">🗣️</span><span>Practice Word for Word</span></button>
       <button class="vhub wide" id="vNumTest"><span class="vi vi-bounce">🎲</span><span>Test Numbers &amp; Books</span></button>
       <button class="vhub wide review" id="vMemTest"><span class="vi">${reviewVi}</span><span>${reviewLabel}</span></button>
     </div>`;
+  el("goalBtn").onclick=openGoalSettings;
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
+  el("vW4W").onclick=()=>{ const a=pickW4WVerse(); if(!a){ toast(mem.length?"All your verses are done for now — great work!":"Memorize a verse first — tap Suggested!"); return; } startWordForWord(a[0],a[1],a[2],()=>{ show("verse"); renderVerse(); }); };
   el("vNumTest").onclick=()=> knownNumbers().size>=2 ? startNumberTest() : toast("Learn a few numbers first in the Learn tab!");
   el("vMemTest").onclick=()=> mem.length ? startMemTest() : toast("Memorize a verse first — tap Suggested!");
   if(srFlashPending && el("vMemTest")){ srFlashPending=false; const rb=el("vMemTest"); rb.classList.add("srbtn-flash"); setTimeout(()=>rb.classList.remove("srbtn-flash"),6000); }
@@ -3854,6 +3886,69 @@ function creditToday(){
   DAY_FREEZE.forEach(m=>{ if(Prog.dayStreak>=m) grantFreeze("day"+m, `${m}-day streak`); });   // milestone rewards
   creditWeek();
   saveProg(); updateMetrics(); checkBadges();
+}
+/* ================= DAILY GOAL — verses + book images + word-for-word, combined (1–10/day) ================= */
+// goal can be a single number (Prog.dailyGoal) or overridden per weekday (Prog.goalByDay[0..6], 0=Sunday)
+function goalToday(){ const dow=new Date().getDay(); const byDay=Prog.goalByDay||{};
+  let g = (byDay[dow]!=null) ? byDay[dow] : (Prog.dailyGoal!=null ? Prog.dailyGoal : 1);
+  return Math.max(1, Math.min(10, g|0)); }
+function goalState(){ const t=dayKey(new Date()); if(!Prog.goalDay || Prog.goalDay.date!==t) Prog.goalDay={date:t,count:0,celebrated:false}; return Prog.goalDay; }
+function goalCount(){ return goalState().count; }
+function goalMet(){ return goalCount()>=goalToday(); }
+function bumpGoal(){ const st=goalState(), before=st.count, target=goalToday(); if(before>=target){ st.count++; saveProg(); return; }  // already met → still count, no flash
+  st.count++; saveProg(); goalFlash(st.count, target); updateMetrics();   // refresh HUD + the Verses tab badge
+  if(st.count>=target && !st.celebrated){ st.celebrated=true; saveProg(); setTimeout(onGoalComplete, 1300); } }
+// a 1–10 node path; the just-completed node fills and pulses
+function goalFlash(now, target){
+  const host=document.querySelector(".phone"); if(!host) return;
+  const wrap=document.createElement("div"); wrap.className="goalflash";
+  let nodes=""; for(let i=1;i<=target;i++) nodes+=`<span class="gf-node ${i<now?"done":(i===now?"just":"")}"">${i<=now?"✓":i}</span>`;
+  wrap.innerHTML=`<div class="gf-card"><div class="gf-title">${now>=target?"🎉 Goal reached!":"Daily goal"}</div><div class="gf-nodes">${nodes}</div><div class="gf-sub">${now}/${target} today</div></div>`;
+  host.appendChild(wrap); requestAnimationFrame(()=>wrap.classList.add("show"));
+  setTimeout(()=>{ wrap.classList.remove("show"); setTimeout(()=>wrap.remove(), 350); }, now>=target?1500:1050);
+}
+function goalBarHTML(){ const c=goalCount(), t=goalToday(), met=c>=t;
+  const dots=Array.from({length:t},(_,i)=>`<span class="gb-dot ${i<c?"on":""}"></span>`).join("");
+  return `<span class="gb-ic">${met?"🎉":"🎯"}</span><div class="gb-mid"><div class="gb-title">${met?"Goal complete for today!":"Today's goal"}</div><div class="gb-dots">${dots}</div></div><div class="gb-count">${c}/${t}</div>`;
+}
+// the memorized verse with the FEWEST words that isn't mastered (10×) and hasn't been practiced yet today
+function pickW4WVerse(){
+  const today=dayKey(new Date());
+  const doneToday=(Prog.w4wToday&&Prog.w4wToday.date===today)?Prog.w4wToday.set:{};
+  const pool=(Prog.memorized||[]).map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2]))
+    .filter(a=>{ const k=a.join(":"); return w4wCount(k)<10 && !doneToday[k]; });
+  if(!pool.length) return null;
+  pool.sort((A,B)=>((kjvText(A[0],A[1],A[2])||"").split(/\s+/).length)-((kjvText(B[0],B[1],B[2])||"").split(/\s+/).length));
+  return pool[0];
+}
+function markW4WToday(vkey){ const today=dayKey(new Date()); if(!Prog.w4wToday||Prog.w4wToday.date!==today) Prog.w4wToday={date:today,set:{}}; Prog.w4wToday.set[vkey]=true; }
+function onGoalComplete(){
+  const m=el("goalDoneModal")||(()=>{ const d=document.createElement("div"); d.id="goalDoneModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card center"><div style="font-size:46px">🎯</div>
+    <h2 style="margin:6px 0 2px">Goal complete for today!</h2>
+    <p class="lead">You hit your goal of <b class="gold">${goalToday()}</b>. Want to adjust it?</p>
+    <div class="btnrow"><button class="btn" id="gdAdjust">Adjust my goal</button><button class="btn ghost" id="gdKeep">Keep it</button></div></div>`;
+  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("gdKeep").onclick=()=>m.style.display="none";
+  el("gdAdjust").onclick=()=>{ m.style.display="none"; openGoalSettings(); };
+}
+function openGoalSettings(){
+  const m=el("goalSetModal")||(()=>{ const d=document.createElement("div"); d.id="goalSetModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const cur=Prog.dailyGoal!=null?Prog.dailyGoal:1, byDay=Prog.goalByDay||{};
+  const numRow=(sel,attr)=>`<div class="goal-nums" data-row="${attr}">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="goal-num ${sel===n?"on":""}" data-${attr}="${n}">${n}</button>`).join("")}</div>`;
+  m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose" id="gsClose">✕</button><div style="flex:1;text-align:center;font-weight:800">Daily goal</div><span style="width:34px"></span></div>
+    <p class="hint">How many things — new verses, book images, or word-for-word practices — will you do each day? (1–10, combined.)</p>
+    <div class="prof-sect" style="margin-top:12px">Everyday goal</div>
+    ${numRow(cur,"g")}
+    <div class="prof-sect" style="margin-top:16px">Per-day overrides <span style="text-transform:none;letter-spacing:0;font-weight:600;color:var(--muted)">(optional — e.g. more on Sundays)</span></div>
+    <div id="gsDays">${DOW.map((d,i)=>`<div class="goal-dayrow"><div class="goal-dayname">${d}</div><select class="vpsel goal-daysel" data-dow="${i}" style="padding:8px 30px 8px 10px;font-size:14px"><option value="">— use everyday (${cur}) —</option>${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}" ${byDay[i]===n?"selected":""}>${n}</option>`).join("")}</select></div>`).join("")}</div>
+    <button class="btn" id="gsSave" style="width:100%;margin-top:14px">Save goal</button></div>`;
+  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("gsClose").onclick=()=>m.style.display="none";
+  let pick=cur;
+  m.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{ pick=+b.dataset.g; m.querySelectorAll("[data-g]").forEach(x=>x.classList.toggle("on",x===b)); });
+  el("gsSave").onclick=()=>{ Prog.dailyGoal=pick; const gb={}; m.querySelectorAll(".goal-daysel").forEach(s=>{ if(s.value) gb[+s.dataset.dow]=+s.value; }); Prog.goalByDay=gb; saveProg(); m.style.display="none"; toast("🎯 Goal saved"); if(document.querySelector('.view.active')?.id==="verse") renderVerse(); updateMetrics(); };
 }
 // ---- Perfect Week: review on ≥5 days in a Monday-anchored week → talent reward (feeds the store) ----
 function weekKeyOf(d){ const dt=new Date(d.getFullYear(),d.getMonth(),d.getDate()); dt.setDate(dt.getDate()-((dt.getDay()+6)%7)); return dt.getFullYear()+"-"+(dt.getMonth()+1)+"-"+dt.getDate(); }
@@ -4222,7 +4317,7 @@ function showBadgeModal(b){
 function addMemorized(s){
   const k=refKey(bookNum(s.b),s.c,s.v);
   Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k); // once learned, drop from saved/skip
-  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); saveProg(); updateMetrics(); earnTalents(15); checkBadges(); }
+  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); saveProg(); updateMetrics(); earnTalents(15); checkBadges(); bumpGoal(); }   // a new verse counts toward today's goal
   else saveProg();
 }
 // "I forgot this": pull a verse OUT of memorized so it returns to the pool to re-encode later.
@@ -5397,7 +5492,7 @@ function typeTestComplete(){
   const r=w4wRecord(vkey); reviewVerseSR(vkey);
   const justMastered=r.count===10, mastered=r.count>=10;
   const w4wReward = 10 + (justMastered?40:0);   // +10 per recitation, +40 bonus the run they master it
-  earnTalents(w4wReward); refreshHUD&&refreshHUD();
+  earnTalents(w4wReward); refreshHUD&&refreshHUD(); markW4WToday(vkey); bumpGoal();   // a word-for-word practice counts toward today's goal
   V.innerHTML=`<div class="card center ttwin">
       <div class="ttburst">${justMastered?"👑":"🎉"}</div>
       <h2 style="font-size:22px;margin:6px 0 2px">${justMastered?"Verse Mastered!":"You did it!"}</h2>
@@ -5865,6 +5960,7 @@ const Scratch = (()=>{
     const btn=document.querySelector(`.tabbar button[data-tab="${L.tab}"]`);
     flyToNav(L.icon, btn, ()=>{
       if(!Prog.scratchWon.includes(L.tab)) Prog.scratchWon.push(L.tab);   // in a sim this is temporary (restored on exit); real runs persist
+      if(L.tab==="verse" && Prog.dailyGoal==null){ Prog.dailyGoal=1; }   // unlocking Verses sets a starter daily goal of 1
       if(!sim) saveProg();
       updateTabLocks();
       if(!sim && document.querySelector(".view.active")?.id==="learn") renderPath();   // reveal a newly-unlocked Learn lesson (e.g. the palace)
@@ -5979,4 +6075,4 @@ function appBack(){
 </body>
 </html>
 
-<!-- deploy bb-20260823-080238 -->
+<!-- deploy bb-20260823-081301 -->
