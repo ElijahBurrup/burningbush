@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 87 = Fig (plump purple fig, green leaf) -->
+<defs>
+<linearGradient id="p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c98bd9"/><stop offset=".5" stop-color="#8a3fa0"/><stop offset="1" stop-color="#5a1f70"/></linearGradient>
+<linearGradient id="lf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9db78"/><stop offset="1" stop-color="#3f8a2c"/></linearGradient>
+</defs>
+<path d="M48 20 Q26 30 24 54 Q22 78 48 84 Q74 78 72 54 Q70 30 48 20 Z" fill="url(#p)"/>
+<path d="M40 34 Q44 52 40 70" fill="none" stroke="#e8c6f0" stroke-width="2" opacity=".3" stroke-linecap="round"/>
+<rect x="45" y="10" width="6" height="12" rx="3" fill="#7a5228"/>
+<path d="M51 16 Q68 12 74 26 Q60 26 51 20 Z" fill="url(#lf)"/>
+<path d="M48 84 Q48 88 52 88" fill="none" stroke="#5a1f70" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>
+</svg>

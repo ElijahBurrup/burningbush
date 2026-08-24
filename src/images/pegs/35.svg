@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 35 = Mole (emerging from a molehill) -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M10 82 Q48 62 86 82 Z" fill="#0e2c1d" opacity=".3"/>
+<ellipse cx="51" cy="48" rx="24" ry="18" fill="url(#g)"/>
+<path d="M29 48 L13 42 L16 56 Z" fill="url(#g)"/>
+<circle cx="14" cy="49" r="2.8" fill="#0e2c1d"/>
+<circle cx="35" cy="43" r="2" fill="#0e2c1d"/>
+<g stroke="url(#g)" stroke-width="3.6" stroke-linecap="round"><line x1="41" y1="63" x2="39" y2="79"/><line x1="47" y1="64" x2="47" y2="80"/><line x1="53" y1="64" x2="54" y2="80"/><line x1="59" y1="63" x2="61" y2="78"/></g>
+</svg>

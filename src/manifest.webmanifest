@@ -1,0 +1,15 @@
+{
+  "name": "Burning Bush — Bible Memory",
+  "short_name": "Burning Bush",
+  "description": "Memorize Scripture with the Major System, memory palaces, and spaced repetition.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1115",
+  "theme_color": "#0f1115",
+  "icons": [
+    { "src": "images/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "images/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

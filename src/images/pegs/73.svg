@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 73 = Gum (gumball machine) -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect x="45" y="10" width="6" height="4" rx="1.5" fill="url(#g)"/>
+<path d="M33 22 Q48 12 63 22 Z" fill="url(#g)"/>
+<rect x="32" y="21" width="32" height="3.5" rx="1.7" fill="url(#g)"/>
+<circle cx="48" cy="40" r="20" fill="url(#g)"/>
+<g fill="#0e2c1d" opacity=".42"><circle cx="40" cy="34" r="5"/><circle cx="55" cy="34" r="4.6"/><circle cx="48" cy="44" r="5"/><circle cx="59" cy="45" r="3.8"/><circle cx="37" cy="46" r="4"/><circle cx="49" cy="54" r="4"/></g>
+<rect x="31" y="60" width="34" height="24" rx="4" fill="url(#g)"/>
+<rect x="45" y="65" width="6" height="2.4" rx="1" fill="#0e2c1d"/>
+<circle cx="48" cy="73" r="5" fill="#0e2c1d"/><rect x="46.5" y="70.5" width="3" height="5.5" rx="1" fill="url(#g)"/>
+<path d="M42 84 V80 Q42 77 48 77 Q54 77 54 80 V84 Z" fill="#0e2c1d"/>
+<rect x="28" y="84" width="40" height="4" rx="2" fill="url(#g)"/>
+</svg>

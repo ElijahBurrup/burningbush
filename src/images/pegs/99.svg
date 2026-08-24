@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 99 = Baby (swaddled, smiling) -->
+<defs>
+<linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdeeff"/><stop offset=".5" stop-color="#8fd0ee"/><stop offset="1" stop-color="#4fa8d8"/></linearGradient>
+<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd9ae"/><stop offset="1" stop-color="#f0b57e"/></linearGradient>
+</defs>
+<path d="M24 88 Q18 56 48 52 Q78 56 72 88 Q48 96 24 88 Z" fill="url(#b)"/>
+<path d="M36 60 Q48 66 60 60" fill="none" stroke="#fff" stroke-width="2" opacity=".5"/>
+<circle cx="48" cy="38" r="20" fill="url(#sk)"/>
+<path d="M40 22 Q48 14 56 22" fill="none" stroke="#7a5228" stroke-width="3" stroke-linecap="round"/>
+<circle cx="41" cy="38" r="2.6" fill="#0e2c1d"/><circle cx="55" cy="38" r="2.6" fill="#0e2c1d"/>
+<circle cx="34" cy="44" r="4" fill="#ff9e9e" opacity=".6"/><circle cx="62" cy="44" r="4" fill="#ff9e9e" opacity=".6"/>
+<path d="M39 46 Q48 54 57 46" fill="none" stroke="#0e2c1d" stroke-width="2.2" stroke-linecap="round"/>
+</svg>

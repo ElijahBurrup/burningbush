@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 89 = Fob (car key fob, lock/unlock buttons) -->
+<defs>
+<linearGradient id="k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#33403c"/><stop offset="1" stop-color="#0e2c1d"/></linearGradient>
+<linearGradient id="m" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f7fa"/><stop offset="1" stop-color="#9fb1bd"/></linearGradient>
+</defs>
+<circle cx="48" cy="18" r="5" fill="none" stroke="url(#m)" stroke-width="3"/>
+<rect x="26" y="22" width="44" height="58" rx="18" fill="url(#k)"/>
+<ellipse cx="40" cy="18" rx="10" ry="3" fill="#0e2c1d" opacity=".4"/>
+<circle cx="48" cy="42" r="8" fill="#33403c" stroke="#e33b52" stroke-width="2"/>
+<path d="M44 42 a4 4 0 0 1 8 0" fill="none" stroke="#e33b52" stroke-width="1.6"/>
+<rect x="45" y="42" width="6" height="5" rx="1" fill="#e33b52"/>
+<circle cx="48" cy="62" r="8" fill="#33403c" stroke="#4fbf6b" stroke-width="2"/>
+<path d="M44 63 a4 3.4 0 0 0 8 0" fill="none" stroke="#4fbf6b" stroke-width="1.6"/>
+<rect x="45" y="59" width="6" height="4" rx="1" fill="#4fbf6b"/>
+<rect x="42" y="80" width="12" height="14" rx="2" fill="url(#m)"/>
+<rect x="42" y="90" width="4" height="5" fill="url(#m)"/><rect x="50" y="90" width="4" height="5" fill="url(#m)"/>
+</svg>

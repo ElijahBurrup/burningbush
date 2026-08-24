@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs>
+<linearGradient id="g_jazz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect x="45" y="12" width="9" height="10" rx="2" fill="url(#g_jazz)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M49 22 V42 Q49 62 66 66" fill="none" stroke="url(#g_jazz)" stroke-width="9" stroke-linecap="round"/>
+<path d="M49 22 V42 Q49 62 66 66" fill="none" stroke="#0e2c1d" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
+<path d="M58 58 L84 62 L70 80 Z" fill="url(#g_jazz)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<g fill="#0e2c1d"><circle cx="49" cy="30" r="1.9"/><circle cx="49" cy="39" r="1.9"/><circle cx="53" cy="48" r="1.9"/></g>
+</svg>

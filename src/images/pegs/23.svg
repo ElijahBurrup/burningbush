@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 23 = Gnome (garden gnome, red hat, white beard) -->
+<defs>
+<linearGradient id="r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7a5a"/><stop offset=".5" stop-color="#e33326"/><stop offset="1" stop-color="#a81810"/></linearGradient>
+<linearGradient id="w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9e0e4"/></linearGradient>
+<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd9ae"/><stop offset="1" stop-color="#f0b57e"/></linearGradient>
+</defs>
+<path d="M48 9 Q72 40 63 53 Q48 61 33 53 Q24 40 48 9 Z" fill="url(#r)"/>
+<circle cx="66" cy="38" r="4.5" fill="url(#w)"/>
+<ellipse cx="48" cy="54" rx="18" ry="6" fill="url(#w)"/>
+<circle cx="48" cy="57" r="15" fill="url(#sk)"/>
+<circle cx="42" cy="56" r="2.6" fill="#0e2c1d"/><circle cx="54" cy="56" r="2.6" fill="#0e2c1d"/>
+<circle cx="48" cy="62" r="3.4" fill="#e8935f"/>
+<path d="M22 90 Q20 62 34 57 Q48 78 48 90 Q48 78 62 57 Q76 62 74 90 Z" fill="url(#w)"/>
+</svg>

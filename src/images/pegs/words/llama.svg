@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Llama -->
+<defs><linearGradient id="g_llama" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<ellipse cx="42" cy="56" rx="20" ry="13" fill="url(#g_llama)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M54 50 Q60 34 62 26" fill="none" stroke="url(#g_llama)" stroke-width="12" stroke-linecap="round"/>
+<path d="M54 50 Q60 34 62 26" fill="none" stroke="#0e2c1d" stroke-width="1.4" opacity=".4"/>
+<path d="M58 28 Q62 20 70 22 Q74 24 72 32 Q68 36 60 34 Z" fill="url(#g_llama)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M62 22 L60 13 L67 20 Z" fill="url(#g_llama)" stroke="#0e2c1d" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M68 21 L71 12 L74 20 Z" fill="url(#g_llama)" stroke="#0e2c1d" stroke-width="1.6" stroke-linejoin="round"/>
+<circle cx="66" cy="27" r="1.6" fill="#0e2c1d"/>
+<g fill="url(#g_llama)" stroke="#0e2c1d" stroke-width="2">
+<rect x="30" y="64" width="6" height="16" rx="2"/>
+<rect x="46" y="64" width="6" height="16" rx="2"/>
+</g>
+</svg>

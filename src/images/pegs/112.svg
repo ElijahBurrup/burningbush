@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 112 = Tighten (wrench turning a bolt) -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M28 34 A21 21 0 0 1 49 27" fill="none" stroke="url(#g)" stroke-width="3" stroke-linecap="round"/>
+<path d="M49 27 l-6 -1 M49 27 l-1 6" fill="none" stroke="url(#g)" stroke-width="3" stroke-linecap="round"/>
+<path d="M47 63 L36 57 L36 45 L47 39 L58 45 L58 57 Z" fill="url(#g)"/>
+<circle cx="47" cy="51" r="6" fill="#0e2c1d"/>
+<g transform="rotate(38 64 64)">
+<rect x="58" y="60" width="28" height="10" rx="3" fill="url(#g)"/>
+<path d="M46 54 h14 v5.5 h-6 v5 h6 v5.5 h-14 a11 11 0 0 1 0 -21 z" fill="url(#g)"/>
+</g>
+</svg>

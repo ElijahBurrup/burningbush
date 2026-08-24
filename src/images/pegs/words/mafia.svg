@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Mafia: fedora hat -->
+<defs>
+<linearGradient id="gmafia" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M28 52 q0 -22 20 -22 t20 22 q-8 -8 -20 -8 t-20 8 Z" fill="url(#gmafia)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M28 50 q20 -10 40 0 v3 q-20 -8 -40 0 Z" fill="#a8763a" stroke="#0e2c1d" stroke-width="1.6"/>
+<path d="M14 56 q34 16 68 0 q-6 8 -34 8 t-34 -8 Z" fill="url(#gmafia)" stroke="#0e2c1d" stroke-width="2"/>
+</svg>

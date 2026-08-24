@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Lull (soothe to sleep - cradle & moon) -->
+<defs><linearGradient id="g_lull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<path d="M72 20 A12 12 0 1 0 72 44 A9 9 0 1 1 72 20 Z" fill="url(#g_lull)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M24 52 L72 52 Q70 70 48 70 Q26 70 24 52 Z" fill="url(#g_lull)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M24 52 Q26 36 42 40 L44 52 Z" fill="url(#g_lull)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M18 72 Q48 82 78 72" fill="none" stroke="#0e2c1d" stroke-width="2.5" stroke-linecap="round"/>
+<g stroke="#0e2c1d" stroke-width="1.4" opacity=".4"><path d="M34 54 V66"/><path d="M44 55 V68"/><path d="M54 55 V68"/><path d="M64 54 V64"/></g>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Bowl -->
+<defs>
+<linearGradient id="g_bowl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M40 30 q0 -6 8 -6 M56 30 q0 -6 8 -6" fill="none" stroke="#0e2c1d" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+<ellipse cx="48" cy="44" rx="36" ry="8" fill="url(#g_bowl)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M14 46 q6 32 34 32 q28 0 34 -32 z" fill="url(#g_bowl)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+</svg>

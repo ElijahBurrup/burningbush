@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 108 = Adhesive (glue bottle) -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M44 12 L52 12 L50 24 L46 24 Z" fill="url(#g)"/>
+<circle cx="48" cy="12" r="2.6" fill="url(#g)"/>
+<path d="M40 24 h16 q6 0 6 8 v32 q0 8 -8 8 h-12 q-8 0 -8 -8 v-32 q0 -8 6 -8 z" fill="url(#g)"/>
+<rect x="40" y="42" width="16" height="18" rx="2" fill="#0e2c1d" opacity=".85"/>
+<path d="M43 48 h10 M43 52 h10 M43 56 h7" stroke="url(#g)" stroke-width="1.4" opacity=".7"/>
+</svg>

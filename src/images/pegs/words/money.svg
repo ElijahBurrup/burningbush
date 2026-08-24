@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Money: bill and coins -->
+<defs>
+<linearGradient id="gmoney" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<g transform="rotate(-8 48 40)">
+<rect x="20" y="26" width="52" height="28" rx="3" fill="#79c081" stroke="#0e2c1d" stroke-width="2"/>
+<circle cx="46" cy="40" r="8" fill="none" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M46 35 v10 M43 37 h5 M44 43 h5" stroke="#0e2c1d" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+</g>
+<g stroke="#0e2c1d" stroke-width="2">
+<ellipse cx="58" cy="72" rx="16" ry="6" fill="url(#gmoney)"/>
+<path d="M42 66 v6 a16 6 0 0 0 32 0 v-6" fill="url(#gmoney)"/>
+<ellipse cx="58" cy="66" rx="16" ry="6" fill="url(#gmoney)"/>
+</g>
+</svg>

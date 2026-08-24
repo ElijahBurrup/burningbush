@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 44 = Acts : comedy & tragedy theatre masks -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<!-- tragedy mask (left) -->
+<g transform="rotate(-8 36 50)">
+<path d="M22 26 q14 -6 28 0 q3 22 -5 38 q-5 10 -9 10 q-4 0 -9 -10 q-8 -16 -5 -38 z" fill="url(#g)" stroke="#0e2c1d" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M28 40 q4 4 8 1" fill="none" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M40 41 q4 -3 8 1" fill="none" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M30 62 q6 -6 12 0" fill="none" stroke="#0e2c1d" stroke-width="2.2" stroke-linecap="round"/>
+</g>
+<!-- comedy mask (right, on top) -->
+<g transform="rotate(8 62 48)">
+<path d="M48 24 q14 -6 28 0 q3 22 -5 38 q-5 10 -9 10 q-4 0 -9 -10 q-8 -16 -5 -38 z" fill="url(#g)" stroke="#0e2c1d" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M54 40 q4 -4 8 -1" fill="none" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M66 39 q4 3 8 -1" fill="none" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M56 58 q6 6 12 0" fill="none" stroke="#0e2c1d" stroke-width="2.2" stroke-linecap="round"/>
+</g>
+</svg>

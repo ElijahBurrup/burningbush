@@ -1,1 +1,5 @@
 burningbush-api/
+burningbush-qa/
+node_modules/
+tests/.snapshots-actual/
+*.log

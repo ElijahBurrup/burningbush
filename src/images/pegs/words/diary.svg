@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_diary" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<rect x="26" y="18" width="44" height="60" rx="5" fill="url(#g_diary)" stroke="#0e2c1d" stroke-width="2"/>
+<line x1="33" y1="18" x2="33" y2="78" stroke="#0e2c1d" stroke-width="2" opacity=".35"/>
+<rect x="42" y="46" width="16" height="13" rx="2" fill="#0e2c1d"/>
+<path d="M45 46 v-3 a5 5 0 0 1 10 0 v3" fill="none" stroke="#0e2c1d" stroke-width="2"/>
+</svg>

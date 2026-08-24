@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Pub : foaming beer mug -->
+<defs>
+<linearGradient id="g_pub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M26 34 h34 v46 a4 4 0 0 1 -4 4 h-26 a4 4 0 0 1 -4 -4 z" fill="url(#g_pub)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M60 42 h10 a8 8 0 0 1 8 8 v10 a8 8 0 0 1 -8 8 h-10" fill="none" stroke="#0e2c1d" stroke-width="2.5"/>
+<path d="M24 34 q-2 -14 12 -12 q2 -10 12 -6 q10 -6 14 4 q10 -2 8 12 q-4 4 -12 2 q-6 4 -14 0 q-8 4 -14 0 q-4 0 -6 0 z" fill="#fff" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<line x1="34" y1="46" x2="34" y2="76" stroke="#0e2c1d" stroke-width="1.5" opacity=".4"/>
+</svg>

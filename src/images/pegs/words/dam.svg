@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_dam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<path d="M18 26 h60 v8 q-30 8 -60 0 z" fill="#5aa9e6" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M20 34 q28 8 56 0 l-8 44 h-40 z" fill="url(#g_dam)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<g stroke="#0e2c1d" stroke-width="1.6" opacity=".4">
+<line x1="38" y1="40" x2="35" y2="76"/><line x1="48" y1="41" x2="48" y2="76"/><line x1="58" y1="40" x2="61" y2="76"/>
+</g>
+<g stroke="#9fc8e8" stroke-width="3" fill="none" stroke-linecap="round" opacity=".85">
+<path d="M43 60 q-2 10 -3 16"/><path d="M53 60 q2 10 3 16"/>
+</g>
+</svg>

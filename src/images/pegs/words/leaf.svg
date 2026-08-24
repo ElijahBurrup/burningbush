@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Leaf -->
+<defs><linearGradient id="g_leaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9db78"/><stop offset=".5" stop-color="#5fae34"/><stop offset="1" stop-color="#2f7a1e"/></linearGradient></defs>
+<path d="M48 16 Q76 30 66 58 Q56 80 48 82 Q40 80 30 58 Q20 30 48 16 Z" fill="url(#g_leaf)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M48 22 L48 78" stroke="#0e2c1d" stroke-width="2" stroke-linecap="round"/>
+<g stroke="#0e2c1d" stroke-width="1.4" opacity=".5" fill="none">
+<path d="M48 34 Q58 34 62 42"/>
+<path d="M48 34 Q38 34 34 42"/>
+<path d="M48 48 Q60 48 62 56"/>
+<path d="M48 48 Q36 48 34 56"/>
+<path d="M48 62 Q56 62 58 68"/>
+<path d="M48 62 Q40 62 38 68"/>
+</g>
+<path d="M48 82 L48 90" stroke="#0e2c1d" stroke-width="2" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 15 = Ezra : an open scroll held up with a quill -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect x="16" y="46" width="64" height="28" rx="4" fill="url(#g)"/>
+<circle cx="16" cy="60" r="9" fill="url(#g)" stroke="#0e2c1d" stroke-width="2"/>
+<circle cx="80" cy="60" r="9" fill="url(#g)" stroke="#0e2c1d" stroke-width="2"/>
+<rect x="26" y="54" width="40" height="3" fill="#0e2c1d"/>
+<rect x="26" y="62" width="30" height="3" fill="#0e2c1d"/>
+<path d="M78 12 Q46 22 34 46 Q32 50 36 50 Q56 40 78 12Z" fill="url(#g)" stroke="#0e2c1d" stroke-width="1.5"/>
+<line x1="58" y1="26" x2="40" y2="46" stroke="#0e2c1d" stroke-width="1.5"/>
+</svg>

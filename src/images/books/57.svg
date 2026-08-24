@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 57 = Philemon : a chain snapping in the middle (Onesimus set free) -->
+<defs>
+<linearGradient id="g57" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<!-- four links: a joined pair on the left, a joined pair on the right, snapped apart in the middle -->
+<g fill="none">
+<ellipse cx="14" cy="48" rx="11" ry="8" stroke="#0e2c1d" stroke-width="9"/>
+<ellipse cx="34" cy="48" rx="11" ry="8" stroke="#0e2c1d" stroke-width="9"/>
+<ellipse cx="62" cy="48" rx="11" ry="8" stroke="#0e2c1d" stroke-width="9"/>
+<ellipse cx="82" cy="48" rx="11" ry="8" stroke="#0e2c1d" stroke-width="9"/>
+</g>
+<g fill="none">
+<ellipse cx="14" cy="48" rx="11" ry="8" stroke="url(#g57)" stroke-width="6"/>
+<ellipse cx="34" cy="48" rx="11" ry="8" stroke="url(#g57)" stroke-width="6"/>
+<ellipse cx="62" cy="48" rx="11" ry="8" stroke="url(#g57)" stroke-width="6"/>
+<ellipse cx="82" cy="48" rx="11" ry="8" stroke="url(#g57)" stroke-width="6"/>
+</g>
+<!-- snap sparks in the central gap -->
+<g stroke="#fff3c0" stroke-width="2.6" stroke-linecap="round">
+<line x1="48" y1="40" x2="48" y2="33"/>
+<line x1="43" y1="43" x2="38" y2="39"/>
+<line x1="53" y1="43" x2="58" y2="39"/>
+<line x1="48" y1="56" x2="48" y2="63"/>
+</g>
+</svg>

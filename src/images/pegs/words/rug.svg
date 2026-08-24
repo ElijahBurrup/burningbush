@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Rug (patterned carpet with fringe) -->
+<defs><linearGradient id="g_rug" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<rect x="18" y="28" width="60" height="40" rx="3" fill="url(#g_rug)" stroke="#0e2c1d" stroke-width="2"/>
+<rect x="25" y="34" width="46" height="28" rx="2" fill="none" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M48 38 L60 48 L48 58 L36 48 Z" fill="none" stroke="#0e2c1d" stroke-width="2"/>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linecap="round">
+<path d="M20 68 v6"/><path d="M28 68 v6"/><path d="M36 68 v6"/><path d="M44 68 v6"/><path d="M52 68 v6"/><path d="M60 68 v6"/><path d="M68 68 v6"/><path d="M76 68 v6"/>
+<path d="M20 28 v-6"/><path d="M28 28 v-6"/><path d="M36 28 v-6"/><path d="M44 28 v-6"/><path d="M52 28 v-6"/><path d="M60 28 v-6"/><path d="M68 28 v-6"/><path d="M76 28 v-6"/>
+</g>
+</svg>

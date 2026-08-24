@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 97 = Book (open) -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M48 32 Q34 25 18 29 L18 68 Q34 64 48 70 Q62 64 78 68 L78 29 Q62 25 48 32 Z" fill="url(#g)"/>
+<path d="M48 32 V70" stroke="#0e2c1d" stroke-width="2" opacity=".4"/>
+<g stroke="#0e2c1d" stroke-width="1.5" opacity=".28" fill="none"><path d="M24 39 Q34 36 44 39"/><path d="M24 47 Q34 44 44 47"/><path d="M24 55 Q34 52 44 55"/><path d="M52 39 Q62 36 72 39"/><path d="M52 47 Q62 44 72 47"/><path d="M52 55 Q62 52 72 55"/></g>
+</svg>

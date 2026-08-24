@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 65 = Chilli (red pepper, green stem) -->
+<defs>
+<linearGradient id="r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a5a"/><stop offset=".5" stop-color="#e43326"/><stop offset="1" stop-color="#b01818"/></linearGradient>
+<linearGradient id="lf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9db78"/><stop offset="1" stop-color="#3f8a2c"/></linearGradient>
+</defs>
+<path d="M40 24 Q46 30 52 28" fill="none" stroke="url(#lf)" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M50 30 Q72 34 68 56 Q64 78 44 80 Q28 80 28 66 Q39 69 46 58 Q54 44 46 34 Q44 30 50 30 Z" fill="url(#r)"/>
+<path d="M44 40 Q40 54 34 64" fill="none" stroke="#ffffff" stroke-width="2" opacity=".2" stroke-linecap="round"/>
+</svg>

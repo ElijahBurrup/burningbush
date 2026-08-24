@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_coal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b6f76"/><stop offset=".6" stop-color="#3a3d43"/><stop offset="1" stop-color="#1d1f23"/></linearGradient></defs>
+<path d="M30 40 L44 22 L64 28 L76 48 L66 72 L38 74 L20 56 Z" fill="url(#g_coal)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M44 22 L50 46 L30 40 M50 46 L76 48 M50 46 L38 74" fill="none" stroke="#0e2c1d" stroke-width="1.5" opacity=".45"/>
+</svg>

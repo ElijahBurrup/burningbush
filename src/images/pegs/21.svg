@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 21 = Net : a round landing net with visible mesh and a handle -->
+<defs>
+<linearGradient id="g21" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<clipPath id="hoop21"><circle cx="48" cy="40" r="22"/></clipPath>
+</defs>
+<!-- handle -->
+<rect x="44" y="58" width="8" height="30" rx="4" fill="url(#g21)" stroke="#0e2c1d" stroke-width="2"/>
+<!-- mesh netting: gold crosshatch clipped to the hoop (light so it shows on dark) -->
+<g clip-path="url(#hoop21)" stroke="#ffcf4d" stroke-width="1.6" opacity=".85">
+<line x1="18" y1="34" x2="52" y2="68"/><line x1="26" y1="26" x2="66" y2="66"/><line x1="34" y1="18" x2="72" y2="56"/><line x1="42" y1="18" x2="72" y2="48"/><line x1="18" y1="44" x2="44" y2="70"/>
+<line x1="78" y1="34" x2="44" y2="68"/><line x1="70" y1="26" x2="30" y2="66"/><line x1="62" y1="18" x2="24" y2="56"/><line x1="54" y1="18" x2="24" y2="48"/><line x1="78" y1="44" x2="52" y2="70"/>
+</g>
+<!-- hoop rim : dark then gold -->
+<circle cx="48" cy="40" r="24" fill="none" stroke="#0e2c1d" stroke-width="8"/>
+<circle cx="48" cy="40" r="24" fill="none" stroke="url(#g21)" stroke-width="5"/>
+<!-- collar where handle meets hoop -->
+<rect x="42" y="57" width="12" height="7" rx="3" fill="url(#g21)" stroke="#0e2c1d" stroke-width="2"/>
+</svg>

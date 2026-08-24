@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs>
+<linearGradient id="g_cone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf4d"/><stop offset=".6" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M44 16 L52 16 L70 72 L26 72 Z" fill="url(#g_cone)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<path d="M35 46 L61 46 L64 56 L32 56 Z" fill="#fff6e8" stroke="#0e2c1d" stroke-width="1.6"/>
+<rect x="18" y="72" width="60" height="10" rx="3" fill="url(#g_cone)" stroke="#0e2c1d" stroke-width="2"/>
+</svg>

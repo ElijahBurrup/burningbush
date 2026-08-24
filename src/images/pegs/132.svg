@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 132 = Domino (single black domino tile with white pips) -->
+<defs>
+<linearGradient id="d" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3a3a"/><stop offset="1" stop-color="#111"/></linearGradient>
+</defs>
+<rect x="24" y="10" width="48" height="76" rx="8" fill="url(#d)" stroke="#000" stroke-width="2"/>
+<rect x="30" y="46" width="36" height="3" fill="#eee"/>
+<circle cx="48" cy="24" r="4.4" fill="#eee"/>
+<circle cx="36" cy="66" r="4.4" fill="#eee"/>
+<circle cx="48" cy="76" r="4.4" fill="#eee"/>
+<circle cx="60" cy="66" r="4.4" fill="#eee"/>
+</svg>

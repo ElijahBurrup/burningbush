@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 16 = Nehemiah : rebuilt brick wall -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M18 30 h10 v8 h10 v-8 h10 v8 h10 v-8 h10 v52 h-60 Z" fill="url(#g)"/>
+<g stroke="#0e2c1d" stroke-width="2.4" fill="none">
+<line x1="18" y1="46" x2="78" y2="46"/>
+<line x1="18" y1="60" x2="78" y2="60"/>
+<line x1="18" y1="74" x2="78" y2="74"/>
+<line x1="38" y1="38" x2="38" y2="46"/>
+<line x1="58" y1="38" x2="58" y2="46"/>
+<line x1="28" y1="46" x2="28" y2="60"/>
+<line x1="48" y1="46" x2="48" y2="60"/>
+<line x1="68" y1="46" x2="68" y2="60"/>
+<line x1="38" y1="60" x2="38" y2="74"/>
+<line x1="58" y1="60" x2="58" y2="74"/>
+<line x1="28" y1="74" x2="28" y2="82"/>
+<line x1="48" y1="74" x2="48" y2="82"/>
+<line x1="68" y1="74" x2="68" y2="82"/>
+</g>
+</svg>

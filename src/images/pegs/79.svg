@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 79 = Cube (Rubik's cube) -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M48 16 L78 33 L48 50 L18 33 Z" fill="url(#g)"/>
+<path d="M18 33 L48 50 L48 82 L18 65 Z" fill="url(#g)"/>
+<path d="M78 33 L48 50 L48 82 L78 65 Z" fill="url(#g)"/>
+<g stroke="#0e2c1d" stroke-width="1.7" opacity=".5" fill="none">
+<path d="M28 27 L58 44 M38 21 L68 38"/>
+<path d="M18 44 L48 61 M18 55 L48 72"/>
+<path d="M28 39 L28 71 M38 44 L38 76"/>
+<path d="M78 44 L48 61 M78 55 L48 72"/>
+<path d="M58 44 L58 76 M68 39 L68 71"/>
+</g>
+</svg>

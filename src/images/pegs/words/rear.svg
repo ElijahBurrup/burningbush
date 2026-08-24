@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Rear: back of a car with taillights -->
+<defs>
+<linearGradient id="grear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M22 66 v-22 q0 -14 26 -14 t26 14 v22 Z" fill="url(#grear)" stroke="#0e2c1d" stroke-width="2"/>
+<rect x="34" y="36" width="28" height="14" rx="2" fill="#cfe8ff" stroke="#0e2c1d" stroke-width="1.6"/>
+<rect x="26" y="54" width="10" height="8" rx="2" fill="#d43b2e" stroke="#0e2c1d" stroke-width="1.6"/>
+<rect x="60" y="54" width="10" height="8" rx="2" fill="#d43b2e" stroke="#0e2c1d" stroke-width="1.6"/>
+<path d="M20 66 h56 v4 h-56 Z" fill="#a8763a" stroke="#0e2c1d" stroke-width="1.6"/>
+<path d="M40 20 v10 M48 22 l6 6 M56 20 v10" fill="none" stroke="#0e2c1d" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+</svg>

@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Burning Bush — one-command deploy.
+# Syncs dev index.html → the burningbush repo (with the required /burningbush/ path rewrites),
+# commits, pushes, ALSO pokes Render's API (its auto-deploy webhook is unreliable), then waits
+# until the exact new build is actually live at kingdombuilders.ai/burningbush.
+#
+# Usage:  bin/deploy "commit message"
+set -euo pipefail
+
+MSG="${1:-Update Burning Bush}"
+DEV="C:/Projects/BibleMemory"
+ROOT="C:/Projects/BurningBush"
+REPO="$ROOT/burningbush"
+MEM="C:/Users/elija/.claude/projects/C--Users-elija/memory/project_burningbush_deploy.md"
+
+# Render creds live in the memory file (single source of truth) — no secrets hardcoded here.
+KEY="$(grep -oE 'rnd_[A-Za-z0-9]+' "$MEM" | head -1 || true)"
+SRV="$(grep -oE 'srv-[a-z0-9]+' "$MEM" | head -1 || true)"
+
+echo "▸ Syncing dev → repo with path rewrites…"
+sed -e 's#href="images/icon-512.png"#href="/burningbush/images/icon-512.png"#g' \
+    -e 's#href="manifest.webmanifest"#href="/burningbush/manifest.webmanifest"#g' \
+    -e 's#href="fonts/fonts.css"#href="/burningbush/fonts/fonts.css"#g' \
+    -e 's#src="kjv.js"#src="/burningbush/kjv.js"#g' \
+    -e 's#src="bbe.js"#src="/burningbush/bbe.js"#g' \
+    -e 's#`images/books/${n}.svg`#`/burningbush/images/books/${n}.svg`#g' \
+    -e 's#`images/pegs/${n}.svg`#`/burningbush/images/pegs/${n}.svg`#g' \
+    -e 's#images/pegs/words/${slug}.svg#/burningbush/images/pegs/words/${slug}.svg#g' \
+    "$DEV/index.html" > "$REPO/index.html"
+
+REW="$(diff "$DEV/index.html" "$REPO/index.html" | grep -c '^>' || true)"
+echo "  path rewrites: $REW (expect 9)"
+if [ "$REW" != "9" ]; then echo "✗ Expected 9 path rewrites, got $REW — aborting (check the src/href patterns)"; exit 1; fi
+
+# Build stamp so we can confirm THIS exact version went live.
+BUILD="bb-$(date +%Y%m%d-%H%M%S)"
+printf '\n<!-- deploy %s -->\n' "$BUILD" >> "$REPO/index.html"
+
+echo "▸ Commit + push…"
+cd "$ROOT"
+git add burningbush/index.html
+git commit -q -m "$MSG
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
+git push -q origin master
+echo "  pushed ($BUILD)"
+
+if [ -n "$KEY" ] && [ -n "$SRV" ]; then
+  echo "▸ Triggering Render (webhook is unreliable)…"
+  curl -s --max-time 25 -X POST -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
+    -d '{"clearCache":"do_not_clear"}' "https://api.render.com/v1/services/$SRV/deploys" >/dev/null && echo "  render deploy triggered"
+else
+  echo "  (no Render key found in memory — relying on auto-deploy)"
+fi
+
+echo -n "▸ Waiting for $BUILD to go live"
+for i in $(seq 1 25); do
+  if curl -s --max-time 15 "https://kingdombuilders.ai/burningbush/index.html?cb=$RANDOM$i" | grep -q "$BUILD"; then
+    echo ""; echo "✅ LIVE — $BUILD is serving at https://kingdombuilders.ai/burningbush"; exit 0
+  fi
+  echo -n "."; sleep 8
+done
+echo ""; echo "⚠ Pushed + triggered, but $BUILD not confirmed live after ~200s. Check Render dashboard."; exit 2

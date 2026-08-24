@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 33 = Mummy -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+<clipPath id="mum"><path d="M32 84 V52 a16 16 0 0 1 32 0 V84 Z M34 30 a14 14 0 0 1 28 0 v8 H34 Z"/></clipPath>
+</defs>
+<g fill="url(#g)">
+<circle cx="48" cy="30" r="14"/>
+<path d="M32 86 V54 a16 16 0 0 1 32 0 V86 Z"/>
+</g>
+<g clip-path="url(#mum)" stroke="#0e2c1d" stroke-width="2.4">
+<line x1="30" y1="22" x2="66" y2="28"/><line x1="30" y1="32" x2="66" y2="26"/>
+<line x1="30" y1="50" x2="66" y2="56"/><line x1="30" y1="60" x2="66" y2="54"/><line x1="30" y1="70" x2="66" y2="76"/><line x1="30" y1="80" x2="66" y2="74"/>
+</g>
+<circle cx="43" cy="31" r="2.6" fill="#0e2c1d"/><circle cx="53" cy="31" r="2.6" fill="#0e2c1d"/>
+</svg>

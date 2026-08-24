@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Rare: gemstone -->
+<defs>
+<linearGradient id="grare" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M30 30 h36 l14 16 -32 38 -32 -38 Z" fill="url(#grare)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<g fill="none" stroke="#0e2c1d" stroke-width="1.8" stroke-linejoin="round">
+<path d="M16 46 h64"/><path d="M30 30 L40 46 L48 84 M66 30 L56 46 L48 84 M40 46 h16"/>
+</g>
+</svg>

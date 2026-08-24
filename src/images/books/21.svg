@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 21 = Ecclesiastes : an hourglass -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect x="22" y="14" width="52" height="8" rx="3" fill="url(#g)"/>
+<rect x="22" y="74" width="52" height="8" rx="3" fill="url(#g)"/>
+<path d="M28 22 h40 l-16 26 l16 26 h-40 l16-26 z" fill="url(#g)"/>
+<path d="M40 30 h16 l-8 14 z" fill="#0e2c1d"/>
+<path d="M48 54 l7 12 h-14 z" fill="#0e2c1d"/>
+</svg>

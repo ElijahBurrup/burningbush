@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Berry : strawberry -->
+<defs>
+<linearGradient id="g_berry" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7a6a"/><stop offset=".5" stop-color="#e6342f"/><stop offset="1" stop-color="#b01530"/></linearGradient>
+<linearGradient id="lf_berry" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9db78"/><stop offset="1" stop-color="#3f8a2c"/></linearGradient>
+</defs>
+<path d="M24 40 q24 -12 48 0 q4 26 -24 42 q-28 -16 -24 -42 z" fill="url(#g_berry)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M30 34 q18 -10 36 0 q-6 8 -18 8 q-12 0 -18 -8 z" fill="url(#lf_berry)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M48 20 v14" stroke="#0e2c1d" stroke-width="2.5" stroke-linecap="round"/>
+<g fill="#ffe9a8">
+<ellipse cx="38" cy="52" rx="2" ry="3"/><ellipse cx="52" cy="50" rx="2" ry="3"/><ellipse cx="46" cy="62" rx="2" ry="3"/><ellipse cx="58" cy="60" rx="2" ry="3"/><ellipse cx="34" cy="64" rx="2" ry="3"/>
+</g>
+</svg>

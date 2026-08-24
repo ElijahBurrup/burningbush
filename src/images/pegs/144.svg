@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 144 = Dryer (hair dryer) -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<g transform="rotate(-22 46 46)">
+<rect x="24" y="32" width="36" height="24" rx="12" fill="url(#g)"/>
+<rect x="58" y="38" width="10" height="12" rx="2" fill="url(#g)"/>
+<path d="M34 55 L30 78 L46 78 L45 55 Z" fill="url(#g)"/>
+<circle cx="34" cy="44" r="8" fill="#0e2c1d" opacity=".3"/>
+</g>
+<g stroke="#ffcf4d" stroke-width="2.6" stroke-linecap="round" opacity=".6"><path d="M74 30 h8"/><path d="M76 39 h9"/><path d="M74 48 h8"/></g>
+</svg>

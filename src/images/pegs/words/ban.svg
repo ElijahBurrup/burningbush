@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Ban : prohibition sign -->
+<defs>
+<linearGradient id="g_ban" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8f6a"/><stop offset=".5" stop-color="#e33322"/><stop offset="1" stop-color="#b01515"/></linearGradient>
+</defs>
+<circle cx="48" cy="48" r="34" fill="none" stroke="url(#g_ban)" stroke-width="9"/>
+<line x1="27" y1="27" x2="69" y2="69" stroke="url(#g_ban)" stroke-width="9" stroke-linecap="round"/>
+<circle cx="48" cy="48" r="34" fill="none" stroke="#0e2c1d" stroke-width="1.5" opacity=".35"/>
+</svg>

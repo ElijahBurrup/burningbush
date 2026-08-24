@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 133 = Edamame (green pod squeezing out beans) -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9db78"/><stop offset="1" stop-color="#4c8a2c"/></linearGradient>
+</defs>
+<path d="M18 50 Q14 24 40 16 Q70 8 82 34 Q90 52 74 66 Q52 84 30 74 Q16 68 18 50 Z" fill="url(#g)" stroke="#2f5a1a" stroke-width="2"/>
+<path d="M24 44 Q48 30 78 40" fill="none" stroke="#2f5a1a" stroke-width="2" opacity=".5"/>
+<circle cx="38" cy="44" r="13" fill="#c7ea94" stroke="#3f8a2c" stroke-width="2"/>
+<circle cx="62" cy="44" r="13" fill="#c7ea94" stroke="#3f8a2c" stroke-width="2"/>
+<circle cx="52" cy="66" r="13" fill="#c7ea94" stroke="#3f8a2c" stroke-width="2"/>
+<path d="M40 12 q2 -8 8 -8" fill="none" stroke="#2f5a1a" stroke-width="3" stroke-linecap="round"/>
+</svg>

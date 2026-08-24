@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+<!-- 9 = 1 Samuel : anointing horn of oil pouring a golden drop -->
+<defs>
+<linearGradient id="g9" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<!-- horn body, curved, tapering to a downward tip -->
+<path d="M36 27 C26 41 28 58 40 71 C52 58 58 40 60 28 Z" fill="url(#g9)" stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round"/>
+<!-- textured ridges following the horn -->
+<g fill="none" stroke="#0e2c1d" stroke-width="1.4" opacity=".38" stroke-linecap="round">
+<path d="M36 34 C31 46 32 58 40 67"/>
+<path d="M44 33 C40 45 41 56 46 64"/>
+</g>
+<!-- wide textured mouth opening at the top -->
+<ellipse cx="48" cy="27" rx="12" ry="5" fill="#e0561a" stroke="#0e2c1d" stroke-width="2"/>
+<ellipse cx="48" cy="27" rx="7" ry="2.6" fill="#b4390f"/>
+<!-- falling oil droplet from the tip -->
+<path d="M40 73 C36 79 36 84 40 84 C44 84 44 79 40 73 Z" fill="url(#g9)" stroke="#0e2c1d" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>

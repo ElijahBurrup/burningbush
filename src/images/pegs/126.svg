@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 126 = Danish (swirled pastry with white icing) -->
+<defs>
+<linearGradient id="p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c877"/><stop offset="1" stop-color="#c9812f"/></linearGradient>
+</defs>
+<circle cx="48" cy="52" r="32" fill="url(#p)" stroke="#8a5a1e" stroke-width="2"/>
+<path d="M48 52 m-22 0 a22 22 0 0 1 44 0 a16 16 0 0 1 -32 0 a10 10 0 0 1 20 0 a5 5 0 0 1 -10 0" fill="none" stroke="#8a5a1e" stroke-width="2.4" stroke-linecap="round" opacity=".7"/>
+<circle cx="48" cy="52" r="4" fill="#e2383f"/>
+<g stroke="#fffdf5" stroke-width="3.2" fill="none" stroke-linecap="round">
+<path d="M22 40 q6 8 0 16 q-6 8 0 16"/>
+<path d="M74 40 q-6 8 0 16 q6 8 0 16"/>
+<path d="M40 22 q8 6 16 0"/>
+</g>
+</svg>

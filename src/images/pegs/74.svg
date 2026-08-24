@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 74 = Car -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<path d="M12 62 L18 48 Q20 44 26 44 L34 34 L58 34 Q64 34 68 44 L78 50 Q84 52 84 58 L84 64 L12 64 Z" fill="url(#g)"/>
+<path d="M34 39 L56 39 Q60 39 62 44 L64 49 L34 49 Z" fill="#0e2c1d"/>
+<circle cx="28" cy="64" r="8.5" fill="#0e2c1d"/><circle cx="28" cy="64" r="3.6" fill="url(#g)"/>
+<circle cx="66" cy="64" r="8.5" fill="#0e2c1d"/><circle cx="66" cy="64" r="3.6" fill="url(#g)"/>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 163 = Hot Jam (jam jar bubbling over with steam) -->
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef6fb"/><stop offset="1" stop-color="#cfe1ec"/></linearGradient>
+<linearGradient id="j" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2383f"/><stop offset="1" stop-color="#8a1420"/></linearGradient>
+</defs>
+<g stroke="#c9822e" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8">
+<path d="M36 20 q-4 -8 0 -14"/>
+<path d="M48 20 q4 -8 0 -16"/>
+<path d="M60 20 q-4 -8 0 -14"/>
+</g>
+<rect x="24" y="30" width="48" height="52" rx="8" fill="url(#g)" stroke="#93a8b6" stroke-width="2"/>
+<rect x="28" y="20" width="40" height="12" rx="4" fill="#c9822e" stroke="#8a5a1e" stroke-width="2"/>
+<path d="M28 42 Q48 30 68 42 L70 78 Q48 88 26 78 Z" fill="url(#j)"/>
+<path d="M24 40 Q34 26 48 34 Q62 26 72 40 Q60 34 48 40 Q36 34 24 40 Z" fill="url(#j)"/>
+<circle cx="34" cy="60" r="2.4" fill="#ff8f9a"/>
+<circle cx="58" cy="66" r="2" fill="#ff8f9a"/>
+</svg>

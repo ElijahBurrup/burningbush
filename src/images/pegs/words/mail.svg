@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- Mail: envelope -->
+<defs>
+<linearGradient id="gmail" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient>
+</defs>
+<rect x="16" y="26" width="64" height="44" rx="5" fill="url(#gmail)" stroke="#0e2c1d" stroke-width="2"/>
+<path d="M18 30 l30 24 30 -24" fill="none" stroke="#0e2c1d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18 66 l24 -20 M78 66 l-24 -20" fill="none" stroke="#0e2c1d" stroke-width="2" opacity=".6" stroke-linecap="round"/>
+</svg>

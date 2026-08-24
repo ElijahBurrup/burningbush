@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<!-- 122 = Downy Hen (fluffy hen shedding soft down feathers) -->
+<defs>
+<linearGradient id="h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffdf5"/><stop offset="1" stop-color="#f0dfc0"/></linearGradient>
+</defs>
+<ellipse cx="46" cy="62" rx="26" ry="19" fill="url(#h)" stroke="#c9ad7c" stroke-width="2"/>
+<g fill="url(#h)" stroke="#c9ad7c" stroke-width="1.4">
+<circle cx="26" cy="52" r="7"/><circle cx="22" cy="64" r="7"/><circle cx="28" cy="75" r="6"/>
+<circle cx="66" cy="52" r="7"/><circle cx="70" cy="64" r="7"/><circle cx="64" cy="75" r="6"/>
+<circle cx="46" cy="44" r="8"/>
+</g>
+<circle cx="66" cy="40" r="10" fill="url(#h)" stroke="#c9ad7c" stroke-width="2"/>
+<path d="M64 30 q0 -8 6 -8 q6 0 4 8 q4 -2 4 4 q-6 4 -12 0 Z" fill="#e2383f"/>
+<path d="M75 40 l9 3 l-9 4 Z" fill="#f0a02a"/>
+<circle cx="70" cy="38" r="2" fill="#2b2013"/>
+<g fill="#f5e9cf" stroke="#c9ad7c" stroke-width="1" opacity=".9">
+<ellipse cx="16" cy="30" rx="4" ry="2.4" transform="rotate(-20 16 30)"/>
+<ellipse cx="30" cy="18" rx="4" ry="2.4" transform="rotate(10 30 18)"/>
+<ellipse cx="46" cy="14" rx="4" ry="2.4"/>
+</g>
+<g stroke="#c9ad7c" stroke-width="1.4" opacity=".6" fill="none" stroke-linecap="round">
+<path d="M20 34 q-4 -6 -2 -12"/>
+<path d="M34 22 q-2 -6 2 -10"/>
+</g>
+</svg>
