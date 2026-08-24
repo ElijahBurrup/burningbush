@@ -40,6 +40,8 @@
     --sg-hi:#5f8cff; --sg-lo:#141d3f; --sg-fg:#ffffff;   /* story-section gradient: light→dark across sections (per-theme below) */
     --purple:#b48cf2; --purple-soft:rgba(180,140,242,.16);   /* God's-promise verses */
     --bible:#8a6a4a; --bible-ink:#efe2cd;   /* the Bible tab icon — humble brown, not red */
+    --rome-red:#8c2f28; --rome-gold:#c9a227; --rome-marble:#efe7d6; --rome-ink:#2c2118; --rome-shadow:rgba(0,0,0,.5);
+    --purple-deep:#7d55c7; --on-purple:#ffffff;   /* fill for a promise you've learned */
     --gray1:#6b7480; --gray2:#4c545f; --gray-shadow:#333a44;
     /* state backgrounds (quiz feedback / selection) */
     --ok-bg:#16281a; --no-bg:#2a1418; --sel-bg:#182236;
@@ -569,6 +571,9 @@
   .vbox.skip,.vbox.sugskip{border-color:var(--miss-ink);color:var(--miss-ink)}
   .vbox.locked{border-color:var(--line);color:var(--cell-ink)}
   .vbox.promise{border-color:var(--purple);color:var(--purple);background:var(--purple-soft)}   /* a promise of God */
+  /* a promise you've LEARNED is filled, not just outlined — it's held, not merely marked */
+  .vbox.mem.promise,.vbox.memgreen.promise{background:linear-gradient(135deg,var(--purple),var(--purple-deep,var(--purple)));border-color:var(--purple);color:var(--on-purple,#fff)}
+  .vbox.memgreen.promise::after{color:var(--on-purple,#fff)}
   .vbox.notready{color:var(--cell-ink)!important}   /* not reachable yet: keep the outline, grey the number */
   .promise-ref{color:var(--purple)}
   /* chapter picker = round gold chips; verse picker = square tiles (visual differentiator) */
@@ -609,6 +614,49 @@
   .wpopt{padding:13px 8px;border-radius:12px;border:2px solid var(--line);background:var(--panel2);color:var(--ink);font-size:15px;font-weight:700;cursor:pointer;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .wpopt.good{border-color:var(--green);background:var(--green-soft);color:var(--good)}
   .wpopt.bad{border-color:var(--miss-ink);background:var(--no-bg);color:var(--miss-ink)}
+  /* ---- Caesar's Tax: the Roman overlay, the wheel, the legion, the church ---- */
+  #taxov{position:absolute;inset:0;z-index:150;display:none;background:var(--scrim);padding:16px;box-sizing:border-box;overflow-y:auto}
+  #taxov.on{display:flex;align-items:flex-start;justify-content:center}
+  .taxcard{width:100%;max-width:352px;margin:auto;background:var(--rome-marble);border:3px solid var(--rome-gold);border-radius:18px;padding:14px 15px 16px;text-align:center;box-shadow:0 22px 60px var(--rome-shadow);color:var(--rome-ink);position:relative;overflow:hidden}
+  .taxspqr{font-family:var(--font-display);letter-spacing:.34em;font-size:12px;font-weight:800;color:var(--rome-marble);background:var(--rome-red);border-radius:8px;padding:6px 0;margin:-3px -3px 11px}
+  .taxtitle{font-family:var(--font-display);font-size:20px;font-weight:800;margin:0 0 4px;line-height:1.2}
+  .taxsub{font-size:13.5px;line-height:1.45;opacity:.82;margin:0 0 10px}
+  .taxlegion{display:flex;justify-content:center;gap:12px;height:60px;margin-bottom:2px}
+  .taxlegion svg{width:36px;height:56px;opacity:0;transform:translateX(-40px)}
+  #taxov.march .taxlegion svg{animation:legionmarch .55s ease-out forwards}
+  #taxov.march .taxlegion svg:nth-child(2){animation-delay:.12s}
+  #taxov.march .taxlegion svg:nth-child(3){animation-delay:.24s}
+  @keyframes legionmarch{0%{opacity:0;transform:translateX(-40px)}60%{opacity:1;transform:translateX(4px) translateY(-3px)}100%{opacity:1;transform:translateX(0)}}
+  .taxwheelwrap{position:relative;width:216px;height:222px;margin:2px auto 2px}
+  .taxwheel{width:216px;height:216px;display:block;margin-top:8px}
+  .taxwheel.spin{transition:transform 4.2s cubic-bezier(.17,.67,.16,1)}
+  .taxpointer{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:2;width:24px;height:28px}
+  .taxresult{font-family:var(--font-display);font-size:17px;font-weight:800;margin:4px 0 0;min-height:23px;color:var(--rome-red)}
+  .taxtook{font-size:13.5px;font-weight:700;margin-top:3px;min-height:19px}
+  .taxverse{font-size:11.5px;font-style:italic;line-height:1.45;opacity:.72;margin:11px 0 0;border-top:1px solid var(--rome-gold);padding-top:8px}
+  .taxbtn{width:100%;margin-top:11px;padding:13px;border-radius:12px;border:none;background:var(--rome-red);color:var(--rome-marble);font-size:15px;font-weight:800;cursor:pointer}
+  .taxbtn.ghost{background:transparent;border:2px solid var(--rome-gold);color:var(--rome-ink);margin-top:8px;padding:11px}
+  .taxseal{position:absolute;top:46%;left:50%;width:104px;height:104px;opacity:0;pointer-events:none;z-index:3;transform:translate(-50%,-50%) scale(2.2)}
+  .taxseal.stamp{animation:sealstamp .45s ease-out forwards}
+  @keyframes sealstamp{0%{opacity:0;transform:translate(-50%,-50%) scale(2.2) rotate(-14deg)}70%{opacity:1;transform:translate(-50%,-50%) scale(.94) rotate(-6deg)}100%{opacity:.95;transform:translate(-50%,-50%) scale(1) rotate(-8deg)}}
+  /* the letter from Rome */
+  .romescroll{background:var(--rome-marble);color:var(--rome-ink);border-radius:14px;border:2px solid var(--rome-gold);padding:16px 15px;text-align:left;font-size:14px;line-height:1.6}
+  .romescroll .rs-h{font-family:var(--font-display);font-size:18px;font-weight:800;text-align:center;margin:0 0 2px}
+  .romescroll .rs-from{text-align:center;font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.6;margin-bottom:12px}
+  .romescroll .rs-sign{text-align:right;font-style:italic;margin-top:12px;opacity:.8}
+  /* the church your tax builds */
+  .churchbar{height:12px;border-radius:999px;background:var(--panel3);overflow:hidden;margin-top:10px}
+  .churchbar span{display:block;height:100%;background:linear-gradient(90deg,var(--rome-gold),var(--gold))}
+  .churchstage{font-size:12.5px;font-weight:800;color:var(--gold-ink);margin-top:7px;letter-spacing:.02em}
+  .churchsvg{width:100%;max-width:288px;display:block;margin:0 auto}
+  /* "the collectors ride in N days" */
+  .taxwarn{display:flex;align-items:center;gap:9px;background:var(--panel2);border:1px solid var(--rome-gold);border-radius:12px;padding:9px 12px;margin-bottom:8px;cursor:pointer;font-size:13px;font-weight:700;color:var(--ink-soft);text-align:left}
+  .taxwarn .tw-ic{font-size:19px;flex:0 0 auto}
+  @media (prefers-reduced-motion:reduce){
+    .taxwheel.spin{transition:transform .35s linear}
+    #taxov.march .taxlegion svg{animation-duration:.01s}
+    .taxseal.stamp{animation-duration:.01s}
+  }
   .vlegend-wrap{margin:10px 0 0}
   .vlegend-toggle{background:none;border:none;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.04em;padding:4px 0;cursor:pointer}
   .vlegend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:4px 0 2px}
@@ -1368,6 +1416,10 @@
       <button class="btn ghost" id="testStoriesDone" style="width:100%;margin-top:8px">📜 Simulate Stories finished</button>
       <button class="btn ghost" id="testUnpaid" style="width:100%;margin-top:8px">🆓 Simulate unpaid user</button>
       <button class="btn ghost" id="testTalent" style="width:100%;margin-top:8px">🪙 Preview talent animation</button>
+      <button class="btn ghost" id="testTaxWheel" style="width:100%;margin-top:8px">🏛️ Preview Caesar's tax wheel</button>
+      <button class="btn ghost" id="testPaywall" style="width:100%;margin-top:8px">💳 Show the Pro purchase screen</button>
+      <button class="btn ghost" id="testChurch" style="width:100%;margin-top:8px">⛪ Open the church in Rome</button>
+      <button class="btn ghost" id="testRomeLetter" style="width:100%;margin-top:8px">📜 Replay Rome's letter</button>
       <button class="btn ghost" id="testAdd500" style="width:100%;margin-top:8px">🪙 Add 500 talents</button>
       <button class="btn ghost" id="testRestore" style="width:100%;margin-top:8px;color:var(--miss-ink);border-color:var(--miss)">↩ Restore my real progress (after a simulation)</button>
 
@@ -1464,8 +1516,16 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.3.0";
+const APP_VERSION="1.4.0";
 const CHANGELOG=[
+ {v:"1.4.0", d:"August 24, 2026", t:"Render unto Caesar", items:[
+   ["new","<b>Rome has taken notice.</b> Once you subscribe, a letter arrives from Caesar — and every seven days the collectors call. A wheel spins, Caesar names his share, and your talents are lighter. Spend them, or Rome will."],
+   ["new","<b>Half of everything Caesar takes is laid up as stone.</b> A church rises in Rome, brick by brick, that Caesar never meant to build — and a counter keeps the tally of every one you finish."],
+   ["new","Fifty-two different summonses, one a week, so no year repeats itself."],
+   ["new","Caesar assesses the wealthy hardest, and takes no notice of the poor. You will see the collectors coming two days out — time enough to spend what you can."],
+   ["new","More room for a full purse: Pro subscribers can now bank ten Streak Freezes instead of five, and five Peek tokens can be bought at once for less."],
+   ["fix","A promise of God you have already learned is now <b>filled</b> purple rather than merely outlined — held, not just marked."]
+ ]},
  {v:"1.3.0", d:"August 24, 2026", t:"Your rhythm, your reminders", items:[
    ["new","<b>The daily goal screen asks one question first:</b> the same number every day, weekdays apart from weekends, or each day on its own — and then shows only that. No more hunting through options you are not using."],
    ["new","Choosing a number now uses the same square keypad as the verse test, so the app asks for a number the same way everywhere."],
@@ -2116,6 +2176,15 @@ function migrateProg(p){
   if(typeof p.freezes!=="number") p.freezes=0; p.freezeAwards=arr(p.freezeAwards); // Streak-Freeze power-ups + which milestones already granted one
   if(typeof p.hints!=="number") p.hints=0; // "Peek" tokens spendable in the verse test
   if(typeof p.weekKey!=="string") p.weekKey=""; if(typeof p.weekDays!=="number") p.weekDays=0; if(typeof p.weekGoalHit!=="boolean") p.weekGoalHit=false; // Perfect-Week tracking
+  // Caesar's weekly levy + the church it builds
+  if(typeof p.taxAt!=="number") p.taxAt=0;              // 0 = never assessed (set when the Rome letter lands)
+  if(typeof p.taxWeek!=="number") p.taxWeek=0;          // which of the 52 summonses comes next
+  if(typeof p.romeLetterSeen!=="boolean") p.romeLetterSeen=false;
+  p.taxLog=arr(p.taxLog).slice(0,8);
+  p.church=obj(p.church);
+  if(typeof p.church.given!=="number") p.church.given=0;   // talents toward the church now rising
+  if(typeof p.church.built!=="number") p.church.built=0;   // churches finished and standing
+  if(typeof p.church.total!=="number") p.church.total=p.church.given;
   // Daily goal: one of three modes, so the setup screen only ever shows one set of controls.
   if(p.goalMode!=="same"&&p.goalMode!=="week"&&p.goalMode!=="days")
     p.goalMode = (p.goalByDay && Object.keys(p.goalByDay).length) ? "days" : "same";   // existing per-day users keep their setup
@@ -2152,6 +2221,12 @@ function mergeProg(a,b){
   m.tickets=[...(a.tickets||[]),...(b.tickets||[])].filter((t,i,arr)=>arr.findIndex(x=>x.ts===t.ts&&x.type===t.type)===i); // union by (ts,type)
   m.palaces=((a.palaces||[]).length>=(b.palaces||[]).length)?a.palaces:b.palaces;   // keep the fuller palace set
   m.verseSR=mergeSR(a.verseSR,b.verseSR);
+  m.taxAt=Math.max(a.taxAt||0,b.taxAt||0); m.taxWeek=Math.max(a.taxWeek||0,b.taxWeek||0);
+  m.romeLetterSeen=!!(a.romeLetterSeen||b.romeLetterSeen);
+  m.taxLog=[...(a.taxLog||[]),...(b.taxLog||[])].filter((t,i,q)=>q.findIndex(x=>x.at===t.at)===i).sort((x,y)=>y.at-x.at).slice(0,8);
+  { const ca=(a.church||{}), cb=(b.church||{});   // never lose a finished church to a sync
+    m.church={ built:Math.max(ca.built||0,cb.built||0), total:Math.max(ca.total||0,cb.total||0),
+               given:Math.max(ca.given||0,cb.given||0) }; }
   return migrateProg(m);
 }
 function mergeSR(a,b){ a=a||{}; b=b||{}; const out={}; new Set([...Object.keys(a),...Object.keys(b)]).forEach(k=>{
@@ -2233,6 +2308,7 @@ const Billing = {
       Billing.grant(12);
       try{ history.replaceState(null,"",location.pathname); }catch(e){}
       setTimeout(()=>toast("✨ Pro unlocked — the whole Bible is open to you!"),300);
+      setTimeout(()=>{ try{ maybeRomeLetter(); }catch(e){} },1200);
     }
   }
 };
@@ -3771,7 +3847,7 @@ function renderVerse(){
   const dueAll=reviewDueCount();   // numbers + verses + palaces due for spaced repetition today
   const reviewVi=dueAll?"🔁":"🎯";
   const reviewLabel=dueAll?`Spaced Repetition · ${dueAll} due`:(mem.length?`Practice Verses (${mem.length})`:`Practice Verses`);
-  V.innerHTML=`<div class="goalbar" id="goalBtn">${goalBarHTML()}</div>
+  V.innerHTML=`${taxWarnHTML()}<div class="goalbar" id="goalBtn">${goalBarHTML()}</div>
     <div class="versehub">
       <button class="vhub sq" data-view="sugg"><span class="vi">✨</span><span>Suggested</span><small>${suggReach} in reach</small></button>
       <button class="vhub sq" data-view="topics"><span class="vi">📚</span><span>Topics</span><small>${TOPICS.length}</small></button>
@@ -3781,7 +3857,7 @@ function renderVerse(){
       <button class="vhub wide" id="vNumTest"><span class="vi vi-bounce">🎲</span><span>Test Numbers &amp; Books</span></button>
       <button class="vhub wide review" id="vMemTest"><span class="vi">${reviewVi}</span><span>${reviewLabel}</span></button>
     </div>`;
-  el("goalBtn").onclick=openGoalSettings;
+  el("goalBtn").onclick=openGoalSettings; wireTaxWarn();
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
   el("vW4W").onclick=()=>{ const a=pickW4WVerse(); if(!a){ toast(mem.length?"All your verses are done for now — great work!":"Memorize a verse first — tap Suggested!"); return; } startWordForWord(a[0],a[1],a[2],()=>{ show("verse"); renderVerse(); }); };
   el("vNumTest").onclick=()=> knownNumbers().size>=2 ? startNumberTest() : toast("Learn a few numbers first in the Learn tab!");
@@ -4055,11 +4131,13 @@ function doneForToday(){
 function dayKey(d){ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }   // local-day identity for the daily streak
 // Streak Freeze power-ups: earned at day-streak & answer-streak milestones, auto-spent to save a streak when a day is missed.
 const FREEZE_MAX=5;
+// Pro users are taxed weekly, so give their talents more room to land.
+function freezeMax(){ return Billing.isPro() ? 10 : FREEZE_MAX; }
 const DAY_FREEZE=[3,7,14,30,60,100,150,200,300,365];   // day-streak milestones that grant a freeze
 const ANS_FREEZE=[25,50,100,200,500];                   // correct-in-a-row milestones that grant a freeze
 function grantFreeze(key, reason){
   if(Prog.freezeAwards.includes(key)) return;           // one grant per milestone, ever
-  if((Prog.freezes||0)>=FREEZE_MAX) return;             // at the cap → don't burn the milestone; grant it later when there's room
+  if((Prog.freezes||0)>=freezeMax()) return;            // at the cap → don't burn the milestone; grant it later when there's room
   Prog.freezeAwards.push(key); Prog.freezes=(Prog.freezes||0)+1; toast(`🧊 Streak Freeze earned — ${reason}!`); saveProg();
 }
 // The day streak is earned by finishing BOTH halves of the day: every spaced-repetition
@@ -4214,6 +4292,298 @@ function openGoalSettings(){
     if(document.querySelector('.view.active')?.id==="verse") renderVerse(); updateMetrics();
   };
 }
+/* =================== CAESAR'S TAX ===================
+   Pro users get every book free, so talents pile up with nothing to buy. Every seven days
+   Rome notices and takes its share — the point being to SPEND them or lose them. Half of
+   whatever Rome takes is quietly diverted to build a church in Rome, brick by brick, so the
+   loss becomes something that stands. Matthew 22:21 anchors the whole conceit: the talents
+   are Caesar's, the Word is God's. ==================================================== */
+const TAX_DAYS=7, TAX_WARN_DAYS=2, TAX_EXEMPT_UNDER=200, TAX_RICH_AT=1000;
+const TAX_TO_CHURCH=0.5;          // half of every levy is laid up as stone
+const CHURCH_GOAL=2500;           // talents per church; ~3 months of faithful use
+// [percentage Rome TAKES, weight]. The wealthy are assessed hardest — only 90/70 swap.
+const TAX_TABLES={ rich:[[90,60],[80,30],[70,7],[50,3]], poor:[[70,60],[80,30],[90,7],[50,3]] };
+// Twelve wedges whose counts mirror the odds, so the wheel shows what you're truly facing.
+const TAX_WHEEL={ rich:[90,80,70,90,80,50,90,80,90,70,90,90], poor:[70,80,90,70,80,50,70,80,70,90,70,70] };
+const CHURCH_STAGES=["bare ground","the ground is broken","the foundation is dug","the footings are laid",
+  "the steps rise","the walls go up","the columns stand","the portico takes shape","the roof is beamed",
+  "the windows are glazed","the dome is raised","the cross is set"];
+// 52 summonses — one a week, no repeat for a year. The joke is always on Rome, never on Scripture.
+const TAX_WEEKS=[
+ ["A Census Is Decreed","The governor requires an accounting of every talent in your purse. Spin, and learn Caesar's share."],
+ ["The Publican Calls","A tax-gatherer waits at your gate with ledger and stylus. He is not known for his mercy."],
+ ["The Legions Must Be Paid","Winter quarters are cold and the soldiers' wages are late. Rome turns its eyes to your treasury."],
+ ["For the Aqueduct","Water must run to the city, and stone is not quarried by goodwill."],
+ ["The Eagle Passes","The standard-bearer halts at your door. Where the eagle stops, the ledger opens."],
+ ["Tribute for the Provinces","Judea is assessed this week. Your name is upon the roll."],
+ ["Whose Image Is This?","The coin in your hand bears Caesar's face. Caesar has noticed."],
+ ["The Road Must Be Mended","Every mile of the Appian Way is paid for twice — once in stone, once in silver."],
+ ["A Requisition from the Prefect","His seal is fresh and his patience is thin."],
+ ["The Grain Dole","Rome must be fed before Rome is pleased. Your share has been calculated."],
+ ["The Harbour Dues","Nothing crosses the water untaxed. Nor, it seems, does anything on land."],
+ ["By Order of the Senate","SPQR has resolved that you can spare rather more than you supposed."],
+ ["The Scribe Sharpens His Stylus","He has your name, your street, and a distressingly accurate figure."],
+ ["The Salt Tax","Even salt belongs to Caesar. Be glad he has not yet thought of the air."],
+ ["Winter Quarters","The legion camps nearby this season. Hospitality is not optional."],
+ ["A Triumph Is Planned","Someone must pay for the laurels, the trumpets and the elephants."],
+ ["The Assessors Arrive","Two men, one ledger, no humour."],
+ ["Rome Remembers You","You had hoped to be forgotten. You were not."],
+ ["The Poll Tax","One head, one payment. Yours has been counted."],
+ ["The Governor's Accounts Are Short","They will not be short for long."],
+ ["A Levy for the Frontier","Barbarians at the Rhine — and the bill arrives in Judea."],
+ ["The Coin Weighs Heavy","So Rome has kindly offered to lighten it."],
+ ["Caesar's Portion","He asks only for what is his. He also decides what that is."],
+ ["The Ledger Is Opened","Your name sits between a fishmonger and a widow. Rome is nothing if not thorough."],
+ ["Tax Farmers at the Gate","They bought the right to collect from you, and mean to profit by it."],
+ ["Not the Only Treasury","The Temple keeps accounts. So, you will find, does Rome."],
+ ["A Bridge over the Tiber","It will be beautiful. It will be costly. It will be funded by you."],
+ ["The Denarius Due","A day's wage for a labourer — rather more, this week, for you."],
+ ["The Procurator Inquires","Politely. Once."],
+ ["Circuses to Arrange","Bread is cheap. Lions are not."],
+ ["The Garrison Is Reinforced","More shields, more spears, more silver — chiefly yours."],
+ ["A New Wing for the Palace","Marble does not quarry itself, and Caesar is fond of marble."],
+ ["The Wine Tax","A tax upon gladness. Rome misses nothing."],
+ ["Couriers on the Imperial Road","Fast horses, fed at your expense."],
+ ["The Recount","The first count was insulting to Rome. The second will be corrected."],
+ ["A Statue for the Forum","Caesar in bronze, larger than life, paid for by lives rather smaller."],
+ ["The Aqueduct Leaks","And so, conveniently, does the treasury."],
+ ["Rome Extends Her Roads","Every stone laid is a coin lifted."],
+ ["The Optio Takes Names","He writes slowly and remembers everything."],
+ ["Tribute Day in Galilee","The tables are set out in the square. Yours is the third."],
+ ["An Audit of the Faithful","Rome does not care what you believe. Rome cares what you have."],
+ ["The Wax Is Warm","The seal is pressed before you have finished protesting."],
+ ["A Fleet to Build","Pirates trouble the grain ships. You will trouble your purse."],
+ ["The Assessment Is Revised","Upward. It is always upward."],
+ ["Silver for the Standards","The eagles must gleam, whatever it costs you."],
+ ["The Quaestor's Visit","He brings a smile, two soldiers and a very long list."],
+ ["Provisions for the March","The legion eats before it walks, and you buy the bread."],
+ ["The Emperor's Birthday","Congratulations are expected. So is a gift."],
+ ["A Tax upon the Tax","The first was for the roads. The second is for collecting the first."],
+ ["The Column Rises","Every carved victory upon it was paid for by someone. This week, by you."],
+ ["Rome Counts the Provinces","And, provincial, counts you."],
+ ["The Last Levy of the Year","Rome wishes you a prosperous new year, and will return to inspect it."]
+];
+const TAX_VERSE='"Render therefore unto Caesar the things which are Caesar’s; and unto God the things that are God’s." — Matthew 22:21';
+
+function taxBand(t){ return t<TAX_EXEMPT_UNDER ? null : (t>=TAX_RICH_AT ? "rich" : "poor"); }
+function pickTaxRate(rows){ let r=Math.random()*rows.reduce((s,x)=>s+x[1],0);
+  for(let i=0;i<rows.length;i++){ if((r-=rows[i][1])<0) return rows[i][0]; } return rows[rows.length-1][0]; }
+function taxDueAt(){ return (Prog.taxAt||0)+TAX_DAYS*DAY; }
+function taxPending(){ return Billing.isPro() && !!Prog.taxAt && Date.now()>=taxDueAt(); }
+// whole days until the collectors arrive, or 0 when it isn't worth warning about yet
+function taxWarnDays(){ if(!Billing.isPro()||!Prog.taxAt) return 0;
+  const d=Math.ceil((taxDueAt()-Date.now())/DAY); return (d>0&&d<=TAX_WARN_DAYS)?d:0; }
+function taxWarnHTML(){ const d=taxWarnDays(); if(!d) return "";
+  return `<div class="taxwarn" id="taxWarnBtn"><span class="tw-ic">\u{1F985}</span><span>Caesar's collectors ride in <b>${d} day${d>1?"s":""}</b> — spend what you can.</span></div>`; }
+function wireTaxWarn(){ const b=el("taxWarnBtn"); if(b) b.onclick=openStore; }
+
+/* ---- the church your levy builds ---- */
+function church(){ Prog.church=Prog.church||{given:0,built:0,total:0}; return Prog.church; }
+function churchPct(){ return Math.max(0,Math.min(1, church().given/CHURCH_GOAL)); }
+function churchStage(){ const i=Math.min(CHURCH_STAGES.length-1, Math.floor(churchPct()*CHURCH_STAGES.length)); return CHURCH_STAGES[i]; }
+let _chSeq=0;
+// A Roman basilica revealed from the ground up as the stones are paid for.
+function churchSVG(pct){
+  const id="ch"+(++_chSeq), H=151, y=H*(1-pct);
+  return `<svg class="churchsvg" viewBox="0 0 240 158" role="img" aria-label="The church in Rome, ${Math.floor(pct*100)}% built">
+    <defs>
+      <clipPath id="${id}"><rect x="0" y="${y.toFixed(1)}" width="240" height="${(158-y).toFixed(1)}"/></clipPath>
+      <pattern id="${id}b" width="14" height="8" patternUnits="userSpaceOnUse">
+        <rect width="14" height="8" fill="var(--rome-marble)"/>
+        <path d="M0 8h14M7 0v8" stroke="var(--rome-ink)" stroke-opacity=".16" stroke-width=".7"/>
+      </pattern>
+    </defs>
+    <rect x="8" y="151" width="224" height="7" rx="2" fill="var(--rome-ink)" opacity=".22"/>
+    <g clip-path="url(#${id})">
+      <rect x="22" y="142" width="196" height="9" rx="1.5" fill="url(#${id}b)" stroke="var(--rome-ink)" stroke-opacity=".22"/>
+      <rect x="32" y="134" width="176" height="8" rx="1.5" fill="url(#${id}b)" stroke="var(--rome-ink)" stroke-opacity=".22"/>
+      <rect x="46" y="62" width="148" height="72" fill="var(--rome-ink)" opacity=".4"/>
+      <path d="M110 134 v-25 a10 10 0 0 1 20 0 v25 z" fill="var(--rome-red)" opacity=".75"/>
+      ${[52,76,100,124,148,172].map(x=>`<rect x="${x}" y="128" width="16" height="6" rx="1" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width=".8"/><rect x="${x+2}" y="70" width="12" height="58" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width=".8"/><rect x="${x}" y="64" width="16" height="6" rx="1" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width=".8"/>`).join("")}
+      <rect x="40" y="54" width="160" height="10" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width="1.2"/>
+      <path d="M36 54 L120 22 L204 54 Z" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width="1.6"/>
+      <path d="M104 50 L120 38 L136 50 Z" fill="var(--rome-red)" opacity=".5"/>
+      <path d="M94 22 a26 24 0 0 1 52 0 Z" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width="1.4"/>
+      <rect x="117" y="0" width="6" height="16" rx="1" fill="var(--rome-gold)"/>
+      <rect x="111" y="4" width="18" height="5" rx="1" fill="var(--rome-gold)"/>
+    </g></svg>`;
+}
+function churchAdd(n){
+  const c=church(); c.given+=n; c.total=(c.total||0)+n;
+  let finished=0;
+  while(c.given>=CHURCH_GOAL){ c.given-=CHURCH_GOAL; c.built=(c.built||0)+1; finished++; }
+  saveProg(); return finished;
+}
+function openChurch(){
+  const m=el("churchModal")||(()=>{ const d=document.createElement("div"); d.id="churchModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const c=church(), pct=churchPct();
+  m.innerHTML=`<div class="modal-card center"><div class="lv-topbar"><button class="lclose" id="chClose">✕</button>
+      <div style="flex:1;text-align:center;font-weight:800">The church in Rome</div><span style="width:34px"></span></div>
+    <p class="hint" style="margin:10px 0 4px">Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with.</p>
+    ${churchSVG(pct)}
+    <div class="churchbar"><span style="width:${(pct*100).toFixed(1)}%"></span></div>
+    <div class="churchstage">${Math.floor(pct*100)}% — ${churchStage()}</div>
+    <p class="hint" style="margin-top:6px"><b class="gold">${c.given}</b> of ${CHURCH_GOAL} talents toward this one${(c.total||0)>c.given?` · <b class="gold">${c.total}</b> given in all`:""}</p>
+    ${c.built?`<div class="teachbox" style="margin-top:12px"><div style="font-size:26px;letter-spacing:2px">${"⛪".repeat(Math.min(c.built,12))}${c.built>12?` +${c.built-12}`:""}</div>
+      <div style="margin-top:4px"><b class="gold">${c.built} church${c.built>1?"es":""}</b> finished and standing.</div></div>`
+      :`<p class="hint" style="margin-top:10px">No church finished yet — the first stones are being laid.</p>`}
+    <button class="btn" id="chOk" style="width:100%;margin-top:14px">Amen</button></div>`;
+  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("chClose").onclick=()=>m.style.display="none";
+  el("chOk").onclick=()=>m.style.display="none";
+}
+
+/* ---- the letter that arrives when you become Pro ---- */
+function openRomeLetter(after){
+  Prog.romeLetterSeen=true; if(!Prog.taxAt) Prog.taxAt=Date.now();   // the first levy is a week away, not now
+  saveProg();
+  const ov=taxOverlay();
+  ov.innerHTML=`<div class="taxcard">
+      <div class="taxspqr">S · P · Q · R</div>
+      <div class="taxlegion">${legionSVG()}${legionSVG()}${legionSVG()}</div>
+      <div class="romescroll" style="margin-top:10px">
+        <div class="rs-h">Rome Has Taken Notice</div>
+        <div class="rs-from">By order of Caesar</div>
+        <p style="margin:0 0 10px">Word has reached the Palatine that your storehouse has grown full. Where there is wealth, there is Rome; and where there is Rome, there is the reckoning.</p>
+        <p style="margin:0 0 10px">Therefore be it known: <b>every seven days</b> the collectors will call upon you, and the wheel will name Caesar's share. The legions must be paid, the roads kept, the aqueducts running.</p>
+        <p style="margin:0">Spend freely, then, or see it spent for you. And take this comfort — <b>half of all Rome takes from you is laid up as stone</b>, and a church rises in the imperial city that Caesar never meant to build.</p>
+        <div class="rs-sign">— the Procurator, on Caesar's authority</div>
+      </div>
+      <div class="taxverse">${TAX_VERSE}</div>
+      <button class="taxbtn" id="rlOk">So be it →</button></div>`;
+  ov.classList.add("on","march");
+  el("rlOk").onclick=()=>{ ov.classList.remove("on","march"); if(after) after(); };
+}
+
+/* ---- the overlay + its furniture ---- */
+function taxOverlay(){
+  let ov=el("taxov");
+  if(!ov){ ov=document.createElement("div"); ov.id="taxov"; ov.setAttribute("aria-hidden","true"); document.querySelector(".phone").appendChild(ov); }
+  return ov;
+}
+function legionSVG(){
+  return `<svg viewBox="0 0 40 60" aria-hidden="true">
+    <rect x="33" y="3" width="2" height="51" rx="1" fill="var(--rome-ink)"/>
+    <path d="M34 0 l3.2 7.5 -6.4 0z" fill="var(--rome-gold)"/>
+    <rect x="14" y="42" width="5.5" height="14" rx="1.5" fill="var(--rome-ink)"/>
+    <rect x="21.5" y="42" width="5.5" height="14" rx="1.5" fill="var(--rome-ink)"/>
+    <rect x="12" y="22" width="17" height="21" rx="2.5" fill="var(--rome-red)"/>
+    <path d="M12 22 h17 v4 h-17z" fill="var(--rome-ink)" opacity=".3"/>
+    <circle cx="20.5" cy="14.5" r="7" fill="var(--rome-gold)"/>
+    <rect x="13.5" y="14.5" width="14" height="6" rx="1" fill="var(--rome-gold)"/>
+    <rect x="16.5" y="15.5" width="8" height="5" rx="1.5" fill="var(--rome-ink)" opacity=".6"/>
+    <path d="M16.8 8 q3.7 -6.5 7.4 0 q-3.7 -2.2 -7.4 0z" fill="var(--rome-red)"/>
+    <rect x="19.5" y="3.5" width="2" height="5" rx="1" fill="var(--rome-red)"/>
+    <rect x="6" y="24" width="13.5" height="20" rx="3" fill="var(--rome-red)" stroke="var(--rome-gold)" stroke-width="1.6"/>
+    <path d="M12.7 27 v14 M9 34 h7.5" stroke="var(--rome-gold)" stroke-width="1.1" opacity=".95"/></svg>`;
+}
+let _twSeq=0;
+function taxWheelSVG(vals){
+  const id="tw"+(++_twSeq), n=vals.length, step=360/n, R=100, cx=108, cy=108;
+  const pt=(a,r)=>[cx+r*Math.cos((a-90)*Math.PI/180), cy+r*Math.sin((a-90)*Math.PI/180)];
+  let out=`<svg class="taxwheel" id="${id}" viewBox="0 0 216 216" aria-hidden="true"><circle cx="${cx}" cy="${cy}" r="${R+4}" fill="var(--rome-gold)"/>`;
+  vals.forEach((v,i)=>{
+    const a0=i*step, a1=(i+1)*step, [x0,y0]=pt(a0,R), [x1,y1]=pt(a1,R);
+    const fill = i%2 ? "var(--rome-red)" : "var(--rome-marble)";
+    const ink  = i%2 ? "var(--rome-marble)" : "var(--rome-ink)";
+    const [lx,ly]=pt(a0+step/2, R*0.66);
+    out+=`<path d="M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${R},${R} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z" fill="${fill}" stroke="var(--rome-gold)" stroke-width="1.2"/>`
+      + `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" fill="${ink}" font-size="15" font-weight="800" text-anchor="middle" dominant-baseline="central">${v}%</text>`;   // upright: readable all the way round
+  });
+  out+=`<circle cx="${cx}" cy="${cy}" r="19" fill="var(--rome-gold)" stroke="var(--rome-ink)" stroke-width="1.5"/>`
+     + `<circle cx="${cx}" cy="${cy}" r="12" fill="var(--rome-red)"/></svg>`;
+  return out;
+}
+function taxSealSVG(rate){
+  return `<svg class="taxseal" id="taxSeal" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="44" fill="var(--rome-red)" opacity=".92"/>
+    <circle cx="50" cy="50" r="37" fill="none" stroke="var(--rome-marble)" stroke-width="2" stroke-opacity=".8"/>
+    <text x="50" y="43" text-anchor="middle" fill="var(--rome-marble)" font-size="13" font-weight="800" letter-spacing="2">SPQR</text>
+    <text x="50" y="66" text-anchor="middle" fill="var(--rome-marble)" font-size="21" font-weight="800">${rate}%</text></svg>`;
+}
+
+/* ---- the levy itself ---- */
+function openTaxWheel(preview, after){
+  const bal=Prog.talents||0, band=taxBand(bal);
+  const rows=TAX_TABLES[band||"poor"], rate=band?pickTaxRate(rows):0;
+  const vals=TAX_WHEEL[band||"poor"];
+  const wk=TAX_WEEKS[(Prog.taxWeek||0)%TAX_WEEKS.length];
+  const takes=band?Math.round(bal*rate/100):0;
+  const toChurch=Math.round(takes*TAX_TO_CHURCH);
+  const ov=taxOverlay();
+  ov.innerHTML=`<div class="taxcard">
+      <div class="taxspqr">S · P · Q · R</div>
+      <div class="taxlegion">${legionSVG()}${legionSVG()}${legionSVG()}</div>
+      <div class="taxtitle">${wk[0]}</div>
+      <div class="taxsub">${wk[1]}</div>
+      <div class="taxwheelwrap">
+        <svg class="taxpointer" viewBox="0 0 24 28" aria-hidden="true"><path d="M12 28 L2 4 h20z" fill="var(--rome-ink)"/><path d="M12 24 L5 6 h14z" fill="var(--rome-gold)"/></svg>
+        ${taxWheelSVG(vals)}
+        ${taxSealSVG(rate||70)}
+      </div>
+      <div class="taxresult" id="taxResult">&nbsp;</div>
+      <div class="taxtook" id="taxTook">&nbsp;</div>
+      <div class="taxverse">${TAX_VERSE}</div>
+      <button class="taxbtn" id="taxGo">${preview?"Spin (preview)":"Face the wheel"}</button>
+      <button class="taxbtn ghost" id="taxDone" style="display:none">Render unto Caesar →</button>
+      <button class="taxbtn ghost" id="taxChurch" style="display:none">⛪ See what it has built</button>
+    </div>`;
+  ov.classList.add("on","march");
+  const wheel=ov.querySelector(".taxwheel");
+  const finish=()=>{
+    ov.classList.remove("on","march");
+    if(after) after();
+  };
+  el("taxGo").onclick=()=>{
+    el("taxGo").disabled=true; el("taxGo").style.opacity=".5";
+    // land on a wedge that actually bears the drawn value, with a little jitter inside it
+    const step=360/vals.length;
+    const seats=vals.map((v,i)=>v===(rate||vals[0])?i:-1).filter(i=>i>=0);
+    const seat=seats[Math.floor(Math.random()*seats.length)];
+    const jitter=(Math.random()-0.5)*step*0.6;
+    const deg=360*5 + (360 - (seat*step + step/2 + jitter));
+    wheel.classList.add("spin");
+    requestAnimationFrame(()=>{ wheel.style.transform=`rotate(${deg.toFixed(2)}deg)`; });
+    setTimeout(()=>{
+      const seal=el("taxSeal"); if(seal) seal.classList.add("stamp");
+      let built=0;
+      if(!band){
+        el("taxResult").textContent="Caesar takes no notice of the poor.";
+        el("taxTook").textContent="Your purse is too light to interest Rome.";
+      } else {
+        el("taxResult").textContent=`Caesar claims ${rate}%`;
+        if(preview){
+          el("taxTook").innerHTML=`<span class="muted">Preview only — nothing was taken. Rome would have claimed <b>${takes} \u{1FA99}</b>, laying <b>${toChurch}</b> as stone.</span>`;
+        } else {
+          spendTalents(takes);
+          built=churchAdd(toChurch);
+          el("taxTook").innerHTML=`−${takes} \u{1FA99} taken · <b class="gold">${toChurch}</b> laid up as stone`;
+        }
+      }
+      if(!preview){
+        Prog.taxAt=Date.now(); Prog.taxWeek=((Prog.taxWeek||0)+1)%TAX_WEEKS.length;
+        Prog.taxLog=[{at:Date.now(),rate:band?rate:0,took:takes,church:toChurch},...(Prog.taxLog||[])].slice(0,8);
+        saveProg(); updateMetrics();
+      }
+      if(built){ el("taxResult").innerHTML+=`<div style="font-size:14px;margin-top:6px">⛪ <b>A church stands in Rome.</b></div>`; }
+      const done=el("taxDone"), ch=el("taxChurch");
+      done.style.display=""; ch.style.display="";
+      done.onclick=finish;
+      ch.onclick=()=>{ finish(); openChurch(); };
+    }, 4400);
+  };
+}
+// Boot: the letter first if they've just become Pro, then any levy that has fallen due,
+// then the "what's new" card — never two at once.
+function maybeRomeLetter(after){
+  if(Billing.isPro() && !Prog.romeLetterSeen){ openRomeLetter(after); return true; }
+  return false;
+}
+function bootPopups(){
+  if(Billing.isPro() && !Prog.romeLetterSeen){ setTimeout(()=>openRomeLetter(checkVersionCard), 900); return; }
+  if(taxPending()){ setTimeout(()=>openTaxWheel(false, checkVersionCard), 900); return; }
+  checkVersionCard();
+}
 // ---- Perfect Week: review on ≥5 days in a Monday-anchored week → talent reward (feeds the store) ----
 function weekKeyOf(d){ const dt=new Date(d.getFullYear(),d.getMonth(),d.getDate()); dt.setDate(dt.getDate()-((dt.getDay()+6)%7)); return dt.getFullYear()+"-"+(dt.getMonth()+1)+"-"+dt.getDate(); }
 function weekDaysNow(){ return (Prog.weekKey===weekKeyOf(new Date())) ? (Prog.weekDays||0) : 0; }
@@ -4234,24 +4604,37 @@ function encourageHTML(){ const r=WORD_VERSES[Math.floor(Date.now()/DAY)%WORD_VE
 function openStore(){
   let m=document.getElementById("storeModal");
   if(!m){ m=document.createElement("div"); m.id="storeModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
-  const t=Prog.talents||0, freezeFull=(Prog.freezes||0)>=FREEZE_MAX, canFreeze=t>=120&&!freezeFull, canPeek=t>=40;
+  const cap=freezeMax();
+  const t=Prog.talents||0, freezeFull=(Prog.freezes||0)>=cap, canFreeze=t>=120&&!freezeFull, canPeek=t>=40, canPeek5=t>=150;
+  const warn=taxWarnDays();
   m.innerHTML=`<div class="modal-card">
     <h2 style="font-size:18px;margin:0 0 4px">💰 Talents Store</h2>
+    ${warn?`<div class="taxwarn" style="cursor:default;margin:8px 0"><span class="tw-ic">\u{1F985}</span><span>Caesar's collectors ride in <b>${warn} day${warn>1?"s":""}</b>. Spend them, or Rome will.</span></div>`:""}
     <p class="hint" style="margin:0 0 12px">You have <b class="gold">🪙 ${t} talents</b>. Spend them on tools that keep you going.</p>
     <div class="storeitem">
       <div class="si-top"><span>🧊 Streak Freeze</span><span class="si-have">have ${Prog.freezes||0}</span></div>
-      <div class="si-desc">Auto-saves your streak if you miss a day.${freezeFull?` You're at the max of ${FREEZE_MAX}.`:""}</div>
+      <div class="si-desc">Auto-saves your streak if you miss a day.${freezeFull?` You're at the max of ${cap}.`:""}</div>
       <button class="btn ${canFreeze?"":"ghost"}" data-buy="freeze" ${canFreeze?"":"disabled"}>${freezeFull?"Maxed out":"Buy · 120 🪙"}</button></div>
     <div class="storeitem" style="margin-top:12px">
       <div class="si-top"><span>🔎 Peek token</span><span class="si-have">have ${Prog.hints||0}</span></div>
       <div class="si-desc">Reveal the book in a verse test when you're stuck.</div>
       <button class="btn ${canPeek?"":"ghost"}" data-buy="peek" ${canPeek?"":"disabled"}>${canPeek?"Buy · 40 🪙":"Need 40 🪙"}</button></div>
+    <div class="storeitem" style="margin-top:12px">
+      <div class="si-top"><span>🔎 Five Peek tokens</span><span class="si-have">save 50 🪙</span></div>
+      <div class="si-desc">Five at once, cheaper than one at a time — somewhere for a full purse to go.</div>
+      <button class="btn ${canPeek5?"":"ghost"}" data-buy="peek5" ${canPeek5?"":"disabled"}>${canPeek5?"Buy · 150 🪙":"Need 150 🪙"}</button></div>
+    ${Billing.isPro()?`<div class="storeitem" style="margin-top:12px">
+      <div class="si-top"><span>⛪ The church in Rome</span><span class="si-have">${church().built} built</span></div>
+      <div class="si-desc">Half of every levy Caesar takes is laid up as stone. See what has risen.</div>
+      <button class="btn ghost" id="storeChurch">Visit the church</button></div>`:""}
     <button class="btn ghost" id="storeClose" style="margin-top:16px;width:100%">Done</button></div>`;
   m.style.display="flex";
   m.querySelector("#storeClose").onclick=()=>{ m.style.display="none"; };
+  if(m.querySelector("#storeChurch")) m.querySelector("#storeChurch").onclick=()=>{ m.style.display="none"; openChurch(); };
   m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   m.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{
-    if(b.dataset.buy==="freeze"){ if((Prog.freezes||0)>=FREEZE_MAX||(Prog.talents||0)<120) return; Prog.talents-=120; Prog.freezes++; toast("🧊 Streak Freeze purchased!"); }
+    if(b.dataset.buy==="freeze"){ if((Prog.freezes||0)>=freezeMax()||(Prog.talents||0)<120) return; Prog.talents-=120; Prog.freezes++; toast("🧊 Streak Freeze purchased!"); }
+    else if(b.dataset.buy==="peek5"){ if((Prog.talents||0)<150) return; Prog.talents-=150; Prog.hints=(Prog.hints||0)+5; toast("🔎 Five Peek tokens purchased!"); }
     else { if((Prog.talents||0)<40) return; Prog.talents-=40; Prog.hints=(Prog.hints||0)+1; toast("🔎 Peek token purchased!"); }
     saveProg(); updateMetrics(); openStore();
   });
@@ -5363,7 +5746,7 @@ function wirePaywall(){
   if(el("payCode")) el("payCode").onclick=()=>{
     const code=prompt("Enter your unlock code:");
     if(code===null) return;
-    if(Billing.redeem(code)){ closePaywall(); renderAcctBox(); renderPath(); toast("✨ Code accepted — full access unlocked!"); }
+    if(Billing.redeem(code)){ closePaywall(); renderAcctBox(); renderPath(); toast("✨ Code accepted — full access unlocked!"); setTimeout(()=>maybeRomeLetter(),900); }
     else toast("That code isn't valid.");
   };
 }
@@ -5791,6 +6174,11 @@ if(el("testAdd500")) el("testAdd500").onclick=()=>{   // admin: actually grant 5
   el("themeModal").style.display="none";
   setTimeout(()=>earnTalents(500), 180);
 };
+// admin: the wheel spins for real but takes nothing and doesn't touch the 7-day clock
+if(el("testTaxWheel")) el("testTaxWheel").onclick=()=>{ el("themeModal").style.display="none"; openTaxWheel(true); };
+if(el("testPaywall")) el("testPaywall").onclick=()=>{ el("themeModal").style.display="none"; openPaywall(); };
+if(el("testChurch")) el("testChurch").onclick=()=>{ el("themeModal").style.display="none"; openChurch(); };
+if(el("testRomeLetter")) el("testRomeLetter").onclick=()=>{ el("themeModal").style.display="none"; Prog.romeLetterSeen=false; saveProg(); openRomeLetter(); };
 if(el("testUnpaid")) el("testUnpaid").onclick=()=>{
   if(Billing.isPro()){ Billing.revoke(); bustCaches(); el("themeModal").style.display="none"; toast("🆓 Now simulating an unpaid (free) user — Pro content is locked."); show("learn"); }
   else { Billing.grant(12); bustCaches(); el("themeModal").style.display="none"; toast("✨ Pro access restored."); show("learn"); }
@@ -6575,7 +6963,7 @@ if(!Prog.onboarded){
 } else {
   show(bootTab);   // returning user / page refresh — back to the tab they were on
 }
-checkVersionCard();   // "What's new" card — shown once per release
+bootPopups();   // Rome's letter → any levy that has fallen due → the "What's new" card
 
 /* ---- Android / browser back button = in-app back (one screen per press); at the Learn home, back again exits ---- */
 function appBack(){
