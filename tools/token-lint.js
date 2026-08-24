@@ -5,7 +5,7 @@
 // Run:  node tools/token-lint.js     (exits non-zero on any violation)
 const fs = require('fs');
 const path = require('path');
-const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, '..', 'src', 'index.html'), 'utf8');
 const style = html.match(/<style>([\s\S]*?)<\/style>/)[1];
 
 function stripBlocks(css) {

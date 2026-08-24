@@ -4,7 +4,7 @@
 // Run:  node tools/decor-lint.js
 const fs = require('fs');
 const path = require('path');
-const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, '..', 'src', 'index.html'), 'utf8');
 
 const m = html.match(/\/\*\s*===== THEME DECORATORS[\s\S]*?===== END THEME DECORATORS ===== \*\//);
 if (!m) { console.error('decor-lint: markers not found'); process.exit(1); }

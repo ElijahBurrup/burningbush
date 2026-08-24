@@ -643,8 +643,8 @@
   .taxlegion svg{opacity:0;transform:translateX(-40px)}
   .taxlegion .lg{width:34px;height:52px}
   .taxlegion .hl{width:38px;height:54px}
-  .taxlegion.solo{height:46px;margin-bottom:0}
-  .taxlegion.solo .hl{width:36px;height:51px}
+  .taxlegion.solo{height:42px;margin-bottom:0}
+  .taxlegion.solo .hl{width:30px;height:42px}
   .taxhub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;pointer-events:none;line-height:0}
   .taxhub svg{width:38px;height:54px;display:block;filter:drop-shadow(0 2px 4px var(--rome-shadow))}
   #taxov.march .taxlegion svg{animation:legionmarch .55s ease-out forwards}
@@ -705,7 +705,7 @@
   .taxwarn{display:flex;align-items:center;gap:9px;background:var(--panel2);border:1px solid var(--rome-gold);border-radius:12px;padding:9px 12px;margin-bottom:8px;cursor:pointer;font-size:13px;font-weight:700;color:var(--ink-soft);text-align:left}
   .taxwarn .tw-ic{font-size:19px;flex:0 0 auto}
   /* very short screens (SE-class): compress the letter so it still reads without scrolling */
-  @media (max-height:620px){
+  @media (max-height:700px){
     .taxcard{padding:10px 12px 12px}
     .taxspqr-note{font-size:9.5px;margin-bottom:7px}
     .taxlegion.solo{height:38px}
@@ -715,6 +715,17 @@
     .romescroll p{margin:0 0 6px}
     .taxverse{font-size:10.5px;margin-top:7px;padding-top:6px}
     .taxbtn{padding:11px;font-size:14px;margin-top:8px}
+  }
+  /* SE-class screens (568px tall): the letter still has to read in one screen */
+  @media (max-height:600px){
+    .taxlegion.solo{height:30px}
+    .taxlegion.solo .hl{width:22px;height:31px}
+    .romescroll{font-size:11.5px;line-height:1.32;padding:9px 10px}
+    .romescroll .rs-h{font-size:15px}
+    .romescroll p{margin:0 0 5px}
+    .romescroll .rs-sign{margin-top:5px}
+    .taxverse{font-size:9.5px;line-height:1.35;margin-top:5px;padding-top:5px}
+    .taxbtn{padding:10px;font-size:13.5px;margin-top:7px}
   }
   @media (prefers-reduced-motion:reduce){
     .taxwheel.spin{transition:transform .35s linear}
@@ -1583,8 +1594,13 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.9.2";
+const APP_VERSION="1.9.3";
 const CHANGELOG=[
+ {v:"1.9.3", d:"August 24, 2026", t:"Small mercies", items:[
+   ["new","The <b>“a little, and often”</b> word now waits until you have done <b>twenty</b> things in a day rather than fifteen."],
+   ["fix","“New palace” on the Learn path is now <b>Add Palace</b>."],
+   ["fix","Rome’s letter fits on one screen again on smaller phones — it had crept over by a few pixels."]
+ ]},
  {v:"1.9.2", d:"August 24, 2026", t:"In front, where you can read it", items:[
    ["fix","Tapping <b>S·P·Q·R</b> opened the explanation <i>behind</i> Caesar’s screen. Any pop-up opened over a full-screen moment — the church, a word’s Hebrew or Greek, Rome explaining itself — now comes up in front where you can actually read it."]
  ]},
@@ -2985,7 +3001,7 @@ function buildUnits(){
   units.push({name:"Spaced Repetition", ic:"🔁", videoTrack:true, skills:[ vid("sr") ]});
   // Optional bonus palaces get appended to the end of each later section (never block progress).
   let _palaceSlot=1;
-  const addOptPalace=(u)=>{ u.skills.push({id:"palace:"+_palaceSlot,label:"New palace",kind:"palace",optional:true,items:[_palaceSlot]}); _palaceSlot++; return u; };
+  const addOptPalace=(u)=>{ u.skills.push({id:"palace:"+_palaceSlot,label:"Add Palace",kind:"palace",optional:true,items:[_palaceSlot]}); _palaceSlot++; return u; };
   // 4) Balanced climb: each round pairs Old Testament books with New Testament books (OT 6-39, NT 41-66 — Mark onward).
   const ot=range(6,39), nt=range(41,66), ROUNDS=12;
   const rng=arr=>arr.length?bookName(arr[0])+(arr.length>1?"–"+bookName(arr[arr.length-1]):""):"";
@@ -4588,7 +4604,7 @@ function pickBlessing(mastered, b, c, v){
 
 /* ---- "A little, and often." When a day's work gets big, teach the rhythm rather than
    applaud the burst: Scripture settles by returning, not by rushing. ---- */
-const PACE_AT=15;
+const PACE_AT=20;
 const PACE_VERSES=[
  [[23,28,10],"Line upon line — a little at a time is God's own pattern for teaching."],
  [[25,3,23],"His mercies are new every morning. Come back tomorrow and find them."],
