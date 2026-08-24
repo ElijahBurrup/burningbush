@@ -654,6 +654,12 @@
   .taxwheelwrap{position:relative;width:196px;height:196px;margin:4px auto 2px}
   .taxwheel{width:196px;height:196px;display:block}
   @media (max-height:700px){ .taxwheelwrap{width:168px;height:168px} .taxwheel{width:168px;height:168px} .taxlegion{height:46px} .taxlegion .lg{width:28px;height:43px} }
+  /* once the wheel has stopped it has done its work — give the room to the verdict */
+  .taxcard.settled .taxwheelwrap{width:150px;height:150px;transition:width .4s ease,height .4s ease}
+  .taxcard.settled .taxwheel{width:150px;height:150px}
+  .taxcard.settled .taxlegion{height:0;overflow:hidden;margin:0}
+  .taxcard.settled .taxsub{display:none}
+  @media (prefers-reduced-motion:reduce){ .taxcard.settled .taxwheelwrap{transition:none} }
   .taxwheel.spin{transition:transform 4.2s cubic-bezier(.17,.67,.16,1)}
   .taxpointer{position:absolute;top:-7px;left:50%;transform:translateX(-50%);z-index:3;width:24px;height:28px;filter:drop-shadow(0 2px 3px var(--rome-shadow))}
   .taxresult{font-family:var(--font-display);font-size:17px;font-weight:800;margin:4px 0 0;min-height:23px;color:var(--gold-ink)}
@@ -1574,8 +1580,11 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.9.0";
+const APP_VERSION="1.9.1";
 const CHANGELOG=[
+ {v:"1.9.1", d:"August 24, 2026", t:"Room for the verdict", items:[
+   ["fix","Once Caesar’s wheel stops it steps aside — the wheel shrinks, the legion falls back, and the <b>Build</b> button is brought into view. It no longer hangs below the fold on a small phone."]
+ ]},
  {v:"1.9.0", d:"August 24, 2026", t:"A piece at a time", items:[
    ["new","<b>Each levy now pays for one piece of the church</b> — a stretch of wall, a pew, the pulpit, a stained-glass window, the bell, the font, the great door — and <b>25 sweaty taps</b> finish it. Fourteen pieces, each with its own trades and its own drawing that fills in as you work."],
    ["new","A faint ghost of the finished piece stands behind your work, so you can see what you are building toward."],
@@ -5118,6 +5127,9 @@ function openTaxWheel(preview, after){
         saveProg(); updateMetrics();
       }
       if(built){ el("taxResult").innerHTML+=`<div style="font-size:14px;margin-top:6px">⛪ <b>A church stands in Rome.</b></div>`; }
+      const card=ov.querySelector(".taxcard"); if(card) card.classList.add("settled");
+      // make sure the way forward is on screen, whatever the phone
+      setTimeout(()=>{ try{ ov.scrollTo({top:ov.scrollHeight, behavior:"smooth"}); }catch(e){ ov.scrollTop=ov.scrollHeight; } }, 260);
       // Taxed → the only way on is to go and lay the stone. Untaxed → nothing was built, so just leave.
       if(band && !preview && toChurch>0){
         const bld=el("taxBuild"); bld.style.display="";
