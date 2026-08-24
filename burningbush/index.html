@@ -850,6 +850,9 @@
   /* ---- theme picker ---- */
   .themebtn{background:var(--panel2);border:1px solid var(--line);border-radius:9px;width:34px;height:34px;font-size:16px;cursor:pointer;color:var(--ink)}
   .modal{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:center;justify-content:center;z-index:60;padding:20px}
+  /* A modal opened while a full-screen overlay is up must sit ABOVE it — overlays are z-150,
+     so a plain z-60 modal opens behind them and looks like nothing happened. */
+  .modal.above{z-index:160}
   .modal-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;width:100%;max-width:340px;max-height:86%;overflow:auto}
   .theme-opt{display:flex;align-items:center;gap:12px;width:100%;background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;cursor:pointer;color:var(--ink);text-align:left}
   .theme-opt.sel{border-color:var(--gold-ink)}
@@ -1580,8 +1583,11 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.9.1";
+const APP_VERSION="1.9.2";
 const CHANGELOG=[
+ {v:"1.9.2", d:"August 24, 2026", t:"In front, where you can read it", items:[
+   ["fix","Tapping <b>S·P·Q·R</b> opened the explanation <i>behind</i> Caesar’s screen. Any pop-up opened over a full-screen moment — the church, a word’s Hebrew or Greek, Rome explaining itself — now comes up in front where you can actually read it."]
+ ]},
  {v:"1.9.1", d:"August 24, 2026", t:"Room for the verdict", items:[
    ["fix","Once Caesar’s wheel stops it steps aside — the wheel shrinks, the legion falls back, and the <b>Build</b> button is brought into view. It no longer hangs below the fold on a small phone."]
  ]},
@@ -1681,7 +1687,7 @@ function openWhatsNew(all){
     <div class="cl-wrap">${list.map(releaseHTML).join("")}</div>
     ${all?"":`<button class="btn ghost sm" id="wnAll" style="width:100%;margin-top:10px">See every version</button>`}
     <button class="btn" id="wnOk" style="width:100%;margin-top:10px">${all?"Done":"Amen — got it"}</button></div>`;
-  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("wnClose").onclick=()=>m.style.display="none";
   el("wnOk").onclick=()=>m.style.display="none";
   if(el("wnAll")) el("wnAll").onclick=()=>openWhatsNew(true);
@@ -2643,6 +2649,15 @@ function updateTabLocks(){
 
 /* =================== ROUTING =================== */
 const el=id=>document.getElementById(id);
+// Raise a modal above any full-screen overlay that is currently showing.
+function raiseModal(m){
+  if(!m) return;
+  const up=["taxov","buildov","scov","simov","obov"].some(id=>{
+    const o=el(id); if(!o) return false;
+    return o.classList.contains("on") || (o.style.display && o.style.display!=="none");
+  });
+  m.classList.toggle("above", up);
+}
 const views=document.querySelectorAll(".view");
 // Keep password managers (and browser autofill) from popping up on ordinary text fields — palace names,
 // verse scenes, location boxes, etc. Only the real login fields (in #loginModal) accept credential autofill.
@@ -3802,7 +3817,7 @@ function confirmSpend(title, sub, onYes, opts){ opts=opts||{};
     <p class="hint" style="margin:0 0 16px">${sub}</p>
     <button class="btn" id="spYes" style="width:100%">${opts.yes||"Yes, use my talents"}</button>
     <button class="btn ghost" id="spNo" style="width:100%;margin-top:8px">Cancel</button></div>`;
-  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("spYes").onclick=()=>{ m.style.display="none"; onYes(); };
   el("spNo").onclick=()=>{ m.style.display="none"; };
 }
@@ -4350,7 +4365,7 @@ function onGoalComplete(){
     <div class="gold" style="font-weight:800;font-size:13px;margin-bottom:10px">Matthew 25:21</div>
     <p class="lead">You kept today's goal of <b class="gold">${goalToday()}</b>. Want to adjust it?</p>
     <div class="btnrow"><button class="btn" id="gdAdjust">Adjust my goal</button><button class="btn ghost" id="gdKeep">Keep it</button></div></div>`;
-  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("gdKeep").onclick=()=>m.style.display="none";
   el("gdAdjust").onclick=()=>{ m.style.display="none"; openGoalSettings(); };
 }
@@ -4401,7 +4416,7 @@ function openGoalSettings(){
     <div class="prof-sect" style="margin-top:18px">Reminders</div>
     <div id="goalReminderBox"></div>
     <button class="btn" id="gsSave" style="width:100%;margin-top:16px">Save</button></div>`;
-  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("gsClose").onclick=()=>m.style.display="none";
   m.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{
     draft.mode=b.dataset.mode;
@@ -4497,7 +4512,7 @@ function openWordDef(b,c,v,i,word){
         <div style="flex:1;text-align:center;font-weight:800">${clean||"This word"}</div><span style="width:34px"></span></div>
       <div class="hint" style="margin:8px 0 0">${bookName(b)} ${c}:${v}</div>${body}
       <button class="btn" id="wdOk" style="width:100%;margin-top:14px">Close</button></div>`;
-    m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+    m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
     el("wdClose").onclick=()=>m.style.display="none";
     el("wdOk").onclick=()=>m.style.display="none";
   };
@@ -4603,7 +4618,7 @@ function openPaceNudge(){
       <div class="gold" style="font-style:normal;font-weight:800;font-size:12px;margin-top:6px">${bookName(ref[0])} ${ref[1]}:${ref[2]}</div></div>
     <p class="hint" style="margin-top:10px">${why}</p>
     <button class="btn" id="pnOk" style="width:100%;margin-top:14px">Amen</button></div>`;
-  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("pnOk").onclick=()=>m.style.display="none";
 }
 // Fires once a day, the first time the day's tally reaches PACE_AT.
@@ -4755,7 +4770,7 @@ function openChurch(){
         <div style="font-size:13px;color:var(--ink-soft);margin-top:2px">church${c.built>1?"es":""} finished<br>and standing</div></div></div>`
       :`<p class="hint" style="margin-top:10px">No church finished yet — the first stones are being laid.</p>`}
     <button class="btn" id="chOk" style="width:100%;margin-top:14px">Amen</button></div>`;
-  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("chClose").onclick=()=>m.style.display="none";
   el("chOk").onclick=()=>m.style.display="none";
 }
@@ -5009,7 +5024,7 @@ function openSpqrNote(){
     <p class="lead" style="margin:8px 0 0">“The Senate and People of Rome.”</p>
     <p class="hint" style="margin:10px 0 0">Rome stamped these four letters on every standard, every coin and every demand for money — the whole authority of the empire in four letters.</p>
     <button class="btn" id="sqOk" style="width:100%;margin-top:14px">Got it</button></div>`;
-  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("sqClose").onclick=()=>m.style.display="none";
   el("sqOk").onclick=()=>m.style.display="none";
 }
@@ -5302,7 +5317,7 @@ function showSceneReveal(n, isBook){
     ${(!mine&&!built)?`<p class="hint" style="margin-top:10px">You haven't written a scene for this one yet — you can add one on its lesson card in <b class="gold">Learn</b>.</p>`:""}
     <div class="teachbox" style="margin-top:10px">${decodeSentence(n)}</div>
     <button class="btn" id="srvOk" style="width:100%;margin-top:12px">Got it</button></div>`;
-  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("srvClose").onclick=()=>m.style.display="none";
   el("srvOk").onclick=()=>m.style.display="none";
 }
@@ -5976,7 +5991,7 @@ function openMicHelp(){
     <div class="inst-tabs"><button class="inst-tab ${plat!=="android"?"on":""}" data-mplat="ios">🍎 iPhone</button><button class="inst-tab ${plat==="android"?"on":""}" data-mplat="android">🤖 Android</button></div>
     <div id="micHelpBody" style="text-align:left">${body(plat==="android"?"android":"ios")}</div>
     <button class="btn" id="micHelpClose" style="width:100%;margin-top:12px">Got it</button></div>`;
-  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("micHelpClose").onclick=()=>m.style.display="none";
   m.querySelectorAll("[data-mplat]").forEach(t=>t.onclick=()=>{ m.querySelectorAll(".inst-tab").forEach(x=>x.classList.remove("on")); t.classList.add("on"); el("micHelpBody").innerHTML=body(t.dataset.mplat); });
 }
@@ -6176,7 +6191,7 @@ function openInstallDialog(){
       <div id="instBody" style="text-align:left">${body(plat==="android"?"android":"ios")}</div>
       <div class="callout" style="margin-top:12px;text-align:left"><b>🔑 Same data everywhere.</b> Log in with your account and your progress syncs across your phone, computer, and this website.</div>`}
     <button class="btn ${isStandalone()?"":"ghost"}" id="instClose" style="margin-top:14px;width:100%">Close</button></div>`;
-  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("instClose").onclick=()=>m.style.display="none";
   const wireNow=()=>{ const b=el("instNow"); if(b) b.onclick=async()=>{ if(!bbInstallPrompt) return; bbInstallPrompt.prompt(); try{ await bbInstallPrompt.userChoice; }catch(e){} bbInstallPrompt=null; m.style.display="none"; }; };
   wireNow();
@@ -6194,7 +6209,7 @@ function openBrandMenu(){
     <button class="btn ghost menu-row" id="bmBug"><span>🐞</span> Report Bug</button>
     <button class="btn ghost menu-row" id="bmFeat"><span>💡</span> Request Feature</button>
     <button class="btn" id="bmClose" style="margin-top:12px;width:100%">Close</button></div>`;
-  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("bmClose").onclick=()=>m.style.display="none";
   if(el("bmInstall")) el("bmInstall").onclick=()=>{ m.style.display="none"; openInstallDialog(); };
   el("bmDonate").onclick=()=>{ m.style.display="none"; openTicketForm({type:"donate", title:"🎁 Gift a subscription", intro:"Bless someone with Burning Bush. Tell us their name or email and add a note — we'll follow up to set it up.", recipient:true, placeholder:"A note for them (optional)…"}); };
@@ -6238,7 +6253,7 @@ function openStatsInfo(){
     <div class="statrow"><span class="static">★</span><div><b>${Prog.memorized.length} verse${Prog.memorized.length===1?"":"s"} hidden</b><div class="hint" style="margin:2px 0 0">Verses you've built into pictures and can test yourself on.</div></div></div>
     <button class="btn" id="siStore" style="margin-top:16px;width:100%">💰 Talents Store · <b>${Prog.talents||0}</b> talents</button>
     <button class="btn ghost" id="siClose" style="margin-top:8px;width:100%">Close</button></div>`;
-  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("siClose").onclick=()=>m.style.display="none";
   el("siStore").onclick=()=>{ m.style.display="none"; openStore(); };
 }
@@ -6656,7 +6671,7 @@ function openNotifyHelp(denied){
     ${denied?`<p class="hint" style="margin:10px 0 4px;color:var(--miss-ink)"><b>Notifications are currently blocked on this device.</b></p>`:""}
     <div style="margin-top:12px">${body}</div>${extra}
     <button class="btn" id="nhOk" style="width:100%;margin-top:14px">Got it</button></div>`;
-  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("nhClose").onclick=()=>m.style.display="none";
   el("nhOk").onclick=()=>m.style.display="none";
   if(el("nhInstall")) el("nhInstall").onclick=()=>{ m.style.display="none"; openInstallDialog(); };
