@@ -588,6 +588,27 @@
   .navrow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
   .navrow .btn.sm{width:auto}
   .vpsel.needpick{border-color:var(--miss);box-shadow:0 0 0 2px var(--no-bg)}
+  /* goal setup — one mode at a time */
+  .goalseg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .goalseg-b{padding:9px 6px;border-radius:11px;border:2px solid var(--line);background:var(--panel2);color:var(--muted);font-size:12px;font-weight:800;cursor:pointer;line-height:1.25;min-width:0}
+  .goalseg-b.on{border-color:var(--gold2);background:var(--gold-soft);color:var(--gold-ink)}
+  .goalrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+  .goalrow-k{font-size:14px;font-weight:700;color:var(--ink-soft)}
+  .goalfield{min-width:64px;padding:10px 14px;border-radius:11px;border:2px solid var(--gold2);background:var(--panel2);color:var(--gold-ink);font-size:18px;font-weight:800;cursor:pointer}
+  /* reminders — only the alarms you actually use are drawn */
+  .rem-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .rem-row .rem-time{flex:1;text-align:left}
+  .rem-toggle{background:var(--panel2);border:1px solid var(--line);border-radius:10px;font-size:17px;line-height:1;padding:8px 10px;cursor:pointer;filter:grayscale(1);opacity:.55}
+  .rem-toggle.on{filter:none;opacity:1;border-color:var(--gold2)}
+  .rem-main{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;font-weight:700}
+  .rem-main input{width:20px;height:20px}
+  .nhstep{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;font-size:13.5px;line-height:1.45;color:var(--ink-soft)}
+  .nhstep b.n{flex:0 0 22px;height:22px;border-radius:50%;background:var(--gold);color:var(--on-accent);display:grid;place-items:center;font-size:12px;margin-top:1px}
+  /* word-picker warm-up */
+  .wpgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+  .wpopt{padding:13px 8px;border-radius:12px;border:2px solid var(--line);background:var(--panel2);color:var(--ink);font-size:15px;font-weight:700;cursor:pointer;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .wpopt.good{border-color:var(--green);background:var(--green-soft);color:var(--good)}
+  .wpopt.bad{border-color:var(--miss-ink);background:var(--no-bg);color:var(--miss-ink)}
   .vlegend-wrap{margin:10px 0 0}
   .vlegend-toggle{background:none;border:none;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.04em;padding:4px 0;cursor:pointer}
   .vlegend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:4px 0 2px}
@@ -1443,8 +1464,15 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.2.0";
+const APP_VERSION="1.3.0";
 const CHANGELOG=[
+ {v:"1.3.0", d:"August 24, 2026", t:"Your rhythm, your reminders", items:[
+   ["new","<b>The daily goal screen asks one question first:</b> the same number every day, weekdays apart from weekends, or each day on its own — and then shows only that. No more hunting through options you are not using."],
+   ["new","Choosing a number now uses the same square keypad as the verse test, so the app asks for a number the same way everywhere."],
+   ["new","<b>Up to three daily reminders</b>, set right there on the goal screen. Only the ones you actually use are shown — start with one and add another when you want it."],
+   ["new","If reminders are not coming through, there is now a step-by-step walkthrough written for your exact phone — iPhone or Android — including the battery setting on Android that silently delays them."],
+   ["new","<b>A word-picker warm-up before you type a verse word for word.</b> Eight words appear and you tap the one that comes next: green and it moves on, red and you try again. Recognition first, then recall."]
+ ]},
  {v:"1.2.0", d:"August 24, 2026", t:"Your pace, your order", items:[
    ["new","<b>Pro subscribers can now learn the books in any order</b> — start with the one God has put on your heart, not the one that comes next."],
    ["new","Not subscribed? You can still open the next book with <b>1000 talents</b>. The books come in order, one at a time — and every talent you've earned counts toward the next one."],
@@ -2088,7 +2116,17 @@ function migrateProg(p){
   if(typeof p.freezes!=="number") p.freezes=0; p.freezeAwards=arr(p.freezeAwards); // Streak-Freeze power-ups + which milestones already granted one
   if(typeof p.hints!=="number") p.hints=0; // "Peek" tokens spendable in the verse test
   if(typeof p.weekKey!=="string") p.weekKey=""; if(typeof p.weekDays!=="number") p.weekDays=0; if(typeof p.weekGoalHit!=="boolean") p.weekGoalHit=false; // Perfect-Week tracking
-  p.reminder=obj(p.reminder); if(typeof p.reminder.on!=="boolean") p.reminder.on=false; if(typeof p.reminder.time!=="string") p.reminder.time="20:00"; // daily reminder preference
+  // Daily goal: one of three modes, so the setup screen only ever shows one set of controls.
+  if(p.goalMode!=="same"&&p.goalMode!=="week"&&p.goalMode!=="days")
+    p.goalMode = (p.goalByDay && Object.keys(p.goalByDay).length) ? "days" : "same";   // existing per-day users keep their setup
+  if(typeof p.goalWeekday!=="number") p.goalWeekday = (p.dailyGoal!=null?p.dailyGoal:1);
+  if(typeof p.goalWeekend!=="number") p.goalWeekend = (p.dailyGoal!=null?p.dailyGoal:1);
+  // Reminders: up to 3 alarms. An older single {time} becomes alarm 1 so nobody loses their setting.
+  p.reminder=obj(p.reminder); if(typeof p.reminder.on!=="boolean") p.reminder.on=false;
+  if(!Array.isArray(p.reminder.times)) p.reminder.times=[{t:(typeof p.reminder.time==="string"&&p.reminder.time)||"20:00", on:true}];
+  p.reminder.times=p.reminder.times.filter(x=>x&&typeof x.t==="string"&&/^\d{1,2}:\d{2}$/.test(x.t)).slice(0,3);
+  if(!p.reminder.times.length) p.reminder.times=[{t:"20:00",on:true}];
+  p.reminder.time=p.reminder.times[0].t;   // keep the legacy field in step
   p.saved=p.saved.filter(k=>!p.memorized.includes(k)); p.skipped=p.skipped.filter(k=>!p.memorized.includes(k)); // heal verses stuck in saved/skip after being learned
   // (future) if(p.__v<2){ ...transform... }
   p.__v=PROG_SCHEMA;
@@ -4042,9 +4080,17 @@ function creditToday(){
   saveProg(); updateMetrics(); checkBadges();
 }
 /* ================= DAILY GOAL — verses + book images + word-for-word, combined (1–10/day) ================= */
-// goal can be a single number (Prog.dailyGoal) or overridden per weekday (Prog.goalByDay[0..6], 0=Sunday)
-function goalToday(){ const dow=new Date().getDay(); const byDay=Prog.goalByDay||{};
-  let g = (byDay[dow]!=null) ? byDay[dow] : (Prog.dailyGoal!=null ? Prog.dailyGoal : 1);
+// Three ways to set the goal — same every day, weekdays vs weekends, or each day on its own.
+// The setup screen shows ONLY the chosen mode's controls; this reads whichever is in force.
+const GOAL_MODES=[["same","Same<br>every day"],["week","Weekdays<br>vs weekends"],["days","Each day<br>on its own"]];
+function goalMode(){ const m=Prog.goalMode; return (m==="week"||m==="days")?m:"same"; }
+function goalToday(){
+  const dow=new Date().getDay(), m=goalMode(), base=(Prog.dailyGoal!=null?Prog.dailyGoal:1);
+  let g;
+  if(m==="days"){ const byDay=Prog.goalByDay||{}; g=(byDay[dow]!=null)?byDay[dow]:base; }
+  else if(m==="week"){ g=(dow===0||dow===6) ? (Prog.goalWeekend!=null?Prog.goalWeekend:base)
+                                            : (Prog.goalWeekday!=null?Prog.goalWeekday:base); }
+  else g=base;
   return Math.max(1, Math.min(10, g|0)); }
 function goalState(){ const t=dayKey(new Date()); if(!Prog.goalDay || Prog.goalDay.date!==t) Prog.goalDay={date:t,count:0,celebrated:false}; return Prog.goalDay; }
 function goalCount(){ return goalState().count; }
@@ -4103,23 +4149,70 @@ function onGoalComplete(){
   el("gdKeep").onclick=()=>m.style.display="none";
   el("gdAdjust").onclick=()=>{ m.style.display="none"; openGoalSettings(); };
 }
+// The same centered square-number picker the verse test uses, reusable anywhere.
+function numberSheet(o){
+  let m=el("numSheet");
+  if(!m){ m=document.createElement("div"); m.id="numSheet"; m.className="mtoverlay"; m.style.display="none"; document.querySelector(".phone").appendChild(m); }
+  const choices=o.choices||[1,2,3,4,5,6,7,8,9,10];
+  m.innerHTML=`<div class="mtsheet"><div class="mtsheet-h"><b>${o.title||"Pick a number"}</b><button class="lclose" id="nsClose" style="margin:0">✕</button></div>
+    <div class="mtsquares">${choices.map(n=>`<button class="mtsq ${n===o.value?"sel":""}" data-n="${n}">${n}</button>`).join("")}</div></div>`;
+  m.style.display="grid";
+  const close=()=>{ m.style.display="none"; };
+  el("nsClose").onclick=close;
+  m.onclick=e=>{ if(e.target===m) close(); };
+  m.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{ close(); o.onPick(+b.dataset.n); });
+}
 function openGoalSettings(){
   const m=el("goalSetModal")||(()=>{ const d=document.createElement("div"); d.id="goalSetModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
-  const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  const cur=Prog.dailyGoal!=null?Prog.dailyGoal:1, byDay=Prog.goalByDay||{};
-  const numRow=(sel,attr)=>`<div class="goal-nums" data-row="${attr}">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="goal-num ${sel===n?"on":""}" data-${attr}="${n}">${n}</button>`).join("")}</div>`;
+  const DOW=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const base=Prog.dailyGoal!=null?Prog.dailyGoal:1;
+  const draft={ mode:goalMode(), same:base,
+    weekday:(Prog.goalWeekday!=null?Prog.goalWeekday:base),
+    weekend:(Prog.goalWeekend!=null?Prog.goalWeekend:base),
+    byDay:Object.assign({},Prog.goalByDay||{}) };
+  const val=k => k==="same"?draft.same : k==="weekday"?draft.weekday : k==="weekend"?draft.weekend
+                : (draft.byDay[+k.slice(1)]!=null?draft.byDay[+k.slice(1)]:draft.same);
+  const row=(k,label)=>`<div class="goalrow"><div class="goalrow-k">${label}</div><button type="button" class="goalfield" data-pick="${k}">${val(k)}</button></div>`;
+  // ONLY the chosen mode's controls are drawn — the other two never appear.
+  const paint=()=>{
+    const body = draft.mode==="same" ? row("same","Every day")
+      : draft.mode==="week" ? row("weekday","Monday – Friday")+row("weekend","Saturday &amp; Sunday")
+      : DOW.map((d,i)=>row("d"+i,d)).join("");
+    el("gsBody").innerHTML=body;
+    el("gsBody").querySelectorAll("[data-pick]").forEach(btn=>btn.onclick=()=>{
+      const k=btn.dataset.pick;
+      numberSheet({ title:"How many a day?", value:val(k), onPick:n=>{
+        if(k==="same") draft.same=n; else if(k==="weekday") draft.weekday=n;
+        else if(k==="weekend") draft.weekend=n; else draft.byDay[+k.slice(1)]=n;
+        paint();
+      }});
+    });
+  };
   m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose" id="gsClose">✕</button><div style="flex:1;text-align:center;font-weight:800">Daily goal</div><span style="width:34px"></span></div>
-    <p class="hint">How many things — new verses, book images, or word-for-word practices — will you do each day? (1–10, combined.)</p>
-    <div class="prof-sect" style="margin-top:12px">Everyday goal</div>
-    ${numRow(cur,"g")}
-    <div class="prof-sect" style="margin-top:16px">Per-day overrides <span style="text-transform:none;letter-spacing:0;font-weight:600;color:var(--muted)">(optional — e.g. more on Sundays)</span></div>
-    <div id="gsDays">${DOW.map((d,i)=>`<div class="goal-dayrow"><div class="goal-dayname">${d}</div><select class="vpsel goal-daysel" data-dow="${i}" style="padding:8px 30px 8px 10px;font-size:14px"><option value="">— use everyday (${cur}) —</option>${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}" ${byDay[i]===n?"selected":""}>${n}</option>`).join("")}</select></div>`).join("")}</div>
-    <button class="btn" id="gsSave" style="width:100%;margin-top:14px">Save goal</button></div>`;
+    <p class="hint">How many things — new verses, book images or word-for-word practices — will you do each day?</p>
+    <div class="prof-sect" style="margin-top:12px">How do you want to set it?</div>
+    <div class="goalseg">${GOAL_MODES.map(x=>`<button class="goalseg-b ${draft.mode===x[0]?"on":""}" data-mode="${x[0]}">${x[1]}</button>`).join("")}</div>
+    <div id="gsBody" style="margin-top:14px"></div>
+    <div class="prof-sect" style="margin-top:18px">Reminders</div>
+    <div id="goalReminderBox"></div>
+    <button class="btn" id="gsSave" style="width:100%;margin-top:16px">Save</button></div>`;
   m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("gsClose").onclick=()=>m.style.display="none";
-  let pick=cur;
-  m.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{ pick=+b.dataset.g; m.querySelectorAll("[data-g]").forEach(x=>x.classList.toggle("on",x===b)); });
-  el("gsSave").onclick=()=>{ Prog.dailyGoal=pick; const gb={}; m.querySelectorAll(".goal-daysel").forEach(s=>{ if(s.value) gb[+s.dataset.dow]=+s.value; }); Prog.goalByDay=gb; saveProg(); m.style.display="none"; toast("🎯 Goal saved"); if(document.querySelector('.view.active')?.id==="verse") renderVerse(); updateMetrics(); };
+  m.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{
+    draft.mode=b.dataset.mode;
+    m.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("on",x===b));
+    paint();
+  });
+  paint();
+  reminderUI("goalReminderBox");
+  el("gsSave").onclick=()=>{
+    Prog.goalMode=draft.mode; Prog.dailyGoal=draft.same;
+    Prog.goalWeekday=draft.weekday; Prog.goalWeekend=draft.weekend;
+    if(draft.mode==="days"){ const gb={}; for(let i=0;i<7;i++) gb[i]=(draft.byDay[i]!=null?draft.byDay[i]:draft.same); Prog.goalByDay=gb; }
+    else Prog.goalByDay={};
+    saveProg(); m.style.display="none"; toast("🎯 Goal saved");
+    if(document.querySelector('.view.active')?.id==="verse") renderVerse(); updateMetrics();
+  };
 }
 // ---- Perfect Week: review on ≥5 days in a Monday-anchored week → talent reward (feeds the store) ----
 function weekKeyOf(d){ const dt=new Date(d.getFullYear(),d.getMonth(),d.getDate()); dt.setDate(dt.getDate()-((dt.getDay()+6)%7)); return dt.getFullYear()+"-"+(dt.getMonth()+1)+"-"+dt.getDate(); }
@@ -5474,35 +5567,148 @@ function importBackup(file){
   }catch(e){ el("backupMsg").innerHTML=`<b style="color:var(--miss-ink)">That file isn't a valid backup.</b>`; } };
   r.readAsText(file);
 }
-// Daily reminder. Uses Capacitor LocalNotifications in the installed app (reliable, scheduled); best-effort Web Notification while the tab is open otherwise.
+/* ---- Reminders: up to 3 daily alarms.
+   The real target is the PHONE APP: Capacitor LocalNotifications gives true scheduled,
+   repeating alarms that fire with the app closed. On the web we do the best the platform
+   allows and say so plainly — no web API can wake a closed page at a chosen time. On an
+   installed iPhone PWA the ONLY route is the service worker (iOS Safari has no
+   Notification constructor at all). ---- */
+const REMINDER_MAX=3, REMINDER_IDS=[4200,4201,4202];
+let swReg=null;   // held from register() so we never depend on the SW controlling the page
+if("serviceWorker" in navigator){ try{ navigator.serviceWorker.register("/burningbush/sw.js").then(r=>{ swReg=r; }).catch(()=>{}); }catch(e){} }
 const Reminders = {
   cap(){ return (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.LocalNotifications) || null; },
-  async enable(){
-    let granted=false; const cap=this.cap();   // default false: no Capacitor AND no Notification API → can't actually remind, so don't claim success
-    try{ if(cap){ const p=await cap.requestPermissions(); granted=(p.display==="granted"); }
-      else if("Notification" in window){ granted=(await Notification.requestPermission())==="granted"; } }catch(e){ granted=false; }
-    if(!granted){ Prog.reminder.on=false; saveProg(); toast("Allow notifications to get daily reminders."); return; }
-    Prog.reminder.on=true; saveProg(); await this.schedule(); toast("Daily reminder set for "+Prog.reminder.time+" ✓");
+  live(){ return (Prog.reminder.times||[]).filter(x=>x && x.on!==false).slice(0,REMINDER_MAX); },
+  async ask(){
+    const cap=this.cap();
+    try{ if(cap){ const p=await cap.requestPermissions(); return p.display==="granted"; }
+      if("Notification" in window) return (await Notification.requestPermission())==="granted"; }catch(e){}
+    return false;
   },
-  async disable(){ Prog.reminder.on=false; saveProg(); const cap=this.cap(); if(cap){ try{ await cap.cancel({notifications:[{id:4200}]}); }catch(e){} } if(this._t){ clearTimeout(this._t); this._t=null; } },
-  async schedule(){ const r=Prog.reminder; if(!r.on) return; const [hh,mm]=(r.time||"20:00").split(":").map(Number); const cap=this.cap();
-    if(cap){ try{ await cap.cancel({notifications:[{id:4200}]}); }catch(e){}
-      try{ await cap.schedule({notifications:[{id:4200,title:"Burning Bush",body:"Your verses are waiting — keep your streak alive 🔥",schedule:{on:{hour:hh,minute:mm},repeats:true}}]}); }catch(e){} return; }
-    this.armWeb(hh,mm); },
-  armWeb(hh,mm){ if(this._t) clearTimeout(this._t); const now=new Date(), t=new Date(); t.setHours(hh,mm,0,0); if(t<=now) t.setDate(t.getDate()+1);
-    const ms=t-now; if(ms>0 && ms<26*3600*1000) this._t=setTimeout(()=>{ this.fireWeb(); this.armWeb(hh,mm); }, ms); },
-  fireWeb(){ if(!Prog.reminder.on) return; if(!("Notification" in window)||Notification.permission!=="granted"){ Prog.reminder.on=false; saveProg(); return; }   // permission revoked → stop claiming reminders are on
+  async enable(){
+    const ok=await this.ask();
+    if(!ok){ Prog.reminder.on=false; saveProg(); openNotifyHelp(true); return false; }
+    Prog.reminder.on=true; saveProg(); await this.schedule();
+    const n=this.live().length; toast(n>1?`${n} reminders set ✓`:"Reminder set ✓"); return true;
+  },
+  async disable(){ Prog.reminder.on=false; saveProg(); await this.cancelAll(); },
+  async cancelAll(){
+    const cap=this.cap();
+    if(cap){ try{ await cap.cancel({notifications:REMINDER_IDS.map(id=>({id}))}); }catch(e){} }
+    (this._t||[]).forEach(t=>clearTimeout(t)); this._t=[];
+  },
+  async schedule(){
+    await this.cancelAll();
+    if(!Prog.reminder.on) return;
+    const list=this.live(), cap=this.cap();
+    if(cap){
+      try{ await cap.schedule({ notifications:list.map((x,i)=>{ const [hh,mm]=x.t.split(":").map(Number);
+        return {id:REMINDER_IDS[i], title:"Burning Bush", body:"Your verses are waiting — keep your streak alive 🔥",
+                schedule:{on:{hour:hh,minute:mm}, repeats:true}}; }) }); }catch(e){}
+      return;
+    }
+    this._t=[]; list.forEach(x=>this.armWeb(x));
+  },
+  armWeb(x){
+    const [hh,mm]=x.t.split(":").map(Number);
+    const now=new Date(), t=new Date(); t.setHours(hh,mm,0,0); if(t<=now) t.setDate(t.getDate()+1);
+    const ms=t-now; if(ms>0 && ms<26*3600*1000) (this._t=this._t||[]).push(setTimeout(()=>{ this.fireWeb(); this.schedule(); }, ms));
+  },
+  async fireWeb(){
+    if(!Prog.reminder.on) return;
+    if(!("Notification" in window) || Notification.permission!=="granted") return;
     const due=versesDueCount()+palacesDueCount();
-    try{ new Notification("Burning Bush",{body: due>0?`${due} review${due>1?"s":""} due — keep your streak alive 🔥`:"Time to hide a verse in your heart 📖"}); }catch(e){} },
+    const body = due>0 ? `${due} review${due>1?"s":""} due — keep your streak alive 🔥` : "Time to hide a verse in your heart 📖";
+    try{ if(swReg && swReg.showNotification){ await swReg.showNotification("Burning Bush",{body, tag:"bb-reminder"}); return; } }catch(e){}
+    try{ new Notification("Burning Bush",{body}); }catch(e){}
+  },
+  // Say exactly what this device can and can't do — never promise an alarm the platform won't deliver.
+  note(){
+    if(this.cap()) return "A gentle nudge at each time you set.";
+    const plat=devicePlatform();
+    if(plat==="ios") return isStandalone()
+      ? "On iPhone these arrive while Burning Bush is open or recently used. The phone app will make them true alarms."
+      : "⚠️ On iPhone, reminders can't arrive at all until Burning Bush is added to your Home Screen.";
+    if(plat==="android") return "On Android these arrive while Burning Bush is open or recently used. The phone app will make them true alarms.";
+    return "In a browser these only nudge you while the app is open — install the app for reliable reminders.";
+  },
   init(){ if(Prog.reminder && Prog.reminder.on) this.schedule(); }
 };
-function renderReminder(){
-  const r=Prog.reminder, box=el("reminderBox"); if(!box) return;
-  box.innerHTML=`<label style="display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer"><span>Remind me to review daily</span><input type="checkbox" id="remOn" ${r.on?"checked":""} style="width:20px;height:20px"></label>
-    <div id="remTimeRow" style="margin-top:8px;${r.on?"":"opacity:.45;pointer-events:none"}"><label class="vplabel">Time</label><input type="time" id="remTime" class="typein" value="${r.time}" style="text-align:left"></div>
-    <p class="hint" style="margin-top:6px">${Reminders.cap()?"A gentle nudge at your chosen time each day.":"On the web this only nudges you while the app is open — install the app for reliable daily reminders."}</p>`;
-  el("remOn").onchange=async()=>{ if(el("remOn").checked) await Reminders.enable(); else await Reminders.disable(); renderReminder(); };
-  el("remTime").onchange=async()=>{ Prog.reminder.time=el("remTime").value||"20:00"; saveProg(); if(Prog.reminder.on) await Reminders.schedule(); };
+// One implementation, mounted on both the goal screen and the Profile menu.
+function reminderUI(hostId){
+  const host=el(hostId); if(!host) return;
+  const r=Prog.reminder, times=r.times||[];
+  const rows=times.map((x,i)=>`<div class="rem-row">
+      <input type="time" class="typein rem-time" data-t="${i}" value="${x.t}">
+      <button type="button" class="rem-toggle ${x.on!==false?"on":""}" data-on="${i}" title="${x.on!==false?"On":"Off"}">${x.on!==false?"🔔":"🔕"}</button>
+      ${times.length>1?`<button type="button" class="ed-trash" data-del="${i}" title="Remove">✕</button>`:""}
+    </div>`).join("");
+  host.innerHTML=`
+    <label class="rem-main"><span>Remind me to review</span><input type="checkbox" id="remOn" ${r.on?"checked":""}></label>
+    <div id="remBody" style="margin-top:10px;${r.on?"":"opacity:.45;pointer-events:none"}">
+      ${rows}
+      ${times.length<REMINDER_MAX?`<button type="button" class="btn ghost sm" id="remAdd" style="width:100%;margin-top:2px">+ Add a reminder</button>`:""}
+      <p class="hint" style="margin-top:8px">${Reminders.note()}</p>
+      <button type="button" class="btn ghost sm" id="remHelp" style="width:100%;margin-top:6px">Not getting reminders? →</button>
+    </div>`;
+  const re=()=>reminderUI(hostId);
+  el("remOn").onchange=async()=>{ if(el("remOn").checked) await Reminders.enable(); else await Reminders.disable(); re(); };
+  host.querySelectorAll("[data-t]").forEach(inp=>inp.onchange=async()=>{
+    const i=+inp.dataset.t; if(!inp.value) return; Prog.reminder.times[i].t=inp.value;
+    Prog.reminder.time=Prog.reminder.times[0].t; saveProg(); if(Prog.reminder.on) await Reminders.schedule(); });
+  host.querySelectorAll("[data-on]").forEach(b=>b.onclick=async()=>{
+    const i=+b.dataset.on, x=Prog.reminder.times[i]; x.on=(x.on===false); saveProg();
+    if(Prog.reminder.on) await Reminders.schedule(); re(); });
+  host.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{
+    Prog.reminder.times.splice(+b.dataset.del,1);
+    if(!Prog.reminder.times.length) Prog.reminder.times=[{t:"20:00",on:true}];
+    Prog.reminder.time=Prog.reminder.times[0].t; saveProg(); if(Prog.reminder.on) await Reminders.schedule(); re(); });
+  if(el("remAdd")) el("remAdd").onclick=async()=>{
+    if(Prog.reminder.times.length>=REMINDER_MAX) return;
+    const used=Prog.reminder.times.map(x=>x.t);
+    const next=["07:00","12:30","20:00"].find(t=>!used.includes(t))||"20:00";
+    Prog.reminder.times.push({t:next,on:true}); saveProg(); if(Prog.reminder.on) await Reminders.schedule(); re(); };
+  if(el("remHelp")) el("remHelp").onclick=()=>openNotifyHelp(false);
+}
+function renderReminder(){ reminderUI("reminderBox"); }
+// Platform-specific walkthrough for turning notifications on.
+function openNotifyHelp(denied){
+  const m=el("notifyHelpModal")||(()=>{ const d=document.createElement("div"); d.id="notifyHelpModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const plat=devicePlatform(), standalone=isStandalone();
+  const step=(n,t)=>`<div class="nhstep"><b class="n">${n}</b><span>${t}</span></div>`;
+  let title="Turning on reminders", body="", extra="";
+  if(plat==="ios" && !standalone){
+    title="Add Burning Bush to your Home Screen first";
+    body = step(1,"Tap the <b>Share</b> button at the bottom of Safari (the square with an arrow).")
+         + step(2,"Scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>.")
+         + step(3,"Open Burning Bush from the new icon — <b>not</b> from Safari.")
+         + step(4,"Come back here and switch reminders on. iPhone will ask for permission; tap <b>Allow</b>.");
+    extra=`<p class="hint" style="margin-top:6px">iPhone will not deliver notifications to a website running in Safari — only to an app on your Home Screen. This is an Apple rule, not a Burning Bush one.</p>
+      <button class="btn ghost" id="nhInstall" style="width:100%;margin-top:10px">📲 Show me how to install</button>`;
+  } else if(plat==="ios"){
+    body = step(1,"Open <b>Settings</b> › <b>Notifications</b>.")
+         + step(2,"Scroll to <b>Burning Bush</b> and tap it.")
+         + step(3,"Turn <b>Allow Notifications</b> on, and tick <b>Lock Screen</b>, <b>Banners</b> and <b>Sounds</b>.")
+         + step(4,"Check <b>Focus</b> / Do Not Disturb isn't silencing it at your reminder time.");
+  } else if(plat==="android"){
+    body = step(1,"Open <b>Settings</b> › <b>Apps</b> › <b>Burning Bush</b>.")
+         + step(2,"Tap <b>Notifications</b> and turn them <b>on</b>.")
+         + step(3,"Back in the app info, open <b>Battery</b> and choose <b>Unrestricted</b> — battery saving is the usual reason a reminder arrives late or never.")
+         + step(4,"Make sure <b>Do Not Disturb</b> isn't covering your reminder time.");
+  } else {
+    body = step(1,"Click the padlock 🔒 in your browser's address bar.")
+         + step(2,"Set <b>Notifications</b> to <b>Allow</b>, then reload the page.")
+         + step(3,"Reminders on a computer only appear while Burning Bush is open in a tab.");
+  }
+  m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose" id="nhClose">✕</button>
+      <div style="flex:1;text-align:center;font-weight:800">${title}</div><span style="width:34px"></span></div>
+    ${denied?`<p class="hint" style="margin:10px 0 4px;color:var(--miss-ink)"><b>Notifications are currently blocked on this device.</b></p>`:""}
+    <div style="margin-top:12px">${body}</div>${extra}
+    <button class="btn" id="nhOk" style="width:100%;margin-top:14px">Got it</button></div>`;
+  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("nhClose").onclick=()=>m.style.display="none";
+  el("nhOk").onclick=()=>m.style.display="none";
+  if(el("nhInstall")) el("nhInstall").onclick=()=>{ m.style.display="none"; openInstallDialog(); };
 }
 el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); renderReminder(); el("backupMsg").innerHTML="";
   if(el("bugReportsWrap")) el("bugReportsWrap").style.display = (typeof Auth!=="undefined" && Auth.isAdmin()) ? "" : "none";
@@ -5636,7 +5842,7 @@ function renderTextFade(){
     </div>`;
   el("tfClose").onclick=()=>backFromTF();
   el("tfReveal").onclick=()=>{ TF.stage=0; renderTextFade(); };
-  el("tfNext").onclick=()=>{ if(done){ startTypeTest(TF.b,TF.c,TF.v,TF.retFn); } else { TF.stage++; renderTextFade(); } };
+  el("tfNext").onclick=()=>{ if(done){ startWordPick(TF.b,TF.c,TF.v,TF.retFn); } else { TF.stage++; renderTextFade(); } };
   // tap a blank to peek at the word for 2 seconds, then it hides again
   host.querySelectorAll(".w.blank").forEach(sp=>sp.onclick=()=>{
     if(sp._peeking) return; sp._peeking=true; const wi=+sp.dataset.wi, full=TF.words[wi];
@@ -5660,11 +5866,69 @@ function fmtWhen(ts){ const d=new Date(ts), now=new Date(); const sameDay=d.toDa
   return sameDay ? `today at ${t}` : (d.getTime()-now.getTime()<2*W4W_DAY ? `tomorrow at ${t}` : d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+` at ${t}`); }
 function normWord(s){ return (s||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
 
-// launch the full word-for-word session for a verse (peek-fade → typing test), respecting the lock
+// launch the full word-for-word session (peek-fade → word picker → typing test), respecting the lock
 function startWordForWord(b,c,v,ret){
   const vkey=refKey(b,c,v);
   if(w4wLocked(vkey)){ show("verse"); w4wLockScreen(b,c,v,ret); return; }
   startTextFade(b,c,v,ret);
+}
+/* ---- Word picker: choose the next word from 8 candidates before typing it free-form.
+   Recognition before recall — it warms the verse up and shows you where the gaps are. ---- */
+const WORDPICK_CHOICES=8;
+const WORDPICK_MAX=0;   // 0 = the whole verse; set a number to cap the warm-up on long verses
+const KJV_COMMON=["the","and","of","to","in","that","he","shall","unto","for","his","they","be","is","with","not","all",
+"thou","thee","thy","was","which","my","me","him","them","it","are","said","LORD","God","ye","have","will","from","as",
+"but","by","their","upon","were","when","this","man","men","one","us","so","there","hath","then","let","heart","word",
+"name","hand","day","people","earth","heaven","son","king","house","great","good","come","came","went","made","make",
+"give","know","love","faith","life","light","truth","way","peace","holy","spirit","world","things","time","glory",
+"power","righteousness","mercy","grace","fear","hope","soul","flesh","law","sin","death","ever","children","god"];
+let WP=null;
+function wpChoices(){
+  const words=WP.words, idx=WP.idx, correct=words[idx];
+  const seen=new Set([normWord(correct)]), pool=[];
+  const add=w=>{ const n=normWord(w); if(!n||seen.has(n)) return; seen.add(n); pool.push(w); };
+  // 1. other words from THIS verse — the most believable decoys, they already fit the voice
+  shuffle(words.filter((_,i)=>i!==idx).slice()).forEach(add);
+  // 2. common KJV words, nearest in length to the answer first, so nothing stands out by shape
+  const target=normWord(correct).length;
+  KJV_COMMON.slice().sort((a,b)=>Math.abs(a.length-target)-Math.abs(b.length-target)||(Math.random()-.5)).forEach(add);
+  return shuffle([correct, ...pool.slice(0, WORDPICK_CHOICES-1)]);
+}
+function startWordPick(b,c,v,ret){
+  const all=(kjvText(b,c,v)||"").split(/\s+/).filter(Boolean);
+  if(all.length<2){ startTypeTest(b,c,v,ret); return; }   // nothing to warm up
+  const stop = WORDPICK_MAX>0 ? Math.min(WORDPICK_MAX, all.length) : all.length;
+  WP={b,c,v,ret,words:all,stop,idx:0,opts:null,missed:0};
+  show("verse"); renderWordPick();
+}
+function renderWordPick(){
+  if(WP.idx>=WP.stop){ const {b,c,v,ret}=WP; WP=null; startTypeTest(b,c,v,ret); return; }
+  const V=el("verse"), done=WP.idx;
+  if(!WP.opts) WP.opts=wpChoices();
+  const said=WP.words.slice(0,done).join(" ");
+  V.innerHTML=`<div class="card">
+      <div class="lv-topbar"><button class="lclose" id="wpClose" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(WP.b)} ${WP.c}:${WP.v}</div>
+        <div class="ttcount ${done?"ttgood":""}">${done}/${WP.stop}</div></div>
+      <p class="hint" style="text-align:center;margin:0 0 6px">Warm-up — tap the word that comes next.</p>
+      <div class="ttdisplay" id="wpDisplay"><span class="ttdone">${said}</span>${said?"":`<span style="color:var(--muted)">the verse builds here as you go…</span>`}</div>
+      <div class="wpgrid">${WP.opts.map(w=>`<button type="button" class="wpopt" data-w="${w.replace(/"/g,"&quot;")}">${w}</button>`).join("")}</div>
+      <div class="hint" id="wpFb" style="text-align:center;margin-top:10px">&nbsp;</div>
+    </div>`;
+  const disp=el("wpDisplay"); disp.scrollTop=disp.scrollHeight;
+  el("wpClose").onclick=()=>{ const r=WP.ret; WP=null; r?r():renderVerse(); };
+  const correct=WP.words[WP.idx];
+  V.querySelectorAll("[data-w]").forEach(btn=>btn.onclick=()=>{
+    if(btn.disabled) return;
+    if(normWord(btn.dataset.w)===normWord(correct)){
+      btn.classList.add("good");
+      V.querySelectorAll("[data-w]").forEach(x=>x.disabled=true);
+      setTimeout(()=>{ WP.idx++; WP.opts=null; renderWordPick(); }, 320);
+    } else {
+      btn.classList.add("bad"); btn.disabled=true; WP.missed++;
+      el("wpFb").innerHTML=`<b style="color:var(--miss-ink)">↻ Try again</b>`;
+    }
+  });
 }
 function w4wLockScreen(b,c,v,ret){
   const V=el("verse"), r=Prog.w4w[refKey(b,c,v)]||{count:0};
