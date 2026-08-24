@@ -516,7 +516,10 @@
   .srcount{font-size:52px;font-weight:900;color:var(--gold-ink);line-height:1;margin:2px 0 6px}
   /* talent reward: a big coin blooms center, a stream flies to the top counter */
   .talfx{position:absolute;inset:0;z-index:120;pointer-events:none;overflow:visible}
-  .talbig{position:absolute;transform:translate(-50%,-50%) scale(.2);opacity:0;transition:transform .45s cubic-bezier(.2,1.5,.4,1),opacity .3s;text-align:center;z-index:2}
+  /* solid square panel so the screen behind never bleeds through the reward */
+  .talbig{position:absolute;transform:translate(-50%,-50%) scale(.2);opacity:0;transition:transform .45s cubic-bezier(.2,1.5,.4,1),opacity .3s;text-align:center;z-index:2;
+    width:152px;height:152px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:var(--panel);border:2px solid var(--gold2);border-radius:20px;box-shadow:0 16px 44px var(--scrim)}
   .talbig.pop{transform:translate(-50%,-50%) scale(1);opacity:1}
   .talbig.gone{opacity:0;transform:translate(-50%,-50%) scale(1.4)}
   .talcoin{font-size:76px;/*raw-ok*/filter:drop-shadow(0 8px 18px rgba(0,0,0,.45))}
@@ -1548,8 +1551,13 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.6.1";
+const APP_VERSION="1.7.0";
 const CHANGELOG=[
+ {v:"1.7.0", d:"August 24, 2026", t:"Not unto us", items:[
+   ["new","<b>Every moment of praise now points upward.</b> Finishing a verse word for word reads “<b>Hidden in your heart</b>” with Psalm 119:11, and the tenth time “<b>Sealed in your heart</b>”. The party popper is gone from the app entirely."],
+   ["new","A right answer is marked “<b>Kept ✓</b>” — the Word held, not a prize won. Resting a verse now says “<b>Come apart and rest a while</b>”."],
+   ["fix","The talents coin sits on a solid panel now, so the screen behind never bleeds through it."]
+ ]},
  {v:"1.6.1", d:"August 24, 2026", t:"A moment to enjoy it", items:[
    ["fix","The talents coin now <b>holds twice as long</b> before it flies up to your counter — long enough to actually see what you earned."]
  ]},
@@ -3360,7 +3368,7 @@ function renderPalacePractice(){
     strengthen("sk:palace:"+PP.slot); saveProg(); updateMetrics(); checkBadges();
     const done=stored&&palaceTrailDone(stored), nextMs=stored?palaceNextReviewMs(stored):null;
     const trailMsg = !stored ? "" : done
-      ? "🎉 You've walked the whole spaced-repetition trail — this palace is locked into long-term memory."
+      ? "🕊️ You've walked the whole spaced-repetition trail — this palace is kept in long-term memory."
       : `Next spaced-repetition review in <b class="gold">${srHuman(nextMs)}</b>.`;
     const ret=PP.ret; PP=null;
     L.innerHTML=`<div class="card center"><div style="font-size:52px">🏛️</div><h2>Palace refreshed!</h2>
@@ -3713,7 +3721,7 @@ function finishLesson(){
   else if(sk.kind==="book")
     msg=`<b>${sk.items.length===1?"Book image learned":sk.items.length+" book images learned"}:</b> <b class="gold">${sk.items.map(bookName).join(", ")}</b>.`;
   const unlocked = newly.length
-    ? `<div class="callout" style="border-left-color:var(--good)"><b style="color:var(--good)">🎉 ${newly.length} new verse${newly.length>1?"s":""} unlocked!</b> Now buildable: <b class="gold">${newly.slice(0,4).map(v=>v.b+" "+v.c+":"+v.v).join(", ")}${newly.length>4?", …":""}</b>.</div>`
+    ? `<div class="callout" style="border-left-color:var(--good)"><b style="color:var(--good)">🌿 ${newly.length} more of His Word within reach</b> Now buildable: <b class="gold">${newly.slice(0,4).map(v=>v.b+" "+v.c+":"+v.v).join(", ")}${newly.length>4?", …":""}</b>.</div>`
     : `<div class="callout">Keep going — verses unlock once their <b>book, chapter and verse numbers</b> are all learned.</div>`;
   el("learn").innerHTML=`<div class="card center">
     <div style="font-size:56px">🏅</div>
@@ -4848,7 +4856,7 @@ function startNumberTest(round){
   const recent=recentKnownNumbers();
   if(recent.length<2){ toast("Learn a few number images first!"); return; }
   const pool = round===1 ? recent.slice(0,10) : recent.slice(10);   // round 1 = most recent 10; round 2+ = the rest
-  if(!pool.length){ toast(round>1?"No older numbers left to review — great job!":"Learn a few number images first!"); return; }
+  if(!pool.length){ toast(round>1?"No older numbers left to review — you've been over them all.":"Learn a few number images first!"); return; }
   const withBook=pool.filter(n=>n<=66);
   const qs=[];
   for(let i=0;i<15;i++){
@@ -4925,7 +4933,7 @@ function finishNumberTest(){
   const hasMore=NT&&NT.hasMore, round=(NT&&NT.round)||1;
   el("verse").innerHTML=`<div class="card center"><div style="font-size:52px">🔢</div>
     <h2>${round>1?"Round complete!":"Recent numbers done!"}</h2>
-    <p class="lead">${NT.ok} answered${NT.wrong?` · ${NT.wrong} retr${NT.wrong===1?"y":"ies"}`:" — flawless!"}. ${round>1?"":"You just drilled your <b class=\"gold\">10 most recently learned</b> numbers &amp; books."} The ones you nailed got <b class="gold">stronger</b> — they'll stay gold longer.</p>
+    <p class="lead">${NT.ok} answered${NT.wrong?` · ${NT.wrong} retr${NT.wrong===1?"y":"ies"}`:" — not one slipped away"}. ${round>1?"":"You just drilled your <b class=\"gold\">10 most recently learned</b> numbers &amp; books."} The ones you held got <b class="gold">stronger</b> — they'll stay gold longer.</p>
     <div class="btnrow">${hasMore?`<button class="btn blue" id="ntMore">Round 2 → older ones</button>`:`<button class="btn" id="ntAgain">Test again</button>`}<button class="btn ghost" id="ntDone">Done</button></div></div>`;
   if(el("ntMore")) el("ntMore").onclick=()=>startNumberTest(2);
   if(el("ntAgain")) el("ntAgain").onclick=()=>startNumberTest(1);
@@ -5065,7 +5073,7 @@ function memTestRender(){
       mtLock=true; paintAll(); el("mtCheck").disabled=true; el("mtWarn").textContent="";
       const card=V.querySelector(".card"); if(card){ card.classList.add("mt-correctflash"); setTimeout(()=>card.classList.remove("mt-correctflash"),900); }   // flash the whole practice card green
       ["mtFieldB","mtFieldC","mtFieldV"].forEach(id=>{const e=el(id);if(e)e.classList.add("correctflash");});
-      el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}${peeked?` · <span style="opacity:.85">🔥 streak held (peek used)</span>`:""}</div></div>`;
+      el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Kept ✓</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}${peeked?` · <span style="opacity:.85">🔥 streak held (peek used)</span>`:""}</div></div>`;
       if(cr>=5 && cr%5===0){   // every 5 clean recalls in a row → offer to rest this verse for 14 days (re-offered if declined earlier)
         el("mtFb").innerHTML+=`<div class="feedback ok" style="position:static;margin:10px -20px -20px;border-radius:0"><div class="sub" style="margin-bottom:8px">🎯 That's 5 in a row! Rest this verse for <b>14 days</b>?</div><div class="btnrow" style="margin:0"><button class="btn" id="szYes" style="margin:0">Snooze 14 days</button><button class="btn ghost" id="szNo" style="margin:0">Keep reviewing</button></div></div>`;
         el("szYes").onclick=()=>{ snoozeVerse(kk); toast("😴 Resting for 14 days"); goNext(); };
@@ -5321,7 +5329,7 @@ function vpCheck(){
   if(ok){ // flash green, auto-advance
     bumpStreak(true); reviewVerseSR(refKey(bn,s.c,s.v)); const pts=awardTalents(refKey(bn,s.c,s.v), vpWrong===0); saveProg(); refreshHUD(); checkBadges();
     sels.forEach(x=>x.classList.add("correct")); el("vpCheck").disabled=true; el("vpWarn").textContent="";
-    el("vpFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Correct! 🎉</div><div class="sub"><b class="gold">${s.b} ${s.c}:${s.v}</b> · ${talentMsg(pts)}</div></div>`;
+    el("vpFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Kept ✓</div><div class="sub"><b class="gold">${s.b} ${s.c}:${s.v}</b> · ${talentMsg(pts)}</div></div>`;
     setTimeout(goNext, 900);
   } else {
     vpWrong++; saveProg(); refreshHUD();   // a miss no longer breaks the streak — only 3-in-a-row does
@@ -6326,7 +6334,7 @@ async function openBugReports(){
   };
   try{
     const {tickets}=await Auth.adminTickets("bug");
-    if(!tickets || !tickets.length){ el("bugList").innerHTML=`<p class="hint" style="text-align:center;margin:20px 0">No bug reports yet. 🎉</p>`; return; }
+    if(!tickets || !tickets.length){ el("bugList").innerHTML=`<p class="hint" style="text-align:center;margin:20px 0">No bug reports yet.</p>`; return; }
     el("bugList").innerHTML=`<table class="bug-grid"><thead><tr><th>Email</th><th>Bug</th><th></th><th></th></tr></thead><tbody>${
       tickets.map(t=>`<tr data-bk="${esc(t.key)}">
         <td class="bug-em">${esc(t.email)}</td>
@@ -6509,7 +6517,7 @@ function w4wLockScreen(b,c,v,ret){
   V.innerHTML=`<div class="card center" style="position:relative">
       <button class="lclose" id="w4wClose" style="position:absolute;left:10px;top:12px;margin:0;z-index:2">✕</button>
       <div style="font-size:44px">⏳</div>
-      <h2 style="font-size:20px;margin:8px 0 2px">Nicely done — rest a bit</h2>
+      <h2 style="font-size:20px;margin:8px 0 2px">Come apart and rest a while</h2>
       <div style="font-weight:800;color:var(--gold-ink);margin:2px 0">${bookName(b)} ${c}:${v}</div>
       <p class="lead" style="margin:8px 0">You've completed <b class="gold">${Math.min(r.count,10)} of 10</b> word-for-word practices on this verse.</p>
       <p class="lead" style="margin:0"><b>Next practice unlocks ${fmtWhen(w4wNextAllowed(refKey(b,c,v)))}.</b> Spacing your reps is what moves a verse into long-term memory.</p>
@@ -6598,11 +6606,13 @@ function typeTestComplete(){
   earnTalents(w4wReward); refreshHUD&&refreshHUD(); markW4WToday(vkey);
   const showGoal = bumpGoal(true);   // counts toward today's goal, but the track waits for "Amen"
   V.innerHTML=`<div class="card center ttwin">
-      <div class="ttburst">${justMastered?"👑":"🎉"}</div>
-      <h2 style="font-size:22px;margin:6px 0 2px">${justMastered?"Verse Mastered!":"You did it!"}</h2>
-      <div style="font-weight:800;color:var(--gold-ink);margin:2px 0">${bookName(b)} ${c}:${v}</div>
-      <p class="lead" style="margin:10px 0 4px">${bookName(b)} ${c}:${v} — Word for Word Practice<br><b class="gold" style="font-size:20px">${Math.min(r.count,10)} of 10 complete</b>${mastered?`<br><span class="gold">★ Mastered${r.count>10?` · ${r.count}×`:""}</span>`:""}</p>
-      <div style="font-weight:800;color:var(--gold-ink);margin:2px 0 2px">+${w4wReward} 🪙${justMastered?" · mastery bonus!":""}</div>
+      <div class="ttburst">${justMastered?"👑":"🙏"}</div>
+      <h2 style="font-size:21px;margin:6px 0 2px">${justMastered?"Sealed in your heart":"Hidden in your heart"}</h2>
+      ${(b===19&&c===119&&v===11)?"":`<p class="lead" style="font-style:italic;margin:6px 0 0;font-size:13px">“Thy word have I hid in mine heart, that I might not sin against thee.”</p>
+      <div class="gold" style="font-weight:800;font-size:12px;margin-bottom:2px">Psalm 119:11</div>`}
+      <div style="font-weight:800;color:var(--gold-ink);margin:8px 0 0">${bookName(b)} ${c}:${v}</div>
+      <p class="lead" style="margin:4px 0">Word for Word Practice<br><b class="gold" style="font-size:20px">${Math.min(r.count,10)} of 10 complete</b>${mastered?`<br><span class="gold">★ Mastered${r.count>10?` · ${r.count}×`:""}</span>`:""}</p>
+      <div style="font-weight:800;color:var(--gold-ink);margin:2px 0 2px">+${w4wReward} 🪙${justMastered?" · mastery gift":""}</div>
       <div class="ttlock">🔒 Next practice locked until <b>${fmtWhen(w4wNextAllowed(vkey))}</b></div>
       <button class="btn" id="ttDone" style="margin-top:16px">Amen — done</button></div>`;
   el("ttDone").onclick=()=>{ ret?ret():renderVerse(); showGoal(); creditToday(); };
