@@ -1548,8 +1548,11 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.6.0";
+const APP_VERSION="1.6.1";
 const CHANGELOG=[
+ {v:"1.6.1", d:"August 24, 2026", t:"A moment to enjoy it", items:[
+   ["fix","The talents coin now <b>holds twice as long</b> before it flies up to your counter — long enough to actually see what you earned."]
+ ]},
  {v:"1.6.0", d:"August 24, 2026", t:"Caesar, in your colours", items:[
    ["new","Caesar’s wheel and his letter now wear <b>your theme</b>, and the Roman art is drawn from the <b>Romans book tile</b> you already know — the same plumed helmet, the same crimson and gold."],
    ["new","<b>Two NO TAX wedges</b> on the wheel. Caesar’s wheel will never stop on them — but if your purse is under 200 talents, that is exactly where it lands."],
@@ -3949,19 +3952,22 @@ function talentBurst(delta){
   const big=document.createElement("div"); big.className="talbig"; big.style.left=cx+"px"; big.style.top=cy+"px";
   big.innerHTML=`<div class="talcoin">🪙</div><div class="talplus">+${delta}</div>`;
   layer.appendChild(big);
+  // How long the big coin holds at centre before the stream flies to the counter. Doubled
+  // from 300ms so the reward actually registers before it leaves the screen.
+  const TAL_HOLD=600;
   requestAnimationFrame(()=>big.classList.add("pop"));
-  setTimeout(()=>big.classList.add("gone"),650);
+  setTimeout(()=>big.classList.add("gone"),TAL_HOLD+650);
   const N=Math.min(16,Math.max(6,delta));
   for(let i=0;i<N;i++){
     const c=document.createElement("div"); c.className="talstream"; c.textContent="🪙";
     c.style.left=cx+"px"; c.style.top=cy+"px";
-    const jx=Math.random()*70-35, jy=Math.random()*44-18, delay=300+i*40;
+    const jx=Math.random()*70-35, jy=Math.random()*44-18, delay=TAL_HOLD+i*40;
     layer.appendChild(c);
     requestAnimationFrame(()=>{ c.style.transform=`translate(${jx}px,${jy}px)`;
       requestAnimationFrame(()=>{ c.style.transition=`transform .6s cubic-bezier(.5,.02,.4,1) ${delay}ms, opacity .25s ${delay+430}ms`;
         c.style.transform=`translate(${tx-cx}px,${ty-cy}px) scale(.45)`; c.style.opacity="0"; }); });
   }
-  setTimeout(()=>layer.remove(),300+N*40+900);
+  setTimeout(()=>layer.remove(),TAL_HOLD+N*40+900);
   // counter climb, synced to when coins start landing
   const t0=performance.now(), dur=Math.max(650,Math.min(1400,delta*40));
   target.textContent=talDisp(start);
@@ -3970,7 +3976,7 @@ function talentBurst(delta){
     if(metric){ metric.classList.add("talpulse"); }
     if(p<1) requestAnimationFrame(tick);
     else { target.textContent=talDisp(end); if(metric) setTimeout(()=>metric.classList.remove("talpulse"),260); updateMetrics(); } }
-  setTimeout(()=>requestAnimationFrame(tick),260);
+  setTimeout(()=>requestAnimationFrame(tick),TAL_HOLD-40);   // climb starts as the coins do
 }
 // a lighter version of the coin burst for the books/verses counters — a few glyphs stream up, then the square pulses
 function flyToMetric(targetId, glyph, count, startDelay){
