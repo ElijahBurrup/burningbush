@@ -415,6 +415,13 @@
   .lv-triple-sm .lv-cell-w{font-size:11px}
   .lv-triple-sm .pegimg-sm,.lv-triple-sm .imgph-sm{width:50px;height:50px}
   .lv-versetext{font-size:16px;line-height:1.5;color:var(--ink);text-align:center;margin:6px 0 16px}
+  /* press and hold a word for its Hebrew or Greek */
+  .vw{cursor:pointer;border-radius:4px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  .vw.held{background:var(--gold-soft);box-shadow:0 0 0 2px var(--gold-soft)}
+  .wd-eng{font-size:26px;font-weight:800;text-align:center;color:var(--gold-ink);margin-top:10px}
+  .wd-lang{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:center;font-weight:800;margin-top:3px}
+  .wd-orig{font-size:34px;text-align:center;margin:10px 0 2px;line-height:1.35;direction:rtl;unicode-bidi:isolate}
+  .wd-translit{font-size:15px;font-style:italic;text-align:center;color:var(--ink-soft)}
   .mastered-ribbon{display:block;text-align:center;font-weight:800;font-size:13px;color:var(--on-accent);background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:999px;padding:6px 14px;margin:0 0 12px}
   .w4w-rect{display:flex;align-items:center;justify-content:space-between;width:100%;gap:10px;padding:16px 18px;border-radius:16px;border:1.5px solid var(--gold2);background:var(--panel2);color:var(--gold-ink);cursor:pointer;font-weight:800;font-size:16px}
   .w4w-rect:active{transform:scale(.99)}
@@ -1516,8 +1523,15 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.4.0";
+const APP_VERSION="1.5.0";
 const CHANGELOG=[
+ {v:"1.5.0", d:"August 24, 2026", t:"The word behind the word", items:[
+   ["new","<b>Press and hold any word in a verse</b> to see what it was before it was English — the Hebrew or Greek word, how it sounds, what it means, and every way the KJV translators rendered it."],
+   ["new","Strong’s Hebrew and Greek are bundled into the app: 8,674 Hebrew words and 5,523 Greek, covering more than nine words in ten across all 66 books."],
+   ["new","Psalm 23:1 will tell you that <i>LORD</i> is יְהֹוָה — Yehovah. John 3:16 will tell you that <i>loved</i> is ἀγαπάω — agapao."],
+   ["new","The lexicon only downloads the first time you hold a word, so the app still opens as fast as it ever did."],
+   ["fix","Where our KJV and the tagged source disagree, no definition is offered rather than the wrong one. Better silence than a false witness."]
+ ]},
  {v:"1.4.0", d:"August 24, 2026", t:"Render unto Caesar", items:[
    ["new","<b>Rome has taken notice.</b> Once you subscribe, a letter arrives from Caesar — and every seven days the collectors call. A wheel spins, Caesar names his share, and your talents are lighter. Spend them, or Rome will."],
    ["new","<b>Half of everything Caesar takes is laid up as stone.</b> A church rises in Rome, brick by brick, that Caesar never meant to build — and a counter keeps the tally of every one you finish."],
@@ -4292,6 +4306,106 @@ function openGoalSettings(){
     if(document.querySelector('.view.active')?.id==="verse") renderVerse(); updateMetrics();
   };
 }
+/* =================== HEBREW / GREEK / ENGLISH DICTIONARY ===================
+   Press and hold any word in a verse to see what it was in the original tongue.
+   Two data files, both loaded ONLY on the first long-press so start-up stays fast:
+     strongs.js — Strong's Hebrew (8,674) + Greek (5,523), from openscriptures/strongs
+     kjvtag.js  — which Strong's number each KJV word renders, by word position
+   Where the tagged source disagrees with our KJV we stop rather than guess, so a word
+   either gets the right entry or none at all. ============================== */
+const DICT_HOLD_MS=420;
+let _dictState="idle";   // idle | loading | ready | failed
+function dictLoaded(){ return !!(window.STRONGS && window.KJVTAG); }
+function loadDict(){
+  if(dictLoaded()) return Promise.resolve(true);
+  if(_dictState==="loading") return _dictPromise;
+  _dictState="loading";
+  const one=src=>new Promise((res,rej)=>{ const s=document.createElement("script"); s.src=src; s.async=true;
+    s.onload=res; s.onerror=()=>rej(new Error(src)); document.head.appendChild(s); });
+  _dictPromise=Promise.all([one("/burningbush/strongs.js"),one("/burningbush/kjvtag.js")])
+    .then(()=>{ _dictState="ready"; return true; })
+    .catch(()=>{ _dictState="failed"; return false; });
+  return _dictPromise;
+}
+let _dictPromise=null;
+// the Strong's code for word #i of a verse, or null
+function strongsAt(b,c,v,i){
+  try{ const row=window.KJVTAG[b][c][v]; if(!row) return null;
+    const code=row.split(",")[i]; if(!code) return null;
+    return (b<=39?"h":"g")+code;                     // OT is Hebrew (with some Aramaic), NT Greek
+  }catch(e){ return null; }
+}
+function strongsEntry(key){
+  if(!key||!window.STRONGS) return null;
+  const e=window.STRONGS[key[0]] && window.STRONGS[key[0]][key.slice(1)];
+  return e?Object.assign({num:key[0].toUpperCase()+key.slice(1), lang:key[0]==="h"?"Hebrew":"Greek"},e):null;
+}
+// Wrap each word so a long-press knows exactly which one was held.
+function verseWordsHTML(b,c,v,text){
+  const t=(text!=null?text:kjvText(b,c,v))||"";
+  let i=-1;
+  return `<span class="vwrap" data-vref="${b}:${c}:${v}">`
+    + t.split(/(\s+)/).map(tok=>{
+        if(!tok || /^\s+$/.test(tok)) return tok;
+        i++;
+        return `<span class="vw" data-vw="${i}">${tok.replace(/&/g,"&amp;").replace(/</g,"&lt;")}</span>`;
+      }).join("")
+    + `</span>`;
+}
+// One delegated press-and-hold, wired once. Cancels on move or early release so it never
+// fights a scroll.
+let _dictWired=false;
+function wireVerseWords(){
+  if(_dictWired) return; _dictWired=true;
+  const host=document.querySelector(".phone"); if(!host) return;
+  let timer=null, startX=0, startY=0, target=null;
+  const cancel=()=>{ if(timer){ clearTimeout(timer); timer=null; } if(target){ target.classList.remove("held"); target=null; } };
+  host.addEventListener("pointerdown",e=>{
+    const w=e.target.closest && e.target.closest(".vw"); if(!w) return;
+    const wrap=w.closest("[data-vref]"); if(!wrap) return;
+    target=w; startX=e.clientX; startY=e.clientY;
+    timer=setTimeout(()=>{
+      timer=null; if(target) target.classList.remove("held");
+      const [b,c,v]=wrap.dataset.vref.split(":").map(Number);
+      openWordDef(b,c,v,+w.dataset.vw,w.textContent);
+      target=null;
+    }, DICT_HOLD_MS);
+    w.classList.add("held");
+  },{passive:true});
+  host.addEventListener("pointermove",e=>{ if(timer && (Math.abs(e.clientX-startX)>9||Math.abs(e.clientY-startY)>9)) cancel(); },{passive:true});
+  ["pointerup","pointercancel","pointerleave","scroll"].forEach(ev=>host.addEventListener(ev,cancel,{passive:true,capture:true}));
+  const content=document.querySelector(".content"); if(content) content.addEventListener("scroll",cancel,{passive:true});
+}
+function openWordDef(b,c,v,i,word){
+  const m=el("wordDefModal")||(()=>{ const d=document.createElement("div"); d.id="wordDefModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const clean=(word||"").replace(/[^A-Za-z'-]/g,"");
+  const shell=body=>{
+    m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose" id="wdClose">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800">${clean||"This word"}</div><span style="width:34px"></span></div>
+      <div class="hint" style="margin:8px 0 0">${bookName(b)} ${c}:${v}</div>${body}
+      <button class="btn" id="wdOk" style="width:100%;margin-top:14px">Close</button></div>`;
+    m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+    el("wdClose").onclick=()=>m.style.display="none";
+    el("wdOk").onclick=()=>m.style.display="none";
+  };
+  shell(`<p class="hint" style="margin-top:14px">Opening the lexicon…</p>`);
+  loadDict().then(ok=>{
+    if(!ok){ shell(`<p class="hint" style="margin-top:14px">The lexicon couldn't be loaded — check your connection and try again.</p>`); return; }
+    const e=strongsEntry(strongsAt(b,c,v,i));
+    if(!e){
+      shell(`<div class="teachbox" style="margin-top:12px"><b class="gold">${clean}</b><br><span class="muted">No original-language word is recorded for this one. Small joining words — and words the translators supplied for sense — often have none.</span></div>`);
+      return;
+    }
+    shell(`
+      <div class="wd-eng">${clean}</div>
+      <div class="wd-lang">${e.lang} · Strong's ${e.num}</div>
+      <div class="wd-orig">${e.l||""}</div>
+      ${e.t?`<div class="wd-translit">${e.t}${e.p?` · <span class="muted">${e.p}</span>`:""}</div>`:""}
+      ${e.d?`<div class="teachbox" style="margin-top:12px;text-align:left"><b class="gold">Meaning</b><br>${e.d}</div>`:""}
+      ${e.k?`<div class="teachbox" style="margin-top:10px;text-align:left"><b class="gold">Rendered in the KJV as</b><br>${e.k}</div>`:""}`);
+  });
+}
+
 /* =================== CAESAR'S TAX ===================
    Pro users get every book free, so talents pile up with nothing to buy. Every seven days
    Rome notices and takes its share — the point being to SPEND them or lose them. Half of
@@ -5241,7 +5355,7 @@ function renderLearnedVerse(b,c,v,ret){
       ${mastered?`<div class="mastered-ribbon">★ Mastered — recited word-for-word ${cnt}×</div>`:""}
       <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
       <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
-      <div class="lv-versetext">${text}</div>
+      <div class="lv-versetext">${verseWordsHTML(b,c,v,text)}</div>
       <button class="w4w-rect ${mastered?"done":""}" id="lvWord">
         <span class="w4w-rect-lbl">📖 Learn Word for Word</span>
         <span class="w4w-rect-count">${cnt}/10${mastered?" ✓":""}</span>
@@ -5301,7 +5415,8 @@ function renderWalk(){
         ${verseNavNow.html}
         <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
         <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
-        <div class="lv-versetext">"${curScene.text}"</div>
+        <div class="lv-versetext">“${verseWordsHTML(b,c,v,curScene.text)}”</div>
+        <div class="hint" style="text-align:center;margin:-8px 0 10px">Press and hold any word for its Hebrew or Greek.</div>
         <div class="teachbox"><b class="gold">Now picture it.</b> Weave <b>${bp.word}</b>, <b>${cp.word}</b> and <b>${vp.word}</b> — and what this verse means — into one <b>action-packed scene</b>, set in a room of one of your memory palaces.</div>
         ${canLearn?`<button class="btn" id="wToScene" style="margin-top:12px">Save Visual →</button>`:missHtml}
         <div class="btnrow" style="margin-top:8px"><button class="btn ghost" id="wSave" style="flex:1">${Prog.saved.includes(vkey)?"↩ Unsave":"Save for later"}</button><button class="btn ghost" id="wSkip" style="flex:1">${Prog.skipped.includes(vkey)?"↩ Unskip":"Skip"}</button></div>
@@ -5331,7 +5446,7 @@ function renderWalk(){
       ${palaceSel}
       <div class="lv-ref" style="font-size:20px;margin:8px 0 4px">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
       <div class="lv-triple lv-triple-sm">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
-      <div class="lv-versetext" style="font-size:13.5px;line-height:1.45;margin:0 0 12px">"${curScene.text}"</div>
+      <div class="lv-versetext" style="font-size:13.5px;line-height:1.45;margin:0 0 12px">“${verseWordsHTML(b,c,v,curScene.text)}”</div>
       <label class="vplabel">Your scene</label>
       <textarea class="ed-ta" id="wScene" placeholder="e.g. In the kitchen, a giant ${bp.word} smashes into a ${cp.word} while a ${vp.word} …">${(Prog.customScene[vkey]||"").replace(/</g,"&lt;")}</textarea>
       <button type="button" class="mic-btn" id="wMic"><span class="mic-ic">🎤</span><span class="mic-lbl">Hold to speak your scene</span></button>
@@ -6963,6 +7078,7 @@ if(!Prog.onboarded){
 } else {
   show(bootTab);   // returning user / page refresh — back to the tab they were on
 }
+wireVerseWords();   // press-and-hold on any verse word → its Hebrew/Greek
 bootPopups();   // Rome's letter → any levy that has fallen due → the "What's new" card
 
 /* ---- Android / browser back button = in-app back (one screen per press); at the Learn home, back again exits ---- */
