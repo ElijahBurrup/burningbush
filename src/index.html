@@ -1594,8 +1594,11 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.9.3";
+const APP_VERSION="1.9.4";
 const CHANGELOG=[
+ {v:"1.9.4", d:"August 24, 2026", t:"Tightening up before launch", items:[
+   ["fix","Access and account handling tightened ahead of launch. Nothing changes for you — the groundwork simply got firmer."]
+ ]},
  {v:"1.9.3", d:"August 24, 2026", t:"Small mercies", items:[
    ["new","The <b>“a little, and often”</b> word now waits until you have done <b>twenty</b> things in a day rather than fifteen."],
    ["fix","“New palace” on the Learn path is now <b>Add Palace</b>."],
@@ -2420,7 +2423,9 @@ const Billing = {
   grant(months=12){ Store.setJSON("vv_pro",{active:true, plan:"annual", since:Date.now(), until:Date.now()+Math.round(months*30.44*DAY)}); },
   revoke(){ Store.remove("vv_pro"); },
   // Comp / promo codes that unlock the full app permanently (no expiry).
-  codes: ["elijahsentme"],
+  // EMPTY ON PURPOSE: a shared code unlocks the paid app for anyone who learns it. Add one
+  // here only for a deliberate, time-boxed campaign, and remove it again afterwards.
+  codes: [],
   redeem(code){ const c=(code||"").trim().toLowerCase().replace(/\s+/g,""); if(Billing.codes.includes(c)){ Store.setJSON("vv_pro",{active:true, plan:"code", since:Date.now(), until:null}); return true; } return false; },
   startCheckout(plan){
     const url = plan==="monthly" ? Billing.cfg.monthlyUrl : Billing.cfg.checkoutUrl;
@@ -2506,7 +2511,7 @@ const Auth = {
   adminSetDone(key,done){ return Auth._req("/admin/tickets/status","POST",{key,done}); },
   adminDelete(key){ return Auth._req("/admin/tickets/delete","POST",{key}); }
 };
-const ADMIN_EMAILS=["elijah@kingdombuilders.ai"];   // who may review every user's bug reports
+const ADMIN_EMAILS=["elijahdburrup@gmail.com","erinburrup@gmail.com"];   // who may review every user's bug reports and see the Admin tools
 // any verse (curated pool object if present, else built from the full KJV)
 function verseObj(b,c,v){ const p=verseAt(refKey(b,c,v));
   if(p) return {b:p.b||bookName(b),c,v,text:p.text||kjvText(b,c,v),concept:p.concept||"",scene:p.scene,elements:p.elements};

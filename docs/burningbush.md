@@ -90,7 +90,7 @@ The app ships a user-facing changelog. Before you deploy:
    The full history lives under **Profile → What's new → Version history** (`openWhatsNew(true)`).
    Seen-state is the `Store` key `vv_version`.
 
-Current: **v1.9.3** (2026-08-24).
+Current: **v1.9.4** (2026-08-24).
 
 ## 6. Deployment (⚠️ read before pushing)
 
