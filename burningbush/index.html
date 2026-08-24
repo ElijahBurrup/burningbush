@@ -38,6 +38,7 @@
     --gold-shadow:#9c7522; --gold-soft:rgba(232,201,106,.14); --accent-soft:rgba(91,140,255,.14);
     --green-hi:#6fe08f; --green-soft:rgba(75,191,115,.16); --green-ink:#8fe0a8; --green-line:#2e6b45;
     --sg-hi:#5f8cff; --sg-lo:#141d3f; --sg-fg:#ffffff;   /* story-section gradient: light→dark across sections (per-theme below) */
+    --purple:#b48cf2; --purple-soft:rgba(180,140,242,.16);   /* God's-promise verses */
     --gray1:#6b7480; --gray2:#4c545f; --gray-shadow:#333a44;
     /* state backgrounds (quiz feedback / selection) */
     --ok-bg:#16281a; --no-bg:#2a1418; --sel-bg:#182236;
@@ -157,8 +158,8 @@
   .btn.sm{width:auto;padding:10px 16px;font-size:13px;border-radius:11px;box-shadow:none}
   .btnrow{display:flex;gap:10px;margin-top:12px}
   /* verse hub — large square launcher buttons (2-col grid) + full-width test/review bars */
-  .versehub{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
-  .vhub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px;font-size:17px;font-weight:800;color:var(--ink);cursor:pointer;text-align:center}
+  .versehub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px}
+  .vhub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px;font-size:17px;font-weight:800;color:var(--ink);cursor:pointer;text-align:center;min-width:0}
   .vhub.sq{aspect-ratio:1.55}
   .vhub .vi{font-size:40px;line-height:1}
   .vhub small{font-size:13px;font-weight:700;color:var(--muted)}
@@ -565,6 +566,9 @@
   .vbox.save,.vbox.sugmem{border-color:var(--green);color:var(--good)}
   .vbox.skip,.vbox.sugskip{border-color:var(--miss-ink);color:var(--miss-ink)}
   .vbox.locked{border-color:var(--line);color:var(--cell-ink)}
+  .vbox.promise{border-color:var(--purple);color:var(--purple);background:var(--purple-soft)}   /* a promise of God */
+  .vbox.notready{color:var(--cell-ink)!important}   /* not reachable yet: keep the outline, grey the number */
+  .promise-ref{color:var(--purple)}
   /* chapter picker = round gold chips; verse picker = square tiles (visual differentiator) */
   .vboxes.chapters .vbox{border-radius:50%}
   /* CHAPTERS render as big gold "CH" cards; VERSES stay small number squares — unmistakably different screens */
@@ -713,6 +717,17 @@
   .theme-opt.sel{border-color:var(--gold-ink)}
   .theme-opt .sw{width:44px;height:44px;border-radius:10px;flex:none;border:1px solid var(--sw-line)}
   .theme-opt .tn{font-weight:800;font-size:15px} .theme-opt .td{font-size:12px;color:var(--muted)}
+  .cl-wrap{max-height:52vh;overflow-y:auto;margin-top:8px}
+  .cl-rel{border-top:1px solid var(--line);padding:12px 0 4px}
+  .cl-rel:first-child{border-top:none;padding-top:4px}
+  .cl-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .cl-head b{font-size:17px}
+  .cl-date{font-size:12px;color:var(--muted);font-weight:700}
+  .cl-title{font-size:13px;color:var(--ink-soft);font-weight:700;margin:2px 0 8px}
+  .cl-item{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;line-height:1.45;margin-bottom:7px;color:var(--ink-soft)}
+  .cl-tag{flex:0 0 auto;font-size:9.5px;font-weight:800;letter-spacing:.06em;padding:3px 6px;border-radius:5px;margin-top:2px}
+  .cl-tag.new{background:var(--green-soft);color:var(--good);border:1px solid var(--green)}
+  .cl-tag.fix{background:var(--accent-soft);color:var(--blue-ink);border:1px solid var(--blue2)}
   .prof-sect{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--gold-ink);font-weight:800;margin-bottom:8px}
   .prof-sect.prof-collapsible{cursor:pointer;padding:8px 10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;margin-bottom:6px;user-select:none}
   .prof-sect .prof-caret{display:inline-block;width:14px;color:var(--muted)}
@@ -817,7 +832,7 @@
   .phone[data-theme="illumined"]{
     --bg:#0b0b18;--panel:#16143a;--panel2:#1c1a44;--panel3:#262353;--ink:#efeafc;--muted:#9c9ac2;
     --gold:#e8c96a;--gold2:#b8933f;--accent:#7aa2ff;--green:#7fe0a0;--miss:#ff9ab0;--line:rgba(232,201,106,.22);
-    --sg-hi:#7aa2ff;--sg-lo:#1a2450;--sg-fg:#ffffff;
+    --sg-hi:#7aa2ff;--sg-lo:#1a2450;--sg-fg:#ffffff;--purple:#c9a6ff;--purple-soft:rgba(201,166,255,.18);
     --gold-hi:#ffe9a8;--glow:rgba(232,201,106,.5);
     background:radial-gradient(700px 400px at 50% -8%,rgba(70,60,150,.5),transparent 55%),linear-gradient(180deg,#14142e,#0d0d20 60%,#0a0a18);
     border-color:rgba(232,201,106,.28);
@@ -887,7 +902,7 @@
   .phone[data-theme="illumined"] .pill{background:rgba(232,201,106,.08);border-color:var(--line);color:var(--gold-hi)}
 
   /* ============ STAINED GLASS — cathedral leaded-glass, jewel tones, Cinzel ============ */
-  .phone[data-theme="glass"]{--bg:#0a0b14;--panel:#141726;--panel2:#1b1f33;--panel3:#252b45;--ink:#eef0f6;--muted:#98a0bd;--gold:#e8c96a;--gold2:#b8912f;--accent:#4f7fe0;--green:#3fae7a;--miss:#d05a72;--line:#33406b;
+  .phone[data-theme="glass"]{--bg:#0a0b14;--panel:#141726;--panel2:#1b1f33;--panel3:#252b45;--ink:#eef0f6;--muted:#98a0bd;--gold:#e8c96a;--gold2:#b8912f;--accent:#4f7fe0;--green:#3fae7a;--miss:#d05a72;--line:#33406b;--purple:#b79cf0;--purple-soft:rgba(183,156,240,.16);
     --sg-hi:#5a8ae6;--sg-lo:#101a3e;--sg-fg:#eef2ff;
     --radius-card:10px;--radius-box:6px;--radius-pill:8px;
     --font-body:"EB Garamond",Georgia,serif;--font-cap:"Cormorant Garamond",serif;
@@ -953,7 +968,7 @@
   .phone[data-theme="glass"] .milestone.reached .msub{color:#4a3810}
 
   /* ============ SCRIPTURE QUEST — youth adventure/RPG, chunky, Luckiest Guy ============ */
-  .phone[data-theme="quest"]{--bg:#122320;--panel:#1b312b;--panel2:#213a33;--panel3:#2b4a41;--ink:#f5eede;--muted:#a6b3a5;--gold:#f4b942;--gold2:#c9852f;--accent:#2ec4b6;--green:#4caf50;--miss:#e76f51;--line:#2d4640;
+  .phone[data-theme="quest"]{--bg:#122320;--panel:#1b312b;--panel2:#213a33;--panel3:#2b4a41;--ink:#f5eede;--muted:#a6b3a5;--gold:#f4b942;--gold2:#c9852f;--accent:#2ec4b6;--green:#4caf50;--miss:#e76f51;--line:#2d4640;--purple:#a678e8;--purple-soft:rgba(166,120,232,.16);
     --sg-hi:#5fc98a;--sg-lo:#123a24;--sg-fg:#f2fff0;
     --radius-card:20px;--radius-box:14px;
     background:
@@ -1044,6 +1059,7 @@
   .phone[data-theme="buddy"]{
     --bg:#eaf4ff; --panel:#ffffff; --panel2:#f0f5fb; --panel3:#e4ebf3; --panel0:#eef5ff;
     --sg-hi:#6fa8ff; --sg-lo:#22499b; --sg-fg:#ffffff;
+    --purple:#7b3fd4; --purple-soft:rgba(123,63,212,.13);
     --ink:#3a4a5e; --muted:#8a97a8; --ink-soft:#4a5a6e; --ink-soft2:#5a6675;
     --gold:#ffb800; --gold2:#e0a600; --gold-ink:#a06f00; --accent:#1cb0f6;
     --green:#58cc02; --good:#3f9e00; --green-ink:#3f9e00; --green-line:#8ccf5a;
@@ -1238,7 +1254,7 @@
     <button data-tab="learn" class="on"><span class="ic">🎓</span><span class="lbl">Learn</span></button>
     <button data-tab="verse"><span class="tabbadge"></span><span class="ic">📖</span><span class="lbl">Verses</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
     <button data-tab="palace"><span class="tabbadge"></span><span class="ic">🏛️</span><span class="lbl">Palaces</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
-    <button data-tab="journey"><span class="ic">🗺️</span><span class="lbl">Journey</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
+    <button data-tab="journey"><span class="ic">📕</span><span class="lbl">Bible</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
     <button data-tab="stories"><span class="ic">📜</span><span class="lbl">Stories</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
   </div>
 
@@ -1314,6 +1330,9 @@
       <div class="prof-sect" style="margin-top:18px">Start over</div>
       <p class="hint" style="margin:0 0 8px">Wipe all progress and begin as a brand-new user. <b>Export a backup first</b> — you can Restore it later.</p>
       <button class="btn ghost" id="resetBtn" style="width:100%;color:var(--miss-ink);border-color:var(--miss)">♻️ Reset all progress</button>
+
+      <div class="prof-sect" style="margin-top:18px">What's new</div>
+      <button class="btn ghost" id="pChangelog" style="width:100%">📋 Version history</button>
 
       <div class="prof-sect" style="margin-top:18px">Admin</div>
       <button class="btn ghost" id="testScratchBtn" style="width:100%">🎫 Test scratch-off</button>
@@ -1414,6 +1433,61 @@ const TRANSLATIONS=[
  {id:"ESV", name:"English Standard Version", data:()=>null, licensed:true},
  {id:"BBE", name:"Bible in Basic English", data:()=>window.BBE, licensed:false, bonus:true}
 ];
+/* =================== VERSION & CHANGELOG =================== */
+// Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
+// pops the "What's new" card once per device; the full history lives under
+// Profile → What's new. Each item is ["new"|"fix", "what changed"].
+const APP_VERSION="1.1.0";
+const CHANGELOG=[
+ {v:"1.1.0", d:"August 24, 2026", t:"Verses, stories & streaks", items:[
+   ["new","Bible stories now finish on the same verse page as every other verse — write the scene and place it in a palace room."],
+   ["new","Verse review now asks “Where does <i>&lt;story&gt;</i> begin?” for any verse that opens one of the 100 Bible stories."],
+   ["new","God's promises are marked in purple — in every verse list and in the chapter grid."],
+   ["new","📝 Reveal my scene on the number test shows your own written scene without leaving the question."],
+   ["new","The Journey tab is now <b>Bible</b>, with a Bible icon, and slides to the far-left spot once you earn it."],
+   ["new","Your daily streak now takes both halves of the day: today's goal <b>and</b> every review that came due."],
+   ["fix","The Verses screen ran off the right edge — Topics, Saved and the three practice buttons were unreachable."],
+   ["fix","The goal-completion track no longer covers your word-for-word result; it waits for “Amen”."],
+   ["fix","Verses you can't reach yet keep their colored outline — only the number greys out."],
+   ["fix","Saved or skipped a verse? Those buttons now read <b>Unsave</b> and <b>Unskip</b>."],
+   ["fix","Verse testing offers 12 books instead of 8, always pairs Psalms with Proverbs, and never splits up John &amp; 1–3 John, Samuel, Kings, Chronicles, Corinthians, Thessalonians, Timothy or Peter."],
+   ["fix","The memorized-verses counter now flags a missing palace or room, not only a missing scene."],
+   ["fix","“Bonus palace” is now “New palace”."],
+   ["fix","Dropped the redundant “Verses” heading at the top of the Verses screen."]
+ ]},
+ {v:"1.0.0", d:"August 2026", t:"Burning Bush launch", items:[
+   ["new","The full path: the Major System, the 66 books, memory palaces, Bible stories and spaced repetition."],
+   ["new","Five themes, cloud accounts, backup &amp; restore, badges, talents and daily goals."]
+ ]}
+];
+function releaseHTML(r){
+  return `<div class="cl-rel"><div class="cl-head"><b class="gold">v${r.v}</b><span class="cl-date">${r.d}</span></div>`
+    + (r.t?`<div class="cl-title">${r.t}</div>`:"")
+    + r.items.map(it=>`<div class="cl-item"><span class="cl-tag ${it[0]}">${it[0]==="new"?"NEW":"FIX"}</span><span>${it[1]}</span></div>`).join("")
+    + `</div>`;
+}
+function openWhatsNew(all){
+  const m=el("whatsNewModal")||(()=>{ const d=document.createElement("div"); d.id="whatsNewModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const list=all?CHANGELOG:[CHANGELOG[0]];
+  m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose" id="wnClose">✕</button>
+      <div style="flex:1;text-align:center;font-weight:800">${all?"Version history":"What's new"}</div><span style="width:34px"></span></div>
+    ${all?"":`<p class="hint" style="margin:10px 0 0">You're now on <b class="gold">v${APP_VERSION}</b> — here's what changed.</p>`}
+    <div class="cl-wrap">${list.map(releaseHTML).join("")}</div>
+    ${all?"":`<button class="btn ghost sm" id="wnAll" style="width:100%;margin-top:10px">See every version</button>`}
+    <button class="btn" id="wnOk" style="width:100%;margin-top:10px">${all?"Done":"Amen — got it"}</button></div>`;
+  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("wnClose").onclick=()=>m.style.display="none";
+  el("wnOk").onclick=()=>m.style.display="none";
+  if(el("wnAll")) el("wnAll").onclick=()=>openWhatsNew(true);
+  try{ Store.set("vv_version",APP_VERSION); }catch(e){}   // seen — don't pop again for this release
+}
+// Pop the card once per release. A brand-new user just gets the version recorded silently.
+function checkVersionCard(){
+  let seen=null; try{ seen=Store.get("vv_version",null); }catch(e){}
+  if(seen===APP_VERSION) return;
+  if(!seen && !Prog.onboarded){ try{ Store.set("vv_version",APP_VERSION); }catch(e){} return; }
+  setTimeout(()=>openWhatsNew(false), 900);
+}
 function curTrans(){ return Store.get("vv_trans","KJV"); }
 function transData(){ const t=TRANSLATIONS.find(x=>x.id===curTrans()); const d=t&&t.data&&t.data(); return d||window.KJV; } // fallback KJV
 function transFellBack(){ const t=TRANSLATIONS.find(x=>x.id===curTrans()); return !!(t&&t.licensed); }
@@ -2179,6 +2253,7 @@ function verseObj(b,c,v){ const p=verseAt(refKey(b,c,v));
   if(p) return {b:p.b||bookName(b),c,v,text:p.text||kjvText(b,c,v),concept:p.concept||"",scene:p.scene,elements:p.elements};
   return {b:bookName(b),c,v,text:kjvText(b,c,v),concept:""}; }
 function isSuggested(b,c,v){ return !!verseAt(refKey(b,c,v)); } // curated heart-verse
+const SUGSKIP_RE=/\bbegat\b|\bthe son of\b|\bcubits?\b|\bshekels?\b|\bwere numbered\b|\bnumbered of the\b|\bnumber of the\b|\bafter their families\b|\bhe goats\b|\bhe lambs\b|\blambs of the first year\b|\bmeat offering\b|\bwave offering\b|\bthe sons of \w+ were\b|\bhundred and \w+ thousand\b/i;
 function verseState(b,c,v){
   const k=refKey(b,c,v);
   if(Prog.memorized.includes(k)) return isSuggested(b,c,v) ? "memgreen" : "mem"; // learned suggested verse keeps green
@@ -2186,8 +2261,28 @@ function verseState(b,c,v){
   if(Prog.saved.includes(k))     return "save";
   if(!reachable(b,c,v))          return "locked";               // can't encode yet → grey
   if(verseAt(k))                 return "sugmem";               // curated heart-verse → suggest memorize (green)
-  if(/\bbegat\b|\bthe son of\b|\bcubits?\b|\bshekels?\b|\bwere numbered\b|\bnumbered of the\b|\bnumber of the\b|\bafter their families\b|\bhe goats\b|\bhe lambs\b|\blambs of the first year\b|\bmeat offering\b|\bwave offering\b|\bthe sons of \w+ were\b|\bhundred and \w+ thousand\b/i.test(kjvText(b,c,v))) return "sugskip"; // genealogy / offerings / cubits / census → suggest skip
+  if(SUGSKIP_RE.test(kjvText(b,c,v))) return "sugskip";        // genealogy / offerings / cubits / census → suggest skip
   return "ready";                                                // reachable, no suggestion
+}
+// A curated verse tagged as one of God's promises. Read straight from GEMS, not from the
+// merged verse map — NT_VERSES/SCENES entries overwrite GEMS there and carry no cat.
+let _promiseSet=null;
+function isPromiseVerse(b,c,v){
+  if(!_promiseSet){ _promiseSet=new Set(); GEMS.forEach(g=>{ if(g.cat==="promise") _promiseSet.add(refKey(bookNum(g.b),g.c,g.v)); }); }
+  return _promiseSet.has(refKey(b,c,v));
+}
+// Class for a square in the chapter grid. The verse's own state ALWAYS colors the outline;
+// when it isn't reachable yet we add .notready, which greys the number but keeps that outline.
+function verseBoxClass(b,c,v){
+  const k=refKey(b,c,v);
+  let base;
+  if(Prog.memorized.includes(k))           base = isSuggested(b,c,v) ? "memgreen" : "mem";
+  else if(Prog.skipped.includes(k))        base = "skip";
+  else if(Prog.saved.includes(k))          base = "save";
+  else if(verseAt(k))                      base = "sugmem";
+  else if(SUGSKIP_RE.test(kjvText(b,c,v))) base = "sugskip";
+  else                                     base = "ready";
+  return base + (isPromiseVerse(b,c,v) ? " promise" : "") + (reachable(b,c,v) ? "" : " notready");
 }
 function cardState(k){ const st=SRS[k]; return (st && typeof st.box==="number") ? st : {box:1,due:0}; } // heal entries missing/NaN box (which would poison due dates)
 function gradeKey(k,g){
@@ -2298,6 +2393,9 @@ function updateTabLocks(){
     b.classList.toggle("ticket", !won);                                    // locked tabs render as scratch-off tickets
     b.classList.toggle("pending", !won && (scratchSimActive || pend>=0));   // tickets flash while a scratch is available (or during a sim)
   });
+  // Once the Bible tab is earned it takes the far-left slot and everything else slides right.
+  const bar=document.querySelector(".tabbar"), bibleBtn=bar&&bar.querySelector('button[data-tab="journey"]');
+  if(bar && bibleBtn && tabWon("journey") && bar.firstElementChild!==bibleBtn) bar.insertBefore(bibleBtn, bar.firstElementChild);
   if(!scratchSimActive && pend>=0 && pend!==scratchOffered){ scratchOffered=pend; setTimeout(()=>toast("🎫 You earned a scratch-off! Tap a flashing golden ticket below 👇"),450); }
   if(pend<0) scratchOffered=-1;
   // once the user has 5 verses, remind them a 5-answer streak in the verse test unlocks the next ticket
@@ -2401,16 +2499,16 @@ function renderJourney(){
   const VMODES=[["num","#","Book number"],["numimg","🔢","Number image"],["bookimg","📖","Book image"],["name","Aa","Book name"]];
   const viewToggle=`<div class="bible-viewtoggle">${VMODES.map(m=>`<button class="bvt ${mode===m[0]?"on":""}" data-vmode="${m[0]}" title="${m[2]}">${m[1]}</button>`).join("")}</div>`;
   J.innerHTML=`
-    <h2 style="margin:0 0 6px">Your Journey</h2>
+    <h2 style="margin:0 0 6px">Bible</h2>
     ${(function(){ // daily habit hook — kept compact so the whole page fits without scrolling
       const dueV=versesDueCount(), dueP=palacesDueCount(), td=dueV+dueP;
       const streak=(Prog.dayStreak>0?`<span class="gold" style="font-weight:800">🔥 ${Prog.dayStreak}-day</span>`:"")+(Prog.freezes>0?`<span title="Streak Freezes — auto-save a missed day" style="margin-left:6px;font-weight:800">🧊 ${Prog.freezes}</span>`:"");
       const wd=weekDaysNow(), weekLine=`${"●".repeat(Math.min(wd,5))}${"○".repeat(Math.max(0,5-wd))} ${wd}/5${Prog.weekGoalHit?" ⭐":""}`;
       if(td>0){ const bits=[]; if(dueV) bits.push(`${dueV} verse${dueV>1?"s":""}`); if(dueP) bits.push(`${dueP} palace${dueP>1?"s":""}`);
         return `<div class="card" style="border:1px solid var(--gold2);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;margin-bottom:9px">
-          <div style="min-width:0"><div style="font-weight:800;font-size:14px">🔔 ${bits.join(" · ")} due today</div><div class="hint" style="margin-top:2px">${streak?streak+" · ":""}${weekLine}</div></div>
+          <div style="min-width:0"><div style="font-weight:800;font-size:14px">🔔 ${bits.join(" · ")} due today</div><div class="hint" style="margin-top:2px">${streak?streak+" · ":""}${weekLine}</div>${streakNeedLine()}</div>
           <button class="btn blue" id="jReview" style="margin:0;flex:0 0 auto;width:auto;padding:10px 16px;white-space:nowrap">Review →</button></div>`; }
-      return `<div class="card" style="padding:11px 14px;margin-bottom:9px;text-align:center"><div style="font-weight:800;color:var(--good)">✓ You're caught up today</div><div class="hint" style="margin-top:3px">${streak?streak+" · ":""}${weekLine}</div></div>`;
+      return `<div class="card" style="padding:11px 14px;margin-bottom:9px;text-align:center"><div style="font-weight:800;color:var(--good)">✓ You're caught up today</div><div class="hint" style="margin-top:3px">${streak?streak+" · ":""}${weekLine}</div>${streakNeedLine()}</div>`;
     })()}
     <div class="card biblecard" style="margin-top:0;position:relative;padding:12px 14px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><h2 style="font-size:15px;margin:0">The whole Bible</h2><div style="display:flex;gap:6px;align-items:center">${viewToggle}<button class="bible-search-btn" id="bibleSearchBtn" title="Jump to a book">🔍</button></div></div>
@@ -2443,6 +2541,12 @@ let _storyStarts=null;
 function storyStarts(){ if(_storyStarts) return _storyStarts; const v=new Set(), c=new Set();
   STORY_GROUPS.forEach(g=>g.s.forEach(st=>{ const b=bookNum(st[1]); v.add(b+":"+st[2]+":"+st[3]); c.add(b+":"+st[2]); }));
   _storyStarts={v,c}; return _storyStarts; }
+// refKey → the name of the Bible story that begins there
+let _storyNameMap=null;
+function storyNameAt(b,c,v){
+  if(!_storyNameMap){ _storyNameMap={}; STORY_GROUPS.forEach(g=>g.s.forEach(st=>{ _storyNameMap[bookNum(st[1])+":"+st[2]+":"+st[3]]=st[0]; })); }
+  return _storyNameMap[b+":"+c+":"+v]||null;
+}
 function renderBookScreen(bn){
   const J=el("journey"), w=pegFor(bn).word, SS=storyStarts();
   let chips="";
@@ -2478,7 +2582,7 @@ function renderChapterScreen(bn,c){
   const J=el("journey"), SS=storyStarts();
   let boxes="";
   for(let v=1;v<=verseCount(bn,c);v++){ const story=SS.v.has(bn+":"+c+":"+v);
-    boxes+=`<div class="vbox ${verseState(bn,c,v)}" data-v="${v}">${pad2(v)}${story?`<span class="storymark" title="A Bible story begins here">📖</span>`:""}</div>`; }
+    boxes+=`<div class="vbox ${verseBoxClass(bn,c,v)}" data-v="${v}">${pad2(v)}${story?`<span class="storymark" title="A Bible story begins here">📖</span>`:""}</div>`; }
   const prevC=c>1?c-1:null, nextC=c<chapCount(bn)?c+1:null;
   J.innerHTML=`
     <div class="navrow">
@@ -2497,7 +2601,8 @@ function renderChapterScreen(bn,c){
         <span><b style="border-color:var(--gold2)"></b>ready</span>
         <span><b style="border-color:var(--green)"></b>suggested / saved</span>
         <span><b style="border-color:var(--miss-ink)"></b>skip</span>
-        <span><b></b>not ready</span>
+        <span><b style="border-color:var(--purple)"></b>a promise of God</span>
+        <span><b></b>not ready — grey number, colored outline</span>
         <span><b style="background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:var(--gold-ink)"></b>learned</span>
         <span>📖 a story begins here</span>
       </div>
@@ -2617,7 +2722,7 @@ function buildUnits(){
   units.push({name:"Spaced Repetition", ic:"🔁", videoTrack:true, skills:[ vid("sr") ]});
   // Optional bonus palaces get appended to the end of each later section (never block progress).
   let _palaceSlot=1;
-  const addOptPalace=(u)=>{ u.skills.push({id:"palace:"+_palaceSlot,label:"Bonus palace",kind:"palace",optional:true,items:[_palaceSlot]}); _palaceSlot++; return u; };
+  const addOptPalace=(u)=>{ u.skills.push({id:"palace:"+_palaceSlot,label:"New palace",kind:"palace",optional:true,items:[_palaceSlot]}); _palaceSlot++; return u; };
   // 4) Balanced climb: each round pairs Old Testament books with New Testament books (OT 6-39, NT 41-66 — Mark onward).
   const ot=range(6,39), nt=range(41,66), ROUNDS=12;
   const rng=arr=>arr.length?bookName(arr[0])+(arr.length>1?"–"+bookName(arr[arr.length-1]):""):"";
@@ -2946,15 +3051,19 @@ function finishStory(){
   const sk=ST.sk, host=ST.host||"learn", ret=ST.ret||renderPath;
   if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id);
   sk.items.forEach(id=>gradeKey(`sk:story:${id}`,"good"));
-  // The story's starting verse now joins spaced repetition, so you keep its location hidden in your heart.
-  const s=sk.story, k=refKey(bookNum(s.b),s.c,s.v);
+  const s=sk.story, b=bookNum(s.b), c=s.c, v=s.v, k=refKey(b,c,v);
   Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k);
-  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); }
   saveProg(); updateMetrics(); ST=null; checkBadges();
-  el(host).innerHTML=`<div class="card center"><div style="font-size:52px">📖</div><h2>Story located!</h2>
-    <p class="lead">Its opening verse just joined your daily review. Keep going through the stories.</p>
-    <button class="btn" id="stBack">Back to stories</button></div>`;
-  el("stBack").onclick=ret;
+  const celebrate=()=>{ show(host);
+    el(host).innerHTML=`<div class="card center"><div style="font-size:52px">📖</div><h2>Story located!</h2>
+      <p class="lead">Its opening verse just joined your daily review — and now it lives in a room of your palace.</p>
+      <button class="btn" id="stBack">Back to stories</button></div>`;
+    el("stBack").onclick=ret; };
+  // Same verse page and palace placement as any other verse — the lesson already walked
+  // the three images, so we open straight on the scene + palace/room step.
+  if(Prog.memorized.includes(k)){ editVerseScene(b,c,v, celebrate, celebrate); return; }
+  walkReturn=celebrate; curScene=verseObj(b,c,v); wPhase="scene"; sceneBackfill=false;
+  show("verse"); renderWalk();
 }
 let storyExpanded=null;
 function renderStories(){
@@ -3457,7 +3566,8 @@ function verseRow(b,c,v,st,star){
     }
   }
   const mst = (st==="mem" && w4wMastered(refKey(b,c,v))) ? '★ ' : '';
-  return `<div class="vrow clkrow" data-vb="${b}:${c}:${v}"><div class="vt"><b class="gold">${star?"✨ ":""}${mst}${bookName(b)} ${c}:${v}${srBadge}</b><div class="muted">${t.length>56?t.slice(0,56).replace(/\s+\S*$/,"")+"…":t}</div>${trail}</div><div>${st==="mem"?'<span style="color:var(--good);font-weight:800">✓</span>':'→'}</div></div>`;
+  const prom = isPromiseVerse(b,c,v);
+  return `<div class="vrow clkrow" data-vb="${b}:${c}:${v}"><div class="vt"><b class="${prom?"promise-ref":"gold"}">${prom?"🤝 ":""}${star?"✨ ":""}${mst}${bookName(b)} ${c}:${v}${srBadge}</b><div class="muted">${t.length>56?t.slice(0,56).replace(/\s+\S*$/,"")+"…":t}</div>${trail}</div><div>${st==="mem"?'<span style="color:var(--good);font-weight:800">✓</span>':'→'}</div></div>`;
 }
 function suggestedVerses(){
   // all curated heart-verses, not yet memorized/skipped; reachable ones first
@@ -3567,8 +3677,10 @@ function renderVerse(){
               +(open?(vs.length?`<div class="vlist">`+vs.map(a=>verseRow(a[0],a[1],a[2],"go")).join("")+`</div>`:`<p class="hint" style="margin:4px 0 8px">None in your range yet — learn more numbers.</p>`):"");
           }).join("");
     } else if(vView==="mem"){ title="★ Memorized verses";
-      memBare=mem.filter(a=>{ const k=a.join(":"); const loc=Prog.verseLoc&&Prog.verseLoc[k]; const sc=((Prog.customScene&&Prog.customScene[k])||"").trim(); return !sc && !(loc&&loc.p!=null); });
-      const nudge = memBare.length ? `<div class="mem-backfill"><div class="mem-backfill-t"><b>🏛️ ${memBare.length} verse${memBare.length>1?"s":""}</b> ${memBare.length>1?"don't":"doesn't"} have a memory scene yet — give ${memBare.length>1?"them":"it"} a palace &amp; room so ${memBare.length>1?"they":"it"} stick${memBare.length>1?"":"s"}.</div><button class="btn sm" id="memBackfill">Add ${memBare.length>1?"scenes":"a scene"} →</button></div>` : "";
+      // anything still missing its scene text, its palace, OR its room shows up here
+      memBare=mem.filter(a=>{ const k=a.join(":"); const loc=(Prog.verseLoc&&Prog.verseLoc[k])||null; const sc=((Prog.customScene&&Prog.customScene[k])||"").trim();
+        return !sc || !loc || loc.p==null || !((loc.room||"").trim()); });
+      const nudge = memBare.length ? `<div class="mem-backfill"><div class="mem-backfill-t"><b>🏛️ ${memBare.length} verse${memBare.length>1?"s":""}</b> ${memBare.length>1?"are":"is"} missing a scene, a palace or a room — fill ${memBare.length>1?"them":"it"} in so ${memBare.length>1?"they":"it"} stick${memBare.length>1?"":"s"}.</div><button class="btn sm" id="memBackfill">Finish ${memBare.length>1?"them":"it"} →</button></div>` : "";
       body=mem.length? nudge+`<p class="hint" style="margin:2px 0 8px">Tap a book, then a verse to rebuild it, add a scene, or practice it word-for-word.</p>`+bookGroupedList(mem,"mem")
         :`<p class="hint">Verses you finish building show up here.</p>`;
     } else if(vView==="saved"){ title="🔖 Saved for later";
@@ -3588,7 +3700,6 @@ function renderVerse(){
   const reviewVi=dueAll?"🔁":"🎯";
   const reviewLabel=dueAll?`Spaced Repetition · ${dueAll} due`:(mem.length?`Practice Verses (${mem.length})`:`Practice Verses`);
   V.innerHTML=`<div class="goalbar" id="goalBtn">${goalBarHTML()}</div>
-    <h2 style="margin:2px 0 8px">Verses</h2>
     <div class="versehub">
       <button class="vhub sq" data-view="sugg"><span class="vi">✨</span><span>Suggested</span><small>${suggReach} in reach</small></button>
       <button class="vhub sq" data-view="topics"><span class="vi">📚</span><span>Topics</span><small>${TOPICS.length}</small></button>
@@ -3855,6 +3966,7 @@ function finishDue(){ if(MS && MS.dueWork) doneForToday(); else practiceNext(tru
 // The "you're done for today" moment — the emotional close of the daily loop; credits the day streak, then offers optional free practice.
 function doneForToday(){
   const V=el("verse");
+  creditToday();   // the review half just finished — credit the streak if the goal is in too
   const wd=weekDaysNow();
   const gotBonus = MS && MS.dueWork && !MS._bonusGiven;
   if(gotBonus){ MS._bonusGiven=true; earnTalents(20); }   // reward for completing today's spaced-repetition review
@@ -3878,9 +3990,12 @@ function grantFreeze(key, reason){
   if((Prog.freezes||0)>=FREEZE_MAX) return;             // at the cap → don't burn the milestone; grant it later when there's room
   Prog.freezeAwards.push(key); Prog.freezes=(Prog.freezes||0)+1; toast(`🧊 Streak Freeze earned — ${reason}!`); saveProg();
 }
+// The day streak is earned by finishing BOTH halves of the day: every spaced-repetition
+// review that came due, AND the daily goal. Called from each place either half can complete.
 function creditToday(){
   const today=dayKey(new Date());
   if(Prog.lastReviewDay===today) return;                       // already credited today
+  if(!goalMet() || reviewDueCount()>0) return;                 // half a day's work isn't a streak day
   const yest=dayKey(new Date(Date.now()-DAY)), twoAgo=dayKey(new Date(Date.now()-2*DAY));
   if(!Prog.lastReviewDay) Prog.dayStreak=1;
   else if(Prog.lastReviewDay===yest) Prog.dayStreak=(Prog.dayStreak||0)+1;   // consecutive day → +1
@@ -3900,9 +4015,16 @@ function goalToday(){ const dow=new Date().getDay(); const byDay=Prog.goalByDay|
 function goalState(){ const t=dayKey(new Date()); if(!Prog.goalDay || Prog.goalDay.date!==t) Prog.goalDay={date:t,count:0,celebrated:false}; return Prog.goalDay; }
 function goalCount(){ return goalState().count; }
 function goalMet(){ return goalCount()>=goalToday(); }
-function bumpGoal(){ const st=goalState(), before=st.count, target=goalToday(); if(before>=target){ st.count++; saveProg(); return; }  // already met → still count, no flash
-  st.count++; saveProg(); goalFlash(st.count, target); updateMetrics();   // refresh HUD + the Verses tab badge
-  if(st.count>=target && !st.celebrated){ st.celebrated=true; saveProg(); setTimeout(onGoalComplete, 1300); } }
+// Returns a function that plays the goal celebration. Pass defer=true to hold it back and
+// play it yourself later (the word-for-word screen waits for "Amen" so nothing covers the result).
+function bumpGoal(defer){ const noop=function(){};
+  const st=goalState(), before=st.count, target=goalToday();
+  if(before>=target){ st.count++; saveProg(); return noop; }              // already met → still count, no flash
+  st.count++; saveProg(); updateMetrics();                               // refresh HUD + the Verses tab badge
+  const celebrate=()=>{ goalFlash(st.count, target);
+    if(st.count>=target && !st.celebrated){ st.celebrated=true; saveProg(); setTimeout(onGoalComplete, 1300); } };
+  if(defer) return celebrate;
+  celebrate(); creditToday(); return noop; }
 // a 1–10 node path; the just-completed node fills and pulses
 function goalFlash(now, target){
   const host=document.querySelector(".phone"); if(!host) return;
@@ -3911,6 +4033,14 @@ function goalFlash(now, target){
   wrap.innerHTML=`<div class="gf-card"><div class="gf-title">${now>=target?"🎉 Goal reached!":"Daily goal"}</div><div class="gf-nodes">${nodes}</div><div class="gf-sub">${now}/${target} today</div></div>`;
   host.appendChild(wrap); requestAnimationFrame(()=>wrap.classList.add("show"));
   setTimeout(()=>{ wrap.classList.remove("show"); setTimeout(()=>wrap.remove(), 350); }, now>=target?1500:1050);
+}
+// what's still standing between today and a streak day
+function streakNeedLine(){
+  if(Prog.lastReviewDay===dayKey(new Date())) return "";
+  const need=[], g=goalToday()-goalCount(), d=reviewDueCount();
+  if(g>0) need.push(`${g} more toward today's goal`);
+  if(d>0) need.push(`${d} review${d>1?"s":""} still due`);
+  return need.length ? `<div class="hint" style="margin-top:3px">🔥 Streak needs: ${need.join(" · ")}</div>` : "";
 }
 function goalBarHTML(){ const c=goalCount(), t=goalToday(), met=c>=t;
   const dots=Array.from({length:t},(_,i)=>`<span class="gb-dot ${i<c?"on":""}"></span>`).join("");
@@ -4059,8 +4189,10 @@ function renderNumTest(){
     <div class="card numtest"><div class="prompt">${prompt}</div>
       <div class="numtest-stim" style="text-align:center;margin:4px 0 8px">${stimulus}</div>
       <div class="opts">${options.map(o=>`<button class="opt" data-ok="${o===correct?1:0}">${o}</button>`).join("")}</div>
+      <button class="btn ghost sm" id="ntScene" style="width:100%;margin-top:10px">📝 Reveal my scene</button>
       <div id="ntFb"></div></div>`;
   el("ntClose").onclick=renderVerse;
+  el("ntScene").onclick=()=>showSceneReveal(n, q.type.indexOf("b")>=0);
   V.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
     if(b.disabled) return;
     if(b.dataset.ok==="1"){                       // correct → green, strengthen, next
@@ -4076,6 +4208,25 @@ function renderNumTest(){
     }
   });
 }
+// Text-only pop-up: whatever the user has written (or the built-in scene) for this number/book.
+function showSceneReveal(n, isBook){
+  const m=el("sceneRevealModal")||(()=>{ const d=document.createElement("div"); d.id="sceneRevealModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const p=pegFor(n), mine=isBook?((Prog.customBook&&Prog.customBook[n])||""):"";
+  const built=isBook
+    ? ((typeof REL!=="undefined" && REL[n] && REL[n].imgToBook) || (MNEM_BOOK[n]&&MNEM_BOOK[n].t) || "")
+    : (DECODE[n] || NOTE[n] || "");
+  const title=isBook ? `${bookName(n)} · Book ${dispNum("book",n)}` : `Number ${dispNum("num",n)}`;
+  m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose" id="srvClose">✕</button><div style="flex:1;text-align:center;font-weight:800">${title}</div><span style="width:34px"></span></div>
+    <div class="teachbox" style="margin-top:12px"><b class="gold">Image:</b> ${p.word} · sounds <b>${p.sounds}</b></div>
+    ${mine?`<div class="relbox" style="border:1px solid var(--gold2);margin-top:10px"><div class="rl" style="color:var(--gold-ink)">★ My own scene</div>${mine}</div>`:""}
+    ${built?`<div class="teachbox" style="margin-top:10px">${built}</div>`:""}
+    ${(!mine&&!built)?`<p class="hint" style="margin-top:10px">You haven't written a scene for this one yet — you can add one on its lesson card in <b class="gold">Learn</b>.</p>`:""}
+    <div class="teachbox" style="margin-top:10px">${decodeSentence(n)}</div>
+    <button class="btn" id="srvOk" style="width:100%;margin-top:12px">Got it</button></div>`;
+  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("srvClose").onclick=()=>m.style.display="none";
+  el("srvOk").onclick=()=>m.style.display="none";
+}
 function finishNumberTest(){
   updateMetrics();
   if(NT && NT.ret){ const ret=NT.ret; NT=null; ret(); return; }   // part of the daily review → flow into verses
@@ -4089,9 +4240,10 @@ function finishNumberTest(){
   el("ntDone").onclick=renderVerse; NT=null;
 }
 let mtSel={b:0,c:0,v:0}, mtLock=false;   // current picks; mtLock freezes the board after the answer is revealed
-const MT_BOOKCHOICES=8;                   // book multiple-choice count — the most that fits without scrolling
+const MT_BOOKCHOICES=12;                  // book multiple-choice count — the most that fits without scrolling
 // look-alike / sound-alike books that always appear together as decoys to trick the eye (e.g. 2 Corinthians ↔ 2 Chronicles)
 const BOOK_CONF_GROUPS=[
+  [19,20],                      // Psalms ↔ Proverbs — always offered together
   [46,13],[47,14],[45,13,14],   // Corinthians ↔ Chronicles (by number), Romans near Chronicles
   [9,10,11,12],                 // 1&2 Samuel / 1&2 Kings
   [50,57],                      // Philippians / Philemon
@@ -4111,11 +4263,20 @@ const BOOK_CONF_GROUPS=[
 ];
 const BOOK_CONF={};
 BOOK_CONF_GROUPS.forEach(g=>g.forEach(n=>{ BOOK_CONF[n]=BOOK_CONF[n]||new Set(); g.forEach(m=>{ if(m!==n) BOOK_CONF[n].add(m); }); }));
+// Books that share a name (John & 1–3 John, 1/2 Samuel, Kings, Chronicles, Corinthians,
+// Thessalonians, Timothy, Peter) must ALWAYS all be on the board together — picking the
+// right Bible book means telling those apart, so we never let one show up alone.
+const BOOK_FAMILY={};
+(function(){ const byBase={};
+  for(let n=1;n<=66;n++){ const base=bookName(n).replace(/^[123]\s+/,"").toLowerCase(); (byBase[base]=byBase[base]||[]).push(n); }
+  Object.keys(byBase).forEach(k=>{ const g=byBase[k]; if(g.length>1) g.forEach(n=>{ BOOK_FAMILY[n]=g.filter(m=>m!==n); }); });
+})();
 function memTestRender(){
   const V=el("verse"), b=memTestCur[0], c=memTestCur[1], v=memTestCur[2], k=knownNumbers();
   mtSel={b:0,c:0,v:0}; mtLock=false;
   // book choices for the picker: the correct book + a short set of decoys. Look-alike books (confusables) always come first.
   let decoys=[];
+  (BOOK_FAMILY[b]||[]).forEach(x=>{ if(x!==b && !decoys.includes(x)) decoys.push(x); });   // every same-name book, always
   shuffle([...(BOOK_CONF[b]||[])]).forEach(x=>{ if(x!==b && decoys.length<MT_BOOKCHOICES-1 && !decoys.includes(x)) decoys.push(x); });  // always include the trap look-alikes
   const known=[]; for(let bb=1;bb<=66;bb++) if(k.has(bb)&&bb!==b&&!decoys.includes(bb)) known.push(bb); shuffle(known);
   known.forEach(x=>{ if(decoys.length<MT_BOOKCHOICES-1) decoys.push(x); });
@@ -4124,6 +4285,7 @@ function memTestRender(){
   V.innerHTML=`<div class="card" style="position:relative">
       <button class="lclose" id="mtClose" style="position:absolute;left:10px;top:12px;margin:0;z-index:2">✕</button>
       ${testHUD()}
+      ${storyNameAt(b,c,v)?`<div class="teachbox" style="margin:8px 0 2px"><b class="gold">📖 Where does “${storyNameAt(b,c,v)}” begin?</b></div>`:""}
       <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${kjvText(b,c,v)}"</div>
       <label class="vplabel">Book</label>
       <div class="mtfieldwrap"><button type="button" class="mtfield" id="mtFieldB">— book —</button><button type="button" class="mtpeek" data-peek="b" title="Peek — costs talents">👁️</button></div>
@@ -4630,15 +4792,15 @@ function renderWalk(){
         <div class="lv-versetext">"${curScene.text}"</div>
         <div class="teachbox"><b class="gold">Now picture it.</b> Weave <b>${bp.word}</b>, <b>${cp.word}</b> and <b>${vp.word}</b> — and what this verse means — into one <b>action-packed scene</b>, set in a room of one of your memory palaces.</div>
         ${canLearn?`<button class="btn" id="wToScene" style="margin-top:12px">Save Visual →</button>`:missHtml}
-        <div class="btnrow" style="margin-top:8px"><button class="btn ghost" id="wSave" style="flex:1">Save for later</button><button class="btn ghost" id="wSkip" style="flex:1">Skip</button></div>
+        <div class="btnrow" style="margin-top:8px"><button class="btn ghost" id="wSave" style="flex:1">${Prog.saved.includes(vkey)?"↩ Unsave":"Save for later"}</button><button class="btn ghost" id="wSkip" style="flex:1">${Prog.skipped.includes(vkey)?"↩ Unskip":"Skip"}</button></div>
         <button class="btn ghost" id="wKnow" style="width:100%;margin-top:8px;border-color:var(--gold2);color:var(--gold-ink)">✓ I already know this — add to my test verses</button>
       </div>`;
     if(el("wClose")) el("wClose").onclick=()=>walkReturn();
     wireVerseNav(V, verseNavNow, walkReturn);
     V.querySelectorAll("[data-learn]").forEach(x=>x.onclick=()=>{ const n=+x.dataset.learn, isBook=x.dataset.book==="1"; startAdhocLearn(n,isBook,()=>openVerseWizard(b,c,v,walkReturn)); });
     if(el("wToScene")) el("wToScene").onclick=()=>{ wPhase="scene"; renderWalk(); };
-    if(el("wSave")) el("wSave").onclick=()=>{ markSaved(); walkReturn(); };
-    if(el("wSkip")) el("wSkip").onclick=()=>{ markSkipped(); walkReturn(); };
+    if(el("wSave")) el("wSave").onclick=()=>{ if(Prog.saved.includes(vkey)){ Prog.saved=Prog.saved.filter(x=>x!==vkey); saveProg(); toast("Removed from Saved"); renderWalk(); } else { markSaved(); walkReturn(); } };
+    if(el("wSkip")) el("wSkip").onclick=()=>{ if(Prog.skipped.includes(vkey)){ Prog.skipped=Prog.skipped.filter(x=>x!==vkey); saveProg(); toast("No longer skipped"); renderWalk(); } else { markSkipped(); walkReturn(); } };
     if(el("wKnow")) el("wKnow").onclick=()=>{ Prog.saved=Prog.saved.filter(x=>x!==vkey); Prog.skipped=Prog.skipped.filter(x=>x!==vkey); addMemorized(curScene); toast("Added to your memorized & test verses ✓"); walkReturn(); };
     return;
   }
@@ -5387,6 +5549,8 @@ function resetAllProgress(){
 el("impFile").onchange=e=>{ if(e.target.files[0]) importBackup(e.target.files[0]); };
 el("themeClose").onclick=()=>el("themeModal").style.display="none";
 el("refBtn").onclick=()=>{ el("themeModal").style.display="none"; show("foundations"); };   // Reference now lives under the profile menu
+el("pChangelog").textContent=`📋 Version history · v${APP_VERSION}`;
+el("pChangelog").onclick=()=>{ el("themeModal").style.display="none"; openWhatsNew(true); };
 el("themeModal").onclick=e=>{ if(e.target===el("themeModal")) el("themeModal").style.display="none"; };
 document.querySelectorAll(".theme-opt").forEach(b=>b.onclick=()=>applyTheme(b.dataset.th));
 applyTheme(Store.get("vv_theme","illumined")); // Illumined Night is the main theme
@@ -5543,7 +5707,8 @@ function typeTestComplete(){
   const r=w4wRecord(vkey); reviewVerseSR(vkey);
   const justMastered=r.count===10, mastered=r.count>=10;
   const w4wReward = 10 + (justMastered?40:0);   // +10 per recitation, +40 bonus the run they master it
-  earnTalents(w4wReward); refreshHUD&&refreshHUD(); markW4WToday(vkey); bumpGoal();   // a word-for-word practice counts toward today's goal
+  earnTalents(w4wReward); refreshHUD&&refreshHUD(); markW4WToday(vkey);
+  const showGoal = bumpGoal(true);   // counts toward today's goal, but the track waits for "Amen"
   V.innerHTML=`<div class="card center ttwin">
       <div class="ttburst">${justMastered?"👑":"🎉"}</div>
       <h2 style="font-size:22px;margin:6px 0 2px">${justMastered?"Verse Mastered!":"You did it!"}</h2>
@@ -5552,7 +5717,7 @@ function typeTestComplete(){
       <div style="font-weight:800;color:var(--gold-ink);margin:2px 0 2px">+${w4wReward} 🪙${justMastered?" · mastery bonus!":""}</div>
       <div class="ttlock">🔒 Next practice locked until <b>${fmtWhen(w4wNextAllowed(vkey))}</b></div>
       <button class="btn" id="ttDone" style="margin-top:16px">Amen — done</button></div>`;
-  el("ttDone").onclick=()=>{ ret?ret():renderVerse(); };
+  el("ttDone").onclick=()=>{ ret?ret():renderVerse(); showGoal(); creditToday(); };
 }
 
 /* =================== MEMORY PALACE (Method of Loci) =================== */
@@ -6096,6 +6261,7 @@ if(!Prog.onboarded){
 } else {
   show(bootTab);   // returning user / page refresh — back to the tab they were on
 }
+checkVersionCard();   // "What's new" card — shown once per release
 
 /* ---- Android / browser back button = in-app back (one screen per press); at the Learn home, back again exits ---- */
 function appBack(){
@@ -6125,5 +6291,3 @@ function appBack(){
 </script>
 </body>
 </html>
-
-<!-- deploy bb-20260823-082145 -->
