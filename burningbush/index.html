@@ -633,8 +633,10 @@
   #taxov.on{display:flex;align-items:flex-start;justify-content:center}
   .taxcard{width:100%;max-width:352px;margin:auto;background:var(--panel);border:2px solid var(--gold2);border-radius:18px;padding:12px 14px 14px;text-align:center;box-shadow:0 22px 60px var(--rome-shadow);color:var(--ink);position:relative;overflow:hidden}
   .taxspqr{font-family:var(--font-display);letter-spacing:.34em;font-size:12px;font-weight:800;color:var(--rome-gold-hi);background:linear-gradient(180deg,var(--rome-red-hi),var(--rome-red-lo));border-radius:8px;padding:6px 0;margin:-2px -2px 4px}
-  .taxspqr-note{font-size:10.5px;line-height:1.35;color:var(--muted);margin:0 0 9px}
-  .taxspqr-note i{color:var(--gold-ink);font-style:normal;font-weight:700}
+  .taxspqr{cursor:pointer;border:none;width:100%;font-family:var(--font-display);animation:spqrflash 1.7s ease-in-out infinite}
+  .taxspqr:active{transform:scale(.99)}
+  @keyframes spqrflash{0%,100%{filter:brightness(1)}50%{filter:brightness(1.55)}}
+  @media (prefers-reduced-motion:reduce){ .taxspqr{animation:none} }
   .taxtitle{font-family:var(--font-display);font-size:20px;font-weight:800;margin:0 0 4px;line-height:1.2;color:var(--gold-ink)}
   .taxsub{font-size:13.5px;line-height:1.45;color:var(--ink-soft);margin:0 0 8px}
   .taxlegion{display:flex;justify-content:center;align-items:flex-end;gap:10px;height:58px;margin-bottom:2px}
@@ -661,6 +663,22 @@
   .taxseal{position:absolute;top:46%;left:50%;width:104px;height:104px;opacity:0;pointer-events:none;z-index:3;transform:translate(-50%,-50%) scale(2.2)}
   .taxseal.stamp{animation:sealstamp .45s ease-out forwards}
   @keyframes sealstamp{0%{opacity:0;transform:translate(-50%,-50%) scale(2.2) rotate(-14deg)}70%{opacity:1;transform:translate(-50%,-50%) scale(.94) rotate(-6deg)}100%{opacity:.95;transform:translate(-50%,-50%) scale(1) rotate(-8deg)}}
+  /* raising the church, tap by tap */
+  #buildov{position:absolute;left:0;right:0;bottom:0;z-index:150;display:none;background:var(--scrim);padding:14px;box-sizing:border-box;overflow:hidden;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+  #buildov.on{display:flex;align-items:center;justify-content:center}
+  .bldcard{width:100%;max-width:352px;background:var(--panel);border:2px solid var(--gold2);border-radius:18px;padding:14px;text-align:center;box-shadow:0 22px 60px var(--rome-shadow);position:relative;z-index:1}
+  .bldtitle{font-family:var(--font-display);font-size:21px;font-weight:800;color:var(--gold-ink)}
+  .bldsub{font-size:13.5px;line-height:1.45;color:var(--ink-soft);margin-top:4px}
+  .bldchurch{margin:8px 0 2px}
+  .bldtaps{font-size:15px;font-weight:800;color:var(--gold-ink);margin-top:8px;letter-spacing:.04em}
+  .bldcraft{font-size:13px;font-weight:700;color:var(--ink-soft);min-height:20px;margin-top:4px;opacity:0}
+  .bldcraft.show{animation:craftpop .75s ease-out}
+  @keyframes craftpop{0%{opacity:0;transform:translateY(6px)}25%{opacity:1;transform:translateY(0)}75%{opacity:1}100%{opacity:0}}
+  .bldfx{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+  .bldpop{position:absolute;font-size:40px;transform:translate(-50%,-50%);animation:bldpop .7s ease-out forwards;will-change:transform,opacity}
+  @keyframes bldpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.4) rotate(-12deg)}30%{opacity:1;transform:translate(-50%,-50%) scale(1.25) rotate(6deg)}100%{opacity:0;transform:translate(-50%,-90%) scale(1) rotate(0)}}
+  .bldsweat{position:absolute;font-size:19px;transform:translate(-50%,-50%);transition:transform .6s cubic-bezier(.3,.7,.4,1),opacity .6s;will-change:transform,opacity;opacity:.95}
+  @media (prefers-reduced-motion:reduce){ .bldpop,.bldcraft.show{animation-duration:.01s} .bldsweat{display:none} }
   /* the letter from Rome */
   .romescroll{background:var(--panel2);color:var(--ink-soft);border-radius:14px;border:1px solid var(--line);padding:11px 13px;text-align:left;font-size:13.5px;line-height:1.46}
   .romescroll p{margin:0 0 7px}
@@ -1551,8 +1569,17 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.7.0";
+const APP_VERSION="1.8.0";
 const CHANGELOG=[
+ {v:"1.8.0", d:"August 24, 2026", t:"Raise the church", items:[
+   ["new","<b>You build the church by hand now.</b> When Caesar takes his share, tap to lay the stone — a different trade under your hands each time, from mixing mortar to staining glass to gilding the cross, with the walls climbing as you go."],
+   ["new","<b>A different blessing every time</b> you finish a verse word for word — over thirty of them, each carrying its own Scripture, so the moment never wears out."],
+   ["new","<b>A little, and often.</b> On a very full day the app stops to say so, with a word from Scripture: the Word settles by returning, not by rushing."],
+   ["new","“Build a new verse” now opens straight to the book you learned last, with its suggestions ready at the top of the screen."],
+   ["new","Two NO TAX wedges you can now hope for, and <b>S·P·Q·R</b> flashes on Caesar’s banner — tap it and Rome will explain itself."],
+   ["fix","Your counters stay visible while Caesar spins, so you can watch the talents go."],
+   ["fix","The churches you have finished now show as one church and one large number, with no scrolling."]
+ ]},
  {v:"1.7.0", d:"August 24, 2026", t:"Not unto us", items:[
    ["new","<b>Every moment of praise now points upward.</b> Finishing a verse word for word reads “<b>Hidden in your heart</b>” with Psalm 119:11, and the tenth time “<b>Sealed in your heart</b>”. The party popper is gone from the app entirely."],
    ["new","A right answer is marked “<b>Kept ✓</b>” — the Word held, not a prize won. Resting a verse now says “<b>Come apart and rest a while</b>”."],
@@ -2234,6 +2261,8 @@ function migrateProg(p){
   if(typeof p.hints!=="number") p.hints=0; // "Peek" tokens spendable in the verse test
   if(typeof p.weekKey!=="string") p.weekKey=""; if(typeof p.weekDays!=="number") p.weekDays=0; if(typeof p.weekGoalHit!=="boolean") p.weekGoalHit=false; // Perfect-Week tracking
   // Caesar's weekly levy + the church it builds
+  if(typeof p.blessIdx!=="number") p.blessIdx=0;        // rotates the word-for-word blessing
+  if(typeof p.paceIdx!=="number") p.paceIdx=0;          // rotates the "little and often" verse
   if(typeof p.taxAt!=="number") p.taxAt=0;              // 0 = never assessed (set when the Rome letter lands)
   if(typeof p.taxWeek!=="number") p.taxWeek=0;          // which of the 52 summonses comes next
   if(typeof p.romeLetterSeen!=="boolean") p.romeLetterSeen=false;
@@ -3732,7 +3761,7 @@ function finishLesson(){
     <div class="btnrow">
       ${newly.length?`<button class="btn" id="lBuild">Build a new verse →</button>`:`<button class="btn" id="lNextNum">Learn another →</button>`}
       <button class="btn ghost" id="lPath2">Back to path</button></div></div>`;
-  if(el("lBuild")) el("lBuild").onclick=()=>show("verse");
+  if(el("lBuild")) el("lBuild").onclick=()=>openSuggestedForBook(latestLearnedBook());
   if(el("lNextNum")) el("lNextNum").onclick=renderPath;
   el("lPath2").onclick=renderPath;
   LZ=null;
@@ -3856,6 +3885,23 @@ function bookGroupedList(verses, section){
   }).join("");
 }
 let vView="hub";   // "hub" (the 6 big buttons) or a sub-list: sugg|topics|mem|saved
+// The most recently learned book — where a user finishing a lesson most wants to go next.
+function latestLearnedBook(){
+  const r=recentKnownNumbers().filter(n=>n>=1&&n<=66);
+  return r.length?r[0]:null;
+}
+// Open Suggested with that book already expanded and its header pinned to the top.
+function openSuggestedForBook(bn){
+  show("verse"); vView="sugg";
+  vBook.sugg.clear(); if(bn) vBook.sugg.add(bn);
+  renderVerse();
+  requestAnimationFrame(()=>{
+    const c=document.querySelector(".content"); if(!c) return;
+    const head=bn && document.querySelector(`#verse [data-bk="sugg:${bn}"]`);
+    if(head){ const cr=c.getBoundingClientRect(), hr=head.getBoundingClientRect(); c.scrollTop += (hr.top-cr.top)-6; }
+    else c.scrollTop=0;
+  });
+}
 function renderVerse(){
   updateMetrics();
   const V=el("verse");
@@ -4237,8 +4283,9 @@ function goalMet(){ return goalCount()>=goalToday(); }
 // play it yourself later (the word-for-word screen waits for "Amen" so nothing covers the result).
 function bumpGoal(defer){ const noop=function(){};
   const st=goalState(), before=st.count, target=goalToday();
-  if(before>=target){ st.count++; saveProg(); return noop; }              // already met → still count, no flash
+  if(before>=target){ st.count++; saveProg(); maybePaceNudge(); return noop; }   // already met → still count, no flash
   st.count++; saveProg(); updateMetrics();                               // refresh HUD + the Verses tab badge
+  maybePaceNudge();                                                      // a big day earns the "little and often" word, not applause
   const celebrate=()=>{ goalFlash(st.count, target);
     if(st.count>=target && !st.celebrated){ st.celebrated=true; saveProg(); setTimeout(onGoalComplete, 1300); } };
   if(defer) return celebrate;
@@ -4452,6 +4499,101 @@ function openWordDef(b,c,v,i,word){
   });
 }
 
+/* ---- A different blessing every time a verse is finished word for word, so the moment
+   never wears out and the praise always lands on the Word rather than the user. Each entry
+   is [heading, [book, chapter, verse]]; the verse text is pulled live from the KJV. ---- */
+const W4W_BLESSINGS=[
+ ["Hidden in your heart",[19,119,11]],
+ ["Written on the table of your heart",[20,3,3]],
+ ["Sweeter than honey",[19,119,103]],
+ ["A lamp unto your feet",[19,119,105]],
+ ["It shall not return void",[23,55,11]],
+ ["Treasured more than your food",[18,23,12]],
+ ["Day and night",[6,1,8]],
+ ["His word runs swiftly",[19,147,15]],
+ ["Quick, and powerful",[58,4,12]],
+ ["Settled in heaven",[19,119,89]],
+ ["Kept in an honest heart",[42,8,15]],
+ ["Dwelling in you richly",[51,3,16]],
+ ["The word of his grace",[44,20,32]],
+ ["Tried, as silver",[19,12,6]],
+ ["Better than fine gold",[19,119,127]],
+ ["Your heritage for ever",[19,119,111]],
+ ["The seed is the word",[42,8,11]],
+ ["Be ye doers",[59,1,22]],
+ ["It shall not pass away",[40,24,35]],
+ ["The words of eternal life",[43,6,68]],
+ ["Bread from his mouth",[40,4,4]],
+ ["Great peace have they",[19,119,165]],
+ ["Thy word is truth",[43,17,17]],
+ ["Holding fast the faithful word",[56,1,9]],
+ ["A light unto my path",[19,119,130]],
+ ["Rejoicing the heart",[19,19,8]]
+];
+const W4W_MASTERY=[
+ ["Sealed in your heart",[22,8,6]],
+ ["Established for ever",[19,119,152]],
+ ["The engrafted word",[59,1,21]],
+ ["Written not with ink",[47,3,3]],
+ ["Bound about thy neck",[20,6,21]],
+ ["Thy testimonies are wonderful",[19,119,129]],
+ ["The word abideth in you",[62,2,14]],
+ ["Thy word have I not forgotten",[19,119,16]]
+];
+// A blessing, with its verse — skipping the quote when it IS the verse just practised.
+function pickBlessing(mastered, b, c, v){
+  const set = mastered ? W4W_MASTERY : W4W_BLESSINGS;
+  const i = (Prog.blessIdx||0) % set.length;
+  Prog.blessIdx = ((Prog.blessIdx||0)+1) % 1000; saveProg();
+  const [title, ref] = set[i];
+  const same = ref[0]===b && ref[1]===c && ref[2]===v;
+  const text = same ? "" : (kjvText(ref[0],ref[1],ref[2])||"");
+  return { title, text, ref: `${bookName(ref[0])} ${ref[1]}:${ref[2]}`, same };
+}
+
+/* ---- "A little, and often." When a day's work gets big, teach the rhythm rather than
+   applaud the burst: Scripture settles by returning, not by rushing. ---- */
+const PACE_AT=15;
+const PACE_VERSES=[
+ [[23,28,10],"Line upon line — a little at a time is God's own pattern for teaching."],
+ [[25,3,23],"His mercies are new every morning. Come back tomorrow and find them."],
+ [[42,9,23],"Daily. Not all at once, and then not again for a fortnight."],
+ [[44,17,11],"They searched the scriptures daily — that is what made them noble."],
+ [[6,1,8],"Day and night: a steady rhythm, not a single long push."],
+ [[48,6,9],"In due season you shall reap, if you faint not. Pace is what keeps you from fainting."],
+ [[20,4,18],"More and more unto the perfect day — the path brightens slowly."],
+ [[38,4,10],"Do not despise the day of small things. Small and daily is how a temple gets built."],
+ [[47,4,16],"Renewed day by day. The inward man is fed by returning, not by cramming."],
+ [[58,3,13],"Daily, while it is called To day."],
+ [[19,61,8],"Daily performing your vows — the same small faithfulness, again."],
+ [[40,6,11],"Daily bread. He gives it a day at a time, and that is enough."],
+ [[27,6,10],"Three times a day, as he did aforetime. The habit was older than the danger."],
+ [[19,119,164],"Seven times a day — little and often, all day long."]
+];
+function openPaceNudge(){
+  const m=el("paceModal")||(()=>{ const d=document.createElement("div"); d.id="paceModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const i=(Prog.paceIdx||0)%PACE_VERSES.length;
+  Prog.paceIdx=((Prog.paceIdx||0)+1)%1000; saveProg();
+  const [ref,why]=PACE_VERSES[i];
+  const txt=kjvText(ref[0],ref[1],ref[2])||"";
+  m.innerHTML=`<div class="modal-card center"><div style="font-size:40px">🌱</div>
+    <h2 style="margin:6px 0 2px;font-size:20px">A little, and often</h2>
+    <p class="lead" style="margin:6px 0 10px">That's <b class="gold">${goalCount()}</b> today — a full day's work and more. But Scripture settles by <b>returning</b>, not by rushing. Ten minutes tomorrow will hold more than an hour tonight.</p>
+    <div class="teachbox" style="text-align:left;font-style:italic">“${txt}”
+      <div class="gold" style="font-style:normal;font-weight:800;font-size:12px;margin-top:6px">${bookName(ref[0])} ${ref[1]}:${ref[2]}</div></div>
+    <p class="hint" style="margin-top:10px">${why}</p>
+    <button class="btn" id="pnOk" style="width:100%;margin-top:14px">Amen</button></div>`;
+  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("pnOk").onclick=()=>m.style.display="none";
+}
+// Fires once a day, the first time the day's tally reaches PACE_AT.
+function maybePaceNudge(){
+  const st=goalState();
+  if(st.count<PACE_AT || st.paced) return;
+  st.paced=true; saveProg();
+  setTimeout(openPaceNudge, 1100);
+}
+
 /* =================== CAESAR'S TAX ===================
    Pro users get every book free, so talents pile up with nothing to buy. Every seven days
    Rome notices and takes its share — the point being to SPEND them or lose them. Half of
@@ -4587,13 +4729,110 @@ function openChurch(){
     <div class="churchbar"><span style="width:${(pct*100).toFixed(1)}%"></span></div>
     <div class="churchstage">${Math.floor(pct*100)}% — ${churchStage()}</div>
     <p class="hint" style="margin-top:6px"><b class="gold">${c.given}</b> of ${CHURCH_GOAL} talents toward this one${(c.total||0)>c.given?` · <b class="gold">${c.total}</b> given in all`:""}</p>
-    ${c.built?`<div class="teachbox" style="margin-top:12px"><div style="font-size:26px;letter-spacing:2px">${"⛪".repeat(Math.min(c.built,12))}${c.built>12?` +${c.built-12}`:""}</div>
-      <div style="margin-top:4px"><b class="gold">${c.built} church${c.built>1?"es":""}</b> finished and standing.</div></div>`
+    ${c.built?`<div class="teachbox" style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:14px">
+        <div style="font-size:42px;line-height:1">⛪</div>
+        <div style="text-align:left"><div class="gold" style="font-size:46px;font-weight:900;line-height:1">${c.built}</div>
+        <div style="font-size:13px;color:var(--ink-soft);margin-top:2px">church${c.built>1?"es":""} finished<br>and standing</div></div></div>`
       :`<p class="hint" style="margin-top:10px">No church finished yet — the first stones are being laid.</p>`}
     <button class="btn" id="chOk" style="width:100%;margin-top:14px">Amen</button></div>`;
   m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("chClose").onclick=()=>m.style.display="none";
   el("chOk").onclick=()=>m.style.display="none";
+}
+
+/* ---- Raising the church: the levy is already credited, so nothing is ever lost if the
+   user backs out. What happens here is the ceremony — ten taps, a different trade under
+   your hands each time, and the walls climbing as you go. ---- */
+const CHURCH_TAPS=10;
+const CRAFTS=[
+ ["🧱","Laying brick"],["🪣","Mixing mortar"],["🔨","Hammering"],["🪚","Sawing beams"],
+ ["🪵","Raising timber"],["🎨","Painting"],["🖌️","Whitewashing"],["🪟","Staining glass"],
+ ["⛏️","Quarrying stone"],["🪛","Fitting the door"],["🧰","Setting the frame"],["🔔","Hanging the bell"],
+ ["🕯️","Setting the candles"],["📐","Squaring the wall"],["🧵","Weaving the veil"],["✨","Gilding the cross"],
+ ["🪞","Polishing marble"],["🌿","Planting the garden"],["🪜","Raising the scaffold"],["🧹","Sweeping the nave"],
+ ["⚒️","Dressing the stone"],["🪟","Glazing the clerestory"],["🕊️","Carving the dove"],["🔩","Pinning the truss"]
+];
+let BLD=null;
+function buildOverlay(){
+  let ov=el("buildov");
+  if(!ov){ ov=document.createElement("div"); ov.id="buildov"; ov.setAttribute("aria-hidden","true"); document.querySelector(".phone").appendChild(ov); }
+  const tb=document.querySelector(".topbar");
+  ov.style.top=(tb?Math.round(tb.getBoundingClientRect().height):0)+"px";   // never cover the top menu
+  return ov;
+}
+// gained = talents laid as stone by this levy (already added to Prog.church)
+function openChurchBuild(gained, after){
+  const endGiven=church().given;
+  // Where the walls stood before this levy. If a church completed, given has wrapped past
+  // zero and this clamps to 0 — the build simply runs from the ground up.
+  const startGiven=Math.max(0, endGiven-gained);
+  BLD={taps:0, gained, after, from:startGiven/CHURCH_GOAL, to:endGiven/CHURCH_GOAL, used:[]};
+  const ov=buildOverlay();
+  ov.innerHTML=`<div class="bldcard">
+      <div class="bldtitle">Raise the church</div>
+      <div class="bldsub" id="bldSub">Tap anywhere — quickly — to lay the stone.</div>
+      <div class="bldchurch" id="bldChurch">${churchSVG(BLD.from)}</div>
+      <div class="churchbar"><span id="bldBar" style="width:${(BLD.from*100).toFixed(1)}%"></span></div>
+      <div class="bldtaps"><span id="bldCount">0</span> / ${CHURCH_TAPS}</div>
+      <div class="bldcraft" id="bldCraft"></div>
+      <button class="taxbtn ghost" id="bldSkip" style="display:none">Enough for today →</button>
+    </div>
+    <div class="bldfx" id="bldFx"></div>`;
+  ov.classList.add("on");
+  const skip=el("bldSkip");
+  setTimeout(()=>{ if(skip) skip.style.display=""; }, 6000);   // a way out if they'd rather not tap
+  if(skip) skip.onclick=()=>finishChurchBuild();
+  const hit=(e)=>{
+    if(!BLD || BLD.taps>=CHURCH_TAPS) return;
+    const r=ov.getBoundingClientRect();
+    const x=(e.touches&&e.touches[0]?e.touches[0].clientX:e.clientX)-r.left;
+    const y=(e.touches&&e.touches[0]?e.touches[0].clientY:e.clientY)-r.top;
+    tapBuild(isFinite(x)?x:r.width/2, isFinite(y)?y:r.height/2);
+  };
+  ov.onpointerdown=hit;
+}
+function tapBuild(x,y){
+  BLD.taps++;
+  const pct=BLD.from+(BLD.to-BLD.from)*(BLD.taps/CHURCH_TAPS);
+  el("bldChurch").innerHTML=churchSVG(pct);
+  el("bldBar").style.width=(pct*100).toFixed(1)+"%";
+  el("bldCount").textContent=BLD.taps;
+  // a different trade each tap, never repeating within a build
+  if(BLD.used.length>=CRAFTS.length) BLD.used=[];
+  let i; do{ i=Math.floor(Math.random()*CRAFTS.length); }while(BLD.used.includes(i));
+  BLD.used.push(i);
+  const [glyph,label]=CRAFTS[i];
+  const cr=el("bldCraft"); cr.textContent=`${glyph} ${label}`;
+  cr.classList.remove("show"); void cr.offsetWidth; cr.classList.add("show");
+  const fx=el("bldFx");
+  const pop=document.createElement("div"); pop.className="bldpop"; pop.textContent=glyph;
+  pop.style.left=x+"px"; pop.style.top=y+"px"; fx.appendChild(pop);
+  setTimeout(()=>pop.remove(),700);
+  // honest work makes you sweat
+  for(let s=0;s<3;s++){
+    const d=document.createElement("div"); d.className="bldsweat"; d.textContent="💦";
+    d.style.left=x+"px"; d.style.top=y+"px"; fx.appendChild(d);
+    const dx=(Math.random()*90-45), dy=-(30+Math.random()*45);
+    requestAnimationFrame(()=>{ d.style.transform=`translate(${dx}px,${dy}px) scale(.6)`; d.style.opacity="0"; });
+    setTimeout(()=>d.remove(),620);
+  }
+  if(navigator.vibrate){ try{ navigator.vibrate(12); }catch(e){} }
+  if(BLD.taps>=CHURCH_TAPS) setTimeout(()=>finishChurchBuild(true), 420);
+}
+function finishChurchBuild(complete){
+  const ov=el("buildov"), after=BLD&&BLD.after, gained=(BLD&&BLD.gained)||0;
+  const c=church();
+  if(ov){
+    ov.onpointerdown=null;
+    ov.innerHTML=`<div class="bldcard">
+        <div class="bldchurch">${churchSVG(churchPct())}</div>
+        <div class="bldtitle" style="margin-top:8px">${complete?"The stone is laid":"Left for another day"}</div>
+        <div class="bldsub">${gained?`<b class="gold">${gained}</b> talents of Caesar's levy became stone.`:""}
+          ${c.built?`<br><b class="gold">${c.built}</b> church${c.built>1?"es":""} finished and standing.`:`<br>${Math.floor(churchPct()*100)}% — ${churchStage()}`}</div>
+        <button class="taxbtn" id="bldDone" style="margin-top:14px">Amen</button>
+      </div>`;
+    el("bldDone").onclick=()=>{ ov.classList.remove("on"); BLD=null; if(after) after(); };
+  } else { BLD=null; if(after) after(); }
 }
 
 /* ---- the letter that arrives when you become Pro ---- */
@@ -4602,8 +4841,7 @@ function openRomeLetter(after){
   saveProg();
   const ov=taxOverlay();
   ov.innerHTML=`<div class="taxcard">
-      <div class="taxspqr">S · P · Q · R</div>
-      <div class="taxspqr-note">${SPQR_NOTE}</div>
+      <button type="button" class="taxspqr" id="taxSpqr">S · P · Q · R</button>
       <div class="taxlegion solo">${romeHelmet("hl")}</div>
       <div class="romescroll" style="margin-top:8px">
         <div class="rs-h">Rome Has Taken Notice</div>
@@ -4616,6 +4854,7 @@ function openRomeLetter(after){
       <div class="taxverse">${TAX_VERSE}</div>
       <button class="taxbtn" id="rlOk">So be it →</button></div>`;
   ov.classList.add("on","march");
+  if(el("taxSpqr")) el("taxSpqr").onclick=openSpqrNote;
   el("rlOk").onclick=()=>{ ov.classList.remove("on","march"); if(after) after(); };
 }
 
@@ -4623,6 +4862,8 @@ function openRomeLetter(after){
 function taxOverlay(){
   let ov=el("taxov");
   if(!ov){ ov=document.createElement("div"); ov.id="taxov"; ov.setAttribute("aria-hidden","true"); document.querySelector(".phone").appendChild(ov); }
+  const tb=document.querySelector(".topbar");
+  ov.style.top=(tb?Math.round(tb.getBoundingClientRect().height):0)+"px";   // leave the counters showing — watching the talents go is the point
   return ov;
 }
 let _rhSeq=0;
@@ -4640,6 +4881,18 @@ function romeHelmet(cls){
     <path d="M46 42 L54 42 L54 78 L46 78 Z" fill="url(#${id}g)"/>
     <path d="M62 38 C58 40 55 42 56 44 L56 66 L62 66 Z" fill="url(#${id}g)"/>
     <circle cx="50" cy="52" r="2" fill="var(--rome-ink)"/></svg>`;
+}
+function openSpqrNote(){
+  const m=el("spqrModal")||(()=>{ const d=document.createElement("div"); d.id="spqrModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card center"><div class="lv-topbar"><button class="lclose" id="sqClose">✕</button>
+      <div style="flex:1;text-align:center;font-weight:800">S · P · Q · R</div><span style="width:34px"></span></div>
+    <div style="font-size:23px;font-weight:800;color:var(--gold-ink);letter-spacing:.06em;margin-top:12px">Senātus Populusque Rōmānus</div>
+    <p class="lead" style="margin:8px 0 0">“The Senate and People of Rome.”</p>
+    <p class="hint" style="margin:10px 0 0">Rome stamped these four letters on every standard, every coin and every demand for money — the whole authority of the empire in four letters.</p>
+    <button class="btn" id="sqOk" style="width:100%;margin-top:14px">Got it</button></div>`;
+  m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("sqClose").onclick=()=>m.style.display="none";
+  el("sqOk").onclick=()=>m.style.display="none";
 }
 const SPQR_NOTE='<b>S·P·Q·R</b> — <i>Senātus Populusque Rōmānus</i>, “the Senate and People of Rome”: stamped on every standard, coin and demand for money.';
 function legionSVG(){
@@ -4698,8 +4951,7 @@ function openTaxWheel(preview, after){
   const toChurch=Math.round(takes*TAX_TO_CHURCH);
   const ov=taxOverlay();
   ov.innerHTML=`<div class="taxcard">
-      <div class="taxspqr">S · P · Q · R</div>
-      <div class="taxspqr-note">${SPQR_NOTE}</div>
+      <button type="button" class="taxspqr" id="taxSpqr">S · P · Q · R</button>
       <div class="taxlegion">${legionSVG()}${legionSVG()}${legionSVG()}</div>
       <div class="taxtitle">${wk[0]}</div>
       <div class="taxsub">${wk[1]}</div>
@@ -4713,10 +4965,11 @@ function openTaxWheel(preview, after){
       <div class="taxtook" id="taxTook">&nbsp;</div>
       <div class="taxverse">${TAX_VERSE}</div>
       <button class="taxbtn" id="taxGo">${preview?"Spin (preview)":"Face the wheel"}</button>
-      <button class="taxbtn ghost" id="taxDone" style="display:none">Render unto Caesar →</button>
-      <button class="taxbtn ghost" id="taxChurch" style="display:none">⛪ See what it has built</button>
+      <button class="taxbtn" id="taxDone" style="display:none">Go in peace →</button>
+      <button class="taxbtn" id="taxBuild" style="display:none">⛪ Build →</button>
     </div>`;
   ov.classList.add("on","march");
+  if(el("taxSpqr")) el("taxSpqr").onclick=openSpqrNote;
   const wheel=ov.querySelector(".taxwheel");
   const finish=()=>{
     ov.classList.remove("on","march");
@@ -4754,10 +5007,13 @@ function openTaxWheel(preview, after){
         saveProg(); updateMetrics();
       }
       if(built){ el("taxResult").innerHTML+=`<div style="font-size:14px;margin-top:6px">⛪ <b>A church stands in Rome.</b></div>`; }
-      const done=el("taxDone"), ch=el("taxChurch");
-      done.style.display=""; ch.style.display="";
-      done.onclick=finish;
-      ch.onclick=()=>{ finish(); openChurch(); };
+      // Taxed → the only way on is to go and lay the stone. Untaxed → nothing was built, so just leave.
+      if(band && !preview && toChurch>0){
+        const bld=el("taxBuild"); bld.style.display="";
+        bld.onclick=()=>{ ov.classList.remove("on","march"); openChurchBuild(toChurch, after); };
+      } else {
+        const done=el("taxDone"); done.style.display=""; done.onclick=finish;
+      }
     }, 4400);
   };
 }
@@ -6605,11 +6861,12 @@ function typeTestComplete(){
   const w4wReward = 10 + (justMastered?40:0);   // +10 per recitation, +40 bonus the run they master it
   earnTalents(w4wReward); refreshHUD&&refreshHUD(); markW4WToday(vkey);
   const showGoal = bumpGoal(true);   // counts toward today's goal, but the track waits for "Amen"
+  const BL = pickBlessing(mastered, b, c, v);   // a different blessing every time
   V.innerHTML=`<div class="card center ttwin">
       <div class="ttburst">${justMastered?"👑":"🙏"}</div>
-      <h2 style="font-size:21px;margin:6px 0 2px">${justMastered?"Sealed in your heart":"Hidden in your heart"}</h2>
-      ${(b===19&&c===119&&v===11)?"":`<p class="lead" style="font-style:italic;margin:6px 0 0;font-size:13px">“Thy word have I hid in mine heart, that I might not sin against thee.”</p>
-      <div class="gold" style="font-weight:800;font-size:12px;margin-bottom:2px">Psalm 119:11</div>`}
+      <h2 style="font-size:21px;margin:6px 0 2px">${BL.title}</h2>
+      ${BL.same?"":`<p class="lead" style="font-style:italic;margin:6px 0 0;font-size:13px">“${BL.text}”</p>
+      <div class="gold" style="font-weight:800;font-size:12px;margin-bottom:2px">${BL.ref}</div>`}
       <div style="font-weight:800;color:var(--gold-ink);margin:8px 0 0">${bookName(b)} ${c}:${v}</div>
       <p class="lead" style="margin:4px 0">Word for Word Practice<br><b class="gold" style="font-size:20px">${Math.min(r.count,10)} of 10 complete</b>${mastered?`<br><span class="gold">★ Mastered${r.count>10?` · ${r.count}×`:""}</span>`:""}</p>
       <div style="font-weight:800;color:var(--gold-ink);margin:2px 0 2px">+${w4wReward} 🪙${justMastered?" · mastery gift":""}</div>
