@@ -39,6 +39,7 @@
     --green-hi:#6fe08f; --green-soft:rgba(75,191,115,.16); --green-ink:#8fe0a8; --green-line:#2e6b45;
     --sg-hi:#5f8cff; --sg-lo:#141d3f; --sg-fg:#ffffff;   /* story-section gradient: light→dark across sections (per-theme below) */
     --purple:#b48cf2; --purple-soft:rgba(180,140,242,.16);   /* God's-promise verses */
+    --bible:#8a6a4a; --bible-ink:#efe2cd;   /* the Bible tab icon — humble brown, not red */
     --gray1:#6b7480; --gray2:#4c545f; --gray-shadow:#333a44;
     /* state backgrounds (quiz feedback / selection) */
     --ok-bg:#16281a; --no-bg:#2a1418; --sel-bg:#182236;
@@ -134,6 +135,7 @@
   .tabbar button{flex:1;background:none;border:none;color:var(--muted);padding:10px 4px 12px;
     font-size:11px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
   .tabbar button .ic{font-size:23px;line-height:1}
+  .tabbar button .ic svg{width:22px;height:22px;display:block;margin:0 auto}
   .tabbar button.on{color:var(--gold-ink)}
   .tabbar button.locked{opacity:.3;pointer-events:none;filter:grayscale(.7)}
   .tabbar button.tabflash{color:var(--gold-ink)}
@@ -572,7 +574,7 @@
   /* chapter picker = round gold chips; verse picker = square tiles (visual differentiator) */
   .vboxes.chapters .vbox{border-radius:50%}
   /* CHAPTERS render as big gold "CH" cards; VERSES stay small number squares — unmistakably different screens */
-  .chapboxes{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:12px 0 4px}
+  .chapboxes{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:12px 0 4px}
   .chapbox{position:relative;aspect-ratio:1.1;border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;background:var(--cell2-bg);border:2px solid var(--box-line);color:var(--muted);font-weight:800}
   .chapbox.ready{border-color:var(--gold2);color:var(--gold-ink)}   /* outlined: dark center + gold border (was a filled panel) */
   .chapbox.locked{opacity:.5;cursor:default}
@@ -585,7 +587,10 @@
   .screenkind.vs{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent)}
   .navrow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
   .navrow .btn.sm{width:auto}
-  .vlegend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:4px 0 14px}
+  .vpsel.needpick{border-color:var(--miss);box-shadow:0 0 0 2px var(--no-bg)}
+  .vlegend-wrap{margin:10px 0 0}
+  .vlegend-toggle{background:none;border:none;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.04em;padding:4px 0;cursor:pointer}
+  .vlegend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:4px 0 2px}
   .vlegend span b{display:inline-block;box-sizing:border-box;width:13px;height:13px;border-radius:3px;vertical-align:-2px;margin-right:4px;background:var(--cell2-bg);border:2px solid var(--line)}   /* outlined swatches — match the outlined cells */
   .biblestrip{display:grid;grid-template-columns:repeat(11,1fr);gap:3px;margin-top:6px}
   .bible-search-btn{background:var(--panel3);border:1px solid var(--line);border-radius:10px;width:34px;height:34px;font-size:16px;cursor:pointer;color:var(--ink);flex:0 0 auto;display:grid;place-items:center}
@@ -1060,6 +1065,7 @@
     --bg:#eaf4ff; --panel:#ffffff; --panel2:#f0f5fb; --panel3:#e4ebf3; --panel0:#eef5ff;
     --sg-hi:#6fa8ff; --sg-lo:#22499b; --sg-fg:#ffffff;
     --purple:#7b3fd4; --purple-soft:rgba(123,63,212,.13);
+    --bible:#7a5836; --bible-ink:#fdf6ea;
     --ink:#3a4a5e; --muted:#8a97a8; --ink-soft:#4a5a6e; --ink-soft2:#5a6675;
     --gold:#ffb800; --gold2:#e0a600; --gold-ink:#a06f00; --accent:#1cb0f6;
     --green:#58cc02; --good:#3f9e00; --green-ink:#3f9e00; --green-line:#8ccf5a;
@@ -1254,7 +1260,7 @@
     <button data-tab="learn" class="on"><span class="ic">🎓</span><span class="lbl">Learn</span></button>
     <button data-tab="verse"><span class="tabbadge"></span><span class="ic">📖</span><span class="lbl">Verses</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
     <button data-tab="palace"><span class="tabbadge"></span><span class="ic">🏛️</span><span class="lbl">Palaces</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
-    <button data-tab="journey"><span class="ic">📕</span><span class="lbl">Bible</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
+    <button data-tab="journey"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 2.8h11.1a2.1 2.1 0 0 1 2.1 2.1v14.2a2.1 2.1 0 0 1-2.1 2.1H5.4A1.6 1.6 0 0 1 3.8 19.6V4.4a1.6 1.6 0 0 1 1.6-1.6Z" fill="var(--bible)"/><path d="M3.8 18.1h13.9" stroke="var(--bible-ink)" stroke-opacity=".45" stroke-width="1"/><path d="M11.3 6.4v8.2M8.4 9.1h5.8" stroke="var(--bible-ink)" stroke-width="1.7" stroke-linecap="round"/></svg></span><span class="lbl">Bible</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
     <button data-tab="stories"><span class="ic">📜</span><span class="lbl">Stories</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
   </div>
 
@@ -1396,7 +1402,7 @@
       <button class="btn blue" id="payMonthly" style="width:100%;margin-top:8px">$5 / month · Go Pro</button>
       <div id="payLessonWrap" style="display:none;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
         <div class="hint" style="margin:0 0 8px">Not ready to subscribe? Spend talents to open <b class="gold">just this one lesson</b> (talents unlock a single lesson only — they don't unlock the app):</div>
-        <button class="btn" id="payLesson" style="width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--on-accent)">🪙 Unlock this lesson · 500 talents</button>
+        <button class="btn" id="payLesson" style="width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--on-accent)">🪙 Unlock this lesson · 1000 talents</button>
       </div>
       <button class="btn ghost" id="payRestore" style="width:100%;margin-top:8px">I already paid · Restore</button>
       <button class="btn ghost" id="payHelp" style="width:100%;margin-top:8px">🙏 Can't afford it? Request assistance</button>
@@ -1437,8 +1443,16 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.1.0";
+const APP_VERSION="1.2.0";
 const CHANGELOG=[
+ {v:"1.2.0", d:"August 24, 2026", t:"Your pace, your order", items:[
+   ["new","<b>Pro subscribers can now learn the books in any order</b> — start with the one God has put on your heart, not the one that comes next."],
+   ["new","Not subscribed? You can still open the next book with <b>1000 talents</b>. The books come in order, one at a time — and every talent you've earned counts toward the next one."],
+   ["new","Finishing your daily goal now reads “<b>Well done, good and faithful servant</b>” — Matthew 25:21, the very parable your talents are named after."],
+   ["new","The Bible tab wears a humble brown Bible now instead of a red one."],
+   ["fix","The Bible drill-down scrolls far less: the key is tucked under the verses and folds away, the chapter heading is half the height, and chapters sit six to a row. Psalm 119 and the Psalms chapter list both lost about a third of their scrolling."],
+   ["fix","“I already know this” is gone. A verse is finished when you've given it a palace and a room — the place is the proof that you truly hold it."]
+ ]},
  {v:"1.1.0", d:"August 24, 2026", t:"Verses, stories & streaks", items:[
    ["new","Bible stories now finish on the same verse page as every other verse — write the scene and place it in a palace room."],
    ["new","Verse review now asks “Where does <i>&lt;story&gt;</i> begin?” for any verse that opens one of the 100 Bible stories."],
@@ -2137,6 +2151,9 @@ const FREE_SKILLS = new Set([
   "palace:0",                                // your first memory palace
   "book:40"                                  // Matthew
 ]);
+// What one lesson costs in talents when the user isn't subscribed. Non-Pro users can only
+// buy the lesson that is NEXT in sequence — the path stays in order for them.
+const LESSON_UNLOCK_COST=1000;
 function isFreeSkill(sk){ return FREE_SKILLS.has(sk.id); }
 function isPaidSkill(sk){ return !isFreeSkill(sk); }
 // Is a given skill locked behind the paywall for THIS user right now?
@@ -2547,6 +2564,15 @@ function storyNameAt(b,c,v){
   if(!_storyNameMap){ _storyNameMap={}; STORY_GROUPS.forEach(g=>g.s.forEach(st=>{ _storyNameMap[bookNum(st[1])+":"+st[2]+":"+st[3]]=st[0]; })); }
   return _storyNameMap[b+":"+c+":"+v]||null;
 }
+// Collapsible key, rendered UNDER the grid so the boxes start at the top of the screen.
+function legendHTML(items){
+  const open=Store.get("vv_legend","0")==="1";
+  return `<div class="vlegend-wrap"><button class="vlegend-toggle" id="legToggle">${open?"▾":"▸"} KEY</button>${open?`<div class="vlegend">${items}</div>`:""}</div>`;
+}
+function wireLegend(rerender){
+  const b=el("legToggle"); if(!b) return;
+  b.onclick=()=>{ Store.set("vv_legend", Store.get("vv_legend","0")==="1"?"0":"1"); rerender(); };
+}
 function renderBookScreen(bn){
   const J=el("journey"), w=pegFor(bn).word, SS=storyStarts();
   let chips="";
@@ -2571,10 +2597,11 @@ function renderBookScreen(bn){
         <div><h2 style="margin:0;font-size:20px">${bookName(bn)}</h2>
           <div class="muted" style="font-size:13px">Book ${pad2(bn)} · image “${w}” · tap a chapter</div></div>
       </div>
-      <div class="vlegend" style="margin-top:10px"><span><b style="border-color:var(--gold2)"></b>chapters you can memorize</span><span><b></b>not ready yet</span><span>📖 a story begins here</span></div>
       <div class="chapboxes">${chips}</div>
+      ${legendHTML(`<span><b style="border-color:var(--gold2)"></b>chapters you can memorize</span><span><b></b>not ready yet</span><span>📖 a story begins here</span>`)}
     </div>`;
   el("bkBack").onclick=renderJourney;
+  wireLegend(()=>renderBookScreen(bn));
   J.querySelectorAll("[data-gob]").forEach(b=>b.onclick=()=>renderBookScreen(+b.dataset.gob));
   J.querySelectorAll("[data-chap]").forEach(h=>h.onclick=()=>renderChapterScreen(bn,+h.dataset.chap));
 }
@@ -2594,22 +2621,23 @@ function renderChapterScreen(bn,c){
     </div>
     <div class="card">
       <span class="screenkind vs">✒️ VERSES · ${bookName(bn)} ${c}</span>
-      <h2 style="margin:0 0 2px;font-size:20px">${bookName(bn)} ${c}<span class="muted" style="font-size:14px;font-weight:600">:1–${verseCount(bn,c)}</span></h2>
-      <div class="chpeg">${pegImg("num",c,pegFor(c).word,true)}<div class="chpeg-w">Chapter ${pad2(c)} = <b class="gold">${pegFor(c).word}</b></div></div>
-      <div class="muted" style="font-size:13px;margin-bottom:8px">${verseCount(bn,c)} verses — small squares</div>
-      <div class="vlegend">
+      <div style="display:flex;gap:12px;align-items:center">
+        <div>${pegImg("num",c,pegFor(c).word,false)}</div>
+        <div style="min-width:0"><h2 style="margin:0;font-size:20px">${bookName(bn)} ${c}</h2>
+          <div class="muted" style="font-size:13px">Chapter ${pad2(c)} = <b class="gold">${pegFor(c).word}</b> · ${verseCount(bn,c)} verses — tap one to memorize</div></div>
+      </div>
+      <div class="vboxes">${boxes}</div>
+      ${legendHTML(`
         <span><b style="border-color:var(--gold2)"></b>ready</span>
         <span><b style="border-color:var(--green)"></b>suggested / saved</span>
         <span><b style="border-color:var(--miss-ink)"></b>skip</span>
         <span><b style="border-color:var(--purple)"></b>a promise of God</span>
         <span><b></b>not ready — grey number, colored outline</span>
         <span><b style="background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:var(--gold-ink)"></b>learned</span>
-        <span>📖 a story begins here</span>
-      </div>
-      <p class="hint">Tap a verse to memorize it.</p>
-      <div class="vboxes">${boxes}</div>
+        <span>📖 a story begins here</span>`)}
     </div>`;
   el("chBack").onclick=()=>renderBookScreen(bn);
+  wireLegend(()=>renderChapterScreen(bn,c));
   J.querySelectorAll("[data-goc]").forEach(b=>b.onclick=()=>renderChapterScreen(bn,+b.dataset.goc));
   J.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{ const v=+b.dataset.v; openVerseWizard(bn,c,v,()=>{show("journey");renderChapterScreen(bn,c);}); });
 }
@@ -2775,6 +2803,8 @@ function skillUnlocked(ui,si){
   // Bible stories unlock the moment their STARTING VERSE is addressable with the numbers you already know —
   // no need to finish every book first. (Everything else still unlocks sequentially.)
   if(sk0&&sk0.kind==="story"){ const s=sk0.story; return reachable(bookNum(s.b),s.c,s.v); }
+  // Pro subscribers roam the books freely — sounds, numbers and palaces still come in order.
+  if(sk0&&sk0.kind==="book"&&Billing.isPro()) return true;
   const flat=flatSkills(), idx=flat.findIndex(x=>x.ui===ui&&x.si===si);
   if(idx<=0) return true;
   // unlock when the previous REQUIRED skill is done — optional (bonus palace) tiles never gate progress
@@ -2935,14 +2965,16 @@ function renderPath(focus){
   const allWon=SCRATCH_LADDER.every(r=>tabWon(r.tab));
   const palaceRung=SCRATCH_LADDER.findIndex(r=>r.tab==="palace");
   let revealMax;
-  if(allWon){ for(let i=UNITS.length-1;i>=0;i--){ if(!UNITS[i].story){ revealMax=i; break; } } }
+  // Pro users see the whole path, since they're allowed to start any book they like.
+  if(allWon||Billing.isPro()){ for(let i=UNITS.length-1;i>=0;i--){ if(!UNITS[i].story){ revealMax=i; break; } } }
   else {
     revealMax=0;
     for(let i=0;i<UNITS.length;i++){ const U=UNITS[i]; if(U.story) break;
       const doneAll=U.skills.every(sk=>sk.optional||Prog.doneSkills.includes(sk.id));
       revealMax=i; if(!doneAll) break; }
-    if(!tabWon("palace") && palaceUnitIdx>=0) revealMax=Math.min(revealMax, palaceUnitIdx);
   }
+  // never reveal past the Memory-Palace scratch-off until it's won (applies to Pro too)
+  if(!tabWon("palace") && palaceUnitIdx>=0) revealMax=Math.min(revealMax, palaceUnitIdx);
   let truncated=false;
   UNITS.forEach((U,ui)=>{
     if(U.story) return;   // stories live in their own tab now, not the Learn path
@@ -2980,8 +3012,10 @@ function renderPath(focus){
         const isStory=sk.kind==="story";
         const label = (isStory||isPalace||sk.kind==="book") ? sk.label : (sk.items.length===1?`${sk.items[0]} · ${sk.label}`:sk.label);
         const face = isStory ? "📖" : (isPalace ? "🏛️" : (sk.items.length===1?sk.items[0]:"★"));
-        html+=`<button class="tile ${color} ${d} ${pro?"pro":""}" data-ui="${ui}" data-si="${si}" ${(color==="locked"&&!pro)?"disabled":""}>
-          ${pro?`<span class="lockbadge">🔒</span>`:""}${face}<small>${label}</small></button>`;
+        // a paywalled tile is only tappable when it is the NEXT one in sequence, so a non-Pro
+        // user can buy their way forward but never skip ahead. Pro users aren't paywalled at all.
+        html+=`<button class="tile ${color} ${d} ${pro?"pro":""}" data-ui="${ui}" data-si="${si}" ${(color==="locked")?"disabled":""}>
+          ${pro?`<span class="lockbadge">${sk.kind==="book"?"🪙":"🔒"}</span>`:""}${face}<small>${label}</small></button>`;
       });
       html+=`</div>`;
       if(palaceLocked) html+=`<div class="hint" style="text-align:center;margin:10px 0 0">${SCRATCH_LADDER[palaceRung].gate()?"You've earned it — scratch the ticket above! 🎫":"Memorize 5 verses and hit a 5-answer streak in the verse test to earn this."}</div>`;
@@ -2999,8 +3033,8 @@ function renderPath(focus){
   L.querySelectorAll("[data-grp]").forEach(h=>h.onclick=()=>{ const ui=+h.dataset.grp; expandedUnits.has(ui)?expandedUnits.delete(ui):expandedUnits.add(ui); renderPath(); });
   L.querySelectorAll("[data-cq]").forEach(b=>b.onclick=()=>{ if(b.dataset.prolock){ openPaywall(); return; } startChapterQuiz(+b.dataset.cq); });
   L.querySelectorAll(".tile:not(.tickettile):not(.video)").forEach(t=>t.onclick=()=>{
+    if(t.classList.contains("locked")) return;   // out of sequence — not even buyable
     if(t.classList.contains("pro")){ openPaywall(UNITS[+t.dataset.ui].skills[+t.dataset.si]); return; }
-    if(t.classList.contains("locked")) return;
     startLesson(UNITS[+t.dataset.ui].skills[+t.dataset.si]);
   });
   L.querySelectorAll(".tile.video").forEach(t=>t.onclick=()=>startVideoLesson(t.dataset.video, renderPath));
@@ -4030,7 +4064,7 @@ function goalFlash(now, target){
   const host=document.querySelector(".phone"); if(!host) return;
   const wrap=document.createElement("div"); wrap.className="goalflash";
   let nodes=""; for(let i=1;i<=target;i++) nodes+=`<span class="gf-node ${i<now?"done":(i===now?"just":"")}"">${i<=now?"✓":i}</span>`;
-  wrap.innerHTML=`<div class="gf-card"><div class="gf-title">${now>=target?"🎉 Goal reached!":"Daily goal"}</div><div class="gf-nodes">${nodes}</div><div class="gf-sub">${now}/${target} today</div></div>`;
+  wrap.innerHTML=`<div class="gf-card"><div class="gf-title">${now>=target?"🙏 Well done":"Daily goal"}</div><div class="gf-nodes">${nodes}</div><div class="gf-sub">${now}/${target} today</div></div>`;
   host.appendChild(wrap); requestAnimationFrame(()=>wrap.classList.add("show"));
   setTimeout(()=>{ wrap.classList.remove("show"); setTimeout(()=>wrap.remove(), 350); }, now>=target?1500:1050);
 }
@@ -4044,7 +4078,7 @@ function streakNeedLine(){
 }
 function goalBarHTML(){ const c=goalCount(), t=goalToday(), met=c>=t;
   const dots=Array.from({length:t},(_,i)=>`<span class="gb-dot ${i<c?"on":""}"></span>`).join("");
-  return `<span class="gb-ic">${met?"🎉":"🎯"}</span><div class="gb-mid"><div class="gb-title">${met?"Goal complete for today!":"Today's goal"}</div><div class="gb-dots">${dots}</div></div><div class="gb-count">${c}/${t}</div>`;
+  return `<span class="gb-ic">${met?"🙏":"🎯"}</span><div class="gb-mid"><div class="gb-title">${met?"Faithful today":"Today's goal"}</div><div class="gb-dots">${dots}</div></div><div class="gb-count">${c}/${t}</div>`;
 }
 // the memorized verse with the FEWEST words that isn't mastered (10×) and hasn't been practiced yet today
 function pickW4WVerse(){
@@ -4059,9 +4093,11 @@ function pickW4WVerse(){
 function markW4WToday(vkey){ const today=dayKey(new Date()); if(!Prog.w4wToday||Prog.w4wToday.date!==today) Prog.w4wToday={date:today,set:{}}; Prog.w4wToday.set[vkey]=true; }
 function onGoalComplete(){
   const m=el("goalDoneModal")||(()=>{ const d=document.createElement("div"); d.id="goalDoneModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
-  m.innerHTML=`<div class="modal-card center"><div style="font-size:46px">🎯</div>
-    <h2 style="margin:6px 0 2px">Goal complete for today!</h2>
-    <p class="lead">You hit your goal of <b class="gold">${goalToday()}</b>. Want to adjust it?</p>
+  m.innerHTML=`<div class="modal-card center"><div style="font-size:46px">🙏</div>
+    <h2 style="margin:6px 0 2px;font-size:20px">Well done, good and faithful servant</h2>
+    <p class="lead" style="font-style:italic;margin:8px 0 2px">“Thou hast been faithful over a few things, I will make thee ruler over many things.”</p>
+    <div class="gold" style="font-weight:800;font-size:13px;margin-bottom:10px">Matthew 25:21</div>
+    <p class="lead">You kept today's goal of <b class="gold">${goalToday()}</b>. Want to adjust it?</p>
     <div class="btnrow"><button class="btn" id="gdAdjust">Adjust my goal</button><button class="btn ghost" id="gdKeep">Keep it</button></div></div>`;
   m.style.display="flex"; m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("gdKeep").onclick=()=>m.style.display="none";
@@ -4793,7 +4829,6 @@ function renderWalk(){
         <div class="teachbox"><b class="gold">Now picture it.</b> Weave <b>${bp.word}</b>, <b>${cp.word}</b> and <b>${vp.word}</b> — and what this verse means — into one <b>action-packed scene</b>, set in a room of one of your memory palaces.</div>
         ${canLearn?`<button class="btn" id="wToScene" style="margin-top:12px">Save Visual →</button>`:missHtml}
         <div class="btnrow" style="margin-top:8px"><button class="btn ghost" id="wSave" style="flex:1">${Prog.saved.includes(vkey)?"↩ Unsave":"Save for later"}</button><button class="btn ghost" id="wSkip" style="flex:1">${Prog.skipped.includes(vkey)?"↩ Unskip":"Skip"}</button></div>
-        <button class="btn ghost" id="wKnow" style="width:100%;margin-top:8px;border-color:var(--gold2);color:var(--gold-ink)">✓ I already know this — add to my test verses</button>
       </div>`;
     if(el("wClose")) el("wClose").onclick=()=>walkReturn();
     wireVerseNav(V, verseNavNow, walkReturn);
@@ -4801,7 +4836,6 @@ function renderWalk(){
     if(el("wToScene")) el("wToScene").onclick=()=>{ wPhase="scene"; renderWalk(); };
     if(el("wSave")) el("wSave").onclick=()=>{ if(Prog.saved.includes(vkey)){ Prog.saved=Prog.saved.filter(x=>x!==vkey); saveProg(); toast("Removed from Saved"); renderWalk(); } else { markSaved(); walkReturn(); } };
     if(el("wSkip")) el("wSkip").onclick=()=>{ if(Prog.skipped.includes(vkey)){ Prog.skipped=Prog.skipped.filter(x=>x!==vkey); saveProg(); toast("No longer skipped"); renderWalk(); } else { markSkipped(); walkReturn(); } };
-    if(el("wKnow")) el("wKnow").onclick=()=>{ Prog.saved=Prog.saved.filter(x=>x!==vkey); Prog.skipped=Prog.skipped.filter(x=>x!==vkey); addMemorized(curScene); toast("Added to your memorized & test verses ✓"); walkReturn(); };
     return;
   }
 
@@ -4842,7 +4876,23 @@ function renderWalk(){
       if(pv!=="") Prog.verseLoc[vkey]={p:+pv, room:(el("wRoom")?el("wRoom").value:"")}; else delete Prog.verseLoc[vkey]; }
     saveProg(); addMemorized(curScene); sceneBackfill=false; walkReturn();
   };
-  const doneAction=()=>{ if(!(el("wScene").value||"").trim()){ confirmBlankScene(finish); return; } finish(); };
+  // A verse counts as learned once it LIVES somewhere: pick the palace and the room. That
+  // location is the proof. (Scene text stays optional — the placement is what we require.)
+  const doneAction=()=>{
+    if(palaces.length){
+      const pv=el("wPalace")?el("wPalace").value:"", rm=el("wRoom")?el("wRoom").value:"";
+      if(pv==="" || !rm){
+        const t=el(pv===""?"wPalace":"wRoom");
+        if(t){ t.classList.add("needpick"); setTimeout(()=>t.classList.remove("needpick"),1400); }
+        toast(pv===""?"Pick the palace this verse lives in.":"Pick the room where the scene happens.");
+        return;
+      }
+      finish(); return;
+    }
+    // no palace built yet → fall back to requiring the written scene, so they aren't dead-ended
+    if(!(el("wScene").value||"").trim()){ confirmBlankScene(finish); return; }
+    finish();
+  };
   if(el("wDone")) el("wDone").onclick=doneAction;
   if(el("wDoneTop")) el("wDoneTop").onclick=doneAction;   // green ✓ in the top bar = same as Done (no scrolling)
   // auto-grow the scene box so it never needs its own scrollbar (grows AND shrinks with the text)
@@ -5187,9 +5237,9 @@ function openPaywall(sk){ const m=el("payModal"); if(!m) return;
   payTargetSkill = (sk && sk.id && sk.kind!=="story") ? sk : null;   // stories/chapter-quiz can't be single-lesson bought
   const wrap=el("payLessonWrap"), btn=el("payLesson");
   if(wrap && btn){
-    if(payTargetSkill){ wrap.style.display=""; const t=Prog.talents||0, afford=t>=500;
+    if(payTargetSkill){ wrap.style.display=""; const t=Prog.talents||0, afford=t>=LESSON_UNLOCK_COST;
       btn.disabled=!afford; btn.style.opacity=afford?"1":".6";
-      btn.textContent = afford ? "🪙 Unlock this lesson · 500 talents" : `🪙 Need 500 talents — you have ${talDisp(t)}`;
+      btn.textContent = afford ? `🪙 Unlock this lesson · ${LESSON_UNLOCK_COST} talents` : `🪙 Need ${LESSON_UNLOCK_COST} talents — you have ${talDisp(t)}`;
     } else wrap.style.display="none";
   }
   m.style.display="flex";
@@ -5201,8 +5251,8 @@ function wirePaywall(){
   if(el("payHelp")) el("payHelp").onclick=()=>{ el("payModal").style.display="none"; openTicketForm({type:"assistance", title:"🙏 Request assistance", intro:"If cost is a barrier, tell us your story. Please share at least 250 words about why you'd like help (up to 500).", minWords:250, maxWords:500, placeholder:"Share why you're asking…"}); };
   if(el("payLesson")) el("payLesson").onclick=()=>{
     if(!payTargetSkill) return;
-    if((Prog.talents||0)<500){ toast(`You need 500 talents — you have ${talDisp(Prog.talents||0)}.`); return; }
-    spendTalents(500);
+    if((Prog.talents||0)<LESSON_UNLOCK_COST){ toast(`You need ${LESSON_UNLOCK_COST} talents — you have ${talDisp(Prog.talents||0)}.`); return; }
+    spendTalents(LESSON_UNLOCK_COST);
     Prog.lessonUnlocks=Prog.lessonUnlocks||[]; if(!Prog.lessonUnlocks.includes(payTargetSkill.id)) Prog.lessonUnlocks.push(payTargetSkill.id);
     saveProg();
     const sk=payTargetSkill; payTargetSkill=null; closePaywall(); toast("🪙 Lesson unlocked!");
