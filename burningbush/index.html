@@ -40,7 +40,11 @@
     --sg-hi:#5f8cff; --sg-lo:#141d3f; --sg-fg:#ffffff;   /* story-section gradient: light→dark across sections (per-theme below) */
     --purple:#b48cf2; --purple-soft:rgba(180,140,242,.16);   /* God's-promise verses */
     --bible:#8a6a4a; --bible-ink:#efe2cd;   /* the Bible tab icon — humble brown, not red */
-    --rome-red:#8c2f28; --rome-gold:#c9a227; --rome-marble:#efe7d6; --rome-ink:#2c2118; --rome-shadow:rgba(0,0,0,.5);
+    /* lifted straight from images/books/45.svg — the Romans plumed helmet, so Caesar's
+       screens and the book tile you already know are visibly the same world */
+    --rome-red:#c22f26; --rome-red-hi:#e23a30; --rome-red-lo:#a01e18;
+    --rome-gold-hi:#ffe9a8; --rome-gold:#ffcf4d; --rome-amber:#ff8a1e; --rome-ember:#e0561a;
+    --rome-marble:#efe7d6; --rome-ink:#2c2118; --rome-shadow:rgba(0,0,0,.5);
     --purple-deep:#7d55c7; --on-purple:#ffffff;   /* fill for a promise you've learned */
     --gray1:#6b7480; --gray2:#4c545f; --gray-shadow:#333a44;
     /* state backgrounds (quiz feedback / selection) */
@@ -624,33 +628,42 @@
   /* ---- Caesar's Tax: the Roman overlay, the wheel, the legion, the church ---- */
   #taxov{position:absolute;inset:0;z-index:150;display:none;background:var(--scrim);padding:16px;box-sizing:border-box;overflow-y:auto}
   #taxov.on{display:flex;align-items:flex-start;justify-content:center}
-  .taxcard{width:100%;max-width:352px;margin:auto;background:var(--rome-marble);border:3px solid var(--rome-gold);border-radius:18px;padding:14px 15px 16px;text-align:center;box-shadow:0 22px 60px var(--rome-shadow);color:var(--rome-ink);position:relative;overflow:hidden}
-  .taxspqr{font-family:var(--font-display);letter-spacing:.34em;font-size:12px;font-weight:800;color:var(--rome-marble);background:var(--rome-red);border-radius:8px;padding:6px 0;margin:-3px -3px 11px}
-  .taxtitle{font-family:var(--font-display);font-size:20px;font-weight:800;margin:0 0 4px;line-height:1.2}
-  .taxsub{font-size:13.5px;line-height:1.45;opacity:.82;margin:0 0 10px}
-  .taxlegion{display:flex;justify-content:center;gap:12px;height:60px;margin-bottom:2px}
-  .taxlegion svg{width:36px;height:56px;opacity:0;transform:translateX(-40px)}
+  .taxcard{width:100%;max-width:352px;margin:auto;background:var(--panel);border:2px solid var(--gold2);border-radius:18px;padding:12px 14px 14px;text-align:center;box-shadow:0 22px 60px var(--rome-shadow);color:var(--ink);position:relative;overflow:hidden}
+  .taxspqr{font-family:var(--font-display);letter-spacing:.34em;font-size:12px;font-weight:800;color:var(--rome-gold-hi);background:linear-gradient(180deg,var(--rome-red-hi),var(--rome-red-lo));border-radius:8px;padding:6px 0;margin:-2px -2px 4px}
+  .taxspqr-note{font-size:10.5px;line-height:1.35;color:var(--muted);margin:0 0 9px}
+  .taxspqr-note i{color:var(--gold-ink);font-style:normal;font-weight:700}
+  .taxtitle{font-family:var(--font-display);font-size:20px;font-weight:800;margin:0 0 4px;line-height:1.2;color:var(--gold-ink)}
+  .taxsub{font-size:13.5px;line-height:1.45;color:var(--ink-soft);margin:0 0 8px}
+  .taxlegion{display:flex;justify-content:center;align-items:flex-end;gap:10px;height:58px;margin-bottom:2px}
+  .taxlegion svg{opacity:0;transform:translateX(-40px)}
+  .taxlegion .lg{width:34px;height:52px}
+  .taxlegion .hl{width:38px;height:54px}
+  .taxlegion.solo{height:46px;margin-bottom:0}
+  .taxlegion.solo .hl{width:36px;height:51px}
+  .taxhub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;pointer-events:none;line-height:0}
+  .taxhub svg{width:38px;height:54px;display:block;filter:drop-shadow(0 2px 4px var(--rome-shadow))}
   #taxov.march .taxlegion svg{animation:legionmarch .55s ease-out forwards}
   #taxov.march .taxlegion svg:nth-child(2){animation-delay:.12s}
   #taxov.march .taxlegion svg:nth-child(3){animation-delay:.24s}
   @keyframes legionmarch{0%{opacity:0;transform:translateX(-40px)}60%{opacity:1;transform:translateX(4px) translateY(-3px)}100%{opacity:1;transform:translateX(0)}}
-  .taxwheelwrap{position:relative;width:216px;height:222px;margin:2px auto 2px}
-  .taxwheel{width:216px;height:216px;display:block;margin-top:8px}
+  .taxwheelwrap{position:relative;width:216px;height:216px;margin:6px auto 2px}
+  .taxwheel{width:216px;height:216px;display:block}
   .taxwheel.spin{transition:transform 4.2s cubic-bezier(.17,.67,.16,1)}
-  .taxpointer{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:2;width:24px;height:28px}
-  .taxresult{font-family:var(--font-display);font-size:17px;font-weight:800;margin:4px 0 0;min-height:23px;color:var(--rome-red)}
-  .taxtook{font-size:13.5px;font-weight:700;margin-top:3px;min-height:19px}
-  .taxverse{font-size:11.5px;font-style:italic;line-height:1.45;opacity:.72;margin:11px 0 0;border-top:1px solid var(--rome-gold);padding-top:8px}
-  .taxbtn{width:100%;margin-top:11px;padding:13px;border-radius:12px;border:none;background:var(--rome-red);color:var(--rome-marble);font-size:15px;font-weight:800;cursor:pointer}
-  .taxbtn.ghost{background:transparent;border:2px solid var(--rome-gold);color:var(--rome-ink);margin-top:8px;padding:11px}
+  .taxpointer{position:absolute;top:-7px;left:50%;transform:translateX(-50%);z-index:3;width:24px;height:28px;filter:drop-shadow(0 2px 3px var(--rome-shadow))}
+  .taxresult{font-family:var(--font-display);font-size:17px;font-weight:800;margin:4px 0 0;min-height:23px;color:var(--gold-ink)}
+  .taxtook{font-size:13.5px;font-weight:700;margin-top:3px;min-height:19px;color:var(--ink-soft)}
+  .taxverse{font-size:11.5px;font-style:italic;line-height:1.4;color:var(--muted);margin:9px 0 0;border-top:1px solid var(--line);padding-top:7px}
+  .taxbtn{width:100%;margin-top:10px;padding:13px;border-radius:12px;border:none;background:linear-gradient(180deg,var(--rome-red-hi),var(--rome-red-lo));color:var(--rome-gold-hi);font-size:15px;font-weight:800;cursor:pointer}
+  .taxbtn.ghost{background:transparent;border:2px solid var(--gold2);color:var(--gold-ink);margin-top:8px;padding:11px}
   .taxseal{position:absolute;top:46%;left:50%;width:104px;height:104px;opacity:0;pointer-events:none;z-index:3;transform:translate(-50%,-50%) scale(2.2)}
   .taxseal.stamp{animation:sealstamp .45s ease-out forwards}
   @keyframes sealstamp{0%{opacity:0;transform:translate(-50%,-50%) scale(2.2) rotate(-14deg)}70%{opacity:1;transform:translate(-50%,-50%) scale(.94) rotate(-6deg)}100%{opacity:.95;transform:translate(-50%,-50%) scale(1) rotate(-8deg)}}
   /* the letter from Rome */
-  .romescroll{background:var(--rome-marble);color:var(--rome-ink);border-radius:14px;border:2px solid var(--rome-gold);padding:16px 15px;text-align:left;font-size:14px;line-height:1.6}
-  .romescroll .rs-h{font-family:var(--font-display);font-size:18px;font-weight:800;text-align:center;margin:0 0 2px}
-  .romescroll .rs-from{text-align:center;font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.6;margin-bottom:12px}
-  .romescroll .rs-sign{text-align:right;font-style:italic;margin-top:12px;opacity:.8}
+  .romescroll{background:var(--panel2);color:var(--ink-soft);border-radius:14px;border:1px solid var(--line);padding:11px 13px;text-align:left;font-size:13.5px;line-height:1.46}
+  .romescroll p{margin:0 0 7px}
+  .romescroll .rs-h{font-family:var(--font-display);font-size:18px;font-weight:800;text-align:center;margin:0 0 1px;color:var(--gold-ink)}
+  .romescroll .rs-from{text-align:center;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+  .romescroll .rs-sign{text-align:right;font-style:italic;margin:8px 0 0;color:var(--muted)}
   /* the church your tax builds */
   .churchbar{height:12px;border-radius:999px;background:var(--panel3);overflow:hidden;margin-top:10px}
   .churchbar span{display:block;height:100%;background:linear-gradient(90deg,var(--rome-gold),var(--gold))}
@@ -659,6 +672,18 @@
   /* "the collectors ride in N days" */
   .taxwarn{display:flex;align-items:center;gap:9px;background:var(--panel2);border:1px solid var(--rome-gold);border-radius:12px;padding:9px 12px;margin-bottom:8px;cursor:pointer;font-size:13px;font-weight:700;color:var(--ink-soft);text-align:left}
   .taxwarn .tw-ic{font-size:19px;flex:0 0 auto}
+  /* very short screens (SE-class): compress the letter so it still reads without scrolling */
+  @media (max-height:620px){
+    .taxcard{padding:10px 12px 12px}
+    .taxspqr-note{font-size:9.5px;margin-bottom:7px}
+    .taxlegion.solo{height:38px}
+    .taxlegion.solo .hl{width:30px;height:43px}
+    .romescroll{font-size:12.5px;line-height:1.4;padding:10px 11px}
+    .romescroll .rs-h{font-size:16px}
+    .romescroll p{margin:0 0 6px}
+    .taxverse{font-size:10.5px;margin-top:7px;padding-top:6px}
+    .taxbtn{padding:11px;font-size:14px;margin-top:8px}
+  }
   @media (prefers-reduced-motion:reduce){
     .taxwheel.spin{transition:transform .35s linear}
     #taxov.march .taxlegion svg{animation-duration:.01s}
@@ -1423,11 +1448,11 @@
       <button class="btn ghost" id="testStoriesDone" style="width:100%;margin-top:8px">📜 Simulate Stories finished</button>
       <button class="btn ghost" id="testUnpaid" style="width:100%;margin-top:8px">🆓 Simulate unpaid user</button>
       <button class="btn ghost" id="testTalent" style="width:100%;margin-top:8px">🪙 Preview talent animation</button>
-      <button class="btn ghost" id="testTaxWheel" style="width:100%;margin-top:8px">🏛️ Preview Caesar's tax wheel</button>
+      <button class="btn ghost" id="testTaxWheel" style="width:100%;margin-top:8px">🏛️ Run Caesar's tax now</button>
       <button class="btn ghost" id="testPaywall" style="width:100%;margin-top:8px">💳 Show the Pro purchase screen</button>
       <button class="btn ghost" id="testChurch" style="width:100%;margin-top:8px">⛪ Open the church in Rome</button>
       <button class="btn ghost" id="testRomeLetter" style="width:100%;margin-top:8px">📜 Replay Rome's letter</button>
-      <button class="btn ghost" id="testAdd500" style="width:100%;margin-top:8px">🪙 Add 500 talents</button>
+      <button class="btn ghost" id="testAdd500" style="width:100%;margin-top:8px">🪙 Give talents…</button>
       <button class="btn ghost" id="testRestore" style="width:100%;margin-top:8px;color:var(--miss-ink);border-color:var(--miss)">↩ Restore my real progress (after a simulation)</button>
 
       <div id="bugReportsWrap" style="display:none">
@@ -1523,8 +1548,15 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.5.0";
+const APP_VERSION="1.6.0";
 const CHANGELOG=[
+ {v:"1.6.0", d:"August 24, 2026", t:"Caesar, in your colours", items:[
+   ["new","Caesar’s wheel and his letter now wear <b>your theme</b>, and the Roman art is drawn from the <b>Romans book tile</b> you already know — the same plumed helmet, the same crimson and gold."],
+   ["new","<b>Two NO TAX wedges</b> on the wheel. Caesar’s wheel will never stop on them — but if your purse is under 200 talents, that is exactly where it lands."],
+   ["new","<b>S·P·Q·R</b> is explained wherever it appears: <i>Senātus Populusque Rōmānus</i>, “the Senate and People of Rome”."],
+   ["fix","Rome’s letter fits on one screen now, down to the smallest phone — no scrolling to read your own summons."],
+   ["fix","Admin: the tax wheel now runs for real, taking the talents and laying the stone; and “Add 500 talents” is now <b>Give talents</b>, where you type the amount."]
+ ]},
  {v:"1.5.0", d:"August 24, 2026", t:"The word behind the word", items:[
    ["new","<b>Press and hold any word in a verse</b> to see what it was before it was English — the Hebrew or Greek word, how it sounds, what it means, and every way the KJV translators rendered it."],
    ["new","Strong’s Hebrew and Greek are bundled into the app: 8,674 Hebrew words and 5,523 Greek, covering more than nine words in ten across all 66 books."],
@@ -4418,7 +4450,10 @@ const CHURCH_GOAL=2500;           // talents per church; ~3 months of faithful u
 // [percentage Rome TAKES, weight]. The wealthy are assessed hardest — only 90/70 swap.
 const TAX_TABLES={ rich:[[90,60],[80,30],[70,7],[50,3]], poor:[[70,60],[80,30],[90,7],[50,3]] };
 // Twelve wedges whose counts mirror the odds, so the wheel shows what you're truly facing.
-const TAX_WHEEL={ rich:[90,80,70,90,80,50,90,80,90,70,90,90], poor:[70,80,90,70,80,50,70,80,70,90,70,70] };
+// 14 wedges: the twelve real ones, plus two NO TAX that the wheel can never stop on — the
+// weighted draw happens first and only ever names a rate that is actually on the table.
+// (The one exception is a purse under 200, whose "rate" is 0 — that DOES land on NO TAX.)
+const TAX_WHEEL={ rich:[90,80,70,0,90,80,50,90,80,90,0,70,90,90], poor:[70,80,90,0,70,80,50,70,80,70,0,90,70,70] };
 const CHURCH_STAGES=["bare ground","the ground is broken","the foundation is dug","the footings are laid",
   "the steps rise","the walls go up","the columns stand","the portico takes shape","the roof is beamed",
   "the windows are glazed","the dome is raised","the cross is set"];
@@ -4554,14 +4589,15 @@ function openRomeLetter(after){
   const ov=taxOverlay();
   ov.innerHTML=`<div class="taxcard">
       <div class="taxspqr">S · P · Q · R</div>
-      <div class="taxlegion">${legionSVG()}${legionSVG()}${legionSVG()}</div>
-      <div class="romescroll" style="margin-top:10px">
+      <div class="taxspqr-note">${SPQR_NOTE}</div>
+      <div class="taxlegion solo">${romeHelmet("hl")}</div>
+      <div class="romescroll" style="margin-top:8px">
         <div class="rs-h">Rome Has Taken Notice</div>
         <div class="rs-from">By order of Caesar</div>
-        <p style="margin:0 0 10px">Word has reached the Palatine that your storehouse has grown full. Where there is wealth, there is Rome; and where there is Rome, there is the reckoning.</p>
-        <p style="margin:0 0 10px">Therefore be it known: <b>every seven days</b> the collectors will call upon you, and the wheel will name Caesar's share. The legions must be paid, the roads kept, the aqueducts running.</p>
-        <p style="margin:0">Spend freely, then, or see it spent for you. And take this comfort — <b>half of all Rome takes from you is laid up as stone</b>, and a church rises in the imperial city that Caesar never meant to build.</p>
-        <div class="rs-sign">— the Procurator, on Caesar's authority</div>
+        <p>Word has reached the Palatine that your storehouse has grown full. Where there is wealth, there is Rome.</p>
+        <p><b>Every seven days</b> the collectors will call, and the wheel will name Caesar's share. Spend freely, then, or see it spent for you.</p>
+        <p>Yet take this comfort: <b>half of all Rome takes is laid up as stone</b>, and a church rises in the imperial city that Caesar never meant to build.</p>
+        <div class="rs-sign">— the Procurator</div>
       </div>
       <div class="taxverse">${TAX_VERSE}</div>
       <button class="taxbtn" id="rlOk">So be it →</button></div>`;
@@ -4575,45 +4611,67 @@ function taxOverlay(){
   if(!ov){ ov=document.createElement("div"); ov.id="taxov"; ov.setAttribute("aria-hidden","true"); document.querySelector(".phone").appendChild(ov); }
   return ov;
 }
+let _rhSeq=0;
+// The Romans book icon (images/books/45.svg), redrawn on tokens so it can sit on any theme.
+function romeHelmet(cls){
+  const id="rh"+(++_rhSeq);
+  return `<svg class="${cls||"hl"}" viewBox="24 12 48 68" aria-hidden="true">
+    <defs>
+      <linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--rome-gold-hi)"/><stop offset=".45" stop-color="var(--rome-gold)"/><stop offset=".8" stop-color="var(--rome-amber)"/><stop offset="1" stop-color="var(--rome-ember)"/></linearGradient>
+      <linearGradient id="${id}p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--rome-red-hi)"/><stop offset="1" stop-color="var(--rome-red-lo)"/></linearGradient>
+    </defs>
+    <path d="M40 14 C30 16 26 26 30 34 C40 30 52 30 62 34 C66 26 60 16 48 14 C46 20 44 20 40 14 Z" fill="url(#${id}p)"/>
+    <path d="M28 34 C24 46 24 58 30 66 L34 66 C30 56 30 46 34 38 C42 34 54 34 62 38 C66 46 66 56 62 66 L66 66 C72 58 72 46 68 34 C56 28 40 28 28 34 Z" fill="url(#${id}g)"/>
+    <path d="M34 38 L34 74 L44 74 L44 44 C40 42 37 40 34 38 Z" fill="url(#${id}g)"/>
+    <path d="M46 42 L54 42 L54 78 L46 78 Z" fill="url(#${id}g)"/>
+    <path d="M62 38 C58 40 55 42 56 44 L56 66 L62 66 Z" fill="url(#${id}g)"/>
+    <circle cx="50" cy="52" r="2" fill="var(--rome-ink)"/></svg>`;
+}
+const SPQR_NOTE='<b>S·P·Q·R</b> — <i>Senātus Populusque Rōmānus</i>, “the Senate and People of Rome”: stamped on every standard, coin and demand for money.';
 function legionSVG(){
-  return `<svg viewBox="0 0 40 60" aria-hidden="true">
-    <rect x="33" y="3" width="2" height="51" rx="1" fill="var(--rome-ink)"/>
-    <path d="M34 0 l3.2 7.5 -6.4 0z" fill="var(--rome-gold)"/>
+  return `<svg class="lg" viewBox="0 0 40 60" aria-hidden="true">
+    <rect x="33" y="3" width="2" height="51" rx="1" fill="var(--rome-ember)"/>
+    <path d="M34 0 l3.2 7.5 -6.4 0z" fill="var(--rome-gold-hi)"/>
     <rect x="14" y="42" width="5.5" height="14" rx="1.5" fill="var(--rome-ink)"/>
     <rect x="21.5" y="42" width="5.5" height="14" rx="1.5" fill="var(--rome-ink)"/>
     <rect x="12" y="22" width="17" height="21" rx="2.5" fill="var(--rome-red)"/>
-    <path d="M12 22 h17 v4 h-17z" fill="var(--rome-ink)" opacity=".3"/>
+    <path d="M12 22 h17 v4 h-17z" fill="var(--rome-red-lo)"/>
     <circle cx="20.5" cy="14.5" r="7" fill="var(--rome-gold)"/>
-    <rect x="13.5" y="14.5" width="14" height="6" rx="1" fill="var(--rome-gold)"/>
+    <rect x="13.5" y="14.5" width="14" height="6" rx="1" fill="var(--rome-amber)"/>
     <rect x="16.5" y="15.5" width="8" height="5" rx="1.5" fill="var(--rome-ink)" opacity=".6"/>
-    <path d="M16.8 8 q3.7 -6.5 7.4 0 q-3.7 -2.2 -7.4 0z" fill="var(--rome-red)"/>
-    <rect x="19.5" y="3.5" width="2" height="5" rx="1" fill="var(--rome-red)"/>
-    <rect x="6" y="24" width="13.5" height="20" rx="3" fill="var(--rome-red)" stroke="var(--rome-gold)" stroke-width="1.6"/>
-    <path d="M12.7 27 v14 M9 34 h7.5" stroke="var(--rome-gold)" stroke-width="1.1" opacity=".95"/></svg>`;
+    <path d="M16.8 8 q3.7 -6.5 7.4 0 q-3.7 -2.2 -7.4 0z" fill="var(--rome-red-hi)"/>
+    <rect x="19.5" y="3.5" width="2" height="5" rx="1" fill="var(--rome-red-hi)"/>
+    <rect x="6" y="24" width="13.5" height="20" rx="3" fill="var(--rome-red)" stroke="var(--rome-gold-hi)" stroke-width="1.6"/>
+    <path d="M12.7 27 v14 M9 34 h7.5" stroke="var(--rome-gold-hi)" stroke-width="1.1" opacity=".95"/></svg>`;
 }
 let _twSeq=0;
 function taxWheelSVG(vals){
   const id="tw"+(++_twSeq), n=vals.length, step=360/n, R=100, cx=108, cy=108;
   const pt=(a,r)=>[cx+r*Math.cos((a-90)*Math.PI/180), cy+r*Math.sin((a-90)*Math.PI/180)];
-  let out=`<svg class="taxwheel" id="${id}" viewBox="0 0 216 216" aria-hidden="true"><circle cx="${cx}" cy="${cy}" r="${R+4}" fill="var(--rome-gold)"/>`;
+  let out=`<svg class="taxwheel" id="${id}" viewBox="0 0 216 216" aria-hidden="true">
+    <defs><linearGradient id="${id}r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--rome-red-hi)"/><stop offset="1" stop-color="var(--rome-red-lo)"/></linearGradient>
+    <linearGradient id="${id}y" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--rome-gold-hi)"/><stop offset=".6" stop-color="var(--rome-gold)"/><stop offset="1" stop-color="var(--rome-amber)"/></linearGradient></defs>
+    <circle cx="${cx}" cy="${cy}" r="${R+4}" fill="var(--rome-ember)"/>`;
   vals.forEach((v,i)=>{
     const a0=i*step, a1=(i+1)*step, [x0,y0]=pt(a0,R), [x1,y1]=pt(a1,R);
-    const fill = i%2 ? "var(--rome-red)" : "var(--rome-marble)";
-    const ink  = i%2 ? "var(--rome-marble)" : "var(--rome-ink)";
-    const [lx,ly]=pt(a0+step/2, R*0.66);
-    out+=`<path d="M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${R},${R} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z" fill="${fill}" stroke="var(--rome-gold)" stroke-width="1.2"/>`
-      + `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" fill="${ink}" font-size="15" font-weight="800" text-anchor="middle" dominant-baseline="central">${v}%</text>`;   // upright: readable all the way round
+    const free = !v;
+    const fill = free ? "var(--panel3)" : (i%2 ? `url(#${id}r)` : `url(#${id}y)`);
+    const ink  = free ? "var(--good)" : (i%2 ? "var(--rome-gold-hi)" : "var(--rome-ink)");
+    const [lx,ly]=pt(a0+step/2, R*(free?0.63:0.66));
+    out+=`<path d="M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${R},${R} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z" fill="${fill}" stroke="var(--rome-ember)" stroke-width="1.2"/>`
+      + (free
+        ? `<text x="${lx.toFixed(1)}" y="${(ly-5).toFixed(1)}" fill="${ink}" font-size="10" font-weight="800" text-anchor="middle" dominant-baseline="central">NO</text><text x="${lx.toFixed(1)}" y="${(ly+5).toFixed(1)}" fill="${ink}" font-size="10" font-weight="800" text-anchor="middle" dominant-baseline="central">TAX</text>`
+        : `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" fill="${ink}" font-size="14" font-weight="800" text-anchor="middle" dominant-baseline="central">${v}%</text>`);   // upright: readable all the way round
   });
-  out+=`<circle cx="${cx}" cy="${cy}" r="19" fill="var(--rome-gold)" stroke="var(--rome-ink)" stroke-width="1.5"/>`
-     + `<circle cx="${cx}" cy="${cy}" r="12" fill="var(--rome-red)"/></svg>`;
+  out+=`<circle cx="${cx}" cy="${cy}" r="31" fill="var(--rome-ember)" stroke="var(--rome-gold-hi)" stroke-width="1.5"/></svg>`;
   return out;
 }
 function taxSealSVG(rate){
   return `<svg class="taxseal" id="taxSeal" viewBox="0 0 100 100" aria-hidden="true">
-    <circle cx="50" cy="50" r="44" fill="var(--rome-red)" opacity=".92"/>
-    <circle cx="50" cy="50" r="37" fill="none" stroke="var(--rome-marble)" stroke-width="2" stroke-opacity=".8"/>
-    <text x="50" y="43" text-anchor="middle" fill="var(--rome-marble)" font-size="13" font-weight="800" letter-spacing="2">SPQR</text>
-    <text x="50" y="66" text-anchor="middle" fill="var(--rome-marble)" font-size="21" font-weight="800">${rate}%</text></svg>`;
+    <circle cx="50" cy="50" r="44" fill="var(--rome-red-lo)" opacity=".93"/>
+    <circle cx="50" cy="50" r="37" fill="none" stroke="var(--rome-gold-hi)" stroke-width="2" stroke-opacity=".85"/>
+    <text x="50" y="43" text-anchor="middle" fill="var(--rome-gold-hi)" font-size="13" font-weight="800" letter-spacing="2">SPQR</text>
+    <text x="50" y="66" text-anchor="middle" fill="var(--rome-gold-hi)" font-size="21" font-weight="800">${rate}%</text></svg>`;
 }
 
 /* ---- the levy itself ---- */
@@ -4627,12 +4685,14 @@ function openTaxWheel(preview, after){
   const ov=taxOverlay();
   ov.innerHTML=`<div class="taxcard">
       <div class="taxspqr">S · P · Q · R</div>
+      <div class="taxspqr-note">${SPQR_NOTE}</div>
       <div class="taxlegion">${legionSVG()}${legionSVG()}${legionSVG()}</div>
       <div class="taxtitle">${wk[0]}</div>
       <div class="taxsub">${wk[1]}</div>
       <div class="taxwheelwrap">
-        <svg class="taxpointer" viewBox="0 0 24 28" aria-hidden="true"><path d="M12 28 L2 4 h20z" fill="var(--rome-ink)"/><path d="M12 24 L5 6 h14z" fill="var(--rome-gold)"/></svg>
+        <svg class="taxpointer" viewBox="0 0 24 28" aria-hidden="true"><path d="M12 28 L2 4 h20z" fill="var(--rome-red-lo)"/><path d="M12 24 L5 6 h14z" fill="var(--rome-gold-hi)"/></svg>
         ${taxWheelSVG(vals)}
+        <div class="taxhub">${romeHelmet("hl")}</div>
         ${taxSealSVG(rate||70)}
       </div>
       <div class="taxresult" id="taxResult">&nbsp;</div>
@@ -4652,7 +4712,7 @@ function openTaxWheel(preview, after){
     el("taxGo").disabled=true; el("taxGo").style.opacity=".5";
     // land on a wedge that actually bears the drawn value, with a little jitter inside it
     const step=360/vals.length;
-    const seats=vals.map((v,i)=>v===(rate||vals[0])?i:-1).filter(i=>i>=0);
+    const seats=vals.map((v,i)=>v===rate?i:-1).filter(i=>i>=0);   // rate 0 (exempt) lands on NO TAX
     const seat=seats[Math.floor(Math.random()*seats.length)];
     const jitter=(Math.random()-0.5)*step*0.6;
     const deg=360*5 + (360 - (seat*step + step/2 + jitter));
@@ -6285,12 +6345,17 @@ if(el("testTalent")) el("testTalent").onclick=()=>{   // pure-visual demo: plays
   el("themeModal").style.display="none";
   setTimeout(()=>talentBurst(40), 180);
 };
-if(el("testAdd500")) el("testAdd500").onclick=()=>{   // admin: actually grant 500 talents (with the earn animation)
+// admin: type how many talents to grant (with the earn animation)
+if(el("testAdd500")) el("testAdd500").onclick=()=>{
   el("themeModal").style.display="none";
-  setTimeout(()=>earnTalents(500), 180);
+  editText({ title:"Give talents", hint:`How many talents should be added? You have ${talDisp(Prog.talents||0)}.`,
+    value:"500",
+    onSave:v=>{ const n=Math.max(0,Math.min(999999,parseInt(String(v).replace(/[^0-9]/g,""),10)||0));
+      if(!n){ toast("Enter a number of talents."); return; }
+      setTimeout(()=>{ earnTalents(n); toast(`🪙 ${n} talents given`); }, 180); } });
 };
-// admin: the wheel spins for real but takes nothing and doesn't touch the 7-day clock
-if(el("testTaxWheel")) el("testTaxWheel").onclick=()=>{ el("themeModal").style.display="none"; openTaxWheel(true); };
+// admin: a real levy — talents are taken and the church is built, exactly as on the day it falls due
+if(el("testTaxWheel")) el("testTaxWheel").onclick=()=>{ el("themeModal").style.display="none"; openTaxWheel(false); };
 if(el("testPaywall")) el("testPaywall").onclick=()=>{ el("themeModal").style.display="none"; openPaywall(); };
 if(el("testChurch")) el("testChurch").onclick=()=>{ el("themeModal").style.display="none"; openChurch(); };
 if(el("testRomeLetter")) el("testRomeLetter").onclick=()=>{ el("themeModal").style.display="none"; Prog.romeLetterSeen=false; saveProg(); openRomeLetter(); };
