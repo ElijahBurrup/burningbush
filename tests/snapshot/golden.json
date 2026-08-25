@@ -261,10 +261,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "bf9ea65c5e048f46",
-  "len": 13818,
-  "els": 319,
-  "buttons": 32,
+  "h": "b3bffc08823bcde7",
+  "len": 14150,
+  "els": 325,
+  "buttons": 33,
   "svgs": 0,
   "imgs": 0,
   "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
@@ -315,13 +315,13 @@
   "text": "💰 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "e254e1f5b58cf21b",
-  "len": 22564,
-  "els": 438,
+  "h": "c26715ec84112722",
+  "len": 23863,
+  "els": 468,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.13.0 August 25, 2026 The verse ladder NEW Every verse now stands somewhere: Locating (learning wher"
+  "text": "✕ Version history v1.14.0 August 25, 2026 The Feature Store NEW Profile → Feature store. The app has grown a great deal,"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -331,6 +331,15 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "classic/modal/feature-store": {
+  "h": "357d73ff17b84a91",
+  "len": 4383,
+  "els": 63,
+  "buttons": 10,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
  },
  "classic/modal/stage": {
   "h": "e5865eea850e3261",
@@ -684,10 +693,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "49a405365d44012e",
-  "len": 13818,
-  "els": 319,
-  "buttons": 32,
+  "h": "81857f67a0c99113",
+  "len": 14150,
+  "els": 325,
+  "buttons": 33,
   "svgs": 0,
   "imgs": 0,
   "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
@@ -738,13 +747,13 @@
   "text": "💰 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "e254e1f5b58cf21b",
-  "len": 22564,
-  "els": 438,
+  "h": "c26715ec84112722",
+  "len": 23863,
+  "els": 468,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.13.0 August 25, 2026 The verse ladder NEW Every verse now stands somewhere: Locating (learning wher"
+  "text": "✕ Version history v1.14.0 August 25, 2026 The Feature Store NEW Profile → Feature store. The app has grown a great deal,"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -754,6 +763,15 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "illumined/modal/feature-store": {
+  "h": "357d73ff17b84a91",
+  "len": 4383,
+  "els": 63,
+  "buttons": 10,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
  },
  "illumined/modal/stage": {
   "h": "e5865eea850e3261",
@@ -1107,10 +1125,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "1ec7cb5fc47cd30e",
-  "len": 13818,
-  "els": 319,
-  "buttons": 32,
+  "h": "0768223a25ac2926",
+  "len": 14150,
+  "els": 325,
+  "buttons": 33,
   "svgs": 0,
   "imgs": 0,
   "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
@@ -1161,13 +1179,13 @@
   "text": "💰 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "e254e1f5b58cf21b",
-  "len": 22564,
-  "els": 438,
+  "h": "c26715ec84112722",
+  "len": 23863,
+  "els": 468,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.13.0 August 25, 2026 The verse ladder NEW Every verse now stands somewhere: Locating (learning wher"
+  "text": "✕ Version history v1.14.0 August 25, 2026 The Feature Store NEW Profile → Feature store. The app has grown a great deal,"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1177,6 +1195,15 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "glass/modal/feature-store": {
+  "h": "357d73ff17b84a91",
+  "len": 4383,
+  "els": 63,
+  "buttons": 10,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
  },
  "glass/modal/stage": {
   "h": "e5865eea850e3261",
@@ -1530,10 +1557,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "3ec801a010aa3c2e",
-  "len": 13818,
-  "els": 319,
-  "buttons": 32,
+  "h": "d367a125521faef7",
+  "len": 14150,
+  "els": 325,
+  "buttons": 33,
   "svgs": 0,
   "imgs": 0,
   "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
@@ -1584,13 +1611,13 @@
   "text": "💰 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "e254e1f5b58cf21b",
-  "len": 22564,
-  "els": 438,
+  "h": "c26715ec84112722",
+  "len": 23863,
+  "els": 468,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.13.0 August 25, 2026 The verse ladder NEW Every verse now stands somewhere: Locating (learning wher"
+  "text": "✕ Version history v1.14.0 August 25, 2026 The Feature Store NEW Profile → Feature store. The app has grown a great deal,"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1600,6 +1627,15 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "quest/modal/feature-store": {
+  "h": "357d73ff17b84a91",
+  "len": 4383,
+  "els": 63,
+  "buttons": 10,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
  },
  "quest/modal/stage": {
   "h": "e5865eea850e3261",
@@ -1953,10 +1989,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "d81169fc78eed8eb",
-  "len": 13818,
-  "els": 319,
-  "buttons": 32,
+  "h": "f278273bacea6060",
+  "len": 14150,
+  "els": 325,
+  "buttons": 33,
   "svgs": 0,
   "imgs": 0,
   "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
@@ -2007,13 +2043,13 @@
   "text": "💰 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "e254e1f5b58cf21b",
-  "len": 22564,
-  "els": 438,
+  "h": "c26715ec84112722",
+  "len": 23863,
+  "els": 468,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.13.0 August 25, 2026 The verse ladder NEW Every verse now stands somewhere: Locating (learning wher"
+  "text": "✕ Version history v1.14.0 August 25, 2026 The Feature Store NEW Profile → Feature store. The app has grown a great deal,"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
@@ -2023,6 +2059,15 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "buddy/modal/feature-store": {
+  "h": "357d73ff17b84a91",
+  "len": 4383,
+  "els": 63,
+  "buttons": 10,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
  },
  "buddy/modal/stage": {
   "h": "e5865eea850e3261",

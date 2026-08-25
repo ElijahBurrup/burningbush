@@ -64,6 +64,7 @@ module.exports = [
   { name: 'modal/store', sel: '#storeModal', go: () => { openStore(); } },
   { name: 'modal/whats-new', sel: '#whatsNewModal', go: () => { openWhatsNew(true); } },
   { name: 'modal/church', sel: '#churchModal', go: () => { Prog.church = { given: 1400, built: 3, total: 8900 }; openChurch(); } },
+  { name: 'modal/feature-store', sel: '#featModal', go: () => { openFeatureStore(); } },
   // ---- the verse ladder (v1.13) ----
   { name: 'modal/stage', sel: '#stageModal', go: () => { openStagePicker(19, 23, 1, '19:23:1', () => { }); } },
   { name: 'modal/promote-pool', sel: '#promoteModal', go: () => { openStagePromote(43, 3, 16, '43:3:16', 'w4w', () => { }); } },

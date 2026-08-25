@@ -115,6 +115,9 @@ async function open(browser, o = {}) {
     Prog.scratchWon = ['verse', 'palace', 'journey', 'stories'];
     if (pro) Billing.grant(); else Billing.revoke();
     if (prog) Object.assign(Prog, prog);
+    // grandfathering ran at boot against an EMPTY account; re-run it now the progress is here,
+    // so the seeded account behaves like the established user it is meant to represent
+    Prog.featuresInit = false; grandfatherFeatures(); applyFeatureVisibility();
     bustCaches(); saveProg(); updateMetrics(); updateTabLocks();
     const ob = document.getElementById('obov'); if (ob) ob.remove();
     document.querySelectorAll('.modal').forEach(m => (m.style.display = 'none'));

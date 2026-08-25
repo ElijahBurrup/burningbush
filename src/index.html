@@ -833,6 +833,16 @@
   .mtradio .rdot{flex:0 0 16px;width:16px;height:16px;border-radius:50%;border:2px solid var(--line);box-sizing:border-box}
   .mtradio.sel{color:var(--accent);border-color:var(--accent)}
   .mtradio.sel .rdot{border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--accent)}
+  .fcard{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+  .fcard .fic{font-size:22px;line-height:1;flex:none}
+  .fcard .fmid{flex:1;min-width:0}
+  .fcard .fname{font-weight:800;font-size:14px}
+  .fcard .fpro{font-size:10px;font-weight:800;color:var(--gold-ink);letter-spacing:.5px}
+  .fcard .fwhat{font-size:12px;color:var(--muted);line-height:1.45;margin-top:3px}
+  .fsw{flex:none;width:44px;height:26px;border-radius:13px;border:2px solid var(--line);background:var(--panel3);position:relative;cursor:pointer;padding:0;margin:0}
+  .fsw::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--muted)}
+  .fsw.on{background:var(--cell-bg);border-color:var(--accent)}
+  .fsw.on::after{transform:translateX(18px);background:var(--accent)}
   .stagerow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
   .stagepip{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:10px;border:2px solid var(--line);background:var(--panel2);color:var(--muted);font-size:11px;line-height:1.2;text-align:center}
   .stagepip b{font-weight:800;font-size:11px}
@@ -1474,9 +1484,14 @@
         </div>
       </div>
 
-      <div class="prof-sect" id="badgeSect">Badges <span id="badgeCount" style="color:var(--muted);float:right;text-transform:none;letter-spacing:0"></span></div>
-      <div id="badgeGrid"></div>
-      <p class="hint" id="badgeNext" style="margin:8px 0 0"></p>
+      <div id="badgeWrap">
+        <div class="prof-sect" id="badgeSect">Badges <span id="badgeCount" style="color:var(--muted);float:right;text-transform:none;letter-spacing:0"></span></div>
+        <div id="badgeGrid"></div>
+        <p class="hint" id="badgeNext" style="margin:8px 0 0"></p>
+      </div>
+
+      <div class="prof-sect" style="margin-top:18px">Feature store</div>
+      <button class="btn ghost" id="pFeatures" style="width:100%">✨ Turn features on or off<span id="pFeatCount"></span></button>
 
       <div class="prof-sect" style="margin-top:18px">Account</div>
       <div id="acctBox"></div>
@@ -1484,9 +1499,11 @@
       <div class="prof-sect" style="margin-top:16px">Bible translation</div>
       <div id="transList"></div>
 
+      <div id="refWrap">
       <div class="prof-sect" style="margin-top:16px">Reference library</div>
       <button class="btn ghost" id="refBtn" style="width:100%">📚 The Major System, number pegs &amp; the 66 books</button>
 
+      </div>
       <div class="prof-sect" style="margin-top:16px">What's new</div>
       <button class="btn ghost" id="pChangelog" style="width:100%">📋 Version history</button>
 
@@ -1594,8 +1611,14 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.13.0";
+const APP_VERSION="1.14.0";
 const CHANGELOG=[
+ {v:"1.14.0", d:"August 25, 2026", t:"The Feature Store", items:[
+   ["new","<b>Profile \u2192 Feature store.</b> The app has grown a great deal, so a new account now starts with the core \u2014 learn the numbers, learn the books, build a verse, review it \u2014 and everything else waits on a switch. Each one explains what it does <i>before</i> you turn it on."],
+   ["new","Nine features can be switched: <b>Daily Goal</b>, <b>Milestones</b>, <b>Warm-Up Before Typing</b>, <b>Reference Library</b>, <b>Word for Word</b>, <b>Word Meanings</b>, <b>Practice Your Way</b>, <b>Daily Reminder</b> and <b>Caesar's Levy</b>."],
+   ["new","They are all <b>free and included</b> \u2014 switched off only so you are not handed the whole app at once. Turn anything on or off whenever you like; nothing you have done is ever lost by switching something off."],
+   ["fix","If you were already using the app, <b>you keep everything you had</b>. Only genuinely new accounts start lean."]
+ ]},
  {v:"1.13.0", d:"August 25, 2026", t:"The verse ladder", items:[
    ["new","Every verse now stands somewhere: <b>Locating</b> (learning where it lives), <b>Word for word</b> (the text itself is being tested), or <b>Known by heart</b>. A verse only moves when you say so."],
    ["new","<b>Known by heart</b> retires a verse from review and <b>frees its place in a palace</b> for another verse \u2014 while it still counts among your memorized verses, and is never asked for a scene or a room again. This is for the verses you knew long before the app."],
@@ -2343,6 +2366,8 @@ function migrateProg(p){
   if(!p.locPast||typeof p.locPast!=="object") p.locPast={};          // the station "known by heart" released, kept so it can be given back
   if(!p.stageAsk||typeof p.stageAsk!=="object") p.stageAsk={};       // where a promotion was last declined, so it nudges but never nags
   if(!p.revPrefs||typeof p.revPrefs!=="object") p.revPrefs={};       // how the user wants to be asked in review
+  if(!p.features||typeof p.features!=="object") p.features={};   // which features are switched on
+  if(typeof p.featuresInit!=="boolean") p.featuresInit=false;     // has the one-time grandfathering run?
   if(!p.ntPrefs||typeof p.ntPrefs!=="object") p.ntPrefs={};   // number-practice set-up: which forms, how many
   p.piecesUsed=arr(p.piecesUsed);                       // church pieces already built, so none repeats early
   if(typeof p.palaceSlots!=="number") p.palaceSlots=0;  // extra palace slots bought with talents
@@ -2416,6 +2441,10 @@ function mergeProg(a,b){
       m.w4wSR[k] = !y ? x : (!x ? y : (((x.n||0)>=(y.n||0)) ? x : y)); }); }
   m.locPast=Object.assign({},a.locPast||{},b.locPast||{});
   m.revPrefs=Object.assign({},a.revPrefs||{},b.revPrefs||{});   // a preference, not progress
+  // a feature switched ON anywhere stays on: the device that turned it on is the one that meant it
+  m.featuresInit=!!(a.featuresInit||b.featuresInit);
+  { const fa=a.features||{}, fb=b.features||{}; m.features={};
+    new Set([...Object.keys(fa),...Object.keys(fb)]).forEach(k=>{ m.features[k]=!!(fa[k]||fb[k]); }); }
   m.stageAsk=Object.assign({},a.stageAsk||{},b.stageAsk||{});
   // A verse that came out of the merge at rest must not still be holding a station: one device may
   // have promoted it while the other still had the location recorded.
@@ -4161,20 +4190,20 @@ function renderVerse(){
   const dueAll=reviewDueCount();   // numbers + verses + palaces due for spaced repetition today
   const reviewVi=dueAll?"🔁":"🎯";
   const reviewLabel=dueAll?`Spaced Repetition · ${dueAll} due`:(mem.length?`Practice Verses (${mem.length})`:`Practice Verses`);
-  V.innerHTML=`${taxWarnHTML()}<div class="goalbar" id="goalBtn">${goalBarHTML()}</div>
+  V.innerHTML=`${taxWarnHTML()}${feat("goal")?`<div class="goalbar" id="goalBtn">${goalBarHTML()}</div>`:""}
     <div class="versehub">
       <button class="vhub sq" data-view="sugg"><span class="vi">✨</span><span>Suggested</span><small>${suggReach} in reach</small></button>
       <button class="vhub sq" data-view="topics"><span class="vi">📚</span><span>Topics</span><small>${TOPICS.length}</small></button>
       <button class="vhub sq" data-view="mem"><span class="vi">★</span><span>Memorized</span><small>${mem.length}</small></button>
       <button class="vhub sq" data-view="saved"><span class="vi">🔖</span><span>Saved</span><small>${saved.length}</small></button>
-      <button class="vhub wide" id="vW4W"><span class="vi">🗣️</span><span>Practice Word for Word</span></button>
+      ${feat("w4w")?`<button class="vhub wide" id="vW4W"><span class="vi">🗣️</span><span>Practice Word for Word</span></button>`:""}
       <button class="vhub wide" id="vNumTest"><span class="vi vi-bounce">🎲</span><span>Test Numbers &amp; Books</span></button>
       <button class="vhub wide review" id="vMemTest"><span class="vi">${reviewVi}</span><span>${reviewLabel}</span></button>
     </div>`;
-  el("goalBtn").onclick=openGoalSettings; wireTaxWarn();
+  if(el("goalBtn")) el("goalBtn").onclick=openGoalSettings; wireTaxWarn();
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
-  el("vW4W").onclick=()=>{ const a=pickW4WVerse(); if(!a){ toast(mem.length?"All your verses are done for now — great work!":"Memorize a verse first — tap Suggested!"); return; } startWordForWord(a[0],a[1],a[2],()=>{ show("verse"); renderVerse(); }); };
-  el("vNumTest").onclick=()=> knownNumbers().size>=2 ? openNumTestSetup() : toast("Learn a few numbers first in the Learn tab!");
+  if(el("vW4W")) el("vW4W").onclick=()=>{ const a=pickW4WVerse(); if(!a){ toast(mem.length?"All your verses are done for now — great work!":"Memorize a verse first — tap Suggested!"); return; } startWordForWord(a[0],a[1],a[2],()=>{ show("verse"); renderVerse(); }); };
+  el("vNumTest").onclick=()=> knownNumbers().size>=2 ? (feat("ntsetup")?openNumTestSetup():startNumberTest()) : toast("Learn a few numbers first in the Learn tab!");
   el("vMemTest").onclick=()=> mem.length ? openReviewSetup() : toast("Memorize a verse first — tap Suggested!");
   if(srFlashPending && el("vMemTest")){ srFlashPending=false; const rb=el("vMemTest"); rb.classList.add("srbtn-flash"); setTimeout(()=>rb.classList.remove("srbtn-flash"),6000); }
   paintTheme();
@@ -4296,7 +4325,7 @@ function memArr(){ return Prog.memorized.map(k=>k.split(":").map(Number)).filter
    A verse in the word-for-word pool can be reviewed either way: by its address, or by typing it.
    The chooser only appears once there is something in the pool to choose between - until then a
    review works exactly as it always has.                                                      */
-function w4wPoolSize(){ return (Prog.memorized||[]).filter(k=>verseStage(k)!=="loc").length; }
+function w4wPoolSize(){ return feat("w4w") ? (Prog.memorized||[]).filter(k=>verseStage(k)!=="loc").length : 0; }
 function heartCount(){ return (Prog.memorized||[]).filter(k=>isHeart(k)).length; }
 function revPrefs(){
   const p=Prog.revPrefs||{};
@@ -4398,6 +4427,78 @@ function practiceNext(first){
    new round begins. State (cr=correct-in-a-row, rd=cleared this round, lc=last-correct, sz=snooze-until) lives on each
    verseSR entry, so it persists across sessions with zero extra storage or per-frame work. ---- */
 const SNOOZE_MS=14*DAY, ESTAB_CR=5;
+/* ---- THE FEATURE STORE ------------------------------------------------------------------
+   The app has grown a great deal. Everything below can be switched off, so a new account starts
+   with the core - learn the numbers, learn the books, build a verse, review it - and takes on the
+   rest when it is wanted rather than meeting all of it at once.
+
+   `on` is the default for a NEW account. An account that already has progress keeps everything
+   turned ON at migration, because taking a feature away from someone using it is not a default,
+   it is a loss.                                                                              */
+const FEATURES=[
+ {id:"goal", on:true, icon:"\u{1F3AF}", name:"Daily Goal",
+  what:"Set how much you want to do each day \u2014 new verses, book images or recitations \u2014 and watch the track fill as you go."},
+ {id:"badges", on:true, icon:"\u{1F396}\uFE0F", name:"Milestones",
+  what:"Marks along the way, from your first verse to a thousand, named after the moments in Scripture they echo."},
+ {id:"wordpick", on:true, icon:"\u{1F9E9}", name:"Warm-Up Before Typing",
+  what:"Before you type a verse from memory, tap the next word from eight choices. Recognition before recall \u2014 it shows you where the gaps are. Turn it off to go straight to typing."},
+ {id:"reference", on:true, icon:"\u{1F4DA}", name:"Reference Library",
+  what:"The whole number grid and the book table in one place, to look up any peg or any book without leaving what you are doing."},
+ {id:"w4w", on:false, icon:"\u{1F5E3}\uFE0F", name:"Word for Word",
+  what:"Learn to recite verses by typing them out, then take them through testing \u2014 no warm-up, no hints \u2014 until they are known by heart. Adds a stage to every verse and a choice of how you are reviewed."},
+ {id:"dict", on:false, icon:"\u{1F4DC}", name:"Word Meanings",
+  what:"Press and hold any word in a verse to see what it meant in the original Hebrew or Greek, its Strong's number, and where else it is used."},
+ {id:"ntsetup", on:false, icon:"\u{1F39B}\uFE0F", name:"Practice Your Way",
+  what:"Choose exactly which kinds of number and book question you are asked \u2014 numbers to books, images to numbers, and four more \u2014 and how many, before every practice."},
+ {id:"reminders", on:false, icon:"\u{1F514}", name:"Daily Reminder",
+  what:"A nudge at a time you choose, so a day does not slip past. Your phone will ask permission the first time."},
+ {id:"rome", on:false, pro:true, icon:"\u{1F3DB}\uFE0F", name:"Caesar's Levy",
+  what:"Every seven days Rome takes notice of your talents and a wheel decides what it claims \u2014 and half of everything taken is laid up as stone toward a church in Rome. Spend them or lose them."},
+];
+function featDef(id){ return FEATURES.find(x=>x.id===id)||null; }
+function feat(id){ const f=featDef(id); if(!f) return true;
+  const v=(Prog.features||{})[id];
+  if(v===undefined) return !!f.on;
+  return !!v; }
+function setFeat(id,on){ Prog.features=Prog.features||{}; Prog.features[id]=!!on; saveProg(); }
+function featOffCount(){ return FEATURES.filter(f=>!feat(f.id)).length; }
+// Run ONCE per account, at boot. Someone who was already using the app keeps every feature they
+// had: switching one off is a choice, having one taken away by an update is not. A genuinely new
+// account falls through to the lean defaults in the table above.
+function grandfatherFeatures(){
+  if(!Prog || Prog.featuresInit) return;
+  Prog.featuresInit=true; Prog.features=Prog.features||{};
+  const used=(Prog.memorized&&Prog.memorized.length)||(Prog.doneSkills&&Prog.doneSkills.length)||(Prog.palaces&&Prog.palaces.length);
+  if(used) FEATURES.forEach(f=>{ if(Prog.features[f.id]===undefined) Prog.features[f.id]=true; });
+  saveProg();
+}
+function openFeatureStore(){
+  const m=el("featModal")||(()=>{ const d=document.createElement("div"); d.id="featModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const paint=()=>{
+    el("fsList").innerHTML=FEATURES.map(f=>`<div class="fcard">
+        <span class="fic">${f.icon}</span>
+        <span class="fmid"><span class="fname">${f.name}${f.pro?' <span class="fpro">PRO</span>':""}</span>
+          <div class="fwhat">${f.what}</div></span>
+        <button type="button" class="fsw ${feat(f.id)?"on":""}" data-feat="${f.id}" role="switch" aria-checked="${feat(f.id)}" aria-label="${f.name}"></button>
+      </div>`).join("");
+    el("fsList").querySelectorAll("[data-feat]").forEach(b=>b.onclick=()=>{
+      const id=b.dataset.feat, want=!feat(id), d=featDef(id);
+      if(want && d.pro && !Billing.isPro()){ toast("Caesar's Levy comes with a subscription."); return; }
+      setFeat(id,want); paint();
+      toast(`${d.icon} ${d.name} ${want?"on":"off"}`);
+      refreshHUD&&refreshHUD(); updateTabLocks&&updateTabLocks();
+    });
+  };
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar"><button class="lclose" id="fsClose">\u2715</button><div style="flex:1;text-align:center;font-weight:800">Feature Store</div><span style="width:34px"></span></div>
+      <p class="hint" style="margin:6px 0 0">Everything here is <b>free</b> and included \u2014 it is switched off so you are not handed the whole app at once. Turn on whatever you want, whenever you want, and turn it off again if it is not for you. Nothing you have done is ever lost by switching something off.</p>
+      <div id="fsList" style="margin-top:12px"></div>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  el("fsClose").onclick=()=>{ m.style.display="none"; renderVerse&&(document.querySelector(".view.active")||{}).id==="verse"&&renderVerse(); };
+  m.onclick=ev=>{ if(ev.target===m) el("fsClose").click(); };
+  paint();
+}
 /* ---- THE VERSE LADDER ------------------------------------------------------------------
    One stage per verse, and a verse only moves when the user says so.
      loc    Locating       learning the address; in the SR rotation, wants a station and a scene
@@ -4658,8 +4759,8 @@ function startW4WTest(b,c,v,ret){ startTypeTest(b,c,v,ret,true); }
 function stageAskAt(k,to){ const a=(Prog.stageAsk||{})[k]||{}; return a[to]||0; }
 function noteStageAsk(k,to,at){ Prog.stageAsk=Prog.stageAsk||{}; Prog.stageAsk[k]=Prog.stageAsk[k]||{}; Prog.stageAsk[k][to]=at||1; saveProg(); }
 // ten practices is exactly where a verse leaves the practice pool, so this is the natural moment to ask
-function shouldOfferW4W(k){ return verseStage(k)==="loc" && w4wCount(k)>=W4W_PRACTICE_FOR_POOL && !stageAskAt(k,"w4w"); }
-function shouldOfferHeart(k){ if(verseStage(k)!=="w4w") return false;
+function shouldOfferW4W(k){ if(!feat("w4w")) return false; return verseStage(k)==="loc" && w4wCount(k)>=W4W_PRACTICE_FOR_POOL && !stageAskAt(k,"w4w"); }
+function shouldOfferHeart(k){ if(!feat("w4w")||verseStage(k)!=="w4w") return false;
   const cr=w4wTestStreak(k); return cr>=W4W_TEST_CR && cr>=stageAskAt(k,"heart")+W4W_TEST_CR; }
 function openStagePromote(b,c,v,k,to,after){
   const m=el("promoteModal")||(()=>{ const d=document.createElement("div"); d.id="promoteModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
@@ -4699,6 +4800,7 @@ function pickW4WVerse(){
 }
 function markW4WToday(vkey){ const today=dayKey(new Date()); if(!Prog.w4wToday||Prog.w4wToday.date!==today) Prog.w4wToday={date:today,set:{}}; Prog.w4wToday.set[vkey]=true; }
 function onGoalComplete(){
+  if(!feat("goal")) return;
   const m=el("goalDoneModal")||(()=>{ const d=document.createElement("div"); d.id="goalDoneModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   m.innerHTML=`<div class="modal-card center"><div style="font-size:46px">🙏</div>
     <h2 style="margin:6px 0 2px;font-size:20px">Well done, good and faithful servant</h2>
@@ -4830,6 +4932,7 @@ function wireVerseWords(){
   let timer=null, startX=0, startY=0, target=null;
   const cancel=()=>{ if(timer){ clearTimeout(timer); timer=null; } if(target){ target.classList.remove("held"); target=null; } };
   host.addEventListener("pointerdown",e=>{
+    if(!feat("dict")) return;
     const w=e.target.closest && e.target.closest(".vw"); if(!w) return;
     const wrap=w.closest("[data-vref]"); if(!wrap) return;
     target=w; startX=e.clientX; startY=e.clientY;
@@ -5054,7 +5157,7 @@ function taxPending(){ return Billing.isPro() && (!!Prog.taxOwed || (!!Prog.taxA
 // whole days until the collectors arrive, or 0 when it isn't worth warning about yet
 function taxWarnDays(){ if(!Billing.isPro()||!Prog.taxAt) return 0;
   const d=Math.ceil((taxDueAt()-Date.now())/DAY); return (d>0&&d<=TAX_WARN_DAYS)?d:0; }
-function taxWarnHTML(){ const d=taxWarnDays(); if(!d) return "";
+function taxWarnHTML(){ if(!feat("rome")) return ""; const d=taxWarnDays(); if(!d) return "";
   return `<div class="taxwarn" id="taxWarnBtn"><span class="tw-ic">\u{1F985}</span><span>Caesar's collectors ride in <b>${d} day${d>1?"s":""}</b> — spend what you can.</span></div>`; }
 function wireTaxWarn(){ const b=el("taxWarnBtn"); if(b) b.onclick=openStore; }
 
@@ -5519,6 +5622,7 @@ function maybeRomeLetter(after){
   return false;
 }
 function bootPopups(){
+  if(!feat("rome")){ checkVersionCard(); return; }   // Caesar only calls on those who asked for him
   if(Billing.isPro() && !Prog.romeLetterSeen){ setTimeout(()=>openRomeLetter(checkVersionCard), 900); return; }
   if(taxPending()){ setTimeout(()=>openTaxWheel(false, checkVersionCard), 900); return; }
   checkVersionCard();
@@ -5529,7 +5633,7 @@ document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState!=="visible") return;
   const up=id=>{ const o=el(id); return !!o && o.classList.contains("on"); };
   if(up("taxov")||up("buildov")||up("obov")) return;    // already facing it, laying the stone, or still onboarding
-  if(taxPending()) openTaxWheel(false);
+  if(feat("rome") && taxPending()) openTaxWheel(false);
 });
 // ---- Perfect Week: review on ≥5 days in a Monday-anchored week → talent reward (feeds the store) ----
 function weekKeyOf(d){ const dt=new Date(d.getFullYear(),d.getMonth(),d.getDate()); dt.setDate(dt.getDate()-((dt.getDay()+6)%7)); return dt.getFullYear()+"-"+(dt.getMonth()+1)+"-"+dt.getDate(); }
@@ -5987,6 +6091,7 @@ function earnedBadges(){ return BADGES.filter(b=>b.have()); }
 function nextBadge(){ const c=Prog.memorized.length; return BADGES.filter(b=>b.cat==="Verses Memorized").find(b=>b.n>c)||null; }
 // detect newly-earned badges across ALL categories and celebrate the newest
 function checkBadges(){
+  if(!feat("badges")) return;
   const newly=[];
   BADGES.forEach(b=>{ if(b.have() && !Prog.badges.includes(b.id)){ Prog.badges.push(b.id); newly.push(b); } });
   if(newly.length){ saveProg(); earnTalents(25*newly.length); showBadgeModal(newly[newly.length-1]); }
@@ -6247,11 +6352,11 @@ function renderLearnedVerse(b,c,v,ret){
       <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
       <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
       <div class="lv-versetext">${verseWordsHTML(b,c,v,text)}</div>
-      <button class="w4w-rect ${mastered?"done":""}" id="lvWord">
+      ${feat("w4w")?`<button class="w4w-rect ${mastered?"done":""}" id="lvWord">
         <span class="w4w-rect-lbl">${inPool?"🗣️ Test Word for Word":"📖 Learn Word for Word"}</span>
         <span class="w4w-rect-count">${inPool?`${w4wTestStreak(vkey)}/${W4W_TEST_CR} clean`:`${cnt}/10${mastered?" ✓":""}`}</span>
       </button>
-      ${mastered?"":`<p class="hint" style="text-align:center;margin:8px 0 0">Recite it word-for-word 10× to <b class="gold">master</b> this verse.</p>`}
+      ${mastered?"":`<p class="hint" style="text-align:center;margin:8px 0 0">Recite it word-for-word 10× to <b class="gold">master</b> this verse.</p>`}`:""}
       <div class="lv-sr">
         <div class="lv-sr-lbl">Spaced repetition</div>
         ${o?srTrailHTML(o):`<p class="hint" style="text-align:center;margin:0">This verse joins your review trail as you practice it.</p>`}
@@ -6262,7 +6367,7 @@ function renderLearnedVerse(b,c,v,ret){
     </div>`;
   el("lvClose").onclick=()=>ret?ret():renderVerse();
   wireVerseNav(V, nav, ret);
-  el("lvWord").onclick=()=>{ const back=()=>renderLearnedVerse(b,c,v,ret);
+  if(el("lvWord")) el("lvWord").onclick=()=>{ const back=()=>renderLearnedVerse(b,c,v,ret);
     inPool ? startW4WTest(b,c,v,back) : startWordForWord(b,c,v,back); };
   el("lvStage").onclick=()=>openStagePicker(b,c,v,vkey, ()=>renderLearnedVerse(b,c,v,ret));
   el("lvForgot").onclick=()=>confirmForgetVerse(b,c,v, ()=>renderLearnedVerse(b,c,v,ret), ret);
@@ -6283,11 +6388,12 @@ function lvStageBlock(vkey){
 function openStagePicker(b,c,v,vkey,after){
   const m=el("stageModal")||(()=>{ const d=document.createElement("div"); d.id="stageModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   const cur=verseStage(vkey), here=stationName((Prog.verseLoc||{})[vkey]);
+  const rungs=V_STAGES.filter(x=>x!=="w4w"||feat("w4w")||cur==="w4w");   // no middle rung without the feature
   const row=x=>`<button type="button" class="mtradio ${x===cur?"sel":""}" data-stage="${x}" style="align-items:flex-start;text-align:left"><span class="rdot" style="margin-top:3px"></span><span><b>${STAGE_INFO[x].i} ${STAGE_INFO[x].n}</b><br><span style="font-weight:600;font-size:12px;color:var(--muted)">${STAGE_WHAT[x]}</span></span></button>`;
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar"><button class="lclose" id="stClose">\u2715</button><div style="flex:1;text-align:center;font-weight:800">${bookName(b)} ${c}:${v}</div><span style="width:34px"></span></div>
       <p class="hint" style="margin:6px 0 0">Every verse counts as memorized at any of these. What changes is how much work it asks of you.</p>
-      <div class="mtradiolist one" style="margin-top:12px">${V_STAGES.map(row).join("")}</div>
+      <div class="mtradiolist one" style="margin-top:12px">${rungs.map(row).join("")}</div>
       ${here?`<p class="hint" style="margin:10px 0 0">Right now it sits at <b class="gold">${here}</b>. Moving it to Known by Heart frees that place \u2014 bringing it back later puts it there again.</p>`:""}
     </div>`;
   m.style.display="flex"; raiseModal(m);
@@ -7073,6 +7179,7 @@ const Reminders = {
 };
 // One implementation, mounted on both the goal screen and the Profile menu.
 function reminderUI(hostId){
+  { const _h=el(hostId); if(!feat("reminders")){ if(_h) _h.innerHTML=""; return; } }
   const host=el(hostId); if(!host) return;
   const r=Prog.reminder, times=r.times||[];
   const rows=times.map((x,i)=>`<div class="rem-row">
@@ -7110,6 +7217,14 @@ function reminderUI(hostId){
 }
 // The Admin block — simulations, "give talents", the tax wheel — is powerful enough that it
 // must never appear for a customer. Signed in as an ADMIN_EMAILS account, or it isn't there.
+// Every switch that only shows or hides something is applied from here, so the store never has to
+// know which screens exist and no screen has to remember to ask.
+function applyFeatureVisibility(){
+  const set=(id,on)=>{ const x=el(id); if(x) x.style.display=on?"":"none"; };
+  set("badgeWrap", feat("badges"));
+  set("refWrap", feat("reference"));
+  const fc=el("pFeatCount"); if(fc){ const n=featOffCount(); fc.textContent=n?` \u00b7 ${n} to try`:""; }
+}
 function applyAdminVisibility(){
   const admin = (typeof Auth!=="undefined") && Auth.isAdmin();
   const wrap=el("adminWrap"); if(wrap) wrap.style.display = admin ? "" : "none";
@@ -7155,7 +7270,7 @@ function openNotifyHelp(denied){
   if(el("nhInstall")) el("nhInstall").onclick=()=>{ m.style.display="none"; openInstallDialog(); };
 }
 el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); el("backupMsg").innerHTML="";
-  applyAdminVisibility();
+  applyAdminVisibility(); applyFeatureVisibility();
   if(el("testUnpaid")) el("testUnpaid").textContent = Billing.isPro() ? "🆓 Simulate unpaid user" : "✨ Restore Pro access";
   el("themeModal").style.display="flex"; initProfileCollapse(); };
 // Make each profile subheader a collapsible section; all collapsed each time the menu opens.
@@ -7255,6 +7370,7 @@ if(el("testRestore")) el("testRestore").onclick=()=>{ const bak=Store.getJSON("v
 el("impFile").onchange=e=>{ if(e.target.files[0]) importBackup(e.target.files[0]); };
 el("themeClose").onclick=()=>el("themeModal").style.display="none";
 el("refBtn").onclick=()=>{ el("themeModal").style.display="none"; show("foundations"); };   // Reference now lives under the profile menu
+if(el("pFeatures")) el("pFeatures").onclick=()=>openFeatureStore();
 el("pChangelog").textContent=`📋 Version history · v${APP_VERSION}`;
 el("pChangelog").onclick=()=>{ el("themeModal").style.display="none"; openWhatsNew(true); };
 el("themeModal").onclick=e=>{ if(e.target===el("themeModal")) el("themeModal").style.display="none"; };
@@ -7353,6 +7469,7 @@ function wpChoices(){
 }
 function startWordPick(b,c,v,ret){
   const all=(kjvText(b,c,v)||"").split(/\s+/).filter(Boolean);
+  if(!feat("wordpick")){ startTypeTest(b,c,v,ret); return; }   // switched off -> straight to typing
   if(all.length<2){ startTypeTest(b,c,v,ret); return; }   // nothing to warm up
   const stop = WORDPICK_MAX>0 ? Math.min(WORDPICK_MAX, all.length) : all.length;
   WP={b,c,v,ret,words:all,stop,idx:0,opts:null,missed:0};
@@ -8070,6 +8187,8 @@ if(!Prog.onboarded){
   show(bootTab);   // returning user / page refresh — back to the tab they were on
 }
 wireVerseWords();   // press-and-hold on any verse word → its Hebrew/Greek
+grandfatherFeatures();   // an account that predates the Feature Store keeps everything it had
+applyFeatureVisibility();
 bootPopups();   // Rome's letter → any levy that has fallen due → the "What's new" card
 
 /* ---- Android / browser back button = in-app back (one screen per press); at the Learn home, back again exits ---- */

@@ -694,6 +694,7 @@ const DAY = 86400000;
   // ================= THE VERSE LADDER (v1.13) =================
   // These rewrite Prog freely, so the seeded account is snapshotted and put back at the end.
   const ladderSnap = await $(() => JSON.stringify(Prog));
+  await $(() => { setFeat('w4w', true); return true; });   // the ladder is a Feature Store switch now
 
   describe('ladder: stages', () => { });
   const st = await $(() => {
@@ -925,6 +926,154 @@ const DAY = 86400000;
   no(vPage.inWizard, 'it is NOT offered while building a new verse — that would be a shortcut past learning');
 
   await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); }, ladderSnap);
+
+  // ================= THE FEATURE STORE (v1.14) =================
+  describe('feature store', () => { });
+  const storeSnap = await $(() => JSON.stringify(Prog));
+
+  const cat = await $(() => ({
+    n: FEATURES.length,
+    ids: FEATURES.map(f => f.id).join(','),
+    named: FEATURES.every(f => f.name && f.name.length > 2),
+    described: FEATURES.every(f => f.what && f.what.length > 40),
+    iconed: FEATURES.every(f => !!f.icon),
+    uniqueIds: new Set(FEATURES.map(f => f.id)).size,
+    uniqueNames: new Set(FEATURES.map(f => f.name)).size,
+    defaultOff: FEATURES.filter(f => !f.on).map(f => f.id).join(','),
+  }));
+  is(cat.n, 9, 'nine features can be switched');
+  is(cat.uniqueIds, 9, '...each with its own id');
+  is(cat.uniqueNames, 9, '...and its own name');
+  ok(cat.named, 'every feature has a name');
+  ok(cat.described, '...and a real description, not a label');
+  ok(cat.iconed, '...and an icon');
+  is(cat.defaultOff, 'w4w,dict,ntsetup,reminders,rome', 'a new account starts without the five heaviest');
+
+  // a brand-new account gets the lean set; one that was already in use keeps everything
+  const grand = await $(() => {
+    Prog.features = {}; Prog.featuresInit = false;
+    const keep = Prog.memorized; Prog.memorized = []; Prog.doneSkills = []; Prog.palaces = [];
+    grandfatherFeatures();
+    const fresh = { w4w: feat('w4w'), goal: feat('goal'), stamped: Prog.featuresInit };
+    Prog.features = {}; Prog.featuresInit = false; Prog.memorized = keep;
+    grandfatherFeatures();
+    const existing = { w4w: feat('w4w'), dict: feat('dict'), rome: feat('rome') };
+    return { fresh, existing };
+  });
+  no(grand.fresh.w4w, 'a brand-new account does not start with Word for Word');
+  ok(grand.fresh.goal, '...but does start with the daily goal');
+  ok(grand.fresh.stamped, '...and the decision is stamped so it runs once');
+  ok(grand.existing.w4w, 'an account already in use keeps Word for Word');
+  ok(grand.existing.dict, '...and Word Meanings');
+  ok(grand.existing.rome, '...and everything else it had');
+
+  const toggles = await $(() => {
+    setFeat('dict', false);
+    const off = { dict: feat('dict'), n: featOffCount() };
+    setFeat('dict', true);
+    const on = { dict: feat('dict'), stored: Prog.features.dict };
+    return { off, on };
+  });
+  no(toggles.off.dict, 'a feature can be switched off');
+  ok(toggles.off.n > 0, '...and is counted as available to try');
+  ok(toggles.on.dict, '...and switched back on');
+  ok(toggles.on.stored === true, '...with the choice actually stored');
+
+  // the gates
+  const gates = await $(() => {
+    const out = {};
+    setFeat('w4w', false); saveProg();
+    show('verse'); vView = 'hub'; renderVerse();
+    out.hubOff = !el('vW4W');
+    out.poolOff = w4wPoolSize();
+    out.offerOff = shouldOfferW4W('43:3:16');
+    openStagePicker(19, 23, 1, '19:23:1', () => { });
+    out.rungsOff = [...document.querySelectorAll('#stageModal [data-stage]')].map(b => b.dataset.stage).join(',');
+    el('stageModal').style.display = 'none';
+    setFeat('w4w', true); saveProg();
+    show('verse'); vView = 'hub'; renderVerse();
+    out.hubOn = !!el('vW4W');
+    openStagePicker(19, 23, 1, '19:23:1', () => { });
+    out.rungsOn = [...document.querySelectorAll('#stageModal [data-stage]')].map(b => b.dataset.stage).join(',');
+    el('stageModal').style.display = 'none';
+
+    setFeat('wordpick', false);
+    startWordPick(43, 3, 16, () => { });
+    out.pickOff = !!el('ttIn') && !document.querySelector('.wpopt');
+    setFeat('wordpick', true);
+    startWordPick(43, 3, 16, () => { });
+    out.pickOn = !!document.querySelector('.wpopt');
+
+    setFeat('rome', false); Prog.taxAt = Date.now() - 6 * 86400000; Billing.grant(); saveProg();   // due in a day = the WARNING window, not yet due
+    out.warnOff = taxWarnHTML() === '';
+    setFeat('rome', true);
+    out.warnOn = taxWarnHTML() !== '';
+    Billing.revoke(); setFeat('rome', false); saveProg();
+
+    setFeat('badges', false); show('verse'); renderVerse();
+    el('themeBtn').click(); applyFeatureVisibility();
+    out.badgesHidden = getComputedStyle(el('badgeWrap')).display === 'none';
+    setFeat('badges', true); applyFeatureVisibility();
+    out.badgesShown = getComputedStyle(el('badgeWrap')).display !== 'none';
+    setFeat('reference', false); applyFeatureVisibility();
+    out.refHidden = getComputedStyle(el('refWrap')).display === 'none';
+    setFeat('reference', true); applyFeatureVisibility();
+    el('themeModal').style.display = 'none';
+    return out;
+  });
+  ok(gates.hubOff, 'with Word for Word off the hub button is gone');
+  is(gates.poolOff, 0, '...the testing pool is empty');
+  no(gates.offerOff, '...and nothing is ever offered a promotion into it');
+  is(gates.rungsOff, 'loc,heart', '...and the ladder drops its middle rung');
+  ok(gates.hubOn, 'switching it on brings the button back');
+  is(gates.rungsOn, 'loc,w4w,heart', '...and the middle rung with it');
+  ok(gates.pickOff, 'with the warm-up off, typing starts immediately');
+  ok(gates.pickOn, '...and on, the tiles come back');
+  ok(gates.warnOff, "Caesar's warning is silent unless asked for");
+  ok(gates.warnOn, '...and speaks when it is');
+  ok(gates.badgesHidden, 'Milestones can be hidden from Profile');
+  ok(gates.badgesShown, '...and shown again');
+  ok(gates.refHidden, 'so can the Reference library');
+
+  // the store screen itself
+  const fstore = await $(() => {
+    openFeatureStore();
+    const cards = [...document.querySelectorAll('#fsList .fcard')];
+    const out = {
+      cards: cards.length,
+      switches: document.querySelectorAll('#fsList [data-feat]').length,
+      everyCardDescribed: cards.every(c => (c.querySelector('.fwhat') || {}).textContent && c.querySelector('.fwhat').textContent.length > 40),
+      free: /free/i.test(el('featModal').innerText),
+      names: cards.map(c => c.querySelector('.fname').textContent.replace(/\s*PRO$/, '').trim()).join(' | '),
+    };
+    const dictSw = document.querySelector('#fsList [data-feat="dict"]');
+    const was = feat('dict');
+    dictSw.click();
+    out.flipped = feat('dict') !== was;
+    out.reflected = document.querySelector('#fsList [data-feat="dict"]').classList.contains('on') === feat('dict');
+    el('featModal').style.display = 'none';
+    return out;
+  });
+  is(fstore.cards, 9, 'the store lists every feature');
+  is(fstore.switches, 9, '...each with its own switch');
+  ok(fstore.everyCardDescribed, '...and every one explains what it does before you turn it on');
+  ok(fstore.free, '...and says plainly that they are free');
+  has(fstore.names, 'Word Meanings', 'Word Meanings is on the shelf');
+  has(fstore.names, 'Practice Your Way', '...and the number & book set-up');
+  has(fstore.names, 'Word for Word', '...and word-for-word testing');
+  ok(fstore.flipped, 'a switch actually switches');
+  ok(fstore.reflected, '...and the screen shows the new state');
+
+  const fmerge = await $(() => {
+    const mk = o => migrateProg(Object.assign(JSON.parse(JSON.stringify(Prog)), o));
+    const m = mergeProg(mk({ features: { dict: true, rome: false } }), mk({ features: { dict: false, rome: false, w4w: true } }));
+    return { dict: m.features.dict, w4w: m.features.w4w, rome: m.features.rome };
+  });
+  ok(fmerge.dict, 'a feature switched on anywhere stays on after a sync');
+  ok(fmerge.w4w, '...including one only the other device turned on');
+  no(fmerge.rome, '...while one nobody turned on stays off');
+
+  await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); }, storeSnap);
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
