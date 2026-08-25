@@ -84,8 +84,8 @@ const DAY = 86400000;
   ok(econ.pro.open > 60, 'a subscriber has the whole path open');
   is(econ.pro.priced, 0, 'a subscriber is never shown a price');
   ok(econ.lastBookOpenToPro, 'a subscriber may start Revelation on day one');
-  is(econ.proFreeze, 10, 'subscribers may bank ten freezes');
-  is(econ.freeFreeze, 5, 'free users may bank five');
+  is(econ.proFreeze, 10, 'ten freezes is the cap');
+  is(econ.freeFreeze, 10, '…for everyone, subscriber or not');
 
   // ─────────────────────────────── the daily goal ───────────────────────────────
   describe('daily goal', () => { });
@@ -106,6 +106,27 @@ const DAY = 86400000;
   is(goal.days.sun, 8, 'per-day mode honours Sunday');
   is(goal.days.thu, 4, '…and Thursday');
   is(goal.paceAt, 20, 'the pacing word arrives at twenty');
+
+  const goalMax = await $(() => {
+    Prog.goalMode = 'same'; Prog.dailyGoal = 15; saveProg(); const at15 = goalToday();
+    Prog.dailyGoal = 99; saveProg(); const clamped = goalToday();
+    return { max: GOAL_MAX, at15, clamped };
+  });
+  is(goalMax.max, 15, 'a daily goal may be as high as fifteen');
+  is(goalMax.at15, 15, '…and fifteen is honoured');
+  is(goalMax.clamped, 15, '…and nothing above it is');
+
+  const d1 = await $(() => {
+    Prog.memorized = ['43:3:16']; Prog.dailyGoal = 5;
+    Prog.goalDay = { date: dayKey(new Date()), count: 0, celebrated: true };
+    Prog.verseSR = { '43:3:16': { learnedAt: Date.now() - 86400000 - 1000, step: 1 } }; saveProg();
+    const a = goalCount(); reviewVerseSR('43:3:16'); const afterD1 = goalCount() - a;
+    Prog.verseSR = { '43:3:16': { learnedAt: Date.now() - 9 * 86400000, step: 3 } }; saveProg();
+    const b = goalCount(); reviewVerseSR('43:3:16'); const afterLater = goalCount() - b;
+    return { afterD1, afterLater };
+  });
+  is(d1.afterD1, 1, "yesterday's verse, reviewed today, counts toward the goal");
+  is(d1.afterLater, 0, '…while a later checkpoint does not');
 
   const pace = await $(async () => {
     Prog.goalMode = 'same'; Prog.dailyGoal = 3; Prog.paceIdx = 0;
@@ -310,6 +331,119 @@ const DAY = 86400000;
   hasNot(rev.win, 'You did it', 'the win screen does not congratulate the user');
   has(rev.win, 'heart', '…it speaks of the Word being kept');
   hasNot(rev.nums, 'flawless', 'a clean round is not called flawless');
+
+  // ─────────────────────────────── prices & gates (v1.10) ───────────────────────────────
+  describe('prices', () => { });
+  const price = await $(() => {
+    Billing.revoke(); Prog.talents = 5000; Prog.palaceSlots = 0; Prog.storySections = [];
+    Prog.palaces = [1,2,3,4].map(i => ({ place: 'P'+i, stations: ['a'], learnedAt: Date.now(), step: 1 }));
+    saveProg();
+    const atFour = canBuildPalace();
+    Prog.palaces.push({ place: 'P5', stations: ['a'], learnedAt: Date.now(), step: 1 }); saveProg();
+    const atFive = canBuildPalace();
+    const before = Prog.talents; const bought = buyPalaceSlot();
+    const spent = before - Prog.talents, afterBuy = canBuildPalace();
+    Billing.grant(); const proAny = canBuildPalace(); Billing.revoke();
+    return { freeze: FREEZE_COST, palace: PALACE_COST, palaceFree: PALACE_FREE, section: STORY_SECTION_COST,
+      atFour, atFive, bought, spent, afterBuy, proAny };
+  });
+  is(price.freeze, 250, 'a Streak Freeze costs 250');
+  is(price.palace, 1000, 'a palace beyond the free ones costs 1000');
+  is(price.palaceFree, 5, 'the first five palaces are free');
+  is(price.section, 500, 'a Bible-story section costs 500');
+  ok(price.atFour, 'a fifth palace is still free');
+  no(price.atFive, 'a sixth is not');
+  ok(price.bought && price.spent === 1000, 'buying a slot costs exactly 1000');
+  ok(price.afterBuy, '…and then the palace can be built');
+  ok(price.proAny, 'a subscriber never pays for a palace');
+
+  const shop = await $(() => {
+    Billing.revoke(); Prog.talents = 5000; saveProg(); openStore();
+    const t = el('storeModal').innerText;
+    el('storeModal').style.display = 'none';
+    return { peek: /Peek/i.test(t), freeze250: /250/.test(t), palaceRow: /memory palace/i.test(t) };
+  });
+  no(shop.peek, 'Peek tokens are no longer sold');
+  ok(shop.freeze250, 'the store quotes 250 for a freeze');
+  ok(shop.palaceRow, 'a free account can buy a palace from the store');
+
+  const story = await $(() => {
+    const ui = UNITS.findIndex(U => U.story);
+    Billing.revoke(); Prog.talents = 5000; Prog.storySections = []; saveProg();
+    show('stories'); storyExpanded = new Set([ui]); renderStories();
+    const locked = el('stories').innerText;
+    const out = { header: /Creation/.test(locked), hidden: !/Noah/.test(locked), buy: !!document.querySelector('[data-buysec]') };
+    const before = Prog.talents;
+    buyStorySection(ui, () => { }); el('spYes').click();
+    out.spent = before - Prog.talents; out.owned = storySectionOwned(ui);
+    renderStories(); out.shownAfter = /Noah/.test(el('stories').innerText);
+    Billing.grant(); Prog.storySections = []; saveProg(); renderStories();
+    out.proSeesAll = /Noah/.test(el('stories').innerText);
+    Billing.revoke();
+    return out;
+  });
+  ok(story.header, 'a locked section still shows its name');
+  ok(story.hidden, '…but not the stories inside');
+  ok(story.buy, '…and offers to open it');
+  is(story.spent, 500, 'opening a section costs 500');
+  ok(story.owned && story.shownAfter, '…after which the stories are there');
+  ok(story.proSeesAll, 'a subscriber sees every section');
+
+  // ─────────────────────────────── the church deck ───────────────────────────────
+  describe('church pieces', () => { });
+  const deck = await $(() => {
+    Prog.piecesUsed = []; saveProg();
+    const first = [], second = [];
+    for (let i = 0; i < PIECES.length; i++) first.push(nextPieceIndex());
+    for (let i = 0; i < PIECES.length; i++) second.push(nextPieceIndex());
+    return { n: PIECES.length, firstUnique: new Set(first).size, secondUnique: new Set(second).size };
+  });
+  is(deck.firstUnique, deck.n, 'every church piece is dealt before any repeats');
+  is(deck.secondUnique, deck.n, '…and the deck reshuffles cleanly');
+
+  // ─────────────────────────────── the profile menu ───────────────────────────────
+  describe('profile', () => { });
+  const prof = await $(() => {
+    el('themeBtn').click();
+    const secs = [...document.querySelectorAll('#themeModal .prof-sect')].map(s => s.textContent.replace(/[▸▾]\s*/, '').trim());
+    const out = { first: secs[0], secs,
+      startOver: !!el('resetBtn'), reminder: !!el('reminderBox'), share: !!el('pShare'), store: !!el('pStore'),
+      resetFn: typeof resetAllProgress !== 'undefined',
+      adminForCustomer: getComputedStyle(el('adminWrap')).display !== 'none' };
+    Auth.user = { email: 'erinburrup@gmail.com' }; applyAdminVisibility();
+    out.adminForAdmin = getComputedStyle(el('adminWrap')).display !== 'none';
+    Auth.user = { email: 'nobody@example.com' }; applyAdminVisibility();
+    out.adminForOther = getComputedStyle(el('adminWrap')).display !== 'none';
+    Auth.user = null; applyAdminVisibility();
+    el('themeModal').style.display = 'none';
+    return out;
+  });
+  no(prof.startOver, '"Start over" is gone from Profile');
+  no(prof.resetFn, '…and resetAllProgress cannot be called at all');
+  no(prof.reminder, 'the reminder lives on the goal screen, not here');
+  no(prof.share, 'Share progress is gone');
+  no(prof.store, 'the Talents Store is gone (it is on the top bar)');
+  no(prof.adminForCustomer, 'a signed-out visitor sees no Admin block');
+  ok(prof.adminForAdmin, 'an admin account does');
+  no(prof.adminForOther, 'another signed-in account does not');
+  has(prof.secs.join(' | '), 'Badges', 'Badges is near the top');
+
+  // ─────────────────────────────── the tab bar ───────────────────────────────
+  describe('tabs', () => { });
+  const tabs = await $(() => {
+    const order = () => [...document.querySelectorAll('.tabbar button')].map(b => b.dataset.tab);
+    Prog.scratchWon = ['verse', 'palace', 'journey', 'stories']; saveProg(); updateTabLocks();
+    const won = order();
+    Prog.scratchWon = []; saveProg(); updateTabLocks();
+    const fresh = order();
+    Prog.scratchWon = ['verse', 'palace', 'journey', 'stories']; saveProg(); updateTabLocks();
+    const L = SCRATCH_LADDER.find(x => x.tab === 'journey');
+    return { won, fresh, ticketName: L.name, ticketSvg: !!(L.iconHtml && L.iconHtml().includes('<svg')) };
+  });
+  is(tabs.won[0], 'journey', 'the Bible takes the far-left slot once earned');
+  is(tabs.fresh[0], 'learn', '…and Learn has it on a fresh account');
+  is(tabs.ticketName, 'Bible', 'the scratch-off names it Bible, not Journey');
+  ok(tabs.ticketSvg, '…and shows the Bible icon');
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));

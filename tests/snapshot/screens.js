@@ -72,5 +72,7 @@ module.exports = [
   { name: 'rome/letter', sel: '#taxov', pro: true, go: () => { Prog.romeLetterSeen = false; openRomeLetter(); } },
   { name: 'rome/wheel', sel: '#taxov', pro: true, go: () => { Prog.talents = 3000; Prog.taxAt = Date.now() - 8 * DAY; openTaxWheel(false); } },
   { name: 'rome/wheel-poor', sel: '#taxov', pro: true, go: () => { Prog.talents = 400; Prog.taxAt = Date.now() - 8 * DAY; openTaxWheel(false); } },
-  { name: 'rome/build', sel: '#buildov', pro: true, go: () => { Prog.church = { given: 400, built: 1, total: 2900 }; openChurchBuild(500, null); } },
+  { name: 'rome/build', sel: '#buildov', pro: true, go: () => { Prog.church = { given: 400, built: 1, total: 2900 };
+      Prog.piecesUsed = []; saveProg();   // pieces are DEALT, not rolled — reset the deck so the capture is reproducible
+      openChurchBuild(500, null); } },
 ];

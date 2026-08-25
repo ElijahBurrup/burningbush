@@ -1443,8 +1443,42 @@
     <div class="modal-card">
       <h2 style="font-size:18px;margin:0 0 12px">Profile &amp; Settings</h2>
 
-      <div class="prof-sect">Bible translation</div>
+      <!-- Admin: only rendered for the two admin accounts (see ADMIN_EMAILS / applyAdminVisibility) -->
+      <div id="adminWrap" style="display:none">
+        <div class="prof-sect">Admin</div>
+        <button class="btn ghost" id="testScratchBtn" style="width:100%">🎫 Test scratch-off</button>
+        <button class="btn ghost" id="testOnboardBtn" style="width:100%;margin-top:8px">🕯️ Test onboarding</button>
+        <button class="btn ghost" id="testLearnDone" style="width:100%;margin-top:8px">🎓 Simulate Learn finished</button>
+        <button class="btn ghost" id="testStoriesDone" style="width:100%;margin-top:8px">📜 Simulate Stories finished</button>
+        <button class="btn ghost" id="testUnpaid" style="width:100%;margin-top:8px">🆓 Simulate unpaid user</button>
+        <button class="btn ghost" id="testTalent" style="width:100%;margin-top:8px">🪙 Preview talent animation</button>
+        <button class="btn ghost" id="testTaxWheel" style="width:100%;margin-top:8px">🏛️ Run Caesar's tax now</button>
+        <button class="btn ghost" id="testPaywall" style="width:100%;margin-top:8px">💳 Show the Pro purchase screen</button>
+        <button class="btn ghost" id="testChurch" style="width:100%;margin-top:8px">⛪ Open the church in Rome</button>
+        <button class="btn ghost" id="testRomeLetter" style="width:100%;margin-top:8px">📜 Replay Rome's letter</button>
+        <button class="btn ghost" id="testAdd500" style="width:100%;margin-top:8px">🪙 Give talents…</button>
+        <button class="btn ghost" id="testRestore" style="width:100%;margin-top:8px;color:var(--miss-ink);border-color:var(--miss)">↩ Restore my real progress (after a simulation)</button>
+        <div id="bugReportsWrap" style="display:none">
+          <div class="prof-sect" style="margin-top:18px">Bug reports</div>
+          <button class="btn ghost" id="bugReportsBtn" style="width:100%">🐞 Review bug reports</button>
+        </div>
+      </div>
+
+      <div class="prof-sect" id="badgeSect">Badges <span id="badgeCount" style="color:var(--muted);float:right;text-transform:none;letter-spacing:0"></span></div>
+      <div id="badgeGrid"></div>
+      <p class="hint" id="badgeNext" style="margin:8px 0 0"></p>
+
+      <div class="prof-sect" style="margin-top:18px">Account</div>
+      <div id="acctBox"></div>
+
+      <div class="prof-sect" style="margin-top:16px">Bible translation</div>
       <div id="transList"></div>
+
+      <div class="prof-sect" style="margin-top:16px">Reference library</div>
+      <button class="btn ghost" id="refBtn" style="width:100%">📚 The Major System, number pegs &amp; the 66 books</button>
+
+      <div class="prof-sect" style="margin-top:16px">What's new</div>
+      <button class="btn ghost" id="pChangelog" style="width:100%">📋 Version history</button>
 
       <div class="prof-sect" style="margin-top:16px">Theme</div>
       <button class="theme-opt" data-th="illumined"><span class="sw" style="background:linear-gradient(135deg,#0e0a26,#8b7bff,#f6dd8c)"></span><div><div class="tn">Illumined Night</div><div class="td">Glowing worship starfield · main theme</div></div></button>
@@ -1453,26 +1487,11 @@
       <button class="theme-opt" data-th="quest"><span class="sw" style="background:linear-gradient(135deg,#1f9d90,#f4b942)"></span><div><div class="tn">Scripture Quest</div><div class="td">Playful adventure · for youth</div></div></button>
       <button class="theme-opt" data-th="buddy"><span class="sw" style="background:linear-gradient(135deg,#1cb0f6,#58cc02 60%,#ffb800)"></span><div><div class="tn">Verse Buddy</div><div class="td">Bright &amp; friendly · for kids</div></div></button>
 
-      <div class="prof-sect" style="margin-top:16px">Daily reminder</div>
-      <div id="reminderBox"></div>
-
-      <div class="prof-sect" style="margin-top:16px">Reference library</div>
-      <button class="btn ghost" id="refBtn" style="width:100%">📚 The Major System, number pegs &amp; the 66 books</button>
-
       <div class="prof-sect" style="margin-top:16px">Get the app</div>
       <button class="btn ghost" id="pInstall" style="width:100%">📲 Install on your phone (home-screen app)</button>
 
-      <div class="prof-sect" style="margin-top:16px">Share &amp; rewards</div>
-      <div class="btnrow" style="margin-top:0">
-        <button class="btn ghost" id="pShare">📣 Share progress</button>
-        <button class="btn ghost" id="pStore">💰 Talents Store</button>
-      </div>
-
-      <div class="prof-sect" style="margin-top:16px">Account</div>
-      <div id="acctBox"></div>
-
       <div class="prof-sect" style="margin-top:16px">Back up your progress</div>
-      <p class="hint" style="margin:0 0 8px">Progress is saved in this browser only. Export a backup file to keep it safe or move to another device.</p>
+      <p class="hint" style="margin:0 0 8px">Signing in keeps your progress safe in the cloud. A backup file is a second copy you hold yourself — useful before switching devices.</p>
       <div class="btnrow" style="margin-top:0">
         <button class="btn ghost" id="expBtn">⬇️ Export backup</button>
         <button class="btn ghost" id="impBtn">⬆️ Restore</button>
@@ -1480,37 +1499,8 @@
       <input type="file" id="impFile" accept="application/json" style="display:none">
       <div id="backupMsg" class="hint" style="margin-top:8px"></div>
 
-      <div class="prof-sect" style="margin-top:18px">Start over</div>
-      <p class="hint" style="margin:0 0 8px">Wipe all progress and begin as a brand-new user. <b>Export a backup first</b> — you can Restore it later.</p>
-      <button class="btn ghost" id="resetBtn" style="width:100%;color:var(--miss-ink);border-color:var(--miss)">♻️ Reset all progress</button>
-
-      <div class="prof-sect" style="margin-top:18px">What's new</div>
-      <button class="btn ghost" id="pChangelog" style="width:100%">📋 Version history</button>
-
-      <div class="prof-sect" style="margin-top:18px">Admin</div>
-      <button class="btn ghost" id="testScratchBtn" style="width:100%">🎫 Test scratch-off</button>
-      <button class="btn ghost" id="testOnboardBtn" style="width:100%;margin-top:8px">🕯️ Test onboarding</button>
-      <button class="btn ghost" id="testLearnDone" style="width:100%;margin-top:8px">🎓 Simulate Learn finished</button>
-      <button class="btn ghost" id="testStoriesDone" style="width:100%;margin-top:8px">📜 Simulate Stories finished</button>
-      <button class="btn ghost" id="testUnpaid" style="width:100%;margin-top:8px">🆓 Simulate unpaid user</button>
-      <button class="btn ghost" id="testTalent" style="width:100%;margin-top:8px">🪙 Preview talent animation</button>
-      <button class="btn ghost" id="testTaxWheel" style="width:100%;margin-top:8px">🏛️ Run Caesar's tax now</button>
-      <button class="btn ghost" id="testPaywall" style="width:100%;margin-top:8px">💳 Show the Pro purchase screen</button>
-      <button class="btn ghost" id="testChurch" style="width:100%;margin-top:8px">⛪ Open the church in Rome</button>
-      <button class="btn ghost" id="testRomeLetter" style="width:100%;margin-top:8px">📜 Replay Rome's letter</button>
-      <button class="btn ghost" id="testAdd500" style="width:100%;margin-top:8px">🪙 Give talents…</button>
-      <button class="btn ghost" id="testRestore" style="width:100%;margin-top:8px;color:var(--miss-ink);border-color:var(--miss)">↩ Restore my real progress (after a simulation)</button>
-
-      <div id="bugReportsWrap" style="display:none">
-        <div class="prof-sect" style="margin-top:18px">Bug reports</div>
-        <button class="btn ghost" id="bugReportsBtn" style="width:100%">🐞 Review bug reports</button>
-      </div>
-
-      <div class="prof-sect" style="margin-top:18px">Badges <span id="badgeCount" style="color:var(--muted);float:right;text-transform:none;letter-spacing:0"></span></div>
-      <div id="badgeGrid"></div>
-      <p class="hint" id="badgeNext" style="margin:8px 0 0"></p>
-
       <button class="btn" id="themeClose" style="margin-top:14px">Done</button>
+
     </div>
   </div>
 
@@ -1594,8 +1584,21 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.9.4";
+const APP_VERSION="1.10.0";
 const CHANGELOG=[
+ {v:"1.10.0", d:"August 24, 2026", t:"Your bench, your pace", items:[
+   ["new","A daily goal can now be as high as <b>15</b>, and <b>reviewing yesterday’s verse counts toward it</b> — coming back is the work, not just starting something new."],
+   ["new","The scratch-off that opens the Bible now says <b>Bible</b> and carries its own icon, and the tab <b>slides into place</b> as you win it."],
+   ["new","<b>Beyond your first five memory palaces</b>, a new one costs 1000 talents — or comes free with Pro."],
+   ["new","<b>Bible story sections</b> can be opened one at a time for 500 talents. You can always see what waits inside; Pro opens them all."],
+   ["new","You can <b>cancel your subscription</b> from Account."],
+   ["fix","<b>Add a reminder</b> and <b>Not getting reminders?</b> on the goal screen did nothing. They work now."],
+   ["fix","A tidier Profile: badges near the top, the settings you actually use above the ones you don’t, and <b>Reset all progress removed entirely</b> — wiping every verse you have hidden in your heart should never sit one tap away."],
+   ["fix","Streak Freezes now cost 250 talents, with room for ten. Peek tokens are no longer sold."],
+   ["fix","Caesar deals a <b>different piece of the church</b> each time — all fourteen come round before any repeats."],
+   ["fix","<b>Seven more milestones</b> along the Bible-stories track, so the encouragement keeps pace with the work."],
+   ["fix","The S·P·Q·R note lost its stray close button — “Got it” was always enough."]
+ ]},
  {v:"1.9.4", d:"August 24, 2026", t:"Tightening up before launch", items:[
    ["fix","Access and account handling tightened ahead of launch. Nothing changes for you — the groundwork simply got firmer."]
  ]},
@@ -2306,6 +2309,9 @@ function migrateProg(p){
   if(typeof p.hints!=="number") p.hints=0; // "Peek" tokens spendable in the verse test
   if(typeof p.weekKey!=="string") p.weekKey=""; if(typeof p.weekDays!=="number") p.weekDays=0; if(typeof p.weekGoalHit!=="boolean") p.weekGoalHit=false; // Perfect-Week tracking
   // Caesar's weekly levy + the church it builds
+  p.piecesUsed=arr(p.piecesUsed);                       // church pieces already built, so none repeats early
+  if(typeof p.palaceSlots!=="number") p.palaceSlots=0;  // extra palace slots bought with talents
+  p.storySections=arr(p.storySections);                 // Bible-story sections bought with talents
   if(typeof p.blessIdx!=="number") p.blessIdx=0;        // rotates the word-for-word blessing
   if(typeof p.paceIdx!=="number") p.paceIdx=0;          // rotates the "little and often" verse
   if(typeof p.taxAt!=="number") p.taxAt=0;              // 0 = never assessed (set when the Rome letter lands)
@@ -2352,6 +2358,7 @@ function mergeProg(a,b){
   m.tickets=[...(a.tickets||[]),...(b.tickets||[])].filter((t,i,arr)=>arr.findIndex(x=>x.ts===t.ts&&x.type===t.type)===i); // union by (ts,type)
   m.palaces=((a.palaces||[]).length>=(b.palaces||[]).length)?a.palaces:b.palaces;   // keep the fuller palace set
   m.verseSR=mergeSR(a.verseSR,b.verseSR);
+  m.palaceSlots=Math.max(a.palaceSlots||0,b.palaceSlots||0); m.storySections=uniq(a.storySections,b.storySections);
   m.taxAt=Math.max(a.taxAt||0,b.taxAt||0); m.taxWeek=Math.max(a.taxWeek||0,b.taxWeek||0);
   m.romeLetterSeen=!!(a.romeLetterSeen||b.romeLetterSeen);
   m.taxLog=[...(a.taxLog||[]),...(b.taxLog||[])].filter((t,i,q)=>q.findIndex(x=>x.at===t.at)===i).sort((x,y)=>y.at-x.at).slice(0,8);
@@ -2397,7 +2404,11 @@ const FREE_SKILLS = new Set([
 ]);
 // What one lesson costs in talents when the user isn't subscribed. Non-Pro users can only
 // buy the lesson that is NEXT in sequence — the path stays in order for them.
-const LESSON_UNLOCK_COST=1000;
+const LESSON_UNLOCK_COST=1000;      // one book, for a user who isn't subscribed
+const PALACE_COST=1000;             // a memory palace beyond the free five
+const PALACE_FREE=5;                // how many palaces come without charge
+const STORY_SECTION_COST=500;       // one section of five Bible stories
+const FREEZE_COST=250;              // a Streak Freeze
 function isFreeSkill(sk){ return FREE_SKILLS.has(sk.id); }
 function isPaidSkill(sk){ return !isFreeSkill(sk); }
 // Is a given skill locked behind the paywall for THIS user right now?
@@ -2614,7 +2625,7 @@ const SCRATCH_LADDER=[
   {tab:"palace",  icon:"🏛️", name:"Memory Palaces",  desc:"Build your own palaces — walk a familiar place and leave a verse at each spot.",  gate:()=>Prog.memorized.length>=5 && (Prog.bestStreak||0)>=5,
      reqs:[{label:"Memorize 5 verses", done:()=>Prog.memorized.length>=5, prog:()=>`${Math.min(5,Prog.memorized.length)}/5`},
            {label:"Hit a 5-answer streak in the verse test", done:()=>(Prog.bestStreak||0)>=5, prog:()=>`best ${Prog.bestStreak||0}/5`}]},
-  {tab:"journey", icon:"🗺️", name:"Your Journey",    desc:"See the whole Bible open before you — every book, chapter and verse you can reach.", gate:()=>Prog.memorized.length>=15 && palaceCount()>=3,
+  {tab:"journey", icon:"📕", iconHtml:()=>bibleIconSVG(), name:"Bible",    desc:"See the whole Bible open before you — every book, chapter and verse you can reach.", gate:()=>Prog.memorized.length>=15 && palaceCount()>=3,
      reqs:[{label:"Memorize 15 verses", done:()=>Prog.memorized.length>=15, prog:()=>`${Math.min(15,Prog.memorized.length)}/15`},
            {label:"Build 3 memory palaces", done:()=>palaceCount()>=3, prog:()=>`${Math.min(3,palaceCount())}/3`}]},
   {tab:"stories", icon:"📜", name:"Bible Stories",   desc:"100 of the Bible's great stories — located, learned, and ready to tell.",         gate:()=>Prog.memorized.length>=25 && palaceCount()>=5 && nt5Done(),
@@ -2657,9 +2668,7 @@ function updateTabLocks(){
     b.classList.toggle("ticket", !won);                                    // locked tabs render as scratch-off tickets
     b.classList.toggle("pending", !won && (scratchSimActive || pend>=0));   // tickets flash while a scratch is available (or during a sim)
   });
-  // Once the Bible tab is earned it takes the far-left slot and everything else slides right.
-  const bar=document.querySelector(".tabbar"), bibleBtn=bar&&bar.querySelector('button[data-tab="journey"]');
-  if(bar && bibleBtn && tabWon("journey") && bar.firstElementChild!==bibleBtn) bar.insertBefore(bibleBtn, bar.firstElementChild);
+  syncTabOrder(false);   // Bible sits far left once earned; back in place when it isn't
   if(!scratchSimActive && pend>=0 && pend!==scratchOffered){ scratchOffered=pend; setTimeout(()=>toast("🎫 You earned a scratch-off! Tap a flashing golden ticket below 👇"),450); }
   if(pend<0) scratchOffered=-1;
   // once the user has 5 verses, remind them a 5-answer streak in the verse test unlocks the next ticket
@@ -2668,6 +2677,30 @@ function updateTabLocks(){
   }
 }
 
+// The Bible tab takes the far-left slot once it is earned, and returns to its place when it
+// isn't — which is what makes the scratch-off simulation start from a true first-boot nav.
+// animate:true plays the slide (FLIP: measure, reorder, then run each button home).
+const TAB_ORDER=["learn","verse","palace","journey","stories"];
+function syncTabOrder(animate){
+  const bar=document.querySelector(".tabbar"); if(!bar) return;
+  const bible=bar.querySelector('button[data-tab="journey"]'); if(!bible) return;
+  const want=tabWon("journey"), isFirst=bar.firstElementChild===bible;
+  if(want===isFirst) return;                                   // already how it should be
+  const btns=[...bar.children];
+  const before=new Map(btns.map(b=>[b, b.getBoundingClientRect().left]));
+  if(want) bar.insertBefore(bible, bar.firstElementChild);
+  else TAB_ORDER.forEach(t=>{ const b=bar.querySelector(`button[data-tab="${t}"]`); if(b) bar.appendChild(b); });
+  if(!animate) return;
+  btns.forEach(b=>{
+    const dx=before.get(b)-b.getBoundingClientRect().left;
+    if(!dx) return;
+    b.style.transition="none"; b.style.transform=`translateX(${dx}px)`;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      b.style.transition="transform .55s cubic-bezier(.2,.75,.25,1)"; b.style.transform="";
+    }));
+    setTimeout(()=>{ b.style.transition=""; b.style.transform=""; }, 700);
+  });
+}
 /* =================== ROUTING =================== */
 const el=id=>document.getElementById(id);
 // Raise a modal above any full-screen overlay that is currently showing.
@@ -3102,18 +3135,39 @@ const MILESTONES=[
  {after:"Creation & the Fall", reached:()=>storiesDone(0,4), stories:true, e:"🌍", t:"Creation Remembered",
   c:"You know where the story of the world begins.",
   d:"Creation, the Fall, and Noah — the opening of the Bible's grand story is anchored in your memory."},
+ {after:"Jacob & Joseph", reached:()=>storiesDone(0,14), stories:true, e:"🧥", t:"The Promise Carried",
+  c:"Abraham, Jacob and Joseph — the promise passes from hand to hand.",
+  d:"Fifteen stories in. You can find the covenant wherever it is spoken of, from Ur to a coat of many colours."},
  {after:"Moses & the Exodus", reached:()=>storiesDone(0,19), stories:true, e:"🌊", t:"Out of Egypt",
   c:"From creation to the parting of the Red Sea.",
   d:"The Bible's opening act — creation, the patriarchs, and the great deliverance from Egypt — is fixed in your memory."},
+ {after:"Conquest & Judges", reached:()=>storiesDone(0,29), stories:true, e:"🎺", t:"The Land Taken",
+  c:"Jericho has fallen and the judges have risen.",
+  d:"Thirty stories held. The wilderness is behind you and the land is before you."},
+ {after:"David & Solomon", reached:()=>storiesDone(0,39), stories:true, e:"👑", t:"The King's House",
+  c:"From a shepherd boy to a throne, and the wisdom that followed.",
+  d:"Forty stories. You can walk from Goliath's field to Solomon's court without opening a book."},
+ {after:"Prophets & Suffering", reached:()=>storiesDone(0,49), stories:true, e:"🔥", t:"Half the Story",
+  c:"Fifty of the hundred — the prophets are speaking and you know where to find them.",
+  d:"Elijah's fire, Job's patience, Isaiah's call. You are halfway through the whole account."},
  {after:"Exile & Deliverance", reached:()=>storiesDone(0,54), stories:true, e:"🏛️", t:"The Old Testament Story",
   c:"From Eden to the exile.",
   d:"The whole sweep of the Old Testament narrative — its heroes, kings and prophets — is now at your fingertips."},
+ {after:"The Birth of Jesus", reached:()=>storiesDone(0,59), stories:true, e:"⭐", t:"Unto You a Saviour",
+  c:"The angel, the manger, the wise men — you hold the beginning of the Gospel.",
+  d:"Sixty stories. The Old Testament is behind you and Christ has come."},
+ {after:"Miracles of Jesus", reached:()=>storiesDone(0,69), stories:true, e:"🌊", t:"He Calmed the Storm",
+  c:"Water into wine, five thousand fed, a storm stilled with a word.",
+  d:"Seventy stories. You can locate His works as readily as His words."},
  {after:"The Cross & Resurrection", reached:()=>storiesDone(0,89), stories:true, e:"✝️", t:"The Gospel Story",
   c:"The whole story of Jesus — birth, ministry, cross and empty tomb.",
   d:"You can walk anyone from Bethlehem to the resurrection, story by story, chapter and verse."},
  {after:"Parables of Jesus III", reached:()=>storiesDone(70,84), stories:true, e:"🌾", t:"Every Parable",
   c:"All fifteen of Jesus' major parables, located and learned.",
   d:"When someone asks 'where's that parable?' — you'll know the book, chapter and verse in an instant."},
+ {after:"The Early Church", reached:()=>storiesDone(0,94), stories:true, e:"⛪", t:"The Church Begins",
+  c:"Pentecost, the first healings, the first martyr — the Church is on its feet.",
+  d:"Ninety-five stories. Only the road to Rome remains."},
  {after:"Paul & the End", reached:()=>storiesDone(0,99), stories:true, e:"⭐", t:"100 Stories Mastered",
   c:"Every major story in the Bible, by heart.",
   d:"You can turn to any of the Bible's 100 great stories in a moment. Now go tell them."}
@@ -3355,6 +3409,18 @@ function finishStory(){
   walkReturn=celebrate; curScene=verseObj(b,c,v); wPhase="scene"; sceneBackfill=false;
   show("verse"); renderWalk();
 }
+// A free account sees every section header — the shape of the whole Bible story — but the
+// stories inside stay closed until that section is bought. Subscribers see them all.
+function storySectionOwned(ui){ return Billing.isPro() || (Prog.storySections||[]).includes(ui); }
+function buyStorySection(ui, after){
+  if((Prog.talents||0) < STORY_SECTION_COST){ toast(`That section costs ${STORY_SECTION_COST} talents — you have ${talDisp(Prog.talents||0)}.`); return; }
+  confirmSpend(`Open this section for <b class="gold">${STORY_SECTION_COST} 🪙</b>?`,
+    `Five Bible stories, yours to keep. You'll have ${talDisp(Math.max(0,(Prog.talents||0)-STORY_SECTION_COST))} talents left.`,
+    ()=>{ spendTalents(STORY_SECTION_COST);
+      Prog.storySections=Prog.storySections||[]; if(!Prog.storySections.includes(ui)) Prog.storySections.push(ui);
+      saveProg(); toast("📜 Section opened ✓"); if(after) after(); },
+    {icon:"📜", yes:`Yes, ${STORY_SECTION_COST} talents`});
+}
 let storyExpanded=null;
 function renderStories(){
   updateMetrics();
@@ -3372,7 +3438,14 @@ function renderStories(){
     const open=storyExpanded.has(ui), grp=done===tot?"grp-gold":(ready?"grp-blue":"");
     const frac=groups.length>1?(gi/(groups.length-1)).toFixed(3):0;   // 0 (lightest) → 1 (darkest) across the story sections
     html+=`<div class="unit"><button class="grouphead story-grad ${open?"open":""} ${grp}" data-sgrp="${ui}" style="--t:${frac}"><span>${U.ic?`<span class="ghead-ic">${U.ic}</span>`:""}${U.name}</span><span class="gmeta">${done}/${tot} ${open?"▾":"▸"}</span></button>`;
-    if(open){ html+=`<div class="vlist" style="margin-top:10px">`;
+    if(open && !storySectionOwned(ui)){
+      html+=`<div class="teachbox" style="margin-top:10px;text-align:center">
+        <div style="font-size:26px">🔒</div>
+        <div style="margin:4px 0 8px"><b class="gold">${U.skills.length} stories</b> wait inside this section.</div>
+        <button class="btn sm" data-buysec="${ui}" style="width:100%">Open it · ${STORY_SECTION_COST} 🪙</button>
+        <div class="hint" style="margin-top:8px">You have ${talDisp(Prog.talents||0)} talents — or go Pro and every section opens.</div></div>`;
+    }
+    else if(open){ html+=`<div class="vlist" style="margin-top:10px">`;
       // sort by reachability: the highest number (book, chapter OR verse) sinks to the bottom, so 4:1 comes before 2:7
       const ord=U.skills.map((sk,si)=>({sk,si})).sort((a,b)=>storyReachKey(a.sk)-storyReachKey(b.sk)||a.si-b.si);
       ord.forEach(({sk,si})=>{ const s=sk.story, unlocked=skillUnlocked(ui,si), isDone=Prog.doneSkills.includes(sk.id), can=unlocked||isDone;
@@ -3384,6 +3457,7 @@ function renderStories(){
   });
   S.innerHTML=html;
   S.querySelectorAll("[data-sgrp]").forEach(h=>h.onclick=()=>{ const ui=+h.dataset.sgrp; storyExpanded.has(ui)?storyExpanded.delete(ui):storyExpanded.add(ui); renderStories(); });
+  S.querySelectorAll("[data-buysec]").forEach(b=>b.onclick=()=>buyStorySection(+b.dataset.buysec, renderStories));
   S.querySelectorAll("[data-story]").forEach(r=>r.onclick=()=>{ const [ui,si]=r.dataset.story.split(":").map(Number); startStoryLesson(UNITS[ui].skills[si],"stories",renderStories); });
 }
 /* ---- Memory Palace builder (build 3 personal palaces) ---- */
@@ -3423,7 +3497,13 @@ function reviewDueCount(){ return numbersDueCount()+versesDueCount()+palacesDueC
 function newSR(){ return {learnedAt:Date.now(), step:1, dueAt:Date.now()+(SR_TRAIL[1]-SR_TRAIL[0])*DAY}; } // D0 done at learn, D1 due in 1 day
 function startVerseSR(k){ Prog.verseSR=Prog.verseSR||{}; if(!Prog.verseSR[k]) Prog.verseSR[k]=newSR(); }
 function reviewVerseSR(k){ if(!Prog.memorized.includes(k)) return; Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k];
-  if(!o){ Prog.verseSR[k]=newSR(); return; } srAdvance(o); }
+  if(!o){ Prog.verseSR[k]=newSR(); return; }
+  // A verse learned yesterday comes due at its D1 checkpoint. Reviewing it is real work and
+  // counts toward today's goal, the same as a new verse or a word-for-word practice.
+  const wasD1 = srDueIndex(o)===1;
+  const advanced = srAdvance(o);
+  if(advanced && wasD1) bumpGoal();
+}
 function srHuman(ms){ if(ms==null) return "—"; if(ms<=0) return "today"; const d=Math.round(ms/DAY); return d<=1?"1 day":d+" days"; }
 // the 6-node D0…D30 trail: done = filled gold, due = pulsing, upcoming = dim
 function srTrailHTML(p){ const step=(p&&p.step)||1, di=palaceDueIndex(p);
@@ -3486,7 +3566,23 @@ function renderPalacePractice(){
     }
   });
 }
+// Subscribers get every palace. A free account gets PALACE_FREE, then pays for each one —
+// the same shape as buying a book, so the rule is learned once and applies everywhere.
+function palaceSlotsOwned(){ return PALACE_FREE + ((Prog.palaceSlots||0)); }
+function canBuildPalace(){ return Billing.isPro() || palaceCount() < palaceSlotsOwned(); }
+function buyPalaceSlot(){
+  if(Billing.isPro()) return true;
+  if((Prog.talents||0) < PALACE_COST){ toast(`A new palace costs ${PALACE_COST} talents — you have ${talDisp(Prog.talents||0)}.`); return false; }
+  spendTalents(PALACE_COST); Prog.palaceSlots=(Prog.palaceSlots||0)+1; saveProg();
+  toast("🏛️ Room for another palace ✓"); return true;
+}
 function startNewPalace(){ // build an extra palace from the Palace tab
+  if(!canBuildPalace()){
+    confirmSpend(`Build another memory palace for <b class="gold">${PALACE_COST} 🪙</b>?`,
+      `Your first ${PALACE_FREE} palaces are free. You have ${talDisp(Prog.talents||0)} talents — or go Pro for unlimited palaces.`,
+      ()=>{ if(buyPalaceSlot()) startNewPalace(); }, {icon:"🏛️", yes:`Yes, ${PALACE_COST} talents`});
+    return;
+  }
   PB={slot:Prog.palaces.length, stage:0, place:"", stations:[], host:"palace", ret:renderPalace};
   renderPalaceBuild();
 }
@@ -4292,9 +4388,8 @@ function doneForToday(){
 }
 function dayKey(d){ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }   // local-day identity for the daily streak
 // Streak Freeze power-ups: earned at day-streak & answer-streak milestones, auto-spent to save a streak when a day is missed.
-const FREEZE_MAX=5;
-// Pro users are taxed weekly, so give their talents more room to land.
-function freezeMax(){ return Billing.isPro() ? 10 : FREEZE_MAX; }
+const FREEZE_MAX=10;
+function freezeMax(){ return FREEZE_MAX; }
 const DAY_FREEZE=[3,7,14,30,60,100,150,200,300,365];   // day-streak milestones that grant a freeze
 const ANS_FREEZE=[25,50,100,200,500];                   // correct-in-a-row milestones that grant a freeze
 function grantFreeze(key, reason){
@@ -4322,6 +4417,7 @@ function creditToday(){
 /* ================= DAILY GOAL — verses + book images + word-for-word, combined (1–10/day) ================= */
 // Three ways to set the goal — same every day, weekdays vs weekends, or each day on its own.
 // The setup screen shows ONLY the chosen mode's controls; this reads whichever is in force.
+const GOAL_MAX=15;
 const GOAL_MODES=[["same","Same<br>every day"],["week","Weekdays<br>vs weekends"],["days","Each day<br>on its own"]];
 function goalMode(){ const m=Prog.goalMode; return (m==="week"||m==="days")?m:"same"; }
 function goalToday(){
@@ -4331,7 +4427,7 @@ function goalToday(){
   else if(m==="week"){ g=(dow===0||dow===6) ? (Prog.goalWeekend!=null?Prog.goalWeekend:base)
                                             : (Prog.goalWeekday!=null?Prog.goalWeekday:base); }
   else g=base;
-  return Math.max(1, Math.min(10, g|0)); }
+  return Math.max(1, Math.min(GOAL_MAX, g|0)); }
 function goalState(){ const t=dayKey(new Date()); if(!Prog.goalDay || Prog.goalDay.date!==t) Prog.goalDay={date:t,count:0,celebrated:false}; return Prog.goalDay; }
 function goalCount(){ return goalState().count; }
 function goalMet(){ return goalCount()>=goalToday(); }
@@ -4394,7 +4490,7 @@ function onGoalComplete(){
 function numberSheet(o){
   let m=el("numSheet");
   if(!m){ m=document.createElement("div"); m.id="numSheet"; m.className="mtoverlay"; m.style.display="none"; document.querySelector(".phone").appendChild(m); }
-  const choices=o.choices||[1,2,3,4,5,6,7,8,9,10];
+  const choices=o.choices||Array.from({length:GOAL_MAX},(_,i)=>i+1);
   m.innerHTML=`<div class="mtsheet"><div class="mtsheet-h"><b>${o.title||"Pick a number"}</b><button class="lclose" id="nsClose" style="margin:0">✕</button></div>
     <div class="mtsquares">${choices.map(n=>`<button class="mtsq ${n===o.value?"sel":""}" data-n="${n}">${n}</button>`).join("")}</div></div>`;
   m.style.display="grid";
@@ -4914,8 +5010,18 @@ function buildOverlay(){
   return ov;
 }
 // gained = talents laid as stone by this levy (already added to Prog.church)
+// Draw the next church piece WITHOUT replacement, so testing (and playing) works through all
+// fourteen before any of them comes round again — rolling a die kept returning the lectern.
+function nextPieceIndex(){
+  let used=(Prog.piecesUsed||[]).filter(i=>i>=0 && i<PIECES.length);
+  if(used.length>=PIECES.length) used=[];                       // the deck is spent — shuffle and deal again
+  const left=PIECES.map((_,i)=>i).filter(i=>!used.includes(i));
+  const pick=left[Math.floor(Math.random()*left.length)];
+  Prog.piecesUsed=[...used,pick]; saveProg();
+  return pick;
+}
 function openChurchBuild(gained, after){
-  const pi=Math.floor(Math.random()*PIECES.length), piece=PIECES[pi];
+  const pi=nextPieceIndex(), piece=PIECES[pi];
   BLD={taps:0, gained, after, pi, used:[]};
   const ov=buildOverlay();
   ov.innerHTML=`<div class="bldcard">
@@ -5021,6 +5127,10 @@ function taxOverlay(){
   ov.style.top=(tb?Math.round(tb.getBoundingClientRect().height):0)+"px";   // leave the counters showing — watching the talents go is the point
   return ov;
 }
+// One Bible icon, used by the tab, the scratch-off prize and the icon that flies between them.
+function bibleIconSVG(){
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 2.8h11.1a2.1 2.1 0 0 1 2.1 2.1v14.2a2.1 2.1 0 0 1-2.1 2.1H5.4A1.6 1.6 0 0 1 3.8 19.6V4.4a1.6 1.6 0 0 1 1.6-1.6Z" fill="var(--bible)"/><path d="M3.8 18.1h13.9" stroke="var(--bible-ink)" stroke-opacity=".45" stroke-width="1"/><path d="M11.3 6.4v8.2M8.4 9.1h5.8" stroke="var(--bible-ink)" stroke-width="1.7" stroke-linecap="round"/></svg>`;
+}
 let _rhSeq=0;
 // The Romans book icon (images/books/45.svg), redrawn on tokens so it can sit on any theme.
 function romeHelmet(cls){
@@ -5039,14 +5149,13 @@ function romeHelmet(cls){
 }
 function openSpqrNote(){
   const m=el("spqrModal")||(()=>{ const d=document.createElement("div"); d.id="spqrModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
-  m.innerHTML=`<div class="modal-card center"><div class="lv-topbar"><button class="lclose" id="sqClose">✕</button>
-      <div style="flex:1;text-align:center;font-weight:800">S · P · Q · R</div><span style="width:34px"></span></div>
+  m.innerHTML=`<div class="modal-card center">
+    <div style="font-weight:800;letter-spacing:.06em">S · P · Q · R</div>
     <div style="font-size:23px;font-weight:800;color:var(--gold-ink);letter-spacing:.06em;margin-top:12px">Senātus Populusque Rōmānus</div>
     <p class="lead" style="margin:8px 0 0">“The Senate and People of Rome.”</p>
     <p class="hint" style="margin:10px 0 0">Rome stamped these four letters on every standard, every coin and every demand for money — the whole authority of the empire in four letters.</p>
     <button class="btn" id="sqOk" style="width:100%;margin-top:14px">Got it</button></div>`;
   m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
-  el("sqClose").onclick=()=>m.style.display="none";
   el("sqOk").onclick=()=>m.style.display="none";
 }
 const SPQR_NOTE='<b>S·P·Q·R</b> — <i>Senātus Populusque Rōmānus</i>, “the Senate and People of Rome”: stamped on every standard, coin and demand for money.';
@@ -5208,7 +5317,8 @@ function openStore(){
   let m=document.getElementById("storeModal");
   if(!m){ m=document.createElement("div"); m.id="storeModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
   const cap=freezeMax();
-  const t=Prog.talents||0, freezeFull=(Prog.freezes||0)>=cap, canFreeze=t>=120&&!freezeFull, canPeek=t>=40, canPeek5=t>=150;
+  const t=Prog.talents||0, freezeFull=(Prog.freezes||0)>=cap, canFreeze=t>=FREEZE_COST&&!freezeFull;
+  const palaces=palaceCount(), canPalace=!Billing.isPro() && t>=PALACE_COST;
   const warn=taxWarnDays();
   m.innerHTML=`<div class="modal-card">
     <h2 style="font-size:18px;margin:0 0 4px">💰 Talents Store</h2>
@@ -5217,15 +5327,11 @@ function openStore(){
     <div class="storeitem">
       <div class="si-top"><span>🧊 Streak Freeze</span><span class="si-have">have ${Prog.freezes||0}</span></div>
       <div class="si-desc">Auto-saves your streak if you miss a day.${freezeFull?` You're at the max of ${cap}.`:""}</div>
-      <button class="btn ${canFreeze?"":"ghost"}" data-buy="freeze" ${canFreeze?"":"disabled"}>${freezeFull?"Maxed out":"Buy · 120 🪙"}</button></div>
-    <div class="storeitem" style="margin-top:12px">
-      <div class="si-top"><span>🔎 Peek token</span><span class="si-have">have ${Prog.hints||0}</span></div>
-      <div class="si-desc">Reveal the book in a verse test when you're stuck.</div>
-      <button class="btn ${canPeek?"":"ghost"}" data-buy="peek" ${canPeek?"":"disabled"}>${canPeek?"Buy · 40 🪙":"Need 40 🪙"}</button></div>
-    <div class="storeitem" style="margin-top:12px">
-      <div class="si-top"><span>🔎 Five Peek tokens</span><span class="si-have">save 50 🪙</span></div>
-      <div class="si-desc">Five at once, cheaper than one at a time — somewhere for a full purse to go.</div>
-      <button class="btn ${canPeek5?"":"ghost"}" data-buy="peek5" ${canPeek5?"":"disabled"}>${canPeek5?"Buy · 150 🪙":"Need 150 🪙"}</button></div>
+      <button class="btn ${canFreeze?"":"ghost"}" data-buy="freeze" ${canFreeze?"":"disabled"}>${freezeFull?"Maxed out":`Buy · ${FREEZE_COST} 🪙`}</button></div>
+    ${Billing.isPro()?"":`<div class="storeitem" style="margin-top:12px">
+      <div class="si-top"><span>🏛️ Another memory palace</span><span class="si-have">have ${palaces}</span></div>
+      <div class="si-desc">${palaces<PALACE_FREE?`Your first ${PALACE_FREE} are free — ${PALACE_FREE-palaces} still to build.`:`Beyond the first ${PALACE_FREE}, a new palace costs ${PALACE_COST} talents.`}</div>
+      ${palaces<PALACE_FREE?"":`<button class="btn ${canPalace?"":"ghost"}" data-buy="palace" ${canPalace?"":"disabled"}>${canPalace?`Buy · ${PALACE_COST} 🪙`:`Need ${PALACE_COST} 🪙`}</button>`}</div>`}
     ${Billing.isPro()?`<div class="storeitem" style="margin-top:12px">
       <div class="si-top"><span>⛪ The church in Rome</span><span class="si-have">${church().built} built</span></div>
       <div class="si-desc">Half of every levy Caesar takes is laid up as stone. See what has risen.</div>
@@ -5236,9 +5342,9 @@ function openStore(){
   if(m.querySelector("#storeChurch")) m.querySelector("#storeChurch").onclick=()=>{ m.style.display="none"; openChurch(); };
   m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   m.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{
-    if(b.dataset.buy==="freeze"){ if((Prog.freezes||0)>=freezeMax()||(Prog.talents||0)<120) return; Prog.talents-=120; Prog.freezes++; toast("🧊 Streak Freeze purchased!"); }
-    else if(b.dataset.buy==="peek5"){ if((Prog.talents||0)<150) return; Prog.talents-=150; Prog.hints=(Prog.hints||0)+5; toast("🔎 Five Peek tokens purchased!"); }
-    else { if((Prog.talents||0)<40) return; Prog.talents-=40; Prog.hints=(Prog.hints||0)+1; toast("🔎 Peek token purchased!"); }
+    if(b.dataset.buy==="freeze"){ if((Prog.freezes||0)>=freezeMax()||(Prog.talents||0)<FREEZE_COST) return;
+      Prog.talents-=FREEZE_COST; Prog.freezes++; toast("🧊 Streak Freeze purchased!"); }
+    else if(b.dataset.buy==="palace"){ if(!buyPalaceSlot()) return; }
     saveProg(); updateMetrics(); openStore();
   });
 }
@@ -6292,7 +6398,9 @@ function renderAcctBox(){
     ? `<div class="acct-row" style="margin-top:10px"><div class="acct-av" style="background:var(--gold);color:#241a02">★</div>
         <div style="flex:1"><div style="font-weight:700;font-size:14px" class="gold">Pro — whole Bible unlocked</div>
         <div class="muted" style="font-size:11px">${until?"Renews "+until:"Active"}</div></div>
-        ${Billing.cfg.manageUrl?`<a class="btn sm ghost" href="${Billing.cfg.manageUrl}" target="_blank" rel="noopener">Manage</a>`:""}</div>`
+        ${Billing.cfg.manageUrl
+          ? `<a class="btn sm ghost" href="${Billing.cfg.manageUrl}" target="_blank" rel="noopener">Manage</a>`
+          : `<button class="btn sm ghost" id="cancelSub">Cancel</button>`}</div>`
     : `<div class="acct-row" style="margin-top:10px"><div class="acct-av" style="background:var(--panel2)">🔒</div>
         <div style="flex:1"><div style="font-weight:700;font-size:14px">Free path</div>
         <div class="muted" style="font-size:11px">Torah, first palace &amp; Matthew</div></div>
@@ -6310,6 +6418,14 @@ function renderAcctBox(){
   if(el("resendVerify")) el("resendVerify").onclick=()=>{ Auth.resendVerification().then(()=>toast("Verification email sent.")).catch(()=>toast("Couldn't send right now.")); };
   if(el("signOut")) el("signOut").onclick=()=>{ if(typeof Auth!=="undefined" && Auth.loggedIn()){ Auth.signOut(); toast("Signed out."); } else { Store.remove("vv_acct"); renderAcctBox(); } };
   if(el("goProBtn")) el("goProBtn").onclick=()=>{ el("themeModal").style.display="none"; openPaywall(); };
+  // Until the Stripe customer portal is configured, never leave a subscriber with no way out:
+  // tell them plainly how to cancel rather than showing a button that does nothing.
+  if(el("cancelSub")) el("cancelSub").onclick=()=>{
+    el("themeModal").style.display="none";
+    openTicketForm({type:"cancel", title:"Cancel your subscription",
+      intro:"Tell us to cancel and we'll take care of it, then confirm by email. You keep Pro until the end of the period you've already paid for.",
+      minWords:0, maxWords:200, placeholder:"Anything you'd like us to know…"});
+  };
 }
 /* ---- paywall ---- */
 let payTargetSkill=null;
@@ -6639,7 +6755,8 @@ function reminderUI(hostId){
       <button type="button" class="btn ghost sm" id="remHelp" style="width:100%;margin-top:6px">Not getting reminders? →</button>
     </div>`;
   const re=()=>reminderUI(hostId);
-  el("remOn").onchange=async()=>{ if(el("remOn").checked) await Reminders.enable(); else await Reminders.disable(); re(); };
+  const q=sel=>host.querySelector(sel);   // scoped: the same ids may exist at another mount point
+  q("#remOn").onchange=async()=>{ if(q("#remOn").checked) await Reminders.enable(); else await Reminders.disable(); re(); };
   host.querySelectorAll("[data-t]").forEach(inp=>inp.onchange=async()=>{
     const i=+inp.dataset.t; if(!inp.value) return; Prog.reminder.times[i].t=inp.value;
     Prog.reminder.time=Prog.reminder.times[0].t; saveProg(); if(Prog.reminder.on) await Reminders.schedule(); });
@@ -6650,14 +6767,20 @@ function reminderUI(hostId){
     Prog.reminder.times.splice(+b.dataset.del,1);
     if(!Prog.reminder.times.length) Prog.reminder.times=[{t:"20:00",on:true}];
     Prog.reminder.time=Prog.reminder.times[0].t; saveProg(); if(Prog.reminder.on) await Reminders.schedule(); re(); });
-  if(el("remAdd")) el("remAdd").onclick=async()=>{
+  if(q("#remAdd")) q("#remAdd").onclick=async()=>{
     if(Prog.reminder.times.length>=REMINDER_MAX) return;
     const used=Prog.reminder.times.map(x=>x.t);
-    const next=["07:00","12:30","20:00"].find(t=>!used.includes(t))||"20:00";
+    const next=["07:00","12:30","20:00","06:30","21:30"].find(t=>!used.includes(t))||"20:00";
     Prog.reminder.times.push({t:next,on:true}); saveProg(); if(Prog.reminder.on) await Reminders.schedule(); re(); };
-  if(el("remHelp")) el("remHelp").onclick=()=>openNotifyHelp(false);
+  if(q("#remHelp")) q("#remHelp").onclick=()=>openNotifyHelp(false);
 }
-function renderReminder(){ reminderUI("reminderBox"); }
+// The Admin block — simulations, "give talents", the tax wheel — is powerful enough that it
+// must never appear for a customer. Signed in as an ADMIN_EMAILS account, or it isn't there.
+function applyAdminVisibility(){
+  const admin = (typeof Auth!=="undefined") && Auth.isAdmin();
+  const wrap=el("adminWrap"); if(wrap) wrap.style.display = admin ? "" : "none";
+  const bugs=el("bugReportsWrap"); if(bugs) bugs.style.display = admin ? "" : "none";
+}
 // Platform-specific walkthrough for turning notifications on.
 function openNotifyHelp(denied){
   const m=el("notifyHelpModal")||(()=>{ const d=document.createElement("div"); d.id="notifyHelpModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
@@ -6697,8 +6820,8 @@ function openNotifyHelp(denied){
   el("nhOk").onclick=()=>m.style.display="none";
   if(el("nhInstall")) el("nhInstall").onclick=()=>{ m.style.display="none"; openInstallDialog(); };
 }
-el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); renderReminder(); el("backupMsg").innerHTML="";
-  if(el("bugReportsWrap")) el("bugReportsWrap").style.display = (typeof Auth!=="undefined" && Auth.isAdmin()) ? "" : "none";
+el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); el("backupMsg").innerHTML="";
+  applyAdminVisibility();
   if(el("testUnpaid")) el("testUnpaid").textContent = Billing.isPro() ? "🆓 Simulate unpaid user" : "✨ Restore Pro access";
   el("themeModal").style.display="flex"; initProfileCollapse(); };
 // Make each profile subheader a collapsible section; all collapsed each time the menu opens.
@@ -6718,10 +6841,9 @@ function initProfileCollapse(){
 }
 el("expBtn").onclick=exportBackup;
 el("impBtn").onclick=()=>el("impFile").click();
-if(el("pShare")) el("pShare").onclick=()=>shareProgress(null);
-if(el("pStore")) el("pStore").onclick=()=>{ el("themeModal").style.display="none"; openStore(); };
+// Share progress and the Talents Store were removed from Profile — the store lives on the
+// top bar, which is where people actually reach for it.
 if(el("pInstall")) el("pInstall").onclick=()=>{ el("themeModal").style.display="none"; openInstallDialog(); };
-if(el("resetBtn")) el("resetBtn").onclick=resetAllProgress;
 if(el("testScratchBtn")) el("testScratchBtn").onclick=()=>{ el("themeModal").style.display="none"; ScratchSim.begin(); };
 if(el("testOnboardBtn")) el("testOnboardBtn").onclick=()=>{ el("themeModal").style.display="none"; Onboard.preview(); };
 if(el("bugReportsBtn")) el("bugReportsBtn").onclick=()=>openBugReports();
@@ -6793,12 +6915,9 @@ if(el("testUnpaid")) el("testUnpaid").onclick=()=>{
   else { Billing.grant(12); bustCaches(); el("themeModal").style.display="none"; toast("✨ Pro access restored."); show("learn"); }
 };
 if(el("testRestore")) el("testRestore").onclick=()=>{ const bak=Store.getJSON("vv_simbak",null); if(!bak){ toast("No simulation active."); return; } Prog=migrateProg(bak); Store.setJSON(PROG_KEY,Prog); Store.remove("vv_simbak"); bustCaches(); recomputeLevel(); el("themeModal").style.display="none"; toast("Restored your real progress."); show("learn"); };
-function resetAllProgress(){
-  if(!confirm("Start over as a brand-new user?\n\nThis wipes ALL progress on this device — lessons, verses, palaces, streaks — and signs you out.\n\nTip: Export a backup first (you can Restore it later).")) return;
-  [PROG_KEY, SRS_KEY, PROG_KEY+"_bak", SRS_KEY+"_bak", "vv_token", "vv_acct"].forEach(k=>{ try{ Store.remove(k); }catch(e){} localStorage.removeItem(k); });
-  Store.set("vv_skiplogin","1");   // reload straight into a fresh new-user experience
-  location.reload();
-}
+// resetAllProgress() was removed deliberately: wiping every verse a person has hidden in
+// their heart should not sit one tap — or one console call — away.
+
 el("impFile").onchange=e=>{ if(e.target.files[0]) importBackup(e.target.files[0]); };
 el("themeClose").onclick=()=>el("themeModal").style.display="none";
 el("refBtn").onclick=()=>{ el("themeModal").style.display="none"; show("foundations"); };   // Reference now lives under the profile menu
@@ -7506,7 +7625,8 @@ const Scratch = (()=>{
   return {
     open(r, o){ rung=r; opts=o||{}; revealed=false; cells.clear(); const L=SCRATCH_LADDER[r];
       el("scTitle").innerHTML=(opts.title||"🎫 You earned a scratch-off!");
-      el("scIcon").textContent=L.icon; el("scName").textContent=L.name; el("scDesc").innerHTML=L.desc;
+      if(L.iconHtml) el("scIcon").innerHTML=L.iconHtml(); else el("scIcon").textContent=L.icon;
+      el("scName").textContent=L.name; el("scDesc").innerHTML=L.desc;
       el("scClaim").style.display="none"; foil.classList.remove("gone");
       ov.classList.add("on"); ov.setAttribute("aria-hidden","false");
       requestAnimationFrame(fitCanvas);
@@ -7518,8 +7638,10 @@ function flyToNav(iconChar, targetBtn, done){
   const phone=document.querySelector(".phone");
   if(!targetBtn||!phone){ done&&done(); return; }
   const pr=phone.getBoundingClientRect(), start=el("scIcon").getBoundingClientRect(), dst=targetBtn.getBoundingClientRect();
-  const fly=document.createElement("div"); fly.textContent=iconChar;
+  const fly=document.createElement("div");
+  if(typeof iconChar==="string" && iconChar.trim().startsWith("<")) fly.innerHTML=iconChar; else fly.textContent=iconChar;
   fly.style.cssText=`position:absolute;z-index:200;left:${start.left-pr.left}px;top:${start.top-pr.top}px;font-size:60px;line-height:1;pointer-events:none;transition:all .9s cubic-bezier(.5,-0.12,.25,1.2);will-change:left,top,font-size`;
+  const flySvg=fly.querySelector("svg"); if(flySvg){ flySvg.style.width="60px"; flySvg.style.height="60px"; }
   phone.appendChild(fly);
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     fly.style.left=(dst.left-pr.left + dst.width/2 - 11)+"px";
@@ -7562,7 +7684,9 @@ const ScratchSim = (()=>{
   el("simNext").onclick=()=>{ if(i<SCRATCH_LADDER.length-1){ i++; openRung(); } else end(); };
   el("simExit").onclick=end;
   return {
-    begin(){ realWon=Prog.scratchWon.slice(); scratchSimActive=true; Prog.scratchWon=[]; scratchOffered=-1; updateTabLocks(); i=0; openRung(); }
+    begin(){ realWon=Prog.scratchWon.slice(); scratchSimActive=true; Prog.scratchWon=[]; scratchOffered=-1;
+      updateTabLocks(); syncTabOrder(false);   // Learn back in the far-left slot, exactly as a new user sees it
+      i=0; openRung(); }
   };
 })();
 

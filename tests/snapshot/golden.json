@@ -252,13 +252,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "756149954d5c91e5",
-  "len": 15594,
-  "els": 341,
-  "buttons": 38,
+  "h": "c677ae1adc870c8e",
+  "len": 13818,
+  "els": 319,
+  "buttons": 32,
   "svgs": 0,
   "imgs": 0,
-  "text": "Profile &amp; Settings ▸ Bible translation KJV free King James Version ✓ NKJV licensed New King James Version · needs li"
+  "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
  },
  "classic/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -297,22 +297,22 @@
   "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
  },
  "classic/modal/store": {
-  "h": "a0232dec9346f093",
-  "len": 1156,
-  "els": 23,
-  "buttons": 4,
+  "h": "653687a7b4ca024d",
+  "len": 787,
+  "els": 16,
+  "buttons": 2,
   "svgs": 0,
   "imgs": 0,
   "text": "💰 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "33d71ac4c6dc516a",
-  "len": 16356,
-  "els": 316,
+  "h": "605c5850542712db",
+  "len": 18633,
+  "els": 366,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.9.4 August 24, 2026 Tightening up before launch FIX Access and account handling tightened ahead of "
+  "text": "✕ Version history v1.10.0 August 24, 2026 Your bench, your pace NEW A daily goal can now be as high as 15 , and reviewin"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -324,13 +324,13 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "classic/modal/spqr": {
-  "h": "b0e58b77025f3beb",
-  "len": 693,
-  "els": 9,
-  "buttons": 2,
+  "h": "a55adb0ea727d140",
+  "len": 582,
+  "els": 6,
+  "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ S · P · Q · R Senātus Populusque Rōmānus “The Senate and People of Rome.” Rome stamped these four letters on every sta"
+  "text": "S · P · Q · R Senātus Populusque Rōmānus “The Senate and People of Rome.” Rome stamped these four letters on every stand"
  },
  "classic/modal/word-def": {
   "h": "16d64a1825d21a56",
@@ -621,13 +621,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "ce266eb67c989e48",
-  "len": 15594,
-  "els": 341,
-  "buttons": 38,
+  "h": "cc32c6083ba85324",
+  "len": 13818,
+  "els": 319,
+  "buttons": 32,
   "svgs": 0,
   "imgs": 0,
-  "text": "Profile &amp; Settings ▸ Bible translation KJV free King James Version ✓ NKJV licensed New King James Version · needs li"
+  "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
  },
  "illumined/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -666,22 +666,22 @@
   "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
  },
  "illumined/modal/store": {
-  "h": "ca5186133918c4f4",
-  "len": 1156,
-  "els": 23,
-  "buttons": 4,
+  "h": "361c54cfd08c4939",
+  "len": 787,
+  "els": 16,
+  "buttons": 2,
   "svgs": 0,
   "imgs": 0,
   "text": "💰 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "33d71ac4c6dc516a",
-  "len": 16356,
-  "els": 316,
+  "h": "605c5850542712db",
+  "len": 18633,
+  "els": 366,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.9.4 August 24, 2026 Tightening up before launch FIX Access and account handling tightened ahead of "
+  "text": "✕ Version history v1.10.0 August 24, 2026 Your bench, your pace NEW A daily goal can now be as high as 15 , and reviewin"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -693,13 +693,13 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "illumined/modal/spqr": {
-  "h": "b0e58b77025f3beb",
-  "len": 693,
-  "els": 9,
-  "buttons": 2,
+  "h": "a55adb0ea727d140",
+  "len": 582,
+  "els": 6,
+  "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ S · P · Q · R Senātus Populusque Rōmānus “The Senate and People of Rome.” Rome stamped these four letters on every sta"
+  "text": "S · P · Q · R Senātus Populusque Rōmānus “The Senate and People of Rome.” Rome stamped these four letters on every stand"
  },
  "illumined/modal/word-def": {
   "h": "6d4d043603d278c3",
@@ -990,13 +990,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "f6fdaaf51e543119",
-  "len": 15594,
-  "els": 341,
-  "buttons": 38,
+  "h": "69387a0bc27b4552",
+  "len": 13818,
+  "els": 319,
+  "buttons": 32,
   "svgs": 0,
   "imgs": 0,
-  "text": "Profile &amp; Settings ▸ Bible translation KJV free King James Version ✓ NKJV licensed New King James Version · needs li"
+  "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
  },
  "glass/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -1035,22 +1035,22 @@
   "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
  },
  "glass/modal/store": {
-  "h": "946cb8bb438d8a73",
-  "len": 1156,
-  "els": 23,
-  "buttons": 4,
+  "h": "88a923d036a2b4e4",
+  "len": 787,
+  "els": 16,
+  "buttons": 2,
   "svgs": 0,
   "imgs": 0,
   "text": "💰 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "33d71ac4c6dc516a",
-  "len": 16356,
-  "els": 316,
+  "h": "605c5850542712db",
+  "len": 18633,
+  "els": 366,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.9.4 August 24, 2026 Tightening up before launch FIX Access and account handling tightened ahead of "
+  "text": "✕ Version history v1.10.0 August 24, 2026 Your bench, your pace NEW A daily goal can now be as high as 15 , and reviewin"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1062,13 +1062,13 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "glass/modal/spqr": {
-  "h": "b0e58b77025f3beb",
-  "len": 693,
-  "els": 9,
-  "buttons": 2,
+  "h": "a55adb0ea727d140",
+  "len": 582,
+  "els": 6,
+  "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ S · P · Q · R Senātus Populusque Rōmānus “The Senate and People of Rome.” Rome stamped these four letters on every sta"
+  "text": "S · P · Q · R Senātus Populusque Rōmānus “The Senate and People of Rome.” Rome stamped these four letters on every stand"
  },
  "glass/modal/word-def": {
   "h": "6d4d043603d278c3",
@@ -1359,13 +1359,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "938acf0f37af1f52",
-  "len": 15594,
-  "els": 341,
-  "buttons": 38,
+  "h": "c259039d1919d911",
+  "len": 13818,
+  "els": 319,
+  "buttons": 32,
   "svgs": 0,
   "imgs": 0,
-  "text": "Profile &amp; Settings ▸ Bible translation KJV free King James Version ✓ NKJV licensed New King James Version · needs li"
+  "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
  },
  "quest/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -1404,22 +1404,22 @@
   "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
  },
  "quest/modal/store": {
-  "h": "458c8b5470da7ae9",
-  "len": 1156,
-  "els": 23,
-  "buttons": 4,
+  "h": "dffcb17f07609c3f",
+  "len": 787,
+  "els": 16,
+  "buttons": 2,
   "svgs": 0,
   "imgs": 0,
   "text": "💰 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "33d71ac4c6dc516a",
-  "len": 16356,
-  "els": 316,
+  "h": "605c5850542712db",
+  "len": 18633,
+  "els": 366,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.9.4 August 24, 2026 Tightening up before launch FIX Access and account handling tightened ahead of "
+  "text": "✕ Version history v1.10.0 August 24, 2026 Your bench, your pace NEW A daily goal can now be as high as 15 , and reviewin"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1431,13 +1431,13 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "quest/modal/spqr": {
-  "h": "b0e58b77025f3beb",
-  "len": 693,
-  "els": 9,
-  "buttons": 2,
+  "h": "a55adb0ea727d140",
+  "len": 582,
+  "els": 6,
+  "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ S · P · Q · R Senātus Populusque Rōmānus “The Senate and People of Rome.” Rome stamped these four letters on every sta"
+  "text": "S · P · Q · R Senātus Populusque Rōmānus “The Senate and People of Rome.” Rome stamped these four letters on every stand"
  },
  "quest/modal/word-def": {
   "h": "6d4d043603d278c3",
@@ -1728,13 +1728,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "4177014239ef615a",
-  "len": 15594,
-  "els": 341,
-  "buttons": 38,
+  "h": "1bdf5f708ae80762",
+  "len": 13818,
+  "els": 319,
+  "buttons": 32,
   "svgs": 0,
   "imgs": 0,
-  "text": "Profile &amp; Settings ▸ Bible translation KJV free King James Version ✓ NKJV licensed New King James Version · needs li"
+  "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
  },
  "buddy/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -1773,22 +1773,22 @@
   "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
  },
  "buddy/modal/store": {
-  "h": "490d44aae104e6f2",
-  "len": 1156,
-  "els": 23,
-  "buttons": 4,
+  "h": "5b8a7d9184e97de2",
+  "len": 787,
+  "els": 16,
+  "buttons": 2,
   "svgs": 0,
   "imgs": 0,
   "text": "💰 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "33d71ac4c6dc516a",
-  "len": 16356,
-  "els": 316,
+  "h": "605c5850542712db",
+  "len": 18633,
+  "els": 366,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.9.4 August 24, 2026 Tightening up before launch FIX Access and account handling tightened ahead of "
+  "text": "✕ Version history v1.10.0 August 24, 2026 Your bench, your pace NEW A daily goal can now be as high as 15 , and reviewin"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
@@ -1800,13 +1800,13 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "buddy/modal/spqr": {
-  "h": "b0e58b77025f3beb",
-  "len": 693,
-  "els": 9,
-  "buttons": 2,
+  "h": "a55adb0ea727d140",
+  "len": 582,
+  "els": 6,
+  "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ S · P · Q · R Senātus Populusque Rōmānus “The Senate and People of Rome.” Rome stamped these four letters on every sta"
+  "text": "S · P · Q · R Senātus Populusque Rōmānus “The Senate and People of Rome.” Rome stamped these four letters on every stand"
  },
  "buddy/modal/word-def": {
   "h": "6d4d043603d278c3",
