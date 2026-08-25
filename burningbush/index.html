@@ -833,6 +833,14 @@
   .mtradio .rdot{flex:0 0 16px;width:16px;height:16px;border-radius:50%;border:2px solid var(--line);box-sizing:border-box}
   .mtradio.sel{color:var(--accent);border-color:var(--accent)}
   .mtradio.sel .rdot{border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--accent)}
+  .stagerow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+  .stagepip{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:10px;border:2px solid var(--line);background:var(--panel2);color:var(--muted);font-size:11px;line-height:1.2;text-align:center}
+  .stagepip b{font-weight:800;font-size:11px}
+  .stagepip.on{border-color:var(--accent);color:var(--accent);background:var(--cell-bg)}
+  .stagesum{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:2px 0 10px}
+  .stagesum div{padding:8px 4px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);text-align:center;line-height:1.25}
+  .stagesum b{display:block;font-size:17px;color:var(--gold-ink)}
+  .stagesum span{font-size:11px;color:var(--muted);font-weight:700}
   .mtradio.chk .rdot{border-radius:5px}
   .mtradiolist.one{grid-template-columns:1fr}
   .mtsquares{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;max-height:172px;overflow-y:auto}
@@ -1586,8 +1594,16 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.12.0";
+const APP_VERSION="1.13.0";
 const CHANGELOG=[
+ {v:"1.13.0", d:"August 25, 2026", t:"The verse ladder", items:[
+   ["new","Every verse now stands somewhere: <b>Locating</b> (learning where it lives), <b>Word for word</b> (the text itself is being tested), or <b>Known by heart</b>. A verse only moves when you say so."],
+   ["new","<b>Known by heart</b> retires a verse from review and <b>frees its place in a palace</b> for another verse \u2014 while it still counts among your memorized verses, and is never asked for a scene or a room again. This is for the verses you knew long before the app."],
+   ["new","<b>\u201cI know this one by heart\u201d</b> sits on a verse's own page, so you can put a verse straight at rest. Every move is reversible \u2014 bring it back and it returns to the exact station it held."],
+   ["new","A real <b>word-for-word test</b>: type the verse with no warm-up and no hints. One wrong word breaks the run. <b>Five clean runs</b> and the app asks whether the verse is ready to rest."],
+   ["new","After ten word-for-word practices you are asked whether to <b>add the verse to testing</b>. Both offers are asked once and remembered \u2014 a nudge, never a nag."],
+   ["new","Once you have a verse in the pool, <b>review asks how you want to be tested</b>: by location, word for word, or both \u2014 and whether to include verses you have set to rest."]
+ ]},
  {v:"1.12.0", d:"August 25, 2026", t:"Straight to the typing", items:[
    ["new","The word-for-word warm-up can now be <b>skipped</b> \u2014 the button sits at the foot of the screen, and takes you straight to typing the verse from memory."],
    ["fix","The warm-up tiles now show <b>just the word</b>. A trailing comma or full stop was quietly narrowing the guess; apostrophes and hyphens inside a word (\u201cGod\u2019s\u201d, \u201cwell-beloved\u201d) are part of it and stay."]
@@ -2322,6 +2338,11 @@ function migrateProg(p){
   if(typeof p.hints!=="number") p.hints=0; // "Peek" tokens spendable in the verse test
   if(typeof p.weekKey!=="string") p.weekKey=""; if(typeof p.weekDays!=="number") p.weekDays=0; if(typeof p.weekGoalHit!=="boolean") p.weekGoalHit=false; // Perfect-Week tracking
   // Caesar's weekly levy + the church it builds
+  if(!p.verseStage||typeof p.verseStage!=="object") p.verseStage={};  // the verse ladder; absent key = "locating"
+  if(!p.w4wSR||typeof p.w4wSR!=="object") p.w4wSR={};                // word-for-word TEST record (streak of clean passes)
+  if(!p.locPast||typeof p.locPast!=="object") p.locPast={};          // the station "known by heart" released, kept so it can be given back
+  if(!p.stageAsk||typeof p.stageAsk!=="object") p.stageAsk={};       // where a promotion was last declined, so it nudges but never nags
+  if(!p.revPrefs||typeof p.revPrefs!=="object") p.revPrefs={};       // how the user wants to be asked in review
   if(!p.ntPrefs||typeof p.ntPrefs!=="object") p.ntPrefs={};   // number-practice set-up: which forms, how many
   p.piecesUsed=arr(p.piecesUsed);                       // church pieces already built, so none repeats early
   if(typeof p.palaceSlots!=="number") p.palaceSlots=0;  // extra palace slots bought with talents
@@ -2384,6 +2405,22 @@ function mergeProg(a,b){
   { const ca=(a.church||{}), cb=(b.church||{});   // never lose a finished church to a sync
     m.church={ built:Math.max(ca.built||0,cb.built||0), total:Math.max(ca.total||0,cb.total||0),
                given:Math.max(ca.given||0,cb.given||0) }; }
+  // THE LADDER ONLY EVER GOES UP on a merge: a promotion earned on the phone is never undone by the laptop.
+  { const sa=a.verseStage||{}, sb=b.verseStage||{}; m.verseStage={};
+    new Set([...Object.keys(sa),...Object.keys(sb)]).forEach(k=>{
+      const x=sa[k]||"loc", y=sb[k]||"loc", win=(stageRank(x)>=stageRank(y))?x:y;
+      if(win!=="loc") m.verseStage[k]=win; }); }
+  { const wa=a.w4wSR||{}, wb=b.w4wSR||{}; m.w4wSR={};   // the record that has seen more tests is the fuller one
+    new Set([...Object.keys(wa),...Object.keys(wb)]).forEach(k=>{
+      const x=wa[k], y=wb[k];
+      m.w4wSR[k] = !y ? x : (!x ? y : (((x.n||0)>=(y.n||0)) ? x : y)); }); }
+  m.locPast=Object.assign({},a.locPast||{},b.locPast||{});
+  m.revPrefs=Object.assign({},a.revPrefs||{},b.revPrefs||{});   // a preference, not progress
+  m.stageAsk=Object.assign({},a.stageAsk||{},b.stageAsk||{});
+  // A verse that came out of the merge at rest must not still be holding a station: one device may
+  // have promoted it while the other still had the location recorded.
+  Object.keys(m.verseStage).forEach(k=>{ if(m.verseStage[k]==="heart" && m.verseLoc && m.verseLoc[k]){
+    m.locPast=m.locPast||{}; m.locPast[k]=m.verseLoc[k]; delete m.verseLoc[k]; } });
   return migrateProg(m);
 }
 function mergeSR(a,b){ a=a||{}; b=b||{}; const out={}; new Set([...Object.keys(a),...Object.keys(b)]).forEach(k=>{
@@ -3505,8 +3542,8 @@ function palaceNextReviewMs(p){ const step=p&&p.step||1; if(step>=SR_TRAIL.lengt
 function palacesDueCount(){ return (Prog.palaces||[]).filter(pl=>pl&&palaceDue(pl)).length; }
 // verse spaced-repetition trail — the SAME relative D0…D30 model as palaces, one per memorized verse.
 function verseSRobj(k){ return (Prog.verseSR||{})[k]; }
-function verseDue(k){ const o=verseSRobj(k); return !!o && srDueIndex(o)>=0; }
-function versesDueCount(){ const sr=Prog.verseSR||{}; return (Prog.memorized||[]).filter(k=>{ const o=sr[k]; return o && srDueIndex(o)>=0; }).length; }
+function verseDue(k){ if(isHeart(k)) return false; const o=verseSRobj(k); return !!o && srDueIndex(o)>=0; }
+function versesDueCount(){ const sr=Prog.verseSR||{}; return (Prog.memorized||[]).filter(k=>{ if(isHeart(k)) return false; const o=sr[k]; return o && srDueIndex(o)>=0; }).length; }
 // numbers that have entered the Leitner review cycle and whose next review has come due
 function numbersDueList(){ const soon=Date.now()+SR_GRACE, eod=endOfToday(), out=[]; knownNumbers().forEach(n=>{ if(n<1||n>176) return; const st=SRS['sk:num:'+n]; if(!st || typeof st.box!=='number') return;
   const gap=INTERVAL[st.box]||0, limit = gap<=1 ? soon : eod;   // 1-day boxes get 1-hour grace; longer boxes batch the whole calendar day
@@ -4100,10 +4137,13 @@ function renderVerse(){
           }).join("");
     } else if(vView==="mem"){ title="★ Memorized verses";
       // anything still missing its scene text, its palace, OR its room shows up here
-      memBare=mem.filter(a=>{ const k=a.join(":"); const loc=(Prog.verseLoc&&Prog.verseLoc[k])||null; const sc=((Prog.customScene&&Prog.customScene[k])||"").trim();
+      memBare=mem.filter(a=>{ const k=a.join(":"); if(isHeart(k)) return false;   // known by heart -> never nagged for a scene or a station
+        const loc=(Prog.verseLoc&&Prog.verseLoc[k])||null; const sc=((Prog.customScene&&Prog.customScene[k])||"").trim();
         return !sc || !loc || loc.p==null || !((loc.room||"").trim()); });
       const nudge = memBare.length ? `<div class="mem-backfill"><div class="mem-backfill-t"><b>🏛️ ${memBare.length} verse${memBare.length>1?"s":""}</b> ${memBare.length>1?"are":"is"} missing a scene, a palace or a room — fill ${memBare.length>1?"them":"it"} in so ${memBare.length>1?"they":"it"} stick${memBare.length>1?"":"s"}.</div><button class="btn sm" id="memBackfill">Finish ${memBare.length>1?"them":"it"} →</button></div>` : "";
-      body=mem.length? nudge+`<p class="hint" style="margin:2px 0 8px">Tap a book, then a verse to rebuild it, add a scene, or practice it word-for-word.</p>`+bookGroupedList(mem,"mem")
+      const _sc=stageCounts();
+      const stageSum=mem.length?`<div class="stagesum">${V_STAGES.map(s=>`<div><b>${_sc[s]}</b><span>${STAGE_INFO[s].i} ${STAGE_INFO[s].n}</span></div>`).join("")}</div>`:"";
+      body=mem.length? stageSum+nudge+`<p class="hint" style="margin:2px 0 8px">Tap a book, then a verse to rebuild it, add a scene, or practice it word-for-word.</p>`+bookGroupedList(mem,"mem")
         :`<p class="hint">Verses you finish building show up here.</p>`;
     } else if(vView==="saved"){ title="🔖 Saved for later";
       body=saved.length?bookGroupedList(saved,"saved"):`<p class="hint">Tap "Save · come back later" on any verse and it lands here.</p>`;
@@ -4135,7 +4175,7 @@ function renderVerse(){
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
   el("vW4W").onclick=()=>{ const a=pickW4WVerse(); if(!a){ toast(mem.length?"All your verses are done for now — great work!":"Memorize a verse first — tap Suggested!"); return; } startWordForWord(a[0],a[1],a[2],()=>{ show("verse"); renderVerse(); }); };
   el("vNumTest").onclick=()=> knownNumbers().size>=2 ? openNumTestSetup() : toast("Learn a few numbers first in the Learn tab!");
-  el("vMemTest").onclick=()=> mem.length ? startMemTest() : toast("Memorize a verse first — tap Suggested!");
+  el("vMemTest").onclick=()=> mem.length ? openReviewSetup() : toast("Memorize a verse first — tap Suggested!");
   if(srFlashPending && el("vMemTest")){ srFlashPending=false; const rb=el("vMemTest"); rb.classList.add("srbtn-flash"); setTimeout(()=>rb.classList.remove("srbtn-flash"),6000); }
   paintTheme();
 }
@@ -4252,6 +4292,55 @@ let MS=null; // {phase:"sr"|"practice", srQueue:[keys]}
 function memArr(){ return Prog.memorized.map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2])); }
 // The daily spaced-repetition loop pools ALL three kinds due today — numbers, verses, palaces —
 // works through them in that order, then flows into free verse practice + streak.
+/* ---- How you want to be asked -------------------------------------------------------------
+   A verse in the word-for-word pool can be reviewed either way: by its address, or by typing it.
+   The chooser only appears once there is something in the pool to choose between - until then a
+   review works exactly as it always has.                                                      */
+function w4wPoolSize(){ return (Prog.memorized||[]).filter(k=>verseStage(k)!=="loc").length; }
+function heartCount(){ return (Prog.memorized||[]).filter(k=>isHeart(k)).length; }
+function revPrefs(){
+  const p=Prog.revPrefs||{};
+  const out={ loc:p.loc!==false, w4w:p.w4w!==false, heart:!!p.heart };
+  if(!out.loc && !out.w4w) out.loc=true;   // never start a session with nothing it can ask
+  return out;
+}
+function openReviewSetup(){
+  if(!w4wPoolSize()){ startMemTest(); return; }
+  const draft=revPrefs(), V=el("verse"); show("verse");
+  const hearts=heartCount();
+  const ROWS=[
+    {k:"loc",   t:"Location",      s:"Where is this verse? Book, chapter and verse."},
+    {k:"w4w",   t:"Word for word", s:"Type it from memory \u2014 no warm-up, no hints. "+w4wPoolSize()+" verse"+(w4wPoolSize()===1?"":"s")+" in the pool."},
+  ];
+  if(hearts) ROWS.push({k:"heart", t:"Include verses known by heart", s:"They are resting, but you can be asked anyway \u2014 both kinds of question. "+hearts+" verse"+(hearts===1?"":"s")+"."});
+  const paint=()=>{
+    el("rvRows").innerHTML=ROWS.map(r=>`<button type="button" class="mtradio chk ${draft[r.k]?"sel":""}" data-rk="${r.k}" style="align-items:flex-start;text-align:left"><span class="rdot" style="margin-top:3px"></span><span><b>${r.t}</b><br><span style="font-weight:600;font-size:12px;color:var(--muted)">${r.s}</span></span></button>`).join("");
+    el("rvRows").querySelectorAll("[data-rk]").forEach(x=>x.onclick=()=>{ draft[x.dataset.rk]=!draft[x.dataset.rk]; paint(); });
+    const none=!draft.loc && !draft.w4w;
+    el("rvGo").disabled=none; el("rvGo").style.opacity=none?".5":"";
+    el("rvWarn").textContent=none?"Choose at least one way to be asked.":"";
+  };
+  V.innerHTML=`<div class="card">
+      <div class="lv-topbar"><button class="lclose" id="rvClose">\u2715</button><div style="flex:1;text-align:center;font-weight:800">Review</div><span style="width:34px"></span></div>
+      <p class="hint" style="margin:6px 0 0">How would you like to be asked?</p>
+      <div class="mtradiolist one" id="rvRows" style="margin-top:10px"></div>
+      <div class="hint" id="rvWarn" style="min-height:18px;margin:6px 0 0"></div>
+      <button class="btn" id="rvGo" style="width:100%;margin-top:8px">Begin review</button>
+    </div>`;
+  el("rvClose").onclick=renderVerse;
+  el("rvGo").onclick=()=>{ if(!draft.loc && !draft.w4w) return;
+    Prog.revPrefs={loc:draft.loc, w4w:draft.w4w, heart:draft.heart}; saveProg(); startMemTest(); };
+  paint();
+}
+// In a session the same verse can be asked two ways. Which one depends on the set-up above and on
+// whether this verse is in the pool at all - a verse still being located is always asked by address.
+function askVerseIn(k){
+  const p=revPrefs();
+  if(p.w4w && verseStage(k)!=="loc" && (!p.loc || Math.random()<0.5)){
+    const [b,c,v]=k.split(":").map(Number); startW4WTest(b,c,v, nextMemVerse); return;
+  }
+  askVerse(k);
+}
 function startMemTest(){
   const mem=memArr();
   memTestRecent=[]; suppressGrowth=false; reviewedThisSession=[];
@@ -4283,7 +4372,7 @@ function askVerse(key){ memTestCur=key.split(":").map(Number); memTestWrong=0; m
 function nextMemVerse(){                       // the "go to next" hook fired after each answered verse
   if(MS && MS.phase==="sr"){
     while(MS.srQueue.length && !verseDue(MS.srQueue[0])) MS.srQueue.shift(); // drop any already cleared
-    if(MS.srQueue.length){ const k=MS.srQueue.shift(); srFlash(()=>askVerse(k)); return; }   // flash count, then ask the next due verse
+    if(MS.srQueue.length){ const k=MS.srQueue.shift(); srFlash(()=>askVerseIn(k)); return; }   // flash count, then ask the next due verse
     srBanner("complete"); return;              // all due verses handled → complete banner → palaces → practice
   }
   practiceNext(false);
@@ -4303,14 +4392,61 @@ function practiceNext(first){
   let pool=deck.filter(k=>!avoid.has(k)); if(!pool.length) pool=deck;
   const cur=pool[Math.floor(Math.random()*pool.length)];
   memTestRecent.push(cur); while(memTestRecent.length>Math.min(deck.length-1,6)) memTestRecent.shift();
-  askVerse(cur);
+  askVerseIn(cur);
 }
 /* ---- Verse practice DECK: a correctly-answered verse drops out of the deck until the whole deck is cleared, then a
    new round begins. State (cr=correct-in-a-row, rd=cleared this round, lc=last-correct, sz=snooze-until) lives on each
    verseSR entry, so it persists across sessions with zero extra storage or per-frame work. ---- */
 const SNOOZE_MS=14*DAY, ESTAB_CR=5;
+/* ---- THE VERSE LADDER ------------------------------------------------------------------
+   One stage per verse, and a verse only moves when the user says so.
+     loc    Locating       learning the address; in the SR rotation, wants a station and a scene
+     w4w    Word for word  the user has said the TEXT is ready to be tested; still in the rotation
+     heart  Known by heart finished: out of both rotations, station released, never asked for a
+                           scene - and STILL counted among the memorized verses, which is the point.
+   Absent means "loc", so nothing is stored for the common case.                            */
+const V_STAGES=["loc","w4w","heart"];
+const STAGE_INFO={
+  loc:  {n:"Locating",      i:"\u{1F9ED}", d:"Learning where it lives"},
+  w4w:  {n:"Word for word", i:"\u{1F5E3}\uFE0F", d:"Ready for the words themselves to be tested"},
+  heart:{n:"Known by heart",i:"\u{1F49B}", d:"Resting \u2014 and still counted"},
+};
+const STAGE_WHAT={
+  loc:  "In your review rotation. Keeps its place in a palace, and is asked for a scene.",
+  w4w:  "In the rotation AND tested on the words themselves. Keeps its place in a palace.",
+  heart:"Rests. Out of both rotations and its place in a palace is freed for another verse. It still counts among your memorized verses, and you can test it whenever you like.",
+};
+function verseStage(k){ const s=(Prog.verseStage||{})[k]; return V_STAGES.includes(s)?s:"loc"; }
+function stageRank(s){ const i=V_STAGES.indexOf(s); return i<0?0:i; }
+function isHeart(k){ return verseStage(k)==="heart"; }
+// Moving up to "known by heart" RELEASES the palace station so the space can be used again. The old
+// station is kept in locPast, so moving back down puts the verse exactly where it was - the whole
+// thing is reversible. Scene text is never touched at any stage; it is the user's writing.
+function setVerseStage(k,s){
+  if(!V_STAGES.includes(s)) return null;
+  const was=verseStage(k); if(was===s) return null;
+  Prog.verseStage=Prog.verseStage||{};
+  if(s==="loc") delete Prog.verseStage[k]; else Prog.verseStage[k]=s;
+  let freed=null;
+  if(s==="heart"){
+    const loc=(Prog.verseLoc||{})[k];
+    if(loc){ Prog.locPast=Prog.locPast||{}; Prog.locPast[k]=loc; delete Prog.verseLoc[k]; freed=loc; }
+  } else {
+    const past=(Prog.locPast||{})[k];
+    if(past){ if(!((Prog.verseLoc||{})[k])){ Prog.verseLoc=Prog.verseLoc||{}; Prog.verseLoc[k]=past; } delete Prog.locPast[k]; }
+  }
+  saveProg();
+  return {was, now:s, freed};
+}
+function stageCounts(){ const c={loc:0,w4w:0,heart:0}; (Prog.memorized||[]).forEach(k=>{ c[verseStage(k)]++; }); return c; }
+function stationName(loc){
+  if(!loc||loc.p==null) return "";
+  const p=(Prog.palaces||[])[loc.p]; const room=(loc.room||"").trim();
+  return [p&&p.place, room].filter(Boolean).join(" \u00b7 ");
+}
 function vsr(k){ return (Prog.verseSR||{})[k]||null; }
-function deckKeys(){ const now=Date.now(); return memArr().map(a=>a.join(":")).filter(k=>{ const o=vsr(k); return !o || ((!(o.sz>now)) && !o.rd); }); } // askable = not snoozed & not already correct this round
+function deckKeys(){ const now=Date.now(); const keepHeart=revPrefs().heart;
+  return memArr().map(a=>a.join(":")).filter(k=>{ if(isHeart(k) && !keepHeart) return false; const o=vsr(k); return !o || ((!(o.sz>now)) && !o.rd); }); } // askable = not snoozed & not already correct this round
 function deckRoundReset(){ const now=Date.now(); (Prog.memorized||[]).forEach(k=>{ const o=vsr(k); if(o && !(o.sz>now)) o.rd=false; }); saveProg(); }
 function markAnswer(k, correct, firstTry){ Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k]||(Prog.verseSR[k]=newSR());
   if(correct){ o.rd=true; o.lc=Date.now(); o.cr=firstTry?(o.cr||0)+1:0; } else { o.cr=0; } return o.cr||0; }   // any miss breaks the streak
@@ -4499,11 +4635,64 @@ function goalBarHTML(){ const c=goalCount(), t=goalToday(), met=c>=t;
   return `<span class="gb-ic">${met?"🙏":"🎯"}</span><div class="gb-mid"><div class="gb-title">${met?"Faithful today":"Today's goal"}</div><div class="gb-dots">${dots}</div></div><div class="gb-count">${c}/${t}</div>`;
 }
 // the memorized verse with the FEWEST words that isn't mastered (10×) and hasn't been practiced yet today
+/* ---- The word-for-word TEST ---------------------------------------------------------------
+   PRACTICE is the flow from the hub: a peek at the text, the word-pick warm-up, a reveal-a-letter
+   hint, three a day. It counts attempts (Prog.w4w) and asks nothing of you.
+   A TEST is the typing screen ALONE - no preview, no warm-up, no hint - and a single wrong word
+   breaks it. Five clean passes in a row is what earns "known by heart", which is why the bar has
+   to be higher than practice: it retires a verse from review and gives its palace station back. */
+const W4W_TEST_CR=5, W4W_PRACTICE_FOR_POOL=10;
+function w4wsr(k){ return (Prog.w4wSR||{})[k]||null; }
+function w4wTestStreak(k){ const r=w4wsr(k); return (r&&r.cr)||0; }
+function w4wTestRecord(k, clean){
+  Prog.w4wSR=Prog.w4wSR||{};
+  const r=Prog.w4wSR[k]||(Prog.w4wSR[k]={cr:0,n:0,ok:0,at:0});
+  r.n=(r.n||0)+1; r.at=Date.now();
+  if(clean){ r.ok=(r.ok||0)+1; r.cr=(r.cr||0)+1; } else { r.cr=0; }
+  saveProg(); return r;
+}
+function startW4WTest(b,c,v,ret){ startTypeTest(b,c,v,ret,true); }
+
+/* Promotions are OFFERED, never taken. Declining is remembered, so nothing asks twice - the
+   control on the verse's own page is always there for anyone who changes their mind. */
+function stageAskAt(k,to){ const a=(Prog.stageAsk||{})[k]||{}; return a[to]||0; }
+function noteStageAsk(k,to,at){ Prog.stageAsk=Prog.stageAsk||{}; Prog.stageAsk[k]=Prog.stageAsk[k]||{}; Prog.stageAsk[k][to]=at||1; saveProg(); }
+// ten practices is exactly where a verse leaves the practice pool, so this is the natural moment to ask
+function shouldOfferW4W(k){ return verseStage(k)==="loc" && w4wCount(k)>=W4W_PRACTICE_FOR_POOL && !stageAskAt(k,"w4w"); }
+function shouldOfferHeart(k){ if(verseStage(k)!=="w4w") return false;
+  const cr=w4wTestStreak(k); return cr>=W4W_TEST_CR && cr>=stageAskAt(k,"heart")+W4W_TEST_CR; }
+function openStagePromote(b,c,v,k,to,after){
+  const m=el("promoteModal")||(()=>{ const d=document.createElement("div"); d.id="promoteModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const ref=`${bookName(b)} ${c}:${v}`, here=stationName((Prog.verseLoc||{})[k]);
+  const body = to==="w4w" ? {
+      icon:"\u{1F5E3}\uFE0F", ttl:"Ten times through",
+      lead:`You have recited <b class="gold">${ref}</b> word for word ten times.`,
+      note:"Add it to word-for-word testing? You will be asked to type it from memory with no warm-up and no hints \u2014 and it stays in your usual review as well.",
+      yes:"Yes \u2014 test me on the words", no:"Not yet" }
+    : {
+      icon:"\u{1F49B}", ttl:"Five in a row, word for word",
+      lead:`<b class="gold">${ref}</b> has come back to you clean five times running.`,
+      note:`Move it to Known by Heart? It leaves your review rotation${here?`, and its place at <b class="gold">${here}</b> is freed for another verse`:""}. It still counts among your memorized verses, and you can test it whenever you like.`,
+      yes:"Move it to Known by Heart", no:"Keep reviewing it" };
+  m.innerHTML=`<div class="modal-card center">
+      <div style="font-size:34px">${body.icon}</div>
+      <div style="font-size:20px;font-weight:800;margin-top:6px">${body.ttl}</div>
+      <p class="lead" style="margin:8px 0 0">${body.lead}</p>
+      <p class="hint" style="margin:10px 0 0">${body.note}</p>
+      <button class="btn" id="prYes" style="width:100%;margin-top:14px">${body.yes}</button>
+      <button class="btn ghost" id="prNo" style="width:100%;margin-top:8px">${body.no}</button></div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; };
+  el("prYes").onclick=()=>{ close(); const r=setVerseStage(k,to);
+    toast(to==="heart" ? (r&&r.freed?`\u{1F49B} At rest \u00b7 ${stationName(r.freed)} is free again`:"\u{1F49B} Known by heart") : "\u{1F5E3}\uFE0F In word-for-word testing");
+    updateMetrics&&updateMetrics(); if(after) after(); };
+  el("prNo").onclick=()=>{ close(); noteStageAsk(k,to, to==="w4w"?w4wCount(k):w4wTestStreak(k)); if(after) after(); };
+}
 function pickW4WVerse(){
   const today=dayKey(new Date());
   const doneToday=(Prog.w4wToday&&Prog.w4wToday.date===today)?Prog.w4wToday.set:{};
   const pool=(Prog.memorized||[]).map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2]))
-    .filter(a=>{ const k=a.join(":"); return w4wCount(k)<10 && !doneToday[k]; });
+    .filter(a=>{ const k=a.join(":"); return !isHeart(k) && w4wCount(k)<10 && !doneToday[k]; });
   if(!pool.length) return null;
   pool.sort((A,B)=>((kjvText(A[0],A[1],A[2])||"").split(/\s+/).length)-((kjvText(B[0],B[1],B[2])||"").split(/\s+/).length));
   return pool[0];
@@ -6047,32 +6236,72 @@ function wireVerseNav(scopeEl, nav, ret){   // buttons route through openVerseWi
 function renderLearnedVerse(b,c,v,ret){
   const V=el("verse"); show("verse");
   const vkey=refKey(b,c,v), cnt=w4wCount(vkey), mastered=cnt>=10, o=verseSRobj(vkey);
+  const inPool=verseStage(vkey)!=="loc";   // in the pool -> the button TESTS instead of teaching
   const text=kjvText(b,c,v)||"";
   const nav=verseNavBar(b,c,v,"lvClose");
   const cell=(kindLbl,n)=>`<div class="lv-cell"><div class="lv-cell-k">${kindLbl}</div>${pegImg("num",n,pegFor(n).word)}<div class="lv-cell-w">${pegFor(n).word}</div></div>`;
   V.innerHTML=`<div class="card">
       ${nav.html}
-      ${mastered?`<div class="mastered-ribbon">★ Mastered — recited word-for-word ${cnt}×</div>`:""}
+      ${verseStage(vkey)==="heart"?`<div class="mastered-ribbon">💛 Known by heart — resting, and still counted</div>`
+        :(mastered?`<div class="mastered-ribbon">★ Mastered — recited word-for-word ${cnt}×</div>`:"")}
       <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
       <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
       <div class="lv-versetext">${verseWordsHTML(b,c,v,text)}</div>
       <button class="w4w-rect ${mastered?"done":""}" id="lvWord">
-        <span class="w4w-rect-lbl">📖 Learn Word for Word</span>
-        <span class="w4w-rect-count">${cnt}/10${mastered?" ✓":""}</span>
+        <span class="w4w-rect-lbl">${inPool?"🗣️ Test Word for Word":"📖 Learn Word for Word"}</span>
+        <span class="w4w-rect-count">${inPool?`${w4wTestStreak(vkey)}/${W4W_TEST_CR} clean`:`${cnt}/10${mastered?" ✓":""}`}</span>
       </button>
       ${mastered?"":`<p class="hint" style="text-align:center;margin:8px 0 0">Recite it word-for-word 10× to <b class="gold">master</b> this verse.</p>`}
       <div class="lv-sr">
         <div class="lv-sr-lbl">Spaced repetition</div>
         ${o?srTrailHTML(o):`<p class="hint" style="text-align:center;margin:0">This verse joins your review trail as you practice it.</p>`}
       </div>
+      ${lvStageBlock(vkey)}
       ${lvSceneBlock(vkey)}
       <button class="btn ghost" id="lvForgot" style="width:100%;margin-top:14px;font-size:13px;color:var(--muted)">🤔 I forgot this — re-encode later</button>
     </div>`;
   el("lvClose").onclick=()=>ret?ret():renderVerse();
   wireVerseNav(V, nav, ret);
-  el("lvWord").onclick=()=>startWordForWord(b,c,v,()=>renderLearnedVerse(b,c,v,ret));
+  el("lvWord").onclick=()=>{ const back=()=>renderLearnedVerse(b,c,v,ret);
+    inPool ? startW4WTest(b,c,v,back) : startWordForWord(b,c,v,back); };
+  el("lvStage").onclick=()=>openStagePicker(b,c,v,vkey, ()=>renderLearnedVerse(b,c,v,ret));
   el("lvForgot").onclick=()=>confirmForgetVerse(b,c,v, ()=>renderLearnedVerse(b,c,v,ret), ret);
   if(el("lvScene")) el("lvScene").onclick=()=>editVerseScene(b,c,v, ()=>renderLearnedVerse(b,c,v,ret), ()=>renderLearnedVerse(b,c,v,ret));
+}
+// Where this verse stands, on its own page. Deliberately NOT in the build wizard: there it would sit
+// in the path of every new verse and become a shortcut past learning. Here it is an act on a verse
+// the user went looking for.
+function lvStageBlock(vkey){
+  const s=verseStage(vkey);
+  return `<div class="lv-sr" style="margin-top:12px">
+      <div class="lv-sr-lbl">Where this verse stands</div>
+      <div class="stagerow">${V_STAGES.map(x=>`<span class="stagepip ${x===s?"on":""}">${STAGE_INFO[x].i}<b>${STAGE_INFO[x].n}</b></span>`).join("")}</div>
+      <p class="hint" style="text-align:center;margin:8px 0 0">${STAGE_WHAT[s]}</p>
+      <button class="btn ghost sm" id="lvStage" style="width:100%;margin-top:8px">${s==="heart"?"Bring this verse back":"I know this one by heart \u2192"}</button>
+    </div>`;
+}
+function openStagePicker(b,c,v,vkey,after){
+  const m=el("stageModal")||(()=>{ const d=document.createElement("div"); d.id="stageModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const cur=verseStage(vkey), here=stationName((Prog.verseLoc||{})[vkey]);
+  const row=x=>`<button type="button" class="mtradio ${x===cur?"sel":""}" data-stage="${x}" style="align-items:flex-start;text-align:left"><span class="rdot" style="margin-top:3px"></span><span><b>${STAGE_INFO[x].i} ${STAGE_INFO[x].n}</b><br><span style="font-weight:600;font-size:12px;color:var(--muted)">${STAGE_WHAT[x]}</span></span></button>`;
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar"><button class="lclose" id="stClose">\u2715</button><div style="flex:1;text-align:center;font-weight:800">${bookName(b)} ${c}:${v}</div><span style="width:34px"></span></div>
+      <p class="hint" style="margin:6px 0 0">Every verse counts as memorized at any of these. What changes is how much work it asks of you.</p>
+      <div class="mtradiolist one" style="margin-top:12px">${V_STAGES.map(row).join("")}</div>
+      ${here?`<p class="hint" style="margin:10px 0 0">Right now it sits at <b class="gold">${here}</b>. Moving it to Known by Heart frees that place \u2014 bringing it back later puts it there again.</p>`:""}
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; };
+  el("stClose").onclick=close;
+  m.onclick=ev=>{ if(ev.target===m) close(); };
+  m.querySelectorAll("[data-stage]").forEach(btn=>btn.onclick=()=>{
+    const r=setVerseStage(vkey, btn.dataset.stage);
+    close();
+    if(r){ toast(r.now==="heart" ? (r.freed?`\u{1F49B} At rest \u00b7 ${stationName(r.freed)} is free again`:"\u{1F49B} Known by heart")
+                                 : `${STAGE_INFO[r.now].i} Moved to ${STAGE_INFO[r.now].n}`);
+      updateMetrics&&updateMetrics(); }
+    if(after) after();
+  });
 }
 // The verse's memory scene, shown on its detail page: a read-out with an Edit button if it has one,
 // or an invitation to add one (the backfill path for verses learned before palaces/scenes existed).
@@ -7174,8 +7403,8 @@ function w4wLockScreen(b,c,v,ret){
 }
 
 let TT=null;
-function startTypeTest(b,c,v,ret){ const words=(kjvText(b,c,v)||"").split(/\s+/).filter(Boolean);
-  TT={b,c,v,ret,words,idx:0,wrong:false,wrongWord:null,hintUsed:false}; renderTypeTest(); }
+function startTypeTest(b,c,v,ret,isTest){ const words=(kjvText(b,c,v)||"").split(/\s+/).filter(Boolean);
+  TT={b,c,v,ret,words,idx:0,wrong:false,wrongWord:null,hintUsed:false,test:!!isTest,misses:0}; renderTypeTest(); }
 function renderTypeTest(){
   const V=el("verse"), total=TT.words.length;
   // Build the shell ONCE. From here on we mutate only the top display + counter in place — the input element
@@ -7183,7 +7412,7 @@ function renderTypeTest(){
   V.innerHTML=`<div class="card">
       <div class="lv-topbar"><button class="lclose" id="ttClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(TT.b)} ${TT.c}:${TT.v}</div><div class="ttcount" id="ttCount">0/${total}</div></div>
       <div class="ttdisplay" id="ttDisplay"></div>
-      <button class="btn ghost sm" id="ttHint" style="width:100%;margin:0 0 8px">🔎 Reveal a letter</button>
+      <button class="btn ghost sm" id="ttHint" style="width:100%;margin:0 0 8px${TT.test?";display:none":""}">🔎 Reveal a letter</button>
       <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type word 1…">
       <p class="hint" style="text-align:center;margin-top:8px">Each word jumps to the top the moment you finish it — <b>green</b> if right, <b>red</b> if wrong (then it clears to retry).</p>
     </div>`;
@@ -7209,7 +7438,7 @@ function renderTypeTest(){
       if(TT.idx>=total){ typeTestComplete(); return; }
       paintTop();
     } else {                                            // wrong → show it red at top, clear the box to retry
-      TT.wrong=true; TT.wrongWord=typed; inp.value=""; inp.classList.remove("good","wrong"); paintTop();
+      TT.wrong=true; TT.wrongWord=typed; TT.misses=(TT.misses||0)+1; inp.value=""; inp.classList.remove("good","wrong"); paintTop();
     }
   };
   // no space/enter needed: the moment the typed word is as long as the target, it jumps to the top
@@ -7248,6 +7477,7 @@ function typeTestComplete(){
     el("ttGiveUp").onclick=()=>{ ret?ret():renderVerse(); };
     return;
   }
+  if(TT.test){ w4wTestResult(b,c,v,vkey,ret); return; }
   const r=w4wRecord(vkey); reviewVerseSR(vkey);
   const justMastered=r.count===10, mastered=r.count>=10;
   const w4wReward = 10 + (justMastered?40:0);   // +10 per recitation, +40 bonus the run they master it
@@ -7264,9 +7494,35 @@ function typeTestComplete(){
       <div style="font-weight:800;color:var(--gold-ink);margin:2px 0 2px">+${w4wReward} 🪙${justMastered?" · mastery gift":""}</div>
       <div class="ttlock">🔒 Next practice locked until <b>${fmtWhen(w4wNextAllowed(vkey))}</b></div>
       <button class="btn" id="ttDone" style="margin-top:16px">Amen — done</button></div>`;
-  el("ttDone").onclick=()=>{ ret?ret():renderVerse(); showGoal(); creditToday(); };
+  el("ttDone").onclick=()=>{
+    const go=()=>{ ret?ret():renderVerse(); showGoal(); creditToday(); };
+    if(shouldOfferW4W(vkey)) openStagePromote(b,c,v,vkey,"w4w",go); else go();
+  };
 }
 
+// The result of a TEST. A pass means every word right, first time, unaided - anything less breaks
+// the streak, because five of these is what retires a verse from review.
+function w4wTestResult(b,c,v,vkey,ret){
+  const clean=!TT.misses && !TT.hintUsed, slips=TT.misses||0;
+  const r=w4wTestRecord(vkey, clean);
+  const V=el("verse");
+  if(clean){ reviewVerseSR(vkey); creditToday(); earnTalents(15); refreshHUD&&refreshHUD(); }
+  const showGoal = clean ? bumpGoal(true) : (()=>{});
+  const left=Math.max(0, W4W_TEST_CR-(r.cr||0));
+  V.innerHTML=`<div class="card center">
+      <div style="font-size:44px">${clean?"\u{1F54A}\uFE0F":"\u{1F331}"}</div>
+      <h2 style="font-size:21px;margin:8px 0 2px">${clean?"Word for word":"Not quite \u2014 but you finished"}</h2>
+      <div style="font-weight:800;color:var(--gold-ink);margin:2px 0">${bookName(b)} ${c}:${v}</div>
+      <p class="lead" style="margin:8px 0 0">${clean
+        ? `Every word, unaided.${left?` <b class="gold">${left} more</b> like that and this verse can rest.`:" That is five in a row."}`
+        : `${slips} word${slips===1?"":"s"} came back slowly, so the run starts again. You still got to the end of it \u2014 that is the part that counts.`}</p>
+      <div style="font-weight:800;color:var(--gold-ink);margin:10px 0 0">Clean runs in a row: ${r.cr||0} of ${W4W_TEST_CR}${clean?" \u00b7 +15 \u{1FA99}":""}</div>
+      <button class="btn" id="wtDone" style="margin-top:16px">Amen \u2014 done</button></div>`;
+  el("wtDone").onclick=()=>{
+    const go=()=>{ ret?ret():renderVerse(); showGoal(); };
+    if(shouldOfferHeart(vkey)) openStagePromote(b,c,v,vkey,"heart",go); else go();
+  };
+}
 /* =================== MEMORY PALACE (Method of Loci) =================== */
 // Pre-built palaces for SEQUENCES the Major System handles poorly (ordered lists).
 // Ready-made palaces: each is ONE familiar room walked in order, its standard items pre-loaded with a useful Bible list.

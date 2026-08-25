@@ -17,7 +17,7 @@ module.exports = [
   { name: 'verse/hub', sel: '#verse', go: () => { show('verse'); vView = 'hub'; renderVerse(); } },
   { name: 'verse/suggested', sel: '#verse', go: () => { show('verse'); vView = 'sugg'; vBook.sugg = new Set([19]); renderVerse(); } },
   { name: 'verse/topics', sel: '#verse', go: () => { show('verse'); vView = 'topics'; vTopic.clear(); vTopic.add(0); renderVerse(); } },
-  { name: 'verse/memorized', sel: '#verse', go: () => { show('verse'); vView = 'mem'; vBook.mem = new Set([19]); renderVerse(); } },
+  { name: 'verse/memorized', sel: '#verse', go: () => { Prog.verseStage = {}; show('verse'); vView = 'mem'; vBook.mem = new Set([19]); renderVerse(); } },
   { name: 'verse/saved', sel: '#verse', go: () => { Prog.saved = ['40:6:33']; show('verse'); vView = 'saved'; renderVerse(); } },
 
   // ---- the verse wizard ----
@@ -64,6 +64,16 @@ module.exports = [
   { name: 'modal/store', sel: '#storeModal', go: () => { openStore(); } },
   { name: 'modal/whats-new', sel: '#whatsNewModal', go: () => { openWhatsNew(true); } },
   { name: 'modal/church', sel: '#churchModal', go: () => { Prog.church = { given: 1400, built: 3, total: 8900 }; openChurch(); } },
+  // ---- the verse ladder (v1.13) ----
+  { name: 'modal/stage', sel: '#stageModal', go: () => { openStagePicker(19, 23, 1, '19:23:1', () => { }); } },
+  { name: 'modal/promote-pool', sel: '#promoteModal', go: () => { openStagePromote(43, 3, 16, '43:3:16', 'w4w', () => { }); } },
+  { name: 'modal/promote-heart', sel: '#promoteModal', go: () => { openStagePromote(19, 23, 1, '19:23:1', 'heart', () => { }); } },
+  // openReviewSetup only draws a chooser when something is in the pool, so the stage is set for the
+  // render and put straight back — the screen is already in the DOM by then.
+  { name: 'practice/review-setup', sel: '#verse', go: () => {
+      Prog.verseStage = { '43:3:16': 'w4w' }; Prog.revPrefs = {}; saveProg();
+      openReviewSetup();
+      Prog.verseStage = {}; saveProg(); } },
   { name: 'modal/snooze', sel: '#snoozeModal', go: () => { openSnoozeAsk(43, 3, 16, '43:3:16', () => { }); } },
   { name: 'modal/spqr', sel: '#spqrModal', go: () => { openSpqrNote(); } },
   { name: 'modal/word-def', sel: '#wordDefModal', go: () => { openWordDef(19, 23, 1, 1, 'LORD'); } },

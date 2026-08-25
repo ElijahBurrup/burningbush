@@ -45,13 +45,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "classic/verse/memorized": {
-  "h": "29ea62e71529deef",
-  "len": 1172,
-  "els": 27,
+  "h": "0789288f1763b61d",
+  "len": 1341,
+  "els": 37,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ★ Memorized verses 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so they stick. Finish th"
+  "text": "← Verses ★ Memorized verses 3 🧭 Locating 0 🗣️ Word for word 0 💛 Known by heart 🏛️ 2 verses are missing a scene, a pa"
  },
  "classic/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -81,10 +81,10 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "classic/wizard/learned": {
-  "h": "c76196bcab5ddbcf",
-  "len": 2917,
-  "els": 56,
-  "buttons": 8,
+  "h": "99eaa35e6bcfa031",
+  "len": 3458,
+  "els": 67,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
@@ -261,7 +261,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "d542537d4b3efd40",
+  "h": "bf9ea65c5e048f46",
   "len": 13818,
   "els": 319,
   "buttons": 32,
@@ -315,13 +315,13 @@
   "text": "💰 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "4f7e1985598f67bc",
-  "len": 20792,
-  "els": 405,
+  "h": "e254e1f5b58cf21b",
+  "len": 22564,
+  "els": 438,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.12.0 August 25, 2026 Straight to the typing NEW The word-for-word warm-up can now be skipped — the "
+  "text": "✕ Version history v1.13.0 August 25, 2026 The verse ladder NEW Every verse now stands somewhere: Locating (learning wher"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -331,6 +331,42 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "classic/modal/stage": {
+  "h": "e5865eea850e3261",
+  "len": 1745,
+  "els": 27,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
+ },
+ "classic/modal/promote-pool": {
+  "h": "f1c2c75dcb04b63d",
+  "len": 649,
+  "els": 8,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word-for-word testing? You will be a"
+ },
+ "classic/modal/promote-heart": {
+  "h": "d3d5c66fb1828d8f",
+  "len": 753,
+  "els": 9,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "💛 Five in a row, word for word Psalms 23:1 has come back to you clean five times running. Move it to Known by Heart? It"
+ },
+ "classic/practice/review-setup": {
+  "h": "6238bca1be3468d5",
+  "len": 1154,
+  "els": 21,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Review How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for word Type it fr"
  },
  "classic/modal/snooze": {
   "h": "cd48df7b00427f31",
@@ -432,13 +468,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "illumined/verse/memorized": {
-  "h": "29ea62e71529deef",
-  "len": 1172,
-  "els": 27,
+  "h": "0789288f1763b61d",
+  "len": 1341,
+  "els": 37,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ★ Memorized verses 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so they stick. Finish th"
+  "text": "← Verses ★ Memorized verses 3 🧭 Locating 0 🗣️ Word for word 0 💛 Known by heart 🏛️ 2 verses are missing a scene, a pa"
  },
  "illumined/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -468,10 +504,10 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "illumined/wizard/learned": {
-  "h": "c76196bcab5ddbcf",
-  "len": 2917,
-  "els": 56,
-  "buttons": 8,
+  "h": "99eaa35e6bcfa031",
+  "len": 3458,
+  "els": 67,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
@@ -648,7 +684,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "254b48aa10339c31",
+  "h": "49a405365d44012e",
   "len": 13818,
   "els": 319,
   "buttons": 32,
@@ -702,13 +738,13 @@
   "text": "💰 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "4f7e1985598f67bc",
-  "len": 20792,
-  "els": 405,
+  "h": "e254e1f5b58cf21b",
+  "len": 22564,
+  "els": 438,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.12.0 August 25, 2026 Straight to the typing NEW The word-for-word warm-up can now be skipped — the "
+  "text": "✕ Version history v1.13.0 August 25, 2026 The verse ladder NEW Every verse now stands somewhere: Locating (learning wher"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -718,6 +754,42 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "illumined/modal/stage": {
+  "h": "e5865eea850e3261",
+  "len": 1745,
+  "els": 27,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
+ },
+ "illumined/modal/promote-pool": {
+  "h": "f1c2c75dcb04b63d",
+  "len": 649,
+  "els": 8,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word-for-word testing? You will be a"
+ },
+ "illumined/modal/promote-heart": {
+  "h": "d3d5c66fb1828d8f",
+  "len": 753,
+  "els": 9,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "💛 Five in a row, word for word Psalms 23:1 has come back to you clean five times running. Move it to Known by Heart? It"
+ },
+ "illumined/practice/review-setup": {
+  "h": "6238bca1be3468d5",
+  "len": 1154,
+  "els": 21,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Review How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for word Type it fr"
  },
  "illumined/modal/snooze": {
   "h": "cd48df7b00427f31",
@@ -819,13 +891,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "glass/verse/memorized": {
-  "h": "29ea62e71529deef",
-  "len": 1172,
-  "els": 27,
+  "h": "0789288f1763b61d",
+  "len": 1341,
+  "els": 37,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ★ Memorized verses 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so they stick. Finish th"
+  "text": "← Verses ★ Memorized verses 3 🧭 Locating 0 🗣️ Word for word 0 💛 Known by heart 🏛️ 2 verses are missing a scene, a pa"
  },
  "glass/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -855,10 +927,10 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "glass/wizard/learned": {
-  "h": "c76196bcab5ddbcf",
-  "len": 2917,
-  "els": 56,
-  "buttons": 8,
+  "h": "99eaa35e6bcfa031",
+  "len": 3458,
+  "els": 67,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
@@ -1035,7 +1107,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "0c0f429339be83c2",
+  "h": "1ec7cb5fc47cd30e",
   "len": 13818,
   "els": 319,
   "buttons": 32,
@@ -1089,13 +1161,13 @@
   "text": "💰 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "4f7e1985598f67bc",
-  "len": 20792,
-  "els": 405,
+  "h": "e254e1f5b58cf21b",
+  "len": 22564,
+  "els": 438,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.12.0 August 25, 2026 Straight to the typing NEW The word-for-word warm-up can now be skipped — the "
+  "text": "✕ Version history v1.13.0 August 25, 2026 The verse ladder NEW Every verse now stands somewhere: Locating (learning wher"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1105,6 +1177,42 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "glass/modal/stage": {
+  "h": "e5865eea850e3261",
+  "len": 1745,
+  "els": 27,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
+ },
+ "glass/modal/promote-pool": {
+  "h": "f1c2c75dcb04b63d",
+  "len": 649,
+  "els": 8,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word-for-word testing? You will be a"
+ },
+ "glass/modal/promote-heart": {
+  "h": "d3d5c66fb1828d8f",
+  "len": 753,
+  "els": 9,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "💛 Five in a row, word for word Psalms 23:1 has come back to you clean five times running. Move it to Known by Heart? It"
+ },
+ "glass/practice/review-setup": {
+  "h": "6238bca1be3468d5",
+  "len": 1154,
+  "els": 21,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Review How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for word Type it fr"
  },
  "glass/modal/snooze": {
   "h": "cd48df7b00427f31",
@@ -1206,13 +1314,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "quest/verse/memorized": {
-  "h": "29ea62e71529deef",
-  "len": 1172,
-  "els": 27,
+  "h": "0789288f1763b61d",
+  "len": 1341,
+  "els": 37,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ★ Memorized verses 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so they stick. Finish th"
+  "text": "← Verses ★ Memorized verses 3 🧭 Locating 0 🗣️ Word for word 0 💛 Known by heart 🏛️ 2 verses are missing a scene, a pa"
  },
  "quest/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -1242,10 +1350,10 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "quest/wizard/learned": {
-  "h": "c76196bcab5ddbcf",
-  "len": 2917,
-  "els": 56,
-  "buttons": 8,
+  "h": "99eaa35e6bcfa031",
+  "len": 3458,
+  "els": 67,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
@@ -1422,7 +1530,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "40bd75c7a9ec0f07",
+  "h": "3ec801a010aa3c2e",
   "len": 13818,
   "els": 319,
   "buttons": 32,
@@ -1476,13 +1584,13 @@
   "text": "💰 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "4f7e1985598f67bc",
-  "len": 20792,
-  "els": 405,
+  "h": "e254e1f5b58cf21b",
+  "len": 22564,
+  "els": 438,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.12.0 August 25, 2026 Straight to the typing NEW The word-for-word warm-up can now be skipped — the "
+  "text": "✕ Version history v1.13.0 August 25, 2026 The verse ladder NEW Every verse now stands somewhere: Locating (learning wher"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1492,6 +1600,42 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "quest/modal/stage": {
+  "h": "e5865eea850e3261",
+  "len": 1745,
+  "els": 27,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
+ },
+ "quest/modal/promote-pool": {
+  "h": "f1c2c75dcb04b63d",
+  "len": 649,
+  "els": 8,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word-for-word testing? You will be a"
+ },
+ "quest/modal/promote-heart": {
+  "h": "d3d5c66fb1828d8f",
+  "len": 753,
+  "els": 9,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "💛 Five in a row, word for word Psalms 23:1 has come back to you clean five times running. Move it to Known by Heart? It"
+ },
+ "quest/practice/review-setup": {
+  "h": "6238bca1be3468d5",
+  "len": 1154,
+  "els": 21,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Review How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for word Type it fr"
  },
  "quest/modal/snooze": {
   "h": "cd48df7b00427f31",
@@ -1593,13 +1737,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "buddy/verse/memorized": {
-  "h": "29ea62e71529deef",
-  "len": 1172,
-  "els": 27,
+  "h": "0789288f1763b61d",
+  "len": 1341,
+  "els": 37,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ★ Memorized verses 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so they stick. Finish th"
+  "text": "← Verses ★ Memorized verses 3 🧭 Locating 0 🗣️ Word for word 0 💛 Known by heart 🏛️ 2 verses are missing a scene, a pa"
  },
  "buddy/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -1629,10 +1773,10 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "buddy/wizard/learned": {
-  "h": "c76196bcab5ddbcf",
-  "len": 2917,
-  "els": 56,
-  "buttons": 8,
+  "h": "99eaa35e6bcfa031",
+  "len": 3458,
+  "els": 67,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
@@ -1809,7 +1953,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "b4b22e5db85121ed",
+  "h": "d81169fc78eed8eb",
   "len": 13818,
   "els": 319,
   "buttons": 32,
@@ -1863,13 +2007,13 @@
   "text": "💰 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "4f7e1985598f67bc",
-  "len": 20792,
-  "els": 405,
+  "h": "e254e1f5b58cf21b",
+  "len": 22564,
+  "els": 438,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.12.0 August 25, 2026 Straight to the typing NEW The word-for-word warm-up can now be skipped — the "
+  "text": "✕ Version history v1.13.0 August 25, 2026 The verse ladder NEW Every verse now stands somewhere: Locating (learning wher"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
@@ -1879,6 +2023,42 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "buddy/modal/stage": {
+  "h": "e5865eea850e3261",
+  "len": 1745,
+  "els": 27,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
+ },
+ "buddy/modal/promote-pool": {
+  "h": "f1c2c75dcb04b63d",
+  "len": 649,
+  "els": 8,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word-for-word testing? You will be a"
+ },
+ "buddy/modal/promote-heart": {
+  "h": "d3d5c66fb1828d8f",
+  "len": 753,
+  "els": 9,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "💛 Five in a row, word for word Psalms 23:1 has come back to you clean five times running. Move it to Known by Heart? It"
+ },
+ "buddy/practice/review-setup": {
+  "h": "6238bca1be3468d5",
+  "len": 1154,
+  "els": 21,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Review How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for word Type it fr"
  },
  "buddy/modal/snooze": {
   "h": "cd48df7b00427f31",

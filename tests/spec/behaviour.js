@@ -691,6 +691,241 @@ const DAY = 86400000;
   ok(wpSkip.wpEnded, '...ending the warm-up');
   is(wpSkip.sameVerse, '43:3:16', '...on the same verse');
 
+  // ================= THE VERSE LADDER (v1.13) =================
+  // These rewrite Prog freely, so the seeded account is snapshotted and put back at the end.
+  const ladderSnap = await $(() => JSON.stringify(Prog));
+
+  describe('ladder: stages', () => { });
+  const st = await $(() => {
+    const k = '43:3:16';
+    if (!Prog.memorized.includes(k)) Prog.memorized.push(k);
+    Prog.verseStage = {}; Prog.locPast = {};
+    Prog.palaces = [{ place: 'My Kitchen', stations: ['Front door'], learnedAt: Date.now(), step: 1 }];
+    Prog.verseLoc = { [k]: { p: 0, room: 'Front door' } }; saveProg();
+    const out = { stages: V_STAGES.join(','), fresh: verseStage(k), memBefore: Prog.memorized.length };
+    const up = setVerseStage(k, 'heart');
+    out.now = verseStage(k);
+    out.heldAfter = !!(Prog.verseLoc || {})[k];
+    out.remembered = JSON.stringify((Prog.locPast || {})[k] || null);
+    out.freed = up && up.freed ? stationName(up.freed) : '';
+    out.memAfter = Prog.memorized.length;
+    setVerseStage(k, 'loc');                       // ...and back down again
+    out.back = verseStage(k);
+    out.restored = JSON.stringify((Prog.verseLoc || {})[k] || null);
+    out.pastCleared = !((Prog.locPast || {})[k]);
+    return out;
+  });
+  is(st.stages, 'loc,w4w,heart', 'three rungs, in order');
+  is(st.fresh, 'loc', 'a verse starts at Locating with nothing stored');
+  is(st.now, 'heart', 'it can be moved to Known by heart');
+  no(st.heldAfter, '...which releases its palace station');
+  is(st.remembered, '{"p":0,"room":"Front door"}', '...but remembers where it was');
+  is(st.freed, 'My Kitchen · Front door', '...and can name what it freed');
+  is(st.memAfter, st.memBefore, 'and it STILL counts as a memorized verse');
+  is(st.back, 'loc', 'the move is reversible');
+  is(st.restored, '{"p":0,"room":"Front door"}', '...putting the verse back where it was');
+  ok(st.pastCleared, '...and clearing the remembered station');
+
+  describe('ladder: at rest', () => { });
+  const rest = await $(() => {
+    const k = '43:3:16';
+    Prog.memorized = [k]; Prog.verseStage = {}; Prog.revPrefs = { loc: true, w4w: true, heart: false };
+    Prog.customScene = {}; Prog.verseLoc = {}; Prog.w4w = {}; Prog.w4wToday = null;
+    Prog.verseSR = { [k]: Object.assign(newSR(), { step: 1, dueAt: Date.now() - 86400000 }) }; saveProg();
+    const before = { deck: deckKeys().includes(k), due: verseDue(k), dueN: versesDueCount(), pick: !!pickW4WVerse() };
+    show('verse'); vView = 'mem'; vBook.mem = new Set([43]);   // open the book so verse rows are actually drawn
+    renderVerse();
+    before.nudged = /missing a scene|missing a sc/i.test(el('verse').innerText);
+    setVerseStage(k, 'heart');
+    renderVerse();
+    const after = { deck: deckKeys().includes(k), due: verseDue(k), dueN: versesDueCount(), pick: !!pickW4WVerse(),
+      nudged: /missing a scene|missing a sc/i.test(el('verse').innerText),
+      listed: /John 3:16/.test(el('verse').innerText), counts: stageCounts() };
+    return { before, after };
+  });
+  ok(rest.before.deck, 'while it is being located the verse is in the practice deck');
+  ok(rest.before.due, '...and can fall due');
+  is(rest.before.dueN, 1, '...and is counted as due');
+  ok(rest.before.pick, '...and is offered for word-for-word practice');
+  ok(rest.before.nudged, '...and is nagged for a scene and a station');
+  no(rest.after.deck, 'at rest it leaves the practice deck');
+  no(rest.after.due, '...never falls due');
+  is(rest.after.dueN, 0, '...is not counted as due');
+  no(rest.after.pick, '...is not handed out for practice');
+  no(rest.after.nudged, '...and is NEVER asked for a scene or a station again');
+  ok(rest.after.listed, 'yet it is still there in the memorized list');
+  is(rest.after.counts.heart, 1, '...counted under Known by heart');
+
+  describe('ladder: the word-for-word test', () => { });
+  const clean = await $(() => {
+    const k = '43:11:35';                                    // "Jesus wept." - two words
+    Prog.memorized = [k]; Prog.verseStage = { [k]: 'w4w' }; Prog.w4wSR = {}; saveProg();
+    startW4WTest(43, 11, 35, () => { });
+    const out = { isTest: !!TT.test, hintHidden: el('ttHint').style.display === 'none', misses0: TT.misses };
+    const put = w => { const i = el('ttIn'); i.value = w; i.dispatchEvent(new Event('input')); };
+    TT.words.slice().forEach(put);
+    const r = w4wsr(k) || {};
+    out.n = r.n; out.ok = r.ok; out.cr = r.cr;
+    out.result = el('verse').innerText;
+    return out;
+  });
+  ok(clean.isTest, 'a test knows it is a test');
+  ok(clean.hintHidden, '...and offers no reveal-a-letter');
+  is(clean.misses0, 0, '...starting with a clean sheet');
+  is(clean.n, 1, 'finishing it records a test');
+  is(clean.ok, 1, '...a passed one');
+  is(clean.cr, 1, '...and starts the streak');
+  has(clean.result, 'Clean runs in a row: 1 of 5', 'the result says how far along the streak is');
+
+  const dirty = await $(() => {
+    const k = '43:11:35';
+    Prog.memorized = [k]; Prog.verseStage = { [k]: 'w4w' };
+    Prog.w4wSR = { [k]: { cr: 3, n: 3, ok: 3, at: 0 } }; saveProg();
+    startW4WTest(43, 11, 35, () => { });
+    const put = w => { const i = el('ttIn'); i.value = w; i.dispatchEvent(new Event('input')); };
+    put('Jesux');                                            // same length, wrong word
+    const misses = TT.misses;
+    TT.words.slice().forEach(put);
+    const r = w4wsr(k) || {};
+    return { misses, cr: r.cr, n: r.n, ok: r.ok };
+  });
+  is(dirty.misses, 1, 'a wrong word is counted');
+  is(dirty.n, 4, '...the attempt still counts as a test');
+  is(dirty.ok, 3, '...but not as a pass');
+  is(dirty.cr, 0, '...and a single slip breaks the run of five');
+
+  describe('ladder: promotions', () => { });
+  const ten = await $(() => {
+    const k = '43:3:16';
+    Prog.memorized = [k]; Prog.verseStage = {}; Prog.stageAsk = {};
+    Prog.w4w = { [k]: { count: 9, times: [] } }; saveProg();
+    const at9 = shouldOfferW4W(k);
+    Prog.w4w[k].count = 10; saveProg();
+    const at10 = shouldOfferW4W(k);
+    Prog.verseStage = { [k]: 'w4w' }; saveProg();
+    const alreadyThere = shouldOfferW4W(k);
+    Prog.verseStage = {}; saveProg();
+    noteStageAsk(k, 'w4w', 10);
+    return { at9, at10, alreadyThere, afterDecline: shouldOfferW4W(k) };
+  });
+  no(ten.at9, 'nine practices is not yet the moment to ask');
+  ok(ten.at10, 'ten is');
+  no(ten.alreadyThere, '...and a verse already in the pool is never asked again');
+  no(ten.afterDecline, 'declining is remembered — it asks once, not every time');
+
+  const five = await $(() => {
+    const k = '43:11:35';
+    Prog.memorized = [k]; Prog.verseStage = { [k]: 'w4w' }; Prog.stageAsk = {};
+    Prog.palaces = [{ place: 'My Kitchen', stations: ['Front door'], learnedAt: Date.now(), step: 1 }];
+    Prog.verseLoc = { [k]: { p: 0, room: 'Front door' } };
+    Prog.w4wSR = { [k]: { cr: 4, n: 4, ok: 4, at: 0 } }; saveProg();
+    const at4 = shouldOfferHeart(k);
+    startW4WTest(43, 11, 35, () => { });
+    const put = w => { const i = el('ttIn'); i.value = w; i.dispatchEvent(new Event('input')); };
+    TT.words.slice().forEach(put);
+    const out = { at4, streak: w4wTestStreak(k), at5: shouldOfferHeart(k) };
+    el('wtDone').click();
+    const m = el('promoteModal');
+    out.asked = !!m && m.style.display === 'flex';
+    out.txt = m ? m.innerText : '';
+    if (out.asked) {
+      el('prYes').click();
+      out.stage = verseStage(k);
+      out.freed = !((Prog.verseLoc || {})[k]);
+      out.stillMemorized = Prog.memorized.includes(k);
+    }
+    return out;
+  });
+  no(five.at4, 'four in a row is not enough to retire a verse');
+  is(five.streak, 5, 'a fifth clean run completes it');
+  ok(five.at5, '...and that is the moment to ask');
+  ok(five.asked, 'the offer arrives as a popup');
+  has(five.txt, 'Known by Heart', '...naming where it would go');
+  has(five.txt, 'My Kitchen', '...and naming the station it would free');
+  is(five.stage, 'heart', 'accepting moves it');
+  ok(five.freed, '...releasing the station');
+  ok(five.stillMemorized, '...and it is still a memorized verse');
+
+  describe('ladder: how you are asked', () => { });
+  const chooser = await $(() => {
+    Prog.memorized = ['43:3:16']; Prog.verseStage = {}; saveProg();
+    show('verse'); openReviewSetup();
+    const noneToChoose = !el('rvRows');
+    Prog.verseStage = { '43:3:16': 'w4w' }; saveProg();
+    show('verse'); openReviewSetup();
+    const rows = [...document.querySelectorAll('#rvRows [data-rk]')].map(b => b.dataset.rk);
+    return { noneToChoose, rows: rows.join(','), pool: w4wPoolSize() };
+  });
+  ok(chooser.noneToChoose, 'with nothing in the pool there is nothing to choose — review starts as it always did');
+  is(chooser.pool, 1, 'once a verse is in the pool');
+  is(chooser.rows, 'loc,w4w', '...the chooser offers both ways of being asked');
+
+  const routed = await $(() => {
+    const k = '43:11:35';
+    Prog.memorized = [k]; Prog.verseStage = { [k]: 'w4w' };
+    Prog.revPrefs = { loc: false, w4w: true, heart: false }; saveProg();
+    askVerseIn(k);
+    const byTyping = !!el('ttIn');
+    Prog.revPrefs = { loc: true, w4w: false, heart: false }; saveProg();
+    askVerseIn(k);
+    const byAddress = !!el('mtFieldB');
+    Prog.verseStage = {}; Prog.revPrefs = { loc: false, w4w: true, heart: false }; saveProg();
+    askVerseIn(k);                                            // still being located
+    const stage1 = !!el('mtFieldB');
+    Prog.revPrefs = { loc: false, w4w: false, heart: false }; saveProg();
+    return { byTyping, byAddress, stage1, guard: revPrefs().loc };
+  });
+  ok(routed.byTyping, 'choose word for word and the verse is asked by typing');
+  ok(routed.byAddress, 'choose location and the same verse is asked by address');
+  ok(routed.stage1, 'a verse still being located is ALWAYS asked by address');
+  ok(routed.guard, 'unticking both falls back to location rather than asking nothing');
+
+  const hearts = await $(() => {
+    const k = '43:3:16';
+    Prog.memorized = [k]; Prog.verseStage = { [k]: 'heart' };
+    Prog.verseSR = { [k]: newSR() };
+    Prog.revPrefs = { loc: true, w4w: true, heart: false }; saveProg();
+    const out = { off: deckKeys().includes(k) };
+    Prog.revPrefs = { loc: true, w4w: true, heart: true }; saveProg();
+    out.on = deckKeys().includes(k);
+    out.stillNotDue = verseDue(k);
+    return out;
+  });
+  no(hearts.off, 'a resting verse is left out of practice by default');
+  ok(hearts.on, '...and included when you ask for it');
+  no(hearts.stillNotDue, '...but never becomes DUE either way — resting means resting');
+
+  describe('ladder: the verse page', () => { });
+  const vPage = await $(() => {
+    const k = '19:23:1';
+    Prog.memorized = [k]; Prog.verseStage = {}; Prog.verseLoc = {}; saveProg();
+    renderLearnedVerse(19, 23, 1, () => { });
+    const out = { pips: document.querySelectorAll('.stagepip').length,
+      onNow: (document.querySelector('.stagepip.on') || {}).textContent || '',
+      cta: (el('lvStage') || {}).textContent || '',
+      inWizard: false };
+    el('lvStage').click();
+    out.picker = !!el('stageModal') && el('stageModal').style.display === 'flex';
+    out.choices = document.querySelectorAll('#stageModal [data-stage]').length;
+    document.querySelector('#stageModal [data-stage="heart"]').click();
+    out.stage = verseStage(k);
+    out.ribbon = /Known by heart/i.test(el('verse').innerText);
+    // and it is NOT offered while building a new verse
+    openVerseWizard(40, 6, 33, () => { });
+    out.inWizard = !!el('lvStage');
+    return out;
+  });
+  is(vPage.pips, 3, 'the verse page shows all three rungs');
+  has(vPage.onNow, 'Locating', '...marking where this verse stands');
+  has(vPage.cta, 'know this one by heart', 'the way in is on the verse page');
+  ok(vPage.picker, 'tapping it opens the picker');
+  is(vPage.choices, 3, '...offering all three');
+  is(vPage.stage, 'heart', 'choosing Known by heart moves the verse');
+  ok(vPage.ribbon, '...and the page says so');
+  no(vPage.inWizard, 'it is NOT offered while building a new verse — that would be a shortcut past learning');
+
+  await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); }, ladderSnap);
+
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
   if (consoleErrs.length) { console.error(`  ✗ ${consoleErrs.length} console error(s):`); consoleErrs.slice(0, 5).forEach(e => console.error('      ' + e)); }
