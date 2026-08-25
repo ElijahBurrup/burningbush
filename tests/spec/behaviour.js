@@ -445,6 +445,199 @@ const DAY = 86400000;
   is(tabs.ticketName, 'Bible', 'the scratch-off names it Bible, not Journey');
   ok(tabs.ticketSvg, '…and shows the Bible icon');
 
+  // ---------------- verse practice: any vpOrder, vpSticky boxes, snooze popup (v1.11) ----------------
+  describe('verse practice', () => { });
+
+  // the pickers must open in ANY vpOrder - no "pick a book first" gate
+  const vpOrder = await $(() => {
+    show('verse'); askVerse('43:3:16'); memTestWrong = 1;      // >0 suppresses the auto-Check timer
+    const out = {};
+    el('mtFieldV').click();                                    // verse FIRST, with nothing else chosen
+    out.verseOpensFirst = el('mtOverlay').style.display !== 'none' && el('mtVerseGrid').style.display !== 'none';
+    const anyV = document.querySelector('#mtVerseGrid [data-vn]'); if (anyV) anyV.click();
+    out.verseHeld = mtSel.v;
+    el('mtFieldC').click();                                    // then chapter, still no book
+    out.chapOpensFirst = el('mtOverlay').style.display !== 'none' && el('mtChapGrid').style.display !== 'none';
+    const anyC = document.querySelector('#mtChapGrid [data-cn]'); if (anyC) anyC.click();
+    out.chapHeld = mtSel.c;
+    out.verseSurvived = mtSel.v;
+    return out;
+  });
+  ok(vpOrder.verseOpensFirst, 'the verse picker opens with no book chosen');
+  ok(vpOrder.verseHeld > 0, '...and the choice is kept');
+  ok(vpOrder.chapOpensFirst, 'the chapter picker opens with no book chosen');
+  ok(vpOrder.chapHeld > 0, '...and a chapter can be chosen after the verse');
+  ok(vpOrder.verseSurvived > 0, '...without losing the verse already picked');
+
+  // a wrong answer must not empty the boxes
+  const vpSticky = await $(() => {
+    show('verse'); askVerse('43:3:16');
+    mtSel = { b: 1, c: 1, v: 1 };                              // deliberately wrong - the verse is John 3:16
+    el('mtCheck').click();
+    return { b: mtSel.b, c: mtSel.c, v: mtSel.v, warned: !!el('mtWarn').textContent };
+  });
+  ok(vpSticky.warned, 'a wrong answer is marked wrong');
+  is(vpSticky.b, 1, '...and the book stays put');
+  is(vpSticky.c, 1, '...and the chapter stays put');
+  is(vpSticky.v, 1, '...and the verse stays put');
+
+  // a new choice clears another ONLY when it makes it impossible.
+  // Driven through the real buttons, so it is the shipped handler being tested.
+  const vpRange = await $(() => {
+    show('verse'); askVerse('43:3:16'); memTestWrong = 1;
+    const openB = () => el('mtFieldB').click();
+    const books = () => [...document.querySelectorAll('#mtBookList [data-bk]')];
+    openB();
+    const impossibleC = [], possibleC = [];
+    books().forEach(btn => { mtSel = { b: 0, c: 200, v: 0 }; btn.click(); impossibleC.push(mtSel.c); openB(); });
+    books().forEach(btn => { mtSel = { b: 0, c: 1, v: 0 }; btn.click(); possibleC.push(mtSel.c); openB(); });
+    el('mtFieldB').click();                                     // close the book sheet
+    const openC = () => el('mtFieldC').click();
+    const chaps = () => [...document.querySelectorAll('#mtChapGrid [data-cn]')];
+    openC();
+    const impossibleV = [], possibleV = [];
+    chaps().forEach(btn => { mtSel = { b: 43, c: 0, v: 999 }; btn.click(); impossibleV.push(mtSel.v); openC(); });
+    chaps().forEach(btn => { mtSel = { b: 43, c: 0, v: 1 }; btn.click(); possibleV.push(mtSel.v); openC(); });
+    return {
+      books: impossibleC.length, chaps: impossibleV.length,
+      cCleared: impossibleC.every(c => c === 0), cKept: possibleC.every(c => c === 1),
+      vCleared: impossibleV.every(v => v === 0), vKept: possibleV.every(v => v === 1),
+    };
+  });
+  ok(vpRange.books > 0 && vpRange.chaps > 0, 'there are books and chapters to try');
+  ok(vpRange.cCleared, 'a chapter no book has is cleared when the book changes');
+  ok(vpRange.cKept, '...but chapter 1 survives every book');
+  ok(vpRange.vCleared, 'a verse no chapter has is cleared when the chapter changes');
+  ok(vpRange.vKept, '...but verse 1 survives every chapter');
+
+  // five in a row asks about resting the verse - in a popup, not at the foot of the card
+  const vpSnz = await $(() => {
+    const kk = '43:3:16';
+    Prog.verseSR = { [kk]: Object.assign(newSR(), { cr: 4, rd: false }) }; saveProg();
+    show('verse'); askVerse(kk);
+    mtSel = { b: 43, c: 3, v: 16 }; el('mtCheck').click();
+    return { inlineOffer: /Rest this verse/i.test(el('mtFb').innerText), cr: vsr(kk).cr };
+  });
+  no(vpSnz.inlineOffer, 'the rest offer is no longer printed under the card');
+  is(vpSnz.cr, 5, '...and five clean recalls is what triggers it');
+  await page.waitForFunction(() => { const m = el('snoozeModal'); return m && m.style.display === 'flex'; }, { timeout: 4000 }).catch(() => { });
+  const vpSnzModal = await $(() => {
+    const m = el('snoozeModal');
+    const out = { shown: !!m && m.style.display === 'flex', txt: m ? m.innerText : '' };
+    if (out.shown) {
+      el('szYes').click();
+      out.snoozed = (vsr('43:3:16').sz || 0) > Date.now();
+      out.closed = m.style.display === 'none';
+    }
+    return out;
+  });
+  ok(vpSnzModal.shown, 'it is asked in a popup of its own');
+  has(vpSnzModal.txt, '14 days', '...naming the fortnight');
+  ok(vpSnzModal.snoozed, '...and accepting rests the verse');
+  ok(vpSnzModal.closed, '...and closes the popup');
+
+  // ---------------- number & book practice set-up (v1.11) ----------------
+  describe('number practice set-up', () => { });
+  const ntsAll = await $(() => {
+    Prog.ntPrefs = {}; saveProg();
+    const d = ntPrefs();
+    const out = { defaults: d.types.length, count: d.count, forms: NT_FORMS.length,
+      labels: NT_FORMS.map(f => f.label).join(' | ') };
+    openNumTestSetup();
+    out.screen = !!el('ntsForms');
+    out.rows = document.querySelectorAll('#ntsForms [data-form]').length;
+    out.allChecked = document.querySelectorAll('#ntsForms [data-form].sel').length;
+    out.countShown = el('ntsCount').textContent;
+    document.querySelectorAll('#ntsForms [data-form]').forEach(b => { if (b.dataset.form !== 'q_n2b') b.click(); });
+    out.leftChecked = document.querySelectorAll('#ntsForms [data-form].sel').length;
+    el('ntsGo').click();
+    out.askedTypes = [...new Set((NT.qs || []).map(q => q.type))];
+    out.qCount = (NT.qs || []).length;
+    out.allBookNumbers = (NT.qs || []).every(q => q.n <= 66);
+    return out;
+  });
+  is(ntsAll.forms, 6, 'six forms - three pairs, each run both ways');
+  is(ntsAll.defaults, 6, 'all six are on by default');
+  is(ntsAll.count, 15, 'and fifteen questions by default');
+  has(ntsAll.labels, 'Numbers to Books', 'Numbers to Books is offered');
+  has(ntsAll.labels, 'Images to Books', 'Images to Books is offered');
+  ok(ntsAll.screen, 'practice opens on a set-up screen');
+  is(ntsAll.rows, 6, '...listing every form');
+  is(ntsAll.allChecked, 6, '...all ticked to start');
+  is(ntsAll.countShown, '15', '...and showing fifteen');
+  is(ntsAll.leftChecked, 1, 'the others can be unticked');
+  is(ntsAll.askedTypes.join(','), 'q_n2b', 'and then ONLY that form is asked');
+  is(ntsAll.qCount, 15, 'fifteen questions were built');
+  ok(ntsAll.allBookNumbers, 'a book form never draws a number above 66');
+
+  const ntsKept = await $(() => {
+    Prog.ntPrefs = { types: ['q_i2n'], count: 40 }; saveProg();
+    openNumTestSetup();
+    const out = {
+      checked: [...document.querySelectorAll('#ntsForms [data-form].sel')].map(b => b.dataset.form).join(','),
+      count: el('ntsCount').textContent,
+      choices: NT_COUNTS[0] + '-' + NT_COUNTS[NT_COUNTS.length - 1],
+    };
+    el('ntsGo').click();
+    out.built = (NT.qs || []).length;
+    out.types = [...new Set((NT.qs || []).map(q => q.type))].join(',');
+    return out;
+  });
+  is(ntsKept.checked, 'q_i2n', 'returning to the screen shows the last set-up');
+  is(ntsKept.count, '40', '...including how many to ask');
+  is(ntsKept.choices, '5-50', 'the count may be set anywhere from 5 to 50');
+  is(ntsKept.built, 40, '...and that many are asked');
+  is(ntsKept.types, 'q_i2n', '...in the one form chosen');
+
+  const ntsEmpty = await $(() => {
+    Prog.ntPrefs = {}; saveProg(); openNumTestSetup();
+    document.querySelectorAll('#ntsForms [data-form]').forEach(b => b.click());   // untick every one
+    return { disabled: el('ntsGo').disabled, warned: !!el('ntsWarn').textContent };
+  });
+  ok(ntsEmpty.disabled, 'with nothing ticked there is nothing to begin');
+  ok(ntsEmpty.warned, '...and the screen says so');
+
+  // ---------------- Rome: a romeLevy stands until it is paid (v1.11) ----------------
+  describe('the romeLevy', () => { });
+  const romeLevy = await $(() => {
+    Billing.grant();
+    Prog.talents = 3000; Prog.taxOwed = 0; Prog.romeLetterSeen = true;
+    Prog.taxAt = Date.now() - 8 * 86400000; saveProg();
+    const out = { dueBefore: taxPending() };
+    openTaxWheel(false);
+    out.owedOnOpen = Prog.taxOwed > 0;
+    el('taxov').classList.remove('on', 'march');                // walk away - exactly what closing the app does
+    Prog.taxAt = Date.now(); saveProg();                        // even with the schedule reset, the debt stands
+    out.stillPending = taxPending();
+    out.talentsUntouched = Prog.talents;
+    return out;
+  });
+  ok(romeLevy.dueBefore, 'a romeLevy falls due after seven days');
+  ok(romeLevy.owedOnOpen, 'the demand is recorded the moment the wheel is raised');
+  ok(romeLevy.stillPending, 'walking away does NOT discharge it');
+  is(romeLevy.talentsUntouched, 3000, '...and nothing was taken');
+
+  await page.evaluate(() => { Prog.taxOwed = Date.now(); Prog.talents = 3000; saveProg(); openTaxWheel(false); el('taxGo').click(); });
+  await page.waitForFunction(() => Prog.taxOwed === 0, { timeout: 9000 }).catch(() => { });
+  const romeSettled = await $(() => ({ owed: Prog.taxOwed, talents: Prog.talents }));
+  is(romeSettled.owed, 0, 'facing the wheel settles the romeLevy');
+  ok(romeSettled.talents < 3000, '...because talents actually left the purse');
+
+  const romeMerged = await $(() => {
+    const mk = o => migrateProg(Object.assign(JSON.parse(JSON.stringify(Prog)), o));
+    const m1 = mergeProg(mk({ taxOwed: 5000, taxAt: 0 }), mk({ taxOwed: 0, taxAt: 0 }));
+    const m2 = mergeProg(mk({ taxOwed: 5000, taxAt: 0 }), mk({ taxOwed: 0, taxAt: 6000 }));
+    return { unsynced: m1.taxOwed, paid: m2.taxOwed };
+  });
+  ok(romeMerged.unsynced > 0, 'a romeLevy owed on one device survives a sync from another');
+  is(romeMerged.paid, 0, '...unless that other device has already romeSettled it');
+
+  await $(() => {
+    Billing.revoke(); Prog.taxOwed = 0; Prog.taxAt = 0; saveProg();
+    ['taxov', 'buildov'].forEach(id => { const o = el(id); if (o) o.classList.remove('on', 'march'); });
+    return true;
+  });
+
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
   if (consoleErrs.length) { console.error(`  ✗ ${consoleErrs.length} console error(s):`); consoleErrs.slice(0, 5).forEach(e => console.error('      ' + e)); }

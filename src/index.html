@@ -833,6 +833,8 @@
   .mtradio .rdot{flex:0 0 16px;width:16px;height:16px;border-radius:50%;border:2px solid var(--line);box-sizing:border-box}
   .mtradio.sel{color:var(--accent);border-color:var(--accent)}
   .mtradio.sel .rdot{border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--accent)}
+  .mtradio.chk .rdot{border-radius:5px}
+  .mtradiolist.one{grid-template-columns:1fr}
   .mtsquares{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;max-height:172px;overflow-y:auto}
   .mtsq{aspect-ratio:1;border-radius:8px;background:var(--cell-bg);border:2px solid var(--line);color:var(--ink);font-size:13px;font-weight:800;cursor:pointer;display:grid;place-items:center;padding:0}
   .mtsq.sel{border-color:var(--accent);background:var(--accent);color:var(--on-blue)}
@@ -1584,8 +1586,15 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.10.0";
+const APP_VERSION="1.11.0";
 const CHANGELOG=[
+ {v:"1.11.0", d:"August 25, 2026", t:"Answer it your way", items:[
+   ["new","In verse practice you can now choose <b>book, chapter and verse in any order</b> \u2014 whichever comes to mind first."],
+   ["new","A wrong answer <b>no longer empties the boxes</b>. What you picked stays put; only a choice that makes another impossible clears it \u2014 chapter 119 cannot survive a move to Genesis, but chapter 23 can."],
+   ["new","<b>Number &amp; book practice now starts with a set-up screen</b>: tick which ways you want to be asked \u2014 numbers to books, books to numbers, numbers to images, images to numbers, images to books, books to images \u2014 and choose <b>how many questions</b>, anywhere from 5 to 50. Your choices are remembered."],
+   ["fix","After five clean recalls, the offer to <b>rest a verse for 14 days</b> now arrives as its own popup instead of a note under the card, where it was easy to miss."],
+   ["fix","<b>Caesar is no longer avoided by closing the app.</b> A levy that has fallen due stands until it is actually paid \u2014 and it is put again the moment you come back."]
+ ]},
  {v:"1.10.0", d:"August 24, 2026", t:"Your bench, your pace", items:[
    ["new","A daily goal can now be as high as <b>15</b>, and <b>reviewing yesterday’s verse counts toward it</b> — coming back is the work, not just starting something new."],
    ["new","The scratch-off that opens the Bible now says <b>Bible</b> and carries its own icon, and the tab <b>slides into place</b> as you win it."],
@@ -2309,12 +2318,14 @@ function migrateProg(p){
   if(typeof p.hints!=="number") p.hints=0; // "Peek" tokens spendable in the verse test
   if(typeof p.weekKey!=="string") p.weekKey=""; if(typeof p.weekDays!=="number") p.weekDays=0; if(typeof p.weekGoalHit!=="boolean") p.weekGoalHit=false; // Perfect-Week tracking
   // Caesar's weekly levy + the church it builds
+  if(!p.ntPrefs||typeof p.ntPrefs!=="object") p.ntPrefs={};   // number-practice set-up: which forms, how many
   p.piecesUsed=arr(p.piecesUsed);                       // church pieces already built, so none repeats early
   if(typeof p.palaceSlots!=="number") p.palaceSlots=0;  // extra palace slots bought with talents
   p.storySections=arr(p.storySections);                 // Bible-story sections bought with talents
   if(typeof p.blessIdx!=="number") p.blessIdx=0;        // rotates the word-for-word blessing
   if(typeof p.paceIdx!=="number") p.paceIdx=0;          // rotates the "little and often" verse
   if(typeof p.taxAt!=="number") p.taxAt=0;              // 0 = never assessed (set when the Rome letter lands)
+  if(typeof p.taxOwed!=="number") p.taxOwed=0;          // >0 = a levy has fallen due and is NOT yet settled
   if(typeof p.taxWeek!=="number") p.taxWeek=0;          // which of the 52 summonses comes next
   if(typeof p.romeLetterSeen!=="boolean") p.romeLetterSeen=false;
   p.taxLog=arr(p.taxLog).slice(0,8);
@@ -2360,7 +2371,11 @@ function mergeProg(a,b){
   m.verseSR=mergeSR(a.verseSR,b.verseSR);
   m.palaceSlots=Math.max(a.palaceSlots||0,b.palaceSlots||0); m.storySections=uniq(a.storySections,b.storySections);
   m.taxAt=Math.max(a.taxAt||0,b.taxAt||0); m.taxWeek=Math.max(a.taxWeek||0,b.taxWeek||0);
+  // an owed levy survives a sync from either device, but a settlement recorded after it discharges it
+  m.taxOwed=(a.taxOwed||0)||(b.taxOwed||0);
+  if(m.taxOwed && m.taxAt>=m.taxOwed) m.taxOwed=0;
   m.romeLetterSeen=!!(a.romeLetterSeen||b.romeLetterSeen);
+  m.ntPrefs=Object.assign({},a.ntPrefs||{},b.ntPrefs||{});   // last set-up wins; it is a preference, not progress
   m.taxLog=[...(a.taxLog||[]),...(b.taxLog||[])].filter((t,i,q)=>q.findIndex(x=>x.at===t.at)===i).sort((x,y)=>y.at-x.at).slice(0,8);
   { const ca=(a.church||{}), cb=(b.church||{});   // never lose a finished church to a sync
     m.church={ built:Math.max(ca.built||0,cb.built||0), total:Math.max(ca.total||0,cb.total||0),
@@ -4115,7 +4130,7 @@ function renderVerse(){
   el("goalBtn").onclick=openGoalSettings; wireTaxWarn();
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
   el("vW4W").onclick=()=>{ const a=pickW4WVerse(); if(!a){ toast(mem.length?"All your verses are done for now — great work!":"Memorize a verse first — tap Suggested!"); return; } startWordForWord(a[0],a[1],a[2],()=>{ show("verse"); renderVerse(); }); };
-  el("vNumTest").onclick=()=> knownNumbers().size>=2 ? startNumberTest() : toast("Learn a few numbers first in the Learn tab!");
+  el("vNumTest").onclick=()=> knownNumbers().size>=2 ? openNumTestSetup() : toast("Learn a few numbers first in the Learn tab!");
   el("vMemTest").onclick=()=> mem.length ? startMemTest() : toast("Memorize a verse first — tap Suggested!");
   if(srFlashPending && el("vMemTest")){ srFlashPending=false; const rb=el("vMemTest"); rb.classList.add("srbtn-flash"); setTimeout(()=>rb.classList.remove("srbtn-flash"),6000); }
   paintTheme();
@@ -4295,6 +4310,22 @@ function deckKeys(){ const now=Date.now(); return memArr().map(a=>a.join(":")).f
 function deckRoundReset(){ const now=Date.now(); (Prog.memorized||[]).forEach(k=>{ const o=vsr(k); if(o && !(o.sz>now)) o.rd=false; }); saveProg(); }
 function markAnswer(k, correct, firstTry){ Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k]||(Prog.verseSR[k]=newSR());
   if(correct){ o.rd=true; o.lc=Date.now(); o.cr=firstTry?(o.cr||0)+1:0; } else { o.cr=0; } return o.cr||0; }   // any miss breaks the streak
+// Five clean recalls in a row -> offer to rest the verse for a fortnight. It gets its own popup now:
+// tucked under the card it was easy to miss, and easy to scroll past without ever deciding.
+function openSnoozeAsk(b,c,v,kk,after){
+  const m=el("snoozeModal")||(()=>{ const d=document.createElement("div"); d.id="snoozeModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card center">
+    <div style="font-size:34px">😴</div>
+    <div style="font-size:20px;font-weight:800;margin-top:6px">That's 5 in a row</div>
+    <p class="lead" style="margin:8px 0 0"><b class="gold">${bookName(b)} ${c}:${v}</b> is holding well.</p>
+    <p class="hint" style="margin:10px 0 0">Rest it for <b>14 days</b> and it won't come up in practice until then, leaving the time for verses that still need the work. You can wake it whenever you like from your verse list.</p>
+    <button class="btn" id="szYes" style="width:100%;margin-top:14px">Rest it 14 days</button>
+    <button class="btn ghost" id="szNo" style="width:100%;margin-top:8px">Keep reviewing it</button></div>`;
+  const close=()=>{ m.style.display="none"; };
+  m.style.display="flex"; raiseModal(m);   // no backdrop dismissal - this is a choice, not a notice
+  el("szYes").onclick=()=>{ close(); snoozeVerse(kk); toast("😴 Resting for 14 days"); after&&after(); };
+  el("szNo").onclick=()=>{ close(); after&&after(); };
+}
 function snoozeVerse(k){ const now=Date.now(), o=vsr(k)||(Prog.verseSR[k]=newSR()); o.sz=now+SNOOZE_MS; o.rd=true; o.dueAt=now+SNOOZE_MS; saveProg(); }
 function verseEstablished(k){ const o=vsr(k); if(!o) return false; const now=Date.now(); return (o.sz>now) || ((o.cr||0)>=ESTAB_CR && (now-(o.lc||0))<=SNOOZE_MS); }
 function allEstablished(){ const mem=memArr(); return mem.length>0 && mem.every(a=>verseEstablished(a.join(":"))); }
@@ -4826,7 +4857,7 @@ function taxBand(t){ return t<TAX_EXEMPT_UNDER ? null : (t>=TAX_RICH_AT ? "rich"
 function pickTaxRate(rows){ let r=Math.random()*rows.reduce((s,x)=>s+x[1],0);
   for(let i=0;i<rows.length;i++){ if((r-=rows[i][1])<0) return rows[i][0]; } return rows[rows.length-1][0]; }
 function taxDueAt(){ return (Prog.taxAt||0)+TAX_DAYS*DAY; }
-function taxPending(){ return Billing.isPro() && !!Prog.taxAt && Date.now()>=taxDueAt(); }
+function taxPending(){ return Billing.isPro() && (!!Prog.taxOwed || (!!Prog.taxAt && Date.now()>=taxDueAt())); }
 // whole days until the collectors arrive, or 0 when it isn't worth warning about yet
 function taxWarnDays(){ if(!Billing.isPro()||!Prog.taxAt) return 0;
   const d=Math.ceil((taxDueAt()-Date.now())/DAY); return (d>0&&d<=TAX_WARN_DAYS)?d:0; }
@@ -5233,6 +5264,8 @@ function openTaxWheel(preview, after){
       <button class="taxbtn" id="taxBuild" style="display:none">⛪ Build →</button>
     </div>`;
   ov.classList.add("on","march");
+  // The demand is on the record the moment it is made - not when it is answered.
+  if(!preview && !Prog.taxOwed){ Prog.taxOwed=Date.now(); saveProg(); }
   if(el("taxSpqr")) el("taxSpqr").onclick=openSpqrNote;
   const wheel=ov.querySelector(".taxwheel");
   const finish=()=>{
@@ -5267,7 +5300,8 @@ function openTaxWheel(preview, after){
         }
       }
       if(!preview){
-        Prog.taxAt=Date.now(); Prog.taxWeek=((Prog.taxWeek||0)+1)%TAX_WEEKS.length;
+        Prog.taxAt=Date.now(); Prog.taxOwed=0;   // settled: the wheel has resolved and Rome has taken its share
+        Prog.taxWeek=((Prog.taxWeek||0)+1)%TAX_WEEKS.length;
         Prog.taxLog=[{at:Date.now(),rate:band?rate:0,took:takes,church:toChurch},...(Prog.taxLog||[])].slice(0,8);
         saveProg(); updateMetrics();
       }
@@ -5296,6 +5330,14 @@ function bootPopups(){
   if(taxPending()){ setTimeout(()=>openTaxWheel(false, checkVersionCard), 900); return; }
   checkVersionCard();
 }
+// Rome does not forget. An unsettled levy is put again every time the app comes back to the front,
+// so closing it mid-wheel is no way to keep your talents.
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState!=="visible") return;
+  const up=id=>{ const o=el(id); return !!o && o.classList.contains("on"); };
+  if(up("taxov")||up("buildov")||up("obov")) return;    // already facing it, laying the stone, or still onboarding
+  if(taxPending()) openTaxWheel(false);
+});
 // ---- Perfect Week: review on ≥5 days in a Monday-anchored week → talent reward (feeds the store) ----
 function weekKeyOf(d){ const dt=new Date(d.getFullYear(),d.getMonth(),d.getDate()); dt.setDate(dt.getDate()-((dt.getDay()+6)%7)); return dt.getFullYear()+"-"+(dt.getMonth()+1)+"-"+dt.getDate(); }
 function weekDaysNow(){ return (Prog.weekKey===weekKeyOf(new Date())) ? (Prog.weekDays||0) : 0; }
@@ -5372,18 +5414,72 @@ function recentKnownNumbers(){
   [...knownNumbers()].forEach(n=>{ if(n>=1&&n<=176&&!seen.has(n)){ seen.add(n); out.push(n); } });   // safety: append any not captured
   return out;
 }
+// Six forms - three pairs, each run both ways. All are on by default; uncheck any and only the rest
+// are asked. The choices are remembered, so coming back to this screen shows the last set-up intact.
+const NT_FORMS=[
+  {id:"q_n2b", label:"Numbers to Books"},
+  {id:"q_b2n", label:"Books to Numbers"},
+  {id:"q_n2i", label:"Numbers to Images"},
+  {id:"q_i2n", label:"Images to Numbers"},
+  {id:"q_i2b", label:"Images to Books"},
+  {id:"q_b2i", label:"Books to Images"},
+];
+const NT_BOOKFORM=new Set(["q_n2b","q_b2n","q_i2b","q_b2i"]);   // these need a number that names a book (1-66)
+const NT_COUNTS=Array.from({length:46},(_,i)=>i+5);             // 5 - 50
+function ntPrefs(){
+  const p=Prog.ntPrefs||{};
+  let t=Array.isArray(p.types)?p.types.filter(x=>NT_FORMS.some(f=>f.id===x)):[];
+  if(!t.length) t=NT_FORMS.map(f=>f.id);
+  return { types:t, count:Math.max(5,Math.min(50,+p.count||15)) };
+}
+function openNumTestSetup(round){
+  round=round||1;
+  if(recentKnownNumbers().length<2){ toast("Learn a few number images first!"); return; }
+  const draft=ntPrefs(), V=el("verse");
+  const paint=()=>{
+    el("ntsForms").innerHTML=NT_FORMS.map(f=>`<button type="button" class="mtradio chk ${draft.types.includes(f.id)?"sel":""}" data-form="${f.id}"><span class="rdot"></span>${f.label}</button>`).join("");
+    el("ntsForms").querySelectorAll("[data-form]").forEach(x=>x.onclick=()=>{
+      const id=x.dataset.form;
+      draft.types = draft.types.includes(id) ? draft.types.filter(t=>t!==id) : [...draft.types,id];
+      paint();
+    });
+    el("ntsCount").textContent=draft.count;
+    el("ntsGo").disabled=!draft.types.length;
+    el("ntsGo").style.opacity=draft.types.length?"":".5";
+    el("ntsWarn").textContent=draft.types.length?"":"Choose at least one kind of question.";
+  };
+  V.innerHTML=`<div class="card">
+      <div class="lv-topbar"><button class="lclose" id="ntsClose">✕</button><div style="flex:1;text-align:center;font-weight:800">Number &amp; book practice</div><span style="width:34px"></span></div>
+      <p class="hint" style="margin:6px 0 0">Which way would you like to be asked?</p>
+      <div class="mtradiolist one" id="ntsForms" style="margin-top:10px"></div>
+      <div class="goalrow" style="margin-top:14px"><div class="goalrow-k">Questions to ask</div><button type="button" class="goalfield" id="ntsCount">15</button></div>
+      <div class="hint" id="ntsWarn" style="min-height:18px;margin:6px 0 0"></div>
+      <button class="btn" id="ntsGo" style="width:100%;margin-top:8px">Begin practice</button>
+    </div>`;
+  el("ntsClose").onclick=renderVerse;
+  el("ntsCount").onclick=()=>numberSheet({ title:"How many questions?", value:draft.count, choices:NT_COUNTS, onPick:n=>{ draft.count=n; paint(); } });
+  el("ntsGo").onclick=()=>{
+    if(!draft.types.length) return;
+    Prog.ntPrefs={types:draft.types, count:draft.count}; saveProg();
+    startNumberTest(round);
+  };
+  paint();
+}
 function startNumberTest(round){
   round=round||1;
   const recent=recentKnownNumbers();
   if(recent.length<2){ toast("Learn a few number images first!"); return; }
   const pool = round===1 ? recent.slice(0,10) : recent.slice(10);   // round 1 = most recent 10; round 2+ = the rest
   if(!pool.length){ toast(round>1?"No older numbers left to review — you've been over them all.":"Learn a few number images first!"); return; }
-  const withBook=pool.filter(n=>n<=66);
+  const pref=ntPrefs();
+  const bookPool=pool.filter(n=>n<=66);
+  // only ask a form the pool can actually supply - the book forms need four numbers that name books
+  const forms=pref.types.filter(t=>!NT_BOOKFORM.has(t) || bookPool.length>=4);
+  if(!forms.length){ toast("Learn a few book numbers (1–66) to practise those forms."); return; }
   const qs=[];
-  for(let i=0;i<15;i++){
-    const n=pool[Math.floor(Math.random()*pool.length)];
-    const types = (n<=66 && withBook.length>=4) ? ["q_n2i","q_i2n","q_n2b","q_b2n","q_i2b","q_b2i"] : ["q_n2i","q_i2n"];
-    qs.push({n, type:pick(types)});
+  for(let i=0;i<pref.count;i++){
+    const type=pick(forms), src=NT_BOOKFORM.has(type)?bookPool:pool;
+    qs.push({n:src[Math.floor(Math.random()*src.length)], type});
   }
   NT={qs, i:0, ok:0, wrong:0, round, hasMore: round===1 && recent.length>10}; renderNumTest();
 }
@@ -5550,21 +5646,29 @@ function memTestRender(){
   // ---- pickers: tap a field to open its picker. Book = filtered radio list; chapter/verse = compact number grid. ----
   const chapMax=()=> mtSel.b?chapCount(mtSel.b):150;
   const verseMax=()=> (mtSel.b&&mtSel.c)?verseCount(mtSel.b,mtSel.c):176;
+  // Book, chapter and verse may be chosen in ANY order, and a wrong answer never wipes the boxes.
+  // A new choice clears another only when it makes it impossible: pick Genesis after chapter 119 and
+  // the chapter has to go; pick Psalms and it stays exactly where it was.
+  const keepInRange=()=>{
+    if(mtSel.b && mtSel.c && mtSel.c>chapCount(mtSel.b)) mtSel.c=0;
+    if(mtSel.v && mtSel.b && mtSel.c && mtSel.v>verseCount(mtSel.b,mtSel.c)) mtSel.v=0;
+  };
+  // auto-Check only on the FIRST attempt - after a miss, retries need a deliberate Check tap so fixing values doesn't keep re-firing
+  const maybeAutoCheck=()=>{ if(mtSel.b&&mtSel.c&&mtSel.v && memTestWrong===0)
+    setTimeout(()=>{ if(el("mtCheck")&&!mtLock && memTestWrong===0) el("mtCheck").click(); },260); };
   const paintFields=()=>{
     const setF=(id,val,txt)=>{ const f=el(id); if(!f) return; f.textContent = val?txt:f.dataset.ph; f.classList.toggle("filled",!!val); f.disabled=mtLock; };
     el("mtFieldB").dataset.ph="— book —"; el("mtFieldC").dataset.ph="— pick —"; el("mtFieldV").dataset.ph="— pick —";
     setF("mtFieldB",mtSel.b,bookName(mtSel.b)); setF("mtFieldC",mtSel.c,pad2(mtSel.c)); setF("mtFieldV",mtSel.v,pad2(mtSel.v));
   };
   const paintBookList=()=>{ el("mtBookList").innerHTML=bookOpts.map(bb=>`<button type="button" class="mtradio ${mtSel.b===bb?"sel":""}" data-bk="${bb}"><span class="rdot"></span>${bookName(bb)}</button>`).join("");
-    el("mtBookList").querySelectorAll("[data-bk]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.b=+x.dataset.bk; mtSel.c=0; mtSel.v=0; el("mtFb").innerHTML=""; closePicks(); paintFields(); }); };
+    el("mtBookList").querySelectorAll("[data-bk]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.b=+x.dataset.bk; keepInRange(); el("mtFb").innerHTML=""; closePicks(); paintFields(); maybeAutoCheck(); }); };
   const paintChap=()=>{ let s=""; const mx=chapMax(); for(let n=1;n<=mx;n++) if(k.has(n)||n===c) s+=`<button class="mtsq ${mtSel.c===n?"sel":""}" data-cn="${n}" ${mtLock?"disabled":""}>${pad2(n)}</button>`;
     el("mtChapGrid").innerHTML=s||`<div class="hint" style="grid-column:1/-1;margin:0">Learn more numbers to pick a chapter.</div>`;
-    el("mtChapGrid").querySelectorAll("[data-cn]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.c=+x.dataset.cn; mtSel.v=0; el("mtFb").innerHTML=""; closePicks(); paintFields(); }); };
+    el("mtChapGrid").querySelectorAll("[data-cn]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.c=+x.dataset.cn; keepInRange(); el("mtFb").innerHTML=""; closePicks(); paintFields(); maybeAutoCheck(); }); };
   const paintVerse=()=>{ let s=""; const mx=verseMax(); for(let n=1;n<=mx;n++) if(k.has(n)||n===v) s+=`<button class="mtsq ${mtSel.v===n?"sel":""}" data-vn="${n}" ${mtLock?"disabled":""}>${pad2(n)}</button>`;
     el("mtVerseGrid").innerHTML=s||`<div class="hint" style="grid-column:1/-1;margin:0">Learn more numbers to pick a verse.</div>`;
-    el("mtVerseGrid").querySelectorAll("[data-vn]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.v=+x.dataset.vn; el("mtFb").innerHTML=""; closePicks(); paintFields();
-      // auto-Check only on the FIRST attempt — after a miss, retries need a deliberate Check tap so fixing values doesn't keep re-firing
-      if(mtSel.b&&mtSel.c&&mtSel.v && memTestWrong===0) setTimeout(()=>{ if(el("mtCheck")&&!mtLock && memTestWrong===0) el("mtCheck").click(); },260); }); };
+    el("mtVerseGrid").querySelectorAll("[data-vn]").forEach(x=>x.onclick=()=>{ if(mtLock) return; mtSel.v=+x.dataset.vn; el("mtFb").innerHTML=""; closePicks(); paintFields(); maybeAutoCheck(); }); };
   // pickers open in a CENTERED overlay (page never scrolls) — one grid shown at a time
   const closePicks=()=>{ el("mtOverlay").style.display="none"; ["mtFieldB","mtFieldC","mtFieldV"].forEach(id=>el(id).classList.remove("open")); };
   const openPick=(field,title,gridId,paint)=>{ if(mtLock) return;
@@ -5574,8 +5678,8 @@ function memTestRender(){
     paint(); el(gridId).style.display=""; el("mtSheetTitle").textContent=title; el(field).classList.add("open");
     el("mtOverlay").style.display="grid"; };
   el("mtFieldB").onclick=()=>openPick("mtFieldB","Which book?","mtBookList",paintBookList);
-  el("mtFieldC").onclick=()=>{ if(!mtSel.b){ toast("Pick a book first."); return; } openPick("mtFieldC","Which chapter?","mtChapGrid",paintChap); };
-  el("mtFieldV").onclick=()=>{ if(!mtSel.c){ toast("Pick a chapter first."); return; } openPick("mtFieldV","Which verse?","mtVerseGrid",paintVerse); };
+  el("mtFieldC").onclick=()=>openPick("mtFieldC","Which chapter?","mtChapGrid",paintChap);
+  el("mtFieldV").onclick=()=>openPick("mtFieldV","Which verse?","mtVerseGrid",paintVerse);
   el("mtSheetClose").onclick=closePicks;
   el("mtOverlay").onclick=(e)=>{ if(e.target===el("mtOverlay")) closePicks(); };   // tap backdrop to close
   const paintAll=()=>{ paintFields(); };
@@ -5595,11 +5699,8 @@ function memTestRender(){
       const card=V.querySelector(".card"); if(card){ card.classList.add("mt-correctflash"); setTimeout(()=>card.classList.remove("mt-correctflash"),900); }   // flash the whole practice card green
       ["mtFieldB","mtFieldC","mtFieldV"].forEach(id=>{const e=el(id);if(e)e.classList.add("correctflash");});
       el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Kept ✓</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}${peeked?` · <span style="opacity:.85">🔥 streak held (peek used)</span>`:""}</div></div>`;
-      if(cr>=5 && cr%5===0){   // every 5 clean recalls in a row → offer to rest this verse for 14 days (re-offered if declined earlier)
-        el("mtFb").innerHTML+=`<div class="feedback ok" style="position:static;margin:10px -20px -20px;border-radius:0"><div class="sub" style="margin-bottom:8px">🎯 That's 5 in a row! Rest this verse for <b>14 days</b>?</div><div class="btnrow" style="margin:0"><button class="btn" id="szYes" style="margin:0">Snooze 14 days</button><button class="btn ghost" id="szNo" style="margin:0">Keep reviewing</button></div></div>`;
-        el("szYes").onclick=()=>{ snoozeVerse(kk); toast("😴 Resting for 14 days"); goNext(); };
-        el("szNo").onclick=goNext;
-      } else setTimeout(goNext, 900);
+      if(cr>=5 && cr%5===0) setTimeout(()=>openSnoozeAsk(b,c,v,kk,goNext), 700);   // every 5 clean recalls in a row -> ASK, in a popup of its own
+      else setTimeout(goNext, 900);
     } else {
       memTestWrong++; markAnswer(refKey(b,c,v),false); saveProg(); refreshHUD();   // a miss no longer breaks the streak — only 3-in-a-row does
       ["mtFieldB","mtFieldC","mtFieldV"].forEach(id=>{const e=el(id);if(e)e.classList.add("wrongflash");});
@@ -5625,8 +5726,8 @@ function memTestRender(){
     confirmSpend(`Reveal the ${partName} for <b class="gold">${cost} 🪙</b>?`,
       `You'll have ${talDisp(Math.max(0,(Prog.talents||0)-cost))} talents left. Answer the rest right and your streak still counts.`, ()=>{
       spendTalents(cost); memHintUses++; closePicks();
-      if(which==="b"){ mtSel.b=b; paintFields(); paintChap(); paintVerse(); el("mtFieldB").disabled=true; el("mtFieldB").classList.add("peeked"); }
-      else if(which==="c"){ mtSel.c=c; paintFields(); paintVerse(); el("mtFieldC").disabled=true; el("mtFieldC").classList.add("peeked"); }
+      if(which==="b"){ mtSel.b=b; keepInRange(); paintFields(); paintChap(); paintVerse(); el("mtFieldB").disabled=true; el("mtFieldB").classList.add("peeked"); }
+      else if(which==="c"){ mtSel.c=c; keepInRange(); paintFields(); paintVerse(); el("mtFieldC").disabled=true; el("mtFieldC").classList.add("peeked"); }
       else { mtSel.v=v; paintFields(); el("mtFieldV").disabled=true; el("mtFieldV").classList.add("peeked"); }
       btn.disabled=true; btn.style.opacity=".5";
       const cl=el("mtHintCost"); if(cl) cl.innerHTML=`Next peek: <b class="gold">${HINT_COSTS[Math.min(memHintUses,2)]} 🪙</b>. Answer right and your streak still counts.`;

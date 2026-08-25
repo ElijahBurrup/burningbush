@@ -134,14 +134,23 @@
   "imgs": 0,
   "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word-for-word practices on this verse. Next practice "
  },
+ "classic/practice/num-setup": {
+  "h": "508cdf1170f8dd28",
+  "len": 1388,
+  "els": 24,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Number &amp; book practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
+ },
  "classic/practice/number-test": {
-  "h": "2e43169f07ad7bd9",
-  "len": 782,
-  "els": 17,
+  "h": "458cda7ee05632a4",
+  "len": 765,
+  "els": 16,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 45 r · L Reel Doll Rum Hammer 📝 Reveal my scene"
+  "text": "✕ 1/15 Which book is this number? 45 Romans Genesis Obadiah Ecclesiastes 📝 Reveal my scene"
  },
  "classic/practice/text-fade": {
   "h": "d74ec576ec2320b6",
@@ -252,7 +261,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "c677ae1adc870c8e",
+  "h": "2edce4062b40bac6",
   "len": 13818,
   "els": 319,
   "buttons": 32,
@@ -306,13 +315,13 @@
   "text": "💰 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "605c5850542712db",
-  "len": 18633,
-  "els": 366,
+  "h": "32acb1522f987302",
+  "len": 20116,
+  "els": 392,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.10.0 August 24, 2026 Your bench, your pace NEW A daily goal can now be as high as 15 , and reviewin"
+  "text": "✕ Version history v1.11.0 August 25, 2026 Answer it your way NEW In verse practice you can now choose book, chapter and "
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -322,6 +331,15 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "classic/modal/snooze": {
+  "h": "cd48df7b00427f31",
+  "len": 656,
+  "els": 9,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "😴 That's 5 in a row John 3:16 is holding well. Rest it for 14 days and it won't come up in practice until then, leaving"
  },
  "classic/modal/spqr": {
   "h": "a55adb0ea727d140",
@@ -503,14 +521,23 @@
   "imgs": 0,
   "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word-for-word practices on this verse. Next practice "
  },
+ "illumined/practice/num-setup": {
+  "h": "508cdf1170f8dd28",
+  "len": 1388,
+  "els": 24,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Number &amp; book practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
+ },
  "illumined/practice/number-test": {
-  "h": "2e43169f07ad7bd9",
-  "len": 782,
-  "els": 17,
+  "h": "458cda7ee05632a4",
+  "len": 765,
+  "els": 16,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 45 r · L Reel Doll Rum Hammer 📝 Reveal my scene"
+  "text": "✕ 1/15 Which book is this number? 45 Romans Genesis Obadiah Ecclesiastes 📝 Reveal my scene"
  },
  "illumined/practice/text-fade": {
   "h": "d74ec576ec2320b6",
@@ -621,7 +648,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "cc32c6083ba85324",
+  "h": "93982f1a659221a0",
   "len": 13818,
   "els": 319,
   "buttons": 32,
@@ -675,13 +702,13 @@
   "text": "💰 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "605c5850542712db",
-  "len": 18633,
-  "els": 366,
+  "h": "32acb1522f987302",
+  "len": 20116,
+  "els": 392,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.10.0 August 24, 2026 Your bench, your pace NEW A daily goal can now be as high as 15 , and reviewin"
+  "text": "✕ Version history v1.11.0 August 25, 2026 Answer it your way NEW In verse practice you can now choose book, chapter and "
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -691,6 +718,15 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "illumined/modal/snooze": {
+  "h": "cd48df7b00427f31",
+  "len": 656,
+  "els": 9,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "😴 That's 5 in a row John 3:16 is holding well. Rest it for 14 days and it won't come up in practice until then, leaving"
  },
  "illumined/modal/spqr": {
   "h": "a55adb0ea727d140",
@@ -872,14 +908,23 @@
   "imgs": 0,
   "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word-for-word practices on this verse. Next practice "
  },
+ "glass/practice/num-setup": {
+  "h": "508cdf1170f8dd28",
+  "len": 1388,
+  "els": 24,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Number &amp; book practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
+ },
  "glass/practice/number-test": {
-  "h": "2e43169f07ad7bd9",
-  "len": 782,
-  "els": 17,
+  "h": "458cda7ee05632a4",
+  "len": 765,
+  "els": 16,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 45 r · L Reel Doll Rum Hammer 📝 Reveal my scene"
+  "text": "✕ 1/15 Which book is this number? 45 Romans Genesis Obadiah Ecclesiastes 📝 Reveal my scene"
  },
  "glass/practice/text-fade": {
   "h": "d74ec576ec2320b6",
@@ -990,7 +1035,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "69387a0bc27b4552",
+  "h": "0543845df65fa01d",
   "len": 13818,
   "els": 319,
   "buttons": 32,
@@ -1044,13 +1089,13 @@
   "text": "💰 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "605c5850542712db",
-  "len": 18633,
-  "els": 366,
+  "h": "32acb1522f987302",
+  "len": 20116,
+  "els": 392,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.10.0 August 24, 2026 Your bench, your pace NEW A daily goal can now be as high as 15 , and reviewin"
+  "text": "✕ Version history v1.11.0 August 25, 2026 Answer it your way NEW In verse practice you can now choose book, chapter and "
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1060,6 +1105,15 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "glass/modal/snooze": {
+  "h": "cd48df7b00427f31",
+  "len": 656,
+  "els": 9,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "😴 That's 5 in a row John 3:16 is holding well. Rest it for 14 days and it won't come up in practice until then, leaving"
  },
  "glass/modal/spqr": {
   "h": "a55adb0ea727d140",
@@ -1241,14 +1295,23 @@
   "imgs": 0,
   "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word-for-word practices on this verse. Next practice "
  },
+ "quest/practice/num-setup": {
+  "h": "508cdf1170f8dd28",
+  "len": 1388,
+  "els": 24,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Number &amp; book practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
+ },
  "quest/practice/number-test": {
-  "h": "2e43169f07ad7bd9",
-  "len": 782,
-  "els": 17,
+  "h": "458cda7ee05632a4",
+  "len": 765,
+  "els": 16,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 45 r · L Reel Doll Rum Hammer 📝 Reveal my scene"
+  "text": "✕ 1/15 Which book is this number? 45 Romans Genesis Obadiah Ecclesiastes 📝 Reveal my scene"
  },
  "quest/practice/text-fade": {
   "h": "d74ec576ec2320b6",
@@ -1359,7 +1422,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "c259039d1919d911",
+  "h": "4aae970a7f809663",
   "len": 13818,
   "els": 319,
   "buttons": 32,
@@ -1413,13 +1476,13 @@
   "text": "💰 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "605c5850542712db",
-  "len": 18633,
-  "els": 366,
+  "h": "32acb1522f987302",
+  "len": 20116,
+  "els": 392,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.10.0 August 24, 2026 Your bench, your pace NEW A daily goal can now be as high as 15 , and reviewin"
+  "text": "✕ Version history v1.11.0 August 25, 2026 Answer it your way NEW In verse practice you can now choose book, chapter and "
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1429,6 +1492,15 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "quest/modal/snooze": {
+  "h": "cd48df7b00427f31",
+  "len": 656,
+  "els": 9,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "😴 That's 5 in a row John 3:16 is holding well. Rest it for 14 days and it won't come up in practice until then, leaving"
  },
  "quest/modal/spqr": {
   "h": "a55adb0ea727d140",
@@ -1610,14 +1682,23 @@
   "imgs": 0,
   "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word-for-word practices on this verse. Next practice "
  },
+ "buddy/practice/num-setup": {
+  "h": "508cdf1170f8dd28",
+  "len": 1388,
+  "els": 24,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Number &amp; book practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
+ },
  "buddy/practice/number-test": {
-  "h": "2e43169f07ad7bd9",
-  "len": 782,
-  "els": 17,
+  "h": "458cda7ee05632a4",
+  "len": 765,
+  "els": 16,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 45 r · L Reel Doll Rum Hammer 📝 Reveal my scene"
+  "text": "✕ 1/15 Which book is this number? 45 Romans Genesis Obadiah Ecclesiastes 📝 Reveal my scene"
  },
  "buddy/practice/text-fade": {
   "h": "d74ec576ec2320b6",
@@ -1728,7 +1809,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "1bdf5f708ae80762",
+  "h": "9242b8f0966cbedd",
   "len": 13818,
   "els": 319,
   "buttons": 32,
@@ -1782,13 +1863,13 @@
   "text": "💰 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "605c5850542712db",
-  "len": 18633,
-  "els": 366,
+  "h": "32acb1522f987302",
+  "len": 20116,
+  "els": 392,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.10.0 August 24, 2026 Your bench, your pace NEW A daily goal can now be as high as 15 , and reviewin"
+  "text": "✕ Version history v1.11.0 August 25, 2026 Answer it your way NEW In verse practice you can now choose book, chapter and "
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
@@ -1798,6 +1879,15 @@
   "svgs": 1,
   "imgs": 0,
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+ },
+ "buddy/modal/snooze": {
+  "h": "cd48df7b00427f31",
+  "len": 656,
+  "els": 9,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "😴 That's 5 in a row John 3:16 is holding well. Rest it for 14 days and it won't come up in practice until then, leaving"
  },
  "buddy/modal/spqr": {
   "h": "a55adb0ea727d140",

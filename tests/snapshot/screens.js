@@ -33,6 +33,8 @@ module.exports = [
   { name: 'practice/type-test', sel: '#verse', go: () => { startTypeTest(43, 11, 35, () => { }); } },
   { name: 'practice/w4w-win', sel: '#verse', go: () => { Prog.w4w = {}; Prog.blessIdx = 0; TT = { b: 43, c: 3, v: 16, ret: null, hintUsed: false, words: [] }; typeTestComplete(); } },
   { name: 'practice/w4w-locked', sel: '#verse', go: () => { Prog.w4w = { '43:3:16': { count: 3, times: [Date.now()] } }; w4wLockScreen(43, 3, 16, () => { }); } },
+  // the set-up screen the practice now opens on — prefs reset so the ticks are reproducible
+  { name: 'practice/num-setup', sel: '#verse', go: () => { Prog.ntPrefs = {}; saveProg(); openNumTestSetup(); } },
   { name: 'practice/number-test', sel: '#verse', go: () => { startNumberTest(1); } },
   { name: 'practice/text-fade', sel: '#verse', go: () => { startTextFade(43, 11, 35, () => { }); } },
 
@@ -62,6 +64,7 @@ module.exports = [
   { name: 'modal/store', sel: '#storeModal', go: () => { openStore(); } },
   { name: 'modal/whats-new', sel: '#whatsNewModal', go: () => { openWhatsNew(true); } },
   { name: 'modal/church', sel: '#churchModal', go: () => { Prog.church = { given: 1400, built: 3, total: 8900 }; openChurch(); } },
+  { name: 'modal/snooze', sel: '#snoozeModal', go: () => { openSnoozeAsk(43, 3, 16, '43:3:16', () => { }); } },
   { name: 'modal/spqr', sel: '#spqrModal', go: () => { openSpqrNote(); } },
   { name: 'modal/word-def', sel: '#wordDefModal', go: () => { openWordDef(19, 23, 1, 1, 'LORD'); } },
   { name: 'modal/notify-help', sel: '#notifyHelpModal', go: () => { openNotifyHelp(true); } },
