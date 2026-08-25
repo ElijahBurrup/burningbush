@@ -1586,8 +1586,12 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.11.0";
+const APP_VERSION="1.12.0";
 const CHANGELOG=[
+ {v:"1.12.0", d:"August 25, 2026", t:"Straight to the typing", items:[
+   ["new","The word-for-word warm-up can now be <b>skipped</b> \u2014 the button sits at the foot of the screen, and takes you straight to typing the verse from memory."],
+   ["fix","The warm-up tiles now show <b>just the word</b>. A trailing comma or full stop was quietly narrowing the guess; apostrophes and hyphens inside a word (\u201cGod\u2019s\u201d, \u201cwell-beloved\u201d) are part of it and stay."]
+ ]},
  {v:"1.11.0", d:"August 25, 2026", t:"Answer it your way", items:[
    ["new","In verse practice you can now choose <b>book, chapter and verse in any order</b> \u2014 whichever comes to mind first."],
    ["new","A wrong answer <b>no longer empties the boxes</b>. What you picked stays put; only a choice that makes another impossible clears it \u2014 chapter 119 cannot survive a move to Genesis, but chapter 23 can."],
@@ -7082,6 +7086,13 @@ function fmtWhen(ts){ const d=new Date(ts), now=new Date(); const sameDay=d.toDa
   let h=d.getHours(), m=d.getMinutes(), ap=h>=12?"PM":"AM"; h=h%12||12; const t=`${h}:${String(m).padStart(2,"0")} ${ap}`;
   return sameDay ? `today at ${t}` : (d.getTime()-now.getTime()<2*W4W_DAY ? `tomorrow at ${t}` : d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+` at ${t}`); }
 function normWord(s){ return (s||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
+// What a word-pick tile SHOWS: the word without the verse's punctuation around it. Apostrophes and
+// hyphens inside a word are part of it ("God's", "well-beloved") and stay. Matching is unaffected -
+// it has always gone through normWord, which ignores punctuation entirely.
+function wpLabel(w){
+  const bare=String(w||"").replace(/^[^A-Za-z0-9]+/,"").replace(/[^A-Za-z0-9]+$/,"");
+  return bare || String(w||"");
+}
 
 // launch the full word-for-word session (peek-fade → word picker → typing test), respecting the lock
 function startWordForWord(b,c,v,ret){
@@ -7129,11 +7140,13 @@ function renderWordPick(){
         <div class="ttcount ${done?"ttgood":""}">${done}/${WP.stop}</div></div>
       <p class="hint" style="text-align:center;margin:0 0 6px">Warm-up — tap the word that comes next.</p>
       <div class="ttdisplay" id="wpDisplay"><span class="ttdone">${said}</span>${said?"":`<span style="color:var(--muted)">the verse builds here as you go…</span>`}</div>
-      <div class="wpgrid">${WP.opts.map(w=>`<button type="button" class="wpopt" data-w="${w.replace(/"/g,"&quot;")}">${w}</button>`).join("")}</div>
+      <div class="wpgrid">${WP.opts.map(w=>`<button type="button" class="wpopt" data-w="${w.replace(/"/g,"&quot;")}">${wpLabel(w)}</button>`).join("")}</div>
       <div class="hint" id="wpFb" style="text-align:center;margin-top:10px">&nbsp;</div>
+      <button class="btn ghost sm" id="wpSkip" style="width:100%;margin-top:8px">Skip the warm-up — type it from memory →</button>
     </div>`;
   const disp=el("wpDisplay"); disp.scrollTop=disp.scrollHeight;
   el("wpClose").onclick=()=>{ const r=WP.ret; WP=null; r?r():renderVerse(); };
+  el("wpSkip").onclick=()=>{ const {b,c,v,ret}=WP; WP=null; startTypeTest(b,c,v,ret); };
   const correct=WP.words[WP.idx];
   V.querySelectorAll("[data-w]").forEach(btn=>btn.onclick=()=>{
     if(btn.disabled) return;

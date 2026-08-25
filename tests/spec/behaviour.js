@@ -638,6 +638,59 @@ const DAY = 86400000;
     return true;
   });
 
+  // ---------------- the word-pick warm-up (v1.12) ----------------
+  describe('word pick', () => { });
+  // Sample the tiles at a dozen points in the verse - any single step may happen to draw only
+  // clean words, so one screenful proves nothing either way.
+  const wpTiles = await $(() => {
+    startWordPick(43, 3, 16, () => { });                       // John 3:16 - commas throughout
+    let rawPunct = 0, blank = 0, total = 0; const edged = [];
+    for (let i = 0; i < Math.min(12, WP.words.length); i++) {
+      WP.idx = i; WP.opts = null; renderWordPick();
+      [...document.querySelectorAll('.wpopt')].forEach(t => {
+        total++;
+        const L = t.textContent;
+        if (/^[^A-Za-z0-9]|[^A-Za-z0-9]$/.test(t.dataset.w)) rawPunct++;
+        if (!L.trim()) blank++;
+        if (/[A-Za-z0-9]/.test(L) && /^[^A-Za-z0-9]|[^A-Za-z0-9]$/.test(L)) edged.push(L);
+      });
+    }
+    return { total, rawPunct, blank, edged: edged.join(','), skip: !!el('wpSkip') };
+  });
+  ok(wpTiles.total > 20, 'the warm-up offers tiles throughout the verse');
+  ok(wpTiles.rawPunct > 0, '...drawn from words that really do carry punctuation');
+  is(wpTiles.edged, '', '...yet no tile shows it hanging off the word');
+  is(wpTiles.blank, 0, 'and no tile is left blank');
+  ok(wpTiles.skip, 'the warm-up can be skipped');
+
+  is(await $(() => wpLabel('world,')), 'world', 'a trailing comma is dropped from the tile');
+  is(await $(() => wpLabel('(and')), 'and', 'so is an opening bracket');
+  is(await $(() => wpLabel("LORD's")), "LORD's", "...but an apostrophe inside a word is not");
+  is(await $(() => wpLabel('well-beloved')), 'well-beloved', '...nor a hyphen');
+
+  // stripping the label must not change what is MATCHED, nor what the verse builds into
+  const wpFound = await $(() => {
+    startWordPick(43, 3, 16, () => { });
+    const correct = WP.words[WP.idx];
+    const tile = [...document.querySelectorAll('.wpopt')].find(t => normWord(t.dataset.w) === normWord(correct));
+    if (tile) tile.click();
+    return { found: !!tile, correct };
+  });
+  ok(wpFound.found, 'the right word is still findable by its bare label');
+  await page.waitForFunction(() => WP && WP.idx === 1, { timeout: 3000 }).catch(() => { });
+  const wpAfter = await $(() => ({ idx: WP && WP.idx, built: el('wpDisplay') ? el('wpDisplay').textContent : '' }));
+  is(wpAfter.idx, 1, '...and choosing it still advances the warm-up');
+  has(wpAfter.built, wpFound.correct, '...building the verse with its punctuation intact');
+
+  const wpSkip = await $(() => {
+    startWordPick(43, 3, 16, () => { });
+    el('wpSkip').click();
+    return { typing: !!el('ttIn'), wpEnded: WP === null, sameVerse: TT && TT.b + ':' + TT.c + ':' + TT.v };
+  });
+  ok(wpSkip.typing, 'skipping goes straight to typing it from memory');
+  ok(wpSkip.wpEnded, '...ending the warm-up');
+  is(wpSkip.sameVerse, '43:3:16', '...on the same verse');
+
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
   if (consoleErrs.length) { console.error(`  ✗ ${consoleErrs.length} console error(s):`); consoleErrs.slice(0, 5).forEach(e => console.error('      ' + e)); }
