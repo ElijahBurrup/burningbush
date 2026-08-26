@@ -1612,8 +1612,14 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.17.0";
+const APP_VERSION="1.18.0";
 const CHANGELOG=[
+ {v:"1.18.0", d:"August 26, 2026", t:"A shorter path", items:[
+   ["new","The Learn path keeps <b>the section you are on and the one before it</b> open, folds the rest away, and puts <b>your next lesson at the top of the screen</b>. Finish a section and the next one opens itself."],
+   ["new","<b>The films have left the path.</b> None of them is a tile to hunt for any more — each arrives where it is needed, and every one you have seen waits in <b>Video Review</b>."],
+   ["new","Every sixth lesson, the app offers you <b>a new memory palace</b> — and if you say yes, walks you straight into building it."],
+   ["fix","The milestone cards are gone from the Learn path. The Bible-story capstones stay where they were."]
+ ]},
  {v:"1.17.0", d:"August 26, 2026", t:"The Library", items:[
    ["new","<b>Verses is now your Library</b>, with its own icon and its own scratch-off, and just <b>four ways in</b>: Video Review, Learn Verses, Spaced Repetition and Memorized."],
    ["new","<b>Video Review</b> keeps every film you have unlocked, in the order it arrived. Tap one to watch it again. Films join the list the first time they are shown \u2014 even if you dismiss one, it waits here."],
@@ -2387,6 +2393,7 @@ function migrateProg(p){
   if(!p.w4wSR||typeof p.w4wSR!=="object") p.w4wSR={};                // word-for-word TEST record (streak of clean passes)
   if(!p.locPast||typeof p.locPast!=="object") p.locPast={};          // the station "known by heart" released, kept so it can be given back
   if(!p.stageAsk||typeof p.stageAsk!=="object") p.stageAsk={};       // where a promotion was last declined, so it nudges but never nags
+  if(typeof p.palaceAskAt!=="number") p.palaceAskAt=0;                // lesson count at the last palace suggestion
   p.videoOrder=arr(p.videoOrder);                                    // films unlocked, in the order they arrived
   if(!p.revPrefs||typeof p.revPrefs!=="object") p.revPrefs={};       // how the user wants to be asked in review
   { const sr=p.verseSR||{}; Object.keys(sr).forEach(k=>{ const o=sr[k];
@@ -2465,6 +2472,7 @@ function mergeProg(a,b){
       const x=wa[k], y=wb[k];
       m.w4wSR[k] = !y ? x : (!x ? y : (((x.n||0)>=(y.n||0)) ? x : y)); }); }
   m.locPast=Object.assign({},a.locPast||{},b.locPast||{});
+  m.palaceAskAt=Math.max(a.palaceAskAt||0,b.palaceAskAt||0);
   m.videoOrder=[...(a.videoOrder||[])]; (b.videoOrder||[]).forEach(k=>{ if(!m.videoOrder.includes(k)) m.videoOrder.push(k); });
   m.revPrefs=Object.assign({},a.revPrefs||{},b.revPrefs||{});   // a preference, not progress
   // a feature switched ON anywhere stays on: the device that turned it on is the one that meant it
@@ -2883,7 +2891,7 @@ function show(tab){
   document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   document.querySelector(".content").scrollTop=0;
   if(tab==="journey") renderJourney();
-  if(tab==="learn") renderPath(true);
+  if(tab==="learn"){ renderPath(true); setTimeout(()=>maybeVideo("major"), 400); }   // the film that opens the track
   if(tab==="verse") renderVerse();
   if(tab==="palace") renderPalace();
   if(tab==="stories") renderStories();
@@ -3114,7 +3122,8 @@ function storyReachKey(sk){ const s=sk.story; return Math.max(bookNum(s.b)||0, s
 
 /* =================== LEARN — Duolingo-style skill path =================== */
 // A skill = {id, label, kind:'num'|'book'|'sound'|'story', items:[n...]} ; tiles unlock in order.
-// video lessons woven into the Learn track (defined before buildUnits, which references them via vid())
+// The films. None of them sit on the Learn path any more — each is triggered where it is needed
+// (see openVideoScreen / maybeVideo) and every one seen is kept in Video Review.
 const VIDEOS = {
   major: {src:"", skill:"video:major", title:"How the Major System works", sub:"Ten simple sounds turn any number into a picture — the key to everything.", done:"I watched it →"},
   verse: {src:"", skill:"video:verse", title:"How to create a verse scene", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse", done:"I watched it →"},
@@ -3127,12 +3136,10 @@ const VIDEOS = {
 function buildUnits(){
   const bk=n=>({id:"book:"+n,label:bookName(n),kind:"book",items:[n]});
   const units=[];
-  const vid=(k)=>({id:VIDEOS[k].skill, label:VIDEOS[k].title, kind:"video", vkey:k, optional:true, items:[]});
   const ROUND_ICONS=["👣","🥾","🛤️","🌄","⛰️","🧗","🏔️","🚩","🦅","🌟","🎖️","🏆","👑"];   // ascending climb, Round 1→13
   const STORY_ICONS=["🍎","⭐","🧥","🌊","📜","🎺","🌾","👑","🔥","🌪️","🦁","👶","🕊️","🍞","🌱","🐑","💰","✝️","⛪","🌅"]; // one per story section
   // 0) The Code — the Major System video first, then the sound↔digit map drilled both ways.
   units.push({name:"The Code · Major System sounds", ic:"🔢", skills:[
-    vid("major"),
     {id:"snd:0-4",label:"Sounds 0–4",kind:"sound",items:[0,1,2,3,4]},
     {id:"snd:5-9",label:"Sounds 5–9",kind:"sound",items:[5,6,7,8,9]}
   ]});
@@ -3142,16 +3149,11 @@ function buildUnits(){
     ...range(1,5).map(d=>({id:"num:"+d,label:PEGS[d],kind:"num",items:[d]})),
     bk(40)
   ]});
-  // 1b) Learn Verses — watch the scene-building video, then go memorize verses in the Verse tab.
-  units.push({name:"Learn Verses", ic:"🎬", videoTrack:true, skills:[ vid("verse") ]});
   // 2) Your Memory Palace — video first, then create one (the create lesson is hidden behind a
   //    scratch-off until earned; memorize 5 verses). Optional so it never blocks the climb.
   units.push({name:"Your Memory Palace", ic:"🏰", palaceUnit:true, skills:[
-    vid("palace"),
     {id:"palace:0",label:"My palace",kind:"palace",optional:true,items:[0]}
   ]});
-  // 2b) Spaced Repetition — watch the video, then practice from the Verse tab.
-  units.push({name:"Spaced Repetition", ic:"🔁", videoTrack:true, skills:[ vid("sr") ]});
   // Optional bonus palaces get appended to the end of each later section (never block progress).
   let _palaceSlot=1;
   const addOptPalace=(u)=>{ u.skills.push({id:"palace:"+_palaceSlot,label:"Add Palace",kind:"palace",optional:true,items:[_palaceSlot]}); _palaceSlot++; return u; };
@@ -3217,36 +3219,6 @@ function skillUnlocked(ui,si){
 }
 /* ---- milestone checkpoints (grey until reached, then gold) ---- */
 const MILESTONES=[
- {after:"The Foundation", reached:()=>foundationsDone(), e:"🕯️", t:"Foundations Laid",
-  c:`The Torah (Genesis–Deuteronomy) and Matthew are complete — you've earned your first scratch-off ${GTIK}. Tap a flashing golden ticket in the menu to reveal what it unlocks.`,
-  d:"The story of creation and the life of Jesus are open to you — you can already stand on foundational promises, commands, and identity verses."},
- {after:"Round 2 ", reached:()=>Prog.level>=11, e:"🌱", t:"Rooted &amp; Growing",
-  c:"You can already locate verses across your first books — the habit is taking root.",
-  d:"Keep climbing — each number you learn multiplies the verses within your reach."},
- {after:"Round 4 ", reached:()=>Prog.level>=MILESTONE, counts:true, e:"🏆", t:"Bible Power Unlocked",
-  c:`You can pinpoint any book, chapter &amp; verse from 1–${MILESTONE} — one huge contiguous span of Scripture.`,
-  d:"Hundreds of the Bible's most powerful promises, commands and power-verses are within reach. Stand on them daily."},
- {after:"Round 6 ", reached:()=>Prog.level>=23, e:"🎵", t:"Songs &amp; Wisdom",
-  c:"Job, Psalms, Proverbs and the wisdom books are now in range.",
-  d:"The prayers, songs and wisdom of Scripture open to you — verses to pray and live by."},
- {after:"Round 7 ", reached:()=>Prog.level>=26, e:"📗", t:"Deep in the Word",
-  c:"More than two dozen numbers strong — a huge swath of Scripture is addressable.",
-  d:"The wisdom books and the prophets are opening up. You're well past the halfway mark."},
- {after:"Round 8 ", reached:()=>Prog.level>=29, e:"📜", t:"The Major Prophets",
-  c:"Isaiah, Jeremiah, Ezekiel and Daniel are within your grasp.",
-  d:"The great visions, warnings, and Messianic promises of the prophets are now yours to memorize."},
- {after:"Round 10 ", reached:()=>Prog.level>=35, e:"🔥", t:"Almost the Whole Old Testament",
-  c:"Nearly every Old Testament book is open.",
-  d:"Just the last prophets and the New Testament's tail remain — you're so close to the whole Bible."},
- {after:"Round 11 ", reached:()=>Prog.level>=45, e:"🕊️", t:"The New Testament Opens",
-  c:"The Gospels, Acts and the letters are within your grasp.",
-  d:"The whole New Testament story — from the manger to the church age — is nearly all yours."},
- {after:"Round 12 ", reached:()=>booksKnown()>=66, e:"📖", t:"The Whole Bible",
-  c:"Every one of the 66 books is now addressable.",
-  d:"From Genesis to Revelation, no book is beyond you — the whole counsel of God is at your fingertips."},
- {after:"Round 13 ", reached:()=>knownNum(176), e:"👑", t:"Every Verse in Scripture",
-  c:"Every chapter and verse number all the way to 176 is learned.",
-  d:"There is no verse in all of Scripture you cannot now encode. Go etch the Word in your heart for the Kingdom."},
  {after:"Creation & the Fall", reached:()=>storiesDone(0,4), stories:true, e:"🌍", t:"Creation Remembered",
   c:"You know where the story of the world begins.",
   d:"Creation, the Fall, and Noah — the opening of the Bible's grand story is anchored in your memory."},
@@ -3384,7 +3356,6 @@ function maybeVideo(key, after){
   if(videoSeen(key)){ if(after) after(); return false; }
   openVideoScreen(key, after); return true;
 }
-function startVideoLesson(key, ret){ openVideoScreen(key, ret||renderPath); }
 let srFlashPending=false;   // set when the SR video is watched → the Spaced-Repetition button pulses on the Verse hub
 function flashNav(cta){
   const map={verse:{tab:"verse",msg:"👇 Learn your verses here"}, palace:{tab:"palace",msg:"👇 Create your palace here"}, sr:{tab:"verse",msg:"👇 Tap Verse — your Spaced-Repetition button is waiting"}};
@@ -3406,16 +3377,20 @@ function goalpostCard(){
     ${(g&&g.ref)?`<div class="gp-row"><span class="gp-k">Ahead</span><span class="gp-v">${g.ref} — <i>"${g.text}"</i></span></div>`:""}
   </div>`;
 }
+// The section you are working through and the one before it stand open; everything else is
+// folded away. Finish a section and the next one opens itself, because "cur" has moved on.
+function defaultExpanded(ui){ const s=new Set([ui]); if(ui>0) s.add(ui-1); return s; }
 function renderPath(focus){
   updateMetrics();
   const L=el("learn");
   let html=`<h2>Learn</h2>`;
-  if(expandedUnits===null) expandedUnits=new Set(); // start with every group collapsed
-  // Opening Learn from the bottom menu: minimize everything, open only the unit holding the
-  // next blue lesson, and scroll to it.
+  const nb0=nextBlueSkill();
+  if(expandedUnits===null) expandedUnits = nb0 ? defaultExpanded(nb0.ui) : new Set();
+  // Opening Learn from the bottom menu: re-fold to the current section and the one before it,
+  // then put the next lesson itself at the top of the screen.
   let focusTile=null;
-  if(focus){ const nb=nextBlueSkill(); if(nb){ expandedUnits=new Set([nb.ui]); focusTile=nb; } }
-  html+=`<p class="hint" style="margin:2px 0 10px">Tap a group to open it.</p>`;
+  if(focus && nb0){ expandedUnits=defaultExpanded(nb0.ui); focusTile=nb0; }
+  html+=`<p class="hint" style="margin:2px 0 10px">Tap a group to open or fold it.</p>`;
   // Keep the page SMALL and focused: reveal only up to the current frontier, and never past the
   // Memory-Palace scratch-off until it's won. Once every feature is unlocked, show the whole path.
   const palaceUnitIdx=UNITS.findIndex(U=>U.palaceUnit);
@@ -3458,12 +3433,6 @@ function renderPath(focus){
             <span class="tikface">🎫</span><small>${earned?"Scratch to unlock!":"Memory Palace"}</small></button>`;
           return;
         }
-        if(sk.kind==="video"){
-          const watched=Prog.doneSkills.includes(sk.id);
-          html+=`<button class="tile video ${watched?"done":""}" data-video="${sk.vkey}">
-            <span class="vface">${watched?"✓":"▶"}</span><small>${sk.label}</small></button>`;
-          return;
-        }
         const unlocked=skillUnlocked(ui,si), color=skillColor(sk,unlocked), d=Prog.doneSkills.includes(sk.id)?"done":"";
         const pro=skillPaywalled(sk);
         const isStory=sk.kind==="story";
@@ -3478,7 +3447,6 @@ function renderPath(focus){
       if(palaceLocked) html+=`<div class="hint" style="text-align:center;margin:10px 0 0">${SCRATCH_LADDER[palaceRung].gate()?"You've earned it — scratch the ticket above! 🎫":"Memorize 5 verses and hit a 5-answer streak in the verse test to earn this."}</div>`;
     }
     html+=`</div>`;
-    MILESTONES.forEach(m=>{ if(U.name.startsWith(m.after)) html+=renderMilestone(m); });
   });
   if(truncated) html+=`<div class="hint" style="text-align:center;margin:14px 0 4px;opacity:.8">🔒 More of your path unlocks as you earn scratch-offs ${GTIK}</div>`;
   L.innerHTML=html;
@@ -3488,7 +3456,6 @@ function renderPath(focus){
     if(t.classList.contains("pro")){ openPaywall(UNITS[+t.dataset.ui].skills[+t.dataset.si]); return; }
     startLesson(UNITS[+t.dataset.ui].skills[+t.dataset.si]);
   });
-  L.querySelectorAll(".tile.video").forEach(t=>t.onclick=()=>startVideoLesson(t.dataset.video, renderPath));
   L.querySelectorAll("[data-palaceticket]").forEach(t=>t.onclick=()=>{
     const rung=SCRATCH_LADDER.findIndex(r=>r.tab==="palace");
     if(SCRATCH_LADDER[rung].gate()) Scratch.open(rung);
@@ -3497,8 +3464,8 @@ function renderPath(focus){
   if(focusTile){
     const tile=L.querySelector(`.tile[data-ui="${focusTile.ui}"][data-si="${focusTile.si}"]`);
     if(tile) tile.classList.add("focusnext");
-    // pin the current round's header to the very top of the scroll area (just under the sticky menu)
-    const head=L.querySelector(`[data-grp="${focusTile.ui}"]`);
+    // put the NEXT LESSON at the top of the scroll area (just under the sticky menu)
+    const head=tile||L.querySelector(`[data-grp="${focusTile.ui}"]`);
     if(head) requestAnimationFrame(()=>{ const c=document.querySelector(".content"); if(c){ const cr=c.getBoundingClientRect(), hr=head.getBoundingClientRect(); c.scrollTop += (hr.top-cr.top)-8; } });
   }
   paintTheme();
@@ -4004,6 +3971,32 @@ function answer(s,good){
   el("fbNext").onclick=advance;
 }
 function advance(){ LZ.i++; renderStep(); }
+/* Six lessons is roughly a section, and a section's worth of new books and numbers is a
+   section's worth of new verses with nowhere to put them. So: offer a palace, and if they say
+   yes, walk them straight into building one rather than telling them where to find it. */
+const LESSONS_PER_PALACE_ASK=6;
+function lessonsDoneCount(){ return (Prog.doneSkills||[]).filter(id=>/^(num|book|snd):/.test(id)).length; }
+function maybeSuggestPalace(){
+  const n=lessonsDoneCount();
+  if(n<LESSONS_PER_PALACE_ASK || n%LESSONS_PER_PALACE_ASK!==0) return false;
+  if((Prog.palaceAskAt||0)>=n) return false;
+  Prog.palaceAskAt=n; saveProg();
+  if(!tabWon("palace")) return false;              // palaces are not open to them yet
+  const m=el("palaceAskModal")||(()=>{ const d=document.createElement("div"); d.id="palaceAskModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card center">
+      <div style="font-size:34px">🏛️</div>
+      <div style="font-size:20px;font-weight:800;margin-top:6px">${n} lessons in</div>
+      <p class="lead" style="margin:8px 0 0">Every lesson puts more verses within your reach. A new memory palace gives them somewhere to live.</p>
+      <p class="hint" style="margin:10px 0 0">A palace is just a place you already know well, walked in the same order every time.</p>
+      <button class="btn" id="paYes" style="width:100%;margin-top:14px">Build one now</button>
+      <button class="btn ghost" id="paNo" style="width:100%;margin-top:8px">Not just now</button>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; };
+  el("paYes").onclick=()=>{ close(); startNewPalace(); };
+  el("paNo").onclick=close;
+  return true;
+}
 function finishLesson(){
   const sk=LZ.sk;
   const rk=v=>refKey(bookNum(v.b),v.c,v.v);
@@ -4031,9 +4024,10 @@ function finishLesson(){
       ${newly.length?`<button class="btn" id="lBuild">Build a new verse →</button>`:`<button class="btn" id="lNextNum">Learn another →</button>`}
       <button class="btn ghost" id="lPath2">Back to path</button></div></div>`;
   if(el("lBuild")) el("lBuild").onclick=()=>openSuggestedForBook(latestLearnedBook());
-  if(el("lNextNum")) el("lNextNum").onclick=renderPath;
-  el("lPath2").onclick=renderPath;
+  if(el("lNextNum")) el("lNextNum").onclick=()=>renderPath(true);
+  el("lPath2").onclick=()=>renderPath(true);
   LZ=null;
+  if(wasNew) setTimeout(maybeSuggestPalace, 700);
 }
 
 /* =================== VERSE (daily + my verses) =================== */

@@ -1,21 +1,21 @@
 {
  "classic/learn/path": {
-  "h": "908416916a1ad013",
-  "len": 6271,
-  "els": 147,
-  "buttons": 27,
+  "h": "3c06d15839964370",
+  "len": 4051,
+  "els": 100,
+  "buttons": 24,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▾ ▶ How the Major System works ★ Sounds 0–4 ★ Sounds"
+  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▾ ★ Sounds 0–4 ★ Sounds 5–9 🧱 The Foundatio"
  },
  "classic/learn/path-collapsed": {
-  "h": "cd0d46b9f8d9afb9",
-  "len": 5326,
-  "els": 126,
-  "buttons": 18,
+  "h": "e1b69ef95490b9bd",
+  "len": 3232,
+  "els": 82,
+  "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/6 ▸ 🕯️ "
+  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/"
  },
  "classic/verse/hub": {
   "h": "9aef3012736dd11b",
@@ -234,7 +234,7 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "classic/stories/list": {
-  "h": "fae4fa5fd992c303",
+  "h": "4179c3476bd1b063",
   "len": 4381,
   "els": 102,
   "buttons": 20,
@@ -261,7 +261,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "554596550b15f6fe",
+  "h": "fd789b784ed11a2a",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -315,13 +315,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "0e8c03b912640ad4",
-  "len": 28177,
-  "els": 549,
+  "h": "6420ea9353641826",
+  "len": 29243,
+  "els": 571,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.17.0 August 26, 2026 The Library NEW Verses is now your Library , with its own icon and its own scr"
+  "text": "✕ Version history v1.18.0 August 26, 2026 A shorter path NEW The Learn path keeps the section you are on and the one bef"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -468,22 +468,22 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "illumined/learn/path": {
-  "h": "908416916a1ad013",
-  "len": 6271,
-  "els": 147,
-  "buttons": 27,
+  "h": "3c06d15839964370",
+  "len": 4051,
+  "els": 100,
+  "buttons": 24,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▾ ▶ How the Major System works ★ Sounds 0–4 ★ Sounds"
+  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▾ ★ Sounds 0–4 ★ Sounds 5–9 🧱 The Foundatio"
  },
  "illumined/learn/path-collapsed": {
-  "h": "cd0d46b9f8d9afb9",
-  "len": 5326,
-  "els": 126,
-  "buttons": 18,
+  "h": "e1b69ef95490b9bd",
+  "len": 3232,
+  "els": 82,
+  "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/6 ▸ 🕯️ "
+  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/"
  },
  "illumined/verse/hub": {
   "h": "9ed57de5281fc897",
@@ -702,7 +702,7 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "illumined/stories/list": {
-  "h": "fae4fa5fd992c303",
+  "h": "4179c3476bd1b063",
   "len": 4381,
   "els": 102,
   "buttons": 20,
@@ -729,7 +729,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "6d33408f65f05095",
+  "h": "43f807c29d91f6ef",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -783,13 +783,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "0e8c03b912640ad4",
-  "len": 28177,
-  "els": 549,
+  "h": "6420ea9353641826",
+  "len": 29243,
+  "els": 571,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.17.0 August 26, 2026 The Library NEW Verses is now your Library , with its own icon and its own scr"
+  "text": "✕ Version history v1.18.0 August 26, 2026 A shorter path NEW The Learn path keeps the section you are on and the one bef"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -936,22 +936,22 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "glass/learn/path": {
-  "h": "908416916a1ad013",
-  "len": 6271,
-  "els": 147,
-  "buttons": 27,
+  "h": "3c06d15839964370",
+  "len": 4051,
+  "els": 100,
+  "buttons": 24,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▾ ▶ How the Major System works ★ Sounds 0–4 ★ Sounds"
+  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▾ ★ Sounds 0–4 ★ Sounds 5–9 🧱 The Foundatio"
  },
  "glass/learn/path-collapsed": {
-  "h": "cd0d46b9f8d9afb9",
-  "len": 5326,
-  "els": 126,
-  "buttons": 18,
+  "h": "e1b69ef95490b9bd",
+  "len": 3232,
+  "els": 82,
+  "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/6 ▸ 🕯️ "
+  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/"
  },
  "glass/verse/hub": {
   "h": "9ed57de5281fc897",
@@ -1170,7 +1170,7 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "glass/stories/list": {
-  "h": "fae4fa5fd992c303",
+  "h": "4179c3476bd1b063",
   "len": 4381,
   "els": 102,
   "buttons": 20,
@@ -1197,7 +1197,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "8b7c9af9df9f8ac1",
+  "h": "07c7cd5b09896cf3",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -1251,13 +1251,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "0e8c03b912640ad4",
-  "len": 28177,
-  "els": 549,
+  "h": "6420ea9353641826",
+  "len": 29243,
+  "els": 571,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.17.0 August 26, 2026 The Library NEW Verses is now your Library , with its own icon and its own scr"
+  "text": "✕ Version history v1.18.0 August 26, 2026 A shorter path NEW The Learn path keeps the section you are on and the one bef"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1404,22 +1404,22 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "quest/learn/path": {
-  "h": "830beb4e9285fd9b",
-  "len": 7014,
-  "els": 160,
-  "buttons": 28,
+  "h": "551bd3589d9fd418",
+  "len": 4794,
+  "els": 113,
+  "buttons": 25,
   "svgs": 1,
   "imgs": 0,
-  "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▾ ▶ How the Major System works ★ Sounds 0–4 ★ Sounds"
+  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▾ ★ Sounds 0–4 ★ Sounds 5–9 🧱 The Foundatio"
  },
  "quest/learn/path-collapsed": {
-  "h": "cd0d46b9f8d9afb9",
-  "len": 5326,
-  "els": 126,
-  "buttons": 18,
+  "h": "e1b69ef95490b9bd",
+  "len": 3232,
+  "els": 82,
+  "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/6 ▸ 🕯️ "
+  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/"
  },
  "quest/verse/hub": {
   "h": "9ed57de5281fc897",
@@ -1638,7 +1638,7 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "quest/stories/list": {
-  "h": "fae4fa5fd992c303",
+  "h": "4179c3476bd1b063",
   "len": 4381,
   "els": 102,
   "buttons": 20,
@@ -1665,7 +1665,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "8e5175e4d8d2c0df",
+  "h": "2f8b4b9510ceaf04",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -1719,13 +1719,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "0e8c03b912640ad4",
-  "len": 28177,
-  "els": 549,
+  "h": "6420ea9353641826",
+  "len": 29243,
+  "els": 571,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.17.0 August 26, 2026 The Library NEW Verses is now your Library , with its own icon and its own scr"
+  "text": "✕ Version history v1.18.0 August 26, 2026 A shorter path NEW The Learn path keeps the section you are on and the one bef"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1872,22 +1872,22 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "buddy/learn/path": {
-  "h": "b2b681aa3da777c1",
-  "len": 6934,
-  "els": 156,
-  "buttons": 28,
+  "h": "8afa5b5ffb6c5e0c",
+  "len": 4714,
+  "els": 109,
+  "buttons": 25,
   "svgs": 1,
   "imgs": 0,
-  "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▾ ▶ How the Major System works ★ Sounds 0–4 ★ Sounds"
+  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▾ ★ Sounds 0–4 ★ Sounds 5–9 🧱 The Foundatio"
  },
  "buddy/learn/path-collapsed": {
-  "h": "cd0d46b9f8d9afb9",
-  "len": 5326,
-  "els": 126,
-  "buttons": 18,
+  "h": "e1b69ef95490b9bd",
+  "len": 3232,
+  "els": 82,
+  "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/6 ▸ 🕯️ "
+  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/"
  },
  "buddy/verse/hub": {
   "h": "9ed57de5281fc897",
@@ -2106,7 +2106,7 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "buddy/stories/list": {
-  "h": "fae4fa5fd992c303",
+  "h": "4179c3476bd1b063",
   "len": 4381,
   "els": 102,
   "buttons": 20,
@@ -2133,7 +2133,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "4656838643c9fcf8",
+  "h": "f9ad4c1eb66b70a4",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -2187,13 +2187,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "0e8c03b912640ad4",
-  "len": 28177,
-  "els": 549,
+  "h": "6420ea9353641826",
+  "len": 29243,
+  "els": 571,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.17.0 August 26, 2026 The Library NEW Verses is now your Library , with its own icon and its own scr"
+  "text": "✕ Version history v1.18.0 August 26, 2026 A shorter path NEW The Learn path keeps the section you are on and the one bef"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",

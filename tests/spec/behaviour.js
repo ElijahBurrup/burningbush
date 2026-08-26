@@ -1258,6 +1258,7 @@ const DAY = 86400000;
 
   await $(() => {
     Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x));
+    markVideoSeen('major');            // the track-opening film is watched at the very start; isolate the one under test
     Prog.memorized = []; Prog.verseSR = {}; saveProg();
     addMemorized(verseObj(43, 3, 16));
     return true;
@@ -1436,6 +1437,105 @@ const DAY = 86400000;
   });
   is(wide.asked, 15, 'with every form on, fifteen are still asked');
   is(wide.distinct, 15, '...and not one of them repeats');
+
+  // ================= THE LEARN PATH (v1.18) =================
+  const learnSnap = await $(() => JSON.stringify(Prog));
+
+  describe('learn path', () => { });
+  const lpath = await $(() => {
+    markVideoSeen('major');
+    show('learn'); renderPath(true);
+    const L = el('learn');
+    const nb = nextBlueSkill();
+    const openHeads = [...L.querySelectorAll('.grouphead.open')].map(x => +x.dataset.grp).sort((a, b) => a - b);
+    const want = nb ? (nb.ui > 0 ? [nb.ui - 1, nb.ui] : [nb.ui]) : [];
+    return {
+      videoTiles: L.querySelectorAll('.tile.video, [data-video]').length,
+      videoSkills: UNITS.reduce((n, U) => n + U.skills.filter(sk => sk.kind === 'video').length, 0),
+      pathMilestones: MILESTONES.filter(m => !m.stories).length,
+      storyMilestones: MILESTONES.filter(m => m.stories).length,
+      openHeads: openHeads.join(','), want: want.join(','),
+      focused: L.querySelectorAll('.focusnext').length,
+      nextUi: nb ? nb.ui : -1,
+    };
+  });
+  is(lpath.videoTiles, 0, 'no film sits on the path waiting to be tapped');
+  is(lpath.videoSkills, 0, '...and none is a lesson any more');
+  is(lpath.pathMilestones, 0, 'the learn-path milestones are gone');
+  is(lpath.storyMilestones, 13, '...while the Bible-story capstones stay');
+  is(lpath.openHeads, lpath.want, 'the current section and the one before it stand open');
+  is(lpath.focused, 1, '...with the next lesson marked');
+
+  const advance = await $(() => {
+    const before = nextBlueSkill();
+    if (!before) return { skip: true };
+    // finish everything in the current section and the next one should open itself
+    UNITS[before.ui].skills.forEach(sk => { if (!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id); });
+    bustCaches(); saveProg();
+    renderPath(true);
+    const after = nextBlueSkill();
+    const openHeads = [...el('learn').querySelectorAll('.grouphead.open')].map(x => +x.dataset.grp).sort((a, b) => a - b);
+    return { skip: false, movedOn: after && after.ui > before.ui, openHeads: openHeads.join(','),
+      want: after ? (after.ui > 0 ? [after.ui - 1, after.ui].join(',') : String(after.ui)) : '' };
+  });
+  ok(advance.skip || advance.movedOn, 'finishing a section moves the frontier on');
+  ok(advance.skip || advance.openHeads === advance.want, '...and the next section opens itself');
+
+  const major = await $(() => {
+    Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x)); saveProg();
+    const m = el('videoModal'); if (m) m.style.display = 'none';
+    return { seen: videoSeen('major') };
+  });
+  no(major.seen, 'the Major System film starts unwatched');
+  await $(() => { show('learn'); return true; });
+  await page.waitForFunction(() => { const m = el('videoModal'); return m && m.style.display === 'flex'; }, { timeout: 4000 }).catch(() => { });
+  const majorShown = await $(() => {
+    const m = el('videoModal');
+    const out = { shown: !!m && m.style.display === 'flex', txt: m ? m.innerText : '' };
+    if (out.shown) el('vsDone').click();
+    return out;
+  });
+  ok(majorShown.shown, 'opening Learn plays it — it is what the whole track rests on');
+  has(majorShown.txt, 'Major System', '...that one');
+
+  describe('a palace every six lessons', () => { });
+  const six = await $(() => {
+    Prog.scratchWon = ['verse', 'palace', 'journey', 'stories'];
+    Prog.doneSkills = ['snd:0-4', 'snd:5-9', 'num:1', 'num:2', 'num:3'];   // five
+    Prog.palaceAskAt = 0; saveProg();
+    const out = { every: LESSONS_PER_PALACE_ASK, atFive: maybeSuggestPalace() };
+    Prog.doneSkills.push('num:4');                                          // six
+    out.atSix = maybeSuggestPalace();
+    const m = el('palaceAskModal');
+    out.shown = !!m && m.style.display === 'flex';
+    out.txt = m ? m.innerText : '';
+    if (out.shown) el('paNo').click();
+    out.twice = maybeSuggestPalace();                                       // same count — must not ask again
+    Prog.doneSkills.push('num:5');                                          // seven
+    out.atSeven = maybeSuggestPalace();
+    return out;
+  });
+  is(six.every, 6, 'the offer comes every sixth lesson');
+  no(six.atFive, 'five lessons is not the moment');
+  ok(six.atSix, 'six is');
+  ok(six.shown, '...and it is asked in a popup');
+  has(six.txt, 'memory palace', '...offering a palace');
+  no(six.twice, 'declining is not asked again at the same count');
+  no(six.atSeven, '...nor on the very next lesson');
+
+  const accept = await $(() => {
+    Prog.doneSkills = ['snd:0-4', 'snd:5-9', 'num:1', 'num:2', 'num:3', 'num:4'];
+    Prog.palaceAskAt = 0; Prog.talents = 5000; saveProg();
+    maybeSuggestPalace();
+    el('paYes').click();
+    return { closed: el('palaceAskModal').style.display === 'none',
+      inBuilder: !!PB, builderSlot: PB ? PB.slot : -1 };
+  });
+  ok(accept.closed, 'accepting closes the offer');
+  ok(accept.inBuilder, '...and walks straight into building the palace');
+  ok(accept.builderSlot >= 0, '...on a new slot');
+
+  await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); bustCaches(); }, learnSnap);
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
