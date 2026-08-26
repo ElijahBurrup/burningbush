@@ -18,13 +18,13 @@
   "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/6 ▸ 🕯️ "
  },
  "classic/verse/hub": {
-  "h": "135faacda5756bb8",
-  "len": 1063,
-  "els": 33,
-  "buttons": 7,
+  "h": "9aef3012736dd11b",
+  "len": 752,
+  "els": 24,
+  "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "🎯 Today's goal 0/1 ✨ Suggested 562 in reach 📚 Topics 22 ★ Memorized 3 🔖 Saved 0 🗣️ Practice Word for Word 🎲 Test Nu"
+  "text": "🎯 Today's goal 0/1 🎬 Video Review none yet ✨ Learn Verses 562 in reach 🎯 Spaced Repetition nothing due ★ Memorized 3"
  },
  "classic/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -144,13 +144,13 @@
   "text": "✕ Number &amp; book practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
  },
  "classic/practice/number-test": {
-  "h": "458cda7ee05632a4",
-  "len": 765,
-  "els": 16,
+  "h": "b8ccb1634ce09379",
+  "len": 783,
+  "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which book is this number? 45 Romans Genesis Obadiah Ecclesiastes 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 05 s/z · L Mummy Mat Seal Door 📝 Reveal my scene"
  },
  "classic/practice/text-fade": {
   "h": "d74ec576ec2320b6",
@@ -261,7 +261,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "e4698a463b9f0adf",
+  "h": "554596550b15f6fe",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -306,22 +306,22 @@
   "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
  },
  "classic/modal/store": {
-  "h": "653687a7b4ca024d",
+  "h": "f2d78cb53708c7ee",
   "len": 787,
   "els": 16,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "💰 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
+  "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "3384339ed7a13ef3",
-  "len": 26885,
-  "els": 523,
+  "h": "0e8c03b912640ad4",
+  "len": 28177,
+  "els": 549,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.16.0 August 26, 2026 One reveal, and films that find you NEW Every film now has its own screen — it"
+  "text": "✕ Version history v1.17.0 August 26, 2026 The Library NEW Verses is now your Library , with its own icon and its own scr"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -349,6 +349,33 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "classic/verse/videos": {
+  "h": "4ae0e90c70690acd",
+  "len": 1100,
+  "els": 18,
+  "buttons": 3,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
+ },
+ "classic/modal/learn-verses": {
+  "h": "08f50e92f2d2727d",
+  "len": 1353,
+  "els": 25,
+  "buttons": 5,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
+ },
+ "classic/modal/practice": {
+  "h": "d9fc4c619eed3711",
+  "len": 1297,
+  "els": 24,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Practice ✕ 🗣️ Word for Word Recite a verse by typing it out from memory. 📖 Verses Where does this verse live? Book, ch"
  },
  "classic/modal/stage": {
   "h": "e5865eea850e3261",
@@ -459,13 +486,13 @@
   "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/6 ▸ 🕯️ "
  },
  "illumined/verse/hub": {
-  "h": "bf0328d629719260",
-  "len": 1068,
-  "els": 33,
-  "buttons": 7,
+  "h": "9ed57de5281fc897",
+  "len": 750,
+  "els": 24,
+  "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "🙏 Faithful today 15/1 ✨ Suggested 562 in reach 📚 Topics 22 ★ Memorized 3 🔖 Saved 1 🗣️ Practice Word for Word 🎲 Test"
+  "text": "🙏 Faithful today 15/1 🎬 Video Review 2 ✨ Learn Verses 562 in reach 🎯 Spaced Repetition nothing due ★ Memorized 3"
  },
  "illumined/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -585,13 +612,13 @@
   "text": "✕ Number &amp; book practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
  },
  "illumined/practice/number-test": {
-  "h": "458cda7ee05632a4",
-  "len": 765,
-  "els": 16,
+  "h": "b8ccb1634ce09379",
+  "len": 783,
+  "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which book is this number? 45 Romans Genesis Obadiah Ecclesiastes 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 05 s/z · L Mummy Mat Seal Door 📝 Reveal my scene"
  },
  "illumined/practice/text-fade": {
   "h": "d74ec576ec2320b6",
@@ -702,7 +729,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "4cc9985147561789",
+  "h": "6d33408f65f05095",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -747,22 +774,22 @@
   "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
  },
  "illumined/modal/store": {
-  "h": "361c54cfd08c4939",
+  "h": "c30c4dec35657b37",
   "len": 787,
   "els": 16,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "💰 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
+  "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "3384339ed7a13ef3",
-  "len": 26885,
-  "els": 523,
+  "h": "0e8c03b912640ad4",
+  "len": 28177,
+  "els": 549,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.16.0 August 26, 2026 One reveal, and films that find you NEW Every film now has its own screen — it"
+  "text": "✕ Version history v1.17.0 August 26, 2026 The Library NEW Verses is now your Library , with its own icon and its own scr"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -790,6 +817,33 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "illumined/verse/videos": {
+  "h": "4ae0e90c70690acd",
+  "len": 1100,
+  "els": 18,
+  "buttons": 3,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
+ },
+ "illumined/modal/learn-verses": {
+  "h": "08f50e92f2d2727d",
+  "len": 1353,
+  "els": 25,
+  "buttons": 5,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
+ },
+ "illumined/modal/practice": {
+  "h": "d9fc4c619eed3711",
+  "len": 1297,
+  "els": 24,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Practice ✕ 🗣️ Word for Word Recite a verse by typing it out from memory. 📖 Verses Where does this verse live? Book, ch"
  },
  "illumined/modal/stage": {
   "h": "e5865eea850e3261",
@@ -900,13 +954,13 @@
   "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/6 ▸ 🕯️ "
  },
  "glass/verse/hub": {
-  "h": "bf0328d629719260",
-  "len": 1068,
-  "els": 33,
-  "buttons": 7,
+  "h": "9ed57de5281fc897",
+  "len": 750,
+  "els": 24,
+  "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "🙏 Faithful today 15/1 ✨ Suggested 562 in reach 📚 Topics 22 ★ Memorized 3 🔖 Saved 1 🗣️ Practice Word for Word 🎲 Test"
+  "text": "🙏 Faithful today 15/1 🎬 Video Review 2 ✨ Learn Verses 562 in reach 🎯 Spaced Repetition nothing due ★ Memorized 3"
  },
  "glass/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -1026,13 +1080,13 @@
   "text": "✕ Number &amp; book practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
  },
  "glass/practice/number-test": {
-  "h": "458cda7ee05632a4",
-  "len": 765,
-  "els": 16,
+  "h": "b8ccb1634ce09379",
+  "len": 783,
+  "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which book is this number? 45 Romans Genesis Obadiah Ecclesiastes 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 05 s/z · L Mummy Mat Seal Door 📝 Reveal my scene"
  },
  "glass/practice/text-fade": {
   "h": "d74ec576ec2320b6",
@@ -1143,7 +1197,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "3fbf30749000faa5",
+  "h": "8b7c9af9df9f8ac1",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -1188,22 +1242,22 @@
   "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
  },
  "glass/modal/store": {
-  "h": "88a923d036a2b4e4",
+  "h": "5a08d596c0dddf6b",
   "len": 787,
   "els": 16,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "💰 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
+  "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "3384339ed7a13ef3",
-  "len": 26885,
-  "els": 523,
+  "h": "0e8c03b912640ad4",
+  "len": 28177,
+  "els": 549,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.16.0 August 26, 2026 One reveal, and films that find you NEW Every film now has its own screen — it"
+  "text": "✕ Version history v1.17.0 August 26, 2026 The Library NEW Verses is now your Library , with its own icon and its own scr"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1231,6 +1285,33 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "glass/verse/videos": {
+  "h": "4ae0e90c70690acd",
+  "len": 1100,
+  "els": 18,
+  "buttons": 3,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
+ },
+ "glass/modal/learn-verses": {
+  "h": "08f50e92f2d2727d",
+  "len": 1353,
+  "els": 25,
+  "buttons": 5,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
+ },
+ "glass/modal/practice": {
+  "h": "d9fc4c619eed3711",
+  "len": 1297,
+  "els": 24,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Practice ✕ 🗣️ Word for Word Recite a verse by typing it out from memory. 📖 Verses Where does this verse live? Book, ch"
  },
  "glass/modal/stage": {
   "h": "e5865eea850e3261",
@@ -1341,13 +1422,13 @@
   "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/6 ▸ 🕯️ "
  },
  "quest/verse/hub": {
-  "h": "bf0328d629719260",
-  "len": 1068,
-  "els": 33,
-  "buttons": 7,
+  "h": "9ed57de5281fc897",
+  "len": 750,
+  "els": 24,
+  "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "🙏 Faithful today 15/1 ✨ Suggested 562 in reach 📚 Topics 22 ★ Memorized 3 🔖 Saved 1 🗣️ Practice Word for Word 🎲 Test"
+  "text": "🙏 Faithful today 15/1 🎬 Video Review 2 ✨ Learn Verses 562 in reach 🎯 Spaced Repetition nothing due ★ Memorized 3"
  },
  "quest/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -1467,13 +1548,13 @@
   "text": "✕ Number &amp; book practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
  },
  "quest/practice/number-test": {
-  "h": "458cda7ee05632a4",
-  "len": 765,
-  "els": 16,
+  "h": "b8ccb1634ce09379",
+  "len": 783,
+  "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which book is this number? 45 Romans Genesis Obadiah Ecclesiastes 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 05 s/z · L Mummy Mat Seal Door 📝 Reveal my scene"
  },
  "quest/practice/text-fade": {
   "h": "d74ec576ec2320b6",
@@ -1584,7 +1665,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "ccbe880aa946f21f",
+  "h": "8e5175e4d8d2c0df",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -1629,22 +1710,22 @@
   "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
  },
  "quest/modal/store": {
-  "h": "dffcb17f07609c3f",
+  "h": "911e2c07ef839a0e",
   "len": 787,
   "els": 16,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "💰 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
+  "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "3384339ed7a13ef3",
-  "len": 26885,
-  "els": 523,
+  "h": "0e8c03b912640ad4",
+  "len": 28177,
+  "els": 549,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.16.0 August 26, 2026 One reveal, and films that find you NEW Every film now has its own screen — it"
+  "text": "✕ Version history v1.17.0 August 26, 2026 The Library NEW Verses is now your Library , with its own icon and its own scr"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1672,6 +1753,33 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "quest/verse/videos": {
+  "h": "4ae0e90c70690acd",
+  "len": 1100,
+  "els": 18,
+  "buttons": 3,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
+ },
+ "quest/modal/learn-verses": {
+  "h": "08f50e92f2d2727d",
+  "len": 1353,
+  "els": 25,
+  "buttons": 5,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
+ },
+ "quest/modal/practice": {
+  "h": "d9fc4c619eed3711",
+  "len": 1297,
+  "els": 24,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Practice ✕ 🗣️ Word for Word Recite a verse by typing it out from memory. 📖 Verses Where does this verse live? Book, ch"
  },
  "quest/modal/stage": {
   "h": "e5865eea850e3261",
@@ -1782,13 +1890,13 @@
   "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/6 ▸ 🕯️ "
  },
  "buddy/verse/hub": {
-  "h": "bf0328d629719260",
-  "len": 1068,
-  "els": 33,
-  "buttons": 7,
+  "h": "9ed57de5281fc897",
+  "len": 750,
+  "els": 24,
+  "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "🙏 Faithful today 15/1 ✨ Suggested 562 in reach 📚 Topics 22 ★ Memorized 3 🔖 Saved 1 🗣️ Practice Word for Word 🎲 Test"
+  "text": "🙏 Faithful today 15/1 🎬 Video Review 2 ✨ Learn Verses 562 in reach 🎯 Spaced Repetition nothing due ★ Memorized 3"
  },
  "buddy/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -1908,13 +2016,13 @@
   "text": "✕ Number &amp; book practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
  },
  "buddy/practice/number-test": {
-  "h": "458cda7ee05632a4",
-  "len": 765,
-  "els": 16,
+  "h": "b8ccb1634ce09379",
+  "len": 783,
+  "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which book is this number? 45 Romans Genesis Obadiah Ecclesiastes 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 05 s/z · L Mummy Mat Seal Door 📝 Reveal my scene"
  },
  "buddy/practice/text-fade": {
   "h": "d74ec576ec2320b6",
@@ -2025,7 +2133,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "3183835a3bbd773b",
+  "h": "4656838643c9fcf8",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -2070,22 +2178,22 @@
   "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
  },
  "buddy/modal/store": {
-  "h": "5b8a7d9184e97de2",
+  "h": "b6146b8d730db47d",
   "len": 787,
   "els": 16,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "💰 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
+  "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "3384339ed7a13ef3",
-  "len": 26885,
-  "els": 523,
+  "h": "0e8c03b912640ad4",
+  "len": 28177,
+  "els": 549,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.16.0 August 26, 2026 One reveal, and films that find you NEW Every film now has its own screen — it"
+  "text": "✕ Version history v1.17.0 August 26, 2026 The Library NEW Verses is now your Library , with its own icon and its own scr"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
@@ -2113,6 +2221,33 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "buddy/verse/videos": {
+  "h": "4ae0e90c70690acd",
+  "len": 1100,
+  "els": 18,
+  "buttons": 3,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
+ },
+ "buddy/modal/learn-verses": {
+  "h": "08f50e92f2d2727d",
+  "len": 1353,
+  "els": 25,
+  "buttons": 5,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
+ },
+ "buddy/modal/practice": {
+  "h": "d9fc4c619eed3711",
+  "len": 1297,
+  "els": 24,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Practice ✕ 🗣️ Word for Word Recite a verse by typing it out from memory. 📖 Verses Where does this verse live? Book, ch"
  },
  "buddy/modal/stage": {
   "h": "e5865eea850e3261",

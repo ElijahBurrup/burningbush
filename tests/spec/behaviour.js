@@ -984,7 +984,9 @@ const DAY = 86400000;
     const out = {};
     setFeat('w4w', false); saveProg();
     show('verse'); vView = 'hub'; renderVerse();
-    out.hubOff = !el('vW4W');
+    openPracticePicker();
+    out.hubOff = !document.querySelector('[data-lb="w4w"]');
+    el('libModal').style.display = 'none';
     out.poolOff = w4wPoolSize();
     out.offerOff = shouldOfferW4W('43:3:16');
     openStagePicker(19, 23, 1, '19:23:1', () => { });
@@ -992,7 +994,9 @@ const DAY = 86400000;
     el('stageModal').style.display = 'none';
     setFeat('w4w', true); saveProg();
     show('verse'); vView = 'hub'; renderVerse();
-    out.hubOn = !!el('vW4W');
+    openPracticePicker();
+    out.hubOn = !!document.querySelector('[data-lb="w4w"]');
+    el('libModal').style.display = 'none';
     openStagePicker(19, 23, 1, '19:23:1', () => { });
     out.rungsOn = [...document.querySelectorAll('#stageModal [data-stage]')].map(b => b.dataset.stage).join(',');
     el('stageModal').style.display = 'none';
@@ -1021,11 +1025,11 @@ const DAY = 86400000;
     el('themeModal').style.display = 'none';
     return out;
   });
-  ok(gates.hubOff, 'with Word for Word off the hub button is gone');
+  ok(gates.hubOff, 'with Word for Word off it is not offered under Practice');
   is(gates.poolOff, 0, '...the testing pool is empty');
   no(gates.offerOff, '...and nothing is ever offered a promotion into it');
   is(gates.rungsOff, 'loc,heart', '...and the ladder drops its middle rung');
-  ok(gates.hubOn, 'switching it on brings the button back');
+  ok(gates.hubOn, 'switching it on brings it back');
   is(gates.rungsOn, 'loc,w4w,heart', '...and the middle rung with it');
   ok(gates.pickOff, 'with the warm-up off, typing starts immediately');
   ok(gates.pickOn, '...and on, the tiles come back');
@@ -1314,6 +1318,124 @@ const DAY = 86400000;
   is(cycle.best, 9, '...while the best ever reached is kept');
 
   await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); clearActiveTest(); }, v16Snap);
+
+  // ================= THE LIBRARY (v1.17) =================
+  const libSnap = await $(() => JSON.stringify(Prog));
+
+  describe('library', () => { });
+  const lib = await $(() => {
+    Prog.memorized = ['43:3:16']; Prog.videoOrder = []; saveProg();
+    show('verse'); vView = 'hub'; renderVerse();
+    const btns = [...document.querySelectorAll('.versehub .vhub')];
+    return {
+      count: btns.length,
+      labels: btns.map(b => b.querySelector('span:nth-child(2)').textContent).join(' | '),
+      tabLabel: (document.querySelector('.tabbar button[data-tab="verse"] .lbl') || {}).textContent,
+      tabIcon: (document.querySelector('.tabbar button[data-tab="verse"] .ic') || {}).textContent,
+      ticket: SCRATCH_LADDER.find(x => x.tab === 'verse').name,
+    };
+  });
+  is(lib.count, 4, 'the Library front page has four ways in');
+  is(lib.labels, 'Video Review | Learn Verses | Spaced Repetition | Memorized', '...in that order');
+  is(lib.tabLabel, 'Library', 'the tab reads Library, not Verses');
+  is(lib.tabIcon, '📚', '...with its own icon');
+  is(lib.ticket, 'Library', '...and the scratch-off that wins it says so too');
+
+  const learn = await $(() => {
+    openLearnVerses();
+    const rows = [...document.querySelectorAll('#lbRows [data-lb]')].map(b => b.dataset.lb);
+    const out = { rows: rows.join(','), practice: !!el('lbPractice'), txt: el('libModal').innerText };
+    document.querySelector('[data-lb="topics"]').click();
+    out.went = vView;
+    out.closed = el('libModal').style.display === 'none';
+    return out;
+  });
+  is(learn.rows, 'sugg,topics,saved', 'Learn Verses offers Suggested, Topics and Saved');
+  ok(learn.practice, '...with Practice at the foot of it');
+  is(learn.went, 'topics', 'choosing one goes there');
+  ok(learn.closed, '...and closes the sheet');
+
+  const prac = await $(() => {
+    setFeat('w4w', true);
+    openPracticePicker();
+    const rows = [...document.querySelectorAll('#lbRows [data-lb]')].map(b => b.dataset.lb);
+    const out = { rows: rows.join(','), txt: el('libModal').innerText };
+    el('libModal').style.display = 'none';
+    return out;
+  });
+  is(prac.rows, 'w4w,verses,nums', 'Practice offers word for word, verses, and numbers & books');
+  has(prac.txt, 'Word for Word', '...named plainly');
+  has(prac.txt, 'Numbers', '...all three');
+
+  describe('video review', () => { });
+  const vreview = await $(() => {
+    Prog.videoOrder = []; Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x)); saveProg();
+    show('verse'); vView = 'videos'; renderVerse();
+    const empty = el('verse').innerText;
+    openVideoScreen('sr'); el('vsClose').click();          // dismissed, NOT watched
+    openVideoScreen('palace'); el('vsDone').click();
+    const order = (Prog.videoOrder || []).slice();
+    vView = 'videos'; renderVerse();
+    const listed = [...document.querySelectorAll('[data-vid]')].map(b => b.dataset.vid);
+    const out = { empty, order: order.join(','), listed: listed.join(','), txt: el('verse').innerText };
+    document.querySelector('[data-vid="sr"]').click();
+    out.opened = el('videoModal').style.display === 'flex';
+    out.openedTitle = el('videoModal').innerText;
+    el('vsClose').click();
+    out.backOnList = !!document.querySelector('[data-vid]');
+    return out;
+  });
+  has(vreview.empty, 'No films yet', 'the list starts empty and says so');
+  is(vreview.order, 'sr,palace', 'a film joins the list the first time it is SHOWN, in that order');
+  is(vreview.listed, 'sr,palace', '...and the list is drawn in that order');
+  has(vreview.txt, 'Complete more of the Learn track', '...with the rest still to come');
+  ok(vreview.opened, 'tapping one opens it');
+  has(vreview.openedTitle, 'spaced repetition', '...the one that was tapped');
+  ok(vreview.backOnList, '...and closing it lands back on the list');
+
+  const dismissed = await $(() => {
+    Prog.videoOrder = []; Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x)); saveProg();
+    openVideoScreen('recall'); el('vsClose').click();
+    return { inList: (Prog.videoOrder || []).includes('recall'), seen: videoSeen('recall') };
+  });
+  ok(dismissed.inList, 'a film dismissed without watching is still in the list');
+  ok(dismissed.seen, '...and does not pop up again by itself');
+
+  const vmerge = await $(() => {
+    const mk = o => migrateProg(Object.assign(JSON.parse(JSON.stringify(Prog)), o));
+    const m = mergeProg(mk({ videoOrder: ['sr', 'palace'] }), mk({ videoOrder: ['sr', 'verse'] }));
+    return { order: (m.videoOrder || []).join(',') };
+  });
+  is(vmerge.order, 'sr,palace,verse', 'a sync keeps every film either device has seen, in order');
+
+  const storeIcon = await $(() => { openStore(); const t = el('storeModal').innerText; el('storeModal').style.display = 'none'; return t; });
+  has(storeIcon, '📖 Talents Store', 'the store carries the old verse icon now');
+
+  await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); }, libSnap);
+
+  describe('no repeats', () => { });
+  const norep = await $(() => {
+    Prog.ntPrefs = { types: ['q_n2i'], count: 15 }; saveProg();   // ONE form, so the deck is just the numbers
+    openNumTestSetup(); el('ntsGo').click();
+    const keys = (NT.qs || []).map(q => q.n + '|' + q.type);
+    const deck = recentKnownNumbers().slice(0, 10).length;
+    const firstPass = keys.slice(0, Math.min(deck, 15));
+    return { asked: keys.length, deck, firstPassUnique: new Set(firstPass).size, firstPassLen: firstPass.length,
+      distinct: new Set(keys).size };
+  });
+  is(norep.asked, 15, 'the quota is met');
+  ok(norep.deck > 0, 'there are questions to draw from');
+  is(norep.firstPassUnique, norep.firstPassLen, 'nothing repeats while an unasked question remains');
+  ok(norep.distinct >= Math.min(norep.deck, 15), '...every distinct question is used before any comes round again');
+
+  const wide = await $(() => {
+    Prog.ntPrefs = { types: NT_FORMS.map(f => f.id), count: 15 }; saveProg();
+    openNumTestSetup(); el('ntsGo').click();
+    const keys = (NT.qs || []).map(q => q.n + '|' + q.type);
+    return { asked: keys.length, distinct: new Set(keys).size };
+  });
+  is(wide.asked, 15, 'with every form on, fifteen are still asked');
+  is(wide.distinct, 15, '...and not one of them repeats');
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));

@@ -1426,7 +1426,7 @@
 
   <div class="tabbar">
     <button data-tab="learn" class="on"><span class="ic">🎓</span><span class="lbl">Learn</span></button>
-    <button data-tab="verse"><span class="tabbadge"></span><span class="ic">📖</span><span class="lbl">Verses</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
+    <button data-tab="verse"><span class="tabbadge"></span><span class="ic">📚</span><span class="lbl">Library</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
     <button data-tab="palace"><span class="tabbadge"></span><span class="ic">🏛️</span><span class="lbl">Palaces</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
     <button data-tab="journey"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 2.8h11.1a2.1 2.1 0 0 1 2.1 2.1v14.2a2.1 2.1 0 0 1-2.1 2.1H5.4A1.6 1.6 0 0 1 3.8 19.6V4.4a1.6 1.6 0 0 1 1.6-1.6Z" fill="var(--bible)"/><path d="M3.8 18.1h13.9" stroke="var(--bible-ink)" stroke-opacity=".45" stroke-width="1"/><path d="M11.3 6.4v8.2M8.4 9.1h5.8" stroke="var(--bible-ink)" stroke-width="1.7" stroke-linecap="round"/></svg></span><span class="lbl">Bible</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
     <button data-tab="stories"><span class="ic">📜</span><span class="lbl">Stories</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
@@ -1612,8 +1612,15 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.16.0";
+const APP_VERSION="1.17.0";
 const CHANGELOG=[
+ {v:"1.17.0", d:"August 26, 2026", t:"The Library", items:[
+   ["new","<b>Verses is now your Library</b>, with its own icon and its own scratch-off, and just <b>four ways in</b>: Video Review, Learn Verses, Spaced Repetition and Memorized."],
+   ["new","<b>Video Review</b> keeps every film you have unlocked, in the order it arrived. Tap one to watch it again. Films join the list the first time they are shown \u2014 even if you dismiss one, it waits here."],
+   ["new","<b>Learn Verses</b> opens the ways of choosing a verse \u2014 Suggested, Topics and Saved \u2014 with <b>Practice</b> at the foot of it for word for word, verses, or numbers &amp; books."],
+   ["fix","<b>Number practice no longer repeats a question</b> while an unasked one remains. Every question the chosen forms allow is dealt out before any comes round again."],
+   ["fix","The Talents Store carries the old verse icon now."]
+ ]},
  {v:"1.16.0", d:"August 26, 2026", t:"One reveal, and films that find you", items:[
    ["new","Every film now has <b>its own screen</b> \u2014 its name, a line on what it is for, and the player \u2014 and it arrives at the moment it first becomes useful instead of sitting somewhere to be hunted for."],
    ["new","<b>What is a Memory Palace?</b> follows the scratch-off that unlocks Palaces. <b>How to create a verse scene</b> follows the one that unlocks your verses. <b>How spaced repetition locks it in</b> comes the moment you memorize your first verse, or the first time you open review \u2014 so it now lands well before the palace film."],
@@ -2380,6 +2387,7 @@ function migrateProg(p){
   if(!p.w4wSR||typeof p.w4wSR!=="object") p.w4wSR={};                // word-for-word TEST record (streak of clean passes)
   if(!p.locPast||typeof p.locPast!=="object") p.locPast={};          // the station "known by heart" released, kept so it can be given back
   if(!p.stageAsk||typeof p.stageAsk!=="object") p.stageAsk={};       // where a promotion was last declined, so it nudges but never nags
+  p.videoOrder=arr(p.videoOrder);                                    // films unlocked, in the order they arrived
   if(!p.revPrefs||typeof p.revPrefs!=="object") p.revPrefs={};       // how the user wants to be asked in review
   { const sr=p.verseSR||{}; Object.keys(sr).forEach(k=>{ const o=sr[k];
       if(o && o.r0===undefined) o.r0=o.learnedAt||1; }); }   // legacy verses: treat the first look-back as done
@@ -2457,6 +2465,7 @@ function mergeProg(a,b){
       const x=wa[k], y=wb[k];
       m.w4wSR[k] = !y ? x : (!x ? y : (((x.n||0)>=(y.n||0)) ? x : y)); }); }
   m.locPast=Object.assign({},a.locPast||{},b.locPast||{});
+  m.videoOrder=[...(a.videoOrder||[])]; (b.videoOrder||[]).forEach(k=>{ if(!m.videoOrder.includes(k)) m.videoOrder.push(k); });
   m.revPrefs=Object.assign({},a.revPrefs||{},b.revPrefs||{});   // a preference, not progress
   // a feature switched ON anywhere stays on: the device that turned it on is the one that meant it
   m.featuresInit=!!(a.featuresInit||b.featuresInit);
@@ -2722,7 +2731,7 @@ const GTIK='<span class="gtik" role="img" aria-label="golden ticket"></span>';  
 const NT5=[40,41,42,43,44];   // the first five New Testament books (Matthew–Acts) — Mark+ are Pro
 function nt5Done(){ return NT5.every(n=>knownNum(n)); }
 const SCRATCH_LADDER=[
-  {tab:"verse",   icon:"📖", name:"Verses",          desc:"Choose what to hide in your heart — suggested verses, topics, and daily review.", gate:()=>foundationsDone(),
+  {tab:"verse",   icon:"📚", name:"Library",         desc:"Your shelf — the films, the verses to learn, your review and everything you have memorized.", gate:()=>foundationsDone(),
      reqs:[{label:"Finish the Foundation — books 1–5 &amp; Matthew", done:()=>foundationsDone()}]},
   {tab:"palace",  icon:"🏛️", name:"Memory Palaces",  desc:"Build your own palaces — walk a familiar place and leave a verse at each spot.",  gate:()=>Prog.memorized.length>=5 && (Prog.bestStreak||0)>=5,
      reqs:[{label:"Memorize 5 verses", done:()=>Prog.memorized.length>=5, prog:()=>`${Math.min(5,Prog.memorized.length)}/5`},
@@ -3345,8 +3354,17 @@ function videoPlayerHTML(V){
     ? `<video class="vidplayer" controls playsinline preload="metadata" data-vsrc="${V.src}"></video>`   // set in JS: a literal src= here cannot be checked by the build path rules
     : videoPlaceholder("▶ "+V.title, "Add your video here.");
 }
+// A film joins the review list the first time its screen is SHOWN - not when it is watched, so
+// dismissing one still leaves it somewhere to be found. Order is the order they arrived.
+function noteVideoShown(k){
+  if(!VIDEOS[k]) return;
+  Prog.videoOrder = Array.isArray(Prog.videoOrder) ? Prog.videoOrder : [];
+  if(!Prog.videoOrder.includes(k)){ Prog.videoOrder.push(k); saveProg(); }
+}
+function videoReviewList(){ return (Prog.videoOrder||[]).filter(k=>!!VIDEOS[k]); }
 function openVideoScreen(key, after){
   const V=VIDEOS[key]; if(!V){ if(after) after(); return; }
+  noteVideoShown(key);
   const m=el("videoModal")||(()=>{ const d=document.createElement("div"); d.id="videoModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar"><span style="width:34px"></span><div style="flex:1;text-align:center;font-weight:800">${V.title}</div><button class="lclose" id="vsClose">✕</button></div>
@@ -4191,6 +4209,15 @@ function renderVerse(){
       const stageSum=mem.length?`<div class="stagesum">${V_STAGES.map(s=>`<div><b>${_sc[s]}</b><span>${STAGE_INFO[s].i} ${STAGE_INFO[s].n}</span></div>`).join("")}</div>`:"";
       body=mem.length? stageSum+nudge+`<p class="hint" style="margin:2px 0 8px">Tap a book, then a verse to rebuild it, add a scene, or practice it word-for-word.</p>`+bookGroupedList(mem,"mem")
         :`<p class="hint">Verses you finish building show up here.</p>`;
+    } else if(vView==="videos"){ title="🎬 Video Review";
+      const list=videoReviewList();
+      body = list.length
+        ? `<p class="hint">Every film you have unlocked, in the order it arrived. Tap one to watch it again.</p>`
+          +`<div style="margin-top:10px">`+list.map(k=>{ const V=VIDEOS[k];
+              return `<button type="button" class="mtradio" data-vid="${k}" style="align-items:flex-start;text-align:left;margin-bottom:8px"><span class="fic" style="font-size:20px">▶</span><span><b>${V.title}</b><br><span style="font-weight:600;font-size:12px;color:var(--muted)">${V.sub}</span></span></button>`;
+            }).join("")+`</div>`
+          +`<p class="hint" style="margin-top:10px">Complete more of the Learn track to unlock the rest.</p>`
+        : `<p class="hint">No films yet. They arrive as you go — each one when it first becomes useful — and every one you have seen waits here.</p>`;
     } else if(vView==="saved"){ title="🔖 Saved for later";
       body=saved.length?bookGroupedList(saved,"saved"):`<p class="hint">Tap "Save · come back later" on any verse and it lands here.</p>`;
     }
@@ -4198,6 +4225,7 @@ function renderVerse(){
     el("vBack").onclick=()=>{ vView="hub"; renderVerse(); document.querySelector(".content").scrollTop=0; };
     V.querySelectorAll("[data-bk]").forEach(h=>h.onclick=()=>{ const [sec,bn]=h.dataset.bk.split(":"); const set=vBook[sec]; const n=+bn; set.has(n)?set.delete(n):set.add(n); reVerse(); });
     V.querySelectorAll("[data-topic]").forEach(h=>h.onclick=()=>{ const ti=+h.dataset.topic; vTopic.has(ti)?vTopic.delete(ti):vTopic.add(ti); reVerse(); });
+    V.querySelectorAll("[data-vid]").forEach(b=>b.onclick=()=>{ const k=b.dataset.vid; openVideoScreen(k, ()=>{ vView="videos"; renderVerse(); }); });
     V.querySelectorAll("[data-vb]").forEach(b=>b.onclick=()=>{ const [x,y,z]=b.dataset.vb.split(":").map(Number); verseScroll=document.querySelector(".content").scrollTop; openVerseWizard(x,y,z,backToVerse); });
     if(el("memBackfill")) el("memBackfill").onclick=()=>{ const f=memBare[0]; if(!f) return; const back=()=>{ vView="mem"; renderVerse(); document.querySelector(".content").scrollTop=0; }; editVerseScene(f[0],f[1],f[2], back, back); };
     paintTheme(); return;
@@ -4206,21 +4234,16 @@ function renderVerse(){
   // ---- HUB: six big buttons; review last ----
   const dueAll=reviewDueCount();   // numbers + verses + palaces due for spaced repetition today
   const reviewVi=dueAll?"🔁":"🎯";
-  const reviewLabel=dueAll?`Spaced Repetition · ${dueAll} due`:(mem.length?`Practice Verses (${mem.length})`:`Practice Verses`);
   V.innerHTML=`${taxWarnHTML()}${feat("goal")?`<div class="goalbar" id="goalBtn">${goalBarHTML()}</div>`:""}
     <div class="versehub">
-      <button class="vhub sq" data-view="sugg"><span class="vi">✨</span><span>Suggested</span><small>${suggReach} in reach</small></button>
-      <button class="vhub sq" data-view="topics"><span class="vi">📚</span><span>Topics</span><small>${TOPICS.length}</small></button>
+      <button class="vhub sq" data-view="videos"><span class="vi">🎬</span><span>Video Review</span><small>${videoReviewList().length||"none yet"}</small></button>
+      <button class="vhub sq" id="vLearn"><span class="vi">✨</span><span>Learn Verses</span><small>${suggReach} in reach</small></button>
+      <button class="vhub sq review" id="vMemTest"><span class="vi">${reviewVi}</span><span>Spaced Repetition</span><small>${dueAll?dueAll+" due":"nothing due"}</small></button>
       <button class="vhub sq" data-view="mem"><span class="vi">★</span><span>Memorized</span><small>${mem.length}</small></button>
-      <button class="vhub sq" data-view="saved"><span class="vi">🔖</span><span>Saved</span><small>${saved.length}</small></button>
-      ${feat("w4w")?`<button class="vhub wide" id="vW4W"><span class="vi">🗣️</span><span>Practice Word for Word</span></button>`:""}
-      <button class="vhub wide" id="vNumTest"><span class="vi vi-bounce">🎲</span><span>Test Numbers &amp; Books</span></button>
-      <button class="vhub wide review" id="vMemTest"><span class="vi">${reviewVi}</span><span>${reviewLabel}</span></button>
     </div>`;
   if(el("goalBtn")) el("goalBtn").onclick=openGoalSettings; wireTaxWarn();
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
-  if(el("vW4W")) el("vW4W").onclick=()=>{ const a=pickW4WVerse(); if(!a){ toast(mem.length?"All your verses are done for now — great work!":"Memorize a verse first — tap Suggested!"); return; } startWordForWord(a[0],a[1],a[2],()=>{ show("verse"); renderVerse(); }); };
-  el("vNumTest").onclick=()=> knownNumbers().size>=2 ? (feat("ntsetup")?openNumTestSetup():startNumberTest()) : toast("Learn a few numbers first in the Learn tab!");
+  if(el("vLearn")) el("vLearn").onclick=openLearnVerses;
   el("vMemTest").onclick=()=> mem.length ? maybeVideo("sr", openReviewSetup) : toast("Memorize a verse first — tap Suggested!");
   if(srFlashPending && el("vMemTest")){ srFlashPending=false; const rb=el("vMemTest"); rb.classList.add("srbtn-flash"); setTimeout(()=>rb.classList.remove("srbtn-flash"),6000); }
   paintTheme();
@@ -5698,6 +5721,47 @@ const WORD_VERSES=[[19,119,11],[6,1,8],[19,1,2],[19,119,105],[51,3,16],[40,4,4],
 function encourageHTML(){ const r=WORD_VERSES[Math.floor(Date.now()/DAY)%WORD_VERSES.length]; const t=kjvText(r[0],r[1],r[2]); if(!t) return "";
   return `<div class="teachbox" style="margin-top:14px;font-style:italic;text-align:left">“${t}” <span class="gold" style="font-style:normal;font-weight:800">— ${bookName(r[0])} ${r[1]}:${r[2]}</span></div>`; }
 // ---- Talent Store: spend earned talents on tools that aid the practice (a Freeze, or a Peek token) ----
+/* ---- Learn Verses -------------------------------------------------------------------------
+   Four buttons on the Library, and the ways of choosing a verse live one tap behind one of them,
+   rather than crowding the front of the screen.                                               */
+function libSheet(title, rows, extra){
+  const m=el("libModal")||(()=>{ const d=document.createElement("div"); d.id="libModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar"><span style="width:34px"></span><div style="flex:1;text-align:center;font-weight:800">${title}</div><button class="lclose" id="lbClose">✕</button></div>
+      <div class="mtradiolist one" id="lbRows" style="margin-top:10px">${rows.map(r=>`<button type="button" class="mtradio" data-lb="${r.id}" style="align-items:flex-start;text-align:left"><span class="rdot" style="margin-top:3px"></span><span><b>${r.icon} ${r.name}</b><br><span style="font-weight:600;font-size:12px;color:var(--muted)">${r.sub}</span></span></button>`).join("")}</div>
+      ${extra||""}
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; };
+  el("lbClose").onclick=close;
+  m.onclick=ev=>{ if(ev.target===m) close(); };
+  m.querySelectorAll("[data-lb]").forEach(b=>b.onclick=()=>{ close(); const r=rows.find(x=>x.id===b.dataset.lb); if(r&&r.go) r.go(); });
+  return {m, close};
+}
+function openLearnVerses(){
+  const go=v=>{ vView=v; renderVerse(); document.querySelector(".content").scrollTop=0; };
+  const rows=[
+    {id:"sugg",   icon:"✨", name:"Suggested",   sub:"The next verses within reach of the books and numbers you know.", go:()=>go("sugg")},
+    {id:"topics", icon:"📚", name:"Topics",      sub:"Verses for what you are walking through — comfort, fear, thanksgiving.", go:()=>go("topics")},
+    {id:"saved",  icon:"🔖", name:"Saved",       sub:"The ones you set aside to come back to.", go:()=>go("saved")},
+  ];
+  const {close}=libSheet("Learn Verses", rows,
+    `<button class="btn ghost" id="lbPractice" style="width:100%;margin-top:12px">🎯 Practice what you know</button>`);
+  el("lbPractice").onclick=()=>{ close(); setTimeout(openPracticePicker, 60); };
+}
+function openPracticePicker(){
+  const rows=[];
+  if(feat("w4w")) rows.push({id:"w4w", icon:"🗣️", name:"Word for Word", sub:"Recite a verse by typing it out from memory.",
+    go:()=>{ const a=pickW4WVerse(); if(!a){ toast((Prog.memorized||[]).length?"All your verses are done for now — great work!":"Memorize a verse first."); return; }
+             startWordForWord(a[0],a[1],a[2],()=>{ show("verse"); renderVerse(); }); }});
+  rows.push({id:"verses", icon:"📖", name:"Verses", sub:"Where does this verse live? Book, chapter and verse — anything you know, not only what is due.",
+    go:()=>{ if(!(Prog.memorized||[]).length){ toast("Memorize a verse first."); return; }
+             memTestRecent=[]; suppressGrowth=false; reviewedThisSession=[]; Prog.streak=0; saveProg(); refreshHUD&&refreshHUD(); practiceNext(true); }});
+  rows.push({id:"nums", icon:"🎲", name:"Numbers &amp; Books", sub:"The pegs themselves — numbers to books, images to numbers and back again.",
+    go:()=>{ if(knownNumbers().size<2){ toast("Learn a few numbers first in the Learn tab!"); return; }
+             feat("ntsetup")?openNumTestSetup():startNumberTest(); }});
+  libSheet("Practice", rows);
+}
 function openStore(){
   let m=document.getElementById("storeModal");
   if(!m){ m=document.createElement("div"); m.id="storeModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
@@ -5706,7 +5770,7 @@ function openStore(){
   const palaces=palaceCount(), canPalace=!Billing.isPro() && t>=PALACE_COST;
   const warn=taxWarnDays();
   m.innerHTML=`<div class="modal-card">
-    <h2 style="font-size:18px;margin:0 0 4px">💰 Talents Store</h2>
+    <h2 style="font-size:18px;margin:0 0 4px">📖 Talents Store</h2>
     ${warn?`<div class="taxwarn" style="cursor:default;margin:8px 0"><span class="tw-ic">\u{1F985}</span><span>Caesar's collectors ride in <b>${warn} day${warn>1?"s":""}</b>. Spend them, or Rome will.</span></div>`:""}
     <p class="hint" style="margin:0 0 12px">You have <b class="gold">🪙 ${t} talents</b>. Spend them on tools that keep you going.</p>
     <div class="storeitem">
@@ -5819,10 +5883,14 @@ function startNumberTest(round){
   // only ask a form the pool can actually supply - the book forms need four numbers that name books
   const forms=pref.types.filter(t=>!NT_BOOKFORM.has(t) || bookPool.length>=4);
   if(!forms.length){ toast("Learn a few book numbers (1–66) to practise those forms."); return; }
+  // every distinct question these forms and numbers can make, dealt without replacement
+  const deck=[];
+  forms.forEach(t=>{ (NT_BOOKFORM.has(t)?bookPool:pool).forEach(n=>deck.push({n,type:t})); });
   const qs=[];
-  for(let i=0;i<pref.count;i++){
-    const type=pick(forms), src=NT_BOOKFORM.has(type)?bookPool:pool;
-    qs.push({n:src[Math.floor(Math.random()*src.length)], type});
+  if(!deck.length){ toast("Learn a few more numbers to practise those forms."); return; }
+  while(qs.length<pref.count){
+    shuffle(deck);                                  // a fresh pass only once the last one is spent
+    for(const c of deck){ if(qs.length>=pref.count) break; qs.push({n:c.n, type:c.type}); }
   }
   NT={qs, i:0, ok:0, wrong:0, round, hasMore: round===1 && recent.length>10}; renderNumTest();
 }
@@ -6872,7 +6940,7 @@ function openStatsInfo(){
     <div class="statrow"><span class="static">🪙</span><div><b>${talDisp(Prog.talents||0)} talents</b><div class="hint" style="margin:2px 0 0">Earn talents for everything you accomplish — finishing lessons, memorizing verses, streaks, badges and spaced-repetition reviews. Spend them in the Talents Store. Past 9,999 they show as ∞.</div></div></div>
     <div class="statrow"><span class="static">📖</span><div><b>${booksKnown()} book${booksKnown()===1?"":"s"} unlocked</b><div class="hint" style="margin:2px 0 0">Bible books you can address by number — the shelves your verses sit on.</div></div></div>
     <div class="statrow"><span class="static">★</span><div><b>${Prog.memorized.length} verse${Prog.memorized.length===1?"":"s"} hidden</b><div class="hint" style="margin:2px 0 0">Verses you've built into pictures and can test yourself on.</div></div></div>
-    <button class="btn" id="siStore" style="margin-top:16px;width:100%">💰 Talents Store · <b>${Prog.talents||0}</b> talents</button>
+    <button class="btn" id="siStore" style="margin-top:16px;width:100%">📖 Talents Store · <b>${Prog.talents||0}</b> talents</button>
     <button class="btn ghost" id="siClose" style="margin-top:8px;width:100%">Close</button></div>`;
   m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("siClose").onclick=()=>m.style.display="none";

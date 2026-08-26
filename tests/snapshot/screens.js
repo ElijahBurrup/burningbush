@@ -66,6 +66,10 @@ module.exports = [
   { name: 'modal/church', sel: '#churchModal', go: () => { Prog.church = { given: 1400, built: 3, total: 8900 }; openChurch(); } },
   { name: 'modal/feature-store', sel: '#featModal', go: () => { openFeatureStore(); } },
   { name: 'modal/video', sel: '#videoModal', go: () => { openVideoScreen('palace'); } },
+  // the Library (v1.17). videoOrder is set explicitly so the list is reproducible.
+  { name: 'verse/videos', sel: '#verse', go: () => { Prog.videoOrder = ['sr', 'palace']; saveProg(); show('verse'); vView = 'videos'; renderVerse(); } },
+  { name: 'modal/learn-verses', sel: '#libModal', go: () => { openLearnVerses(); } },
+  { name: 'modal/practice', sel: '#libModal', go: () => { openPracticePicker(); } },
   // ---- the verse ladder (v1.13) ----
   { name: 'modal/stage', sel: '#stageModal', go: () => { openStagePicker(19, 23, 1, '19:23:1', () => { }); } },
   { name: 'modal/promote-pool', sel: '#promoteModal', go: () => { openStagePromote(43, 3, 16, '43:3:16', 'w4w', () => { }); } },
