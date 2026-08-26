@@ -833,6 +833,7 @@
   .mtradio .rdot{flex:0 0 16px;width:16px;height:16px;border-radius:50%;border:2px solid var(--line);box-sizing:border-box}
   .mtradio.sel{color:var(--accent);border-color:var(--accent)}
   .mtradio.sel .rdot{border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--accent)}
+  .vidplayer{width:100%;display:block;border-radius:14px;background:var(--panel3);border:1px solid var(--line)}
   .fcard{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
   .fcard .fic{font-size:22px;line-height:1;flex:none}
   .fcard .fmid{flex:1;min-width:0}
@@ -1611,8 +1612,16 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.15.0";
+const APP_VERSION="1.16.0";
 const CHANGELOG=[
+ {v:"1.16.0", d:"August 26, 2026", t:"One reveal, and films that find you", items:[
+   ["new","Every film now has <b>its own screen</b> \u2014 its name, a line on what it is for, and the player \u2014 and it arrives at the moment it first becomes useful instead of sitting somewhere to be hunted for."],
+   ["new","<b>What is a Memory Palace?</b> follows the scratch-off that unlocks Palaces. <b>How to create a verse scene</b> follows the one that unlocks your verses. <b>How spaced repetition locks it in</b> comes the moment you memorize your first verse, or the first time you open review \u2014 so it now lands well before the palace film."],
+   ["new","A new film, <b>When a verse won't come</b>, arrives the first time a verse escapes you or you walk back through a scene."],
+   ["fix","<b>One reveal per verse.</b> It costs 50 talents to uncover the book, the chapter or the verse \u2014 and that is the one. Three escalating peeks let a verse be uncovered completely, which is not recall. After the reveal the screen points you at <b>Review my scene</b> instead."],
+   ["new","Close the app in the middle of a verse test and it is <b>waiting for you</b> when you come back \u2014 the same verse, not the hub."],
+   ["fix","A <b>run of right answers belongs to one sitting</b>. Walk away, do something else, come back, and it starts again at nothing. Your best run ever is still kept."]
+ ]},
  {v:"1.15.0", d:"August 26, 2026", t:"The first look back", items:[
    ["new","A verse you saved an hour ago has not been forgotten yet, so testing it proves nothing. <b>Four hours after you save a verse it comes back once</b> — the palace, the location and the scene you wrote, to read over and correct. <b>No test on day one.</b> Only after that reading does it join the testing rotation."],
    ["new","New verses are always <b>first</b> in a review session, before numbers and before anything else."],
@@ -2860,6 +2869,7 @@ function show(tab){
   // leaving the intro via a tab tap = onboarding is done; stamp it so Journey doesn't re-show the intro from step 0 (state desync)
   if(!Prog.onboarded && tab!=="journey"){ Prog.onboarded=true; saveProg(); }
   try{ if(["learn","verse","palace","journey","stories"].includes(tab)) Store.set("vv_tab", tab); }catch(e){}  // remember the tab so a page refresh returns here
+  if(tab!=="verse") clearActiveTest();   // walked away from the test - do not drag them back into it
   views.forEach(v=>v.classList.toggle("active",v.id===tab));
   document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   document.querySelector(".content").scrollTop=0;
@@ -3097,11 +3107,14 @@ function storyReachKey(sk){ const s=sk.story; return Math.max(bookNum(s.b)||0, s
 // A skill = {id, label, kind:'num'|'book'|'sound'|'story', items:[n...]} ; tiles unlock in order.
 // video lessons woven into the Learn track (defined before buildUnits, which references them via vid())
 const VIDEOS = {
-  major: {skill:"video:major", title:"How the Major System works", sub:"Ten simple sounds turn any number into a picture — the key to everything.", done:"I watched it →"},
-  verse: {skill:"video:verse", title:"How to create a verse scene", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse", done:"I watched it →"},
-  palace:{skill:"video:palace", title:"What is a Memory Palace?", sub:"Walk a place you know and leave each item at a spot — do it once and the order sticks.", cta:"palace", done:"I watched it →"},
-  sr:    {skill:"video:sr", title:"How spaced repetition locks it in", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long-term memory.", cta:"sr", done:"I watched it →"}
+  major: {src:"", skill:"video:major", title:"How the Major System works", sub:"Ten simple sounds turn any number into a picture — the key to everything.", done:"I watched it →"},
+  verse: {src:"", skill:"video:verse", title:"How to create a verse scene", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse", done:"I watched it →"},
+  palace:{src:"", skill:"video:palace", title:"What is a Memory Palace?", sub:"Walk a place you know and leave each item at a spot — do it once and the order sticks.", cta:"palace", done:"I watched it →"},
+  sr:    {src:"", skill:"video:sr", title:"How spaced repetition locks it in", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long-term memory.", cta:"sr", done:"I watched it →"},
+  recall:{src:"", skill:"video:recall", title:"When a verse won't come", sub:"A blank is not a failure — it is the moment the scene gets stronger. Here is what to do with it.", done:"I watched it →"}
 };
+// Each entry carries an empty src until the films are recorded; the screen falls back to the
+// placeholder card until one is set. Give it an absolute path when the files are hosted.
 function buildUnits(){
   const bk=n=>({id:"book:"+n,label:bookName(n),kind:"book",items:[n]});
   const units=[];
@@ -3318,19 +3331,42 @@ function nextFocus(){
   return nextSkillLabel() || "keep climbing the Word";
 }
 function videoPlaceholder(title, sub){ return `<div class="vidph"><div class="play">▶</div><div class="vt">${title}</div><div class="vs">${sub}</div></div>`; }
-/* ---- video LESSONS in the Learn path: watch → earn a check → (optionally) flash the nav ---- */
-function startVideoLesson(key, ret){
-  const V=VIDEOS[key], L=el("learn"); if(!V) return;
-  L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="vlClose">✕</button><div class="lbar" style="flex:1"><span style="width:100%"></span></div></div>
-    <div id="lBody"><div class="card">
-      ${videoPlaceholder("▶ "+V.title, V.sub+" (Add your video here.)")}
-      <h2 style="font-size:19px;text-align:center;margin:12px 0 4px">${V.title}</h2>
-      <p class="lead" style="text-align:center">${V.sub}</p>
-      <button class="btn" id="vlDone" style="margin-top:14px">✓ ${V.done}</button></div></div></div>`;
-  const back=()=>ret?ret():renderPath();
-  el("vlClose").onclick=back;
-  el("vlDone").onclick=()=>{ if(!Prog.doneSkills.includes(V.skill)) Prog.doneSkills.push(V.skill); saveProg(); bustCaches(); back(); if(V.cta) setTimeout(()=>flashNav(V.cta),300); };
+/* ---- VIDEOS ------------------------------------------------------------------------------
+   Each film has its own screen: its name, one line on what it is for, and the player. A video is
+   shown ONCE, at the moment it first becomes useful, rather than sitting as a tile to be hunted
+   for. The order that falls out of the triggers below is: the Major System first, then spaced
+   repetition (the first verse memorised), then the palace (its scratch-off), with "when a verse
+   won't come" arriving the first time one actually doesn't.                                    */
+function videoSeen(k){ const V=VIDEOS[k]; return !!V && (Prog.doneSkills||[]).includes(V.skill); }
+function markVideoSeen(k){ const V=VIDEOS[k]; if(!V) return;
+  if(!Prog.doneSkills.includes(V.skill)){ Prog.doneSkills.push(V.skill); saveProg(); bustCaches(); } }
+function videoPlayerHTML(V){
+  return V.src
+    ? `<video class="vidplayer" controls playsinline preload="metadata" data-vsrc="${V.src}"></video>`   // set in JS: a literal src= here cannot be checked by the build path rules
+    : videoPlaceholder("▶ "+V.title, "Add your video here.");
 }
+function openVideoScreen(key, after){
+  const V=VIDEOS[key]; if(!V){ if(after) after(); return; }
+  const m=el("videoModal")||(()=>{ const d=document.createElement("div"); d.id="videoModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar"><span style="width:34px"></span><div style="flex:1;text-align:center;font-weight:800">${V.title}</div><button class="lclose" id="vsClose">✕</button></div>
+      ${videoPlayerHTML(V)}
+      <p class="lead" style="text-align:center;margin:12px 0 0">${V.sub}</p>
+      <button class="btn" id="vsDone" style="width:100%;margin-top:14px">✓ ${V.done||"I watched it →"}</button>
+    </div>`;
+  { const vd=m.querySelector("[data-vsrc]"); if(vd && vd.dataset.vsrc) vd.src=vd.dataset.vsrc; }
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ const vd=m.querySelector("video"); if(vd){ try{ vd.pause(); }catch(err){} } m.style.display="none"; };
+  // Both ways out mark it watched - it stays available from Video Review, and nothing pops up twice.
+  el("vsClose").onclick=()=>{ markVideoSeen(key); close(); if(after) after(); };
+  el("vsDone").onclick=()=>{ markVideoSeen(key); close(); if(after) after(); if(V.cta) setTimeout(()=>flashNav(V.cta),300); };
+}
+// Show it only if it has never been shown; otherwise carry straight on.
+function maybeVideo(key, after){
+  if(videoSeen(key)){ if(after) after(); return false; }
+  openVideoScreen(key, after); return true;
+}
+function startVideoLesson(key, ret){ openVideoScreen(key, ret||renderPath); }
 let srFlashPending=false;   // set when the SR video is watched → the Spaced-Repetition button pulses on the Verse hub
 function flashNav(cta){
   const map={verse:{tab:"verse",msg:"👇 Learn your verses here"}, palace:{tab:"palace",msg:"👇 Create your palace here"}, sr:{tab:"verse",msg:"👇 Tap Verse — your Spaced-Repetition button is waiting"}};
@@ -3986,7 +4022,10 @@ function finishLesson(){
 function reachableScenes(){ return SCENES.filter(s=>reachable(bookNum(s.b),s.c,s.v)); }
 let curScene=null, wSteps=[], wIdx=0;
 let memTestCur=null, memTestRecent=[], memTestWrong=0, reviewedThisSession=[];
-const HINT_COSTS=[25,50,75];   // escalating talent cost for the 1st, 2nd, 3rd hint on the SAME verse
+// ONE reveal per verse, at a flat price. Three escalating peeks let a verse be uncovered entirely,
+// which is recall theatre rather than recall. After the one, the way forward is the scene itself.
+const HINT_COST=50, HINT_MAX=1;
+const NO_MORE_REVEALS="That's your one reveal — tap 🖼️ Review my scene to walk it again.";
 let memHintUses=0;
 // A generic "spend talents?" confirm used before revealing a paid hint.
 function confirmSpend(title, sub, onYes, opts){ opts=opts||{};
@@ -4182,7 +4221,7 @@ function renderVerse(){
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
   if(el("vW4W")) el("vW4W").onclick=()=>{ const a=pickW4WVerse(); if(!a){ toast(mem.length?"All your verses are done for now — great work!":"Memorize a verse first — tap Suggested!"); return; } startWordForWord(a[0],a[1],a[2],()=>{ show("verse"); renderVerse(); }); };
   el("vNumTest").onclick=()=> knownNumbers().size>=2 ? (feat("ntsetup")?openNumTestSetup():startNumberTest()) : toast("Learn a few numbers first in the Learn tab!");
-  el("vMemTest").onclick=()=> mem.length ? openReviewSetup() : toast("Memorize a verse first — tap Suggested!");
+  el("vMemTest").onclick=()=> mem.length ? maybeVideo("sr", openReviewSetup) : toast("Memorize a verse first — tap Suggested!");
   if(srFlashPending && el("vMemTest")){ srFlashPending=false; const rb=el("vMemTest"); rb.classList.add("srbtn-flash"); setTimeout(()=>rb.classList.remove("srbtn-flash"),6000); }
   paintTheme();
 }
@@ -4350,6 +4389,9 @@ function askVerseIn(k){
 }
 function startMemTest(){
   const mem=memArr();
+  // A run of right answers is a run WITHIN one sitting. Walk away, do something else, come back,
+  // and it starts again at nothing - only the best you have ever reached is kept.
+  Prog.streak=0; saveProg(); refreshHUD&&refreshHUD();
   memTestRecent=[]; suppressGrowth=false; reviewedThisSession=[];
   const numDue=numbersDueList();
   const due=mem.map(a=>a.join(":")).filter(k=>verseDue(k));   // verses whose next SR checkpoint has come due
@@ -4389,7 +4431,19 @@ function startNumberReview(nums, ret){
   const qs=nums.map(n=>({n, type: pick((n<=66 && withBook.length>=1) ? ["q_n2i","q_i2n","q_n2b","q_b2n"] : ["q_n2i","q_i2n"]) }));
   NT={qs, i:0, ok:0, wrong:0, ret}; renderNumTest();
 }
-function askVerse(key){ memTestCur=key.split(":").map(Number); memTestWrong=0; memHintUses=0; memTestRender(); }
+/* Close the app in the middle of a verse test and it is waiting for you when you come back -
+   the same verse, not the hub. The marker is dropped the moment you leave the test yourself. */
+function setActiveTest(k){ try{ Store.set("vv_active", k||""); }catch(err){} }
+function clearActiveTest(){ setActiveTest(""); }
+function activeTestKey(){ try{ return Store.get("vv_active","")||""; }catch(err){ return ""; } }
+function resumeActiveTest(){
+  const k=activeTestKey();
+  if(!k || !(Prog.memorized||[]).includes(k)){ clearActiveTest(); return false; }
+  const p=k.split(":").map(Number);
+  if(p.length!==3 || !kjvText(p[0],p[1],p[2])){ clearActiveTest(); return false; }
+  show("verse"); askVerse(k); return true;
+}
+function askVerse(key){ setActiveTest(key); memTestCur=key.split(":").map(Number); memTestWrong=0; memHintUses=0; memTestRender(); }
 function nextMemVerse(){                       // the "go to next" hook fired after each answered verse
   if(MS && MS.phase==="sr"){
     while(MS.srQueue.length && !verseDue(MS.srQueue[0])) MS.srQueue.shift(); // drop any already cleared
@@ -5910,19 +5964,22 @@ function memTestRender(){
       </div>
       <div class="hint" id="mtWarn" style="margin-top:10px;text-align:center">${memTestWrong>0?warnText(memTestWrong):""}</div>
       <button class="btn" id="mtCheck" style="margin-top:8px">Check</button>
-      <div class="hint" id="mtHintCost" style="text-align:center;margin-top:8px">Stuck? Tap the 👁️ on a box to peek for <b class="gold">${HINT_COSTS[Math.min(memHintUses,2)]} 🪙</b> — the cost rises to 50 then 75 on this verse. Answer right and your streak still counts.</div>
+      <div class="hint" id="mtHintCost" style="text-align:center;margin-top:8px">Stuck? Tap the 👁️ on <b>one</b> box to reveal it for <b class="gold">${HINT_COST} 🪙</b> — one reveal per verse. Answer the rest right and your streak still counts.</div>
       <div class="btnrow" style="margin-top:8px;gap:6px"><button class="btn ghost sm" id="mtReview" style="flex:1;margin:0">🖼️ Review my scene</button><button class="btn ghost sm" id="mtForgot" style="flex:1;margin:0">🤔 I forgot this</button></div>
       <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)"><div class="hint" style="text-align:center;margin-bottom:6px">This verse's memory trail (D0…D30)</div>${srTrailHTML(verseSRobj(refKey(b,c,v))||{step:1,learnedAt:Date.now()})}</div>
       <div id="mtFb"></div></div>`;
   el("mtClose").onclick=renderVerse;
   // Review the saved scene FROM the test — this reveals the answer, so it resets the streak to 0
   el("mtReview").onclick=()=>{ if(mtLock) return;
+    // the film first, ONCE - then this handler runs for real (re-entering via maybeVideo would recurse)
+    if(!videoSeen("recall")){ openVideoScreen("recall", ()=>el("mtReview").onclick()); return; }
     confirmSpend("Review your saved scene?", "It shows this verse's answer — your 🔥 streak will reset to <b>0</b>. You'll come right back to this verse afterward.", ()=>{
       Prog.streak=0; saveProg(); refreshHUD(); updateMetrics();
       const backToTest=()=>{ askVerse(refKey(b,c,v)); };
       editVerseScene(b,c,v, backToTest, backToTest);
     }, {icon:"🖼️", yes:"Review it — reset streak"}); };
   el("mtForgot").onclick=()=>{
+    if(!videoSeen("recall")){ openVideoScreen("recall", ()=>el("mtForgot").onclick()); return; }
     const kk=refKey(b,c,v);
     const scene=(Prog.customScene&&Prog.customScene[kk])||"";
     const loc=(Prog.verseLoc&&Prog.verseLoc[kk])||{};
@@ -6009,7 +6066,8 @@ function memTestRender(){
   // verse. Confirm before spending. Peeking never breaks your streak; answer the rest right and it still counts.
   V.querySelectorAll("[data-peek]").forEach(btn=>btn.onclick=()=>{
     if(btn.disabled||mtLock) return;
-    const which=btn.dataset.peek, cost=HINT_COSTS[Math.min(memHintUses,2)];
+    if(memHintUses>=HINT_MAX){ toast(NO_MORE_REVEALS); return; }
+    const which=btn.dataset.peek, cost=HINT_COST;
     const partName=which==="b"?"book":which==="c"?"chapter":"verse";
     if((Prog.talents||0)<cost){ toast(`That hint costs ${cost} talents — you have ${talDisp(Prog.talents||0)}.`); return; }
     confirmSpend(`Reveal the ${partName} for <b class="gold">${cost} 🪙</b>?`,
@@ -6019,7 +6077,8 @@ function memTestRender(){
       else if(which==="c"){ mtSel.c=c; keepInRange(); paintFields(); paintVerse(); el("mtFieldC").disabled=true; el("mtFieldC").classList.add("peeked"); }
       else { mtSel.v=v; paintFields(); el("mtFieldV").disabled=true; el("mtFieldV").classList.add("peeked"); }
       btn.disabled=true; btn.style.opacity=".5";
-      const cl=el("mtHintCost"); if(cl) cl.innerHTML=`Next peek: <b class="gold">${HINT_COSTS[Math.min(memHintUses,2)]} 🪙</b>. Answer right and your streak still counts.`;
+      V.querySelectorAll("[data-peek]").forEach(x=>{ x.disabled=true; x.style.opacity=".45"; });   // the one reveal is spent
+      const cl=el("mtHintCost"); if(cl) cl.textContent=NO_MORE_REVEALS;
       toast(which==="b"?"🔎 Book revealed":which==="c"?"🔎 Chapter revealed":"🔎 Verse revealed");
     });
   });
@@ -6105,7 +6164,9 @@ function showBadgeModal(b){
 function addMemorized(s){
   const k=refKey(bookNum(s.b),s.c,s.v);
   Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k); // once learned, drop from saved/skip
-  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); saveProg(); updateMetrics(); earnTalents(15); checkBadges(); bumpGoal(); }   // a new verse counts toward today's goal
+  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); saveProg(); updateMetrics(); earnTalents(15); checkBadges(); bumpGoal();   // a new verse counts toward today's goal
+    if(Prog.memorized.length===1) setTimeout(()=>maybeVideo("sr"), 900);   // one verse in hand is the moment spaced repetition means something
+  }
   else saveProg();
 }
 // "I forgot this": pull a verse OUT of memorized so it returns to the pool to re-encode later.
@@ -8103,7 +8164,12 @@ const Scratch = (()=>{
       if(!sim && document.querySelector(".view.active")?.id==="learn") renderPath();   // reveal a newly-unlocked Learn lesson (e.g. the palace)
       if(btn){ btn.classList.add("justwon"); setTimeout(()=>btn.classList.remove("justwon"),700); }
       if(sim && opts.onClaimed) opts.onClaimed(rung);
-      else setTimeout(()=>toast(reqsSummary(rung+1)), 500);
+      else {
+        // the film that explains what was just unlocked, right after it is unlocked
+        const vk = L.tab==="palace" ? "palace" : (L.tab==="verse" ? "verse" : null);
+        if(vk) setTimeout(()=>maybeVideo(vk), 650);
+        else setTimeout(()=>toast(reqsSummary(rung+1)), 500);
+      }
     });
   }
   el("scClaim").onclick=claim;
@@ -8189,6 +8255,7 @@ if(!Prog.onboarded){
 }
 wireVerseWords();   // press-and-hold on any verse word → its Hebrew/Greek
 grandfatherFeatures();   // an account that predates the Feature Store keeps everything it had
+resumeActiveTest();      // straight back into an unfinished verse test, if there was one
 applyFeatureVisibility();
 bootPopups();   // Rome's letter → any levy that has fallen due → the "What's new" card
 

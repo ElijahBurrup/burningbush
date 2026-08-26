@@ -90,9 +90,9 @@
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
  },
  "classic/practice/verse-test": {
-  "h": "320cb33983affe49",
-  "len": 3800,
-  "els": 66,
+  "h": "407e010dc4629367",
+  "len": 3801,
+  "els": 67,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
@@ -261,7 +261,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "9a817f0ed4adf326",
+  "h": "e4698a463b9f0adf",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -315,13 +315,13 @@
   "text": "💰 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "e3bd8c6f185663a7",
-  "len": 25051,
-  "els": 491,
+  "h": "3384339ed7a13ef3",
+  "len": 26885,
+  "els": 523,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.15.0 August 26, 2026 The first look back NEW A verse you saved an hour ago has not been forgotten y"
+  "text": "✕ Version history v1.16.0 August 26, 2026 One reveal, and films that find you NEW Every film now has its own screen — it"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -340,6 +340,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
+ },
+ "classic/modal/video": {
+  "h": "4e53ecb4cd017cc4",
+  "len": 603,
+  "els": 11,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
  },
  "classic/modal/stage": {
   "h": "e5865eea850e3261",
@@ -522,9 +531,9 @@
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
  },
  "illumined/practice/verse-test": {
-  "h": "320cb33983affe49",
-  "len": 3800,
-  "els": 66,
+  "h": "407e010dc4629367",
+  "len": 3801,
+  "els": 67,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
@@ -693,7 +702,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "904218daf3a1bdc3",
+  "h": "4cc9985147561789",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -747,13 +756,13 @@
   "text": "💰 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "e3bd8c6f185663a7",
-  "len": 25051,
-  "els": 491,
+  "h": "3384339ed7a13ef3",
+  "len": 26885,
+  "els": 523,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.15.0 August 26, 2026 The first look back NEW A verse you saved an hour ago has not been forgotten y"
+  "text": "✕ Version history v1.16.0 August 26, 2026 One reveal, and films that find you NEW Every film now has its own screen — it"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -772,6 +781,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
+ },
+ "illumined/modal/video": {
+  "h": "4e53ecb4cd017cc4",
+  "len": 603,
+  "els": 11,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
  },
  "illumined/modal/stage": {
   "h": "e5865eea850e3261",
@@ -954,9 +972,9 @@
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
  },
  "glass/practice/verse-test": {
-  "h": "320cb33983affe49",
-  "len": 3800,
-  "els": 66,
+  "h": "407e010dc4629367",
+  "len": 3801,
+  "els": 67,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
@@ -1125,7 +1143,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "b033f7b5bdee5b4b",
+  "h": "3fbf30749000faa5",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -1179,13 +1197,13 @@
   "text": "💰 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "e3bd8c6f185663a7",
-  "len": 25051,
-  "els": 491,
+  "h": "3384339ed7a13ef3",
+  "len": 26885,
+  "els": 523,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.15.0 August 26, 2026 The first look back NEW A verse you saved an hour ago has not been forgotten y"
+  "text": "✕ Version history v1.16.0 August 26, 2026 One reveal, and films that find you NEW Every film now has its own screen — it"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1204,6 +1222,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
+ },
+ "glass/modal/video": {
+  "h": "4e53ecb4cd017cc4",
+  "len": 603,
+  "els": 11,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
  },
  "glass/modal/stage": {
   "h": "e5865eea850e3261",
@@ -1386,9 +1413,9 @@
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
  },
  "quest/practice/verse-test": {
-  "h": "320cb33983affe49",
-  "len": 3800,
-  "els": 66,
+  "h": "407e010dc4629367",
+  "len": 3801,
+  "els": 67,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
@@ -1557,7 +1584,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "39d1d93efb05a595",
+  "h": "ccbe880aa946f21f",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -1611,13 +1638,13 @@
   "text": "💰 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "e3bd8c6f185663a7",
-  "len": 25051,
-  "els": 491,
+  "h": "3384339ed7a13ef3",
+  "len": 26885,
+  "els": 523,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.15.0 August 26, 2026 The first look back NEW A verse you saved an hour ago has not been forgotten y"
+  "text": "✕ Version history v1.16.0 August 26, 2026 One reveal, and films that find you NEW Every film now has its own screen — it"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1636,6 +1663,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
+ },
+ "quest/modal/video": {
+  "h": "4e53ecb4cd017cc4",
+  "len": 603,
+  "els": 11,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
  },
  "quest/modal/stage": {
   "h": "e5865eea850e3261",
@@ -1818,9 +1854,9 @@
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
  },
  "buddy/practice/verse-test": {
-  "h": "320cb33983affe49",
-  "len": 3800,
-  "els": 66,
+  "h": "407e010dc4629367",
+  "len": 3801,
+  "els": 67,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
@@ -1989,7 +2025,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "d32e317e512d8db4",
+  "h": "3183835a3bbd773b",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -2043,13 +2079,13 @@
   "text": "💰 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "e3bd8c6f185663a7",
-  "len": 25051,
-  "els": 491,
+  "h": "3384339ed7a13ef3",
+  "len": 26885,
+  "els": 523,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.15.0 August 26, 2026 The first look back NEW A verse you saved an hour ago has not been forgotten y"
+  "text": "✕ Version history v1.16.0 August 26, 2026 One reveal, and films that find you NEW Every film now has its own screen — it"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
@@ -2068,6 +2104,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
+ },
+ "buddy/modal/video": {
+  "h": "4e53ecb4cd017cc4",
+  "len": 603,
+  "els": 11,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
  },
  "buddy/modal/stage": {
   "h": "e5865eea850e3261",

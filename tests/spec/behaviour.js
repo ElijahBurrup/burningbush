@@ -1184,6 +1184,137 @@ const DAY = 86400000;
 
   await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); }, v15Snap);
 
+  // ================= v1.16 =================
+  const v16Snap = await $(() => JSON.stringify(Prog));
+
+  describe('one reveal', () => { });
+  const reveal = await $(() => {
+    Prog.talents = 500; Prog.memorized = ['43:3:16'];
+    Prog.verseSR = { '43:3:16': { learnedAt: 1, step: 1, r0: 1 } }; saveProg();
+    show('verse'); askVerse('43:3:16');
+    const out = { cost: HINT_COST, max: HINT_MAX, hintBefore: el('mtHintCost').textContent };
+    const before = Prog.talents;
+    document.querySelector('[data-peek="b"]').click();
+    el('spYes').click();
+    out.spent = before - Prog.talents;
+    out.bookFilled = mtSel.b > 0;
+    out.othersClosed = [...document.querySelectorAll('[data-peek]')].every(x => x.disabled);
+    out.hintAfter = el('mtHintCost').textContent;
+    const mid = Prog.talents;
+    const c = document.querySelector('[data-peek="c"]');
+    c.disabled = false;                       // force it back on: the handler itself must refuse
+    c.click();
+    out.secondSpent = mid - Prog.talents;
+    out.chapterStill = mtSel.c;
+    return out;
+  });
+  is(reveal.cost, 50, 'a reveal costs 50 talents');
+  is(reveal.max, 1, '...and there is exactly one per verse');
+  has(reveal.hintBefore, 'one reveal per verse', 'the screen says so before you spend');
+  is(reveal.spent, 50, 'taking it costs 50');
+  ok(reveal.bookFilled, '...and fills the box');
+  ok(reveal.othersClosed, 'the other two close off');
+  has(reveal.hintAfter, 'Review my scene', '...and the line points at the scene instead');
+  is(reveal.secondSpent, 0, 'a forced second reveal spends nothing');
+  is(reveal.chapterStill, 0, '...and reveals nothing');
+
+  describe('videos', () => { });
+  const vids = await $(() => {
+    const keys = Object.keys(VIDEOS);
+    return {
+      keys: keys.join(','), n: keys.length,
+      titled: keys.every(k => VIDEOS[k].title && VIDEOS[k].title.length > 5),
+      described: keys.every(k => VIDEOS[k].sub && VIDEOS[k].sub.length > 25),
+      srcSlot: keys.every(k => VIDEOS[k].src !== undefined),
+    };
+  });
+  is(vids.n, 5, 'five films');
+  has(vids.keys, 'recall', '...including one for when a verse will not come');
+  ok(vids.titled, 'every film has a name');
+  ok(vids.described, '...and a line saying what it is for');
+  ok(vids.srcSlot, '...and a slot for the file itself');
+
+  const vscreen = await $(() => {
+    Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x)); saveProg();
+    openVideoScreen('palace');
+    const m = el('videoModal');
+    const out = { shown: m.style.display === 'flex', txt: m.innerText, player: !!m.querySelector('.vidph, video') };
+    el('vsDone').click();
+    out.seen = videoSeen('palace');
+    out.closed = m.style.display === 'none';
+    out.again = maybeVideo('palace');
+    return out;
+  });
+  ok(vscreen.shown, 'a film opens on its own screen');
+  has(vscreen.txt, 'Memory Palace', '...named');
+  has(vscreen.txt, 'Walk a place you know', '...with a line on what it is for');
+  ok(vscreen.player, '...and a player');
+  ok(vscreen.seen && vscreen.closed, 'watching it marks it watched');
+  no(vscreen.again, '...and it never shows itself again');
+
+  await $(() => {
+    Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x));
+    Prog.memorized = []; Prog.verseSR = {}; saveProg();
+    addMemorized(verseObj(43, 3, 16));
+    return true;
+  });
+  await page.waitForFunction(() => { const m = el('videoModal'); return m && m.style.display === 'flex'; }, { timeout: 5000 }).catch(() => { });
+  const firstVerse = await $(() => {
+    const m = el('videoModal');
+    const out = { shown: !!m && m.style.display === 'flex', txt: m ? m.innerText : '' };
+    if (out.shown) el('vsDone').click();
+    return out;
+  });
+  ok(firstVerse.shown, 'the first verse memorised brings up the spaced-repetition film');
+  has(firstVerse.txt, 'spaced repetition', '...that one, before any palace film');
+
+  const recall = await $(() => {
+    Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x));
+    Prog.memorized = ['43:3:16']; Prog.verseSR = { '43:3:16': { learnedAt: 1, step: 1, r0: 1 } }; saveProg();
+    show('verse'); askVerse('43:3:16');
+    el('mtReview').click();
+    const m = el('videoModal');
+    const out = { shown: !!m && m.style.display === 'flex', txt: m ? m.innerText : '' };
+    if (out.shown) el('vsDone').click();
+    return out;
+  });
+  ok(recall.shown, 'the first walk back through a scene brings up its film');
+  has(recall.txt, "won't come", '...the one about a verse that will not come');
+
+  describe('resume', () => { });
+  const resume = await $(() => {
+    Prog.memorized = ['43:3:16']; Prog.verseSR = { '43:3:16': { learnedAt: 1, step: 1, r0: 1 } }; saveProg();
+    show('verse'); askVerse('43:3:16');
+    const marked = activeTestKey();
+    show('learn');
+    const leftIt = activeTestKey();
+    setActiveTest('43:3:16');
+    const back = resumeActiveTest();
+    const out = { marked, leftIt, back, onTest: !!el('mtFieldB'), tab: document.querySelector('.view.active').id };
+    setActiveTest('1:1:1');                 // a verse that is not theirs any more
+    out.stale = resumeActiveTest();
+    out.staleCleared = activeTestKey();
+    return out;
+  });
+  is(resume.marked, '43:3:16', 'being inside a verse test is remembered');
+  is(resume.leftIt, '', '...and forgotten the moment you go somewhere else');
+  ok(resume.back, 'a remembered test is resumed on the next launch');
+  ok(resume.onTest, '...landing straight back on that verse');
+  is(resume.tab, 'verse', '...on the verse screen, not the hub');
+  no(resume.stale, 'a verse no longer memorised is not resumed');
+  is(resume.staleCleared, '', '...and the marker is dropped');
+
+  describe('the run of right answers', () => { });
+  const cycle = await $(() => {
+    Prog.memorized = ['43:3:16']; Prog.streak = 7; Prog.bestStreak = 9; saveProg();
+    startMemTest();
+    return { streak: Prog.streak, best: Prog.bestStreak };
+  });
+  is(cycle.streak, 0, 'a fresh sitting starts the run at nothing');
+  is(cycle.best, 9, '...while the best ever reached is kept');
+
+  await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); clearActiveTest(); }, v16Snap);
+
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
   if (consoleErrs.length) { console.error(`  ✗ ${consoleErrs.length} console error(s):`); consoleErrs.slice(0, 5).forEach(e => console.error('      ' + e)); }
