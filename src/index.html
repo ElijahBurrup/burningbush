@@ -168,18 +168,30 @@
   /* verse hub — large square launcher buttons (2-col grid) + full-width test/review bars */
   .versehub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px}
   .vhub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px;font-size:17px;font-weight:800;color:var(--ink);cursor:pointer;text-align:center;min-width:0}
-  .vhub.sq{aspect-ratio:1.45}
-  .vhub .vi{font-size:31px;line-height:1;height:34px;display:grid;place-items:center}
-  .vhub .vi svg{width:33px;height:33px;display:block}
+  .vhub.sq{aspect-ratio:1.12}
+  .vhub .vi{font-size:38px;line-height:1;height:42px;display:grid;place-items:center}
+  .vhub .vi svg{width:40px;height:40px;display:block}
   .vhub small{font-size:12.5px;font-weight:700;color:var(--muted)}
-  .versehub .vhub{gap:4px;padding:10px 8px;font-size:15px;line-height:1.15;text-align:center}
+  .versehub{gap:10px}
+  .versehub .vhub{gap:6px;padding:14px 10px;font-size:15.5px;line-height:1.15;text-align:center}
+  .versehub .vhub.wide{padding:14px 16px}
   .vhub.wide{grid-column:1/-1;flex-direction:row;gap:14px;aspect-ratio:auto;padding:11px}
   .vhub.wide .vi{font-size:28px}
   .vi-bounce{display:inline-block;animation:vibounce 1.8s ease-in-out infinite;transform-origin:center bottom}
   @keyframes vibounce{0%,72%,100%{transform:translateY(0) rotate(0)}80%{transform:translateY(-6px) rotate(-12deg)}88%{transform:translateY(-3px) rotate(10deg)}94%{transform:translateY(0) rotate(0)}}
   .vhub:active{transform:scale(.98)}
-  .vhub.review{background:linear-gradient(135deg,var(--blue),var(--blue2));color:var(--on-blue);border:none;box-shadow:0 4px 0 var(--blue-shadow)}
-  .vhub.review small{color:var(--on-blue)}
+  /* The one people press every day. A deeper ground, a lit edge, and the due count as a pill so
+     it reads at a glance instead of as small grey text like every other button. */
+  .vhub.review{position:relative;overflow:hidden;border:none;color:var(--on-blue);
+    background:linear-gradient(150deg,var(--blue2),var(--blue) 55%,var(--blue2));
+    box-shadow:0 5px 0 var(--blue-shadow), inset 0 1px 0 var(--sw-line)}
+  .vhub.review::after{content:"";position:absolute;inset:-40% -30% auto -30%;height:120%;
+    background:radial-gradient(60% 55% at 50% 0%, var(--sw-line), transparent 70%);opacity:.5;pointer-events:none}
+  .vhub.review > *{position:relative;z-index:1}
+  .vhub.review .vi{filter:drop-shadow(0 2px 3px var(--blue-shadow))}
+  .vhub.review small{color:var(--on-blue);background:var(--blue-shadow);border-radius:999px;
+    padding:3px 12px;font-size:12.5px;font-weight:800;letter-spacing:.02em}
+  .vhub.review.hasdue small{background:var(--gold);color:var(--on-accent)}
 
   code{background:var(--code-bg);padding:2px 6px;border-radius:6px;color:var(--gold-ink);font-size:12px}
 
@@ -847,6 +859,11 @@
   .phasedivider::before,.phasedivider::after{content:"";flex:1;height:1px;background:var(--gold2);opacity:.7}
   .phasedivider:first-of-type{margin-top:6px}
   .vidplayer{width:100%;display:block;border-radius:14px;background:var(--panel3);border:1px solid var(--line)}
+  /* Profile fills the phone rather than floating as a card, and the section popup sits above it
+     with a z-index of its own so there is never any question which is in front. */
+  #themeModal.profscreen{align-items:stretch;justify-content:stretch;padding:0;background:var(--bg)}
+  #themeModal.profscreen .modal-card{width:100%;max-width:none;max-height:none;min-height:100%;border-radius:0;margin:0;overflow-y:auto}
+  #profSecModal{z-index:170}
   .profgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
   .profbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px 8px;color:var(--ink);font-weight:800;font-size:14px;line-height:1.15;text-align:center;cursor:pointer;aspect-ratio:1.5}
   .profbtn .pi{font-size:26px;line-height:1}
@@ -1482,7 +1499,8 @@
 
   <div class="modal" id="themeModal" style="display:none">
     <div class="modal-card">
-      <h2 style="font-size:18px;margin:0 0 12px">Profile &amp; Settings</h2>
+      <div class="lv-topbar" style="margin:0 0 12px"><button class="lclose lclose-red" id="profX" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800;font-size:16px">Profile &amp; Settings</div><span style="width:34px"></span></div>
 
       <!-- Admin: only rendered for the two admin accounts (see ADMIN_EMAILS / applyAdminVisibility) -->
       <div id="adminWrap" style="display:none">
@@ -1633,8 +1651,15 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.22.0";
+const APP_VERSION="1.23.0";
 const CHANGELOG=[
+ {v:"1.23.0", d:"August 26, 2026", t:"Bigger, and better looking", items:[
+   ["fix","<b>Profile sections were opening empty.</b> The old collapse-on-open behaviour was still running and hiding the very settings the new popups show. It is gone, and every section opens with its options in it."],
+   ["new","<b>Profile is a full screen</b> now, with a red ✕ at the top."],
+   ["new","The Library buttons are <b>much larger</b> and fill the screen properly."],
+   ["new","<b>Spaced Repetition looks like what it is</b> — the button you press every day. A deeper ground, a lit edge, a new mark (an open book coming round again, with its checkpoints arcing over it) and the due count as a pill that turns <b>gold when something is waiting</b>."],
+   ["fix","The film on the Learn path is simply a film icon now — a way in, not a lesson to complete."]
+ ]},
  {v:"1.22.0", d:"August 26, 2026", t:"Profile, in the Library’s shape", items:[
    ["new","<b>Profile is a grid of buttons now</b>, like the Library — one for each section, with its own icon and a line telling you what is inside."],
    ["new","Pressing one opens <b>its own popup</b>, with a red ✕ and a green ✓ at the top and that section’s settings underneath."],
@@ -3445,9 +3470,9 @@ function renderPath(focus){
     U.skills.forEach((sk,si)=>{
       const unlocked=skillUnlocked(ui,si), color=skillColor(sk,unlocked), d=Prog.doneSkills.includes(sk.id)?"done":"";
       if(sk.kind==="video"){
-        const watched=Prog.doneSkills.includes(sk.id);
-        html+=`<button class="tile video ${watched?"done":""}" data-video="${sk.vkey}">
-          <span class="vface">${watched?"✓":"▶"}</span><small>Watch again</small></button>`;
+        // no state on this one — it is an access point, not a lesson to complete
+        html+=`<button class="tile video" data-video="${sk.vkey}">
+          <span class="vface">🎬</span><small>Video</small></button>`;
         return;
       }
       const pro=skillPaywalled(sk);
@@ -3970,7 +3995,10 @@ function phaseComplete(ui){ const U=UNITS[ui]; return !!U && U.skills.every(sk=>
 function furthestStartedPhase(){ let m=0; phaseIdxs().forEach(i=>{ if(UNITS[i].skills.some(sk=>Prog.doneSkills.includes(sk.id))) m=i; }); return m; }
 function ensurePhaseMax(){
   // Grandfathered on first run: anyone already part-way keeps everything they had reached.
-  if(typeof Prog.phaseMax!=="number" || Prog.phaseMax<0){ Prog.phaseMax=furthestStartedPhase(); saveProg(); }
+  // It only ever RISES — never below a phase that already has work in it. It must not rise to the
+  // phase holding the next lesson: that one is earned by scratching, and auto-revealing it here
+  // would quietly remove the gate (the suite caught exactly that when I tried it).
+  if(typeof Prog.phaseMax!=="number" || Prog.phaseMax<0) Prog.phaseMax=furthestStartedPhase();
   if(Prog.phaseMax<furthestStartedPhase()){ Prog.phaseMax=furthestStartedPhase(); saveProg(); }
   return Prog.phaseMax;
 }
@@ -4246,7 +4274,7 @@ function renderVerse(){
   const dueAll=reviewDueCount();   // numbers + verses + palaces due for spaced repetition today
   V.innerHTML=`${taxWarnHTML()}${feat("goal")?`<div class="goalbar" id="goalBtn">${goalBarHTML()}</div>`:""}
     <div class="versehub">
-      <button class="vhub sq review" id="vMemTest"><span class="vi">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>
+      <button class="vhub sq review ${dueAll?"hasdue":""}" id="vMemTest"><span class="vi">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>
       <button class="vhub sq" data-view="mem"><span class="vi">${heartIconSVG()}</span><span>Memorized</span><small>${mem.length}</small></button>
       <button class="vhub sq" id="vLearn"><span class="vi">✨</span><span>Learn Verses</span><small>${suggReach} in reach</small></button>
       <button class="vhub sq" data-view="videos"><span class="vi">🎬</span><span>Video Review</span><small>${videoReviewList().length||"none yet"}</small></button>
@@ -5559,12 +5587,16 @@ function heartIconSVG(){
 }
 // The spaced-repetition mark: one turn of the circle, and the trail of checkpoints along it.
 function srIconSVG(){
-  return `<svg viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M20.2 12a8.2 8.2 0 1 1-2.7-6.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <path d="M20.4 3.2V8h-4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="8.3" cy="12.4" r="1.5" fill="currentColor"/>
-    <circle cx="12" cy="12.4" r="1.5" fill="currentColor" opacity=".65"/>
-    <circle cx="15.7" cy="12.4" r="1.5" fill="currentColor" opacity=".35"/>
+  // an open book coming round again: the trail of checkpoints arcs over it and the arrow returns
+  return `<svg viewBox="0 0 32 32" aria-hidden="true">
+    <path d="M4 21.5c3.6-1.9 7.2-1.9 10.8 0V11.2C11.2 9.3 7.6 9.3 4 11.2Z" fill="currentColor" opacity=".9"/>
+    <path d="M28 21.5c-3.6-1.9-7.2-1.9-10.8 0V11.2c3.6-1.9 7.2-1.9 10.8 0Z" fill="currentColor" opacity=".65"/>
+    <path d="M16 10.6v11.1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".55"/>
+    <path d="M6.6 8.2A11.4 11.4 0 0 1 26 5.9" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/>
+    <path d="M26.6 1.6v4.9h-4.9" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="10.6" cy="26.4" r="1.7" fill="currentColor"/>
+    <circle cx="16" cy="27.1" r="1.7" fill="currentColor" opacity=".7"/>
+    <circle cx="21.4" cy="26.4" r="1.7" fill="currentColor" opacity=".42"/>
   </svg>`;
 }
 // One Bible icon, used by the tab, the scratch-off prize and the icon that flies between them.
@@ -7403,7 +7435,7 @@ function profSlug(t){ return t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(
 function buildProfileGrid(){
   const card=el("themeModal") && el("themeModal").querySelector(".modal-card");
   if(!card || el("profGrid")) return;                     // built once
-  const done=el("themeClose"), h2=card.querySelector("h2");
+  const done=el("themeClose"), h2=card.querySelector(".lv-topbar");
   const holder=document.createElement("div"); holder.id="profPanels";
   const grid=document.createElement("div"); grid.id="profGrid"; grid.className="profgrid";
   const panels=[]; let cur=null;
@@ -7456,6 +7488,7 @@ function openProfSection(slug){
   el("psClose").onclick=close; el("psDone").onclick=close;
   m.onclick=ev=>{ if(ev.target===m) close(); };
 }
+function closeProfile(){ const m=el("themeModal"); if(!m) return; m.style.display="none"; m.classList.remove("profscreen"); }
 function applyAdminVisibility(){
   const admin = (typeof Auth!=="undefined") && Auth.isAdmin();
   const wrap=el("adminWrap"); if(wrap) wrap.style.display = admin ? "" : "none";
@@ -7501,25 +7534,10 @@ function openNotifyHelp(denied){
   el("nhOk").onclick=()=>m.style.display="none";
   if(el("nhInstall")) el("nhInstall").onclick=()=>{ m.style.display="none"; openInstallDialog(); };
 }
-el("themeBtn").onclick=()=>{ buildProfileGrid(); renderTransList(); renderBadges(); el("backupMsg").innerHTML=""; paintProfileGrid();
+el("themeBtn").onclick=()=>{ buildProfileGrid(); el("themeModal").classList.add("profscreen"); renderTransList(); renderBadges(); el("backupMsg").innerHTML=""; paintProfileGrid();
   applyAdminVisibility(); applyFeatureVisibility();
   if(el("testUnpaid")) el("testUnpaid").textContent = Billing.isPro() ? "🆓 Simulate unpaid user" : "✨ Restore Pro access";
-  el("themeModal").style.display="flex"; initProfileCollapse(); };
-// Make each profile subheader a collapsible section; all collapsed each time the menu opens.
-function initProfileCollapse(){
-  const card=el("themeModal").querySelector(".modal-card"); if(!card) return;
-  [...card.querySelectorAll(".prof-sect")].forEach(sec=>{
-    const group=[]; let sib=sec.nextElementSibling;
-    // stop at the next section header, the Done button, or the admin bug-reports wrapper (its own section)
-    while(sib && !sib.classList.contains("prof-sect") && sib.id!=="themeClose" && sib.id!=="bugReportsWrap"){ group.push(sib); sib=sib.nextElementSibling; }
-    if(!sec.querySelector(".prof-caret")) sec.insertAdjacentHTML("afterbegin", `<span class="prof-caret">▸</span> `);
-    sec.classList.add("prof-collapsible");
-    const caret=sec.querySelector(".prof-caret");
-    const setOpen=(open)=>{ group.forEach(g=>g.style.display=open?"":"none"); caret.textContent=open?"▾":"▸"; };
-    setOpen(false);   // collapsed on entry
-    sec.onclick=()=> setOpen(group.length ? group[0].style.display==="none" : false);
-  });
-}
+  el("themeModal").style.display="flex"; };
 el("expBtn").onclick=exportBackup;
 el("impBtn").onclick=()=>el("impFile").click();
 // Share progress and the Talents Store were removed from Profile — the store lives on the
@@ -7611,7 +7629,8 @@ if(el("testRestore")) el("testRestore").onclick=()=>{ const bak=Store.getJSON("v
 // their heart should not sit one tap — or one console call — away.
 
 el("impFile").onchange=e=>{ if(e.target.files[0]) importBackup(e.target.files[0]); };
-el("themeClose").onclick=()=>el("themeModal").style.display="none";
+el("themeClose").onclick=closeProfile;
+if(el("profX")) el("profX").onclick=closeProfile;
 el("refBtn").onclick=()=>{ el("themeModal").style.display="none"; show("foundations"); };   // Reference now lives under the profile menu
 if(el("pFeatures")) el("pFeatures").onclick=()=>openFeatureStore();
 el("pChangelog").textContent=`📋 Version history · v${APP_VERSION}`;

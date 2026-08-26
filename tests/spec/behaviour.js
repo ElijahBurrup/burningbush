@@ -1254,6 +1254,7 @@ const DAY = 86400000;
 
   await $(() => {
     // every film but this one counts as seen, so no stray trigger can answer for it
+    if (el('videoModal')) el('videoModal').style.display = 'none';
     Object.keys(VIDEOS).forEach(k => { if (k !== 'sr') markVideoSeen(k); });
     Prog.doneSkills = (Prog.doneSkills || []).filter(x => x !== VIDEOS.sr.skill);
     Prog.memorized = []; Prog.verseSR = {}; saveProg();
@@ -1271,6 +1272,7 @@ const DAY = 86400000;
   has(firstVerse.txt, 'spaced repetition', '...that one, before any palace film');
 
   const recall = await $(() => {
+    if (el('videoModal')) el('videoModal').style.display = 'none';
     Object.keys(VIDEOS).forEach(k => { if (k !== 'recall') markVideoSeen(k); });
     Prog.doneSkills = (Prog.doneSkills || []).filter(x => x !== VIDEOS.recall.skill);
     Prog.memorized = ['43:3:16']; Prog.verseSR = { '43:3:16': { learnedAt: 1, step: 1, r0: 1 } }; saveProg();
@@ -1528,6 +1530,7 @@ const DAY = 86400000;
 
   const major = await $(() => {
     // mark every OTHER film seen, so a stray trigger from an earlier block cannot answer for this one
+    if (el('videoModal')) el('videoModal').style.display = 'none';
     Object.keys(VIDEOS).forEach(k => { if (k !== 'major') markVideoSeen(k); });
     Prog.doneSkills = (Prog.doneSkills || []).filter(x => x !== VIDEOS.major.skill); saveProg();
     const m = el('videoModal'); if (m) m.style.display = 'none';
@@ -1773,6 +1776,52 @@ const DAY = 86400000;
   no(pgates.badgesOff, 'switching Milestones off takes its button away');
   no(pgates.refOff, '...and the Reference library too');
   ok(pgates.badgesOn, '...and switching it back brings it back');
+
+  describe('profile screen', () => { });
+  const pscreen = await $(() => {
+    Auth.user = { email: ADMIN_EMAILS[0] };
+    setFeat('badges', true); setFeat('reference', true); saveProg();
+    el('themeBtn').click();
+    const m = el('themeModal');
+    return { screen: m.classList.contains('profscreen'), cross: !!el('profX'),
+      fills: m.querySelector('.modal-card').offsetHeight >= m.offsetHeight - 2 };
+  });
+  ok(pscreen.screen, 'Profile opens as a screen, not a card on a scrim');
+  ok(pscreen.cross, '...with a red cross at the top');
+  ok(pscreen.fills, '...filling the phone');
+
+  // The reported bug: a section opens but its options are not there. Check EVERY section.
+  const pcontent = await $(() => {
+    const rows = [];
+    PROF_PANELS.forEach(p => {
+      openProfSection(p.slug);
+      const m = el('profSecModal'), body = m.querySelector('#psBody');
+      const visible = body.innerText.replace(/\s+/g, ' ').trim();
+      const controls = body.querySelectorAll('button, select, input, .theme-opt, .badge, [data-th]').length;
+      const onTop = (() => {
+        const b = m.querySelector('.modal-card').getBoundingClientRect();
+        const hit = document.elementFromPoint(b.left + b.width / 2, b.top + 40);
+        return !!hit && !!hit.closest('#profSecModal');
+      })();
+      rows.push({ slug: p.slug, chars: visible.length, controls, onTop });
+      el('psDone').click();
+    });
+    return { rows, empty: rows.filter(r => r.chars < 10 || r.controls === 0).map(r => r.slug).join(','),
+      behind: rows.filter(r => !r.onTop).map(r => r.slug).join(','), n: rows.length };
+  });
+  ok(pcontent.n >= 8, 'every section can be opened');
+  is(pcontent.empty, '', 'and not one of them opens empty — each has its options inside');
+  is(pcontent.behind, '', '...and each is drawn in front of the Profile screen, not behind it');
+
+  const pclose = await $(() => {
+    const m = el('themeModal');
+    el('profX').click();
+    const out = { closed: m.style.display === 'none', unscreened: !m.classList.contains('profscreen') };
+    Auth.user = null;
+    return out;
+  });
+  ok(pclose.closed, 'the red cross closes Profile');
+  ok(pclose.unscreened, '...and puts it back to an ordinary modal for anything else that uses it');
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
