@@ -984,9 +984,7 @@ const DAY = 86400000;
     const out = {};
     setFeat('w4w', false); saveProg();
     show('verse'); vView = 'hub'; renderVerse();
-    openPracticePicker();
-    out.hubOff = !document.querySelector('[data-lb="w4w"]');
-    el('libModal').style.display = 'none';
+    out.hubOff = !el('vW4W');
     out.poolOff = w4wPoolSize();
     out.offerOff = shouldOfferW4W('43:3:16');
     openStagePicker(19, 23, 1, '19:23:1', () => { });
@@ -994,9 +992,7 @@ const DAY = 86400000;
     el('stageModal').style.display = 'none';
     setFeat('w4w', true); saveProg();
     show('verse'); vView = 'hub'; renderVerse();
-    openPracticePicker();
-    out.hubOn = !!document.querySelector('[data-lb="w4w"]');
-    el('libModal').style.display = 'none';
+    out.hubOn = !!el('vW4W');
     openStagePicker(19, 23, 1, '19:23:1', () => { });
     out.rungsOn = [...document.querySelectorAll('#stageModal [data-stage]')].map(b => b.dataset.stage).join(',');
     el('stageModal').style.display = 'none';
@@ -1025,7 +1021,7 @@ const DAY = 86400000;
     el('themeModal').style.display = 'none';
     return out;
   });
-  ok(gates.hubOff, 'with Word for Word off it is not offered under Practice');
+  ok(gates.hubOff, 'with Word for Word off its button is gone from the Library');
   is(gates.poolOff, 0, '...the testing pool is empty');
   no(gates.offerOff, '...and nothing is ever offered a promotion into it');
   is(gates.rungsOff, 'loc,heart', '...and the ladder drops its middle rung');
@@ -1257,8 +1253,9 @@ const DAY = 86400000;
   no(vscreen.again, '...and it never shows itself again');
 
   await $(() => {
-    Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x));
-    markVideoSeen('major');            // the track-opening film is watched at the very start; isolate the one under test
+    // every film but this one counts as seen, so no stray trigger can answer for it
+    Object.keys(VIDEOS).forEach(k => { if (k !== 'sr') markVideoSeen(k); });
+    Prog.doneSkills = (Prog.doneSkills || []).filter(x => x !== VIDEOS.sr.skill);
     Prog.memorized = []; Prog.verseSR = {}; saveProg();
     addMemorized(verseObj(43, 3, 16));
     return true;
@@ -1274,7 +1271,8 @@ const DAY = 86400000;
   has(firstVerse.txt, 'spaced repetition', '...that one, before any palace film');
 
   const recall = await $(() => {
-    Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x));
+    Object.keys(VIDEOS).forEach(k => { if (k !== 'recall') markVideoSeen(k); });
+    Prog.doneSkills = (Prog.doneSkills || []).filter(x => x !== VIDEOS.recall.skill);
     Prog.memorized = ['43:3:16']; Prog.verseSR = { '43:3:16': { learnedAt: 1, step: 1, r0: 1 } }; saveProg();
     show('verse'); askVerse('43:3:16');
     el('mtReview').click();
@@ -1330,14 +1328,24 @@ const DAY = 86400000;
     const btns = [...document.querySelectorAll('.versehub .vhub')];
     return {
       count: btns.length,
+      squares: btns.filter(b => b.classList.contains('sq')).length,
+      sameSize: new Set(btns.filter(b => b.classList.contains('sq')).map(b => b.offsetWidth + 'x' + b.offsetHeight)).size,
+      wide: btns.filter(b => b.classList.contains('wide')).map(b => b.querySelector('span:nth-child(2)').textContent).join(''),
+      srDue: (btns[0].querySelector('small') || {}).textContent || '',
+      memIcon: btns[1].querySelector('.vi svg') ? 'drawn' : btns[1].querySelector('.vi').textContent,
       labels: btns.map(b => b.querySelector('span:nth-child(2)').textContent).join(' | '),
       tabLabel: (document.querySelector('.tabbar button[data-tab="verse"] .lbl') || {}).textContent,
       tabIcon: (document.querySelector('.tabbar button[data-tab="verse"] .ic') || {}).textContent,
       ticket: SCRATCH_LADDER.find(x => x.tab === 'verse').name,
     };
   });
-  is(lib.count, 4, 'the Library front page has four ways in');
-  is(lib.labels, 'Video Review | Learn Verses | Spaced Repetition | Memorized', '...in that order');
+  is(lib.count, 7, 'six squares and a wide one');
+  is(lib.labels, 'Spaced Repetition | Memorized | Learn Verses | Video Review | Practice Verses | Practice Numbers | Practice Word for Word', '...in that order');
+  is(lib.squares, 6, 'six of them are squares');
+  is(lib.sameSize, 1, '...and every one measures exactly the same, so none is the odd one out');
+  is(lib.wide, 'Practice Word for Word', 'and word for word runs the width underneath');
+  is(lib.srDue, 'Due (0)', 'Spaced Repetition says how many are due');
+  is(lib.memIcon, 'drawn', 'Memorized carries a drawn heart, not a bare star');
   is(lib.tabLabel, 'Library', 'the tab reads Library, not Verses');
   is(lib.tabIcon, '📚', '...with its own icon');
   is(lib.ticket, 'Library', '...and the scratch-off that wins it says so too');
@@ -1352,21 +1360,10 @@ const DAY = 86400000;
     return out;
   });
   is(learn.rows, 'sugg,topics,saved', 'Learn Verses offers Suggested, Topics and Saved');
-  ok(learn.practice, '...with Practice at the foot of it');
+  no(learn.practice, '...and nothing else — the three practices are buttons of their own now');
   is(learn.went, 'topics', 'choosing one goes there');
   ok(learn.closed, '...and closes the sheet');
 
-  const prac = await $(() => {
-    setFeat('w4w', true);
-    openPracticePicker();
-    const rows = [...document.querySelectorAll('#lbRows [data-lb]')].map(b => b.dataset.lb);
-    const out = { rows: rows.join(','), txt: el('libModal').innerText };
-    el('libModal').style.display = 'none';
-    return out;
-  });
-  is(prac.rows, 'w4w,verses,nums', 'Practice offers word for word, verses, and numbers & books');
-  has(prac.txt, 'Word for Word', '...named plainly');
-  has(prac.txt, 'Numbers', '...all three');
 
   describe('video review', () => { });
   const vreview = await $(() => {
@@ -1530,7 +1527,9 @@ const DAY = 86400000;
 
 
   const major = await $(() => {
-    Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x)); saveProg();
+    // mark every OTHER film seen, so a stray trigger from an earlier block cannot answer for this one
+    Object.keys(VIDEOS).forEach(k => { if (k !== 'major') markVideoSeen(k); });
+    Prog.doneSkills = (Prog.doneSkills || []).filter(x => x !== VIDEOS.major.skill); saveProg();
     const m = el('videoModal'); if (m) m.style.display = 'none';
     return { seen: videoSeen('major') };
   });
@@ -1657,6 +1656,48 @@ const DAY = 86400000;
   is(storyCancel.scene, '', '...nor keep what was typed');
 
   await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); bustCaches(); }, storySnap);
+
+  describe('admin: finish a phase', () => { });
+  const simPhase = await $(() => {
+    Prog.scratchWon = ['verse', 'palace', 'journey', 'stories'];
+    const list = phaseIdxs();
+    Prog.doneSkills = []; Prog.phaseMax = list[0]; Prog.palaces = [];
+    Auth.user = { email: ADMIN_EMAILS[0] };
+    bustCaches(); saveProg();
+    el('themeBtn').click(); applyAdminVisibility();
+    const out = { button: !!el('testFinishPhase') };
+    Auth.user = { email: 'nobody@example.com' }; applyAdminVisibility();
+    out.hiddenFromOthers = getComputedStyle(el('adminWrap')).display === 'none';
+    Auth.user = { email: ADMIN_EMAILS[0] }; applyAdminVisibility();
+    el('testFinishPhase').click();
+    out.phaseDone = phaseComplete(list[0]);
+    Auth.user = null;
+    return out;
+  });
+  ok(simPhase.button, 'Admin can finish the current phase outright');
+  ok(simPhase.hiddenFromOthers, '...and nobody else sees the Admin block at all');
+  ok(simPhase.phaseDone, '...finishing every lesson in it');
+
+  await page.waitForFunction(() => { const o = el('scov'); return o && o.classList.contains('on'); }, { timeout: 5000 }).catch(() => { });
+  const simCard = await $(() => {
+    const o = el('scov');
+    const out = { scratch: !!o && o.classList.contains('on'), name: el('scName') ? el('scName').textContent : '' };
+    if (out.scratch) { o.classList.remove('on'); openPhase(phaseIdxs()[1]); }
+    return out;
+  });
+  ok(simCard.scratch, '...then raises the scratch-off for the next phase');
+  has(simCard.name, 'Foundations', '...naming it');
+
+  const simPalace = await $(() => {
+    // behind the one-per-six mark, so the offer should follow the scratch-off
+    Prog.doneSkills = ['snd:0-4', 'snd:5-9', 'num:1', 'num:2', 'num:3', 'num:4'];
+    Prog.palaces = []; saveProg();
+    return { behind: needsPalace(), offered: maybeSuggestPalace(),
+      shown: el('palaceAskModal') && el('palaceAskModal').style.display === 'flex' };
+  });
+  ok(simPalace.behind, 'and with no palace against six lessons, they are behind');
+  ok(simPalace.offered && simPalace.shown, '...so the palace offer follows');
+  await $(() => { if (el('palaceAskModal')) el('paNo').click(); return true; });
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));

@@ -9,13 +9,13 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ▶ Watch again ★ Sounds 0–4 "
  },
  "classic/verse/hub": {
-  "h": "9aef3012736dd11b",
-  "len": 752,
-  "els": 24,
-  "buttons": 4,
-  "svgs": 0,
+  "h": "fa41ab1b9f84d0bf",
+  "len": 2137,
+  "els": 44,
+  "buttons": 7,
+  "svgs": 2,
   "imgs": 0,
-  "text": "🎯 Today's goal 0/1 🎬 Video Review none yet ✨ Learn Verses 562 in reach 🎯 Spaced Repetition nothing due ★ Memorized 3"
+  "text": "🎯 Today's goal 0/1 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review none yet 📖 Practi"
  },
  "classic/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -252,10 +252,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "92852c1747ce5c71",
-  "len": 14150,
-  "els": 325,
-  "buttons": 33,
+  "h": "dbea306251070640",
+  "len": 14305,
+  "els": 326,
+  "buttons": 34,
   "svgs": 0,
   "imgs": 0,
   "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
@@ -306,13 +306,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "924f701858a73540",
-  "len": 31766,
-  "els": 625,
+  "h": "8cb29a9ba9e3b405",
+  "len": 33179,
+  "els": 658,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.20.0 August 26, 2026 Earn your way down the path NEW The Learn path shows only what you have earned"
+  "text": "✕ Version history v1.21.0 August 26, 2026 A Library you can take in at a glance FIX The Bible scratch-off hands over the"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -351,22 +351,13 @@
   "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
  },
  "classic/modal/learn-verses": {
-  "h": "08f50e92f2d2727d",
-  "len": 1353,
-  "els": 25,
-  "buttons": 5,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
- },
- "classic/modal/practice": {
-  "h": "d9fc4c619eed3711",
-  "len": 1297,
+  "h": "a643b4f04ba8d236",
+  "len": 1244,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "Practice ✕ 🗣️ Word for Word Recite a verse by typing it out from memory. 📖 Verses Where does this verse live? Book, ch"
+  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "classic/modal/stage": {
   "h": "e5865eea850e3261",
@@ -468,13 +459,13 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ▶ Watch again ★ Sounds 0–4 "
  },
  "illumined/verse/hub": {
-  "h": "9ed57de5281fc897",
-  "len": 750,
-  "els": 24,
-  "buttons": 4,
-  "svgs": 0,
+  "h": "d28eadf05f35c024",
+  "len": 2135,
+  "els": 44,
+  "buttons": 7,
+  "svgs": 2,
   "imgs": 0,
-  "text": "🙏 Faithful today 15/1 🎬 Video Review 2 ✨ Learn Verses 562 in reach 🎯 Spaced Repetition nothing due ★ Memorized 3"
+  "text": "🙏 Faithful today 15/1 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review 2 📖 Practice V"
  },
  "illumined/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -711,10 +702,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "5243257f018808fd",
-  "len": 14150,
-  "els": 325,
-  "buttons": 33,
+  "h": "99876dfb96ec94d4",
+  "len": 14305,
+  "els": 326,
+  "buttons": 34,
   "svgs": 0,
   "imgs": 0,
   "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
@@ -765,13 +756,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "924f701858a73540",
-  "len": 31766,
-  "els": 625,
+  "h": "8cb29a9ba9e3b405",
+  "len": 33179,
+  "els": 658,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.20.0 August 26, 2026 Earn your way down the path NEW The Learn path shows only what you have earned"
+  "text": "✕ Version history v1.21.0 August 26, 2026 A Library you can take in at a glance FIX The Bible scratch-off hands over the"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -810,22 +801,13 @@
   "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
  },
  "illumined/modal/learn-verses": {
-  "h": "08f50e92f2d2727d",
-  "len": 1353,
-  "els": 25,
-  "buttons": 5,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
- },
- "illumined/modal/practice": {
-  "h": "d9fc4c619eed3711",
-  "len": 1297,
+  "h": "a643b4f04ba8d236",
+  "len": 1244,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "Practice ✕ 🗣️ Word for Word Recite a verse by typing it out from memory. 📖 Verses Where does this verse live? Book, ch"
+  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "illumined/modal/stage": {
   "h": "e5865eea850e3261",
@@ -927,13 +909,13 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ▶ Watch again ★ Sounds 0–4 "
  },
  "glass/verse/hub": {
-  "h": "9ed57de5281fc897",
-  "len": 750,
-  "els": 24,
-  "buttons": 4,
-  "svgs": 0,
+  "h": "d28eadf05f35c024",
+  "len": 2135,
+  "els": 44,
+  "buttons": 7,
+  "svgs": 2,
   "imgs": 0,
-  "text": "🙏 Faithful today 15/1 🎬 Video Review 2 ✨ Learn Verses 562 in reach 🎯 Spaced Repetition nothing due ★ Memorized 3"
+  "text": "🙏 Faithful today 15/1 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review 2 📖 Practice V"
  },
  "glass/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -1170,10 +1152,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "9ce8cb7ac9b554bd",
-  "len": 14150,
-  "els": 325,
-  "buttons": 33,
+  "h": "e6b9d958cc6a1f2e",
+  "len": 14305,
+  "els": 326,
+  "buttons": 34,
   "svgs": 0,
   "imgs": 0,
   "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
@@ -1224,13 +1206,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "924f701858a73540",
-  "len": 31766,
-  "els": 625,
+  "h": "8cb29a9ba9e3b405",
+  "len": 33179,
+  "els": 658,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.20.0 August 26, 2026 Earn your way down the path NEW The Learn path shows only what you have earned"
+  "text": "✕ Version history v1.21.0 August 26, 2026 A Library you can take in at a glance FIX The Bible scratch-off hands over the"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1269,22 +1251,13 @@
   "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
  },
  "glass/modal/learn-verses": {
-  "h": "08f50e92f2d2727d",
-  "len": 1353,
-  "els": 25,
-  "buttons": 5,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
- },
- "glass/modal/practice": {
-  "h": "d9fc4c619eed3711",
-  "len": 1297,
+  "h": "a643b4f04ba8d236",
+  "len": 1244,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "Practice ✕ 🗣️ Word for Word Recite a verse by typing it out from memory. 📖 Verses Where does this verse live? Book, ch"
+  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "glass/modal/stage": {
   "h": "e5865eea850e3261",
@@ -1386,13 +1359,13 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ▶ Watch again ★ Sounds 0–4 "
  },
  "quest/verse/hub": {
-  "h": "9ed57de5281fc897",
-  "len": 750,
-  "els": 24,
-  "buttons": 4,
-  "svgs": 0,
+  "h": "d28eadf05f35c024",
+  "len": 2135,
+  "els": 44,
+  "buttons": 7,
+  "svgs": 2,
   "imgs": 0,
-  "text": "🙏 Faithful today 15/1 🎬 Video Review 2 ✨ Learn Verses 562 in reach 🎯 Spaced Repetition nothing due ★ Memorized 3"
+  "text": "🙏 Faithful today 15/1 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review 2 📖 Practice V"
  },
  "quest/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -1629,10 +1602,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "a1bc26811550bfbf",
-  "len": 14150,
-  "els": 325,
-  "buttons": 33,
+  "h": "c526b618d537392a",
+  "len": 14305,
+  "els": 326,
+  "buttons": 34,
   "svgs": 0,
   "imgs": 0,
   "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
@@ -1683,13 +1656,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "924f701858a73540",
-  "len": 31766,
-  "els": 625,
+  "h": "8cb29a9ba9e3b405",
+  "len": 33179,
+  "els": 658,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.20.0 August 26, 2026 Earn your way down the path NEW The Learn path shows only what you have earned"
+  "text": "✕ Version history v1.21.0 August 26, 2026 A Library you can take in at a glance FIX The Bible scratch-off hands over the"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1728,22 +1701,13 @@
   "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
  },
  "quest/modal/learn-verses": {
-  "h": "08f50e92f2d2727d",
-  "len": 1353,
-  "els": 25,
-  "buttons": 5,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
- },
- "quest/modal/practice": {
-  "h": "d9fc4c619eed3711",
-  "len": 1297,
+  "h": "a643b4f04ba8d236",
+  "len": 1244,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "Practice ✕ 🗣️ Word for Word Recite a verse by typing it out from memory. 📖 Verses Where does this verse live? Book, ch"
+  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "quest/modal/stage": {
   "h": "e5865eea850e3261",
@@ -1845,13 +1809,13 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ▶ Watch again ★ Sounds 0–4 "
  },
  "buddy/verse/hub": {
-  "h": "9ed57de5281fc897",
-  "len": 750,
-  "els": 24,
-  "buttons": 4,
-  "svgs": 0,
+  "h": "d28eadf05f35c024",
+  "len": 2135,
+  "els": 44,
+  "buttons": 7,
+  "svgs": 2,
   "imgs": 0,
-  "text": "🙏 Faithful today 15/1 🎬 Video Review 2 ✨ Learn Verses 562 in reach 🎯 Spaced Repetition nothing due ★ Memorized 3"
+  "text": "🙏 Faithful today 15/1 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review 2 📖 Practice V"
  },
  "buddy/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -2088,10 +2052,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "876b9621b5333b84",
-  "len": 14150,
-  "els": 325,
-  "buttons": 33,
+  "h": "8855b6fb41a97bb9",
+  "len": 14305,
+  "els": 326,
+  "buttons": 34,
   "svgs": 0,
   "imgs": 0,
   "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
@@ -2142,13 +2106,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "924f701858a73540",
-  "len": 31766,
-  "els": 625,
+  "h": "8cb29a9ba9e3b405",
+  "len": 33179,
+  "els": 658,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.20.0 August 26, 2026 Earn your way down the path NEW The Learn path shows only what you have earned"
+  "text": "✕ Version history v1.21.0 August 26, 2026 A Library you can take in at a glance FIX The Bible scratch-off hands over the"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
@@ -2187,22 +2151,13 @@
   "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
  },
  "buddy/modal/learn-verses": {
-  "h": "08f50e92f2d2727d",
-  "len": 1353,
-  "els": 25,
-  "buttons": 5,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
- },
- "buddy/modal/practice": {
-  "h": "d9fc4c619eed3711",
-  "len": 1297,
+  "h": "a643b4f04ba8d236",
+  "len": 1244,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "Practice ✕ 🗣️ Word for Word Recite a verse by typing it out from memory. 📖 Verses Where does this verse live? Book, ch"
+  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "buddy/modal/stage": {
   "h": "e5865eea850e3261",

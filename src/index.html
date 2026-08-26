@@ -168,9 +168,11 @@
   /* verse hub — large square launcher buttons (2-col grid) + full-width test/review bars */
   .versehub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px}
   .vhub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px;font-size:17px;font-weight:800;color:var(--ink);cursor:pointer;text-align:center;min-width:0}
-  .vhub.sq{aspect-ratio:1.55}
-  .vhub .vi{font-size:40px;line-height:1}
-  .vhub small{font-size:13px;font-weight:700;color:var(--muted)}
+  .vhub.sq{aspect-ratio:1.45}
+  .vhub .vi{font-size:31px;line-height:1;height:34px;display:grid;place-items:center}
+  .vhub .vi svg{width:33px;height:33px;display:block}
+  .vhub small{font-size:12.5px;font-weight:700;color:var(--muted)}
+  .versehub .vhub{gap:4px;padding:10px 8px;font-size:15px;line-height:1.15;text-align:center}
   .vhub.wide{grid-column:1/-1;flex-direction:row;gap:14px;aspect-ratio:auto;padding:11px}
   .vhub.wide .vi{font-size:28px}
   .vi-bounce{display:inline-block;animation:vibounce 1.8s ease-in-out infinite;transform-origin:center bottom}
@@ -1440,7 +1442,7 @@
     <button data-tab="verse"><span class="tabbadge"></span><span class="ic">📚</span><span class="lbl">Library</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
     <button data-tab="palace"><span class="tabbadge"></span><span class="ic">🏛️</span><span class="lbl">Palaces</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
     <button data-tab="journey"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 2.8h11.1a2.1 2.1 0 0 1 2.1 2.1v14.2a2.1 2.1 0 0 1-2.1 2.1H5.4A1.6 1.6 0 0 1 3.8 19.6V4.4a1.6 1.6 0 0 1 1.6-1.6Z" fill="var(--bible)"/><path d="M3.8 18.1h13.9" stroke="var(--bible-ink)" stroke-opacity=".45" stroke-width="1"/><path d="M11.3 6.4v8.2M8.4 9.1h5.8" stroke="var(--bible-ink)" stroke-width="1.7" stroke-linecap="round"/></svg></span><span class="lbl">Bible</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
-    <button data-tab="stories"><span class="ic">📜</span><span class="lbl">Stories</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
+    <button data-tab="stories"><span class="ic">📖</span><span class="lbl">Stories</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
   </div>
 
   <!-- First-run guided onboarding: a full-screen overlay above all app chrome. Content injected by the Onboard module. -->
@@ -1488,6 +1490,7 @@
         <button class="btn ghost" id="testPaywall" style="width:100%;margin-top:8px">💳 Show the Pro purchase screen</button>
         <button class="btn ghost" id="testChurch" style="width:100%;margin-top:8px">⛪ Open the church in Rome</button>
         <button class="btn ghost" id="testRomeLetter" style="width:100%;margin-top:8px">📜 Replay Rome's letter</button>
+        <button class="btn ghost" id="testFinishPhase" style="width:100%;margin-top:8px">🎓 Finish this phase (scratch-off + palace offer)</button>
         <button class="btn ghost" id="testAdd500" style="width:100%;margin-top:8px">🪙 Give talents…</button>
         <button class="btn ghost" id="testRestore" style="width:100%;margin-top:8px;color:var(--miss-ink);border-color:var(--miss)">↩ Restore my real progress (after a simulation)</button>
         <div id="bugReportsWrap" style="display:none">
@@ -1623,8 +1626,16 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.20.0";
+const APP_VERSION="1.21.0";
 const CHANGELOG=[
+ {v:"1.21.0", d:"August 26, 2026", t:"A Library you can take in at a glance", items:[
+   ["fix","The Bible scratch-off hands over <b>the brown book itself</b>, and the menu opens a place for it — everything slides right and the Bible lands on the left."],
+   ["fix","Bible Stories takes the open book on its scratch-off card as well as the menu."],
+   ["new","Six buttons of one size, all on screen at once: <b>Spaced Repetition</b> and <b>Memorized</b>, then <b>Learn Verses</b> and <b>Video Review</b>, then <b>Practice Verses</b> and <b>Practice Numbers</b> — with <b>Practice Word for Word</b> running the width underneath."],
+   ["new","Spaced Repetition now says <b>Due (n)</b> plainly, and carries a mark that shows what it does: one turn of the circle with the checkpoints along it."],
+   ["new","Memorized carries a <b>heart cut with etching</b> instead of a bare white star."],
+   ["fix","Bible Stories takes the open book for its icon."]
+ ]},
  {v:"1.20.0", d:"August 26, 2026", t:"Earn your way down the path", items:[
    ["new","The Learn path shows <b>only what you have earned</b> — the phases you have worked through and the one you are on. Finish the last lesson of a phase and you win a <b>scratch-off for the next one</b>; scratch it and it opens."],
    ["new","The <b>Add Palace</b> tiles are gone from the path. Instead, when you are behind the mark of <b>one palace for every six lessons</b>, a box offers <b>Add now</b> or <b>Skip</b> — and skipping just asks again next lesson, until you have caught up."],
@@ -2772,7 +2783,7 @@ const SCRATCH_LADDER=[
   {tab:"journey", icon:"📕", iconHtml:()=>bibleIconSVG(), name:"Bible",    desc:"See the whole Bible open before you — every book, chapter and verse you can reach.", gate:()=>Prog.memorized.length>=15 && palaceCount()>=3,
      reqs:[{label:"Memorize 15 verses", done:()=>Prog.memorized.length>=15, prog:()=>`${Math.min(15,Prog.memorized.length)}/15`},
            {label:"Build 3 memory palaces", done:()=>palaceCount()>=3, prog:()=>`${Math.min(3,palaceCount())}/3`}]},
-  {tab:"stories", icon:"📜", name:"Bible Stories",   desc:"100 of the Bible's great stories — located, learned, and ready to tell.",         gate:()=>Prog.memorized.length>=25 && palaceCount()>=5 && nt5Done(),
+  {tab:"stories", icon:"📖", name:"Bible Stories",   desc:"100 of the Bible's great stories — located, learned, and ready to tell.",         gate:()=>Prog.memorized.length>=25 && palaceCount()>=5 && nt5Done(),
      reqs:[{label:"Memorize 25 verses", done:()=>Prog.memorized.length>=25, prog:()=>`${Math.min(25,Prog.memorized.length)}/25`},
            {label:"Build 5 memory palaces", done:()=>palaceCount()>=5, prog:()=>`${Math.min(5,palaceCount())}/5`},
            {label:"Learn the first 5 New Testament books (Matthew–Acts)", done:()=>nt5Done(), prog:()=>`${NT5.filter(n=>knownNum(n)).length}/5`}]}
@@ -4221,17 +4232,32 @@ function renderVerse(){
 
   // ---- HUB: six big buttons; review last ----
   const dueAll=reviewDueCount();   // numbers + verses + palaces due for spaced repetition today
-  const reviewVi=dueAll?"🔁":"🎯";
   V.innerHTML=`${taxWarnHTML()}${feat("goal")?`<div class="goalbar" id="goalBtn">${goalBarHTML()}</div>`:""}
     <div class="versehub">
-      <button class="vhub sq" data-view="videos"><span class="vi">🎬</span><span>Video Review</span><small>${videoReviewList().length||"none yet"}</small></button>
+      <button class="vhub sq review" id="vMemTest"><span class="vi">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>
+      <button class="vhub sq" data-view="mem"><span class="vi">${heartIconSVG()}</span><span>Memorized</span><small>${mem.length}</small></button>
       <button class="vhub sq" id="vLearn"><span class="vi">✨</span><span>Learn Verses</span><small>${suggReach} in reach</small></button>
-      <button class="vhub sq review" id="vMemTest"><span class="vi">${reviewVi}</span><span>Spaced Repetition</span><small>${dueAll?dueAll+" due":"nothing due"}</small></button>
-      <button class="vhub sq" data-view="mem"><span class="vi">★</span><span>Memorized</span><small>${mem.length}</small></button>
+      <button class="vhub sq" data-view="videos"><span class="vi">🎬</span><span>Video Review</span><small>${videoReviewList().length||"none yet"}</small></button>
+      <button class="vhub sq" id="vPracVerse"><span class="vi">📖</span><span>Practice Verses</span><small>${mem.length} to draw on</small></button>
+      <button class="vhub sq" id="vPracNum"><span class="vi vi-bounce">🎲</span><span>Practice Numbers</span><small>${knownNumbers().size} known</small></button>
+      ${feat("w4w")?`<button class="vhub wide" id="vW4W"><span class="vi">🗣️</span><span>Practice Word for Word</span></button>`:""}
     </div>`;
   if(el("goalBtn")) el("goalBtn").onclick=openGoalSettings; wireTaxWarn();
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
   if(el("vLearn")) el("vLearn").onclick=openLearnVerses;
+  if(el("vPracVerse")) el("vPracVerse").onclick=()=>{
+    if(!mem.length){ toast("Memorize a verse first — tap Learn Verses."); return; }
+    memTestRecent=[]; suppressGrowth=false; reviewedThisSession=[]; Prog.streak=0; saveProg(); refreshHUD&&refreshHUD();
+    practiceNext(true);   // anything you know, not only what is due
+  };
+  if(el("vPracNum")) el("vPracNum").onclick=()=> knownNumbers().size>=2
+    ? (feat("ntsetup")?openNumTestSetup():startNumberTest())
+    : toast("Learn a few numbers first in the Learn tab!");
+  if(el("vW4W")) el("vW4W").onclick=()=>{
+    const a=pickW4WVerse();
+    if(!a){ toast(mem.length?"All your verses are done for now — great work!":"Memorize a verse first."); return; }
+    startWordForWord(a[0],a[1],a[2],()=>{ show("verse"); renderVerse(); });
+  };
   el("vMemTest").onclick=()=> mem.length ? maybeVideo("sr", openReviewSetup) : toast("Memorize a verse first — tap Suggested!");
   if(srFlashPending && el("vMemTest")){ srFlashPending=false; const rb=el("vMemTest"); rb.classList.add("srbtn-flash"); setTimeout(()=>rb.classList.remove("srbtn-flash"),6000); }
   paintTheme();
@@ -5511,6 +5537,24 @@ function taxOverlay(){
   ov.style.top=(tb?Math.round(tb.getBoundingClientRect().height):0)+"px";   // leave the counters showing — watching the talents go is the point
   return ov;
 }
+// A heart cut with etching lines — for the verses that are already hidden away. A plain star said
+// nothing about what the button held.
+function heartIconSVG(){
+  return `<svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 20.7S3.8 15.8 2.6 11A5.1 5.1 0 0 1 12 7.2a5.1 5.1 0 0 1 9.4 3.8c-1.2 4.8-9.4 9.7-9.4 9.7Z" fill="var(--gold)" stroke="var(--gold-ink)" stroke-width="1.1" stroke-linejoin="round"/>
+    <path d="M7.6 10.1c1.2-.7 2.5-.6 3.5.3M16.3 9.7c-.9-.6-1.9-.7-2.8-.3M8.2 13.2c1.6 1.1 3.3 2 5 2.7M11.2 16.9c.9.6 1.9 1.1 2.9 1.6" fill="none" stroke="var(--gold-ink)" stroke-opacity=".5" stroke-width=".9" stroke-linecap="round"/>
+  </svg>`;
+}
+// The spaced-repetition mark: one turn of the circle, and the trail of checkpoints along it.
+function srIconSVG(){
+  return `<svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20.2 12a8.2 8.2 0 1 1-2.7-6.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <path d="M20.4 3.2V8h-4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="8.3" cy="12.4" r="1.5" fill="currentColor"/>
+    <circle cx="12" cy="12.4" r="1.5" fill="currentColor" opacity=".65"/>
+    <circle cx="15.7" cy="12.4" r="1.5" fill="currentColor" opacity=".35"/>
+  </svg>`;
+}
 // One Bible icon, used by the tab, the scratch-off prize and the icon that flies between them.
 function bibleIconSVG(){
   return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 2.8h11.1a2.1 2.1 0 0 1 2.1 2.1v14.2a2.1 2.1 0 0 1-2.1 2.1H5.4A1.6 1.6 0 0 1 3.8 19.6V4.4a1.6 1.6 0 0 1 1.6-1.6Z" fill="var(--bible)"/><path d="M3.8 18.1h13.9" stroke="var(--bible-ink)" stroke-opacity=".45" stroke-width="1"/><path d="M11.3 6.4v8.2M8.4 9.1h5.8" stroke="var(--bible-ink)" stroke-width="1.7" stroke-linecap="round"/></svg>`;
@@ -5733,22 +5777,7 @@ function openLearnVerses(){
     {id:"topics", icon:"📚", name:"Topics",      sub:"Verses for what you are walking through — comfort, fear, thanksgiving.", go:()=>go("topics")},
     {id:"saved",  icon:"🔖", name:"Saved",       sub:"The ones you set aside to come back to.", go:()=>go("saved")},
   ];
-  const {close}=libSheet("Learn Verses", rows,
-    `<button class="btn ghost" id="lbPractice" style="width:100%;margin-top:12px">🎯 Practice what you know</button>`);
-  el("lbPractice").onclick=()=>{ close(); setTimeout(openPracticePicker, 60); };
-}
-function openPracticePicker(){
-  const rows=[];
-  if(feat("w4w")) rows.push({id:"w4w", icon:"🗣️", name:"Word for Word", sub:"Recite a verse by typing it out from memory.",
-    go:()=>{ const a=pickW4WVerse(); if(!a){ toast((Prog.memorized||[]).length?"All your verses are done for now — great work!":"Memorize a verse first."); return; }
-             startWordForWord(a[0],a[1],a[2],()=>{ show("verse"); renderVerse(); }); }});
-  rows.push({id:"verses", icon:"📖", name:"Verses", sub:"Where does this verse live? Book, chapter and verse — anything you know, not only what is due.",
-    go:()=>{ if(!(Prog.memorized||[]).length){ toast("Memorize a verse first."); return; }
-             memTestRecent=[]; suppressGrowth=false; reviewedThisSession=[]; Prog.streak=0; saveProg(); refreshHUD&&refreshHUD(); practiceNext(true); }});
-  rows.push({id:"nums", icon:"🎲", name:"Numbers &amp; Books", sub:"The pegs themselves — numbers to books, images to numbers and back again.",
-    go:()=>{ if(knownNumbers().size<2){ toast("Learn a few numbers first in the Learn tab!"); return; }
-             feat("ntsetup")?openNumTestSetup():startNumberTest(); }});
-  libSheet("Practice", rows);
+  libSheet("Learn Verses", rows);
 }
 function openStore(){
   let m=document.getElementById("storeModal");
@@ -7468,6 +7497,17 @@ if(el("testAdd500")) el("testAdd500").onclick=()=>{
 if(el("testTaxWheel")) el("testTaxWheel").onclick=()=>{ el("themeModal").style.display="none"; openTaxWheel(false); };
 if(el("testPaywall")) el("testPaywall").onclick=()=>{ el("themeModal").style.display="none"; openPaywall(); };
 if(el("testChurch")) el("testChurch").onclick=()=>{ el("themeModal").style.display="none"; openChurch(); };
+// Complete every lesson in the phase being worked on, exactly as the last one would: the phase
+// scratch-off first, then the palace offer if they are behind the one-per-six mark.
+if(el("testFinishPhase")) el("testFinishPhase").onclick=()=>{
+  el("themeModal").style.display="none";
+  const cur=ensurePhaseMax();
+  UNITS[cur].skills.forEach(sk=>{ if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id); });
+  bustCaches(); saveProg(); updateMetrics(); recomputeLevel&&recomputeLevel();
+  show("learn"); renderPath(true);
+  toast(`🎓 ${UNITS[cur].name} — finished`);
+  setTimeout(()=>{ if(!maybePhaseScratch(()=>setTimeout(maybeSuggestPalace,600))) maybeSuggestPalace(); }, 500);
+};
 if(el("testRomeLetter")) el("testRomeLetter").onclick=()=>{ el("themeModal").style.display="none"; Prog.romeLetterSeen=false; saveProg(); openRomeLetter(); };
 if(el("testUnpaid")) el("testUnpaid").onclick=()=>{
   if(Billing.isPro()){ Billing.revoke(); bustCaches(); el("themeModal").style.display="none"; toast("🆓 Now simulating an unpaid (free) user — Pro content is locked."); show("learn"); }
@@ -8218,11 +8258,12 @@ const Scratch = (()=>{
     const L=SCRATCH_LADDER[rung];
     ov.classList.remove("on"); ov.setAttribute("aria-hidden","true");
     const btn=document.querySelector(`.tabbar button[data-tab="${L.tab}"]`);
-    flyToNav(L.icon, btn, ()=>{
+    flyToNav(L.iconHtml?L.iconHtml():L.icon, btn, ()=>{   // the drawn icon when there is one
       if(!Prog.scratchWon.includes(L.tab)) Prog.scratchWon.push(L.tab);   // in a sim this is temporary (restored on exit); real runs persist
       if(L.tab==="verse" && Prog.dailyGoal==null){ Prog.dailyGoal=1; }   // unlocking Verses sets a starter daily goal of 1
       if(!sim) saveProg();
       updateTabLocks();
+      if(L.tab==="journey") syncTabOrder(true);   // the others slide right; the Bible slots in on the left
       if(!sim && document.querySelector(".view.active")?.id==="learn") renderPath();   // reveal a newly-unlocked Learn lesson (e.g. the palace)
       if(btn){ btn.classList.add("justwon"); setTimeout(()=>btn.classList.remove("justwon"),700); }
       if(sim && opts.onClaimed) opts.onClaimed(rung);
