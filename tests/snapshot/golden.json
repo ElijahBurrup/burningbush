@@ -1,21 +1,12 @@
 {
  "classic/learn/path": {
-  "h": "3c06d15839964370",
-  "len": 4051,
-  "els": 100,
-  "buttons": 24,
+  "h": "e66e28f99c86d98c",
+  "len": 13339,
+  "els": 287,
+  "buttons": 89,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▾ ★ Sounds 0–4 ★ Sounds 5–9 🧱 The Foundatio"
- },
- "classic/learn/path-collapsed": {
-  "h": "e1b69ef95490b9bd",
-  "len": 3232,
-  "els": 82,
-  "buttons": 16,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ★ Sounds 0–4 ★ Sounds 5–9 \ud83e"
  },
  "classic/verse/hub": {
   "h": "9aef3012736dd11b",
@@ -234,7 +225,7 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "classic/stories/list": {
-  "h": "4179c3476bd1b063",
+  "h": "86912b1b25e216b0",
   "len": 4381,
   "els": 102,
   "buttons": 20,
@@ -243,13 +234,13 @@
   "text": "Bible Stories 100 key stories. Each unlocks the moment you can address its opening verse — learn where it begins, and it"
  },
  "classic/stories/lesson": {
-  "h": "08ccf85dfff00259",
-  "len": 510,
-  "els": 13,
-  "buttons": 2,
+  "h": "290b37cf26abd083",
+  "len": 3263,
+  "els": 57,
+  "buttons": 6,
   "svgs": 0,
-  "imgs": 0,
-  "text": "✕ 📖 The story Creation This story begins at Genesis 1:1 . To always find it, turn that address into three pictures. Nex"
+  "imgs": 3,
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
  },
  "classic/reference/foundations": {
   "h": "a41ab691ae77d914",
@@ -261,7 +252,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "fd789b784ed11a2a",
+  "h": "c96bf96f028422fa",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -315,13 +306,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "6420ea9353641826",
-  "len": 29243,
-  "els": 571,
+  "h": "284684accef3bb37",
+  "len": 30626,
+  "els": 601,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.18.0 August 26, 2026 A shorter path NEW The Learn path keeps the section you are on and the one bef"
+  "text": "✕ Version history v1.19.0 August 26, 2026 One long map NEW The Learn path is one scroll now — nothing folds. A named rul"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -468,22 +459,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "illumined/learn/path": {
-  "h": "3c06d15839964370",
-  "len": 4051,
-  "els": 100,
-  "buttons": 24,
+  "h": "e66e28f99c86d98c",
+  "len": 13339,
+  "els": 287,
+  "buttons": 89,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▾ ★ Sounds 0–4 ★ Sounds 5–9 🧱 The Foundatio"
- },
- "illumined/learn/path-collapsed": {
-  "h": "e1b69ef95490b9bd",
-  "len": 3232,
-  "els": 82,
-  "buttons": 16,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ★ Sounds 0–4 ★ Sounds 5–9 \ud83e"
  },
  "illumined/verse/hub": {
   "h": "9ed57de5281fc897",
@@ -702,7 +684,7 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "illumined/stories/list": {
-  "h": "4179c3476bd1b063",
+  "h": "86912b1b25e216b0",
   "len": 4381,
   "els": 102,
   "buttons": 20,
@@ -711,13 +693,13 @@
   "text": "Bible Stories 100 key stories. Each unlocks the moment you can address its opening verse — learn where it begins, and it"
  },
  "illumined/stories/lesson": {
-  "h": "08ccf85dfff00259",
-  "len": 510,
-  "els": 13,
-  "buttons": 2,
+  "h": "290b37cf26abd083",
+  "len": 3263,
+  "els": 57,
+  "buttons": 6,
   "svgs": 0,
-  "imgs": 0,
-  "text": "✕ 📖 The story Creation This story begins at Genesis 1:1 . To always find it, turn that address into three pictures. Nex"
+  "imgs": 3,
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
  },
  "illumined/reference/foundations": {
   "h": "a41ab691ae77d914",
@@ -729,7 +711,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "43f807c29d91f6ef",
+  "h": "f4eddc5a9c50c569",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -783,13 +765,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "6420ea9353641826",
-  "len": 29243,
-  "els": 571,
+  "h": "284684accef3bb37",
+  "len": 30626,
+  "els": 601,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.18.0 August 26, 2026 A shorter path NEW The Learn path keeps the section you are on and the one bef"
+  "text": "✕ Version history v1.19.0 August 26, 2026 One long map NEW The Learn path is one scroll now — nothing folds. A named rul"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -936,22 +918,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "glass/learn/path": {
-  "h": "3c06d15839964370",
-  "len": 4051,
-  "els": 100,
-  "buttons": 24,
+  "h": "e66e28f99c86d98c",
+  "len": 13339,
+  "els": 287,
+  "buttons": 89,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▾ ★ Sounds 0–4 ★ Sounds 5–9 🧱 The Foundatio"
- },
- "glass/learn/path-collapsed": {
-  "h": "e1b69ef95490b9bd",
-  "len": 3232,
-  "els": 82,
-  "buttons": 16,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ★ Sounds 0–4 ★ Sounds 5–9 \ud83e"
  },
  "glass/verse/hub": {
   "h": "9ed57de5281fc897",
@@ -1170,7 +1143,7 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "glass/stories/list": {
-  "h": "4179c3476bd1b063",
+  "h": "86912b1b25e216b0",
   "len": 4381,
   "els": 102,
   "buttons": 20,
@@ -1179,13 +1152,13 @@
   "text": "Bible Stories 100 key stories. Each unlocks the moment you can address its opening verse — learn where it begins, and it"
  },
  "glass/stories/lesson": {
-  "h": "08ccf85dfff00259",
-  "len": 510,
-  "els": 13,
-  "buttons": 2,
+  "h": "290b37cf26abd083",
+  "len": 3263,
+  "els": 57,
+  "buttons": 6,
   "svgs": 0,
-  "imgs": 0,
-  "text": "✕ 📖 The story Creation This story begins at Genesis 1:1 . To always find it, turn that address into three pictures. Nex"
+  "imgs": 3,
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
  },
  "glass/reference/foundations": {
   "h": "a41ab691ae77d914",
@@ -1197,7 +1170,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "07c7cd5b09896cf3",
+  "h": "9658fcdfb7a0eb6f",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -1251,13 +1224,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "6420ea9353641826",
-  "len": 29243,
-  "els": 571,
+  "h": "284684accef3bb37",
+  "len": 30626,
+  "els": 601,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.18.0 August 26, 2026 A shorter path NEW The Learn path keeps the section you are on and the one bef"
+  "text": "✕ Version history v1.19.0 August 26, 2026 One long map NEW The Learn path is one scroll now — nothing folds. A named rul"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1404,22 +1377,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "quest/learn/path": {
-  "h": "551bd3589d9fd418",
-  "len": 4794,
-  "els": 113,
-  "buttons": 25,
+  "h": "8ab2b093da7ec4b1",
+  "len": 14183,
+  "els": 302,
+  "buttons": 90,
   "svgs": 1,
   "imgs": 0,
-  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▾ ★ Sounds 0–4 ★ Sounds 5–9 🧱 The Foundatio"
- },
- "quest/learn/path-collapsed": {
-  "h": "e1b69ef95490b9bd",
-  "len": 3232,
-  "els": 82,
-  "buttons": 16,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ★ Sounds 0–4 ★ Sounds 5–9 \ud83e"
  },
  "quest/verse/hub": {
   "h": "9ed57de5281fc897",
@@ -1638,7 +1602,7 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "quest/stories/list": {
-  "h": "4179c3476bd1b063",
+  "h": "86912b1b25e216b0",
   "len": 4381,
   "els": 102,
   "buttons": 20,
@@ -1647,13 +1611,13 @@
   "text": "Bible Stories 100 key stories. Each unlocks the moment you can address its opening verse — learn where it begins, and it"
  },
  "quest/stories/lesson": {
-  "h": "08ccf85dfff00259",
-  "len": 510,
-  "els": 13,
-  "buttons": 2,
+  "h": "290b37cf26abd083",
+  "len": 3263,
+  "els": 57,
+  "buttons": 6,
   "svgs": 0,
-  "imgs": 0,
-  "text": "✕ 📖 The story Creation This story begins at Genesis 1:1 . To always find it, turn that address into three pictures. Nex"
+  "imgs": 3,
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
  },
  "quest/reference/foundations": {
   "h": "a41ab691ae77d914",
@@ -1665,7 +1629,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "2f8b4b9510ceaf04",
+  "h": "953f14f7e39eb228",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -1719,13 +1683,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "6420ea9353641826",
-  "len": 29243,
-  "els": 571,
+  "h": "284684accef3bb37",
+  "len": 30626,
+  "els": 601,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.18.0 August 26, 2026 A shorter path NEW The Learn path keeps the section you are on and the one bef"
+  "text": "✕ Version history v1.19.0 August 26, 2026 One long map NEW The Learn path is one scroll now — nothing folds. A named rul"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1872,22 +1836,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "buddy/learn/path": {
-  "h": "8afa5b5ffb6c5e0c",
-  "len": 4714,
-  "els": 109,
-  "buttons": 25,
+  "h": "56201eaf3bbc682b",
+  "len": 14002,
+  "els": 296,
+  "buttons": 90,
   "svgs": 1,
   "imgs": 0,
-  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▾ ★ Sounds 0–4 ★ Sounds 5–9 🧱 The Foundatio"
- },
- "buddy/learn/path-collapsed": {
-  "h": "e1b69ef95490b9bd",
-  "len": 3232,
-  "els": 82,
-  "buttons": 16,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "Learn Tap a group to open or fold it. 🔢 The Code · Major System sounds 2/2 ▸ 🧱 The Foundation · Torah &amp; Matthew 6/"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ★ Sounds 0–4 ★ Sounds 5–9 \ud83e"
  },
  "buddy/verse/hub": {
   "h": "9ed57de5281fc897",
@@ -2106,7 +2061,7 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "buddy/stories/list": {
-  "h": "4179c3476bd1b063",
+  "h": "86912b1b25e216b0",
   "len": 4381,
   "els": 102,
   "buttons": 20,
@@ -2115,13 +2070,13 @@
   "text": "Bible Stories 100 key stories. Each unlocks the moment you can address its opening verse — learn where it begins, and it"
  },
  "buddy/stories/lesson": {
-  "h": "08ccf85dfff00259",
-  "len": 510,
-  "els": 13,
-  "buttons": 2,
+  "h": "290b37cf26abd083",
+  "len": 3263,
+  "els": 57,
+  "buttons": 6,
   "svgs": 0,
-  "imgs": 0,
-  "text": "✕ 📖 The story Creation This story begins at Genesis 1:1 . To always find it, turn that address into three pictures. Nex"
+  "imgs": 3,
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
  },
  "buddy/reference/foundations": {
   "h": "a41ab691ae77d914",
@@ -2133,7 +2088,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "f9ad4c1eb66b70a4",
+  "h": "af492c64da647279",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -2187,13 +2142,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "6420ea9353641826",
-  "len": 29243,
-  "els": 571,
+  "h": "284684accef3bb37",
+  "len": 30626,
+  "els": 601,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.18.0 August 26, 2026 A shorter path NEW The Learn path keeps the section you are on and the one bef"
+  "text": "✕ Version history v1.19.0 August 26, 2026 One long map NEW The Learn path is one scroll now — nothing folds. A named rul"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",

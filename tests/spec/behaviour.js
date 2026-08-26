@@ -1447,39 +1447,58 @@ const DAY = 86400000;
     show('learn'); renderPath(true);
     const L = el('learn');
     const nb = nextBlueSkill();
-    const openHeads = [...L.querySelectorAll('.grouphead.open')].map(x => +x.dataset.grp).sort((a, b) => a - b);
-    const want = nb ? (nb.ui > 0 ? [nb.ui - 1, nb.ui] : [nb.ui]) : [];
+    const phases = UNITS.filter(U => !U.story);
     return {
+      headers: L.querySelectorAll('.grouphead').length,
+      dividers: L.querySelectorAll('.phasedivider').length,
+      phaseCount: phases.length,
+      names: phases.map(U => U.name).join(' | '),
+      tilesShown: L.querySelectorAll('.tile').length,
+      tilesTotal: phases.reduce((n, U) => n + U.skills.length, 0),
       videoTiles: L.querySelectorAll('.tile.video, [data-video]').length,
       videoSkills: UNITS.reduce((n, U) => n + U.skills.filter(sk => sk.kind === 'video').length, 0),
       pathMilestones: MILESTONES.filter(m => !m.stories).length,
       storyMilestones: MILESTONES.filter(m => m.stories).length,
-      openHeads: openHeads.join(','), want: want.join(','),
       focused: L.querySelectorAll('.focusnext').length,
+      bands: [...new Set([...L.querySelectorAll('.path')].map(p => p.style.getPropertyValue('--band')))].sort().join(','),
+      torah: UNITS[1].skills.slice(0, 5).map(sk => sk.label).join(','),
+      lastPhaseHasPalace: phases[phases.length - 1].skills.some(sk => sk.kind === 'palace'),
+      numbered: phases.map(U => U.name.split(":")[0]).filter(x => x.indexOf("Phase ") === 0).join(","),
       nextUi: nb ? nb.ui : -1,
     };
   });
+  is(lpath.headers, 0, 'nothing folds — the collapsible headers are gone');
+  is(lpath.dividers, lpath.phaseCount, '...replaced by a named rule between every phase');
+  is(lpath.phaseCount, 13, 'the Code, then Foundations, then eleven numbered phases');
+  is(lpath.numbered, 'Phase 2,Phase 3,Phase 4,Phase 5,Phase 6,Phase 7,Phase 8,Phase 9,Phase 10,Phase 11,Phase 12', 'numbered Phase 2 through Phase 12, with Foundations as the first');
+  has(lpath.names, 'The Code: Major System Sounds', 'the first is the Code');
+  has(lpath.names, 'Foundations', '...then Foundations');
+  has(lpath.names, 'Phase 2: Joshua–Ruth + Mark–John', '...then Joshua–Ruth with Mark–John');
+  has(lpath.names, 'Phase 12: All the Numbers', '...and the numbers alone at the end');
+  hasNot(lpath.names, 'Memory Palace', 'the Memory Palace section is gone from the path');
+  no(lpath.lastPhaseHasPalace, '...and the last phase adds no palace either');
+  is(lpath.tilesShown, lpath.tilesTotal, 'the whole map is on screen — nothing is hidden behind a fold');
   is(lpath.videoTiles, 0, 'no film sits on the path waiting to be tapped');
   is(lpath.videoSkills, 0, '...and none is a lesson any more');
   is(lpath.pathMilestones, 0, 'the learn-path milestones are gone');
   is(lpath.storyMilestones, 13, '...while the Bible-story capstones stay');
-  is(lpath.openHeads, lpath.want, 'the current section and the one before it stand open');
-  is(lpath.focused, 1, '...with the next lesson marked');
+  is(lpath.focused, 1, 'the next lesson is marked');
+  is(lpath.bands, '0,1,2,3', 'the phases band in fours, so two rows read as a group');
+  is(lpath.torah, 'Genesis,Exodus,Leviticus,Numbers,Deuteronomy', 'the first five are named as the books they are');
 
   const advance = await $(() => {
     const before = nextBlueSkill();
     if (!before) return { skip: true };
-    // finish everything in the current section and the next one should open itself
     UNITS[before.ui].skills.forEach(sk => { if (!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id); });
-    bustCaches(); saveProg();
-    renderPath(true);
+    bustCaches(); saveProg(); renderPath(true);
     const after = nextBlueSkill();
-    const openHeads = [...el('learn').querySelectorAll('.grouphead.open')].map(x => +x.dataset.grp).sort((a, b) => a - b);
-    return { skip: false, movedOn: after && after.ui > before.ui, openHeads: openHeads.join(','),
-      want: after ? (after.ui > 0 ? [after.ui - 1, after.ui].join(',') : String(after.ui)) : '' };
+    const marked = el('learn').querySelector('.focusnext');
+    return { skip: false, movedOn: !!after && after.ui > before.ui,
+      marksNew: !!marked && marked.dataset.ui === String(after ? after.ui : -1) };
   });
-  ok(advance.skip || advance.movedOn, 'finishing a section moves the frontier on');
-  ok(advance.skip || advance.openHeads === advance.want, '...and the next section opens itself');
+  ok(advance.skip || advance.movedOn, 'finishing a phase moves the frontier on');
+  ok(advance.skip || advance.marksNew, '...and the mark follows it to the next phase');
+
 
   const major = await $(() => {
     Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x)); saveProg();
@@ -1536,6 +1555,69 @@ const DAY = 86400000;
   ok(accept.builderSlot >= 0, '...on a new slot');
 
   await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); bustCaches(); }, learnSnap);
+
+  // ================= BIBLE STORIES, LEARNED LIKE A VERSE (v1.19) =================
+  const storySnap = await $(() => JSON.stringify(Prog));
+
+  describe('stories', () => { });
+  const bstory = await $(() => {
+    const u = UNITS.findIndex(U => U.story), sk = UNITS[u].skills[0], st = sk.story;
+    const bn = bookNum(st.b), k = refKey(bn, st.c, st.v);
+    Prog.doneSkills = (Prog.doneSkills || []).filter(x => x !== sk.id);
+    Prog.memorized = (Prog.memorized || []).filter(x => x !== k);
+    Prog.palaces = [{ place: 'My Kitchen', stations: ['Front door'], learnedAt: Date.now(), step: 1 }];
+    Prog.customScene = {}; Prog.verseLoc = {}; saveProg();
+
+    startStoryLesson(sk, 'stories', () => { });
+    const out = {
+      walkGone: typeof renderStoryStep === 'undefined',
+      onScene: !!el('wScene'),
+      palacePicker: !!el('wPalace'),
+      roomPicker: !!el('wRoom'),
+      cells: document.querySelectorAll('.lv-triple .lv-cell').length,
+      txt: el('verse').innerText,
+    };
+    // one screen: write the scene, choose the palace and the room, done
+    el('wScene').value = 'the scene for this story';
+    el('wPalace').value = '0'; el('wPalace').onchange();
+    el('wRoom').value = 'Front door';
+    el('wDoneTop').click();
+    out.memorized = Prog.memorized.includes(k);
+    out.scene = (Prog.customScene || {})[k] || '';
+    out.room = ((Prog.verseLoc || {})[k] || {}).room || '';
+    out.marked = (Prog.doneSkills || []).includes(sk.id);
+    out.celebrated = /Story located/i.test(el('stories').innerText);
+    return out;
+  });
+  ok(bstory.walkGone, 'the five-step walk is gone');
+  ok(bstory.onScene, 'a story opens straight on the scene screen');
+  ok(bstory.palacePicker, '...with the palace picker');
+  ok(bstory.roomPicker, '...and the room picker');
+  is(bstory.cells, 3, '...and all three pictures, on the same screen');
+  has(bstory.txt, 'begins at', '...naming where the story begins');
+  ok(bstory.memorized, 'finishing it memorizes the opening verse');
+  is(bstory.scene, 'the scene for this story', '...keeps the scene that was written');
+  is(bstory.room, 'Front door', '...and the room it was given');
+  ok(bstory.marked, '...records the story as learned');
+  ok(bstory.celebrated, '...and says so');
+
+  const storyCancel = await $(() => {
+    const u = UNITS.findIndex(U => U.story), sk = UNITS[u].skills[1] || UNITS[u].skills[0], st = sk.story;
+    const bn = bookNum(st.b), k = refKey(bn, st.c, st.v);
+    Prog.doneSkills = (Prog.doneSkills || []).filter(x => x !== sk.id);
+    Prog.memorized = (Prog.memorized || []).filter(x => x !== k);
+    Prog.customScene = {}; saveProg();
+    startStoryLesson(sk, 'stories', () => { });
+    el('wScene').value = 'typed but abandoned';
+    el('wClose').click();
+    return { marked: (Prog.doneSkills || []).includes(sk.id), memorized: Prog.memorized.includes(k),
+      scene: (Prog.customScene || {})[k] || '' };
+  });
+  no(storyCancel.marked, 'backing out does NOT record the story');
+  no(storyCancel.memorized, '...nor memorize the verse');
+  is(storyCancel.scene, '', '...nor keep what was typed');
+
+  await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); bustCaches(); }, storySnap);
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));

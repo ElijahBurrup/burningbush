@@ -11,7 +11,6 @@
 module.exports = [
   // ---- Learn ----
   { name: 'learn/path', sel: '#learn', go: () => { show('learn'); expandedUnits = new Set([0, 1]); renderPath(); } },
-  { name: 'learn/path-collapsed', sel: '#learn', go: () => { show('learn'); expandedUnits = new Set(); renderPath(); } },
 
   // ---- Verses ----
   { name: 'verse/hub', sel: '#verse', go: () => { show('verse'); vView = 'hub'; renderVerse(); } },
@@ -52,7 +51,8 @@ module.exports = [
 
   // ---- stories & reference ----
   { name: 'stories/list', sel: '#stories', go: () => { show('stories'); storyExpanded = new Set([0]); renderStories(); } },
-  { name: 'stories/lesson', sel: '#stories', go: () => { const u = UNITS.findIndex(U => U.story); startStoryLesson(UNITS[u].skills[0], 'stories', () => { }); } },
+  // a story now opens on the verse scene screen, so that is where it is captured
+  { name: 'stories/lesson', sel: '#verse', go: () => { const u = UNITS.findIndex(U => U.story); startStoryLesson(UNITS[u].skills[0], 'stories', () => { }); } },
   { name: 'reference/foundations', sel: '#foundations', go: () => { show('foundations'); buildNumGrid(); buildBookTable(); } },
 
   // ---- modals ----
