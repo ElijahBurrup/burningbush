@@ -847,6 +847,13 @@
   .phasedivider::before,.phasedivider::after{content:"";flex:1;height:1px;background:var(--gold2);opacity:.7}
   .phasedivider:first-of-type{margin-top:6px}
   .vidplayer{width:100%;display:block;border-radius:14px;background:var(--panel3);border:1px solid var(--line)}
+  .profgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
+  .profbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px 8px;color:var(--ink);font-weight:800;font-size:14px;line-height:1.15;text-align:center;cursor:pointer;aspect-ratio:1.5}
+  .profbtn .pi{font-size:26px;line-height:1}
+  .profbtn small{font-size:11.5px;font-weight:700;color:var(--muted)}
+  .profbtn:active{transform:scale(.98)}
+  .prof-panel-head{display:none}
+  #profPanels{display:none}
   .fcard{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
   .fcard .fic{font-size:22px;line-height:1;flex:none}
   .fcard .fmid{flex:1;min-width:0}
@@ -1626,8 +1633,13 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.21.0";
+const APP_VERSION="1.22.0";
 const CHANGELOG=[
+ {v:"1.22.0", d:"August 26, 2026", t:"Profile, in the Library’s shape", items:[
+   ["new","<b>Profile is a grid of buttons now</b>, like the Library — one for each section, with its own icon and a line telling you what is inside."],
+   ["new","Pressing one opens <b>its own popup</b>, with a red ✕ and a green ✓ at the top and that section’s settings underneath."],
+   ["fix","Switch <b>Milestones</b> or the <b>Reference library</b> off in the Feature Store and their buttons leave Profile too."]
+ ]},
  {v:"1.21.0", d:"August 26, 2026", t:"A Library you can take in at a glance", items:[
    ["fix","The Bible scratch-off hands over <b>the brown book itself</b>, and the menu opens a place for it — everything slides right and the Bible lands on the left."],
    ["fix","Bible Stories takes the open book on its scratch-off card as well as the menu."],
@@ -7362,12 +7374,93 @@ function applyFeatureVisibility(){
   const set=(id,on)=>{ const x=el(id); if(x) x.style.display=on?"":"none"; };
   set("badgeWrap", feat("badges"));
   set("refWrap", feat("reference"));
+  const pb=(s,on)=>{ const b=document.querySelector('#profGrid [data-prof="'+s+'"]'); if(b) b.style.display=on?"":"none"; };
+  pb("badges", feat("badges")); pb("reference-library", feat("reference"));
   const fc=el("pFeatCount"); if(fc){ const n=featOffCount(); fc.textContent=n?` \u00b7 ${n} to try`:""; }
+}
+/* ---- Profile, in the Library's shape -------------------------------------------------------
+   The sections are not rewritten — they are GROUPED where they stand, at boot, and moved into a
+   popup when their button is pressed. Every id and every handler already wired to them survives,
+   which is the whole reason for doing it this way rather than re-authoring the markup.        */
+const PROF_ICONS={ "Admin":"🛠️", "Badges":"🎖️", "Feature store":"✨", "Account":"👤",
+  "Bible translation":"📗", "Reference library":"📚", "What's new":"📋", "Theme":"🎨",
+  "Get the app":"📲", "Back up your progress":"💾" };
+const PROF_SUBS={
+  "Admin":()=>"Test tools",
+  "Badges":()=>{ const n=BADGES.filter(b=>b.have()).length; return n+" earned"; },
+  "Feature store":()=>{ const n=featOffCount(); return n?n+" to try":"all on"; },
+  "Account":()=>((typeof Auth!=="undefined"&&Auth.user&&Auth.user.email)?"Signed in":"Not signed in"),
+  "Bible translation":()=>(Prog.bibleFam||"KJV").toUpperCase(),
+  "Reference library":()=>"Pegs & books",
+  "What's new":()=>"v"+APP_VERSION,
+  "Theme":()=>{ const t=(document.querySelector(".phone")||{getAttribute:()=>""}).getAttribute("data-theme")||"illumined";
+    return {classic:"Classic",illumined:"Illumined Night",glass:"Stained Glass",quest:"Scripture Quest",buddy:"Verse Buddy"}[t]||t; },
+  "Get the app":()=>"Home screen",
+  "Back up your progress":()=>"Export or restore",
+};
+let PROF_PANELS=[];
+function profSlug(t){ return t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+function buildProfileGrid(){
+  const card=el("themeModal") && el("themeModal").querySelector(".modal-card");
+  if(!card || el("profGrid")) return;                     // built once
+  const done=el("themeClose"), h2=card.querySelector("h2");
+  const holder=document.createElement("div"); holder.id="profPanels";
+  const grid=document.createElement("div"); grid.id="profGrid"; grid.className="profgrid";
+  const panels=[]; let cur=null;
+  [...card.children].forEach(node=>{
+    if(node===h2 || node===done) return;
+    const inner=node.firstElementChild;
+    if(inner && inner.classList && inner.classList.contains("prof-sect")){   // a wrapper that IS a section
+      inner.classList.add("prof-panel-head");
+      panels.push({title:(inner.childNodes[0]||inner).textContent.trim(), nodes:[node]}); cur=null; return;
+    }
+    if(node.classList && node.classList.contains("prof-sect")){
+      node.classList.add("prof-panel-head");
+      cur={title:(node.childNodes[0]||node).textContent.trim(), nodes:[node]}; panels.push(cur); return;
+    }
+    if(cur) cur.nodes.push(node);
+  });
+  panels.forEach(p=>{
+    const box=document.createElement("div");
+    box.className="prof-panel"; box.id="pp-"+profSlug(p.title); box.style.display="none";
+    p.nodes.forEach(n=>box.appendChild(n));
+    holder.appendChild(box); p.el=box; p.slug=profSlug(p.title);
+  });
+  PROF_PANELS=panels;
+  card.insertBefore(grid, done);
+  card.insertBefore(holder, done);
+  paintProfileGrid();
+}
+function paintProfileGrid(){
+  const grid=el("profGrid"); if(!grid) return;
+  grid.innerHTML=PROF_PANELS.map(p=>{
+    const sub=PROF_SUBS[p.title]?PROF_SUBS[p.title]():"";
+    return `<button type="button" class="profbtn" data-prof="${p.slug}"><span class="pi">${PROF_ICONS[p.title]||"⚙️"}</span><span>${p.title}</span><small>${sub}</small></button>`;
+  }).join("");
+  grid.querySelectorAll("[data-prof]").forEach(b=>b.onclick=()=>openProfSection(b.dataset.prof));
+  applyAdminVisibility(); applyFeatureVisibility();
+}
+function openProfSection(slug){
+  const p=PROF_PANELS.find(x=>x.slug===slug); if(!p) return;
+  const m=el("profSecModal")||(()=>{ const d=document.createElement("div"); d.id="profSecModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="psClose" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${p.title}</div>
+        <button class="lsave" id="psDone" title="Done">✓</button></div>
+      <div id="psBody"></div>
+    </div>`;
+  const body=m.querySelector("#psBody");
+  body.appendChild(p.el); p.el.style.display="";
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ p.el.style.display="none"; el("profPanels").appendChild(p.el); m.style.display="none"; paintProfileGrid(); };
+  el("psClose").onclick=close; el("psDone").onclick=close;
+  m.onclick=ev=>{ if(ev.target===m) close(); };
 }
 function applyAdminVisibility(){
   const admin = (typeof Auth!=="undefined") && Auth.isAdmin();
   const wrap=el("adminWrap"); if(wrap) wrap.style.display = admin ? "" : "none";
   const bugs=el("bugReportsWrap"); if(bugs) bugs.style.display = admin ? "" : "none";
+  const btn=document.querySelector('#profGrid [data-prof="admin"]'); if(btn) btn.style.display = admin ? "" : "none";
 }
 // Platform-specific walkthrough for turning notifications on.
 function openNotifyHelp(denied){
@@ -7408,7 +7501,7 @@ function openNotifyHelp(denied){
   el("nhOk").onclick=()=>m.style.display="none";
   if(el("nhInstall")) el("nhInstall").onclick=()=>{ m.style.display="none"; openInstallDialog(); };
 }
-el("themeBtn").onclick=()=>{ renderTransList(); renderBadges(); el("backupMsg").innerHTML="";
+el("themeBtn").onclick=()=>{ buildProfileGrid(); renderTransList(); renderBadges(); el("backupMsg").innerHTML=""; paintProfileGrid();
   applyAdminVisibility(); applyFeatureVisibility();
   if(el("testUnpaid")) el("testUnpaid").textContent = Billing.isPro() ? "🆓 Simulate unpaid user" : "✨ Restore Pro access";
   el("themeModal").style.display="flex"; initProfileCollapse(); };

@@ -57,6 +57,7 @@ module.exports = [
 
   // ---- modals ----
   { name: 'modal/profile', sel: '#themeModal', go: () => { el('themeBtn').click(); } },
+  { name: 'modal/prof-section', sel: '#profSecModal', go: () => { el('themeBtn').click(); openProfSection('back-up-your-progress'); } },
   { name: 'modal/goal-same', sel: '#goalSetModal', go: () => { Prog.goalMode = 'same'; openGoalSettings(); } },
   { name: 'modal/goal-week', sel: '#goalSetModal', go: () => { Prog.goalMode = 'week'; openGoalSettings(); } },
   { name: 'modal/goal-days', sel: '#goalSetModal', go: () => { Prog.goalMode = 'days'; openGoalSettings(); } },

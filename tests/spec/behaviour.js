@@ -1699,6 +1699,81 @@ const DAY = 86400000;
   ok(simPalace.offered && simPalace.shown, '...so the palace offer follows');
   await $(() => { if (el('palaceAskModal')) el('paNo').click(); return true; });
 
+  // ================= PROFILE, IN THE LIBRARY'S SHAPE (v1.22) =================
+  describe('profile grid', () => { });
+  const pgrid = await $(() => {
+    Object.keys(VIDEOS).forEach(k => markVideoSeen(k));
+    setFeat('badges', true); setFeat('reference', true);
+    Auth.user = null; saveProg();
+    el('themeBtn').click();
+    const btns = [...document.querySelectorAll('#profGrid .profbtn')];
+    return {
+      count: btns.length,
+      labels: btns.map(b => b.querySelector('span:nth-child(2)').textContent).join(' | '),
+      allIconed: btns.every(b => (b.querySelector('.pi') || {}).textContent),
+      allSubbed: btns.every(b => (b.querySelector('small') || {}).textContent),
+      panels: document.querySelectorAll('#profPanels .prof-panel').length,
+      headsHidden: [...document.querySelectorAll('.prof-panel-head')].every(x => getComputedStyle(x).display === 'none'),
+    };
+  });
+  ok(pgrid.count >= 8, 'Profile is a grid of buttons, one per section');
+  is(pgrid.panels, pgrid.count, '...each with its own panel put aside');
+  ok(pgrid.allIconed, '...every one carrying an icon');
+  ok(pgrid.allSubbed, '...and a line saying what is inside');
+  has(pgrid.labels, 'Theme', 'Theme is one of them');
+  has(pgrid.labels, 'Account', '...and Account');
+  has(pgrid.labels, 'Back up', '...and the backup');
+  ok(pgrid.headsHidden, 'the old inline headers are folded away');
+
+  const psec = await $(() => {
+    openProfSection('theme');
+    const m = el('profSecModal');
+    const out = { open: m.style.display === 'flex',
+      title: (m.querySelector('.lv-topbar div') || {}).textContent || '',
+      cancel: !!el('psClose'), confirm: !!el('psDone'),
+      contentMoved: !!m.querySelector('[data-th="classic"]'),
+      stillWired: false };
+    // the real control still works from inside the popup
+    const before = document.querySelector('.phone').getAttribute('data-theme');
+    m.querySelector('[data-th="quest"]').click();
+    const after = document.querySelector('.phone').getAttribute('data-theme');
+    out.stillWired = after === 'quest' && after !== before;
+    el('psDone').click();
+    out.closed = m.style.display === 'none';
+    out.putBack = !!document.querySelector('#profPanels #pp-theme');
+    applyTheme('classic');
+    return out;
+  });
+  ok(psec.open, 'pressing one opens its own popup');
+  has(psec.title, 'Theme', '...titled with the section');
+  ok(psec.cancel && psec.confirm, '...with a red cross and a green tick at the top');
+  ok(psec.contentMoved, '...and that section\'s controls inside it');
+  ok(psec.stillWired, 'the controls still work — they were moved, not rebuilt');
+  ok(psec.closed && psec.putBack, 'the tick closes it and puts the section back');
+
+  const pgates = await $(() => {
+    Auth.user = { email: ADMIN_EMAILS[0] }; applyAdminVisibility();
+    const btn = s => document.querySelector('#profGrid [data-prof="' + s + '"]');
+    const vis = s => { const b = btn(s); return !!b && getComputedStyle(b).display !== 'none'; };
+    const out = { adminForAdmin: vis('admin') };
+    Auth.user = { email: 'nobody@example.com' }; applyAdminVisibility();
+    out.adminForOther = vis('admin');
+    Auth.user = null; applyAdminVisibility();
+    out.adminSignedOut = vis('admin');
+    setFeat('badges', false); setFeat('reference', false); applyFeatureVisibility();
+    out.badgesOff = vis('badges'); out.refOff = vis('reference-library');
+    setFeat('badges', true); setFeat('reference', true); applyFeatureVisibility();
+    out.badgesOn = vis('badges');
+    el('themeModal').style.display = 'none';
+    return out;
+  });
+  ok(pgates.adminForAdmin, 'an admin sees the Admin button');
+  no(pgates.adminForOther, '...another signed-in account does not');
+  no(pgates.adminSignedOut, '...nor a signed-out visitor');
+  no(pgates.badgesOff, 'switching Milestones off takes its button away');
+  no(pgates.refOff, '...and the Reference library too');
+  ok(pgates.badgesOn, '...and switching it back brings it back');
+
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
   if (consoleErrs.length) { console.error(`  ✗ ${consoleErrs.length} console error(s):`); consoleErrs.slice(0, 5).forEach(e => console.error('      ' + e)); }

@@ -252,13 +252,22 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "dbea306251070640",
-  "len": 14305,
-  "els": 326,
-  "buttons": 34,
+  "h": "cc402b8f3273dec5",
+  "len": 16706,
+  "els": 378,
+  "buttons": 44,
   "svgs": 0,
   "imgs": 0,
-  "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
+  "text": "Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned ✨ Feature store all on 👤 Account Not signed in 📗 Bibl"
+ },
+ "classic/modal/prof-section": {
+  "h": "20b150dea1f1453d",
+  "len": 1232,
+  "els": 15,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Back up your progress ✓ ▸ Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a s"
  },
  "classic/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -306,13 +315,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "8cb29a9ba9e3b405",
-  "len": 33179,
-  "els": 658,
+  "h": "975a31faf3bf3adf",
+  "len": 33961,
+  "els": 676,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.21.0 August 26, 2026 A Library you can take in at a glance FIX The Bible scratch-off hands over the"
+  "text": "✕ Version history v1.22.0 August 26, 2026 Profile, in the Library’s shape NEW Profile is a grid of buttons now , like th"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -702,13 +711,22 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "99876dfb96ec94d4",
-  "len": 14305,
-  "els": 326,
-  "buttons": 34,
+  "h": "32c480584dba789f",
+  "len": 15806,
+  "els": 369,
+  "buttons": 42,
   "svgs": 0,
   "imgs": 0,
-  "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
+  "text": "Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned ✨ Feature store all on 👤 Account Not signed in 📗 Bibl"
+ },
+ "illumined/modal/prof-section": {
+  "h": "20b150dea1f1453d",
+  "len": 1232,
+  "els": 15,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Back up your progress ✓ ▸ Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a s"
  },
  "illumined/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -756,13 +774,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "8cb29a9ba9e3b405",
-  "len": 33179,
-  "els": 658,
+  "h": "975a31faf3bf3adf",
+  "len": 33961,
+  "els": 676,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.21.0 August 26, 2026 A Library you can take in at a glance FIX The Bible scratch-off hands over the"
+  "text": "✕ Version history v1.22.0 August 26, 2026 Profile, in the Library’s shape NEW Profile is a grid of buttons now , like th"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -1152,13 +1170,22 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "e6b9d958cc6a1f2e",
-  "len": 14305,
-  "els": 326,
-  "buttons": 34,
+  "h": "0a8e9f30f5f41a2f",
+  "len": 15804,
+  "els": 369,
+  "buttons": 42,
   "svgs": 0,
   "imgs": 0,
-  "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
+  "text": "Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned ✨ Feature store all on 👤 Account Not signed in 📗 Bibl"
+ },
+ "glass/modal/prof-section": {
+  "h": "20b150dea1f1453d",
+  "len": 1232,
+  "els": 15,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Back up your progress ✓ ▸ Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a s"
  },
  "glass/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -1206,13 +1233,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "8cb29a9ba9e3b405",
-  "len": 33179,
-  "els": 658,
+  "h": "975a31faf3bf3adf",
+  "len": 33961,
+  "els": 676,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.21.0 August 26, 2026 A Library you can take in at a glance FIX The Bible scratch-off hands over the"
+  "text": "✕ Version history v1.22.0 August 26, 2026 Profile, in the Library’s shape NEW Profile is a grid of buttons now , like th"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1602,13 +1629,22 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "c526b618d537392a",
-  "len": 14305,
-  "els": 326,
-  "buttons": 34,
+  "h": "7c7c610159018a92",
+  "len": 15806,
+  "els": 369,
+  "buttons": 42,
   "svgs": 0,
   "imgs": 0,
-  "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
+  "text": "Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned ✨ Feature store all on 👤 Account Not signed in 📗 Bibl"
+ },
+ "quest/modal/prof-section": {
+  "h": "20b150dea1f1453d",
+  "len": 1232,
+  "els": 15,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Back up your progress ✓ ▸ Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a s"
  },
  "quest/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -1656,13 +1692,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "8cb29a9ba9e3b405",
-  "len": 33179,
-  "els": 658,
+  "h": "975a31faf3bf3adf",
+  "len": 33961,
+  "els": 676,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.21.0 August 26, 2026 A Library you can take in at a glance FIX The Bible scratch-off hands over the"
+  "text": "✕ Version history v1.22.0 August 26, 2026 Profile, in the Library’s shape NEW Profile is a grid of buttons now , like th"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -2052,13 +2088,22 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "8855b6fb41a97bb9",
-  "len": 14305,
-  "els": 326,
-  "buttons": 34,
+  "h": "987493778d6ecef0",
+  "len": 15802,
+  "els": 369,
+  "buttons": 42,
   "svgs": 0,
   "imgs": 0,
-  "text": "Profile &amp; Settings ▸ Admin 🎫 Test scratch-off 🕯️ Test onboarding 🎓 Simulate Learn finished 📜 Simulate Stories fi"
+  "text": "Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned ✨ Feature store all on 👤 Account Not signed in 📗 Bibl"
+ },
+ "buddy/modal/prof-section": {
+  "h": "20b150dea1f1453d",
+  "len": 1232,
+  "els": 15,
+  "buttons": 4,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Back up your progress ✓ ▸ Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a s"
  },
  "buddy/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -2106,13 +2151,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "8cb29a9ba9e3b405",
-  "len": 33179,
-  "els": 658,
+  "h": "975a31faf3bf3adf",
+  "len": 33961,
+  "els": 676,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.21.0 August 26, 2026 A Library you can take in at a glance FIX The Bible scratch-off hands over the"
+  "text": "✕ Version history v1.22.0 August 26, 2026 Profile, in the Library’s shape NEW Profile is a grid of buttons now , like th"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
