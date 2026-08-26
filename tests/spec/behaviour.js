@@ -68,11 +68,11 @@ const DAY = 86400000;
     Billing.revoke();
     Prog.doneSkills = ['video:major', 'snd:0-4', 'snd:5-9', 'num:1', 'num:2', 'num:3', 'num:4', 'num:5', 'book:40', 'video:verse', 'video:palace', 'palace:0', 'video:sr'];
     Prog.lessonUnlocks = []; Prog.talents = 1200; bustCaches(); saveProg();
-    show('learn'); expandedUnits = new Set(UNITS.map((_, i) => i)); renderPath();
+    show('learn'); Prog.phaseMax = 99; renderPath();
     const tiles = [...document.querySelectorAll('#learn .tile:not(.tickettile):not(.video)')];
     const free = { total: tiles.length, buyable: tiles.filter(t => t.classList.contains('pro') && !t.disabled).length,
       skippable: tiles.filter(t => t.classList.contains('pro') && t.classList.contains('locked') && !t.disabled).length };
-    Billing.grant(); bustCaches(); show('learn'); expandedUnits = new Set(UNITS.map((_, i) => i)); renderPath();
+    Billing.grant(); bustCaches(); show('learn'); Prog.phaseMax = 99; renderPath();
     const t2 = [...document.querySelectorAll('#learn .tile:not(.tickettile):not(.video)')];
     const pro = { open: t2.filter(t => !t.disabled).length, priced: t2.filter(t => t.querySelector('.lockbadge')).length };
     const lastBook = UNITS.flatMap((U, ui) => U.skills.map((sk, si) => ({ sk, ui, si }))).filter(x => x.sk.kind === 'book').slice(-1)[0];
@@ -1444,31 +1444,32 @@ const DAY = 86400000;
   describe('learn path', () => { });
   const lpath = await $(() => {
     markVideoSeen('major');
+    // reveal everything so the catalogue itself can be checked, then put it back
+    Prog.phaseMax = 99;
     show('learn'); renderPath(true);
     const L = el('learn');
-    const nb = nextBlueSkill();
     const phases = UNITS.filter(U => !U.story);
     return {
       headers: L.querySelectorAll('.grouphead').length,
       dividers: L.querySelectorAll('.phasedivider').length,
       phaseCount: phases.length,
       names: phases.map(U => U.name).join(' | '),
+      numbered: phases.map(U => U.name.split(':')[0]).filter(x => x.indexOf('Phase ') === 0).join(','),
       tilesShown: L.querySelectorAll('.tile').length,
       tilesTotal: phases.reduce((n, U) => n + U.skills.length, 0),
       videoTiles: L.querySelectorAll('.tile.video, [data-video]').length,
       videoSkills: UNITS.reduce((n, U) => n + U.skills.filter(sk => sk.kind === 'video').length, 0),
+      videoWhere: (UNITS.find(U => U.skills.some(sk => sk.kind === 'video')) || {}).name || '',
+      palaceSkills: UNITS.reduce((n, U) => n + U.skills.filter(sk => sk.kind === 'palace').length, 0),
       pathMilestones: MILESTONES.filter(m => !m.stories).length,
       storyMilestones: MILESTONES.filter(m => m.stories).length,
       focused: L.querySelectorAll('.focusnext').length,
       bands: [...new Set([...L.querySelectorAll('.path')].map(p => p.style.getPropertyValue('--band')))].sort().join(','),
       torah: UNITS[1].skills.slice(0, 5).map(sk => sk.label).join(','),
       lastPhaseHasPalace: phases[phases.length - 1].skills.some(sk => sk.kind === 'palace'),
-      numbered: phases.map(U => U.name.split(":")[0]).filter(x => x.indexOf("Phase ") === 0).join(","),
-      nextUi: nb ? nb.ui : -1,
     };
   });
   is(lpath.headers, 0, 'nothing folds — the collapsible headers are gone');
-  is(lpath.dividers, lpath.phaseCount, '...replaced by a named rule between every phase');
   is(lpath.phaseCount, 13, 'the Code, then Foundations, then eleven numbered phases');
   is(lpath.numbered, 'Phase 2,Phase 3,Phase 4,Phase 5,Phase 6,Phase 7,Phase 8,Phase 9,Phase 10,Phase 11,Phase 12', 'numbered Phase 2 through Phase 12, with Foundations as the first');
   has(lpath.names, 'The Code: Major System Sounds', 'the first is the Code');
@@ -1476,28 +1477,56 @@ const DAY = 86400000;
   has(lpath.names, 'Phase 2: Joshua–Ruth + Mark–John', '...then Joshua–Ruth with Mark–John');
   has(lpath.names, 'Phase 12: All the Numbers', '...and the numbers alone at the end');
   hasNot(lpath.names, 'Memory Palace', 'the Memory Palace section is gone from the path');
-  no(lpath.lastPhaseHasPalace, '...and the last phase adds no palace either');
-  is(lpath.tilesShown, lpath.tilesTotal, 'the whole map is on screen — nothing is hidden behind a fold');
-  is(lpath.videoTiles, 0, 'no film sits on the path waiting to be tapped');
-  is(lpath.videoSkills, 0, '...and none is a lesson any more');
+  is(lpath.palaceSkills, 0, 'and no Add Palace tile is left anywhere on it');
+  no(lpath.lastPhaseHasPalace, '...least of all on the last phase');
+  is(lpath.dividers, lpath.phaseCount, 'a named rule marks every phase');
+  is(lpath.tilesShown, lpath.tilesTotal, '...and with everything revealed, every tile is drawn');
+  is(lpath.videoTiles, 1, 'the only film left on the path is the opening one');
+  is(lpath.videoSkills, 1, '...kept there because Video Review is out of reach this early');
+  is(lpath.videoWhere, 'The Code: Major System Sounds', '...and it sits in the Code section');
   is(lpath.pathMilestones, 0, 'the learn-path milestones are gone');
   is(lpath.storyMilestones, 13, '...while the Bible-story capstones stay');
   is(lpath.focused, 1, 'the next lesson is marked');
   is(lpath.bands, '0,1,2,3', 'the phases band in fours, so two rows read as a group');
   is(lpath.torah, 'Genesis,Exodus,Leviticus,Numbers,Deuteronomy', 'the first five are named as the books they are');
 
-  const advance = await $(() => {
-    const before = nextBlueSkill();
-    if (!before) return { skip: true };
-    UNITS[before.ui].skills.forEach(sk => { if (!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id); });
-    bustCaches(); saveProg(); renderPath(true);
-    const after = nextBlueSkill();
-    const marked = el('learn').querySelector('.focusnext');
-    return { skip: false, movedOn: !!after && after.ui > before.ui,
-      marksNew: !!marked && marked.dataset.ui === String(after ? after.ui : -1) };
+  // only what has been earned is on screen
+  const earned = await $(() => {
+    const list = phaseIdxs();
+    Prog.doneSkills = UNITS[list[0]].skills.map(sk => sk.id);   // the Code, finished
+    Prog.phaseMax = list[1];                                    // Foundations open, nothing beyond
+    bustCaches(); saveProg(); show('learn'); renderPath(true);
+    const L = el('learn');
+    const shown = [...L.querySelectorAll('.phasedivider')].map(d => d.textContent.replace(/^\S+\s/, '')).join(' | ');
+    return { shown, dividers: L.querySelectorAll('.phasedivider').length,
+      hasFoundations: /Foundations/.test(shown), hasPhase2: /Phase 2/.test(shown), hasPhase12: /Phase 12/.test(shown) };
   });
-  ok(advance.skip || advance.movedOn, 'finishing a phase moves the frontier on');
-  ok(advance.skip || advance.marksNew, '...and the mark follows it to the next phase');
+  is(earned.dividers, 2, 'only the phases earned so far are on screen');
+  ok(earned.hasFoundations, '...up to and including the one being worked on');
+  no(earned.hasPhase2, '...and not the one after it');
+  no(earned.hasPhase12, '...certainly not the end of the path');
+
+  // finishing a phase wins the next one, and scratching it opens it
+  const won = await $(() => {
+    const list = phaseIdxs();
+    Prog.doneSkills = [...UNITS[list[0]].skills.map(sk => sk.id), ...UNITS[list[1]].skills.map(sk => sk.id)];
+    Prog.phaseMax = list[1]; bustCaches(); saveProg();
+    const out = { complete: phaseComplete(list[1]), next: nextPhaseIdx() === list[2] };
+    out.offered = maybePhaseScratch();
+    out.cardShows = el('scName') ? el('scName').textContent : '';
+    // scratching it through to the claim
+    el('scov') && el('scov').classList.remove('on');
+    openPhase(list[2]);   // what claiming the card does; the foil itself is a canvas gesture
+    out.opened = Prog.phaseMax === list[2];
+    out.nowShown = el('learn').querySelectorAll('.phasedivider').length;
+    return out;
+  });
+  ok(won.complete, 'a phase can be finished');
+  ok(won.next, '...and the one after it is known');
+  ok(won.offered, 'finishing it offers a scratch-off');
+  has(won.cardShows, 'Phase 2', '...for the next phase by name');
+  ok(won.opened, 'claiming it opens that phase');
+  is(won.nowShown, 3, '...and it appears on the path');
 
 
   const major = await $(() => {
@@ -1517,42 +1546,52 @@ const DAY = 86400000;
   ok(majorShown.shown, 'opening Learn plays it — it is what the whole track rests on');
   has(majorShown.txt, 'Major System', '...that one');
 
-  describe('a palace every six lessons', () => { });
+  describe('a palace for every six lessons', () => { });
   const six = await $(() => {
     Prog.scratchWon = ['verse', 'palace', 'journey', 'stories'];
-    Prog.doneSkills = ['snd:0-4', 'snd:5-9', 'num:1', 'num:2', 'num:3'];   // five
-    Prog.palaceAskAt = 0; saveProg();
-    const out = { every: LESSONS_PER_PALACE_ASK, atFive: maybeSuggestPalace() };
+    Prog.doneSkills = ['snd:0-4', 'snd:5-9', 'num:1', 'num:2', 'num:3'];   // five lessons
+    Prog.palaces = []; saveProg();
+    const out = { every: LESSONS_PER_PALACE_ASK, wantAtFive: palacesWanted(), atFive: maybeSuggestPalace() };
     Prog.doneSkills.push('num:4');                                          // six
+    out.wantAtSix = palacesWanted();
     out.atSix = maybeSuggestPalace();
     const m = el('palaceAskModal');
     out.shown = !!m && m.style.display === 'flex';
     out.txt = m ? m.innerText : '';
-    if (out.shown) el('paNo').click();
-    out.twice = maybeSuggestPalace();                                       // same count — must not ask again
-    Prog.doneSkills.push('num:5');                                          // seven
-    out.atSeven = maybeSuggestPalace();
+    if (out.shown) el('paNo').click();                                      // Skip
+    out.askedAgain = maybeSuggestPalace();                                  // skipping does NOT stop it
+    if (el('palaceAskModal').style.display === 'flex') el('paNo').click();
+    Prog.palaces = [{ place: 'A', stations: ['x'], learnedAt: 1, step: 1 }];  // built one on their own
+    out.caughtUp = maybeSuggestPalace();
+    Prog.doneSkills.push('num:5', 'num:6', 'num:7', 'num:8', 'num:9', 'num:10');   // twelve
+    out.wantAtTwelve = palacesWanted();
+    out.behindAgain = maybeSuggestPalace();
+    if (el('palaceAskModal').style.display === 'flex') el('paNo').click();
     return out;
   });
-  is(six.every, 6, 'the offer comes every sixth lesson');
-  no(six.atFive, 'five lessons is not the moment');
-  ok(six.atSix, 'six is');
-  ok(six.shown, '...and it is asked in a popup');
-  has(six.txt, 'memory palace', '...offering a palace');
-  no(six.twice, 'declining is not asked again at the same count');
-  no(six.atSeven, '...nor on the very next lesson');
+  is(six.every, 6, 'the mark is a palace for every six lessons');
+  is(six.wantAtFive, 0, 'five lessons calls for none');
+  no(six.atFive, '...so nothing is asked');
+  is(six.wantAtSix, 1, 'six calls for one');
+  ok(six.atSix, '...and it is asked');
+  ok(six.shown, '...in a popup');
+  has(six.txt, 'Add now', '...offering Add now');
+  has(six.txt, 'Skip', '...and Skip');
+  ok(six.askedAgain, 'skipping asks again at the very next lesson — it does not go quiet');
+  no(six.caughtUp, 'building one unprompted stops the asking');
+  is(six.wantAtTwelve, 2, 'twelve lessons calls for two');
+  ok(six.behindAgain, '...and being behind again starts it asking once more');
 
   const accept = await $(() => {
     Prog.doneSkills = ['snd:0-4', 'snd:5-9', 'num:1', 'num:2', 'num:3', 'num:4'];
-    Prog.palaceAskAt = 0; Prog.talents = 5000; saveProg();
+    Prog.palaces = []; Prog.talents = 5000; saveProg();
     maybeSuggestPalace();
     el('paYes').click();
-    return { closed: el('palaceAskModal').style.display === 'none',
-      inBuilder: !!PB, builderSlot: PB ? PB.slot : -1 };
+    return { closed: el('palaceAskModal').style.display === 'none', inBuilder: !!PB };
   });
-  ok(accept.closed, 'accepting closes the offer');
+  ok(accept.closed, 'Add now closes the offer');
   ok(accept.inBuilder, '...and walks straight into building the palace');
-  ok(accept.builderSlot >= 0, '...on a new slot');
+
 
   await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); bustCaches(); }, learnSnap);
 

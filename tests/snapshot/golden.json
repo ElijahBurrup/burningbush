@@ -1,12 +1,12 @@
 {
  "classic/learn/path": {
-  "h": "e66e28f99c86d98c",
-  "len": 13339,
-  "els": 287,
-  "buttons": 89,
+  "h": "1bd6f2aa6ea5aee2",
+  "len": 5827,
+  "els": 125,
+  "buttons": 39,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ★ Sounds 0–4 ★ Sounds 5–9 \ud83e"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ▶ Watch again ★ Sounds 0–4 "
  },
  "classic/verse/hub": {
   "h": "9aef3012736dd11b",
@@ -252,7 +252,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "c96bf96f028422fa",
+  "h": "92852c1747ce5c71",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -306,13 +306,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "284684accef3bb37",
-  "len": 30626,
-  "els": 601,
+  "h": "924f701858a73540",
+  "len": 31766,
+  "els": 625,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.19.0 August 26, 2026 One long map NEW The Learn path is one scroll now — nothing folds. A named rul"
+  "text": "✕ Version history v1.20.0 August 26, 2026 Earn your way down the path NEW The Learn path shows only what you have earned"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -459,13 +459,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "illumined/learn/path": {
-  "h": "e66e28f99c86d98c",
-  "len": 13339,
-  "els": 287,
-  "buttons": 89,
+  "h": "1bd6f2aa6ea5aee2",
+  "len": 5827,
+  "els": 125,
+  "buttons": 39,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ★ Sounds 0–4 ★ Sounds 5–9 \ud83e"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ▶ Watch again ★ Sounds 0–4 "
  },
  "illumined/verse/hub": {
   "h": "9ed57de5281fc897",
@@ -711,7 +711,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "f4eddc5a9c50c569",
+  "h": "5243257f018808fd",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -765,13 +765,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "284684accef3bb37",
-  "len": 30626,
-  "els": 601,
+  "h": "924f701858a73540",
+  "len": 31766,
+  "els": 625,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.19.0 August 26, 2026 One long map NEW The Learn path is one scroll now — nothing folds. A named rul"
+  "text": "✕ Version history v1.20.0 August 26, 2026 Earn your way down the path NEW The Learn path shows only what you have earned"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -918,13 +918,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "glass/learn/path": {
-  "h": "e66e28f99c86d98c",
-  "len": 13339,
-  "els": 287,
-  "buttons": 89,
+  "h": "1bd6f2aa6ea5aee2",
+  "len": 5827,
+  "els": 125,
+  "buttons": 39,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ★ Sounds 0–4 ★ Sounds 5–9 \ud83e"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ▶ Watch again ★ Sounds 0–4 "
  },
  "glass/verse/hub": {
   "h": "9ed57de5281fc897",
@@ -1170,7 +1170,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "9658fcdfb7a0eb6f",
+  "h": "9ce8cb7ac9b554bd",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -1224,13 +1224,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "284684accef3bb37",
-  "len": 30626,
-  "els": 601,
+  "h": "924f701858a73540",
+  "len": 31766,
+  "els": 625,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.19.0 August 26, 2026 One long map NEW The Learn path is one scroll now — nothing folds. A named rul"
+  "text": "✕ Version history v1.20.0 August 26, 2026 Earn your way down the path NEW The Learn path shows only what you have earned"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1377,13 +1377,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "quest/learn/path": {
-  "h": "8ab2b093da7ec4b1",
-  "len": 14183,
-  "els": 302,
-  "buttons": 90,
+  "h": "fb4de45397c32039",
+  "len": 6671,
+  "els": 140,
+  "buttons": 40,
   "svgs": 1,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ★ Sounds 0–4 ★ Sounds 5–9 \ud83e"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ▶ Watch again ★ Sounds 0–4 "
  },
  "quest/verse/hub": {
   "h": "9ed57de5281fc897",
@@ -1629,7 +1629,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "953f14f7e39eb228",
+  "h": "a1bc26811550bfbf",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -1683,13 +1683,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "284684accef3bb37",
-  "len": 30626,
-  "els": 601,
+  "h": "924f701858a73540",
+  "len": 31766,
+  "els": 625,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.19.0 August 26, 2026 One long map NEW The Learn path is one scroll now — nothing folds. A named rul"
+  "text": "✕ Version history v1.20.0 August 26, 2026 Earn your way down the path NEW The Learn path shows only what you have earned"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1836,13 +1836,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "buddy/learn/path": {
-  "h": "56201eaf3bbc682b",
-  "len": 14002,
-  "els": 296,
-  "buttons": 90,
+  "h": "9a99d39897b88255",
+  "len": 6490,
+  "els": 134,
+  "buttons": 40,
   "svgs": 1,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ★ Sounds 0–4 ★ Sounds 5–9 \ud83e"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds ▶ Watch again ★ Sounds 0–4 "
  },
  "buddy/verse/hub": {
   "h": "9ed57de5281fc897",
@@ -2088,7 +2088,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "af492c64da647279",
+  "h": "876b9621b5333b84",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -2142,13 +2142,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "284684accef3bb37",
-  "len": 30626,
-  "els": 601,
+  "h": "924f701858a73540",
+  "len": 31766,
+  "els": 625,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.19.0 August 26, 2026 One long map NEW The Learn path is one scroll now — nothing folds. A named rul"
+  "text": "✕ Version history v1.20.0 August 26, 2026 Earn your way down the path NEW The Learn path shows only what you have earned"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",

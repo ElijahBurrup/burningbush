@@ -1623,8 +1623,14 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.19.0";
+const APP_VERSION="1.20.0";
 const CHANGELOG=[
+ {v:"1.20.0", d:"August 26, 2026", t:"Earn your way down the path", items:[
+   ["new","The Learn path shows <b>only what you have earned</b> — the phases you have worked through and the one you are on. Finish the last lesson of a phase and you win a <b>scratch-off for the next one</b>; scratch it and it opens."],
+   ["new","The <b>Add Palace</b> tiles are gone from the path. Instead, when you are behind the mark of <b>one palace for every six lessons</b>, a box offers <b>Add now</b> or <b>Skip</b> — and skipping just asks again next lesson, until you have caught up."],
+   ["fix","Build palaces on your own and nothing is said. It is a target, not a schedule."],
+   ["fix","The opening film keeps a tile in <b>The Code</b>, so it can be watched again before Video Review is within reach."]
+ ]},
  {v:"1.19.0", d:"August 26, 2026", t:"One long map", items:[
    ["new","<b>The Learn path is one scroll now</b> — nothing folds. A named rule marks each stretch: <b>The Code</b>, <b>Foundations</b>, then <b>Phase 2 through Phase 12</b>, six books in each and the numbers on their own at the end. Opening Learn brings your next lesson to the top."],
    ["new","Every phase is shaded a step lighter than the last, so two rows read as a group instead of one unbroken wall."],
@@ -2412,7 +2418,7 @@ function migrateProg(p){
   if(!p.w4wSR||typeof p.w4wSR!=="object") p.w4wSR={};                // word-for-word TEST record (streak of clean passes)
   if(!p.locPast||typeof p.locPast!=="object") p.locPast={};          // the station "known by heart" released, kept so it can be given back
   if(!p.stageAsk||typeof p.stageAsk!=="object") p.stageAsk={};       // where a promotion was last declined, so it nudges but never nags
-  if(typeof p.palaceAskAt!=="number") p.palaceAskAt=0;                // lesson count at the last palace suggestion
+  if(typeof p.phaseMax!=="number") p.phaseMax=-1;                     // -1 = work it out from what they have done
   p.videoOrder=arr(p.videoOrder);                                    // films unlocked, in the order they arrived
   if(!p.revPrefs||typeof p.revPrefs!=="object") p.revPrefs={};       // how the user wants to be asked in review
   { const sr=p.verseSR||{}; Object.keys(sr).forEach(k=>{ const o=sr[k];
@@ -2491,7 +2497,7 @@ function mergeProg(a,b){
       const x=wa[k], y=wb[k];
       m.w4wSR[k] = !y ? x : (!x ? y : (((x.n||0)>=(y.n||0)) ? x : y)); }); }
   m.locPast=Object.assign({},a.locPast||{},b.locPast||{});
-  m.palaceAskAt=Math.max(a.palaceAskAt||0,b.palaceAskAt||0);
+  m.phaseMax=Math.max(a.phaseMax||0,b.phaseMax||0);
   m.videoOrder=[...(a.videoOrder||[])]; (b.videoOrder||[]).forEach(k=>{ if(!m.videoOrder.includes(k)) m.videoOrder.push(k); });
   m.revPrefs=Object.assign({},a.revPrefs||{},b.revPrefs||{});   // a preference, not progress
   // a feature switched ON anywhere stays on: the device that turned it on is the one that meant it
@@ -3159,6 +3165,8 @@ function buildUnits(){
   const STORY_ICONS=["🍎","⭐","🧥","🌊","📜","🎺","🌾","👑","🔥","🌪️","🦁","👶","🕊️","🍞","🌱","🐑","💰","✝️","⛪","🌅"]; // one per story section
   // 0) The Code — the Major System video first, then the sound↔digit map drilled both ways.
   units.push({name:"The Code: Major System Sounds", ic:"🔢", skills:[
+    // Video Review is not reachable this early, so the opening film keeps a tile of its own here
+    {id:VIDEOS.major.skill, label:VIDEOS.major.title, kind:"video", vkey:"major", optional:true, items:[]},
     {id:"snd:0-4",label:"Sounds 0–4",kind:"sound",items:[0,1,2,3,4]},
     {id:"snd:5-9",label:"Sounds 5–9",kind:"sound",items:[5,6,7,8,9]}
   ]});
@@ -3168,9 +3176,6 @@ function buildUnits(){
     ...range(1,5).map(d=>({id:"num:"+d,label:bookName(d),kind:"num",items:[d]})),   // Genesis…Deuteronomy, named as the books they are
     bk(40)
   ]});
-  // Optional bonus palaces get appended to the end of each later section (never block progress).
-  let _palaceSlot=1;
-  const addOptPalace=(u)=>{ u.skills.push({id:"palace:"+_palaceSlot,label:"Add Palace",kind:"palace",optional:true,items:[_palaceSlot]}); _palaceSlot++; return u; };
   // 4) Balanced climb: each round pairs Old Testament books with New Testament books (OT 6-39, NT 41-66 — Mark onward).
   // Twelve phases in all: Foundations is the first, then TEN phases of exactly six books each —
   // Old Testament and New side by side — and the twelfth is the remaining number pegs on their own.
@@ -3189,7 +3194,7 @@ function buildUnits(){
     const otN=skills.slice(0,ntStart).map(s=>s.items[0]);
     const ntN=skills.slice(ntStart).map(s=>s.items[0]);
     const label=`Phase ${r+1}: ${rng(otN)}${ntN.length?(otN.length?" + ":"")+rng(ntN):""}`;
-    units.push(addOptPalace({name:label, ic:ROUND_ICONS[r-1], skills}));
+    units.push({name:label, ic:ROUND_ICONS[r-1], skills});
   }
   // 4) Round 13 — the remaining number pegs (67-176) as batch tiles, for chapter/verse numbers
   //    beyond the 66 books. Psalms reaches chapter 150; Psalm 119 reaches verse 176 (the Bible's highest).
@@ -3404,40 +3409,38 @@ function renderPath(focus){
   updateMetrics();
   const L=el("learn");
   const nb=nextBlueSkill();
-  const palaceRung=SCRATCH_LADDER.findIndex(r=>r.tab==="palace");
   // The whole path, top to bottom, with a rule and a name between each phase. Nothing folds:
   // the map IS the point, and the next lesson is brought to the top of the screen instead.
   let phase=0;
   let html=`<h2>Learn</h2><p class="hint" style="margin:2px 0 10px">Your whole path, in order. The next lesson is marked.</p>`;
+  const upTo=ensurePhaseMax();
   UNITS.forEach((U,ui)=>{
     if(U.story) return;                       // stories live in their own tab
+    if(ui>upTo) return;                       // not earned yet — its scratch-off opens it
     html+=`<div class="phasedivider">${U.ic?U.ic+" ":""}${U.name}</div>`;
     html+=`<div class="path" style="--band:${phase++ % 4}">`;   // a lighter band every phase, cycling
     U.skills.forEach((sk,si)=>{
-      if(sk.kind==="palace" && !tabWon("palace")){
-        const earned=SCRATCH_LADDER[palaceRung].gate();
-        html+=`<button class="tile tickettile ${earned?"pending":"locked"}" data-palaceticket="1">
-          <span class="tikface">🎫</span><small>${earned?"Scratch to unlock!":"Memory Palace"}</small></button>`;
+      const unlocked=skillUnlocked(ui,si), color=skillColor(sk,unlocked), d=Prog.doneSkills.includes(sk.id)?"done":"";
+      if(sk.kind==="video"){
+        const watched=Prog.doneSkills.includes(sk.id);
+        html+=`<button class="tile video ${watched?"done":""}" data-video="${sk.vkey}">
+          <span class="vface">${watched?"✓":"▶"}</span><small>Watch again</small></button>`;
         return;
       }
-      const unlocked=skillUnlocked(ui,si), color=skillColor(sk,unlocked), d=Prog.doneSkills.includes(sk.id)?"done":"";
-      const pro=skillPaywalled(sk), isPalace=sk.kind==="palace";
-      const label = (isPalace||sk.kind==="book") ? sk.label : (sk.items.length===1?`${sk.items[0]} · ${sk.label}`:sk.label);
-      const face = isPalace ? "🏛️" : (sk.items.length===1?sk.items[0]:"★");
+      const pro=skillPaywalled(sk);
+      const label = sk.kind==="book" ? sk.label : (sk.items.length===1?`${sk.items[0]} · ${sk.label}`:sk.label);
+      const face = sk.items.length===1?sk.items[0]:"★";
       html+=`<button class="tile ${color} ${d} ${pro?"pro":""}" data-ui="${ui}" data-si="${si}" ${(color==="locked")?"disabled":""}>
         ${pro?`<span class="lockbadge">${sk.kind==="book"?"🪙":"🔒"}</span>`:""}${face}<small>${label}</small></button>`;
     });
     html+=`</div>`;
   });
   L.innerHTML=html;
-  L.querySelectorAll(".tile:not(.tickettile)").forEach(t=>t.onclick=()=>{
+  L.querySelectorAll(".tile.video").forEach(t=>t.onclick=()=>openVideoScreen(t.dataset.video, ()=>renderPath(true)));
+  L.querySelectorAll(".tile:not(.video)").forEach(t=>t.onclick=()=>{
     if(t.classList.contains("locked")) return;   // out of sequence — not even buyable
     if(t.classList.contains("pro")){ openPaywall(UNITS[+t.dataset.ui].skills[+t.dataset.si]); return; }
     startLesson(UNITS[+t.dataset.ui].skills[+t.dataset.si]);
-  });
-  L.querySelectorAll("[data-palaceticket]").forEach(t=>t.onclick=()=>{
-    if(SCRATCH_LADDER[palaceRung].gate()) Scratch.open(palaceRung);
-    else toast("Memorize 5 verses and hit a 5-answer streak in the verse test to unlock the Memory Palace 🎫");
   });
   if(nb){
     const tile=L.querySelector(`.tile[data-ui="${nb.ui}"][data-si="${nb.si}"]`);
@@ -3935,22 +3938,52 @@ function advance(){ LZ.i++; renderStep(); }
 /* Six lessons is roughly a section, and a section's worth of new books and numbers is a
    section's worth of new verses with nowhere to put them. So: offer a palace, and if they say
    yes, walk them straight into building one rather than telling them where to find it. */
+/* ---- How much of the path is on screen ---------------------------------------------------
+   Only what has been earned: every phase already worked through, plus the one being worked on.
+   Finishing the last lesson of a phase wins a scratch-off, and scratching it opens the next.
+   Prog.phaseMax is the index of the deepest phase revealed.                                   */
+function phaseIdxs(){ const out=[]; UNITS.forEach((U,i)=>{ if(!U.story) out.push(i); }); return out; }
+function phaseComplete(ui){ const U=UNITS[ui]; return !!U && U.skills.every(sk=>sk.optional||Prog.doneSkills.includes(sk.id)); }
+function furthestStartedPhase(){ let m=0; phaseIdxs().forEach(i=>{ if(UNITS[i].skills.some(sk=>Prog.doneSkills.includes(sk.id))) m=i; }); return m; }
+function ensurePhaseMax(){
+  // Grandfathered on first run: anyone already part-way keeps everything they had reached.
+  if(typeof Prog.phaseMax!=="number" || Prog.phaseMax<0){ Prog.phaseMax=furthestStartedPhase(); saveProg(); }
+  if(Prog.phaseMax<furthestStartedPhase()){ Prog.phaseMax=furthestStartedPhase(); saveProg(); }
+  return Prog.phaseMax;
+}
+function nextPhaseIdx(){ const list=phaseIdxs(), at=list.indexOf(ensurePhaseMax()); return (at>=0 && at+1<list.length) ? list[at+1] : -1; }
+function openPhase(idx){ Prog.phaseMax=idx; saveProg(); show("learn"); renderPath(true); }
+function openPhaseScratch(idx, after){
+  const U=UNITS[idx];
+  Scratch.open(0, {
+    title:"🎫 A new phase is open!",
+    card:{ icon:U.ic||"🎫", name:U.name, desc:"The next stretch of your path — scratch to open it." },
+    onClaim:()=>{ openPhase(idx); if(after) after(); },
+  });
+}
+function maybePhaseScratch(after){
+  const cur=ensurePhaseMax(), nxt=nextPhaseIdx();
+  if(nxt<0 || !phaseComplete(cur)) return false;
+  openPhaseScratch(nxt, after);
+  return true;
+}
 const LESSONS_PER_PALACE_ASK=6;
 function lessonsDoneCount(){ return (Prog.doneSkills||[]).filter(id=>/^(num|book|snd):/.test(id)).length; }
+// One palace for every six lessons is the mark. It is a TARGET, not a schedule: build two on your
+// own initiative and nothing is said until the sixth lesson after that puts you behind again.
+function palacesWanted(){ return Math.floor(lessonsDoneCount()/LESSONS_PER_PALACE_ASK); }
+function needsPalace(){ return tabWon("palace") && palaceCount() < palacesWanted(); }
 function maybeSuggestPalace(){
-  const n=lessonsDoneCount();
-  if(n<LESSONS_PER_PALACE_ASK || n%LESSONS_PER_PALACE_ASK!==0) return false;
-  if((Prog.palaceAskAt||0)>=n) return false;
-  Prog.palaceAskAt=n; saveProg();
-  if(!tabWon("palace")) return false;              // palaces are not open to them yet
+  if(!needsPalace()) return false;                 // caught up, or palaces not open to them yet
   const m=el("palaceAskModal")||(()=>{ const d=document.createElement("div"); d.id="palaceAskModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const have=palaceCount(), want=palacesWanted(), n=lessonsDoneCount();
   m.innerHTML=`<div class="modal-card center">
       <div style="font-size:34px">🏛️</div>
-      <div style="font-size:20px;font-weight:800;margin-top:6px">${n} lessons in</div>
-      <p class="lead" style="margin:8px 0 0">Every lesson puts more verses within your reach. A new memory palace gives them somewhere to live.</p>
+      <div style="font-size:20px;font-weight:800;margin-top:6px">Room for more</div>
+      <p class="lead" style="margin:8px 0 0">${n} lessons in, and every one of them puts more verses within your reach. We suggest <b class="gold">a palace for every six lessons</b> — that is <b class="gold">${want}</b> by now, and you have <b>${have}</b>.</p>
       <p class="hint" style="margin:10px 0 0">A palace is just a place you already know well, walked in the same order every time.</p>
-      <button class="btn" id="paYes" style="width:100%;margin-top:14px">Build one now</button>
-      <button class="btn ghost" id="paNo" style="width:100%;margin-top:8px">Not just now</button>
+      <button class="btn" id="paYes" style="width:100%;margin-top:14px">Add now</button>
+      <button class="btn ghost" id="paNo" style="width:100%;margin-top:8px">Skip</button>
     </div>`;
   m.style.display="flex"; raiseModal(m);
   const close=()=>{ m.style.display="none"; };
@@ -3988,7 +4021,7 @@ function finishLesson(){
   if(el("lNextNum")) el("lNextNum").onclick=()=>renderPath(true);
   el("lPath2").onclick=()=>renderPath(true);
   LZ=null;
-  if(wasNew) setTimeout(maybeSuggestPalace, 700);
+  if(wasNew) setTimeout(()=>{ if(!maybePhaseScratch(()=>setTimeout(maybeSuggestPalace,500))) maybeSuggestPalace(); }, 700);
 }
 
 /* =================== VERSE (daily + my verses) =================== */
@@ -8176,7 +8209,13 @@ const Scratch = (()=>{
     const gx=Math.min(GRID-1,Math.max(0,Math.floor(p.x/(foil.width/GRID)))), gy=Math.min(GRID-1,Math.max(0,Math.floor(p.y/(foil.height/GRID))));
     cells.add(gy*GRID+gx);
     if(cells.size/(GRID*GRID) > 0.42) reveal(); }
-  function claim(){ if(!revealed) return; const L=SCRATCH_LADDER[rung], sim=!!opts.sim;
+  function claim(){ if(!revealed) return; const sim=!!opts.sim;
+    if(opts.card){                                  // a phase: nothing flies to the nav, it opens the path
+      ov.classList.remove("on"); ov.setAttribute("aria-hidden","true");
+      if(opts.onClaim) opts.onClaim();
+      return;
+    }
+    const L=SCRATCH_LADDER[rung];
     ov.classList.remove("on"); ov.setAttribute("aria-hidden","true");
     const btn=document.querySelector(`.tabbar button[data-tab="${L.tab}"]`);
     flyToNav(L.icon, btn, ()=>{
@@ -8200,7 +8239,8 @@ const Scratch = (()=>{
   ["mousemove","touchmove"].forEach(ev=>foil.addEventListener(ev,scratch,{passive:false}));
   ["mouseup","touchend","touchcancel","mouseleave"].forEach(ev=>foil.addEventListener(ev,()=>{drawing=false;}));
   return {
-    open(r, o){ rung=r; opts=o||{}; revealed=false; cells.clear(); const L=SCRATCH_LADDER[r];
+    open(r, o){ rung=r; opts=o||{}; revealed=false; cells.clear();
+      const L=(opts.card)||SCRATCH_LADDER[r];   // a phase brings its own face; a tab uses the ladder's
       el("scTitle").innerHTML=(opts.title||"🎫 You earned a scratch-off!");
       if(L.iconHtml) el("scIcon").innerHTML=L.iconHtml(); else el("scIcon").textContent=L.icon;
       el("scName").textContent=L.name; el("scDesc").innerHTML=L.desc;
