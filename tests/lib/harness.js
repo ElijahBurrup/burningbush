@@ -115,6 +115,9 @@ async function open(browser, o = {}) {
     Prog.scratchWon = ['verse', 'palace', 'journey', 'stories'];
     if (pro) Billing.grant(); else Billing.revoke();
     if (prog) Object.assign(Prog, prog);
+    // the blob is assigned raw, so run it through migration the way a real load would —
+    // otherwise it is missing every field a saved account would have been given
+    migrateProg(Prog);
     // grandfathering ran at boot against an EMPTY account; re-run it now the progress is here,
     // so the seeded account behaves like the established user it is meant to represent
     Prog.featuresInit = false; grandfatherFeatures(); applyFeatureVisibility();

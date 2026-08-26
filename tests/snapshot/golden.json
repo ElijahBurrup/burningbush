@@ -1,9 +1,9 @@
 {
  "classic/learn/path": {
-  "h": "fd9bf553f4c7ff75",
-  "len": 6760,
-  "els": 153,
-  "buttons": 29,
+  "h": "908416916a1ad013",
+  "len": 6271,
+  "els": 147,
+  "buttons": 27,
   "svgs": 0,
   "imgs": 0,
   "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▾ ▶ How the Major System works ★ Sounds 0–4 ★ Sounds"
@@ -45,9 +45,9 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "classic/verse/memorized": {
-  "h": "0789288f1763b61d",
-  "len": 1341,
-  "els": 37,
+  "h": "7f4a1fca4568c5a5",
+  "len": 2142,
+  "els": 64,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
@@ -81,9 +81,9 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "classic/wizard/learned": {
-  "h": "99eaa35e6bcfa031",
-  "len": 3458,
-  "els": 67,
+  "h": "c4f27714d04eab1b",
+  "len": 3997,
+  "els": 90,
   "buttons": 9,
   "svgs": 0,
   "imgs": 3,
@@ -261,7 +261,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "b3bffc08823bcde7",
+  "h": "9a817f0ed4adf326",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -315,13 +315,13 @@
   "text": "💰 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "c26715ec84112722",
-  "len": 23863,
-  "els": 468,
+  "h": "e3bd8c6f185663a7",
+  "len": 25051,
+  "els": 491,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.14.0 August 25, 2026 The Feature Store NEW Profile → Feature store. The app has grown a great deal,"
+  "text": "✕ Version history v1.15.0 August 26, 2026 The first look back NEW A verse you saved an hour ago has not been forgotten y"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -432,10 +432,10 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "illumined/learn/path": {
-  "h": "fd9bf553f4c7ff75",
-  "len": 6760,
-  "els": 153,
-  "buttons": 29,
+  "h": "908416916a1ad013",
+  "len": 6271,
+  "els": 147,
+  "buttons": 27,
   "svgs": 0,
   "imgs": 0,
   "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▾ ▶ How the Major System works ★ Sounds 0–4 ★ Sounds"
@@ -477,9 +477,9 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "illumined/verse/memorized": {
-  "h": "0789288f1763b61d",
-  "len": 1341,
-  "els": 37,
+  "h": "7f4a1fca4568c5a5",
+  "len": 2142,
+  "els": 64,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
@@ -513,9 +513,9 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "illumined/wizard/learned": {
-  "h": "99eaa35e6bcfa031",
-  "len": 3458,
-  "els": 67,
+  "h": "c4f27714d04eab1b",
+  "len": 3997,
+  "els": 90,
   "buttons": 9,
   "svgs": 0,
   "imgs": 3,
@@ -693,7 +693,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "81857f67a0c99113",
+  "h": "904218daf3a1bdc3",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -747,13 +747,13 @@
   "text": "💰 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "c26715ec84112722",
-  "len": 23863,
-  "els": 468,
+  "h": "e3bd8c6f185663a7",
+  "len": 25051,
+  "els": 491,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.14.0 August 25, 2026 The Feature Store NEW Profile → Feature store. The app has grown a great deal,"
+  "text": "✕ Version history v1.15.0 August 26, 2026 The first look back NEW A verse you saved an hour ago has not been forgotten y"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -864,10 +864,10 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "glass/learn/path": {
-  "h": "fd9bf553f4c7ff75",
-  "len": 6760,
-  "els": 153,
-  "buttons": 29,
+  "h": "908416916a1ad013",
+  "len": 6271,
+  "els": 147,
+  "buttons": 27,
   "svgs": 0,
   "imgs": 0,
   "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▾ ▶ How the Major System works ★ Sounds 0–4 ★ Sounds"
@@ -909,9 +909,9 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "glass/verse/memorized": {
-  "h": "0789288f1763b61d",
-  "len": 1341,
-  "els": 37,
+  "h": "7f4a1fca4568c5a5",
+  "len": 2142,
+  "els": 64,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
@@ -945,9 +945,9 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "glass/wizard/learned": {
-  "h": "99eaa35e6bcfa031",
-  "len": 3458,
-  "els": 67,
+  "h": "c4f27714d04eab1b",
+  "len": 3997,
+  "els": 90,
   "buttons": 9,
   "svgs": 0,
   "imgs": 3,
@@ -1125,7 +1125,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "0768223a25ac2926",
+  "h": "b033f7b5bdee5b4b",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -1179,13 +1179,13 @@
   "text": "💰 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "c26715ec84112722",
-  "len": 23863,
-  "els": 468,
+  "h": "e3bd8c6f185663a7",
+  "len": 25051,
+  "els": 491,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.14.0 August 25, 2026 The Feature Store NEW Profile → Feature store. The app has grown a great deal,"
+  "text": "✕ Version history v1.15.0 August 26, 2026 The first look back NEW A verse you saved an hour ago has not been forgotten y"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1296,10 +1296,10 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "quest/learn/path": {
-  "h": "fd3aa60e88accaf5",
-  "len": 7503,
-  "els": 166,
-  "buttons": 30,
+  "h": "830beb4e9285fd9b",
+  "len": 7014,
+  "els": 160,
+  "buttons": 28,
   "svgs": 1,
   "imgs": 0,
   "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▾ ▶ How the Major System works ★ Sounds 0–4 ★ Sounds"
@@ -1341,9 +1341,9 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "quest/verse/memorized": {
-  "h": "0789288f1763b61d",
-  "len": 1341,
-  "els": 37,
+  "h": "7f4a1fca4568c5a5",
+  "len": 2142,
+  "els": 64,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
@@ -1377,9 +1377,9 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "quest/wizard/learned": {
-  "h": "99eaa35e6bcfa031",
-  "len": 3458,
-  "els": 67,
+  "h": "c4f27714d04eab1b",
+  "len": 3997,
+  "els": 90,
   "buttons": 9,
   "svgs": 0,
   "imgs": 3,
@@ -1557,7 +1557,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "d367a125521faef7",
+  "h": "39d1d93efb05a595",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -1611,13 +1611,13 @@
   "text": "💰 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "c26715ec84112722",
-  "len": 23863,
-  "els": 468,
+  "h": "e3bd8c6f185663a7",
+  "len": 25051,
+  "els": 491,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.14.0 August 25, 2026 The Feature Store NEW Profile → Feature store. The app has grown a great deal,"
+  "text": "✕ Version history v1.15.0 August 26, 2026 The first look back NEW A verse you saved an hour ago has not been forgotten y"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1728,10 +1728,10 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "buddy/learn/path": {
-  "h": "64f02c69cbb68135",
-  "len": 7423,
-  "els": 162,
-  "buttons": 30,
+  "h": "b2b681aa3da777c1",
+  "len": 6934,
+  "els": 156,
+  "buttons": 28,
   "svgs": 1,
   "imgs": 0,
   "text": "Learn Tap a group to open it. 🔢 The Code · Major System sounds 2/3 ▾ ▶ How the Major System works ★ Sounds 0–4 ★ Sounds"
@@ -1773,9 +1773,9 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "buddy/verse/memorized": {
-  "h": "0789288f1763b61d",
-  "len": 1341,
-  "els": 37,
+  "h": "7f4a1fca4568c5a5",
+  "len": 2142,
+  "els": 64,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
@@ -1809,9 +1809,9 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "buddy/wizard/learned": {
-  "h": "99eaa35e6bcfa031",
-  "len": 3458,
-  "els": 67,
+  "h": "c4f27714d04eab1b",
+  "len": 3997,
+  "els": 90,
   "buttons": 9,
   "svgs": 0,
   "imgs": 3,
@@ -1989,7 +1989,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "f278273bacea6060",
+  "h": "d32e317e512d8db4",
   "len": 14150,
   "els": 325,
   "buttons": 33,
@@ -2043,13 +2043,13 @@
   "text": "💰 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "c26715ec84112722",
-  "len": 23863,
-  "els": 468,
+  "h": "e3bd8c6f185663a7",
+  "len": 25051,
+  "els": 491,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.14.0 August 25, 2026 The Feature Store NEW Profile → Feature store. The app has grown a great deal,"
+  "text": "✕ Version history v1.15.0 August 26, 2026 The first look back NEW A verse you saved an hour ago has not been forgotten y"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",

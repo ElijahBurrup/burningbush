@@ -119,9 +119,9 @@ const DAY = 86400000;
   const d1 = await $(() => {
     Prog.memorized = ['43:3:16']; Prog.dailyGoal = 5;
     Prog.goalDay = { date: dayKey(new Date()), count: 0, celebrated: true };
-    Prog.verseSR = { '43:3:16': { learnedAt: Date.now() - 86400000 - 1000, step: 1 } }; saveProg();
+    Prog.verseSR = { '43:3:16': { learnedAt: Date.now() - 86400000 - 1000, step: 1, r0: 1 } }; saveProg();
     const a = goalCount(); reviewVerseSR('43:3:16'); const afterD1 = goalCount() - a;
-    Prog.verseSR = { '43:3:16': { learnedAt: Date.now() - 9 * 86400000, step: 3 } }; saveProg();
+    Prog.verseSR = { '43:3:16': { learnedAt: Date.now() - 9 * 86400000, step: 3, r0: 1 } }; saveProg();
     const b = goalCount(); reviewVerseSR('43:3:16'); const afterLater = goalCount() - b;
     return { afterD1, afterLater };
   });
@@ -732,7 +732,7 @@ const DAY = 86400000;
     const k = '43:3:16';
     Prog.memorized = [k]; Prog.verseStage = {}; Prog.revPrefs = { loc: true, w4w: true, heart: false };
     Prog.customScene = {}; Prog.verseLoc = {}; Prog.w4w = {}; Prog.w4wToday = null;
-    Prog.verseSR = { [k]: Object.assign(newSR(), { step: 1, dueAt: Date.now() - 86400000 }) }; saveProg();
+    Prog.verseSR = { [k]: Object.assign(newSR(), { step: 1, dueAt: Date.now() - 86400000, r0: 1 }) }; saveProg();   // r0 = its first look-back is done
     const before = { deck: deckKeys().includes(k), due: verseDue(k), dueN: versesDueCount(), pick: !!pickW4WVerse() };
     show('verse'); vView = 'mem'; vBook.mem = new Set([43]);   // open the book so verse rows are actually drawn
     renderVerse();
@@ -884,7 +884,7 @@ const DAY = 86400000;
   const hearts = await $(() => {
     const k = '43:3:16';
     Prog.memorized = [k]; Prog.verseStage = { [k]: 'heart' };
-    Prog.verseSR = { [k]: newSR() };
+    Prog.verseSR = { [k]: Object.assign(newSR(), { r0: 1 }) };
     Prog.revPrefs = { loc: true, w4w: true, heart: false }; saveProg();
     const out = { off: deckKeys().includes(k) };
     Prog.revPrefs = { loc: true, w4w: true, heart: true }; saveProg();
@@ -1074,6 +1074,115 @@ const DAY = 86400000;
   no(fmerge.rome, '...while one nobody turned on stays off');
 
   await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); }, storeSnap);
+
+  // ================= v1.15 =================
+  const v15Snap = await $(() => JSON.stringify(Prog));
+
+  describe('no test-out', () => { });
+  const noQuiz = await $(() => {
+    show('learn'); expandedUnits = new Set([0, 1, 2]); renderPath();
+    return {
+      buttons: document.querySelectorAll('[data-cq]').length,
+      wording: /test out|chapter quiz/i.test(el('learn').innerText),
+      fn: typeof startChapterQuiz !== 'undefined',
+      pass: typeof passChapter !== 'undefined',
+      fail: typeof failChapter !== 'undefined',
+    };
+  });
+  is(noQuiz.buttons, 0, 'the learn page offers no chapter quiz');
+  no(noQuiz.wording, '...and never mentions testing out');
+  no(noQuiz.fn, '...and it cannot be started from anywhere else');
+  no(noQuiz.pass, '...its pass screen is gone too');
+  no(noQuiz.fail, '...and its fail screen');
+
+  describe('palace round trip', () => { });
+  const trip = await $(() => {
+    const k = '43:3:16';
+    Prog.palaces = [{ place: 'My Kitchen', stations: ['Front door', 'Sink'], learnedAt: Date.now(), step: 1 }];
+    Prog.memorized = [k]; Prog.verseLoc = { [k]: { p: 0, room: 'Sink' } };
+    Prog.customScene = {}; saveProg();
+    show('palace'); startPalaceEdit(0);
+    document.querySelector('.peLoc[data-si="1"]').value = 'Sink (renamed, not yet saved)';
+    syncPE();
+    const back = () => { show('palace'); startPalaceEdit(0, 'Sink', true); };
+    editVerseScene(43, 3, 16, back, back);
+    const out = { onScene: !!el('wScene') };
+    el('wScene').value = 'a scene I do not want kept';
+    el('wClose').click();                                   // the RED X
+    out.sceneAfterX = (Prog.customScene || {})[k] || '';
+    out.backOnPalace = !!document.querySelector('.peLoc');
+    out.draftKept = (document.querySelector('.peLoc[data-si="1"]') || {}).value;
+    return out;
+  });
+  ok(trip.onScene, "a station's verse opens on its scene screen");
+  is(trip.sceneAfterX, '', 'the red X leaves without saving what was typed');
+  ok(trip.backOnPalace, '...and lands back on the palace location screen');
+  is(trip.draftKept, 'Sink (renamed, not yet saved)', '...with the edits made there still in place');
+
+  const tripSave = await $(() => {
+    const k = '43:3:16';
+    Prog.customScene = {}; saveProg();
+    const back = () => { show('palace'); startPalaceEdit(0, 'Sink', true); };
+    editVerseScene(43, 3, 16, back, back);
+    el('wScene').value = 'a scene I DO want kept';
+    if (el('wPalace')) { el('wPalace').value = '0'; el('wPalace').onchange(); el('wRoom').value = 'Sink'; }
+    el('wDoneTop').click();                                 // the GREEN tick
+    return { saved: (Prog.customScene || {})[k] || '', backOnPalace: !!document.querySelector('.peLoc') };
+  });
+  is(tripSave.saved, 'a scene I DO want kept', 'the green tick saves what was typed');
+  ok(tripSave.backOnPalace, '...and lands back on the palace location screen too');
+
+  describe('the first look back', () => { });
+  const look = await $(() => {
+    const k = '43:3:16';
+    Prog.memorized = [k]; Prog.verseStage = {}; Prog.palaces = [];
+    Prog.revPrefs = { loc: true, w4w: false, heart: false };
+    Prog.verseSR = { [k]: { learnedAt: Date.now() - 3600000, step: 1, dueAt: Date.now() - 1, r0: 0 } }; saveProg();
+    const hour1 = { asked: newVerseDue(k), tested: verseDue(k), deck: deckKeys().includes(k) };
+    Prog.verseSR[k].learnedAt = Date.now() - 5 * 3600000; saveProg();
+    const hour5 = { asked: newVerseDue(k), tested: verseDue(k), deck: deckKeys().includes(k), counted: reviewDueCount() };
+    markFirstReview(k);
+    const after = { asked: newVerseDue(k), tested: verseDue(k), deck: deckKeys().includes(k) };
+    return { hours: FIRST_REVIEW_MS / 3600000, hour1, hour5, after };
+  });
+  is(look.hours, 4, 'the first look back comes four hours after a verse is saved');
+  no(look.hour1.asked, 'an hour after saving, nothing is asked');
+  no(look.hour1.tested, '...and the verse is certainly not tested');
+  no(look.hour1.deck, '...nor handed out in free practice');
+  ok(look.hour5.asked, 'four hours on, it is asked for');
+  no(look.hour5.tested, '...but STILL not tested — day one is a review, not a test');
+  ok(look.hour5.counted > 0, '...and it counts as work waiting');
+  no(look.after.asked, 'once read back it stops being asked for');
+  ok(look.after.tested, '...and only THEN joins the testing rotation');
+
+  const session = await $(() => {
+    const k = '43:3:16';
+    Prog.memorized = [k]; Prog.palaces = []; Prog.customScene = {};
+    Prog.verseSR = { [k]: { learnedAt: Date.now() - 5 * 3600000, step: 1, dueAt: Date.now() - 1, r0: 0 } }; saveProg();
+    startMemTest();
+    const queued = (MS.newQueue || []).slice();
+    beginDueReview();
+    const out = { queued: queued.join(','), onScene: !!el('wScene'), note: el('verse').innerText };
+    el('wScene').value = 'the scene, read back and confirmed';   // a blank scene asks for confirmation first
+    el('wDoneTop').click();
+    out.r0 = (vsr(k) || {}).r0 > 0;
+    out.testableNow = verseDue(k);
+    return out;
+  });
+  is(session.queued, '43:3:16', 'the session opens with the new verse queued first');
+  ok(session.onScene, '...shown on its palace, location and scene screen');
+  has(session.note, 'First look back', '...told plainly that this is a read-through');
+  has(session.note, 'No test yet', '...and that nothing is being tested');
+  ok(session.r0, 'Done records the sitting');
+  ok(session.testableNow, '...and the verse joins the rotation from then on');
+
+  const legacy = await $(() => {
+    const old = migrateProg({ memorized: ['43:3:16'], verseSR: { '43:3:16': { learnedAt: 1000, step: 3 } } });
+    return { stamped: old.verseSR['43:3:16'].r0 };
+  });
+  ok(legacy.stamped > 0, 'a verse that predates this counts as already read back — no rotation empties on update');
+
+  await page.evaluate(snap => { Object.assign(Prog, JSON.parse(snap)); saveProg(); }, v15Snap);
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));

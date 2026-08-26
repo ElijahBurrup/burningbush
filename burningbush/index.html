@@ -1611,8 +1611,14 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.14.0";
+const APP_VERSION="1.15.0";
 const CHANGELOG=[
+ {v:"1.15.0", d:"August 26, 2026", t:"The first look back", items:[
+   ["new","A verse you saved an hour ago has not been forgotten yet, so testing it proves nothing. <b>Four hours after you save a verse it comes back once</b> — the palace, the location and the scene you wrote, to read over and correct. <b>No test on day one.</b> Only after that reading does it join the testing rotation."],
+   ["new","New verses are always <b>first</b> in a review session, before numbers and before anything else."],
+   ["fix","Stepping into a verse from a palace location no longer costs you the station names you were part-way through typing. The <b>red ✕ leaves without saving</b>, the <b>green ✓ saves</b>, and either way your palace edits are still there when you land back."],
+   ["fix","<b>Chapter quiz / test out is gone</b> from the learn page."]
+ ]},
  {v:"1.14.0", d:"August 25, 2026", t:"The Feature Store", items:[
    ["new","<b>Profile \u2192 Feature store.</b> The app has grown a great deal, so a new account now starts with the core \u2014 learn the numbers, learn the books, build a verse, review it \u2014 and everything else waits on a switch. Each one explains what it does <i>before</i> you turn it on."],
    ["new","Nine features can be switched: <b>Daily Goal</b>, <b>Milestones</b>, <b>Warm-Up Before Typing</b>, <b>Reference Library</b>, <b>Word for Word</b>, <b>Word Meanings</b>, <b>Practice Your Way</b>, <b>Daily Reminder</b> and <b>Caesar's Levy</b>."],
@@ -2366,6 +2372,8 @@ function migrateProg(p){
   if(!p.locPast||typeof p.locPast!=="object") p.locPast={};          // the station "known by heart" released, kept so it can be given back
   if(!p.stageAsk||typeof p.stageAsk!=="object") p.stageAsk={};       // where a promotion was last declined, so it nudges but never nags
   if(!p.revPrefs||typeof p.revPrefs!=="object") p.revPrefs={};       // how the user wants to be asked in review
+  { const sr=p.verseSR||{}; Object.keys(sr).forEach(k=>{ const o=sr[k];
+      if(o && o.r0===undefined) o.r0=o.learnedAt||1; }); }   // legacy verses: treat the first look-back as done
   if(!p.features||typeof p.features!=="object") p.features={};   // which features are switched on
   if(typeof p.featuresInit!=="boolean") p.featuresInit=false;     // has the one-time grandfathering run?
   if(!p.ntPrefs||typeof p.ntPrefs!=="object") p.ntPrefs={};   // number-practice set-up: which forms, how many
@@ -3414,11 +3422,6 @@ function renderPath(focus){
       });
       html+=`</div>`;
       if(palaceLocked) html+=`<div class="hint" style="text-align:center;margin:10px 0 0">${SCRATCH_LADDER[palaceRung].gate()?"You've earned it — scratch the ticket above! 🎫":"Memorize 5 verses and hit a 5-answer streak in the verse test to earn this."}</div>`;
-      if(!U.story && !U.palaceUnit && !U.videoTrack){   // no "test out" on the video-only sections (Learn Verses, Spaced Repetition)
-        const unitPaid=U.skills.some(isPaidSkill) && !Billing.isPro(); // any paid content locks "test out"
-        html+=`<div style="text-align:center;margin-top:22px"><button class="btn sm ghost" data-cq="${ui}" ${unitPaid?`data-prolock="1"`:""}>${unitPaid?"🔒 ":"⚡ "}Chapter quiz · test out</button>
-        <div class="hint" style="margin:6px 0 0">${unitPaid?"Unlock the full Bible to test out of this section.":"Ace it (100%) to turn the whole section gold. One wrong answer ends it."}</div></div>`;
-      }
     }
     html+=`</div>`;
     MILESTONES.forEach(m=>{ if(U.name.startsWith(m.after)) html+=renderMilestone(m); });
@@ -3426,7 +3429,6 @@ function renderPath(focus){
   if(truncated) html+=`<div class="hint" style="text-align:center;margin:14px 0 4px;opacity:.8">🔒 More of your path unlocks as you earn scratch-offs ${GTIK}</div>`;
   L.innerHTML=html;
   L.querySelectorAll("[data-grp]").forEach(h=>h.onclick=()=>{ const ui=+h.dataset.grp; expandedUnits.has(ui)?expandedUnits.delete(ui):expandedUnits.add(ui); renderPath(); });
-  L.querySelectorAll("[data-cq]").forEach(b=>b.onclick=()=>{ if(b.dataset.prolock){ openPaywall(); return; } startChapterQuiz(+b.dataset.cq); });
   L.querySelectorAll(".tile:not(.tickettile):not(.video)").forEach(t=>t.onclick=()=>{
     if(t.classList.contains("locked")) return;   // out of sequence — not even buyable
     if(t.classList.contains("pro")){ openPaywall(UNITS[+t.dataset.ui].skills[+t.dataset.si]); return; }
@@ -3571,15 +3573,28 @@ function palaceNextReviewMs(p){ const step=p&&p.step||1; if(step>=SR_TRAIL.lengt
 function palacesDueCount(){ return (Prog.palaces||[]).filter(pl=>pl&&palaceDue(pl)).length; }
 // verse spaced-repetition trail — the SAME relative D0…D30 model as palaces, one per memorized verse.
 function verseSRobj(k){ return (Prog.verseSR||{})[k]; }
-function verseDue(k){ if(isHeart(k)) return false; const o=verseSRobj(k); return !!o && srDueIndex(o)>=0; }
-function versesDueCount(){ const sr=Prog.verseSR||{}; return (Prog.memorized||[]).filter(k=>{ if(isHeart(k)) return false; const o=sr[k]; return o && srDueIndex(o)>=0; }).length; }
+function verseDue(k){ if(isHeart(k)||!firstReviewDone(k)) return false; const o=verseSRobj(k); return !!o && srDueIndex(o)>=0; }
+function versesDueCount(){ const sr=Prog.verseSR||{}; return (Prog.memorized||[]).filter(k=>{ if(isHeart(k)||!firstReviewDone(k)) return false; const o=sr[k]; return o && srDueIndex(o)>=0; }).length; }
 // numbers that have entered the Leitner review cycle and whose next review has come due
 function numbersDueList(){ const soon=Date.now()+SR_GRACE, eod=endOfToday(), out=[]; knownNumbers().forEach(n=>{ if(n<1||n>176) return; const st=SRS['sk:num:'+n]; if(!st || typeof st.box!=='number') return;
   const gap=INTERVAL[st.box]||0, limit = gap<=1 ? soon : eod;   // 1-day boxes get 1-hour grace; longer boxes batch the whole calendar day
   if(st.due<=limit) out.push(n); }); return out.sort((a,b)=>a-b); }
 function numbersDueCount(){ return numbersDueList().length; }
-function reviewDueCount(){ return numbersDueCount()+versesDueCount()+palacesDueCount(); }   // everything due for spaced repetition today
-function newSR(){ return {learnedAt:Date.now(), step:1, dueAt:Date.now()+(SR_TRAIL[1]-SR_TRAIL[0])*DAY}; } // D0 done at learn, D1 due in 1 day
+function reviewDueCount(){ return newVersesDueCount()+numbersDueCount()+versesDueCount()+palacesDueCount(); }   // everything due for spaced repetition today
+/* A verse you saved an hour ago has not been forgotten yet, so testing it proves nothing. Four
+   hours after it is saved it comes back ONCE - the palace, the location and the scene you wrote,
+   to read over and confirm. Only after that does it join the testing rotation. r0 holds when that
+   first sitting happened; 0 means it has not. */
+const FIRST_REVIEW_MS=4*3600000;
+function firstReviewAt(o){ return (o&&o.learnedAt)?o.learnedAt+FIRST_REVIEW_MS:0; }
+function firstReviewDone(k){ const o=vsr(k); return !o || !!o.r0; }
+function newVerseDue(k){ if(isHeart(k)) return false; const o=vsr(k);
+  return !!o && !o.r0 && Date.now()>=firstReviewAt(o); }
+function newVersesDueList(){ return (Prog.memorized||[]).filter(k=>kjvText.apply(null,k.split(":").map(Number)) && newVerseDue(k))
+  .sort((a,b)=>((vsr(a)||{}).learnedAt||0)-((vsr(b)||{}).learnedAt||0)); }   // oldest first
+function newVersesDueCount(){ return newVersesDueList().length; }
+function markFirstReview(k){ const o=vsr(k); if(o && !o.r0){ o.r0=Date.now(); saveProg(); } }
+function newSR(){ return {learnedAt:Date.now(), step:1, dueAt:Date.now()+(SR_TRAIL[1]-SR_TRAIL[0])*DAY, r0:0}; } // D0 done at learn, first REVIEW in 4h, D1 test in a day
 function startVerseSR(k){ Prog.verseSR=Prog.verseSR||{}; if(!Prog.verseSR[k]) Prog.verseSR[k]=newSR(); }
 function reviewVerseSR(k){ if(!Prog.memorized.includes(k)) return; Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k];
   if(!o){ Prog.verseSR[k]=newSR(); return; }
@@ -3809,14 +3824,13 @@ function renderSoundStep(s,pct){
       LZ.ok++; gradeKey(`sk:sound:${s.n}`,"good"); setTimeout(advance,550);
     } else {                                     // wrong
       b.classList.add("wrong");
-      if(LZ.mode==="quiz"){ document.querySelectorAll("[data-sok]").forEach(x=>x.disabled=true); return setTimeout(failChapter,650); }
       b.disabled=true; gradeKey(`sk:sound:${s.n}`,"miss");        // lesson: stay & retry
     }
   });
 }
 function renderStep(){
   const L=el("learn");
-  if(LZ.i>=LZ.steps.length) return LZ.mode==="quiz" ? passChapter() : finishLesson();
+  if(LZ.i>=LZ.steps.length) return finishLesson();
   const s=LZ.steps[LZ.i];
   const pct=Math.round(100*LZ.i/LZ.total);
   if(s.kind==="sound") return renderSoundStep(s,pct);
@@ -3899,7 +3913,6 @@ function wireStep(s){
         LZ.ok++; gradeKey(`sk:${s.kind}:${s.n}`,"good"); setTimeout(advance,550);
       } else {                                  // wrong
         b.classList.add("wrong");
-        if(LZ.mode==="quiz"){ document.querySelectorAll("[data-ans]").forEach(x=>x.disabled=true); return setTimeout(failChapter,650); }
         b.disabled=true; gradeKey(`sk:${s.kind}:${s.n}`,"miss");   // lesson: stay & retry
       }
     });
@@ -3913,7 +3926,6 @@ function wireStep(s){
         LZ.ok++; gradeKey(`sk:${s.kind}:${s.n}`,"good"); setTimeout(advance,550);
       } else {                                  // wrong
         inp.classList.add("wrong");
-        if(LZ.mode==="quiz"){ el("typeGo").disabled=true; return setTimeout(failChapter,650); }
         gradeKey(`sk:${s.kind}:${s.n}`,"miss"); // lesson: stay
       }
     };
@@ -3938,40 +3950,6 @@ function answer(s,good){
   el("fbNext").onclick=advance;
 }
 function advance(){ LZ.i++; renderStep(); }
-/* ---- chapter quiz (test out): 100% turns the whole section gold; one wrong = out ---- */
-function startChapterQuiz(ui){
-  const U=UNITS[ui]; if(U.skills.some(skillPaywalled)) return openPaywall();  // Pro-only section
-  const steps=[];
-  U.skills.forEach(sk=>{ if(sk.kind==="palace"||sk.kind==="story") return; // bonus palaces aren't quizzed
-    sk.items.forEach(n=>{
-    if(sk.kind==="sound"){ steps.push({type:"s_d2s",kind:"sound",n}); steps.push({type:"s_s2d",kind:"sound",n}); }
-    else pairTypesFor(n).forEach(t=>steps.push({type:t,kind:sk.kind,n})); // book: all six; number-only: image↔number
-  }); });
-  shuffle(steps);
-  LZ={mode:"quiz",ui,steps,i:0,total:steps.length,ok:0};
-  renderStep();
-}
-function failChapter(){
-  LZ=null;
-  el("learn").innerHTML=`<div class="card center"><div style="font-size:52px">❌</div>
-    <h2>So close!</h2>
-    <p class="lead">One wrong answer ends the chapter quiz. Work the lessons a little more, then test out again.</p>
-    <button class="btn" id="cqBack">Back to lessons</button></div>`;
-  el("cqBack").onclick=renderPath;
-}
-function passChapter(){
-  const U=UNITS[LZ.ui];
-  U.skills.forEach(sk=>{ if(sk.kind==="palace"||sk.kind==="story") return;   // don't "complete" a palace/story the user never actually built
-    if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id);
-    sk.items.forEach(n=>gradeKey(`sk:${sk.kind}:${n}`,"good")); });   // mark every node gold
-  bustCaches(); recomputeLevel(); saveProg(); updateMetrics(); earnTalents(20); checkBadges(); LZ=null;
-  el("learn").innerHTML=`<div class="card center"><div style="font-size:52px">💯</div>
-    <h2>Perfect — chapter mastered!</h2>
-    <p class="lead">100% on the chapter quiz. Every node in this section is now <b class="gold">gold</b> — you tested out.</p>
-    <div class="btnrow"><button class="btn" id="cqPath">Back to path</button>
-      <button class="btn ghost" id="cqJourney">See journey</button></div></div>`;
-  el("cqPath").onclick=renderPath; el("cqJourney").onclick=()=>show("journey");
-}
 function finishLesson(){
   const sk=LZ.sk;
   const rk=v=>refKey(bookNum(v.b),v.c,v.v);
@@ -4375,17 +4353,31 @@ function startMemTest(){
   memTestRecent=[]; suppressGrowth=false; reviewedThisSession=[];
   const numDue=numbersDueList();
   const due=mem.map(a=>a.join(":")).filter(k=>verseDue(k));   // verses whose next SR checkpoint has come due
-  const anyDue = numDue.length>0 || due.length>0 || palacesDueCount()>0;
+  const fresh=newVersesDueList();                             // saved 4h+ ago and not yet read back once
+  const anyDue = fresh.length>0 || numDue.length>0 || due.length>0 || palacesDueCount()>0;
   if(!mem.length && !anyDue){ renderVerse(); return; }
   // shuffle each group so items aren't quizzed in the fixed order they were learned (numbers ascending, verses in memorized order)
-  MS={ phase:"start", numQueue:shuffle(numDue.slice()), srQueue:shuffle(due.slice()), dueWork:anyDue };
+  MS={ phase:"start", newQueue:fresh.slice(), numQueue:shuffle(numDue.slice()), srQueue:shuffle(due.slice()), dueWork:anyDue };
   if(anyDue) srBanner("start");       // combined counter → Begin → numbers → verses → palaces → practice
   else practiceNext(true);            // nothing due → straight to free practice (skip the "done for today" moment)
 }
 // run the numbers phase (the due numbers), then continue to verses; called from the Begin button
 function beginDueReview(){
+  if(MS.newQueue && MS.newQueue.length) return runNewVerseReview();   // new verses first, always
   if(MS.numQueue && MS.numQueue.length){ startNumberReview(MS.numQueue.slice(), startVersePhase); return; }
   startVersePhase();
+}
+// One new verse, shown as the screen it was built on: palace, location and the scene, ready to be
+// read over and corrected. Done marks the sitting; the red X leaves it for next time.
+function runNewVerseReview(){
+  const k=(MS.newQueue||[]).shift();
+  if(!k) return beginDueReview();
+  const [b,c,v]=k.split(":").map(Number);
+  const on=()=>beginDueReview();
+  sceneNote="\u{1F331} First look back \u2014 read it over, fix anything that did not stick, then Done. No test yet.";
+  editVerseScene(b,c,v,
+    ()=>{ markFirstReview(k); creditToday(); sceneNote=""; on(); },
+    ()=>{ sceneNote=""; on(); });
 }
 function startVersePhase(){
   if(MS.srQueue && MS.srQueue.length){ MS.phase="sr"; nextMemVerse(); }   // pulls the next due verse
@@ -4547,7 +4539,7 @@ function stationName(loc){
 }
 function vsr(k){ return (Prog.verseSR||{})[k]||null; }
 function deckKeys(){ const now=Date.now(); const keepHeart=revPrefs().heart;
-  return memArr().map(a=>a.join(":")).filter(k=>{ if(isHeart(k) && !keepHeart) return false; const o=vsr(k); return !o || ((!(o.sz>now)) && !o.rd); }); } // askable = not snoozed & not already correct this round
+  return memArr().map(a=>a.join(":")).filter(k=>{ if(isHeart(k) && !keepHeart) return false; if(!firstReviewDone(k)) return false; const o=vsr(k); return !o || ((!(o.sz>now)) && !o.rd); }); } // askable = not snoozed & not already correct this round
 function deckRoundReset(){ const now=Date.now(); (Prog.memorized||[]).forEach(k=>{ const o=vsr(k); if(o && !(o.sz>now)) o.rd=false; }); saveProg(); }
 function markAnswer(k, correct, firstTry){ Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k]||(Prog.verseSR[k]=newSR());
   if(correct){ o.rd=true; o.lc=Date.now(); o.cr=firstTry?(o.cr||0)+1:0; } else { o.cr=0; } return o.cr||0; }   // any miss breaks the streak
@@ -6287,7 +6279,7 @@ const SCENE_NUDGES=[
 function startSceneWalk(s){ curScene=s; wPhase="visual"; sceneBackfill=false; renderWalk(); }
 // Backfill: let an ALREADY-memorized verse jump straight to the scene editor (skip the learn/visual phase).
 // doneRet runs after saving; cancelRet runs if they back out without saving.
-let sceneBackfill=false, sceneCancel=null;
+let sceneBackfill=false, sceneCancel=null, sceneNote="";
 function editVerseScene(b,c,v, doneRet, cancelRet){
   curScene=verseObj(b,c,v);
   walkReturn = doneRet || (()=>renderLearnedVerse(b,c,v));
@@ -6478,6 +6470,7 @@ function renderWalk(){
     : `<div class="hint" style="margin:2px 0 10px">You don't have a memory palace yet — build one in the <b>Palaces</b> tab. For now, just describe where your scene happens.</div>`;
   V.innerHTML=`<div class="card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="wClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">${palaces.length?"Which palace?":"Write your scene"}</div><button class="lsave" id="wDoneTop" title="Save & done">✓</button></div>
+      ${sceneNote?`<div class="teachbox" style="margin:0 0 10px">${sceneNote}</div>`:""}
       ${palaceSel}
       <div class="lv-ref" style="font-size:20px;margin:8px 0 4px">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
       <div class="lv-triple lv-triple-sm">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
@@ -6870,7 +6863,7 @@ function renderAcctBox(){
 /* ---- paywall ---- */
 let payTargetSkill=null;
 function openPaywall(sk){ const m=el("payModal"); if(!m) return;
-  payTargetSkill = (sk && sk.id && sk.kind!=="story") ? sk : null;   // stories/chapter-quiz can't be single-lesson bought
+  payTargetSkill = (sk && sk.id && sk.kind!=="story") ? sk : null;   // stories can't be bought as a single lesson
   const wrap=el("payLessonWrap"), btn=el("payLesson");
   if(wrap && btn){
     if(payTargetSkill){ wrap.style.display=""; const t=Prog.talents||0, afford=t>=LESSON_UNLOCK_COST;
@@ -7770,7 +7763,14 @@ let PE=null;
 // memorized verses whose scene is stored at this palace slot + room (matched by the room's text)
 function versesAtLoc(slot, room){ const out=[], vl=Prog.verseLoc||{};
   Object.keys(vl).forEach(k=>{ const l=vl[k]; if(l && l.p===slot && (l.room||"")===room && (Prog.memorized||[]).includes(k)) out.push(k); }); return out; }
-function startPalaceEdit(i, scrollRoom){ const p=Prog.palaces[i]; if(!p) return; PE={slot:i, place:p.place, stations:p.stations.slice(), scrollRoom:scrollRoom||null}; renderPalaceEdit(); }
+function startPalaceEdit(i, scrollRoom, keepDraft){
+  const p=Prog.palaces[i]; if(!p) return;
+  // Coming BACK from a verse's scene screen keeps the draft for this same palace. Stepping in to
+  // look at a verse was never meant to throw away the station names you were part-way through
+  // typing - whether you leave the verse by the red X or the green tick.
+  if(keepDraft && PE && PE.slot===i){ PE.scrollRoom=scrollRoom||null; renderPalaceEdit(); return; }
+  PE={slot:i, place:p.place, stations:p.stations.slice(), scrollRoom:scrollRoom||null}; renderPalaceEdit();
+}
 function syncPE(){ // pull the current field values into PE before a structural re-render
   const P=el("palace"); const nm=P.querySelector("#peName"); if(nm) PE.place=nm.value;
   P.querySelectorAll(".peLoc").forEach(inp=>{ PE.stations[+inp.dataset.si]=inp.value; });
@@ -7808,7 +7808,8 @@ function renderPalaceEdit(){
   // 👁️ view the verse stored at this location → its scene-edit screen; returning lands back here, scrolled to it
   P.querySelectorAll("[data-eye]").forEach(x=>x.onclick=()=>{ syncPE(); const i=+x.dataset.eye, room=PE.stations[i], slot=PE.slot;
     const vk=versesAtLoc(slot,room); if(!vk.length) return; const [b,c,v]=vk[0].split(":").map(Number);
-    const back=()=>{ show("palace"); startPalaceEdit(slot, room); };
+    const back=()=>{ show("palace"); startPalaceEdit(slot, room, true); };
+    // red X discards the verse's scene edits, green tick / Done saves them - both land back here
     editVerseScene(b,c,v, back, back); });
   // scroll the requested location to center after a round-trip from its scene
   if(PE.scrollRoom!=null){ const idx=PE.stations.indexOf(PE.scrollRoom); PE.scrollRoom=null;
