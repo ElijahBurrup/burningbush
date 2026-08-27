@@ -368,8 +368,10 @@
   #scov .scwrap{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px 20px;text-align:center;box-shadow:0 22px 60px var(--scrim)}
   #scov .sctitle{font-family:var(--font-display);font-size:23px;color:var(--gold-ink);margin-bottom:4px}
   #scov .scsub{font-size:13.5px;color:var(--muted);margin-bottom:16px;line-height:1.4}
-  #scov .scticket{position:relative;width:100%;aspect-ratio:1.5;border-radius:16px;overflow:hidden;background:var(--panel2);border:1px solid var(--line)}
-  #scov .scprize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:16px;box-sizing:border-box}
+  /* Phase names run long, so the card is taller than it is wide-ish now — the prize was spilling
+     past the top and bottom of the box on Phase 3. */
+  #scov .scticket{position:relative;width:100%;aspect-ratio:1.12;min-height:324px;border-radius:16px;overflow:hidden;background:var(--panel2);border:1px solid var(--line)}
+  #scov .scprize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:22px 18px;box-sizing:border-box;overflow:hidden}
   #scov .scicon{font-size:62px;line-height:1;filter:drop-shadow(0 0 16px var(--gold2))}
   #scov .scicon svg{width:62px;height:62px;display:block;margin:0 auto}
   #simov .scicon svg{width:54px;height:54px;display:block;margin:0 auto}
@@ -1683,8 +1685,12 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.28.0";
+const APP_VERSION="1.29.0";
 const CHANGELOG=[
+ {v:"1.29.0", d:"August 26, 2026", t:"Room for the long names", items:[
+   ["fix","<b>The phase prize fits its ticket.</b> Phase names run long — Psalms–Song of Solomon with 1–2 Thessalonians is the worst of them — and the box is taller now so nothing spills past the top or bottom. Everything else is the size it was."],
+   ["fix","<b>Reveal my scene</b> no longer appears on book questions in number and book practice."]
+ ]},
  {v:"1.28.0", d:"August 26, 2026", t:"Named and tidied", items:[
    ["new","The Library carries its <b>name and a line saying what it is</b> at the top."],
    ["new","A <b>green tick saves</b> on the daily goal screen, beside the red cross that leaves it."],
@@ -6100,10 +6106,10 @@ function renderNumTest(){
     <div class="card numtest"><div class="prompt">${prompt}</div>
       <div class="numtest-stim" style="text-align:center;margin:4px 0 8px">${stimulus}</div>
       <div class="opts">${options.map(o=>`<button class="opt" data-ok="${o===correct?1:0}">${o}</button>`).join("")}</div>
-      <button class="btn ghost sm" id="ntScene" style="width:100%;margin-top:10px">📝 Reveal my scene</button>
+      ${q.type.indexOf("b")>=0?"":`<button class="btn ghost sm" id="ntScene" style="width:100%;margin-top:10px">📝 Reveal my scene</button>`}
       <div id="ntFb"></div></div>`;
   el("ntClose").onclick=renderVerse;
-  el("ntScene").onclick=()=>showSceneReveal(n, q.type.indexOf("b")>=0);
+  if(el("ntScene")) el("ntScene").onclick=()=>showSceneReveal(n, false);   // number questions only
   V.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
     if(b.disabled) return;
     if(b.dataset.ok==="1"){                       // correct → green, strengthen, next

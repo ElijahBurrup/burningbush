@@ -17,6 +17,25 @@ const TABS = ['learn', 'verse', 'palace', 'journey', 'stories'];
 (async () => {
   const browser = await chromium().launch();
 
+  // A phase prize must fit inside its ticket. Phase names run long, and it spilled past the box.
+  describe('scratch card', () => { });
+  for (const [w, h] of WIDTHS) {
+    const page = await open(browser, { width: w, height: h, prog: SEEDED });
+    const worst = await page.evaluate(() => {
+      let over = 0, where = '';
+      phaseIdxs().forEach(idx => {
+        openPhaseScratch(idx);
+        const box = document.querySelector('#scov .scticket').getBoundingClientRect().height;
+        const need = document.querySelector('#scov .scprize').scrollHeight;
+        if (need - box > over) { over = need - box; where = UNITS[idx].name; }
+        el('scov').classList.remove('on');
+      });
+      return { over, where };
+    });
+    ok(worst.over <= 1, 'every phase prize fits its ticket at ' + w + 'x' + h + (worst.over > 1 ? ' (' + worst.where + ' over by ' + Math.round(worst.over) + 'px)' : ''));
+    await page.close();
+  }
+
   describe('tabs', () => { });
   for (const [w, h] of WIDTHS) {
     const page = await open(browser, { width: w, height: h, prog: SEEDED });
