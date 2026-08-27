@@ -370,23 +370,36 @@ const DAY = 86400000;
   const story = await $(() => {
     const ui = UNITS.findIndex(U => U.story);
     Billing.revoke(); Prog.talents = 5000; Prog.storySections = []; saveProg();
-    show('stories'); storyExpanded = new Set([ui]); renderStories();
-    const locked = el('stories').innerText;
-    const out = { header: /Creation/.test(locked), hidden: !/Noah/.test(locked), buy: !!document.querySelector('[data-buysec]') };
+    show('stories'); renderStories();
+    const grid = el('stories').innerText;
+    const out = { section: /Creation/.test(grid), hidden: !/Noah/.test(grid),
+      tiles: el('stories').querySelectorAll('[data-sgrp]').length };
+    openStorySection(ui);                       // the stories live one tap behind the tile
+    out.buy = !!document.querySelector('#storySecModal [data-buysec]');
+    out.lockedList = !/Noah/.test(el('storySecModal').innerText);
     const before = Prog.talents;
-    buyStorySection(ui, () => { }); el('spYes').click();
-    out.spent = before - Prog.talents; out.owned = storySectionOwned(ui);
-    renderStories(); out.shownAfter = /Noah/.test(el('stories').innerText);
-    Billing.grant(); Prog.storySections = []; saveProg(); renderStories();
-    out.proSeesAll = /Noah/.test(el('stories').innerText);
+    document.querySelector('#storySecModal [data-buysec]').click();
+    el('spYes').click();
+    out.spent = before - Prog.talents;
+    out.owned = storySectionOwned(ui);
+    out.shownAfter = /Noah/.test(el('storySecModal').innerText);
+    out.done = !!el('ssDone');
+    el('ssDone').click();
+    out.closed = el('storySecModal').style.display === 'none';
+    Billing.grant(); Prog.storySections = []; saveProg();
+    out.proSeesAll = storySectionOwned(ui);
     Billing.revoke();
     return out;
   });
-  ok(story.header, 'a locked section still shows its name');
-  ok(story.hidden, '…but not the stories inside');
-  ok(story.buy, '…and offers to open it');
+  ok(story.tiles > 0, 'the stories screen is a grid of sections');
+  ok(story.section, '...each named on its tile');
+  ok(story.hidden, '...with the stories themselves not on the front screen');
+  ok(story.buy, 'a locked section offers to open itself');
+  ok(story.lockedList, '...and shows no stories until it is');
   is(story.spent, 500, 'opening a section costs 500');
-  ok(story.owned && story.shownAfter, '…after which the stories are there');
+  ok(story.owned && story.shownAfter, '...after which the stories are right there');
+  ok(story.done, 'the popup has a Done button, like Profile');
+  ok(story.closed, '...which closes it');
   ok(story.proSeesAll, 'a subscriber sees every section');
 
   // ─────────────────────────────── the church deck ───────────────────────────────

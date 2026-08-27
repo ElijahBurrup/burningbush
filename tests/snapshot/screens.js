@@ -50,7 +50,8 @@ module.exports = [
   { name: 'bible/chapter-long', sel: '#journey', go: () => { show('journey'); renderChapterScreen(19, 119); } },
 
   // ---- stories & reference ----
-  { name: 'stories/list', sel: '#stories', go: () => { show('stories'); storyExpanded = new Set([0]); renderStories(); } },
+  { name: 'stories/list', sel: '#stories', go: () => { show('stories'); renderStories(); } },
+  { name: 'stories/section', sel: '#storySecModal', go: () => { const u = UNITS.findIndex(U => U.story); Billing.grant(); openStorySection(u); } },
   // a story now opens on the verse scene screen, so that is where it is captured
   { name: 'stories/lesson', sel: '#verse', go: () => { const u = UNITS.findIndex(U => U.story); startStoryLesson(UNITS[u].skills[0], 'stories', () => { }); } },
   { name: 'reference/foundations', sel: '#foundations', go: () => { show('foundations'); buildNumGrid(); buildBookTable(); } },

@@ -1680,8 +1680,13 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.26.0";
+const APP_VERSION="1.27.0";
 const CHANGELOG=[
+ {v:"1.27.0", d:"August 26, 2026", t:"Sections, not drawers", items:[
+   ["new","<b>Bible Stories is a grid</b> now, like the Library and Profile — a tile for each section, and its stories one tap behind in a popup with a red ✕ at the top and Done at the foot."],
+   ["new","Reaching for a <b>second reveal</b> no longer just refuses. It says one reveal per verse and offers to <b>walk your notes</b> instead; No leaves you exactly where you were."],
+   ["fix","A palace closes with a <b>red ✕ beside its name</b> rather than a Back bar above it."]
+ ]},
  {v:"1.26.0", d:"August 26, 2026", t:"Cleaner to read", items:[
    ["new","The bottom menu is <b>icons only</b>, all one size. You are told the name when you win the tab, and again at the top of its own page."],
    ["new","<b>One banner for the day</b>, on the Library: your goal, what is still due, your streak, and a tick that only appears when both the goal and your review are done — which is exactly what a streak day has always required. It has left the Bible page, where it never belonged."],
@@ -3584,44 +3589,68 @@ function buyStorySection(ui, after){
       saveProg(); toast("📜 Section opened ✓"); if(after) after(); },
     {icon:"📜", yes:`Yes, ${STORY_SECTION_COST} talents`});
 }
-let storyExpanded=null;
 function renderStories(){
   updateMetrics();
   const S=el("stories"); if(!S) return;
   const groups=[]; UNITS.forEach((U,ui)=>{ if(U.story) groups.push({U,ui}); });
   let doneCount=0, readyCount=0, total=0;
   groups.forEach(({U,ui})=>U.skills.forEach((sk,si)=>{ total++; if(Prog.doneSkills.includes(sk.id)) doneCount++; else if(skillUnlocked(ui,si)) readyCount++; }));
-  if(storyExpanded===null){ storyExpanded=new Set(); }   // all story groups collapsed on entry
+  // A grid of sections, like the Library and Profile. The stories themselves live one tap behind,
+  // in a popup with the same chrome: a cross at the top and Done at the foot.
   let html=`<h2>Bible Stories</h2>
-    <p class="lead">100 key stories. Each unlocks the moment you can address its opening verse — learn where it begins, and it joins your daily review.</p>
-    ${readyCount===0&&doneCount<total?`<p class="hint">Learn more chapter &amp; verse numbers in <b class="gold">Learn</b> to unlock stories — a story opens as soon as you can address its book, chapter &amp; verse.</p>`:""}`;
-  groups.forEach(({U,ui},gi)=>{
-    const done=U.skills.filter(sk=>Prog.doneSkills.includes(sk.id)).length, tot=U.skills.length;
-    const ready=U.skills.some((sk,si)=>!Prog.doneSkills.includes(sk.id)&&skillUnlocked(ui,si));
-    const open=storyExpanded.has(ui), grp=done===tot?"grp-gold":(ready?"grp-blue":"");
-    const frac=groups.length>1?(gi/(groups.length-1)).toFixed(3):0;   // 0 (lightest) → 1 (darkest) across the story sections
-    html+=`<div class="unit"><button class="grouphead story-grad ${open?"open":""} ${grp}" data-sgrp="${ui}" style="--t:${frac}"><span>${U.ic?`<span class="ghead-ic">${U.ic}</span>`:""}${U.name}</span><span class="gmeta">${done}/${tot} ${open?"▾":"▸"}</span></button>`;
-    if(open && !storySectionOwned(ui)){
-      html+=`<div class="teachbox" style="margin-top:10px;text-align:center">
-        <div style="font-size:26px">🔒</div>
-        <div style="margin:4px 0 8px"><b class="gold">${U.skills.length} stories</b> wait inside this section.</div>
-        <button class="btn sm" data-buysec="${ui}" style="width:100%">Open it · ${STORY_SECTION_COST} 🪙</button>
-        <div class="hint" style="margin-top:8px">You have ${talDisp(Prog.talents||0)} talents — or go Pro and every section opens.</div></div>`;
-    }
-    else if(open){ html+=`<div class="vlist" style="margin-top:10px">`;
-      // sort by reachability: the highest number (book, chapter OR verse) sinks to the bottom, so 4:1 comes before 2:7
-      const ord=U.skills.map((sk,si)=>({sk,si})).sort((a,b)=>storyReachKey(a.sk)-storyReachKey(b.sk)||a.si-b.si);
-      ord.forEach(({sk,si})=>{ const s=sk.story, unlocked=skillUnlocked(ui,si), isDone=Prog.doneSkills.includes(sk.id), can=unlocked||isDone;
-        const state=isDone?`<span style="color:var(--good);font-weight:800">✓ located</span>`:(unlocked?`<span class="gold" style="font-weight:800">Learn →</span>`:`<span class="muted">🔒 learn its numbers</span>`);
-        html+=`<div class="vrow ${can?"clkrow":""}" ${can?`data-story="${ui}:${si}"`:""}><div class="vt"><b class="gold">${s.n}</b><div class="muted">${s.b} ${s.c}:${s.v}</div></div><div>${state}</div></div>`; });
-      html+=`</div>`; }
-    html+=`</div>`;
-    MILESTONES.forEach(m=>{ if(m.stories && U.name.startsWith(m.after)) html+=renderMilestone(m); });   // story capstones (Creation Remembered … 100 Stories Mastered)
-  });
+    <p class="lead">100 key stories. Each unlocks the moment you can address its opening verse, and joins your daily review.</p>
+    <div class="hint" style="margin:0 0 10px">${doneCount} of ${total} located${readyCount?` · <b class="gold">${readyCount} ready now</b>`:""}</div>
+    <div class="profgrid">${groups.map(({U,ui})=>{
+      const done=U.skills.filter(sk=>Prog.doneSkills.includes(sk.id)).length, tot=U.skills.length;
+      const ready=U.skills.some((sk,si)=>!Prog.doneSkills.includes(sk.id)&&skillUnlocked(ui,si));
+      const owned=storySectionOwned(ui);
+      const sub=!owned?`🔒 ${STORY_SECTION_COST} 🪙`:(done===tot?"✓ all located":(ready?`${done}/${tot} · ready`:`${done}/${tot}`));
+      return `<button type="button" class="profbtn" data-sgrp="${ui}"><span class="pi">${U.ic||"📖"}</span><span>${U.name}</span><small>${sub}</small></button>`;
+    }).join("")}</div>`;
+  groups.forEach(({U,ui})=>{ MILESTONES.forEach(m=>{ if(m.stories && U.name.startsWith(m.after)) html+=renderMilestone(m); }); });
   S.innerHTML=html;
-  S.querySelectorAll("[data-sgrp]").forEach(h=>h.onclick=()=>{ const ui=+h.dataset.sgrp; storyExpanded.has(ui)?storyExpanded.delete(ui):storyExpanded.add(ui); renderStories(); });
-  S.querySelectorAll("[data-buysec]").forEach(b=>b.onclick=()=>buyStorySection(+b.dataset.buysec, renderStories));
-  S.querySelectorAll("[data-story]").forEach(r=>r.onclick=()=>{ const [ui,si]=r.dataset.story.split(":").map(Number); startStoryLesson(UNITS[ui].skills[si],"stories",renderStories); });
+  S.querySelectorAll("[data-sgrp]").forEach(b=>b.onclick=()=>openStorySection(+b.dataset.sgrp));
+  paintTheme();
+}
+// What a section holds: its stories in reachable order, or the offer to open it.
+function storySectionBody(ui){
+  const U=UNITS[ui];
+  if(!storySectionOwned(ui)){
+    return `<div class="teachbox" style="text-align:center">
+      <div style="font-size:26px">🔒</div>
+      <div style="margin:4px 0 8px"><b class="gold">${U.skills.length} stories</b> wait inside this section.</div>
+      <button class="btn sm" data-buysec="${ui}" style="width:100%">Open it · ${STORY_SECTION_COST} 🪙</button>
+      <div class="hint" style="margin-top:8px">You have ${talDisp(Prog.talents||0)} talents, or go Pro and every section opens.</div></div>`;
+  }
+  const ord=U.skills.map((sk,si)=>({sk,si})).sort((a,b)=>storyReachKey(a.sk)-storyReachKey(b.sk)||a.si-b.si);
+  return `<div class="vlist">${ord.map(({sk,si})=>{
+    const st=sk.story, unlocked=skillUnlocked(ui,si), isDone=Prog.doneSkills.includes(sk.id), can=unlocked||isDone;
+    const state=isDone?`<span style="color:var(--good);font-weight:800">✓ located</span>`
+      :(unlocked?`<span class="gold" style="font-weight:800">Learn →</span>`:`<span class="muted">locked</span>`);
+    return `<div class="vrow ${can?"clkrow":""}" ${can?`data-story="${ui}:${si}"`:""}><div class="vt"><b class="gold">${st.n}</b><div class="muted">${st.b} ${st.c}:${st.v}</div></div><div>${state}</div></div>`;
+  }).join("")}</div>`;
+}
+function openStorySection(ui){
+  const U=UNITS[ui];
+  const m=el("storySecModal")||(()=>{ const d=document.createElement("div"); d.id="storySecModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const draw=()=>{
+    m.innerHTML=`<div class="modal-card">
+        <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="ssClose" style="margin:0">✕</button>
+          <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${U.ic||"📖"} ${U.name}</div><span style="width:34px"></span></div>
+        <div id="ssBody">${storySectionBody(ui)}</div>
+        <button class="btn" id="ssDone" style="width:100%;margin-top:14px">Done</button>
+      </div>`;
+    const close=()=>{ m.style.display="none"; renderStories(); };
+    el("ssClose").onclick=close; el("ssDone").onclick=close;
+    m.querySelectorAll("[data-buysec]").forEach(b=>b.onclick=()=>buyStorySection(ui, draw));
+    m.querySelectorAll("[data-story]").forEach(r=>r.onclick=()=>{
+      const [gi,si]=r.dataset.story.split(":").map(Number);
+      m.style.display="none";
+      startStoryLesson(UNITS[gi].skills[si],"stories",()=>{ show("stories"); renderStories(); openStorySection(gi); });
+    });
+  };
+  draw();
+  m.style.display="flex"; raiseModal(m);
 }
 /* ---- Memory Palace builder (build 3 personal palaces) ---- */
 const PALACE_IDEAS=["A Home","A Commute","A Business","A Church","A School"];   // inspiration prompts on the naming page
@@ -4125,7 +4154,24 @@ let memTestCur=null, memTestRecent=[], memTestWrong=0, reviewedThisSession=[];
 // ONE reveal per verse, at a flat price. Three escalating peeks let a verse be uncovered entirely,
 // which is recall theatre rather than recall. After the one, the way forward is the scene itself.
 const HINT_COST=50, HINT_MAX=1;
-const NO_MORE_REVEALS="That's your one reveal — tap 🖼️ Review my scene to walk it again.";
+const NO_MORE_REVEALS="That's your one reveal. Tap Review my scene to walk it again.";
+// Reaching for a second reveal is the moment the scene is worth walking again, so ask rather than
+// simply refusing. No leaves them exactly where they were, mid-answer, with nothing lost.
+function askReviewNotes(b,c,v){
+  const m=el("oneHintModal")||(()=>{ const d=document.createElement("div"); d.id="oneHintModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card center">
+      <div style="font-size:34px">👁️</div>
+      <div style="font-size:20px;font-weight:800;margin-top:6px">One reveal per verse</div>
+      <p class="lead" style="margin:8px 0 0">You have already uncovered one part of <b class="gold">${bookName(b)} ${c}:${v}</b>.</p>
+      <p class="hint" style="margin:10px 0 0">Would you like to look over your notes for it instead?</p>
+      <button class="btn" id="ohYes" style="width:100%;margin-top:14px">Review my notes</button>
+      <button class="btn ghost" id="ohNo" style="width:100%;margin-top:8px">No, keep going</button>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; };
+  el("ohNo").onclick=close;
+  el("ohYes").onclick=()=>{ close(); const r=el("mtReview"); if(r) r.click(); };
+}
 let memHintUses=0;
 // A generic "spend talents?" confirm used before revealing a paid hint.
 function confirmSpend(title, sub, onYes, opts){ opts=opts||{};
@@ -6259,7 +6305,7 @@ function memTestRender(){
   // verse. Confirm before spending. Peeking never breaks your streak; answer the rest right and it still counts.
   V.querySelectorAll("[data-peek]").forEach(btn=>btn.onclick=()=>{
     if(btn.disabled||mtLock) return;
-    if(memHintUses>=HINT_MAX){ toast(NO_MORE_REVEALS); return; }
+    if(memHintUses>=HINT_MAX){ askReviewNotes(b,c,v); return; }
     const which=btn.dataset.peek, cost=HINT_COST;
     const partName=which==="b"?"book":which==="c"?"chapter":"verse";
     if((Prog.talents||0)<cost){ toast(`That hint costs ${cost} talents — you have ${talDisp(Prog.talents||0)}.`); return; }
@@ -8137,9 +8183,11 @@ function renderMyPalace(i){
   const status = due?`<span style="color:#ff8a8a;font-weight:800">● Spaced-repetition review due now</span>`
     : (done?`<span class="gold">✓ Full trail complete — locked in long-term memory</span>`
     : `Next review in <b class="gold">${srHuman(nextMs)}</b>`);
-  P.innerHTML=`<button class="btn ghost sm" id="palBack" style="width:auto;margin-bottom:12px">← Palaces</button>
-    <div class="card">
-      <h2 style="font-size:19px;margin:0">🏛️ ${p.place}${due?`<span class="due-dot"></span>`:""}</h2>
+  P.innerHTML=`<div class="card">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="lclose lclose-red" id="palBack" style="margin:0;flex:0 0 auto">✕</button>
+        <h2 style="font-size:19px;margin:0;flex:1;min-width:0">🏛️ ${p.place}${due?`<span class="due-dot"></span>`:""}</h2>
+      </div>
       <div class="muted" style="font-size:13px;margin:2px 0 12px">${p.stations.length} memory stations · walk them in order</div>
       <div style="background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 10px;margin-bottom:14px">
         ${srTrailHTML(p)}
