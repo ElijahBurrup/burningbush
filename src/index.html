@@ -669,7 +669,7 @@
   .rem-main input{width:20px;height:20px}
   .nhstep{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;font-size:13.5px;line-height:1.45;color:var(--ink-soft)}
   .nhstep b.n{flex:0 0 22px;height:22px;border-radius:50%;background:var(--gold);color:var(--on-accent);display:grid;place-items:center;font-size:12px;margin-top:1px}
-  /* word-picker warm-up */
+  /* word-picker warm up */
   .wpgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
   .wpopt{padding:13px 8px;border-radius:12px;border:2px solid var(--line);background:var(--panel2);color:var(--ink);font-size:15px;font-weight:700;cursor:pointer;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .wpopt.good{border-color:var(--green);background:var(--green-soft);color:var(--good)}
@@ -891,8 +891,11 @@
   /* Admin is a grid of its own, so it reads like the rest of Profile rather than a stack of bars. */
   #adminWrap{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   #adminWrap > .prof-sect,#adminWrap > #bugReportsWrap{grid-column:1/-1}
-  #adminWrap > .btn{width:100%;margin:0;aspect-ratio:1.7;display:flex;align-items:center;justify-content:center;
-    text-align:center;white-space:normal;line-height:1.2;font-size:12.5px;padding:8px 6px}
+  #adminWrap{align-items:stretch}
+  #adminWrap > .btn{width:100%;margin:0;aspect-ratio:1.15;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:7px;text-align:center;white-space:normal;line-height:1.16;font-size:12.5px;padding:10px 6px}
+  #adminWrap > .btn .abtn-ic{font-size:32px;line-height:1}
+  #adminWrap > .btn .abtn-t{display:block}
   .profgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
   .profbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px 8px;color:var(--ink);font-weight:800;font-size:14px;line-height:1.15;text-align:center;cursor:pointer;aspect-ratio:1.5}
   .profbtn .pi{font-size:26px;line-height:1}
@@ -1393,7 +1396,7 @@
   .grouphead.grp-gold .gmeta{color:var(--done-fg)}
   .grouphead.grp-blue{background:linear-gradient(135deg,var(--blue),var(--blue2));border-color:var(--accent);color:var(--on-blue)}
   .grouphead.grp-blue .gmeta{color:var(--on-blue)}
-  /* Bible-story section headers form a light→dark series (per-theme colors via --sg-hi/--sg-lo); completed (gold) still wins */
+  /* Bible story section headers form a light→dark series (per-theme colors via --sg-hi/--sg-lo); completed (gold) still wins */
   .grouphead.story-grad:not(.grp-gold){background:var(--sg-lo);background:color-mix(in srgb, var(--sg-hi), var(--sg-lo) calc(var(--t,0) * 100%));border-color:transparent;color:var(--sg-fg)}
   .grouphead.story-grad:not(.grp-gold) .gmeta{color:var(--sg-fg);opacity:.92}
   .grouphead.story-grad:not(.grp-gold) .ghead-ic{/*raw-ok*/filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
@@ -1627,11 +1630,11 @@
       <h2 style="font-size:20px;margin:0 0 4px">Unlock the whole Bible</h2>
       <p class="lead" style="font-size:13px;margin:0 0 14px">You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelation.</p>
       <div style="text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:13.5px;line-height:1.7">
-        <div style="opacity:.7;margin-bottom:6px"><b>Free forever:</b> the Major-System sounds, the Torah (Genesis–Deuteronomy), your first memory palace, and Matthew.</div>
+        <div style="opacity:.7;margin-bottom:6px"><b>Free forever:</b> the Major System sounds, the Torah (Genesis–Deuteronomy), your first memory palace, and Matthew.</div>
         <div><b class="gold">Pro unlocks:</b></div>
         <div>✦ All 66 books &amp; the balanced climb</div>
         <div>✦ Every number peg (chapters &amp; verses to 176)</div>
-        <div>✦ All 100 Bible-story lessons</div>
+        <div>✦ All 100 Bible story lessons</div>
         <div>✦ Unlimited bonus memory palaces</div>
       </div>
       <div class="hint" style="margin:0 0 8px;font-weight:700">💳 A subscription unlocks the <b class="gold">entire app, forever</b>:</div>
@@ -1680,8 +1683,14 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.27.0";
+const APP_VERSION="1.28.0";
 const CHANGELOG=[
+ {v:"1.28.0", d:"August 26, 2026", t:"Named and tidied", items:[
+   ["new","The Library carries its <b>name and a line saying what it is</b> at the top."],
+   ["new","A <b>green tick saves</b> on the daily goal screen, beside the red cross that leaves it."],
+   ["new","Admin buttons are <b>bigger, with far larger icons</b>, and every one is the same size so their tops line up."],
+   ["fix","More hyphens gone from the wording. Pronunciation guides keep theirs — EZ‑ra and MIKE‑ah are hyphenated on purpose — and so do phase titles."]
+ ]},
  {v:"1.27.0", d:"August 26, 2026", t:"Sections, not drawers", items:[
    ["new","<b>Bible Stories is a grid</b> now, like the Library and Profile — a tile for each section, and its stories one tap behind in a popup with a red ✕ at the top and Done at the foot."],
    ["new","Reaching for a <b>second reveal</b> no longer just refuses. It says one reveal per verse and offers to <b>walk your notes</b> instead; No leaves you exactly where you were."],
@@ -1741,7 +1750,7 @@ const CHANGELOG=[
  {v:"1.19.0", d:"August 26, 2026", t:"One long map", items:[
    ["new","<b>The Learn path is one scroll now</b> — nothing folds. A named rule marks each stretch: <b>The Code</b>, <b>Foundations</b>, then <b>Phase 2 through Phase 12</b>, six books in each and the numbers on their own at the end. Opening Learn brings your next lesson to the top."],
    ["new","Every phase is shaded a step lighter than the last, so two rows read as a group instead of one unbroken wall."],
-   ["new","<b>Bible stories are learned exactly like a verse</b> — the three pictures, the palace, the room and the scene, all on one screen. The five-step walk is gone."],
+   ["new","<b>Bible stories are learned exactly like a verse</b> — the three pictures, the palace, the room and the scene, all on one screen. The five step walk is gone."],
    ["fix","The first five are named as the books they are: <b>Genesis</b> through <b>Deuteronomy</b>."],
    ["fix","Bigger, clearer names under every tile."],
    ["fix","The Memory Palace section has left the path — you win it on a scratch off, and its film explains it."]
@@ -1750,7 +1759,7 @@ const CHANGELOG=[
    ["new","The Learn path keeps <b>the section you are on and the one before it</b> open, folds the rest away, and puts <b>your next lesson at the top of the screen</b>. Finish a section and the next one opens itself."],
    ["new","<b>The films have left the path.</b> None of them is a tile to hunt for any more — each arrives where it is needed, and every one you have seen waits in <b>Video Review</b>."],
    ["new","Every sixth lesson, the app offers you <b>a new memory palace</b> — and if you say yes, walks you straight into building it."],
-   ["fix","The milestone cards are gone from the Learn path. The Bible-story capstones stay where they were."]
+   ["fix","The milestone cards are gone from the Learn path. The Bible story capstones stay where they were."]
  ]},
  {v:"1.17.0", d:"August 26, 2026", t:"The Library", items:[
    ["new","<b>Verses is now your Library</b>, with its own icon and its own scratch off, and just <b>four ways in</b>: Video Review, Learn Verses, Spaced Repetition and Memorized."],
@@ -1775,7 +1784,7 @@ const CHANGELOG=[
  ]},
  {v:"1.14.0", d:"August 25, 2026", t:"The Feature Store", items:[
    ["new","<b>Profile \u2192 Feature store.</b> The app has grown a great deal, so a new account now starts with the core \u2014 learn the numbers, learn the books, build a verse, review it \u2014 and everything else waits on a switch. Each one explains what it does <i>before</i> you turn it on."],
-   ["new","Nine features can be switched: <b>Daily Goal</b>, <b>Milestones</b>, <b>Warm-Up Before Typing</b>, <b>Reference Library</b>, <b>Word for Word</b>, <b>Word Meanings</b>, <b>Practice Your Way</b>, <b>Daily Reminder</b> and <b>Caesar's Levy</b>."],
+   ["new","Nine features can be switched: <b>Daily Goal</b>, <b>Milestones</b>, <b>Warm Up Before Typing</b>, <b>Reference Library</b>, <b>Word for Word</b>, <b>Word Meanings</b>, <b>Practice Your Way</b>, <b>Daily Reminder</b> and <b>Caesar's Levy</b>."],
    ["new","They are all <b>free and included</b> \u2014 switched off only so you are not handed the whole app at once. Turn anything on or off whenever you like; nothing you have done is ever lost by switching something off."],
    ["fix","If you were already using the app, <b>you keep everything you had</b>. Only genuinely new accounts start lean."]
  ]},
@@ -1783,13 +1792,13 @@ const CHANGELOG=[
    ["new","Every verse now stands somewhere: <b>Locating</b> (learning where it lives), <b>Word for word</b> (the text itself is being tested), or <b>Known by heart</b>. A verse only moves when you say so."],
    ["new","<b>Known by heart</b> retires a verse from review and <b>frees its place in a palace</b> for another verse \u2014 while it still counts among your memorized verses, and is never asked for a scene or a room again. This is for the verses you knew long before the app."],
    ["new","<b>\u201cI know this one by heart\u201d</b> sits on a verse's own page, so you can put a verse straight at rest. Every move is reversible \u2014 bring it back and it returns to the exact station it held."],
-   ["new","A real <b>word for word test</b>: type the verse with no warm-up and no hints. One wrong word breaks the run. <b>Five clean runs</b> and the app asks whether the verse is ready to rest."],
+   ["new","A real <b>word for word test</b>: type the verse with no warm up and no hints. One wrong word breaks the run. <b>Five clean runs</b> and the app asks whether the verse is ready to rest."],
    ["new","After ten word for word practices you are asked whether to <b>add the verse to testing</b>. Both offers are asked once and remembered \u2014 a nudge, never a nag."],
    ["new","Once you have a verse in the pool, <b>review asks how you want to be tested</b>: by location, word for word, or both \u2014 and whether to include verses you have set to rest."]
  ]},
  {v:"1.12.0", d:"August 25, 2026", t:"Straight to the typing", items:[
-   ["new","The word for word warm-up can now be <b>skipped</b> \u2014 the button sits at the foot of the screen, and takes you straight to typing the verse from memory."],
-   ["fix","The warm-up tiles now show <b>just the word</b>. A trailing comma or full stop was quietly narrowing the guess; apostrophes and hyphens inside a word (\u201cGod\u2019s\u201d, \u201cwell-beloved\u201d) are part of it and stay."]
+   ["new","The word for word warm up can now be <b>skipped</b> \u2014 the button sits at the foot of the screen, and takes you straight to typing the verse from memory."],
+   ["fix","The warm up tiles now show <b>just the word</b>. A trailing comma or full stop was quietly narrowing the guess; apostrophes and hyphens inside a word (\u201cGod\u2019s\u201d, \u201cwell-beloved\u201d) are part of it and stay."]
  ]},
  {v:"1.11.0", d:"August 25, 2026", t:"Answer it your way", items:[
    ["new","In verse practice you can now choose <b>book, chapter and verse in any order</b> \u2014 whichever comes to mind first."],
@@ -1808,7 +1817,7 @@ const CHANGELOG=[
    ["fix","A tidier Profile: badges near the top, the settings you actually use above the ones you don’t, and <b>Reset all progress removed entirely</b> — wiping every verse you have hidden in your heart should never sit one tap away."],
    ["fix","Streak Freezes now cost 250 talents, with room for ten. Peek tokens are no longer sold."],
    ["fix","Caesar deals a <b>different piece of the church</b> each time — all fourteen come round before any repeats."],
-   ["fix","<b>Seven more milestones</b> along the Bible-stories track, so the encouragement keeps pace with the work."],
+   ["fix","<b>Seven more milestones</b> along the Bible stories track, so the encouragement keeps pace with the work."],
    ["fix","The S·P·Q·R note lost its stray close button — “Got it” was always enough."]
  ]},
  {v:"1.9.4", d:"August 24, 2026", t:"Tightening up before launch", items:[
@@ -1875,7 +1884,7 @@ const CHANGELOG=[
    ["new","Choosing a number now uses the same square keypad as the verse test, so the app asks for a number the same way everywhere."],
    ["new","<b>Up to three daily reminders</b>, set right there on the goal screen. Only the ones you actually use are shown — start with one and add another when you want it."],
    ["new","If reminders are not coming through, there is now a step-by-step walkthrough written for your exact phone — iPhone or Android — including the battery setting on Android that silently delays them."],
-   ["new","<b>A word-picker warm-up before you type a verse word for word.</b> Eight words appear and you tap the one that comes next: green and it moves on, red and you try again. Recognition first, then recall."]
+   ["new","<b>A word-picker warm up before you type a verse word for word.</b> Eight words appear and you tap the one that comes next: green and it moves on, red and you try again. Recognition first, then recall."]
  ]},
  {v:"1.2.0", d:"August 24, 2026", t:"Your pace, your order", items:[
    ["new","<b>Pro subscribers can now learn the books in any order</b> — start with the one God has put on your heart, not the one that comes next."],
@@ -1890,7 +1899,7 @@ const CHANGELOG=[
    ["new","Verse review now asks “Where does <i>&lt;story&gt;</i> begin?” for any verse that opens one of the 100 Bible stories."],
    ["new","God's promises are marked in purple — in every verse list and in the chapter grid."],
    ["new","📝 Reveal my scene on the number test shows your own written scene without leaving the question."],
-   ["new","The Journey tab is now <b>Bible</b>, with a Bible icon, and slides to the far-left spot once you earn it."],
+   ["new","The Journey tab is now <b>Bible</b>, with a Bible icon, and slides to the far left spot once you earn it."],
    ["new","Your daily streak now takes both halves of the day: today's goal <b>and</b> every review that came due."],
    ["fix","The Verses screen ran off the right edge — Topics, Saved and the three practice buttons were unreachable."],
    ["fix","The goal-completion track no longer covers your word for word result; it waits for “Amen”."],
@@ -2007,11 +2016,11 @@ function decodeSentence(n){ const w=pegFor(n).word, nn=(n>=0&&n<10?"0"+n:""+n), 
 // number pegs are two-digit (00–99): show low peg numbers zero-padded ("01","02","03") so the
 // two-consonant peg words (Seed 01, Sun 02, Sumo 03) read correctly. Books/sounds stay single-digit.
 // ALL numbers display as two digits (05, not 5) — books, chapters, verses, pegs. Only atomic
-// Major-System SOUNDS (0–9) stay single-digit, since there each digit IS the sound.
+// Major System SOUNDS (0–9) stay single-digit, since there each digit IS the sound.
 function dispNum(kind,n){ return (kind!=="sound" && n>=0 && n<10) ? "0"+n : ""+n; }
 function pad2(n){ return (n>=0 && n<10) ? "0"+n : ""+n; }   // two-digit for a raw book/chapter/verse number
 /* ---- alternate image words for the "change the image word" picker ----
-   Each list is Major-System verified (tools/gen-alt-pegs.js): every word decodes to the same
+   Each list is Major System verified (tools/gen-alt-pegs.js): every word decodes to the same
    two-digit code, so a user can swap Soap→Soup for 09 but never Cat (71). Generated, do not hand-edit. */
 const ALT_PEGS = {
   "00":["Sauce","Seesaw"],"01":["Seed","Side","Seat","Suit","Soda","City"],"02":["Sun","Swan","Sauna"],
@@ -2057,7 +2066,7 @@ function pegFor(n){
   else if(n>=10 && n<=99) r={word:PEGS[n], sounds:digitSounds(n)};
   else if(n>=100 && n<=176) r={word:PEGS100[n], sounds:digitSounds(n)};
   else r={word:"?", sounds:digitSounds(n)};
-  // a user-chosen image word (same Major-System code) overrides the default everywhere it's shown
+  // a user-chosen image word (same Major System code) overrides the default everywhere it's shown
   if(typeof Prog!=="undefined" && Prog && Prog.customPeg && Prog.customPeg[n]) r.word=Prog.customPeg[n];
   return r;
 }
@@ -2222,7 +2231,7 @@ const MNEM_NUM = {
 126:"A slouching teenager rolls their eyes so hard they spin into a 2 and a 6.",
 127:"An army tank rumbles over the wall, treads stamping 1-2-7 into the rubble.",
 128:"A knife spins across the kitchen and sticks in the board, blade quivering at 128.",
-129:"A fountain-pen nib scratches across parchment, ink looping a 2 into a 9.",
+129:"A fountain pen nib scratches across parchment, ink looping a 2 into a 9.",
 130:"A stack of dusty tomes topples off the shelf, spines reading 1-3-0.",
 131:"A ripe tomato splats on the wall, seeds spraying out a 1, a 3, a 1.",
 132:"A red demon pops up in a puff of smoke, pitchfork spelling 1-3-2.",
@@ -2423,7 +2432,7 @@ function pegImg(kind,n,word,big){
   return `<img class="${c}" src="${src}" alt="${word}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
     <div class="${ph}"><span>image coming</span></div>`;
 }
-// The "change the image word" picker: user chooses from Major-System-valid alternates (never freeform).
+// The "change the image word" picker: user chooses from Major System-valid alternates (never freeform).
 function pegPicker(n){
   const alts=pegAlts(n); const cur=(typeof Prog!=="undefined"&&Prog.customPeg)?Prog.customPeg[n]:null;
   if(!alts.length && !cur) return "";               // nothing valid to offer
@@ -2507,8 +2516,8 @@ function migrateProg(p){
   if(typeof p.firstWin!=="boolean") p.firstWin=false; // completed the 90-second "first verse hidden" onboarding win
   if(!("persona" in p)) p.persona=null; if(!("dailyMin" in p)) p.dailyMin=null; if(!("bibleFam" in p)) p.bibleFam=null; // intake answers (tailor copy/goalpost/pacing)
   if(!("covenant" in p)) p.covenant=null; // ISO date the user made the daily-memory resolve
-  if(!Array.isArray(p.scratchWon)) p.scratchWon=[]; if(typeof p.scratchInit!=="boolean") p.scratchInit=false; // tabs won via scratch off + one-time back-compat grant
-  if(typeof p.fiveVerseHintShown!=="boolean") p.fiveVerseHintShown=false; // one-time "a 5-streak unlocks your palace" nudge
+  if(!Array.isArray(p.scratchWon)) p.scratchWon=[]; if(typeof p.scratchInit!=="boolean") p.scratchInit=false; // tabs won via scratch off + one time back-compat grant
+  if(typeof p.fiveVerseHintShown!=="boolean") p.fiveVerseHintShown=false; // one time "a 5-streak unlocks your palace" nudge
   p.msSeen=obj(p.msSeen); // milestones the user has already seen expanded (collapsed thereafter)
   p.verseLoc=obj(p.verseLoc); // where each verse's scene lives: {refKey:{p:palaceIndex, room}}
   p.w4w=obj(p.w4w); // per-verse word for word practice: {refKey:{count, times:[ts...]}}
@@ -2531,11 +2540,11 @@ function migrateProg(p){
   { const sr=p.verseSR||{}; Object.keys(sr).forEach(k=>{ const o=sr[k];
       if(o && o.r0===undefined) o.r0=o.learnedAt||1; }); }   // legacy verses: treat the first look-back as done
   if(!p.features||typeof p.features!=="object") p.features={};   // which features are switched on
-  if(typeof p.featuresInit!=="boolean") p.featuresInit=false;     // has the one-time grandfathering run?
+  if(typeof p.featuresInit!=="boolean") p.featuresInit=false;     // has the one time grandfathering run?
   if(!p.ntPrefs||typeof p.ntPrefs!=="object") p.ntPrefs={};   // number-practice set-up: which forms, how many
   p.piecesUsed=arr(p.piecesUsed);                       // church pieces already built, so none repeats early
   if(typeof p.palaceSlots!=="number") p.palaceSlots=0;  // extra palace slots bought with talents
-  p.storySections=arr(p.storySections);                 // Bible-story sections bought with talents
+  p.storySections=arr(p.storySections);                 // Bible story sections bought with talents
   if(typeof p.blessIdx!=="number") p.blessIdx=0;        // rotates the word for word blessing
   if(typeof p.paceIdx!=="number") p.paceIdx=0;          // rotates the "little and often" verse
   if(typeof p.taxAt!=="number") p.taxAt=0;              // 0 = never assessed (set when the Rome letter lands)
@@ -2648,7 +2657,7 @@ function saveProg(){
 // Free tier: The Code (sounds), the Torah's five books, your first memory palace, and Matthew.
 // Everything else (the rest of the Bible, bonus palaces, the number pegs, Bible Stories) is Pro.
 const FREE_SKILLS = new Set([
-  "snd:0-4","snd:5-9",                       // the Major-System sounds (foundation)
+  "snd:0-4","snd:5-9",                       // the Major System sounds (foundation)
   "num:1","num:2","num:3","num:4","num:5",   // the Torah · Genesis–Deuteronomy
   "palace:0",                                // your first memory palace
   "book:40"                                  // Matthew
@@ -2855,7 +2864,7 @@ function updateMetrics(){
   updateAppBadge();
   updateTabLocks();
 }
-// Home-screen icon badge: show the count of spaced repetition items due today (installed PWA).
+// Home screen icon badge: show the count of spaced repetition items due today (installed PWA).
 function updateAppBadge(){
   try{
     const due=(versesDueCount?versesDueCount():0)+(palacesDueCount?palacesDueCount():0);
@@ -2875,7 +2884,7 @@ const SCRATCH_LADDER=[
      reqs:[{label:"Finish the Foundation — books 1–5 &amp; Matthew", done:()=>foundationsDone()}]},
   {tab:"palace",  icon:"🏛️", name:"Memory Palaces",  desc:"Build your own palaces — walk a familiar place and leave a verse at each spot.",  gate:()=>Prog.memorized.length>=5 && (Prog.bestStreak||0)>=5,
      reqs:[{label:"Memorize 5 verses", done:()=>Prog.memorized.length>=5, prog:()=>`${Math.min(5,Prog.memorized.length)}/5`},
-           {label:"Hit a 5-answer streak in the verse test", done:()=>(Prog.bestStreak||0)>=5, prog:()=>`best ${Prog.bestStreak||0}/5`}]},
+           {label:"Hit a 5 answer streak in the verse test", done:()=>(Prog.bestStreak||0)>=5, prog:()=>`best ${Prog.bestStreak||0}/5`}]},
   {tab:"journey", icon:"📕", iconHtml:()=>bibleIconSVG(), name:"Bible",    desc:"See the whole Bible open before you — every book, chapter and verse you can reach.", gate:()=>Prog.memorized.length>=15 && palaceCount()>=3,
      reqs:[{label:"Memorize 15 verses", done:()=>Prog.memorized.length>=15, prog:()=>`${Math.min(15,Prog.memorized.length)}/15`},
            {label:"Build 3 memory palaces", done:()=>palaceCount()>=3, prog:()=>`${Math.min(3,palaceCount())}/3`}]},
@@ -2922,13 +2931,13 @@ function updateTabLocks(){
   syncTabOrder(false);   // Bible sits far left once earned; back in place when it isn't
   if(!scratchSimActive && pend>=0 && pend!==scratchOffered){ scratchOffered=pend; setTimeout(()=>toast("🎫 You earned a scratch off! Tap a flashing golden ticket below 👇"),450); }
   if(pend<0) scratchOffered=-1;
-  // once the user has 5 verses, remind them a 5-answer streak in the verse test unlocks the next ticket
+  // once the user has 5 verses, remind them a 5 answer streak in the verse test unlocks the next ticket
   if(!scratchSimActive && Prog.memorized.length>=5 && (Prog.bestStreak||0)<5 && !tabWon("palace") && !Prog.fiveVerseHintShown){
     Prog.fiveVerseHintShown=true; saveProg(); setTimeout(showScratchReqs, 500);
   }
 }
 
-// The Bible tab takes the far-left slot once it is earned, and returns to its place when it
+// The Bible tab takes the far left slot once it is earned, and returns to its place when it
 // isn't — which is what makes the scratch off simulation start from a true first-boot nav.
 // animate:true plays the slide (FLIP: measure, reorder, then run each button home).
 const TAB_ORDER=["learn","verse","palace","journey","stories"];
@@ -3249,7 +3258,7 @@ const VIDEOS = {
   major: {src:"", skill:"video:major", title:"How the Major System works", sub:"Ten simple sounds turn any number into a picture — the key to everything.", done:"I watched it →"},
   verse: {src:"", skill:"video:verse", title:"How to create a verse scene", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse", done:"I watched it →"},
   palace:{src:"", skill:"video:palace", title:"What is a Memory Palace?", sub:"Walk a place you know and leave each item at a spot — do it once and the order sticks.", cta:"palace", done:"I watched it →"},
-  sr:    {src:"", skill:"video:sr", title:"How spaced repetition locks it in", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long-term memory.", cta:"sr", done:"I watched it →"},
+  sr:    {src:"", skill:"video:sr", title:"How spaced repetition locks it in", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long term memory.", cta:"sr", done:"I watched it →"},
   recall:{src:"", skill:"video:recall", title:"When a verse won't come", sub:"A blank is not a failure — it is the moment the scene gets stronger. Here is what to do with it.", done:"I watched it →"}
 };
 // Each entry carries an empty src until the films are recorded; the screen falls back to the
@@ -3427,7 +3436,7 @@ function nextFocus(){
   if(!tabWon("palace")){
     const v=Prog.memorized.length, s=Prog.bestStreak||0;
     if(v<5) return `memorize ${5-v} more verse${5-v===1?"":"s"} toward your Memory Palace`;
-    if(s<5) return "hit a 5-answer streak in the verse test to unlock your palace";
+    if(s<5) return "hit a 5 answer streak in the verse test to unlock your palace";
     return "scratch your golden ticket 🎫";
   }
   return nextSkillLabel() || "keep climbing the Word";
@@ -3738,7 +3747,7 @@ function renderPalacePractice(){
     strengthen("sk:palace:"+PP.slot); saveProg(); updateMetrics(); checkBadges();
     const done=stored&&palaceTrailDone(stored), nextMs=stored?palaceNextReviewMs(stored):null;
     const trailMsg = !stored ? "" : done
-      ? "🕊️ You've walked the whole spaced repetition trail — this palace is kept in long-term memory."
+      ? "🕊️ You've walked the whole spaced repetition trail — this palace is kept in long term memory."
       : `Next spaced repetition review in <b class="gold">${srHuman(nextMs)}</b>.`;
     const ret=PP.ret; PP=null;
     L.innerHTML=`<div class="card center"><div style="font-size:52px">🏛️</div><h2>Palace refreshed!</h2>
@@ -4361,7 +4370,9 @@ function renderVerse(){
 
   // ---- HUB: six big buttons; review last ----
   const dueAll=reviewDueCount();   // numbers + verses + palaces due for spaced repetition today
-  V.innerHTML=`${taxWarnHTML()}${feat("goal")?`<div class="goalbar" id="goalBtn">${libStatusHTML()}</div>`:""}
+  V.innerHTML=`<h2 style="margin:0 0 2px">Library</h2>
+    <p class="hint" style="margin:0 0 10px">Everything you have hidden away, and every way to practise it.</p>
+    ${taxWarnHTML()}${feat("goal")?`<div class="goalbar" id="goalBtn">${libStatusHTML()}</div>`:""}
     <div class="versehub">
       <button class="vhub sq ${dueAll?"hasdue":""}" id="vMemTest"><span class="vi">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>
       <button class="vhub sq" data-view="mem"><span class="vi">${heartIconSVG()}</span><span>Memorized</span><small>${mem.length}</small></button>
@@ -4522,7 +4533,7 @@ function openReviewSetup(){
   const hearts=heartCount();
   const ROWS=[
     {k:"loc",   t:"Location",      s:"Where is this verse? Book, chapter and verse."},
-    {k:"w4w",   t:"Word for word", s:"Type it from memory \u2014 no warm-up, no hints. "+w4wPoolSize()+" verse"+(w4wPoolSize()===1?"":"s")+" in the pool."},
+    {k:"w4w",   t:"Word for word", s:"Type it from memory \u2014 no warm up, no hints. "+w4wPoolSize()+" verse"+(w4wPoolSize()===1?"":"s")+" in the pool."},
   ];
   if(hearts) ROWS.push({k:"heart", t:"Include verses known by heart", s:"They are resting, but you can be asked anyway \u2014 both kinds of question. "+hearts+" verse"+(hearts===1?"":"s")+"."});
   const paint=()=>{
@@ -4652,12 +4663,12 @@ const FEATURES=[
   what:"Set how much you want to do each day \u2014 new verses, book images or recitations \u2014 and watch the track fill as you go."},
  {id:"badges", on:true, icon:"\u{1F396}\uFE0F", name:"Milestones",
   what:"Marks along the way, from your first verse to a thousand, named after the moments in Scripture they echo."},
- {id:"wordpick", on:true, icon:"\u{1F9E9}", name:"Warm-Up Before Typing",
+ {id:"wordpick", on:true, icon:"\u{1F9E9}", name:"Warm Up Before Typing",
   what:"Before you type a verse from memory, tap the next word from eight choices. Recognition before recall \u2014 it shows you where the gaps are. Turn it off to go straight to typing."},
  {id:"reference", on:true, icon:"\u{1F4DA}", name:"Reference Library",
   what:"The whole number grid and the book table in one place, to look up any peg or any book without leaving what you are doing."},
  {id:"w4w", on:false, icon:"\u{1F5E3}\uFE0F", name:"Word for Word",
-  what:"Learn to recite verses by typing them out, then take them through testing \u2014 no warm-up, no hints \u2014 until they are known by heart. Adds a stage to every verse and a choice of how you are reviewed."},
+  what:"Learn to recite verses by typing them out, then take them through testing \u2014 no warm up, no hints \u2014 until they are known by heart. Adds a stage to every verse and a choice of how you are reviewed."},
  {id:"dict", on:false, icon:"\u{1F4DC}", name:"Word Meanings",
   what:"Press and hold any word in a verse to see what it meant in the original Hebrew or Greek, its Strong's number, and where else it is used."},
  {id:"ntsetup", on:false, icon:"\u{1F39B}\uFE0F", name:"Practice Your Way",
@@ -4793,7 +4804,7 @@ function growVerseHTML(){ const r=GROW_VERSES[Math.floor(Date.now()/DAY)%GROW_VE
 function showGrowthEncouragement(){
   const V=el("verse");
   V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🌾</div><h2 class="gold">These are well established</h2>
-    <p class="lead">Every verse you're holding came back cleanly, 5+ times running in the last two weeks — they're settling into long-term memory. Time to <b>press forward</b>: learn a new book and hide more of the Word in your heart.</p>
+    <p class="lead">Every verse you're holding came back cleanly, 5+ times running in the last two weeks — they're settling into long term memory. Time to <b>press forward</b>: learn a new book and hide more of the Word in your heart.</p>
     ${growVerseHTML()}
     <div class="btnrow" style="margin-top:12px"><button class="btn blue" id="grLearn">Learn something new →</button><button class="btn ghost" id="grStay">Keep reviewing anyway</button></div></div>`;
   el("grLearn").onclick=()=>show("learn");
@@ -4869,10 +4880,10 @@ function doneForToday(){
   el("dtFin").onclick=renderVerse;
 }
 function dayKey(d){ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }   // local-day identity for the daily streak
-// Streak Freeze power-ups: earned at day-streak & answer-streak milestones, auto-spent to save a streak when a day is missed.
+// Streak Freeze power-ups: earned at day streak & answer-streak milestones, auto-spent to save a streak when a day is missed.
 const FREEZE_MAX=10;
 function freezeMax(){ return FREEZE_MAX; }
-const DAY_FREEZE=[3,7,14,30,60,100,150,200,300,365];   // day-streak milestones that grant a freeze
+const DAY_FREEZE=[3,7,14,30,60,100,150,200,300,365];   // day streak milestones that grant a freeze
 const ANS_FREEZE=[25,50,100,200,500];                   // correct-in-a-row milestones that grant a freeze
 function grantFreeze(key, reason){
   if(Prog.freezeAwards.includes(key)) return;           // one grant per milestone, ever
@@ -4963,9 +4974,9 @@ function goalBarHTML(){ const c=goalCount(), t=goalToday(), met=c>=t;
 }
 // the memorized verse with the FEWEST words that isn't mastered (10×) and hasn't been practiced yet today
 /* ---- The word for word TEST ---------------------------------------------------------------
-   PRACTICE is the flow from the hub: a peek at the text, the word-pick warm-up, a reveal-a-letter
+   PRACTICE is the flow from the hub: a peek at the text, the word-pick warm up, a reveal-a-letter
    hint, three a day. It counts attempts (Prog.w4w) and asks nothing of you.
-   A TEST is the typing screen ALONE - no preview, no warm-up, no hint - and a single wrong word
+   A TEST is the typing screen ALONE - no preview, no warm up, no hint - and a single wrong word
    breaks it. Five clean passes in a row is what earns "known by heart", which is why the bar has
    to be higher than practice: it retires a verse from review and gives its palace station back. */
 const W4W_TEST_CR=5, W4W_PRACTICE_FOR_POOL=10;
@@ -4994,7 +5005,7 @@ function openStagePromote(b,c,v,k,to,after){
   const body = to==="w4w" ? {
       icon:"\u{1F5E3}\uFE0F", ttl:"Ten times through",
       lead:`You have recited <b class="gold">${ref}</b> word for word ten times.`,
-      note:"Add it to word for word testing? You will be asked to type it from memory with no warm-up and no hints \u2014 and it stays in your usual review as well.",
+      note:"Add it to word for word testing? You will be asked to type it from memory with no warm up and no hints \u2014 and it stays in your usual review as well.",
       yes:"Yes \u2014 test me on the words", no:"Not yet" }
     : {
       icon:"\u{1F49B}", ttl:"Five in a row, word for word",
@@ -5077,7 +5088,7 @@ function openGoalSettings(){
       }});
     });
   };
-  m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose" id="gsClose">✕</button><div style="flex:1;text-align:center;font-weight:800">Daily goal</div><span style="width:34px"></span></div>
+  m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose lclose-red" id="gsClose">✕</button><div style="flex:1;text-align:center;font-weight:800">Daily goal</div><button class="lsave" id="gsTick" title="Save">✓</button><span style="display:none" style="width:34px"></span></div>
     <p class="hint">How many things — new verses, book images or word for word practices — will you do each day?</p>
     <div class="prof-sect" style="margin-top:12px">How do you want to set it?</div>
     <div class="goalseg">${GOAL_MODES.map(x=>`<button class="goalseg-b ${draft.mode===x[0]?"on":""}" data-mode="${x[0]}">${x[1]}</button>`).join("")}</div>
@@ -5087,6 +5098,7 @@ function openGoalSettings(){
     <button class="btn" id="gsSave" style="width:100%;margin-top:16px">Save</button></div>`;
   m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("gsClose").onclick=()=>m.style.display="none";
+  if(el("gsTick")) el("gsTick").onclick=()=>el("gsSave").click();   // the tick is the Save button, at the top
   m.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{
     draft.mode=b.dataset.mode;
     m.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("on",x===b));
@@ -6140,7 +6152,7 @@ function finishNumberTest(){
 }
 let mtSel={b:0,c:0,v:0}, mtLock=false;   // current picks; mtLock freezes the board after the answer is revealed
 const MT_BOOKCHOICES=12;                  // book multiple-choice count — the most that fits without scrolling
-// look-alike / sound-alike books that always appear together as decoys to trick the eye (e.g. 2 Corinthians ↔ 2 Chronicles)
+// look alike / sound-alike books that always appear together as decoys to trick the eye (e.g. 2 Corinthians ↔ 2 Chronicles)
 const BOOK_CONF_GROUPS=[
   [19,20],                      // Psalms ↔ Proverbs — always offered together
   [46,13],[47,14],[45,13,14],   // Corinthians ↔ Chronicles (by number), Romans near Chronicles
@@ -6173,10 +6185,10 @@ const BOOK_FAMILY={};
 function memTestRender(){
   const V=el("verse"), b=memTestCur[0], c=memTestCur[1], v=memTestCur[2], k=knownNumbers();
   mtSel={b:0,c:0,v:0}; mtLock=false;
-  // book choices for the picker: the correct book + a short set of decoys. Look-alike books (confusables) always come first.
+  // book choices for the picker: the correct book + a short set of decoys. Look alike books (confusables) always come first.
   let decoys=[];
   (BOOK_FAMILY[b]||[]).forEach(x=>{ if(x!==b && !decoys.includes(x)) decoys.push(x); });   // every same-name book, always
-  shuffle([...(BOOK_CONF[b]||[])]).forEach(x=>{ if(x!==b && decoys.length<MT_BOOKCHOICES-1 && !decoys.includes(x)) decoys.push(x); });  // always include the trap look-alikes
+  shuffle([...(BOOK_CONF[b]||[])]).forEach(x=>{ if(x!==b && decoys.length<MT_BOOKCHOICES-1 && !decoys.includes(x)) decoys.push(x); });  // always include the trap look alikes
   const known=[]; for(let bb=1;bb<=66;bb++) if(k.has(bb)&&bb!==b&&!decoys.includes(bb)) known.push(bb); shuffle(known);
   known.forEach(x=>{ if(decoys.length<MT_BOOKCHOICES-1) decoys.push(x); });
   if(decoys.length<MT_BOOKCHOICES-1){ const pool=[]; for(let bb=1;bb<=66;bb++) if(bb!==b&&!decoys.includes(bb)) pool.push(bb); shuffle(pool); while(decoys.length<MT_BOOKCHOICES-1&&pool.length) decoys.push(pool.pop()); }
@@ -6569,12 +6581,12 @@ const SCENE_NUDGES=[
   "A verse without a scene fades fast. Leave it blank for now?",
   "Even one wild sentence makes this verse yours. Skip it anyway?",
   "\"Write the vision, and make it plain.\" Jot your scene before you go?",
-  "Ninety seconds now saves you re-learning it later. Leave it blank?",
+  "Ninety seconds now saves you relearning it later. Leave it blank?",
   "Picture it once, keep it forever. Skip the scene this time?",
   "The Word hidden in your heart starts with a picture. Leave it empty?",
   "Your imagination is the glue that holds it. Sure you want to skip your scene?",
   "\"Let the word of Christ dwell in you richly.\" Give it a home — write your scene?",
-  "Slow down and see it. A blank scene is a verse half-learned — skip anyway?"
+  "Slow down and see it. A blank scene is a verse half learned — skip anyway?"
 ];
 function startSceneWalk(s){ curScene=s; wPhase="visual"; sceneBackfill=false; renderWalk(); }
 // Backfill: let an ALREADY-memorized verse jump straight to the scene editor (skip the learn/visual phase).
@@ -6954,7 +6966,7 @@ const cellOpen=new Set(), bookOpen=new Set();
     const n=+r.dataset.n, dd=el("bd"+n);
     if(dd.style.display==="none"){ dd.style.display="table-row"; bookOpen.add(n); } else { dd.style.display="none"; bookOpen.delete(n); }
   });
-  // shared: pick a Major-System-valid image word straight from either reference table
+  // shared: pick a Major System-valid image word straight from either reference table
   document.getElementById("tab-numbers")?.addEventListener("click",tablePegPick);
   document.getElementById("tab-books")?.addEventListener("click",tablePegPick);
   function tablePegPick(e){
@@ -7581,6 +7593,15 @@ function buildProfileGrid(){
     const ia=PROF_ORDER.indexOf(a.title), ib=PROF_ORDER.indexOf(b.title);
     return (ia<0?99:ia)-(ib<0?99:ib);
   });
+  // Each admin button starts with an emoji and then its label; lift the emoji out so it can be
+  // sized properly and sit above the words, which also makes every button the same shape.
+  const aw=el("adminWrap");
+  if(aw) aw.querySelectorAll(":scope > .btn").forEach(b=>{
+    if(b.querySelector(".abtn-ic")) return;
+    const m=b.textContent.trim().match(/^(\S+)\s+([\s\S]+)$/);
+    if(!m) return;
+    b.innerHTML="<span class=\"abtn-ic\">"+m[1]+"</span><span class=\"abtn-t\">"+m[2]+"</span>";
+  });
   PROF_PANELS=panels;
   card.insertBefore(grid, done);
   card.insertBefore(holder, done);
@@ -7886,7 +7907,7 @@ function startWordForWord(b,c,v,ret){
 /* ---- Word picker: choose the next word from 8 candidates before typing it free-form.
    Recognition before recall — it warms the verse up and shows you where the gaps are. ---- */
 const WORDPICK_CHOICES=8;
-const WORDPICK_MAX=0;   // 0 = the whole verse; set a number to cap the warm-up on long verses
+const WORDPICK_MAX=0;   // 0 = the whole verse; set a number to cap the warm up on long verses
 const KJV_COMMON=["the","and","of","to","in","that","he","shall","unto","for","his","they","be","is","with","not","all",
 "thou","thee","thy","was","which","my","me","him","them","it","are","said","LORD","God","ye","have","will","from","as",
 "but","by","their","upon","were","when","this","man","men","one","us","so","there","hath","then","let","heart","word",
@@ -7922,11 +7943,11 @@ function renderWordPick(){
       <div class="lv-topbar"><button class="lclose" id="wpClose" style="margin:0">✕</button>
         <div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(WP.b)} ${WP.c}:${WP.v}</div>
         <div class="ttcount ${done?"ttgood":""}">${done}/${WP.stop}</div></div>
-      <p class="hint" style="text-align:center;margin:0 0 6px">Warm-up — tap the word that comes next.</p>
+      <p class="hint" style="text-align:center;margin:0 0 6px">Warm up — tap the word that comes next.</p>
       <div class="ttdisplay" id="wpDisplay"><span class="ttdone">${said}</span>${said?"":`<span style="color:var(--muted)">the verse builds here as you go…</span>`}</div>
       <div class="wpgrid">${WP.opts.map(w=>`<button type="button" class="wpopt" data-w="${w.replace(/"/g,"&quot;")}">${wpLabel(w)}</button>`).join("")}</div>
       <div class="hint" id="wpFb" style="text-align:center;margin-top:10px">&nbsp;</div>
-      <button class="btn ghost sm" id="wpSkip" style="width:100%;margin-top:8px">Skip the warm-up — type it from memory →</button>
+      <button class="btn ghost sm" id="wpSkip" style="width:100%;margin-top:8px">Skip the warm up — type it from memory →</button>
     </div>`;
   const disp=el("wpDisplay"); disp.scrollTop=disp.scrollHeight;
   el("wpClose").onclick=()=>{ const r=WP.ret; WP=null; r?r():renderVerse(); };
@@ -7952,7 +7973,7 @@ function w4wLockScreen(b,c,v,ret){
       <h2 style="font-size:20px;margin:8px 0 2px">Come apart and rest a while</h2>
       <div style="font-weight:800;color:var(--gold-ink);margin:2px 0">${bookName(b)} ${c}:${v}</div>
       <p class="lead" style="margin:8px 0">You've completed <b class="gold">${Math.min(r.count,10)} of 10</b> word for word practices on this verse.</p>
-      <p class="lead" style="margin:0"><b>Next practice unlocks ${fmtWhen(w4wNextAllowed(refKey(b,c,v)))}.</b> Spacing your reps is what moves a verse into long-term memory.</p>
+      <p class="lead" style="margin:0"><b>Next practice unlocks ${fmtWhen(w4wNextAllowed(refKey(b,c,v)))}.</b> Spacing your reps is what moves a verse into long term memory.</p>
       <button class="btn" id="w4wBack" style="margin-top:16px">Back to Verses</button></div>`;
   el("w4wClose").onclick=()=>ret?ret():renderVerse(); el("w4wBack").onclick=()=>ret?ret():renderVerse();
 }
@@ -8079,8 +8100,8 @@ function w4wTestResult(b,c,v,vkey,ret){
   };
 }
 /* =================== MEMORY PALACE (Method of Loci) =================== */
-// Pre-built palaces for SEQUENCES the Major System handles poorly (ordered lists).
-// Ready-made palaces: each is ONE familiar room walked in order, its standard items pre-loaded with a useful Bible list.
+// Prebuilt palaces for SEQUENCES the Major System handles poorly (ordered lists).
+// Ready made palaces: each is ONE familiar room walked in order, its standard items pre-loaded with a useful Bible list.
 const PALACES=[
  {id:"ten",icon:"📜",name:"The Ten Commandments",ref:"Exodus 20:3–17",place:"Walk through your KITCHEN",
   stations:[
@@ -8169,7 +8190,7 @@ function renderPalace(){
             <div style="margin-top:12px">${srTrailHTML(p)}</div></div>`;
         }).join("");
       })():""}
-    <div class="prof-sect" style="margin-top:16px">Ready-made palaces</div>
+    <div class="prof-sect" style="margin-top:16px">Ready made palaces</div>
     ${PALACES.map(p=>`<div class="palace-card" data-pal="${p.id}"><h3>${p.icon} ${p.name}</h3><p>${p.ref} · ${p.stations.length} stations</p></div>`).join("")}
     <div class="callout" style="margin-top:14px"><b>How to use it:</b> open one, close your eyes, and walk the place in order. Each spot hands you the next item. Come back and walk it again tomorrow.</div>`;
   el("palAdd").onclick=startNewPalace;
@@ -8181,7 +8202,7 @@ function renderMyPalace(i){
   const p=Prog.palaces[i], P=el("palace");
   const due=palaceDue(p), done=palaceTrailDone(p), nextMs=palaceNextReviewMs(p);
   const status = due?`<span style="color:#ff8a8a;font-weight:800">● Spaced-repetition review due now</span>`
-    : (done?`<span class="gold">✓ Full trail complete — locked in long-term memory</span>`
+    : (done?`<span class="gold">✓ Full trail complete — locked in long term memory</span>`
     : `Next review in <b class="gold">${srHuman(nextMs)}</b>`);
   P.innerHTML=`<div class="card">
       <div style="display:flex;align-items:center;gap:10px">
@@ -8298,7 +8319,7 @@ wireLogin();
 wirePaywall();
 renderAcctBox();
 recomputeLevel();
-// One-time back-compat: existing users keep whatever tabs the old system already unlocked, so the
+// One time back-compat: existing users keep whatever tabs the old system already unlocked, so the
 // new scratch off ladder never revokes access. Fresh users start with nothing won (ceremonies fire live).
 if(!Prog.scratchInit){
   Prog.scratchInit=true;
@@ -8635,7 +8656,7 @@ const ScratchSim = (()=>{
   el("simExit").onclick=end;
   return {
     begin(){ realWon=Prog.scratchWon.slice(); scratchSimActive=true; Prog.scratchWon=[]; scratchOffered=-1;
-      updateTabLocks(); syncTabOrder(false);   // Learn back in the far-left slot, exactly as a new user sees it
+      updateTabLocks(); syncTabOrder(false);   // Learn back in the far left slot, exactly as a new user sees it
       i=0; openRung(); }
   };
 })();
