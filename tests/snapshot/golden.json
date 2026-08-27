@@ -1,21 +1,21 @@
 {
  "classic/learn/path": {
-  "h": "ef8c9194f93b346d",
+  "h": "c8f44b62b61f90e1",
   "len": 5801,
   "els": 125,
   "buttons": 39,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Video ★ Sounds 0–4 ★ Sou"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
  },
  "classic/verse/hub": {
-  "h": "cb8bc18721f17581",
-  "len": 2096,
-  "els": 44,
+  "h": "8ae8268a6c01e09f",
+  "len": 2749,
+  "els": 53,
   "buttons": 7,
-  "svgs": 2,
+  "svgs": 3,
   "imgs": 0,
-  "text": "🎯 Today's goal 0/1 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review none yet 📖 Practi"
+  "text": "🎯 1 more to reach today's goal 🔥 4 🧊 2 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Rev"
  },
  "classic/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -36,7 +36,7 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "classic/verse/memorized": {
-  "h": "7f4a1fca4568c5a5",
+  "h": "293d8a7a91cbb666",
   "len": 2142,
   "els": 64,
   "buttons": 5,
@@ -72,8 +72,8 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "classic/wizard/learned": {
-  "h": "c4f27714d04eab1b",
-  "len": 3997,
+  "h": "273f0142e4da08b0",
+  "len": 4000,
   "els": 90,
   "buttons": 9,
   "svgs": 0,
@@ -117,13 +117,13 @@
   "text": "🙏 Hidden in your heart “Thy word have I hid in mine heart, that I might not sin against thee.” Psalms 119:11 John 3:16 "
  },
  "classic/practice/w4w-locked": {
-  "h": "4314e874a4c9d648",
+  "h": "f2b587f923252bd7",
   "len": 702,
   "els": 10,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word-for-word practices on this verse. Next practice "
+  "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word for word practices on this verse. Next practice "
  },
  "classic/practice/num-setup": {
   "h": "508cdf1170f8dd28",
@@ -189,13 +189,13 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "classic/bible/whole": {
-  "h": "3f76c609b1780ef6",
-  "len": 10567,
-  "els": 223,
+  "h": "10dcfaa690410783",
+  "len": 10181,
+  "els": 218,
   "buttons": 71,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible ✓ You're caught up today 🔥 4-day 🧊 2 · ○○○○○ 0/5 The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03"
+  "text": "Bible The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20"
  },
  "classic/bible/book": {
   "h": "eee6ef9a8311676a",
@@ -252,13 +252,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "035faae1408090f2",
+  "h": "259f3b4a12e04df9",
   "len": 15766,
   "els": 370,
   "buttons": 45,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.25.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.26.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "classic/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -270,31 +270,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "classic/modal/goal-same": {
-  "h": "cd7aabcced108369",
+  "h": "8232738dbad0eaee",
   "len": 2021,
   "els": 31,
   "buttons": 9,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "classic/modal/goal-week": {
-  "h": "a29f991975cb5304",
+  "h": "85b131eb84f6dae4",
   "len": 2177,
   "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "classic/modal/goal-days": {
-  "h": "8cc8bc0a62f4d9b8",
+  "h": "e3d43e192a06460a",
   "len": 2786,
   "els": 49,
   "buttons": 15,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "classic/modal/paywall": {
   "h": "36252831c85e7803",
@@ -315,13 +315,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "5b73dc6c8e018d46",
-  "len": 38047,
-  "els": 765,
+  "h": "542c44e16450dbfa",
+  "len": 39638,
+  "els": 796,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.25.0 August 26, 2026 One tap, not two NEW Feature store , What’s new , Get the app and Reference li"
+  "text": "✕ Version history v1.26.0 August 26, 2026 Cleaner to read NEW The bottom menu is icons only , all one size. You are told"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -378,13 +378,13 @@
   "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
  },
  "classic/modal/promote-pool": {
-  "h": "f1c2c75dcb04b63d",
+  "h": "8fe7de1a891b36ef",
   "len": 649,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word-for-word testing? You will be a"
+  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word for word testing? You will be a"
  },
  "classic/modal/promote-heart": {
   "h": "d3d5c66fb1828d8f",
@@ -459,22 +459,22 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "illumined/learn/path": {
-  "h": "ef8c9194f93b346d",
+  "h": "c8f44b62b61f90e1",
   "len": 5801,
   "els": 125,
   "buttons": 39,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Video ★ Sounds 0–4 ★ Sou"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
  },
  "illumined/verse/hub": {
-  "h": "0aae13c83b601c07",
-  "len": 2094,
-  "els": 44,
+  "h": "e3d2ec466a4dc7ec",
+  "len": 2730,
+  "els": 53,
   "buttons": 7,
-  "svgs": 2,
+  "svgs": 3,
   "imgs": 0,
-  "text": "🙏 Faithful today 15/1 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review 2 📖 Practice V"
+  "text": "✅ Caught up today 🔥 4 🧊 2 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review 2 📖 Pract"
  },
  "illumined/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -495,7 +495,7 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "illumined/verse/memorized": {
-  "h": "7f4a1fca4568c5a5",
+  "h": "293d8a7a91cbb666",
   "len": 2142,
   "els": 64,
   "buttons": 5,
@@ -531,8 +531,8 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "illumined/wizard/learned": {
-  "h": "c4f27714d04eab1b",
-  "len": 3997,
+  "h": "273f0142e4da08b0",
+  "len": 4000,
   "els": 90,
   "buttons": 9,
   "svgs": 0,
@@ -576,13 +576,13 @@
   "text": "🙏 Hidden in your heart “Thy word have I hid in mine heart, that I might not sin against thee.” Psalms 119:11 John 3:16 "
  },
  "illumined/practice/w4w-locked": {
-  "h": "4314e874a4c9d648",
+  "h": "f2b587f923252bd7",
   "len": 702,
   "els": 10,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word-for-word practices on this verse. Next practice "
+  "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word for word practices on this verse. Next practice "
  },
  "illumined/practice/num-setup": {
   "h": "508cdf1170f8dd28",
@@ -648,13 +648,13 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "illumined/bible/whole": {
-  "h": "3f76c609b1780ef6",
-  "len": 10567,
-  "els": 223,
+  "h": "10dcfaa690410783",
+  "len": 10181,
+  "els": 218,
   "buttons": 71,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible ✓ You're caught up today 🔥 4-day 🧊 2 · ○○○○○ 0/5 The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03"
+  "text": "Bible The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20"
  },
  "illumined/bible/book": {
   "h": "eee6ef9a8311676a",
@@ -711,13 +711,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "f19a50ec87beaf06",
+  "h": "bdc7b3dba4120043",
   "len": 14972,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.25.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.26.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "illumined/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -729,31 +729,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "illumined/modal/goal-same": {
-  "h": "cd7aabcced108369",
+  "h": "8232738dbad0eaee",
   "len": 2021,
   "els": 31,
   "buttons": 9,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "illumined/modal/goal-week": {
-  "h": "a29f991975cb5304",
+  "h": "85b131eb84f6dae4",
   "len": 2177,
   "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "illumined/modal/goal-days": {
-  "h": "8cc8bc0a62f4d9b8",
+  "h": "e3d43e192a06460a",
   "len": 2786,
   "els": 49,
   "buttons": 15,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "illumined/modal/paywall": {
   "h": "36252831c85e7803",
@@ -774,13 +774,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "5b73dc6c8e018d46",
-  "len": 38047,
-  "els": 765,
+  "h": "542c44e16450dbfa",
+  "len": 39638,
+  "els": 796,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.25.0 August 26, 2026 One tap, not two NEW Feature store , What’s new , Get the app and Reference li"
+  "text": "✕ Version history v1.26.0 August 26, 2026 Cleaner to read NEW The bottom menu is icons only , all one size. You are told"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -837,13 +837,13 @@
   "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
  },
  "illumined/modal/promote-pool": {
-  "h": "f1c2c75dcb04b63d",
+  "h": "8fe7de1a891b36ef",
   "len": 649,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word-for-word testing? You will be a"
+  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word for word testing? You will be a"
  },
  "illumined/modal/promote-heart": {
   "h": "d3d5c66fb1828d8f",
@@ -918,22 +918,22 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "glass/learn/path": {
-  "h": "ef8c9194f93b346d",
+  "h": "c8f44b62b61f90e1",
   "len": 5801,
   "els": 125,
   "buttons": 39,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Video ★ Sounds 0–4 ★ Sou"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
  },
  "glass/verse/hub": {
-  "h": "0aae13c83b601c07",
-  "len": 2094,
-  "els": 44,
+  "h": "e3d2ec466a4dc7ec",
+  "len": 2730,
+  "els": 53,
   "buttons": 7,
-  "svgs": 2,
+  "svgs": 3,
   "imgs": 0,
-  "text": "🙏 Faithful today 15/1 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review 2 📖 Practice V"
+  "text": "✅ Caught up today 🔥 4 🧊 2 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review 2 📖 Pract"
  },
  "glass/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -954,7 +954,7 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "glass/verse/memorized": {
-  "h": "7f4a1fca4568c5a5",
+  "h": "293d8a7a91cbb666",
   "len": 2142,
   "els": 64,
   "buttons": 5,
@@ -990,8 +990,8 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "glass/wizard/learned": {
-  "h": "c4f27714d04eab1b",
-  "len": 3997,
+  "h": "273f0142e4da08b0",
+  "len": 4000,
   "els": 90,
   "buttons": 9,
   "svgs": 0,
@@ -1035,13 +1035,13 @@
   "text": "🙏 Hidden in your heart “Thy word have I hid in mine heart, that I might not sin against thee.” Psalms 119:11 John 3:16 "
  },
  "glass/practice/w4w-locked": {
-  "h": "4314e874a4c9d648",
+  "h": "f2b587f923252bd7",
   "len": 702,
   "els": 10,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word-for-word practices on this verse. Next practice "
+  "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word for word practices on this verse. Next practice "
  },
  "glass/practice/num-setup": {
   "h": "508cdf1170f8dd28",
@@ -1107,13 +1107,13 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "glass/bible/whole": {
-  "h": "3f76c609b1780ef6",
-  "len": 10567,
-  "els": 223,
+  "h": "10dcfaa690410783",
+  "len": 10181,
+  "els": 218,
   "buttons": 71,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible ✓ You're caught up today 🔥 4-day 🧊 2 · ○○○○○ 0/5 The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03"
+  "text": "Bible The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20"
  },
  "glass/bible/book": {
   "h": "eee6ef9a8311676a",
@@ -1170,13 +1170,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "860cc8762bceee14",
+  "h": "93f43a3abac1c92a",
   "len": 14970,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.25.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.26.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "glass/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -1188,31 +1188,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "glass/modal/goal-same": {
-  "h": "cd7aabcced108369",
+  "h": "8232738dbad0eaee",
   "len": 2021,
   "els": 31,
   "buttons": 9,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "glass/modal/goal-week": {
-  "h": "a29f991975cb5304",
+  "h": "85b131eb84f6dae4",
   "len": 2177,
   "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "glass/modal/goal-days": {
-  "h": "8cc8bc0a62f4d9b8",
+  "h": "e3d43e192a06460a",
   "len": 2786,
   "els": 49,
   "buttons": 15,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "glass/modal/paywall": {
   "h": "36252831c85e7803",
@@ -1233,13 +1233,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "5b73dc6c8e018d46",
-  "len": 38047,
-  "els": 765,
+  "h": "542c44e16450dbfa",
+  "len": 39638,
+  "els": 796,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.25.0 August 26, 2026 One tap, not two NEW Feature store , What’s new , Get the app and Reference li"
+  "text": "✕ Version history v1.26.0 August 26, 2026 Cleaner to read NEW The bottom menu is icons only , all one size. You are told"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1296,13 +1296,13 @@
   "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
  },
  "glass/modal/promote-pool": {
-  "h": "f1c2c75dcb04b63d",
+  "h": "8fe7de1a891b36ef",
   "len": 649,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word-for-word testing? You will be a"
+  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word for word testing? You will be a"
  },
  "glass/modal/promote-heart": {
   "h": "d3d5c66fb1828d8f",
@@ -1377,22 +1377,22 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "quest/learn/path": {
-  "h": "00c543303fc5ed88",
+  "h": "0f912a07e814977b",
   "len": 6645,
   "els": 140,
   "buttons": 40,
   "svgs": 1,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Video ★ Sounds 0–4 ★ Sou"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
  },
  "quest/verse/hub": {
-  "h": "0aae13c83b601c07",
-  "len": 2094,
-  "els": 44,
+  "h": "e3d2ec466a4dc7ec",
+  "len": 2730,
+  "els": 53,
   "buttons": 7,
-  "svgs": 2,
+  "svgs": 3,
   "imgs": 0,
-  "text": "🙏 Faithful today 15/1 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review 2 📖 Practice V"
+  "text": "✅ Caught up today 🔥 4 🧊 2 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review 2 📖 Pract"
  },
  "quest/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -1413,7 +1413,7 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "quest/verse/memorized": {
-  "h": "7f4a1fca4568c5a5",
+  "h": "293d8a7a91cbb666",
   "len": 2142,
   "els": 64,
   "buttons": 5,
@@ -1449,8 +1449,8 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "quest/wizard/learned": {
-  "h": "c4f27714d04eab1b",
-  "len": 3997,
+  "h": "273f0142e4da08b0",
+  "len": 4000,
   "els": 90,
   "buttons": 9,
   "svgs": 0,
@@ -1494,13 +1494,13 @@
   "text": "🙏 Hidden in your heart “Thy word have I hid in mine heart, that I might not sin against thee.” Psalms 119:11 John 3:16 "
  },
  "quest/practice/w4w-locked": {
-  "h": "4314e874a4c9d648",
+  "h": "f2b587f923252bd7",
   "len": 702,
   "els": 10,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word-for-word practices on this verse. Next practice "
+  "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word for word practices on this verse. Next practice "
  },
  "quest/practice/num-setup": {
   "h": "508cdf1170f8dd28",
@@ -1566,13 +1566,13 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "quest/bible/whole": {
-  "h": "3f76c609b1780ef6",
-  "len": 10567,
-  "els": 223,
+  "h": "10dcfaa690410783",
+  "len": 10181,
+  "els": 218,
   "buttons": 71,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible ✓ You're caught up today 🔥 4-day 🧊 2 · ○○○○○ 0/5 The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03"
+  "text": "Bible The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20"
  },
  "quest/bible/book": {
   "h": "eee6ef9a8311676a",
@@ -1629,13 +1629,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "fc7d51666db538fa",
+  "h": "7a69c32f021f2f7c",
   "len": 14972,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.25.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.26.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "quest/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -1647,31 +1647,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "quest/modal/goal-same": {
-  "h": "cd7aabcced108369",
+  "h": "8232738dbad0eaee",
   "len": 2021,
   "els": 31,
   "buttons": 9,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "quest/modal/goal-week": {
-  "h": "a29f991975cb5304",
+  "h": "85b131eb84f6dae4",
   "len": 2177,
   "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "quest/modal/goal-days": {
-  "h": "8cc8bc0a62f4d9b8",
+  "h": "e3d43e192a06460a",
   "len": 2786,
   "els": 49,
   "buttons": 15,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "quest/modal/paywall": {
   "h": "36252831c85e7803",
@@ -1692,13 +1692,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "5b73dc6c8e018d46",
-  "len": 38047,
-  "els": 765,
+  "h": "542c44e16450dbfa",
+  "len": 39638,
+  "els": 796,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.25.0 August 26, 2026 One tap, not two NEW Feature store , What’s new , Get the app and Reference li"
+  "text": "✕ Version history v1.26.0 August 26, 2026 Cleaner to read NEW The bottom menu is icons only , all one size. You are told"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1755,13 +1755,13 @@
   "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
  },
  "quest/modal/promote-pool": {
-  "h": "f1c2c75dcb04b63d",
+  "h": "8fe7de1a891b36ef",
   "len": 649,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word-for-word testing? You will be a"
+  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word for word testing? You will be a"
  },
  "quest/modal/promote-heart": {
   "h": "d3d5c66fb1828d8f",
@@ -1836,22 +1836,22 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "buddy/learn/path": {
-  "h": "a698a28654bf6b33",
+  "h": "89def48b8eca83e5",
   "len": 6464,
   "els": 134,
   "buttons": 40,
   "svgs": 1,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Video ★ Sounds 0–4 ★ Sou"
+  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
  },
  "buddy/verse/hub": {
-  "h": "0aae13c83b601c07",
-  "len": 2094,
-  "els": 44,
+  "h": "e3d2ec466a4dc7ec",
+  "len": 2730,
+  "els": 53,
   "buttons": 7,
-  "svgs": 2,
+  "svgs": 3,
   "imgs": 0,
-  "text": "🙏 Faithful today 15/1 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review 2 📖 Practice V"
+  "text": "✅ Caught up today 🔥 4 🧊 2 Spaced Repetition Due (0) Memorized 3 ✨ Learn Verses 562 in reach 🎬 Video Review 2 📖 Pract"
  },
  "buddy/verse/suggested": {
   "h": "8d5508eb2ebdbcab",
@@ -1872,7 +1872,7 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "buddy/verse/memorized": {
-  "h": "7f4a1fca4568c5a5",
+  "h": "293d8a7a91cbb666",
   "len": 2142,
   "els": 64,
   "buttons": 5,
@@ -1908,8 +1908,8 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "buddy/wizard/learned": {
-  "h": "c4f27714d04eab1b",
-  "len": 3997,
+  "h": "273f0142e4da08b0",
+  "len": 4000,
   "els": 90,
   "buttons": 9,
   "svgs": 0,
@@ -1953,13 +1953,13 @@
   "text": "🙏 Hidden in your heart “Thy word have I hid in mine heart, that I might not sin against thee.” Psalms 119:11 John 3:16 "
  },
  "buddy/practice/w4w-locked": {
-  "h": "4314e874a4c9d648",
+  "h": "f2b587f923252bd7",
   "len": 702,
   "els": 10,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word-for-word practices on this verse. Next practice "
+  "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word for word practices on this verse. Next practice "
  },
  "buddy/practice/num-setup": {
   "h": "508cdf1170f8dd28",
@@ -2025,13 +2025,13 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "buddy/bible/whole": {
-  "h": "3f76c609b1780ef6",
-  "len": 10567,
-  "els": 223,
+  "h": "10dcfaa690410783",
+  "len": 10181,
+  "els": 218,
   "buttons": 71,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible ✓ You're caught up today 🔥 4-day 🧊 2 · ○○○○○ 0/5 The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03"
+  "text": "Bible The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20"
  },
  "buddy/bible/book": {
   "h": "eee6ef9a8311676a",
@@ -2088,13 +2088,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "f64dfdc711933c8e",
+  "h": "5002e38d38d130b7",
   "len": 14968,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.25.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.26.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "buddy/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -2106,31 +2106,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "buddy/modal/goal-same": {
-  "h": "cd7aabcced108369",
+  "h": "8232738dbad0eaee",
   "len": 2021,
   "els": 31,
   "buttons": 9,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "buddy/modal/goal-week": {
-  "h": "a29f991975cb5304",
+  "h": "85b131eb84f6dae4",
   "len": 2177,
   "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "buddy/modal/goal-days": {
-  "h": "8cc8bc0a62f4d9b8",
+  "h": "e3d43e192a06460a",
   "len": 2786,
   "els": 49,
   "buttons": 15,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal How many things — new verses, book images or word-for-word practices — will you do each day? How do you wan"
+  "text": "✕ Daily goal How many things — new verses, book images or word for word practices — will you do each day? How do you wan"
  },
  "buddy/modal/paywall": {
   "h": "36252831c85e7803",
@@ -2151,13 +2151,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "5b73dc6c8e018d46",
-  "len": 38047,
-  "els": 765,
+  "h": "542c44e16450dbfa",
+  "len": 39638,
+  "els": 796,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.25.0 August 26, 2026 One tap, not two NEW Feature store , What’s new , Get the app and Reference li"
+  "text": "✕ Version history v1.26.0 August 26, 2026 Cleaner to read NEW The bottom menu is icons only , all one size. You are told"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
@@ -2214,13 +2214,13 @@
   "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
  },
  "buddy/modal/promote-pool": {
-  "h": "f1c2c75dcb04b63d",
+  "h": "8fe7de1a891b36ef",
   "len": 649,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word-for-word testing? You will be a"
+  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word for word testing? You will be a"
  },
  "buddy/modal/promote-heart": {
   "h": "d3d5c66fb1828d8f",
