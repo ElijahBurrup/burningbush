@@ -1685,8 +1685,12 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.30.0";
+const APP_VERSION="1.31.0";
 const CHANGELOG=[
+ {v:"1.31.0", d:"August 27, 2026", t:"All sixty-six, one lesson", items:[
+   ["fix","<b>Genesis to Deuteronomy now use the same lesson as every other book</b> — book image, book name, your own book image, book number, image name and image. They were never book lessons at all: they were <i>number</i> lessons wearing book names, so no change to the book lesson could ever reach them. They are built from the same one definition as the other sixty-one now, and anything changed there changes all sixty-six."],
+   ["fix","If you had already finished those five, they stay finished."]
+ ]},
  {v:"1.30.0", d:"August 27, 2026", t:"A pass for bugs", items:[
    ["fix","<b>Profile settings could vanish.</b> Opening one section while another was still open destroyed the first one’s controls for the rest of the session — the five themes, the translations, your backup buttons. They are lent to the popup and now always returned before it is rebuilt."],
    ["fix","A damaged or tampered save could put a <b>word where a number belongs</b>, or a negative talent count. Those fields are now coerced and floored at zero on load, so a bad blob heals itself instead of showing nonsense and turning every later sum into NaN."]
@@ -2553,6 +2557,9 @@ function migrateProg(p){
   if(!p.revPrefs||typeof p.revPrefs!=="object") p.revPrefs={};       // how the user wants to be asked in review
   { const sr=p.verseSR||{}; Object.keys(sr).forEach(k=>{ const o=sr[k];
       if(o && o.r0===undefined) o.r0=o.learnedAt||1; }); }   // legacy verses: treat the first look-back as done
+  // Genesis..Deuteronomy used to be number lessons (num:1..5) and are book lessons now. Carry the
+  // completion across so nobody is asked to learn them twice; the old ids are left in place, inert.
+  for(let d=1; d<=5; d++){ if(p.doneSkills.includes("num:"+d) && !p.doneSkills.includes("book:"+d)) p.doneSkills.push("book:"+d); }
   if(!p.features||typeof p.features!=="object") p.features={};   // which features are switched on
   if(typeof p.featuresInit!=="boolean") p.featuresInit=false;     // has the one time grandfathering run?
   if(!p.ntPrefs||typeof p.ntPrefs!=="object") p.ntPrefs={};   // number-practice set-up: which forms, how many
@@ -2672,7 +2679,8 @@ function saveProg(){
 // Everything else (the rest of the Bible, bonus palaces, the number pegs, Bible Stories) is Pro.
 const FREE_SKILLS = new Set([
   "snd:0-4","snd:5-9",                       // the Major System sounds (foundation)
-  "num:1","num:2","num:3","num:4","num:5",   // the Torah · Genesis–Deuteronomy
+  "book:1","book:2","book:3","book:4","book:5",   // the Torah · Genesis–Deuteronomy
+  "num:1","num:2","num:3","num:4","num:5",       // …and their old ids, for anyone mid-migration
   "palace:0",                                // your first memory palace
   "book:40"                                  // Matthew
 ]);
@@ -3292,7 +3300,7 @@ function buildUnits(){
   // 1) The Foundation — the Torah (books 1-5) + Matthew (40). Completing this earns the first
   //    scratch off (Verses). The memory palace is NOT here — it's earned later, after 5 verses.
   units.push({name:"Foundations", ic:"🧱", torahEnd:true, foundationEnd:true, skills:[
-    ...range(1,5).map(d=>({id:"num:"+d,label:bookName(d),kind:"num",bookNamed:true,items:[d]})),   // Genesis…Deuteronomy, named as the books they are
+    ...range(1,5).map(bk),   // Genesis…Deuteronomy — the SAME bk() as every other book, so the book lesson template covers all 66
     bk(40)
   ]});
   // 4) Balanced climb: each round pairs Old Testament books with New Testament books (OT 6-39, NT 41-66 — Mark onward).
@@ -3547,7 +3555,7 @@ function renderPath(focus){
         return;
       }
       const pro=skillPaywalled(sk);
-      const label = (sk.kind==="book"||sk.bookNamed) ? sk.label : (sk.items.length===1?`${sk.items[0]} · ${sk.label}`:sk.label);
+      const label = sk.kind==="book" ? sk.label : (sk.items.length===1?`${sk.items[0]} · ${sk.label}`:sk.label);
       const face = sk.items.length===1?sk.items[0]:"★";
       html+=`<button class="tile ${color} ${d} ${pro?"pro":""}" data-ui="${ui}" data-si="${si}" ${(color==="locked")?"disabled":""}>
         ${pro?`<span class="lockbadge">${sk.kind==="book"?"🪙":"🔒"}</span>`:""}${face}<small>${label}</small></button>`;

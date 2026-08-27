@@ -66,7 +66,7 @@ const DAY = 86400000;
   describe('economy', () => { });
   const econ = await $(() => {
     Billing.revoke();
-    Prog.doneSkills = ['video:major', 'snd:0-4', 'snd:5-9', 'num:1', 'num:2', 'num:3', 'num:4', 'num:5', 'book:40', 'video:verse', 'video:palace', 'palace:0', 'video:sr'];
+    Prog.doneSkills = ['video:major', 'snd:0-4', 'snd:5-9', 'book:1', 'book:2', 'book:3', 'book:4', 'book:5', 'book:40', 'video:verse', 'video:palace', 'palace:0', 'video:sr'];
     Prog.lessonUnlocks = []; Prog.talents = 1200; bustCaches(); saveProg();
     show('learn'); Prog.phaseMax = 99; renderPath();
     const tiles = [...document.querySelectorAll('#learn .tile:not(.tickettile):not(.video)')];
@@ -2019,6 +2019,73 @@ const DAY = 86400000;
   is(lent.inPopup, 1, 'exactly one panel is on loan at a time');
   is(lent.stowed, lent.total - 1, '...and the rest are stowed');
   is(lent.afterClose, lent.total, 'closing returns every panel home');
+
+  // ================= ONE TEMPLATE FOR ALL SIXTY-SIX BOOKS (v1.31) =================
+  describe('every book is a book', () => { });
+  const books = await $(() => {
+    const byBook = {};
+    UNITS.forEach(U => U.skills.forEach(sk => {
+      (sk.items || []).forEach(n => {
+        if (n >= 1 && n <= 66 && (sk.kind === 'book' || /^book:/.test(sk.id))) byBook[n] = sk;
+      });
+    }));
+    const missing = [], wrongKind = [], wrongId = [];
+    for (let n = 1; n <= 66; n++) {
+      const sk = byBook[n];
+      if (!sk) { missing.push(n); continue; }
+      if (sk.kind !== 'book') wrongKind.push(n + ':' + sk.kind);
+      if (sk.id !== 'book:' + n) wrongId.push(n + ':' + sk.id);
+    }
+    // and no book may ALSO be taught by a number lesson — that is how the first five drifted
+    const alsoNum = [];
+    UNITS.forEach(U => U.skills.forEach(sk => {
+      if (sk.kind === 'num') (sk.items || []).forEach(n => { if (n >= 1 && n <= 66 && byBook[n]) alsoNum.push(n); });
+    }));
+    return { missing: missing.join(','), wrongKind: wrongKind.join(','), wrongId: wrongId.join(','),
+      alsoNum: [...new Set(alsoNum)].join(','), count: Object.keys(byBook).length };
+  });
+  is(books.count, 66, 'all sixty-six books are lessons');
+  is(books.missing, '', '...none missing');
+  is(books.wrongKind, '', "...every one is kind:'book', so one template drives them all");
+  is(books.wrongId, '', "...and every id is book:N");
+  is(books.alsoNum, '', 'no book is ALSO taught as a number lesson — that is how the first five drifted');
+
+  const freeTorah = await $(() => {
+    Billing.revoke(); Prog.lessonUnlocks = []; bustCaches();
+    const find = n => { for (const U of UNITS) { const sk = U.skills.find(x => x.id === 'book:' + n); if (sk) return sk; } return null; };
+    const paid = [1, 2, 3, 4, 5, 40].filter(n => { const sk = find(n); return sk && skillPaywalled(sk); });
+    const paidLater = [46, 66].filter(n => { const sk = find(n); return sk && skillPaywalled(sk); });
+    return { paid: paid.join(','), paidLater: paidLater.join(',') };
+  });
+  is(freeTorah.paid, '', 'Genesis to Deuteronomy and Matthew are free — converting them to book lessons must not sell them');
+  is(freeTorah.paidLater, '46,66', '...while the books beyond the Foundation still are not');
+
+  // the rendered teach card must be the same shape for the first book and a late one
+  const tmpl = await $(() => {
+    const shape = n => {
+      const d = document.createElement('div');
+      d.innerHTML = teachCardBody('book', n);
+      return ['.tline img,.tline .imgph', '.tname', '#tcBookImg', '.tnum', '.tword', '.sounds', '#tcEdit']
+        .map(sel => (d.querySelector(sel) ? 1 : 0)).join('');
+    };
+    return { genesis: shape(1), leviticus: shape(3), matthew: shape(40), corinthians: shape(46), revelation: shape(66) };
+  });
+  is(tmpl.genesis, tmpl.corinthians, 'Genesis renders exactly the card 1 Corinthians does');
+  is(tmpl.leviticus, tmpl.corinthians, '...and Leviticus');
+  is(tmpl.matthew, tmpl.corinthians, '...and Matthew');
+  is(tmpl.revelation, tmpl.corinthians, '...and Revelation');
+  is(tmpl.genesis, '1111111', '...all seven parts present: image, name, write my own image, number, image name, sounds, write my own scene');
+
+  const carried = await $(() => {
+    // someone who finished Genesis when it was still a number lesson must not be asked again
+    const p = migrateProg({ doneSkills: ['num:1', 'num:2', 'num:3', 'num:4', 'num:5', 'num:9'] });
+    return { books: [1, 2, 3, 4, 5].every(d => p.doneSkills.includes('book:' + d)),
+      untouched: p.doneSkills.includes('num:9'),
+      noSix: !p.doneSkills.includes('book:6') };
+  });
+  ok(carried.books, 'old num:1..5 completions carry over to book:1..5');
+  ok(carried.untouched, '...leaving other number lessons alone');
+  ok(carried.noSix, '...and inventing nothing');
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
