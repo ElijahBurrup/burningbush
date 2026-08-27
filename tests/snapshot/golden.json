@@ -252,22 +252,22 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "80adb5e90d0eead7",
+  "h": "035faae1408090f2",
   "len": 15766,
   "els": 370,
   "buttons": 45,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned ✨ Feature store all on 👤 Account Not signed in 📗 Bi"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.25.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "classic/modal/prof-section": {
-  "h": "d0145c0cc6bcb3ee",
-  "len": 1126,
-  "els": 14,
+  "h": "ce62ac5b542b407a",
+  "len": 1178,
+  "els": 15,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Back up your progress ✓ Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a sec"
+  "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "classic/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -315,13 +315,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "9b753ca0c4c81407",
-  "len": 36834,
-  "els": 737,
+  "h": "5b73dc6c8e018d46",
+  "len": 38047,
+  "els": 765,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.24.0 August 26, 2026 Undoable, and easier to reach FIX Admin → Finish this phase now takes a snapsh"
+  "text": "✕ Version history v1.25.0 August 26, 2026 One tap, not two NEW Feature store , What’s new , Get the app and Reference li"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -711,22 +711,22 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "7ce924859ad1c7b2",
+  "h": "f19a50ec87beaf06",
   "len": 14972,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned ✨ Feature store all on 👤 Account Not signed in 📗 Bi"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.25.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "illumined/modal/prof-section": {
-  "h": "d0145c0cc6bcb3ee",
-  "len": 1126,
-  "els": 14,
+  "h": "ce62ac5b542b407a",
+  "len": 1178,
+  "els": 15,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Back up your progress ✓ Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a sec"
+  "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "illumined/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -774,13 +774,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "9b753ca0c4c81407",
-  "len": 36834,
-  "els": 737,
+  "h": "5b73dc6c8e018d46",
+  "len": 38047,
+  "els": 765,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.24.0 August 26, 2026 Undoable, and easier to reach FIX Admin → Finish this phase now takes a snapsh"
+  "text": "✕ Version history v1.25.0 August 26, 2026 One tap, not two NEW Feature store , What’s new , Get the app and Reference li"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -1170,22 +1170,22 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "a6f2f4ab3f45debe",
+  "h": "860cc8762bceee14",
   "len": 14970,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned ✨ Feature store all on 👤 Account Not signed in 📗 Bi"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.25.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "glass/modal/prof-section": {
-  "h": "d0145c0cc6bcb3ee",
-  "len": 1126,
-  "els": 14,
+  "h": "ce62ac5b542b407a",
+  "len": 1178,
+  "els": 15,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Back up your progress ✓ Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a sec"
+  "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "glass/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -1233,13 +1233,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "9b753ca0c4c81407",
-  "len": 36834,
-  "els": 737,
+  "h": "5b73dc6c8e018d46",
+  "len": 38047,
+  "els": 765,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.24.0 August 26, 2026 Undoable, and easier to reach FIX Admin → Finish this phase now takes a snapsh"
+  "text": "✕ Version history v1.25.0 August 26, 2026 One tap, not two NEW Feature store , What’s new , Get the app and Reference li"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1629,22 +1629,22 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "97a3fd4b1e23f974",
+  "h": "fc7d51666db538fa",
   "len": 14972,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned ✨ Feature store all on 👤 Account Not signed in 📗 Bi"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.25.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "quest/modal/prof-section": {
-  "h": "d0145c0cc6bcb3ee",
-  "len": 1126,
-  "els": 14,
+  "h": "ce62ac5b542b407a",
+  "len": 1178,
+  "els": 15,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Back up your progress ✓ Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a sec"
+  "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "quest/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -1692,13 +1692,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "9b753ca0c4c81407",
-  "len": 36834,
-  "els": 737,
+  "h": "5b73dc6c8e018d46",
+  "len": 38047,
+  "els": 765,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.24.0 August 26, 2026 Undoable, and easier to reach FIX Admin → Finish this phase now takes a snapsh"
+  "text": "✕ Version history v1.25.0 August 26, 2026 One tap, not two NEW Feature store , What’s new , Get the app and Reference li"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -2088,22 +2088,22 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "2265fc31531e7af8",
+  "h": "f64dfdc711933c8e",
   "len": 14968,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned ✨ Feature store all on 👤 Account Not signed in 📗 Bi"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.25.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "buddy/modal/prof-section": {
-  "h": "d0145c0cc6bcb3ee",
-  "len": 1126,
-  "els": 14,
+  "h": "ce62ac5b542b407a",
+  "len": 1178,
+  "els": 15,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Back up your progress ✓ Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a sec"
+  "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "buddy/modal/goal-same": {
   "h": "cd7aabcced108369",
@@ -2151,13 +2151,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "9b753ca0c4c81407",
-  "len": 36834,
-  "els": 737,
+  "h": "5b73dc6c8e018d46",
+  "len": 38047,
+  "els": 765,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.24.0 August 26, 2026 Undoable, and easier to reach FIX Admin → Finish this phase now takes a snapsh"
+  "text": "✕ Version history v1.25.0 August 26, 2026 One tap, not two NEW Feature store , What’s new , Get the app and Reference li"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",

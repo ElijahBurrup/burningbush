@@ -368,6 +368,8 @@
   #scov .scticket{position:relative;width:100%;aspect-ratio:1.5;border-radius:16px;overflow:hidden;background:var(--panel2);border:1px solid var(--line)}
   #scov .scprize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:16px;box-sizing:border-box}
   #scov .scicon{font-size:62px;line-height:1;filter:drop-shadow(0 0 16px var(--gold2))}
+  #scov .scicon svg{width:62px;height:62px;display:block;margin:0 auto}
+  #simov .scicon svg{width:54px;height:54px;display:block;margin:0 auto}
   #scov .scname{font-family:var(--font-display);font-size:24px;color:var(--gold-ink)}
   #scov .scdesc{font-size:13.5px;color:var(--ink-soft);line-height:1.4}
   #scov .scfoil{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:none}
@@ -883,6 +885,11 @@
   #themeModal.profscreen{align-items:stretch;justify-content:stretch;padding:0;background:var(--bg)}
   #themeModal.profscreen .modal-card{width:100%;max-width:none;max-height:none;min-height:100%;border-radius:0;margin:0;overflow-y:auto}
   #profSecModal{z-index:170}
+  /* Admin is a grid of its own, so it reads like the rest of Profile rather than a stack of bars. */
+  #adminWrap{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  #adminWrap > .prof-sect,#adminWrap > #bugReportsWrap{grid-column:1/-1}
+  #adminWrap > .btn{width:100%;margin:0;aspect-ratio:1.7;display:flex;align-items:center;justify-content:center;
+    text-align:center;white-space:normal;line-height:1.2;font-size:12.5px;padding:8px 6px}
   .profgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
   .profbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px 8px;color:var(--ink);font-weight:800;font-size:14px;line-height:1.15;text-align:center;cursor:pointer;aspect-ratio:1.5}
   .profbtn .pi{font-size:26px;line-height:1}
@@ -1670,8 +1677,15 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.24.0";
+const APP_VERSION="1.25.0";
 const CHANGELOG=[
+ {v:"1.25.0", d:"August 26, 2026", t:"One tap, not two", items:[
+   ["new","<b>Feature store</b>, <b>What’s new</b>, <b>Get the app</b> and <b>Reference library</b> now go straight where they lead — there was only ever one control behind each of them."],
+   ["new","Profile reads in a sensible order: Admin, What’s new, Get the app, Feature store, Bible translation, Theme, Reference library, Back up. <b>Get the app disappears once the app IS installed.</b>"],
+   ["new","<b>Admin is a grid too</b>, two buttons to a row, like the rest of Profile."],
+   ["fix","Section popups have <b>a red ✕ at the top and a Done button at the foot</b> — two ways back, and no green tick."],
+   ["fix","<b>The Bible scratch-off shows the Bible.</b> The drawn icon had no size on that card, so it was there but invisible."]
+ ]},
  {v:"1.24.0", d:"August 26, 2026", t:"Undoable, and easier to reach", items:[
    ["fix","<b>Admin → Finish this phase now takes a snapshot first</b>, so <b>Restore my real progress</b> puts it back exactly. If a simulation already wrote to an account with no snapshot, Restore offers to <b>clear the Learn path and hide the phases never actually reached</b> — verses, palaces, talents and stories untouched."],
    ["fix","Choosing an option inside a Profile section <b>closes the popup</b> instead of leaving it in front of wherever you just went."],
@@ -7430,6 +7444,7 @@ function applyFeatureVisibility(){
   set("refWrap", feat("reference"));
   const pb=(s,on)=>{ const b=document.querySelector('#profGrid [data-prof="'+s+'"]'); if(b) b.style.display=on?"":"none"; };
   pb("badges", feat("badges")); pb("reference-library", feat("reference"));
+  pb("get-the-app", !isInstalledApp());   // already installed → nothing to offer
   const fc=el("pFeatCount"); if(fc){ const n=featOffCount(); fc.textContent=n?` \u00b7 ${n} to try`:""; }
 }
 /* ---- Profile, in the Library's shape -------------------------------------------------------
@@ -7452,6 +7467,14 @@ const PROF_SUBS={
   "Get the app":()=>"Home screen",
   "Back up your progress":()=>"Export or restore",
 };
+// The order Profile reads in. Anything not named here follows, in the order it was authored.
+const PROF_ORDER=["Admin","What's new","Get the app","Feature store","Bible translation","Theme",
+  "Reference library","Back up your progress"];
+// Installed already? Then there is nothing to install, and the button is noise.
+function isInstalledApp(){
+  try{ return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone===true; }
+  catch(err){ return false; }
+}
 let PROF_PANELS=[];
 function profSlug(t){ return t.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
 function buildProfileGrid(){
@@ -7480,6 +7503,10 @@ function buildProfileGrid(){
     p.nodes.forEach(n=>box.appendChild(n));
     holder.appendChild(box); p.el=box; p.slug=profSlug(p.title);
   });
+  panels.sort((a,b)=>{
+    const ia=PROF_ORDER.indexOf(a.title), ib=PROF_ORDER.indexOf(b.title);
+    return (ia<0?99:ia)-(ib<0?99:ib);
+  });
   PROF_PANELS=panels;
   card.insertBefore(grid, done);
   card.insertBefore(holder, done);
@@ -7492,21 +7519,28 @@ function paintProfileGrid(){
     return `<button type="button" class="profbtn" data-prof="${p.slug}"><span class="pi">${PROF_ICONS[p.title]||"⚙️"}</span><span>${p.title}</span><small>${sub}</small></button>`;
   }).join("");
   grid.querySelectorAll("[data-prof]").forEach(b=>b.onclick=()=>{
-    if(b.dataset.prof==="reference-library"){   // nothing to choose in there — just go
-      closeProfile(); openFoundations(()=>el("themeBtn").click()); return;
-    }
+    const go=PROF_DIRECT[b.dataset.prof];
+    if(go){ go(); return; }            // one control behind the button is one tap too many
     openProfSection(b.dataset.prof);
   });
   applyAdminVisibility(); applyFeatureVisibility();
 }
+/* Four of the sections hold a single control, so the button IS the control. The three that open
+   over Profile deliberately leave it standing, which is what their close returns to. */
+const PROF_DIRECT={
+  "reference-library": ()=>{ closeProfile(); openFoundations(()=>el("themeBtn").click()); },
+  "feature-store":     ()=>openFeatureStore(),
+  "what-s-new":        ()=>openWhatsNew(true),
+  "get-the-app":       ()=>openInstallDialog(),
+};
 function openProfSection(slug){
   const p=PROF_PANELS.find(x=>x.slug===slug); if(!p) return;
   const m=el("profSecModal")||(()=>{ const d=document.createElement("div"); d.id="profSecModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="psClose" style="margin:0">✕</button>
-        <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${p.title}</div>
-        <button class="lsave" id="psDone" title="Done">✓</button></div>
+        <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${p.title}</div><span style="width:34px"></span></div>
       <div id="psBody"></div>
+      <button class="btn" id="psDone" style="width:100%;margin-top:14px">Done</button>
     </div>`;
   const body=m.querySelector("#psBody");
   body.appendChild(p.el); p.el.style.display="";
@@ -7523,7 +7557,7 @@ function closeProfile(){
 }
 function applyAdminVisibility(){
   const admin = (typeof Auth!=="undefined") && Auth.isAdmin();
-  const wrap=el("adminWrap"); if(wrap) wrap.style.display = admin ? "" : "none";
+  const wrap=el("adminWrap"); if(wrap) wrap.style.display = admin ? "grid" : "none";
   const bugs=el("bugReportsWrap"); if(bugs) bugs.style.display = admin ? "" : "none";
   const btn=document.querySelector('#profGrid [data-prof="admin"]'); if(btn) btn.style.display = admin ? "" : "none";
 }

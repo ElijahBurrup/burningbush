@@ -1725,6 +1725,9 @@ const DAY = 86400000;
   is(pgrid.panels, pgrid.count, '...each with its own panel put aside');
   ok(pgrid.allIconed, '...every one carrying an icon');
   ok(pgrid.allSubbed, '...and a line saying what is inside');
+  is(pgrid.labels.split(' | ')[0], 'Admin', 'Admin comes first');
+  is(pgrid.labels.split(' | ')[1], "What's new", '...then the release notes');
+  is(pgrid.labels.split(' | ').slice(0,8).join(','), "Admin,What's new,Get the app,Feature store,Bible translation,Theme,Reference library,Back up your progress", '...then the rest, in the order asked for');
   has(pgrid.labels, 'Theme', 'Theme is one of them');
   has(pgrid.labels, 'Account', '...and Account');
   has(pgrid.labels, 'Back up', '...and the backup');
@@ -1900,6 +1903,86 @@ const DAY = 86400000;
   ok(layers.secClosed, 'choosing an option closes the popup');
   ok(layers.profClosed, '...and the Profile screen behind it');
   ok(layers.panelPutBack, '...putting the section back where it lives');
+
+  describe('profile goes straight there', () => { });
+  const direct = await $(() => {
+    const out = {};
+    const tap = slug => { el('themeBtn').click(); document.querySelector('#profGrid [data-prof="' + slug + '"]').click(); };
+    const shut = () => document.querySelectorAll('.modal').forEach(m => (m.style.display = 'none'));
+
+    tap('feature-store');
+    out.featureStore = !!el('featModal') && el('featModal').style.display === 'flex';
+    out.noSectionPopup = !el('profSecModal') || el('profSecModal').style.display !== 'flex';
+    shut();
+
+    tap('what-s-new');
+    out.whatsNew = !!el('whatsNewModal') && el('whatsNewModal').style.display === 'flex';
+    out.notesHaveVersions = /Version history|v1\./i.test(el('whatsNewModal').innerText);
+    out.profileStillBehind = el('themeModal').style.display === 'flex';
+    el('wnClose').click();
+    out.backOnProfile = el('themeModal').style.display === 'flex' && el('whatsNewModal').style.display === 'none';
+    shut();
+
+    tap('get-the-app');
+    out.install = !!el('installModal') && el('installModal').style.display === 'flex';
+    shut();
+
+    tap('reference-library');
+    out.foundations = document.querySelector('.view.active').id === 'foundations';
+    out.profileClosed = el('themeModal').style.display === 'none';
+    el('foundBack').click();
+    out.backToProfile = el('themeModal').style.display === 'flex';
+    shut();
+    return out;
+  });
+  ok(direct.featureStore, 'Feature store opens the switches themselves');
+  ok(direct.noSectionPopup, '...with no section popup in between');
+  ok(direct.whatsNew, "What's new opens the release notes");
+  ok(direct.notesHaveVersions, '...the actual notes');
+  ok(direct.profileStillBehind, '...leaving Profile standing behind it');
+  ok(direct.backOnProfile, '...so its cross returns to Profile');
+  ok(direct.install, 'Get the app opens the install steps');
+  ok(direct.foundations, 'Reference library opens Foundations');
+  ok(direct.profileClosed, '...as a screen of its own');
+  ok(direct.backToProfile, '...and Back returns to Profile');
+
+  const chrome = await $(() => {
+    el('themeBtn').click();
+    openProfSection('theme');
+    const m = el('profSecModal');
+    const done = el('psDone');
+    const out = { cross: !!el('psClose'), noTick: !!done && done.textContent.trim() === 'Done',
+      doneAtBottom: !!done && !done.closest('.lv-topbar'),
+      ticksAnywhere: m.querySelectorAll('.lsave').length };
+    done.click();
+    out.closedByDone = m.style.display === 'none';
+    out.profileStill = el('themeModal').style.display === 'flex';
+    openProfSection('theme');
+    el('psClose').click();
+    out.closedByCross = m.style.display === 'none';
+    document.querySelectorAll('.modal').forEach(x => (x.style.display = 'none'));
+    return out;
+  });
+  ok(chrome.cross, 'a section popup keeps its red cross');
+  is(chrome.ticksAnywhere, 0, '...and has no green tick at all');
+  ok(chrome.noTick && chrome.doneAtBottom, '...with a Done button at the foot instead');
+  ok(chrome.closedByDone, 'Done closes it');
+  ok(chrome.profileStill, '...back onto Profile');
+  ok(chrome.closedByCross, '...and the cross does the same — two ways back');
+
+  describe('the Bible scratch card', () => { });
+  const card = await $(() => {
+    const rung = SCRATCH_LADDER.findIndex(r => r.tab === 'journey');
+    Scratch.open(rung);
+    const ic = el('scIcon'), svg = ic.querySelector('svg');
+    const r = svg ? svg.getBoundingClientRect() : { width: 0, height: 0 };
+    const out = { drawn: !!svg, w: Math.round(r.width), h: Math.round(r.height), name: el('scName').textContent };
+    el('scov').classList.remove('on');
+    return out;
+  });
+  ok(card.drawn, 'the Bible prize is the drawn Bible, not an emoji');
+  ok(card.w > 20 && card.h > 20, '...and it is actually sized, so it can be seen');
+  is(card.name, 'Bible', '...on the Bible card');
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
