@@ -1,7 +1,7 @@
 {
  "classic/learn/path": {
-  "h": "33414f00f36b3270",
-  "len": 5821,
+  "h": "ef8c9194f93b346d",
+  "len": 5801,
   "els": 125,
   "buttons": 39,
   "svgs": 0,
@@ -9,9 +9,9 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Video ★ Sounds 0–4 ★ Sou"
  },
  "classic/verse/hub": {
-  "h": "cd28dce615cb2c6f",
-  "len": 2481,
-  "els": 47,
+  "h": "cb8bc18721f17581",
+  "len": 2096,
+  "els": 44,
   "buttons": 7,
   "svgs": 2,
   "imgs": 0,
@@ -243,8 +243,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
  },
  "classic/reference/foundations": {
-  "h": "a41ab691ae77d914",
-  "len": 234231,
+  "h": "b67886911576f856",
+  "len": 234220,
   "els": 4655,
   "buttons": 455,
   "svgs": 0,
@@ -252,7 +252,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "b4458651f345d3bb",
+  "h": "80adb5e90d0eead7",
   "len": 15766,
   "els": 370,
   "buttons": 45,
@@ -315,13 +315,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "afc4521b4dc87c52",
-  "len": 35212,
-  "els": 701,
+  "h": "9b753ca0c4c81407",
+  "len": 36834,
+  "els": 737,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.23.0 August 26, 2026 Bigger, and better looking FIX Profile sections were opening empty. The old co"
+  "text": "✕ Version history v1.24.0 August 26, 2026 Undoable, and easier to reach FIX Admin → Finish this phase now takes a snapsh"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -333,10 +333,10 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "classic/modal/feature-store": {
-  "h": "357d73ff17b84a91",
-  "len": 4383,
-  "els": 63,
-  "buttons": 10,
+  "h": "79f416f013a56f20",
+  "len": 3894,
+  "els": 56,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
@@ -459,8 +459,8 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "illumined/learn/path": {
-  "h": "33414f00f36b3270",
-  "len": 5821,
+  "h": "ef8c9194f93b346d",
+  "len": 5801,
   "els": 125,
   "buttons": 39,
   "svgs": 0,
@@ -468,9 +468,9 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Video ★ Sounds 0–4 ★ Sou"
  },
  "illumined/verse/hub": {
-  "h": "f4a9cbdddb371b26",
-  "len": 2479,
-  "els": 47,
+  "h": "0aae13c83b601c07",
+  "len": 2094,
+  "els": 44,
   "buttons": 7,
   "svgs": 2,
   "imgs": 0,
@@ -702,8 +702,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
  },
  "illumined/reference/foundations": {
-  "h": "a41ab691ae77d914",
-  "len": 234231,
+  "h": "b67886911576f856",
+  "len": 234220,
   "els": 4655,
   "buttons": 455,
   "svgs": 0,
@@ -711,7 +711,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "0f24d2d5a35c8f0a",
+  "h": "7ce924859ad1c7b2",
   "len": 14972,
   "els": 362,
   "buttons": 43,
@@ -774,13 +774,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "afc4521b4dc87c52",
-  "len": 35212,
-  "els": 701,
+  "h": "9b753ca0c4c81407",
+  "len": 36834,
+  "els": 737,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.23.0 August 26, 2026 Bigger, and better looking FIX Profile sections were opening empty. The old co"
+  "text": "✕ Version history v1.24.0 August 26, 2026 Undoable, and easier to reach FIX Admin → Finish this phase now takes a snapsh"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -792,10 +792,10 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "illumined/modal/feature-store": {
-  "h": "357d73ff17b84a91",
-  "len": 4383,
-  "els": 63,
-  "buttons": 10,
+  "h": "79f416f013a56f20",
+  "len": 3894,
+  "els": 56,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
@@ -918,8 +918,8 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "glass/learn/path": {
-  "h": "33414f00f36b3270",
-  "len": 5821,
+  "h": "ef8c9194f93b346d",
+  "len": 5801,
   "els": 125,
   "buttons": 39,
   "svgs": 0,
@@ -927,9 +927,9 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Video ★ Sounds 0–4 ★ Sou"
  },
  "glass/verse/hub": {
-  "h": "f4a9cbdddb371b26",
-  "len": 2479,
-  "els": 47,
+  "h": "0aae13c83b601c07",
+  "len": 2094,
+  "els": 44,
   "buttons": 7,
   "svgs": 2,
   "imgs": 0,
@@ -1161,8 +1161,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
  },
  "glass/reference/foundations": {
-  "h": "a41ab691ae77d914",
-  "len": 234231,
+  "h": "b67886911576f856",
+  "len": 234220,
   "els": 4655,
   "buttons": 455,
   "svgs": 0,
@@ -1170,7 +1170,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "b7446958e8c9bef1",
+  "h": "a6f2f4ab3f45debe",
   "len": 14970,
   "els": 362,
   "buttons": 43,
@@ -1233,13 +1233,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "afc4521b4dc87c52",
-  "len": 35212,
-  "els": 701,
+  "h": "9b753ca0c4c81407",
+  "len": 36834,
+  "els": 737,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.23.0 August 26, 2026 Bigger, and better looking FIX Profile sections were opening empty. The old co"
+  "text": "✕ Version history v1.24.0 August 26, 2026 Undoable, and easier to reach FIX Admin → Finish this phase now takes a snapsh"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1251,10 +1251,10 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "glass/modal/feature-store": {
-  "h": "357d73ff17b84a91",
-  "len": 4383,
-  "els": 63,
-  "buttons": 10,
+  "h": "79f416f013a56f20",
+  "len": 3894,
+  "els": 56,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
@@ -1377,8 +1377,8 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "quest/learn/path": {
-  "h": "4037ef110aa0afd5",
-  "len": 6665,
+  "h": "00c543303fc5ed88",
+  "len": 6645,
   "els": 140,
   "buttons": 40,
   "svgs": 1,
@@ -1386,9 +1386,9 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Video ★ Sounds 0–4 ★ Sou"
  },
  "quest/verse/hub": {
-  "h": "f4a9cbdddb371b26",
-  "len": 2479,
-  "els": 47,
+  "h": "0aae13c83b601c07",
+  "len": 2094,
+  "els": 44,
   "buttons": 7,
   "svgs": 2,
   "imgs": 0,
@@ -1620,8 +1620,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
  },
  "quest/reference/foundations": {
-  "h": "a41ab691ae77d914",
-  "len": 234231,
+  "h": "b67886911576f856",
+  "len": 234220,
   "els": 4655,
   "buttons": 455,
   "svgs": 0,
@@ -1629,7 +1629,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "6ac11d34fa5457c5",
+  "h": "97a3fd4b1e23f974",
   "len": 14972,
   "els": 362,
   "buttons": 43,
@@ -1692,13 +1692,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "afc4521b4dc87c52",
-  "len": 35212,
-  "els": 701,
+  "h": "9b753ca0c4c81407",
+  "len": 36834,
+  "els": 737,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.23.0 August 26, 2026 Bigger, and better looking FIX Profile sections were opening empty. The old co"
+  "text": "✕ Version history v1.24.0 August 26, 2026 Undoable, and easier to reach FIX Admin → Finish this phase now takes a snapsh"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1710,10 +1710,10 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "quest/modal/feature-store": {
-  "h": "357d73ff17b84a91",
-  "len": 4383,
-  "els": 63,
-  "buttons": 10,
+  "h": "79f416f013a56f20",
+  "len": 3894,
+  "els": 56,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
@@ -1836,8 +1836,8 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "buddy/learn/path": {
-  "h": "06d06fec818bd475",
-  "len": 6484,
+  "h": "a698a28654bf6b33",
+  "len": 6464,
   "els": 134,
   "buttons": 40,
   "svgs": 1,
@@ -1845,9 +1845,9 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Video ★ Sounds 0–4 ★ Sou"
  },
  "buddy/verse/hub": {
-  "h": "f4a9cbdddb371b26",
-  "len": 2479,
-  "els": 47,
+  "h": "0aae13c83b601c07",
+  "len": 2094,
+  "els": 44,
   "buttons": 7,
   "svgs": 2,
   "imgs": 0,
@@ -2079,8 +2079,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
  },
  "buddy/reference/foundations": {
-  "h": "a41ab691ae77d914",
-  "len": 234231,
+  "h": "b67886911576f856",
+  "len": 234220,
   "els": 4655,
   "buttons": 455,
   "svgs": 0,
@@ -2088,7 +2088,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "f54a335760a837bd",
+  "h": "2265fc31531e7af8",
   "len": 14968,
   "els": 362,
   "buttons": 43,
@@ -2151,13 +2151,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "afc4521b4dc87c52",
-  "len": 35212,
-  "els": 701,
+  "h": "9b753ca0c4c81407",
+  "len": 36834,
+  "els": 737,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.23.0 August 26, 2026 Bigger, and better looking FIX Profile sections were opening empty. The old co"
+  "text": "✕ Version history v1.24.0 August 26, 2026 Undoable, and easier to reach FIX Admin → Finish this phase now takes a snapsh"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
@@ -2169,10 +2169,10 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "buddy/modal/feature-store": {
-  "h": "357d73ff17b84a91",
-  "len": 4383,
-  "els": 63,
-  "buttons": 10,
+  "h": "79f416f013a56f20",
+  "len": 3894,
+  "els": 56,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"

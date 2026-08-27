@@ -941,13 +941,14 @@ const DAY = 86400000;
     uniqueNames: new Set(FEATURES.map(f => f.name)).size,
     defaultOff: FEATURES.filter(f => !f.on).map(f => f.id).join(','),
   }));
-  is(cat.n, 9, 'nine features can be switched');
-  is(cat.uniqueIds, 9, '...each with its own id');
-  is(cat.uniqueNames, 9, '...and its own name');
+  is(cat.n, 8, 'eight features can be switched');
+  is(cat.uniqueIds, 8, '...each with its own id');
+  is(cat.uniqueNames, 8, '...and its own name');
   ok(cat.named, 'every feature has a name');
   ok(cat.described, '...and a real description, not a label');
   ok(cat.iconed, '...and an icon');
-  is(cat.defaultOff, 'w4w,dict,ntsetup,reminders,rome', 'a new account starts without the five heaviest');
+  is(cat.defaultOff, 'w4w,dict,ntsetup,reminders', 'a new account starts without the four heaviest');
+  hasNot(cat.ids, 'rome', "Caesar's Levy is not a switch at all — it comes with Pro");
 
   // a brand-new account gets the lean set; one that was already in use keeps everything
   const grand = await $(() => {
@@ -1004,11 +1005,12 @@ const DAY = 86400000;
     startWordPick(43, 3, 16, () => { });
     out.pickOn = !!document.querySelector('.wpopt');
 
-    setFeat('rome', false); Prog.taxAt = Date.now() - 6 * 86400000; Billing.grant(); saveProg();   // due in a day = the WARNING window, not yet due
+    Prog.taxAt = Date.now() - 6 * 86400000; saveProg();   // due in a day = the WARNING window, not yet due
+    Billing.revoke();
     out.warnOff = taxWarnHTML() === '';
-    setFeat('rome', true);
+    Billing.grant();
     out.warnOn = taxWarnHTML() !== '';
-    Billing.revoke(); setFeat('rome', false); saveProg();
+    Billing.revoke(); saveProg();
 
     setFeat('badges', false); show('verse'); renderVerse();
     el('themeBtn').click(); applyFeatureVisibility();
@@ -1029,8 +1031,8 @@ const DAY = 86400000;
   is(gates.rungsOn, 'loc,w4w,heart', '...and the middle rung with it');
   ok(gates.pickOff, 'with the warm-up off, typing starts immediately');
   ok(gates.pickOn, '...and on, the tiles come back');
-  ok(gates.warnOff, "Caesar's warning is silent unless asked for");
-  ok(gates.warnOn, '...and speaks when it is');
+  ok(gates.warnOff, "Caesar's warning is silent without Pro");
+  ok(gates.warnOn, '...and speaks with it');
   ok(gates.badgesHidden, 'Milestones can be hidden from Profile');
   ok(gates.badgesShown, '...and shown again');
   ok(gates.refHidden, 'so can the Reference library');
@@ -1054,8 +1056,8 @@ const DAY = 86400000;
     el('featModal').style.display = 'none';
     return out;
   });
-  is(fstore.cards, 9, 'the store lists every feature');
-  is(fstore.switches, 9, '...each with its own switch');
+  is(fstore.cards, 8, 'the store lists every feature');
+  is(fstore.switches, 8, '...each with its own switch');
   ok(fstore.everyCardDescribed, '...and every one explains what it does before you turn it on');
   ok(fstore.free, '...and says plainly that they are free');
   has(fstore.names, 'Word Meanings', 'Word Meanings is on the shelf');
@@ -1822,6 +1824,82 @@ const DAY = 86400000;
   });
   ok(pclose.closed, 'the red cross closes Profile');
   ok(pclose.unscreened, '...and puts it back to an ordinary modal for anything else that uses it');
+
+  describe('admin simulation is undoable', () => { });
+  const undo = await $(() => {
+    Store.remove('vv_simbak');
+    Auth.user = { email: ADMIN_EMAILS[0] };
+    const list = phaseIdxs();
+    Prog.doneSkills = []; Prog.phaseMax = list[0]; Prog.scratchWon = ['verse','palace','journey','stories'];
+    Prog.memorized = ['43:3:16']; Prog.talents = 700;
+    bustCaches(); saveProg();
+    const before = { skills: Prog.doneSkills.length, snap: !!Store.get('vv_simbak') };
+    el('themeBtn').click(); applyAdminVisibility();
+    el('testFinishPhase').click();
+    const after = { skills: Prog.doneSkills.length, snap: !!Store.get('vv_simbak') };
+    // ...and Restore puts it back exactly
+    const o = el('scov'); if (o) o.classList.remove('on');
+    el('themeBtn').click();
+    el('testRestore').click();
+    const restored = { skills: (Prog.doneSkills || []).length, snap: !!Store.get('vv_simbak'),
+      verses: (Prog.memorized || []).length, talents: Prog.talents };
+    Auth.user = null;
+    return { before, after, restored };
+  });
+  no(undo.before.snap, 'no snapshot is held before a simulation');
+  ok(undo.after.skills > undo.before.skills, 'finishing a phase adds the ticks');
+  ok(undo.after.snap, '...and takes a snapshot first, so it can be undone');
+  is(undo.restored.skills, undo.before.skills, 'Restore puts the ticks back exactly as they were');
+  no(undo.restored.snap, '...and lets the snapshot go');
+  is(undo.restored.verses, 1, '...leaving verses alone');
+  is(undo.restored.talents, 700, '...and talents');
+
+  describe('repairing a path with no snapshot', () => { });
+  const repair = await $(() => {
+    Store.remove('vv_simbak');                       // the state the damaged account is in
+    const list = phaseIdxs();
+    Prog.doneSkills = [];
+    for (let i = 0; i <= 4; i++) UNITS[list[i]].skills.forEach(sk => Prog.doneSkills.push(sk.id));
+    Prog.phaseMax = list[6]; Prog.memorized = ['43:3:16']; Prog.talents = 700;
+    Prog.palaces = [{ place: 'A', stations: ['x'], learnedAt: 1, step: 1 }];
+    bustCaches(); saveProg();
+    const before = { ticks: Prog.doneSkills.length, phaseMax: Prog.phaseMax };
+    const cleared = repairLearnProgress();
+    show('learn'); renderPath(true);
+    return { before, cleared,
+      ticks: (Prog.doneSkills || []).filter(id => /^(num|book|snd|peg|palace):/.test(id)).length,
+      phaseMax: Prog.phaseMax,
+      dividers: el('learn').querySelectorAll('.phasedivider').length,
+      verses: (Prog.memorized || []).length, talents: Prog.talents, palaces: palaceCount() };
+  });
+  ok(repair.before.ticks > 0, 'a path can be left full of ticks with no snapshot to undo them');
+  ok(repair.cleared > 0, 'the repair clears them');
+  is(repair.ticks, 0, '...every one');
+  is(repair.phaseMax, 0, '...and drops the reveal back to where the work really is');
+  is(repair.dividers, 1, '...so only the phase actually reached is on screen');
+  is(repair.verses, 1, 'verses are untouched');
+  is(repair.talents, 700, '...and talents');
+  is(repair.palaces, 1, '...and palaces');
+
+  describe('choosing an option closes the popup', () => { });
+  const layers = await $(() => {
+    Auth.user = { email: ADMIN_EMAILS[0] };
+    el('themeBtn').click();
+    openProfSection('admin');
+    const sec = el('profSecModal'), prof = el('themeModal');
+    const out = { bothOpen: sec.style.display === 'flex' && prof.style.display === 'flex' };
+    el('testPaywall').click();                        // an option that navigates somewhere
+    out.secClosed = sec.style.display === 'none';
+    out.profClosed = prof.style.display === 'none';
+    out.panelPutBack = !!document.querySelector('#profPanels #adminWrap');
+    if (el('payModal')) el('payModal').style.display = 'none';
+    Auth.user = null;
+    return out;
+  });
+  ok(layers.bothOpen, 'a section opens on top of the Profile screen');
+  ok(layers.secClosed, 'choosing an option closes the popup');
+  ok(layers.profClosed, '...and the Profile screen behind it');
+  ok(layers.panelPutBack, '...putting the section back where it lives');
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));

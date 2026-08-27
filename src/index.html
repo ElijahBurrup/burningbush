@@ -93,6 +93,7 @@
   }
   /* ---- phone shell ---- */
   .phone{
+    overscroll-behavior:none;
     width:100%;max-width:412px;height:100dvh;max-height:892px;position:relative;
     background:radial-gradient(900px 500px at 50% -8%,var(--phone-top) 0%,var(--bg) 55%);
     display:flex;flex-direction:column;overflow:hidden;color:var(--ink);
@@ -101,7 +102,7 @@
   @media (max-width:480px){ body{align-items:stretch} .phone{max-height:none;border:0;border-radius:0} }
 
   .topbar{
-    flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;
+    flex:0 0 auto;position:relative;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:8px;
     padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;border-bottom:1px solid var(--line);
     background:var(--topbar-bg);
   }
@@ -129,19 +130,22 @@
   .hudsq.talspend .hn{color:var(--miss-ink)}
   .metric.lvl{color:var(--gold-ink)} .metric.mem{color:var(--good)} .metric.bk{color:var(--accent)}
 
-  .content{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:18px 16px 24px;-webkit-overflow-scrolling:touch}
+  /* The bars are flex siblings of a scrolling middle, so they cannot scroll away — what moved them
+     was rubber-band overscroll. Contain it, and keep the bars painted above the content. */
+  .content{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:18px 16px 24px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
   .view{display:none;animation:fade .22s ease}
   .view.active{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
   .tabbar{
-    flex:0 0 auto;display:flex;border-top:1px solid var(--line);background:var(--tabbar-bg);
+    flex:0 0 auto;position:relative;z-index:6;display:flex;border-top:1px solid var(--line);background:var(--tabbar-bg);
     padding-bottom:env(safe-area-inset-bottom);
   }
-  .tabbar button{flex:1;background:none;border:none;color:var(--muted);padding:10px 4px 12px;
-    font-size:11px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
-  .tabbar button .ic{font-size:23px;line-height:1}
-  .tabbar button .ic svg{width:22px;height:22px;display:block;margin:0 auto}
+  .tabbar button{flex:1;min-width:0;background:none;border:none;color:var(--muted);padding:9px 2px 11px;
+    font-size:10.5px;font-weight:700;cursor:pointer;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:4px}
+  .tabbar button .ic{font-size:26px;line-height:1;flex:none}
+  .tabbar button .ic svg{width:25px;height:25px;display:block}
+  .tabbar button .lbl{text-align:left;line-height:1.04;white-space:normal;overflow-wrap:anywhere;min-width:0}
   .tabbar button.on{color:var(--gold-ink)}
   .tabbar button.locked{opacity:.3;pointer-events:none;filter:grayscale(.7)}
   .tabbar button.tabflash{color:var(--gold-ink)}
@@ -169,8 +173,11 @@
   .versehub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px}
   .vhub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px;font-size:17px;font-weight:800;color:var(--ink);cursor:pointer;text-align:center;min-width:0}
   .vhub.sq{aspect-ratio:1.12}
-  .vhub .vi{font-size:38px;line-height:1;height:42px;display:grid;place-items:center}
-  .vhub .vi svg{width:40px;height:40px;display:block}
+  .vhub .vi{font-size:52px;line-height:1;height:58px;display:grid;place-items:center;
+    filter:drop-shadow(0 3px 2px var(--tile-shadow)) drop-shadow(0 1px 0 var(--sw-line));
+    transform:translateZ(0) rotate(-2deg) scale(1.02)}
+  .vhub .vi svg{width:54px;height:54px;display:block}
+  .vhub:active .vi{transform:translateY(1px) rotate(-2deg) scale(1)}
   .vhub small{font-size:12.5px;font-weight:700;color:var(--muted)}
   .versehub{gap:10px}
   .versehub .vhub{gap:6px;padding:14px 10px;font-size:15.5px;line-height:1.15;text-align:center}
@@ -179,19 +186,31 @@
   .vhub.wide .vi{font-size:28px}
   .vi-bounce{display:inline-block;animation:vibounce 1.8s ease-in-out infinite;transform-origin:center bottom}
   @keyframes vibounce{0%,72%,100%{transform:translateY(0) rotate(0)}80%{transform:translateY(-6px) rotate(-12deg)}88%{transform:translateY(-3px) rotate(10deg)}94%{transform:translateY(0) rotate(0)}}
+  /* All seven must be reachable without a scroll. The base sizes suit a tall phone; shorter
+     screens step down. Measured at 320x568, 360x640 and 390x844 by the layout suite. */
+  @media (max-height:760px){
+    .versehub{gap:7px}
+    .versehub .vhub{padding:10px 8px;font-size:14.5px}
+    .vhub.sq{aspect-ratio:1.64}
+    .vhub .vi{font-size:32px;height:35px}
+    .vhub .vi svg{width:36px;height:36px}
+    .vhub small{font-size:11.5px}
+    .versehub .vhub.wide{padding:10px 14px}
+  }
+  @media (max-height:620px){
+    .versehub{gap:5px}
+    .versehub .vhub{padding:6px 5px;font-size:12.5px}
+    .vhub.sq{aspect-ratio:2.05}
+    .vhub .vi{font-size:24px;height:26px}
+    .vhub .vi svg{width:25px;height:25px}
+    .vhub small{font-size:10.5px}
+    .versehub .vhub.wide{padding:7px 12px}
+    .vhub.wide .vi{font-size:22px;height:24px}
+  }
   .vhub:active{transform:scale(.98)}
-  /* The one people press every day. A deeper ground, a lit edge, and the due count as a pill so
-     it reads at a glance instead of as small grey text like every other button. */
-  .vhub.review{position:relative;overflow:hidden;border:none;color:var(--on-blue);
-    background:linear-gradient(150deg,var(--blue2),var(--blue) 55%,var(--blue2));
-    box-shadow:0 5px 0 var(--blue-shadow), inset 0 1px 0 var(--sw-line)}
-  .vhub.review::after{content:"";position:absolute;inset:-40% -30% auto -30%;height:120%;
-    background:radial-gradient(60% 55% at 50% 0%, var(--sw-line), transparent 70%);opacity:.5;pointer-events:none}
-  .vhub.review > *{position:relative;z-index:1}
-  .vhub.review .vi{filter:drop-shadow(0 2px 3px var(--blue-shadow))}
-  .vhub.review small{color:var(--on-blue);background:var(--blue-shadow);border-radius:999px;
-    padding:3px 12px;font-size:12.5px;font-weight:800;letter-spacing:.02em}
-  .vhub.review.hasdue small{background:var(--gold);color:var(--on-accent)}
+  /* Spaced Repetition sits on the same ground as every other button; only the due count stands
+     out, and only when something is actually waiting. */
+  .vhub.hasdue small{background:var(--gold);color:var(--on-accent);border-radius:999px;padding:3px 12px;font-weight:800}
 
   code{background:var(--code-bg);padding:2px 6px;border-radius:6px;color:var(--gold-ink);font-size:12px}
 
@@ -1421,7 +1440,7 @@
     <section id="stories" class="view"></section>
     <!-- ===================== FOUNDATIONS ===================== -->
     <section id="foundations" class="view">
-      <button class="btn ghost sm" onclick="show('journey')" style="width:auto;margin-bottom:10px">← Back</button>
+      <button class="btn ghost sm" id="foundBack" style="width:auto;margin-bottom:10px">← Back</button>
       <h2>Foundations</h2>
       <p class="lead">The reference library. Build the structure once; every verse hangs on it.</p>
       <div class="subnav">
@@ -1651,8 +1670,17 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.23.0";
+const APP_VERSION="1.24.0";
 const CHANGELOG=[
+ {v:"1.24.0", d:"August 26, 2026", t:"Undoable, and easier to reach", items:[
+   ["fix","<b>Admin → Finish this phase now takes a snapshot first</b>, so <b>Restore my real progress</b> puts it back exactly. If a simulation already wrote to an account with no snapshot, Restore offers to <b>clear the Learn path and hide the phases never actually reached</b> — verses, palaces, talents and stories untouched."],
+   ["fix","Choosing an option inside a Profile section <b>closes the popup</b> instead of leaving it in front of wherever you just went."],
+   ["new","<b>Reference library</b> opens straight onto Foundations, and Back returns you to Profile."],
+   ["fix","<b>Caesar’s Levy is not a switch</b> — it comes with Pro."],
+   ["new","The whole Library fits on one screen again, with <b>bigger, bolder marks</b> on every button."],
+   ["new","The bottom menu has <b>larger icons with the name beside them</b>, and neither bar can be dragged out of place however hard you scroll."],
+   ["fix","The first five books read as <b>Genesis</b> through <b>Deuteronomy</b>, without a number in front."]
+ ]},
  {v:"1.23.0", d:"August 26, 2026", t:"Bigger, and better looking", items:[
    ["fix","<b>Profile sections were opening empty.</b> The old collapse-on-open behaviour was still running and hiding the very settings the new popups show. It is gone, and every section opens with its options in it."],
    ["new","<b>Profile is a full screen</b> now, with a red ✕ at the top."],
@@ -3221,7 +3249,7 @@ function buildUnits(){
   // 1) The Foundation — the Torah (books 1-5) + Matthew (40). Completing this earns the first
   //    scratch-off (Verses). The memory palace is NOT here — it's earned later, after 5 verses.
   units.push({name:"Foundations", ic:"🧱", torahEnd:true, foundationEnd:true, skills:[
-    ...range(1,5).map(d=>({id:"num:"+d,label:bookName(d),kind:"num",items:[d]})),   // Genesis…Deuteronomy, named as the books they are
+    ...range(1,5).map(d=>({id:"num:"+d,label:bookName(d),kind:"num",bookNamed:true,items:[d]})),   // Genesis…Deuteronomy, named as the books they are
     bk(40)
   ]});
   // 4) Balanced climb: each round pairs Old Testament books with New Testament books (OT 6-39, NT 41-66 — Mark onward).
@@ -3476,7 +3504,7 @@ function renderPath(focus){
         return;
       }
       const pro=skillPaywalled(sk);
-      const label = sk.kind==="book" ? sk.label : (sk.items.length===1?`${sk.items[0]} · ${sk.label}`:sk.label);
+      const label = (sk.kind==="book"||sk.bookNamed) ? sk.label : (sk.items.length===1?`${sk.items[0]} · ${sk.label}`:sk.label);
       const face = sk.items.length===1?sk.items[0]:"★";
       html+=`<button class="tile ${color} ${d} ${pro?"pro":""}" data-ui="${ui}" data-si="${si}" ${(color==="locked")?"disabled":""}>
         ${pro?`<span class="lockbadge">${sk.kind==="book"?"🪙":"🔒"}</span>`:""}${face}<small>${label}</small></button>`;
@@ -4274,7 +4302,7 @@ function renderVerse(){
   const dueAll=reviewDueCount();   // numbers + verses + palaces due for spaced repetition today
   V.innerHTML=`${taxWarnHTML()}${feat("goal")?`<div class="goalbar" id="goalBtn">${goalBarHTML()}</div>`:""}
     <div class="versehub">
-      <button class="vhub sq review ${dueAll?"hasdue":""}" id="vMemTest"><span class="vi">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>
+      <button class="vhub sq ${dueAll?"hasdue":""}" id="vMemTest"><span class="vi">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>
       <button class="vhub sq" data-view="mem"><span class="vi">${heartIconSVG()}</span><span>Memorized</span><small>${mem.length}</small></button>
       <button class="vhub sq" id="vLearn"><span class="vi">✨</span><span>Learn Verses</span><small>${suggReach} in reach</small></button>
       <button class="vhub sq" data-view="videos"><span class="vi">🎬</span><span>Video Review</span><small>${videoReviewList().length||"none yet"}</small></button>
@@ -4575,8 +4603,6 @@ const FEATURES=[
   what:"Choose exactly which kinds of number and book question you are asked \u2014 numbers to books, images to numbers, and four more \u2014 and how many, before every practice."},
  {id:"reminders", on:false, icon:"\u{1F514}", name:"Daily Reminder",
   what:"A nudge at a time you choose, so a day does not slip past. Your phone will ask permission the first time."},
- {id:"rome", on:false, pro:true, icon:"\u{1F3DB}\uFE0F", name:"Caesar's Levy",
-  what:"Every seven days Rome takes notice of your talents and a wheel decides what it claims \u2014 and half of everything taken is laid up as stone toward a church in Rome. Spend them or lose them."},
 ];
 function featDef(id){ return FEATURES.find(x=>x.id===id)||null; }
 function feat(id){ const f=featDef(id); if(!f) return true;
@@ -5579,24 +5605,20 @@ function taxOverlay(){
 }
 // A heart cut with etching lines — for the verses that are already hidden away. A plain star said
 // nothing about what the button held.
+// The spaced-repetition mark: one turn of the circle, and the trail of checkpoints beneath it.
+function srIconSVG(){
+  return `<svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20.2 12a8.2 8.2 0 1 1-2.7-6.1" fill="none" stroke="var(--blue)" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M20.4 3.2V8h-4.8" fill="none" stroke="var(--blue)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="8.3" cy="13" r="1.9" fill="var(--good)"/>
+    <circle cx="12" cy="13" r="1.9" fill="var(--gold)"/>
+    <circle cx="15.7" cy="13" r="1.9" fill="var(--miss)"/>
+  </svg>`;
+}
 function heartIconSVG(){
   return `<svg viewBox="0 0 24 24" aria-hidden="true">
     <path d="M12 20.7S3.8 15.8 2.6 11A5.1 5.1 0 0 1 12 7.2a5.1 5.1 0 0 1 9.4 3.8c-1.2 4.8-9.4 9.7-9.4 9.7Z" fill="var(--gold)" stroke="var(--gold-ink)" stroke-width="1.1" stroke-linejoin="round"/>
     <path d="M7.6 10.1c1.2-.7 2.5-.6 3.5.3M16.3 9.7c-.9-.6-1.9-.7-2.8-.3M8.2 13.2c1.6 1.1 3.3 2 5 2.7M11.2 16.9c.9.6 1.9 1.1 2.9 1.6" fill="none" stroke="var(--gold-ink)" stroke-opacity=".5" stroke-width=".9" stroke-linecap="round"/>
-  </svg>`;
-}
-// The spaced-repetition mark: one turn of the circle, and the trail of checkpoints along it.
-function srIconSVG(){
-  // an open book coming round again: the trail of checkpoints arcs over it and the arrow returns
-  return `<svg viewBox="0 0 32 32" aria-hidden="true">
-    <path d="M4 21.5c3.6-1.9 7.2-1.9 10.8 0V11.2C11.2 9.3 7.6 9.3 4 11.2Z" fill="currentColor" opacity=".9"/>
-    <path d="M28 21.5c-3.6-1.9-7.2-1.9-10.8 0V11.2c3.6-1.9 7.2-1.9 10.8 0Z" fill="currentColor" opacity=".65"/>
-    <path d="M16 10.6v11.1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".55"/>
-    <path d="M6.6 8.2A11.4 11.4 0 0 1 26 5.9" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/>
-    <path d="M26.6 1.6v4.9h-4.9" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="10.6" cy="26.4" r="1.7" fill="currentColor"/>
-    <circle cx="16" cy="27.1" r="1.7" fill="currentColor" opacity=".7"/>
-    <circle cx="21.4" cy="26.4" r="1.7" fill="currentColor" opacity=".42"/>
   </svg>`;
 }
 // One Bible icon, used by the tab, the scratch-off prize and the icon that flies between them.
@@ -7037,14 +7059,14 @@ function renderAcctBox(){
         <div class="muted" style="font-size:11px">via ${prov}${unverified?" · unverified":""} · ☁ synced</div></div>
         <button class="btn sm ghost" id="signOut">Sign out</button></div>`
     : `<button class="btn" id="signInBtn">Sign in / Create account</button>`) + verifyRow + proRow;
-  if(el("signInBtn")) el("signInBtn").onclick=()=>{ el("themeModal").style.display="none"; setLoginModal(true); };
+  if(el("signInBtn")) el("signInBtn").onclick=()=>{ closeProfile(); setLoginModal(true); };
   if(el("resendVerify")) el("resendVerify").onclick=()=>{ Auth.resendVerification().then(()=>toast("Verification email sent.")).catch(()=>toast("Couldn't send right now.")); };
   if(el("signOut")) el("signOut").onclick=()=>{ if(typeof Auth!=="undefined" && Auth.loggedIn()){ Auth.signOut(); toast("Signed out."); } else { Store.remove("vv_acct"); renderAcctBox(); } };
-  if(el("goProBtn")) el("goProBtn").onclick=()=>{ el("themeModal").style.display="none"; openPaywall(); };
+  if(el("goProBtn")) el("goProBtn").onclick=()=>{ closeProfile(); openPaywall(); };
   // Until the Stripe customer portal is configured, never leave a subscriber with no way out:
   // tell them plainly how to cancel rather than showing a button that does nothing.
   if(el("cancelSub")) el("cancelSub").onclick=()=>{
-    el("themeModal").style.display="none";
+    closeProfile();
     openTicketForm({type:"cancel", title:"Cancel your subscription",
       intro:"Tell us to cancel and we'll take care of it, then confirm by email. You keep Pro until the end of the period you've already paid for.",
       minWords:0, maxWords:200, placeholder:"Anything you'd like us to know…"});
@@ -7469,7 +7491,12 @@ function paintProfileGrid(){
     const sub=PROF_SUBS[p.title]?PROF_SUBS[p.title]():"";
     return `<button type="button" class="profbtn" data-prof="${p.slug}"><span class="pi">${PROF_ICONS[p.title]||"⚙️"}</span><span>${p.title}</span><small>${sub}</small></button>`;
   }).join("");
-  grid.querySelectorAll("[data-prof]").forEach(b=>b.onclick=()=>openProfSection(b.dataset.prof));
+  grid.querySelectorAll("[data-prof]").forEach(b=>b.onclick=()=>{
+    if(b.dataset.prof==="reference-library"){   // nothing to choose in there — just go
+      closeProfile(); openFoundations(()=>el("themeBtn").click()); return;
+    }
+    openProfSection(b.dataset.prof);
+  });
   applyAdminVisibility(); applyFeatureVisibility();
 }
 function openProfSection(slug){
@@ -7488,7 +7515,12 @@ function openProfSection(slug){
   el("psClose").onclick=close; el("psDone").onclick=close;
   m.onclick=ev=>{ if(ev.target===m) close(); };
 }
-function closeProfile(){ const m=el("themeModal"); if(!m) return; m.style.display="none"; m.classList.remove("profscreen"); }
+function closeProfile(){
+  // an option chosen inside a section popup navigates somewhere — take BOTH layers with it,
+  // or the new screen appears behind the popup that opened it
+  const s=el("profSecModal"); if(s && s.style.display==="flex"){ const p=s.querySelector(".prof-panel"); if(p && el("profPanels")){ p.style.display="none"; el("profPanels").appendChild(p); } s.style.display="none"; }
+  const m=el("themeModal"); if(!m) return; m.style.display="none"; m.classList.remove("profscreen");
+}
 function applyAdminVisibility(){
   const admin = (typeof Auth!=="undefined") && Auth.isAdmin();
   const wrap=el("adminWrap"); if(wrap) wrap.style.display = admin ? "" : "none";
@@ -7542,9 +7574,9 @@ el("expBtn").onclick=exportBackup;
 el("impBtn").onclick=()=>el("impFile").click();
 // Share progress and the Talents Store were removed from Profile — the store lives on the
 // top bar, which is where people actually reach for it.
-if(el("pInstall")) el("pInstall").onclick=()=>{ el("themeModal").style.display="none"; openInstallDialog(); };
-if(el("testScratchBtn")) el("testScratchBtn").onclick=()=>{ el("themeModal").style.display="none"; ScratchSim.begin(); };
-if(el("testOnboardBtn")) el("testOnboardBtn").onclick=()=>{ el("themeModal").style.display="none"; Onboard.preview(); };
+if(el("pInstall")) el("pInstall").onclick=()=>{ closeProfile(); openInstallDialog(); };
+if(el("testScratchBtn")) el("testScratchBtn").onclick=()=>{ closeProfile(); ScratchSim.begin(); };
+if(el("testOnboardBtn")) el("testOnboardBtn").onclick=()=>{ closeProfile(); Onboard.preview(); };
 if(el("bugReportsBtn")) el("bugReportsBtn").onclick=()=>openBugReports();
 
 // Admin-only: review every user's submitted bug reports (email · text · done/undone · delete).
@@ -7586,18 +7618,18 @@ function simComplete(which){
   UNITS.forEach(U=>{ const isStory=!!U.story; if((which==="learn")!==isStory) U.skills.forEach(sk=>{ if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id); }); });
   if(which==="learn"){ Prog.scratchWon=["verse","palace","journey","stories"]; if(!Prog.palaces.filter(Boolean).length) Prog.palaces=[{place:"My house",stations:["a"],learnedAt:1,step:1}]; }
   recomputeLevel(); bustCaches(); saveProg();
-  el("themeModal").style.display="none"; toast("🧪 Simulation applied — Profile → Restore to undo.");
+  closeProfile(); toast("🧪 Simulation applied — Profile → Restore to undo.");
   show(which==="learn"?"learn":"stories");
 }
 if(el("testLearnDone")) el("testLearnDone").onclick=()=>simComplete("learn");
 if(el("testStoriesDone")) el("testStoriesDone").onclick=()=>simComplete("stories");
 if(el("testTalent")) el("testTalent").onclick=()=>{   // pure-visual demo: plays the coin animation without changing the real total
-  el("themeModal").style.display="none";
+  closeProfile();
   setTimeout(()=>talentBurst(40), 180);
 };
 // admin: type how many talents to grant (with the earn animation)
 if(el("testAdd500")) el("testAdd500").onclick=()=>{
-  el("themeModal").style.display="none";
+  closeProfile();
   editText({ title:"Give talents", hint:`How many talents should be added? You have ${talDisp(Prog.talents||0)}.`,
     value:"500",
     onSave:v=>{ const n=Math.max(0,Math.min(999999,parseInt(String(v).replace(/[^0-9]/g,""),10)||0));
@@ -7605,37 +7637,73 @@ if(el("testAdd500")) el("testAdd500").onclick=()=>{
       setTimeout(()=>{ earnTalents(n); toast(`🪙 ${n} talents given`); }, 180); } });
 };
 // admin: a real levy — talents are taken and the church is built, exactly as on the day it falls due
-if(el("testTaxWheel")) el("testTaxWheel").onclick=()=>{ el("themeModal").style.display="none"; openTaxWheel(false); };
-if(el("testPaywall")) el("testPaywall").onclick=()=>{ el("themeModal").style.display="none"; openPaywall(); };
-if(el("testChurch")) el("testChurch").onclick=()=>{ el("themeModal").style.display="none"; openChurch(); };
+if(el("testTaxWheel")) el("testTaxWheel").onclick=()=>{ closeProfile(); openTaxWheel(false); };
+if(el("testPaywall")) el("testPaywall").onclick=()=>{ closeProfile(); openPaywall(); };
+if(el("testChurch")) el("testChurch").onclick=()=>{ closeProfile(); openChurch(); };
 // Complete every lesson in the phase being worked on, exactly as the last one would: the phase
 // scratch-off first, then the palace offer if they are behind the one-per-six mark.
 if(el("testFinishPhase")) el("testFinishPhase").onclick=()=>{
-  el("themeModal").style.display="none";
+  closeProfile();
+  if(!Store.get("vv_simbak")) Store.setJSON("vv_simbak", Prog);   // snapshot real progress once, so Restore can undo this
   const cur=ensurePhaseMax();
   UNITS[cur].skills.forEach(sk=>{ if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id); });
   bustCaches(); saveProg(); updateMetrics(); recomputeLevel&&recomputeLevel();
   show("learn"); renderPath(true);
-  toast(`🎓 ${UNITS[cur].name} — finished`);
+  toast(`🧪 ${UNITS[cur].name} finished — Profile → Restore to undo.`);
   setTimeout(()=>{ if(!maybePhaseScratch(()=>setTimeout(maybeSuggestPalace,600))) maybeSuggestPalace(); }, 500);
 };
-if(el("testRomeLetter")) el("testRomeLetter").onclick=()=>{ el("themeModal").style.display="none"; Prog.romeLetterSeen=false; saveProg(); openRomeLetter(); };
+if(el("testRomeLetter")) el("testRomeLetter").onclick=()=>{ closeProfile(); Prog.romeLetterSeen=false; saveProg(); openRomeLetter(); };
 if(el("testUnpaid")) el("testUnpaid").onclick=()=>{
-  if(Billing.isPro()){ Billing.revoke(); bustCaches(); el("themeModal").style.display="none"; toast("🆓 Now simulating an unpaid (free) user — Pro content is locked."); show("learn"); }
-  else { Billing.grant(12); bustCaches(); el("themeModal").style.display="none"; toast("✨ Pro access restored."); show("learn"); }
+  if(Billing.isPro()){ Billing.revoke(); bustCaches(); closeProfile(); toast("🆓 Now simulating an unpaid (free) user — Pro content is locked."); show("learn"); }
+  else { Billing.grant(12); bustCaches(); closeProfile(); toast("✨ Pro access restored."); show("learn"); }
 };
-if(el("testRestore")) el("testRestore").onclick=()=>{ const bak=Store.getJSON("vv_simbak",null); if(!bak){ toast("No simulation active."); return; } Prog=migrateProg(bak); Store.setJSON(PROG_KEY,Prog); Store.remove("vv_simbak"); bustCaches(); recomputeLevel(); el("themeModal").style.display="none"; toast("Restored your real progress."); show("learn"); };
+// Clear every tick on the Learn path and hide the phases that were never actually reached.
+// This is the repair for an account a simulation wrote to before it learned to snapshot itself:
+// there is no record of which ticks were simulated, so the honest fix is to clear the path and
+// let it be walked again. Nothing outside the Learn path is touched.
+function repairLearnProgress(){
+  const before=(Prog.doneSkills||[]).length;
+  Prog.doneSkills=(Prog.doneSkills||[]).filter(id=>!/^(num|book|snd|peg|palace):/.test(id));
+  Prog.phaseMax=-1;                       // recomputed from what is genuinely left
+  bustCaches(); recomputeLevel(); ensurePhaseMax(); saveProg(); updateMetrics();
+  return before-(Prog.doneSkills||[]).length;
+}
+function confirmRepairLearn(){
+  const m=el("repairModal")||(()=>{ const d=document.createElement("div"); d.id="repairModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const n=(Prog.doneSkills||[]).filter(id=>/^(num|book|snd|peg|palace):/.test(id)).length;
+  m.innerHTML=`<div class="modal-card center">
+      <div style="font-size:34px">↩</div>
+      <div style="font-size:20px;font-weight:800;margin-top:6px">Clear the Learn path?</div>
+      <p class="lead" style="margin:8px 0 0">No simulation snapshot was taken, so there is no way to tell which of your <b>${n}</b> lesson ticks were real and which a simulation added.</p>
+      <p class="hint" style="margin:10px 0 0">This removes every tick on the Learn path and hides the phases you have not actually reached. <b>Your verses, palaces, talents, stories and streak are untouched.</b></p>
+      <button class="btn" id="rpYes" style="width:100%;margin-top:14px">Clear the path</button>
+      <button class="btn ghost" id="rpNo" style="width:100%;margin-top:8px">Leave it alone</button>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  el("rpNo").onclick=()=>{ m.style.display="none"; };
+  el("rpYes").onclick=()=>{ m.style.display="none";
+    const n2=repairLearnProgress();
+    closeProfile();
+    show("learn"); renderPath(true);
+    toast(`↩ ${n2} lesson tick${n2===1?"":"s"} cleared — the path starts where you really are.`);
+  };
+}
+if(el("testRestore")) el("testRestore").onclick=()=>{ const bak=Store.getJSON("vv_simbak",null); if(!bak){ confirmRepairLearn(); return; } Prog=migrateProg(bak); Store.setJSON(PROG_KEY,Prog); Store.remove("vv_simbak"); bustCaches(); recomputeLevel(); closeProfile(); toast("Restored your real progress."); show("learn"); };
 // resetAllProgress() was removed deliberately: wiping every verse a person has hidden in
 // their heart should not sit one tap — or one console call — away.
 
 el("impFile").onchange=e=>{ if(e.target.files[0]) importBackup(e.target.files[0]); };
 el("themeClose").onclick=closeProfile;
 if(el("profX")) el("profX").onclick=closeProfile;
-el("refBtn").onclick=()=>{ el("themeModal").style.display="none"; show("foundations"); };   // Reference now lives under the profile menu
+// The reference library opens straight onto Foundations, and Back returns wherever it came from.
+let foundReturn=null;
+function openFoundations(ret){ foundReturn=ret||null; show("foundations"); }
+if(el("foundBack")) el("foundBack").onclick=()=>{ const r=foundReturn; foundReturn=null; if(r) r(); else show("journey"); };
+if(el("refBtn")) el("refBtn").onclick=()=>{ closeProfile(); openFoundations(); };
 if(el("pFeatures")) el("pFeatures").onclick=()=>openFeatureStore();
 el("pChangelog").textContent=`📋 Version history · v${APP_VERSION}`;
-el("pChangelog").onclick=()=>{ el("themeModal").style.display="none"; openWhatsNew(true); };
-el("themeModal").onclick=e=>{ if(e.target===el("themeModal")) el("themeModal").style.display="none"; };
+el("pChangelog").onclick=()=>{ closeProfile(); openWhatsNew(true); };
+el("themeModal").onclick=e=>{ if(e.target===el("themeModal")) closeProfile(); };
 document.querySelectorAll(".theme-opt").forEach(b=>b.onclick=()=>applyTheme(b.dataset.th));
 applyTheme(Store.get("vv_theme","illumined")); // Illumined Night is the main theme
 Reminders.init(); // re-arm the daily reminder on app open
