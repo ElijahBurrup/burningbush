@@ -46,7 +46,7 @@ const DAY = 86400000;
   is(data.blessingsUnresolved, 0, 'every blessing resolves to real KJV text');
   is(data.paceUnresolved, 0, 'every pacing verse resolves');
   is(data.growUnresolved + data.wordUnresolved, 0, 'every encouragement verse resolves');
-  is(data.storiesTagged, 100, 'a hundred Bible stories');
+  is(data.storiesTagged, 130, 'a hundred and thirty Bible stories');
 
   // ─────────────────────────────── the Major System ───────────────────────────────
   describe('major system', () => { });
@@ -708,6 +708,51 @@ const DAY = 86400000;
   // These rewrite Prog freely, so the seeded account is snapshotted and put back at the end.
   const ladderSnap = await $(() => JSON.stringify(Prog));
   await $(() => { setFeat('w4w', true); return true; });   // the ladder is a Feature Store switch now
+
+  describe('pull to refresh', () => { });
+  const ptr = await $(() => {
+    const out = {};
+    const sc = document.querySelector('.content');
+    const ind = document.getElementById('ptr');
+    out.exists = !!ind;
+    out.hiddenAtRest = !!ind && !ind.classList.contains('on');
+    const touch = (type, y) => sc.dispatchEvent(Object.assign(new Event(type, { bubbles: true }), {
+      touches: type === 'touchend' ? [] : [{ clientY: y }]
+    }));
+    sc.scrollTop = 0;
+    // a short pull is not enough
+    touch('touchstart', 100); touch('touchmove', 130);
+    out.shortShows = ind.classList.contains('on');
+    out.shortArmed = ind.classList.contains('armed');
+    touch('touchend', 130);
+    out.shortReset = !ind.classList.contains('on');
+    // a long pull arms it
+    touch('touchstart', 100); touch('touchmove', 100 + PTR_TRIGGER + 10);
+    out.longArmed = ind.classList.contains('armed');
+    out.says = ind.querySelector('.ptr-t').textContent;
+    // an upward drag is never a refresh
+    touch('touchstart', 200); touch('touchmove', 150);
+    out.upIgnored = !ind.classList.contains('armed') && !ind.classList.contains('on');
+    // ...and neither is a pull that begins part-way down the page. The scroller needs something
+    // to scroll before scrollTop will hold a value at all, hence the filler.
+    const filler = document.createElement('div'); filler.style.height = '2000px'; sc.appendChild(filler);
+    sc.scrollTop = 60;
+    out.reallyScrolled = sc.scrollTop > 0;
+    touch('touchstart', 100); touch('touchmove', 300);
+    out.scrollingIgnored = !ind.classList.contains('armed');
+    filler.remove(); sc.scrollTop = 0;
+    return out;
+  });
+  ok(ptr.exists, 'the app carries its own pull-to-refresh, because a contained scroller kills the browser one');
+  ok(ptr.hiddenAtRest, '...invisible until you actually pull');
+  ok(ptr.shortShows, 'a small pull shows the hint');
+  no(ptr.shortArmed, '...without arming it');
+  ok(ptr.shortReset, '...and letting go puts it away without reloading');
+  ok(ptr.longArmed, 'pulling past the trigger arms it');
+  is(ptr.says, 'Release to refresh', '...and says so');
+  ok(ptr.upIgnored, 'dragging upward never arms it');
+  ok(ptr.reallyScrolled, 'with the page genuinely scrolled down');
+  ok(ptr.scrollingIgnored, '...a downward drag from there is a scroll, not a refresh');
 
   describe('ladder: two rungs', () => { });
   const st = await $(() => {
@@ -1519,7 +1564,7 @@ const DAY = 86400000;
   is(lpath.videoSkills, 1, '...kept there because Video Review is out of reach this early');
   is(lpath.videoWhere, 'The Code: Major System Sounds', '...and it sits in the Code section');
   is(lpath.pathMilestones, 0, 'the learn-path milestones are gone');
-  is(lpath.storyMilestones, 13, '...while the Bible-story capstones stay');
+  is(lpath.storyMilestones, 15, '...while the Bible-story capstones stay');
   is(lpath.focused, 1, 'the next lesson is marked');
   is(lpath.bands, '0,1,2,3', 'the phases band in fours, so two rows read as a group');
   is(lpath.torah, 'Genesis,Exodus,Leviticus,Numbers,Deuteronomy', 'the first five are named as the books they are');

@@ -137,16 +137,31 @@
   .view.active{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
+  /* Pull down at the top of a page to fetch the newest code. Hidden until you actually pull. */
+  .ptr{position:absolute;left:50%;top:8px;z-index:7;transform:translate(-50%,0);
+    display:none;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;
+    background:var(--panel);border:1px solid var(--line);color:var(--muted);
+    font-size:11.5px;font-weight:800;pointer-events:none;white-space:nowrap;
+    box-shadow:0 6px 18px var(--phone-shadow)}
+  .ptr.on{display:flex}
+  .ptr .ptr-ic{font-size:14px;line-height:1;display:block;transition:transform .18s ease}
+  .ptr.armed{color:var(--gold-ink);border-color:var(--gold2)}
+  .ptr.armed .ptr-ic{transform:rotate(180deg)}
+  .ptr.go .ptr-ic{animation:ptrspin .7s linear infinite}
+  @keyframes ptrspin{to{transform:rotate(360deg)}}
+
   .tabbar{
     flex:0 0 auto;position:relative;z-index:6;display:flex;border-top:1px solid var(--line);background:var(--tabbar-bg);
     padding-bottom:env(safe-area-inset-bottom);
   }
-  /* Icons only. The name is given when the tab is won, and again at the top of its own page. */
-  .tabbar button{flex:1;min-width:0;background:none;border:none;color:var(--muted);padding:11px 2px 13px;
-    font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  /* Icon over its name. The padding is tightened rather than the icon, so the names cost the bar
+     about a pixel of height and the icons stay the size they were. */
+  .tabbar button{flex:1;min-width:0;background:none;border:none;color:var(--muted);padding:6px 2px 7px;
+    font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
   .tabbar button .ic{font-size:29px;line-height:1;height:31px;display:grid;place-items:center}
   .tabbar button .ic svg{width:29px;height:29px;display:block}
-  .tabbar button .lbl{display:none}
+  .tabbar button .lbl{display:block;font-size:9.5px;line-height:1;letter-spacing:.01em;
+    max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .tabbar button.on{color:var(--gold-ink)}
   .tabbar button.locked{opacity:.3;pointer-events:none;filter:grayscale(.7)}
   .tabbar button.tabflash{color:var(--gold-ink)}
@@ -1641,7 +1656,7 @@
         <div><b class="gold">Pro unlocks:</b></div>
         <div>✦ All 66 books &amp; the balanced climb</div>
         <div>✦ Every number peg (chapters &amp; verses to 176)</div>
-        <div>✦ All 100 Bible story lessons</div>
+        <div>✦ All 100+ Bible story lessons</div>
         <div>✦ Unlimited bonus memory palaces</div>
       </div>
       <div class="hint" style="margin:0 0 8px;font-weight:700">💳 A subscription unlocks the <b class="gold">entire app, forever</b>:</div>
@@ -1690,8 +1705,15 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.34.0";
+const APP_VERSION="1.35.0";
 const CHANGELOG=[
+ {v:"1.35.0", d:"August 27, 2026", t:"Every parable, and the names are back", items:[
+   ["new","<b>Twenty more parables.</b> All thirty-five of Jesus' parables are now here with the verse each one opens at — the lost coin, the two sons, the wicked tenants, the wedding feast, the hidden treasure, the net, the leaven, the growing seed, the shrewd manager, the persistent widow and the rest."],
+   ["new","<b>Word Pictures of Jesus</b> — ten sayings too short to be called parables, but too good to leave out: the salt of the earth, the lamp under a bushel, the mote and the beam, new wine in old bottles, the vine and the branches."],
+   ["chg","Bible Stories now holds <b>130 openings</b> in 26 sections, and says so as <b>100+</b>."],
+   ["chg","<b>The names are back under the menu icons</b> at the foot of the screen. The icons have not shrunk — the padding gave up the room instead."],
+   ["fix","<b>Pull down at the top of a page to refresh the app.</b> It stopped working when the bars were pinned in place — the same setting that stops them drifting also switches off the browser's own pull to refresh, and an installed app never had one. This one is the app's own, so it works in a tab and in the installed app alike."]
+ ]},
  {v:"1.34.0", d:"August 27, 2026", t:"Say when you know it", items:[
    ["new","<b>Tell the app you already know a verse by heart</b> \u2014 from the verse's own page, any time, without practising it first. If you knew it before you ever opened Burning Bush, you no longer have to prove that seven times over."],
    ["chg","Word for word practice asks for <b>seven recitations instead of ten</b> before it offers to move a verse up."],
@@ -3049,7 +3071,7 @@ const SCRATCH_LADDER=[
   {tab:"journey", icon:"📕", iconHtml:()=>bibleIconSVG(), name:"Bible",    desc:"See the whole Bible open before you — every book, chapter and verse you can reach.", gate:()=>Prog.memorized.length>=15 && palaceCount()>=3,
      reqs:[{label:"Memorize 15 verses", done:()=>Prog.memorized.length>=15, prog:()=>`${Math.min(15,Prog.memorized.length)}/15`},
            {label:"Build 3 memory palaces", done:()=>palaceCount()>=3, prog:()=>`${Math.min(3,palaceCount())}/3`}]},
-  {tab:"stories", icon:"📖", name:"Bible Stories",   desc:"100 of the Bible's great stories — located, learned, and ready to tell.",         gate:()=>Prog.memorized.length>=25 && palaceCount()>=5 && nt5Done(),
+  {tab:"stories", icon:"📖", name:"Bible Stories",   desc:"100+ of the Bible's great stories — located, learned, and ready to tell.",         gate:()=>Prog.memorized.length>=25 && palaceCount()>=5 && nt5Done(),
      reqs:[{label:"Memorize 25 verses", done:()=>Prog.memorized.length>=25, prog:()=>`${Math.min(25,Prog.memorized.length)}/25`},
            {label:"Build 5 memory palaces", done:()=>palaceCount()>=5, prog:()=>`${Math.min(5,palaceCount())}/5`},
            {label:"Learn the first 5 New Testament books (Matthew–Acts)", done:()=>nt5Done(), prog:()=>`${NT5.filter(n=>knownNum(n)).length}/5`}]}
@@ -3253,7 +3275,7 @@ function renderJourney(){
 }
 
 /* =================== BOOK BROWSER (full KJV) =================== */
-// where the 100 Bible stories begin — so the browser can flag those chapters/verses with a 📖
+// where the Bible stories begin — so the browser can flag those chapters/verses with a 📖
 let _storyStarts=null;
 function storyStarts(){ if(_storyStarts) return _storyStarts; const v=new Set(), c=new Set();
   STORY_GROUPS.forEach(g=>g.s.forEach(st=>{ const b=bookNum(st[1]); v.add(b+":"+st[2]+":"+st[3]); c.add(b+":"+st[2]); }));
@@ -3383,7 +3405,11 @@ function renderOnboard(){
   el("obDone").onclick=()=>{ Prog.onboarded=true; saveProg(); show("learn"); }; // start on the Major System path
 }
 
-/* =================== BIBLE STORIES — 100 stories, 20 sections of 5 =================== */
+/* =================== BIBLE STORIES — 130 stories, 26 sections of 5 ===================
+   The last six sections were added after the first hundred. They are APPENDED, never inserted:
+   a story's id is its running position across the whole list, so inserting a section in the
+   middle would silently hand every later story a different id and move people's progress onto
+   stories they had never learned.                                                          */
 // [name, book, chapter, verse] = where the story STARTS. Parables: no repeats; the fullest gospel version.
 const STORY_GROUPS=[
  {t:"Creation & the Fall", s:[["Creation","Genesis",1,1],["Adam & Eve in Eden","Genesis",2,7],["The Fall","Genesis",3,1],["Cain & Abel","Genesis",4,1],["Noah & the Flood","Genesis",6,9]]},
@@ -3405,8 +3431,18 @@ const STORY_GROUPS=[
  {t:"Parables of Jesus III", s:[["The Talents","Matthew",25,14],["The Rich Fool","Luke",12,16],["The Rich Man & Lazarus","Luke",16,19],["The Pharisee & the Tax Collector","Luke",18,9],["The Great Banquet","Luke",14,16]]},
  {t:"The Cross & Resurrection", s:[["The Triumphal Entry","Matthew",21,1],["The Last Supper","Luke",22,14],["Gethsemane","Matthew",26,36],["The Crucifixion","John",19,16],["The Resurrection","John",20,1]]},
  {t:"The Early Church", s:[["The Ascension","Acts",1,9],["Pentecost","Acts",2,1],["Peter & John Heal the Lame Man","Acts",3,1],["Ananias & Sapphira","Acts",5,1],["Stephen the First Martyr","Acts",6,8]]},
- {t:"Paul & the End", s:[["The Conversion of Saul","Acts",9,1],["Peter's Vision & Cornelius","Acts",10,1],["Paul & Silas in Prison","Acts",16,16],["Paul's Shipwreck","Acts",27,1],["The New Heaven & New Earth","Revelation",21,1]]}
+ {t:"Paul & the End", s:[["The Conversion of Saul","Acts",9,1],["Peter's Vision & Cornelius","Acts",10,1],["Paul & Silas in Prison","Acts",16,16],["Paul's Shipwreck","Acts",27,1],["The New Heaven & New Earth","Revelation",21,1]]},
+ // Twenty more parables, so that all thirty-five of Jesus' parables are here with their opening verse.
+ {t:"Parables of Jesus IV", s:[["The Lost Coin","Luke",15,8],["The Two Sons","Matthew",21,28],["The Wicked Tenants","Matthew",21,33],["The Wedding Feast","Matthew",22,2],["The Hidden Treasure","Matthew",13,44]]},
+ {t:"Parables of Jesus V", s:[["The Net","Matthew",13,47],["The Leaven","Matthew",13,33],["The Growing Seed","Mark",4,26],["The Shrewd Manager","Luke",16,1],["The Persistent Widow","Luke",18,1]]},
+ {t:"Parables of Jesus VI", s:[["The Friend at Midnight","Luke",11,5],["The Barren Fig Tree","Luke",13,6],["The Good Shepherd","John",10,1],["The Ten Minas","Luke",19,11],["The Two Debtors","Luke",7,41]]},
+ {t:"Parables of Jesus VII", s:[["The Wise & Foolish Builders","Matthew",7,24],["The Sheep & the Goats","Matthew",25,31],["The Faithful & Wise Servant","Matthew",24,45],["The Watchful Servants","Luke",12,35],["The Tower Builder & the King","Luke",14,28]]},
+ // Too short to carry a story, so they are not called parables - but they are word pictures all the
+ // same, and every one of them has a verse worth being able to find.
+ {t:"Word Pictures of Jesus I", s:[["Salt of the Earth","Matthew",5,13],["The Lamp under a Bushel","Matthew",5,15],["The Mote & the Beam","Matthew",7,3],["The Strait Gate","Matthew",7,13],["A Tree & Its Fruit","Matthew",7,17]]},
+ {t:"Word Pictures of Jesus II", s:[["New Cloth on an Old Coat","Matthew",9,16],["New Wine in Old Bottles","Matthew",9,17],["The Blind Leading the Blind","Luke",6,39],["The Fig Tree in Leaf","Matthew",24,32],["The Vine & the Branches","John",15,1]]}
 ];
+const STORY_TOTAL=STORY_GROUPS.reduce((n,g)=>n+g.s.length,0);   // never hardcode it again
 function storiesDone(a,b){ for(let g=a;g<=b;g++) if(!Prog.doneSkills.includes("story:"+g)) return false; return true; }
 // reachability sort key for a story: the largest number it needs (book #, chapter OR verse). Higher = harder to reach = lower in the list.
 function storyReachKey(sk){ const s=sk.story; return Math.max(bookNum(s.b)||0, s.c||0, s.v||0); }
@@ -3428,7 +3464,7 @@ function buildUnits(){
   const bk=n=>({id:"book:"+n,label:bookName(n),kind:"book",items:[n]});
   const units=[];
   const ROUND_ICONS=["👣","🥾","🛤️","🌄","⛰️","🧗","🏔️","🚩","🦅","🌟","🎖️","🏆","👑"];   // ascending climb, Round 1→13
-  const STORY_ICONS=["🍎","⭐","🧥","🌊","📜","🎺","🌾","👑","🔥","🌪️","🦁","👶","🕊️","🍞","🌱","🐑","💰","✝️","⛪","🌅"]; // one per story section
+  const STORY_ICONS=["🍎","⭐","🧥","🌊","📜","🎺","🌾","👑","🔥","🌪️","🦁","👶","🕊️","🍞","🌱","🐑","💰","✝️","⛪","🌅","🕯️","🌿","🚪","🏗️","🧂","🍷"]; // one per story section
   // 0) The Code — the Major System video first, then the sound↔digit map drilled both ways.
   units.push({name:"The Code: Major System Sounds", ic:"🔢", skills:[
     // Video Review is not reachable this early, so the opening film keeps a tile of its own here
@@ -3540,9 +3576,15 @@ const MILESTONES=[
  {after:"The Cross & Resurrection", reached:()=>storiesDone(0,89), stories:true, e:"✝️", t:"The Gospel Story",
   c:"The whole story of Jesus — birth, ministry, cross and empty tomb.",
   d:"You can walk anyone from Bethlehem to the resurrection, story by story, chapter and verse."},
- {after:"Parables of Jesus III", reached:()=>storiesDone(70,84), stories:true, e:"🌾", t:"Every Parable",
-  c:"All fifteen of Jesus' major parables, located and learned.",
+ {after:"Parables of Jesus III", reached:()=>storiesDone(70,84), stories:true, e:"🌾", t:"The Best Known Parables",
+  c:"The fifteen parables everyone has heard, located and learned.",
+  d:"The Samaritan, the prodigal, the sower, the lost sheep — you can turn to any of them without hunting."},
+ {after:"Parables of Jesus VII", reached:()=>storiesDone(70,84)&&storiesDone(100,119), stories:true, e:"🌱", t:"Every Parable",
+  c:"All thirty-five of Jesus' parables, located and learned.",
   d:"When someone asks 'where's that parable?' — you'll know the book, chapter and verse in an instant."},
+ {after:"Word Pictures of Jesus II", reached:()=>storiesDone(0,STORY_TOTAL-1), stories:true, e:"📖", t:"Every Story Told",
+  c:"Every story, every parable and every word picture in the collection.",
+  d:"A hundred and thirty openings, from 'In the beginning' to the new heaven and the new earth. There is nothing left in here you cannot find."},
  {after:"The Early Church", reached:()=>storiesDone(0,94), stories:true, e:"⛪", t:"The Church Begins",
   c:"Pentecost, the first healings, the first martyr — the Church is on its feet.",
   d:"Ninety-five stories. Only the road to Rome remains."},
@@ -3550,7 +3592,7 @@ const MILESTONES=[
   c:"Every major story in the Bible, by heart.",
   d:"You can turn to any of the Bible's 100 great stories in a moment. Now go tell them."}
 ];
-function storiesLearned(){ let n=0; for(let i=0;i<100;i++) if(Prog.doneSkills.includes("story:"+i)) n++; return n; }
+function storiesLearned(){ let n=0; for(let i=0;i<STORY_TOTAL;i++) if(Prog.doneSkills.includes("story:"+i)) n++; return n; }
 function gemCountsHtml(){
   const c=reachableGemCounts(), t=totalGemCounts();
   return `<div class="gemcounts">`+Object.keys(GEM_CATS).map(k=>
@@ -3561,7 +3603,7 @@ function renderMilestone(m){
   Prog.msSeen = Prog.msSeen || {};
   const firstTime = !Prog.msSeen[m.t];           // celebrate it expanded the first time; collapsed forever after
   if(firstTime){ Prog.msSeen[m.t]=Date.now(); saveProg(); }
-  const num = m.stories ? `<b class="gold">${storiesLearned()}</b> of 100 stories learned`
+  const num = m.stories ? `<b class="gold">${storiesLearned()}</b> of ${STORY_TOTAL} stories learned`
                         : `<b class="gold">${reachableGems()}</b> of ${totalGems()} heart-verses within your reach`;
   return `<details class="milestone reached"${firstTime?" open":""}>
     <summary class="ms-summary"><span class="ms-e">${m.e}</span><span class="mtitle">${m.t}</span><span class="ms-caret">▸</span></summary>
@@ -3768,7 +3810,7 @@ function renderStories(){
   // A grid of sections, like the Library and Profile. The stories themselves live one tap behind,
   // in a popup with the same chrome: a cross at the top and Done at the foot.
   let html=`<h2>Bible Stories</h2>
-    <p class="lead">100 key stories. Each unlocks the moment you can address its opening verse, and joins your daily review.</p>
+    <p class="lead">100+ key stories, parables and word pictures. Each unlocks the moment you can address its opening verse, and joins your daily review.</p>
     <div class="hint" style="margin:0 0 10px">${doneCount} of ${total} located${readyCount?` · <b class="gold">${readyCount} ready now</b>`:""}</div>
     <div class="profgrid">${groups.map(({U,ui})=>{
       const done=U.skills.filter(sk=>Prog.doneSkills.includes(sk.id)).length, tot=U.skills.length;
@@ -8552,7 +8594,7 @@ updateMetrics();
 const PERSONA_CLOSE = {
   peace:"We'll walk toward verses you can stand on when the water rises.",
   roots:"We'll build roots — book by book — until the whole counsel of God is open to you.",
-  shepherd:"We'll get you to the 100 great stories fast: located, learned, ready to tell.",
+  shepherd:"We'll get you to the 100+ great stories fast: located, learned, ready to tell.",
   proof:"We won't ask you to trust the method. In a few days, we'll prove it to you."
 };
 const PERSONA_GOAL = {
@@ -8889,6 +8931,48 @@ wireVerseWords();   // press-and-hold on any verse word → its Hebrew/Greek
 grandfatherFeatures();   // an account that predates the Feature Store keeps everything it had
 resumeActiveTest();      // straight back into an unfinished verse test, if there was one
 applyFeatureVisibility();
+/* ---- Pull down for the newest code ---------------------------------------------------------
+   The top and bottom bars are flex siblings of a CONTAINED scroller - that containment is what
+   stops them drifting when you fling the page, and it is also what stops the browser's own pull
+   to refresh from ever firing. An installed PWA has no pull to refresh to begin with. So the
+   gesture is ours, and it works the same in a tab and in the installed app.
+   The service worker deliberately caches no shell (see sw.js), so a plain reload IS a code
+   refresh - there is no stale copy to clear first.                                           */
+const PTR_TRIGGER=72;                                  // how far to pull before letting go does anything
+function initPullRefresh(){
+  const sc=document.querySelector(".content"); if(!sc || sc.dataset.ptr) return;
+  sc.dataset.ptr="1";
+  const ind=document.createElement("div"); ind.id="ptr"; ind.className="ptr";
+  ind.innerHTML='<span class="ptr-ic">↻</span><span class="ptr-t">Pull to refresh</span>';
+  (document.querySelector(".phone")||document.body).appendChild(ind);
+  const txt=ind.querySelector(".ptr-t");
+  let y0=null, dy=0, firing=false;
+  const reset=()=>{ y0=null; dy=0; ind.className="ptr"; ind.style.transform=""; txt.textContent="Pull to refresh"; };
+  const paint=()=>{
+    const armed=dy>=PTR_TRIGGER;
+    ind.style.transform="translate(-50%,"+Math.min(dy*0.5, PTR_TRIGGER)+"px)";   // resistance, so it pulls against something
+    ind.classList.toggle("on", dy>4); ind.classList.toggle("armed", armed);
+    txt.textContent=armed?"Release to refresh":"Pull to refresh";
+  };
+  sc.addEventListener("touchstart",ev=>{
+    if(firing) return;
+    if(ev.touches.length===1 && sc.scrollTop<=0){ y0=ev.touches[0].clientY; dy=0; } else reset();
+  },{passive:true});
+  sc.addEventListener("touchmove",ev=>{
+    if(firing||y0==null||ev.touches.length!==1) return;
+    if(sc.scrollTop>0){ reset(); return; }                 // they started scrolling for real
+    dy=Math.max(0, ev.touches[0].clientY-y0); paint();
+  },{passive:true});
+  sc.addEventListener("touchend",()=>{
+    if(firing||y0==null) return;
+    if(dy>=PTR_TRIGGER){ firing=true; ind.classList.add("go"); txt.textContent="Refreshing…";
+      setTimeout(()=>location.reload(), 180); return; }
+    reset();
+  },{passive:true});
+  sc.addEventListener("touchcancel",reset,{passive:true});
+}
+initPullRefresh();
+
 bootPopups();   // Rome's letter → any levy that has fallen due → the "What's new" card
 
 /* ---- Android / browser back button = in-app back (one screen per press); at the Learn home, back again exits ---- */
