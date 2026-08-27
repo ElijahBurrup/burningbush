@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_sowing_wind_reaping_whirlwind" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="56" cy="20" rx="28" ry="9" fill="url(#g_sowing_wind_reaping_whirlwind)"/>
+<ellipse cx="52" cy="38" rx="20" ry="8" fill="url(#g_sowing_wind_reaping_whirlwind)"/>
+<ellipse cx="48" cy="55" rx="13" ry="6.5" fill="url(#g_sowing_wind_reaping_whirlwind)"/>
+<path d="M46 62 Q42 70 45 76 Q46 82 42 86" fill="none" stroke-width="3"/>
+<path d="M10 86 Q10 76 18 74 Q28 72 32 78 Q34 82 30 86 Z" fill="url(#g_sowing_wind_reaping_whirlwind)"/>
+<circle cx="34" cy="68" r="2.5" fill="#0e2c1d"/>
+<circle cx="41" cy="61" r="2.5" fill="#0e2c1d"/>
+<circle cx="30" cy="57" r="2.5" fill="#0e2c1d"/>
+<path d="M18 68 Q26 60 36 63" fill="none"/>
+</g>
+</svg>

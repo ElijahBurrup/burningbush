@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_an_almond_branch_budding" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M14 84 C34 66 48 52 66 30 C70 24 76 18 82 14 L86 20 C76 28 68 38 58 50 C44 66 32 76 20 86 Z" fill="url(#g_an_almond_branch_budding)"/>
+<path d="M44 58 C40 48 44 40 52 36 C54 46 52 54 44 58 Z" fill="#6fce4f"/>
+<path d="M64 40 C70 32 78 30 84 34 C78 42 70 44 64 40 Z" fill="#3f8a2c"/>
+<circle cx="30" cy="60" r="9" fill="#f6f2e8"/>
+<circle cx="52" cy="24" r="8" fill="#f6f2e8"/>
+<circle cx="22" cy="34" r="7" fill="#f6f2e8"/>
+<circle cx="30" cy="60" r="3.5" fill="url(#g_an_almond_branch_budding)"/>
+<circle cx="52" cy="24" r="3" fill="url(#g_an_almond_branch_budding)"/>
+<circle cx="22" cy="34" r="2.5" fill="url(#g_an_almond_branch_budding)"/>
+</g>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_dove_descending" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <polygon points="40,10 56,10 50,34 46,34" fill="url(#g_a_dove_descending)"/>
+  <polygon points="14,14 28,20 22,32" fill="url(#g_a_dove_descending)"/>
+  <polygon points="82,14 68,20 74,32" fill="url(#g_a_dove_descending)"/>
+  <circle cx="48" cy="58" r="24" fill="url(#g_a_dove_descending)"/>
+  <path d="M44,40 C36,36 22,38 14,46 C24,46 30,50 34,56 Z" fill="#f6f2e8"/>
+  <path d="M52,40 C60,36 74,38 82,46 C72,46 66,50 62,56 Z" fill="#f6f2e8"/>
+  <path d="M42,38 C36,44 36,56 42,64 C46,70 50,70 54,64 C60,56 60,44 54,38 C50,34 46,34 42,38 Z" fill="#f6f2e8"/>
+  <polygon points="45,68 51,68 48,78" fill="url(#g_a_dove_descending)"/>
+  <circle cx="45" cy="46" r="1.5" fill="#0e2c1d"/>
+</g>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_rejoicing_prisoner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M24 86 C22 62 25 44 31 30 C34 23 42 26 40 33 C34 47 33 64 35 86 Z" fill="url(#g_a_rejoicing_prisoner)"/>
+<path d="M72 86 C74 62 71 44 65 30 C62 23 54 26 56 33 C62 47 63 64 61 86 Z" fill="url(#g_a_rejoicing_prisoner)"/>
+<rect x="24" y="46" width="15" height="10" fill="#8d9aa5"/>
+<rect x="57" y="46" width="15" height="10" fill="#8d9aa5"/>
+<circle cx="42" cy="58" r="4" fill="none"/>
+<circle cx="48" cy="63" r="4" fill="none"/>
+<circle cx="54" cy="58" r="4" fill="none"/>
+<circle cx="44" cy="20" r="4.5" fill="#ffcf4d"/>
+<path d="M48.5 20 V10 C52 10.5 54 13 52 16.5" fill="none"/>
+</g>
+</svg>

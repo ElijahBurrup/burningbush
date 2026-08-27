@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_living_sacrifice" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M48 10 Q62 26 56 38 Q68 36 66 50 Q62 62 48 62 Q34 62 30 50 Q28 36 40 38 Q34 26 48 10 Z" fill="url(#g_a_living_sacrifice)"/>
+<path d="M48 56 Q40 48 42 42 Q44 37 48 41 Q52 37 54 42 Q56 48 48 56 Z" fill="#c0392b"/>
+<rect x="16" y="62" width="64" height="10" fill="#8d9aa5"/>
+<rect x="24" y="72" width="48" height="14" fill="#8d9aa5"/>
+<path d="M40 72 L40 86" fill="none"/>
+<path d="M56 72 L56 86" fill="none"/>
+<path d="M48 62 L48 72" fill="none"/>
+</g>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_treasure_in_clay_jars" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M48 10 L48 2" fill="none" stroke="#ffcf4d" stroke-width="4"/>
+<path d="M28 18 L22 12" fill="none" stroke="#ffcf4d" stroke-width="4"/>
+<path d="M68 18 L74 12" fill="none" stroke="#ffcf4d" stroke-width="4"/>
+<path d="M34 36 Q26 46 26 60 Q26 84 48 84 Q70 84 70 60 Q70 46 62 36 Z" fill="url(#g_treasure_in_clay_jars)"/>
+<rect x="36" y="26" width="24" height="10" fill="url(#g_treasure_in_clay_jars)"/>
+<circle cx="40" cy="24" r="6" fill="#ffe9a8"/>
+<circle cx="56" cy="24" r="6" fill="#ffe9a8"/>
+<path d="M48 12 L54 18 L48 26 L42 18 Z" fill="#2f6fd0"/>
+<path d="M34 56 Q48 62 62 56" fill="none"/>
+</g>
+</svg>

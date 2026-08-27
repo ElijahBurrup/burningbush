@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_broken_dividing_wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M10 26 H44 L38 40 L46 52 L36 64 L44 78 L40 86 H10 Z" fill="url(#g_a_broken_dividing_wall)"/>
+<path d="M54 26 H86 V86 H58 L62 72 L52 58 L60 44 Z" fill="url(#g_a_broken_dividing_wall)"/>
+<path d="M10 46 H38 M10 66 H40 M26 26 V46 M24 66 V86" fill="none"/>
+<path d="M60 46 H86 M58 66 H86 M72 26 V44 M74 66 V86" fill="none"/>
+<rect x="44" y="58" width="12" height="8" fill="#8d9aa5" transform="rotate(-18 50 62)"/>
+<rect x="42" y="74" width="13" height="8" fill="#8d9aa5" transform="rotate(14 48 78)"/>
+</g>
+</svg>

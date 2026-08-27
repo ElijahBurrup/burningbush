@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_heaped_burning_coals" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M48 12 Q56 24 52 32 Q60 30 58 40 Q55 48 48 48 Q41 48 38 40 Q36 30 44 32 Q40 24 48 12 Z" fill="url(#g_heaped_burning_coals)"/>
+<path d="M26 30 Q32 38 28 46 Q23 44 22 38 Q22 33 26 30 Z" fill="url(#g_heaped_burning_coals)"/>
+<path d="M70 30 Q64 38 68 46 Q73 44 74 38 Q74 33 70 30 Z" fill="url(#g_heaped_burning_coals)"/>
+<circle cx="38" cy="58" r="11" fill="#8d9aa5"/>
+<circle cx="58" cy="58" r="11" fill="#8d9aa5"/>
+<circle cx="26" cy="74" r="11" fill="#8d9aa5"/>
+<circle cx="48" cy="75" r="12" fill="url(#g_heaped_burning_coals)"/>
+<circle cx="70" cy="74" r="11" fill="#8d9aa5"/>
+</g>
+</svg>

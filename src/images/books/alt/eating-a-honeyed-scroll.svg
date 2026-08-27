@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_eating_a_honeyed_scroll" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M24 24 L72 24 L72 60 L58 60 A6 6 0 0 0 52 54 A6 6 0 0 0 46 60 L24 60 Z" fill="#f6f2e8"/>
+<rect x="14" y="18" width="12" height="48" rx="6" fill="url(#g_eating_a_honeyed_scroll)"/>
+<rect x="70" y="18" width="12" height="48" rx="6" fill="url(#g_eating_a_honeyed_scroll)"/>
+<path d="M32 60 C30 66 29 69 29 72 C29 76 31 78 34 78 C37 78 39 76 39 72 C39 69 36 66 32 60 Z" fill="url(#g_eating_a_honeyed_scroll)"/>
+<path d="M62 60 C60 68 59 72 59 76 C59 81 61 84 65 84 C69 84 71 81 71 76 C71 72 68 68 62 60 Z" fill="url(#g_eating_a_honeyed_scroll)"/>
+<path d="M36 36 L60 36 M36 46 L54 46" fill="none"/>
+</g>
+</svg>

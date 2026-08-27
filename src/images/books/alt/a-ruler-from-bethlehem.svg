@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_ruler_from_bethlehem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M22 86 V72 L33 61 L44 72 V86 Z" fill="#f6f2e8"/>
+<path d="M52 86 V72 L63 61 L74 72 V86 Z" fill="#f6f2e8"/>
+<path d="M22 50 V30 L34 42 L48 20 L62 42 L74 30 V50 Z" fill="url(#g_a_ruler_from_bethlehem)"/>
+<circle cx="22" cy="27" r="4" fill="url(#g_a_ruler_from_bethlehem)"/>
+<circle cx="48" cy="16" r="4" fill="url(#g_a_ruler_from_bethlehem)"/>
+<circle cx="74" cy="27" r="4" fill="url(#g_a_ruler_from_bethlehem)"/>
+<rect x="19" y="48" width="58" height="10" rx="3" fill="url(#g_a_ruler_from_bethlehem)"/>
+<circle cx="48" cy="53" r="3.5" fill="#c0392b"/>
+</g>
+</svg>

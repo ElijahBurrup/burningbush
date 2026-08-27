@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_nest_among_stars" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M20 14 L24 24 L34 28 L24 32 L20 42 L16 32 L6 28 L16 24 Z" transform="translate(6 0)" fill="url(#g_a_nest_among_stars)"/>
+  <path d="M74 10 L77 18 L85 21 L77 24 L74 32 L71 24 L63 21 L71 18 Z" fill="url(#g_a_nest_among_stars)"/>
+  <path d="M14 46 L16 51 L21 53 L16 55 L14 60 L12 55 L7 53 L12 51 Z" fill="url(#g_a_nest_among_stars)"/>
+  <path d="M84 42 L86 47 L91 49 L86 51 L84 56 L82 51 L77 49 L82 47 Z" fill="url(#g_a_nest_among_stars)"/>
+  <ellipse cx="48" cy="55" rx="12" ry="9" fill="#f6f2e8"/>
+  <path d="M18 56 A30 30 0 0 0 78 56 Q66 62 48 62 Q30 62 18 56 Z" fill="url(#g_a_nest_among_stars)"/>
+  <path d="M22 66 Q48 74 74 66" fill="none"/>
+  <path d="M26 76 Q48 82 70 76" fill="none"/>
+</g>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_the_potter_s_clay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<rect x="40" y="76" width="16" height="10" fill="#8d9aa5"/>
+<ellipse cx="48" cy="72" rx="32" ry="9" fill="#8d9aa5"/>
+<path d="M32 68 Q26 52 38 44 Q28 36 34 26 L62 26 Q68 36 58 44 Q70 52 64 68 Z" fill="url(#g_the_potter_s_clay)"/>
+<ellipse cx="48" cy="26" rx="14" ry="5" fill="#f6f2e8"/>
+<path d="M36 52 Q48 57 60 52" fill="none"/>
+<path d="M34 60 Q48 65 62 60" fill="none"/>
+<path d="M10 62 Q8 70 12 78" fill="none"/>
+<path d="M86 62 Q88 70 84 78" fill="none"/>
+</g>
+</svg>

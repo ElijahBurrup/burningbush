@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_hinds_feet_on_heights" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="17" cy="21" r="7" fill="url(#g_hinds_feet_on_heights)"/>
+<ellipse cx="79" cy="26" rx="7" ry="4.5" fill="#f6f2e8"/>
+<path d="M52 86 L70 44 L86 66 V86 Z" fill="#8d9aa5"/>
+<path d="M10 86 L34 46 L40 40 H64 L70 50 L82 86 Z" fill="url(#g_hinds_feet_on_heights)"/>
+<path d="M36 40 L39 28 Q39 20 48 19 H59 Q62 19 64 15 Q65 12 68 11 L72 13 L75 12 L73 17 L75 21 L70 22 L68 27 Q66 31 60 31 L62 40 H57 L55 32 H46 L44 40 Z" fill="#3f8a2c"/>
+<circle cx="38" cy="25" r="2.5" fill="#f6f2e8"/>
+</g>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_king_on_a_donkey" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M32 50 q0-16 11-16 t11 16 v2 h-22 z" fill="url(#g_king_on_a_donkey)"/>
+<circle cx="43" cy="26" r="7" fill="#f6f2e8"/>
+<polygon points="35,18 37,10 43,15 49,10 51,18" fill="url(#g_king_on_a_donkey)"/>
+<path d="M18 56 q-8 4-6 14" fill="none"/>
+<rect x="28" y="62" width="6" height="22" fill="#8d9aa5"/>
+<rect x="52" y="62" width="6" height="22" fill="#8d9aa5"/>
+<path d="M22 64 q-6-3-5-10 q1-7 10-8 h28 l8-12 3-8 3 8 5-7 1 9 5 3 -2 6 -8 1 -6 11 q-3 7-11 7 h-24 z" fill="#8d9aa5"/>
+<rect x="64" y="80" width="22" height="6" fill="#c0392b"/>
+</g>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_cup_of_wormwood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M20 22 L76 22 C76 44 66 56 48 56 C30 56 20 44 20 22 Z" fill="url(#g_a_cup_of_wormwood)"/>
+<ellipse cx="48" cy="22" rx="28" ry="7" fill="#3f8a2c"/>
+<ellipse cx="48" cy="22" rx="19" ry="4" fill="#6fce4f"/>
+<rect x="44" y="56" width="8" height="18" fill="url(#g_a_cup_of_wormwood)"/>
+<path d="M28 82 C28 76 36 74 48 74 C60 74 68 76 68 82 Z" fill="url(#g_a_cup_of_wormwood)"/>
+<path d="M60 14 C64 6 72 4 80 8 C76 16 68 18 60 14 Z" fill="#3f8a2c"/>
+<path d="M14 34 C12 40 13 45 16 49 C19 45 19 39 17 35 Z" fill="#6fce4f"/>
+</g>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_daniel_among_lions" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="48" cy="50" r="36" fill="url(#g_daniel_among_lions)"/>
+<circle cx="30" cy="28" r="7" fill="url(#g_daniel_among_lions)"/>
+<circle cx="66" cy="28" r="7" fill="url(#g_daniel_among_lions)"/>
+<circle cx="48" cy="48" r="21" fill="#f6f2e8"/>
+<circle cx="41" cy="44" r="2.5" fill="#0e2c1d"/>
+<circle cx="55" cy="44" r="2.5" fill="#0e2c1d"/>
+<path d="M44 52 H52 L48 58 Z" fill="#0e2c1d"/>
+<path d="M48 58 V62 M48 62 Q44 66 40 64 M48 62 Q52 66 56 64" fill="none"/>
+</g>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_bag_with_holes" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M38 22 c-12 6-18 16-18 26 c0 14 12 20 28 20 s28-6 28-20 c0-10-6-20-18-26 z" fill="url(#g_a_bag_with_holes)"/>
+<path d="M40 14 q8-7 16 0" fill="none"/>
+<rect x="36" y="14" width="24" height="9" rx="4" fill="#3f8a2c"/>
+<ellipse cx="36" cy="64" rx="4" ry="3" fill="#0e2c1d" stroke="none"/>
+<ellipse cx="58" cy="66" rx="4" ry="3" fill="#0e2c1d" stroke="none"/>
+<circle cx="32" cy="79" r="5.5" fill="url(#g_a_bag_with_holes)"/>
+<circle cx="50" cy="81" r="5.5" fill="url(#g_a_bag_with_holes)"/>
+<circle cx="66" cy="77" r="5.5" fill="url(#g_a_bag_with_holes)"/>
+</g>
+</svg>

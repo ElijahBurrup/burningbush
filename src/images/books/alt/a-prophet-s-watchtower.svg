@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_prophet_s_watchtower" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M10 86 Q48 64 86 86 Z" fill="url(#g_a_prophet_s_watchtower)"/>
+<path d="M36 80 L41 30 H55 L60 80 Z" fill="url(#g_a_prophet_s_watchtower)"/>
+<path d="M32 30 V16 H39 V22 H45 V16 H51 V22 H57 V16 H64 V30 Z" fill="url(#g_a_prophet_s_watchtower)"/>
+<path d="M64 20 V10" fill="none"/>
+<path d="M64 10 L77 13 L64 17 Z" fill="#2f6fd0"/>
+<rect x="44" y="38" width="8" height="12" rx="4" fill="#0e2c1d"/>
+<path d="M42 80 V68 Q48 62 54 68 V80 Z" fill="#0e2c1d"/>
+</g>
+</svg>

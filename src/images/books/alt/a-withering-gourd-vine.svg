@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_withering_gourd_vine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M14 86 C14 46 30 22 62 18 C76 16 84 24 84 32" fill="none" stroke="#3f8a2c" stroke-width="5"/>
+  <path d="M34 40 C22 34 20 24 26 16 C38 18 42 28 40 38 Z" fill="#6fce4f"/>
+  <path d="M58 22 C62 34 58 44 48 48 C42 40 44 30 52 22 Z" fill="#3f8a2c"/>
+  <path d="M84 32 C84 40 78 42 74 48" fill="none" stroke="#3f8a2c" stroke-width="4"/>
+  <path d="M74 48 C86 52 88 66 80 76 C70 84 58 78 58 66 C58 56 66 48 74 48 Z" fill="url(#g_a_withering_gourd_vine)"/>
+  <path d="M10 86 Q20 82 28 86 Q34 89 40 86" fill="none" stroke="#c0392b" stroke-width="4"/>
+  <circle cx="10" cy="85" r="2" fill="#c0392b"/>
+</g>
+</svg>

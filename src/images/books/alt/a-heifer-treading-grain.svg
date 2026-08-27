@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_heifer_treading_grain" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M10 86 Q18 72 32 76 Q48 68 64 76 Q78 72 86 86 Z" fill="#f6f2e8"/>
+<path d="M22 74 V64 M22 64 L17 59 M22 64 L27 59 M74 74 V64 M74 64 L69 59 M74 64 L79 59" fill="none"/>
+<path d="M20 42 Q20 30 32 30 H60 Q72 30 72 40 V58 Q72 64 66 64 V76 H58 V64 H36 V76 H28 V64 Q20 64 20 56 Z" fill="url(#g_a_heifer_treading_grain)"/>
+<path d="M68 32 Q85 30 86 42 Q86 52 76 52 Q68 52 68 44 Z" fill="url(#g_a_heifer_treading_grain)"/>
+<path d="M72 31 Q70 23 64 23 M80 31 Q82 23 88 25" fill="none"/>
+<circle cx="78" cy="40" r="2" fill="#0e2c1d"/>
+<path d="M20 42 Q12 44 12 54" fill="none"/>
+</g>
+</svg>

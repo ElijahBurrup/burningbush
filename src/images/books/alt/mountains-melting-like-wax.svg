@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_mountains_melting_like_wax" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M40 62 L64 26 L86 62 Z" fill="#8d9aa5"/>
+<ellipse cx="48" cy="86" rx="28" ry="4" fill="url(#g_mountains_melting_like_wax)"/>
+<path d="M10 62 L44 14 L78 62 Z" fill="url(#g_mountains_melting_like_wax)"/>
+<path d="M20 61 v9 c0 7 9 7 9 0 v-9 z" fill="url(#g_mountains_melting_like_wax)"/>
+<path d="M40 61 v15 c0 7 9 7 9 0 v-15 z" fill="url(#g_mountains_melting_like_wax)"/>
+<path d="M59 61 v7 c0 7 9 7 9 0 v-7 z" fill="url(#g_mountains_melting_like_wax)"/>
+<circle cx="33" cy="80" r="3" fill="url(#g_mountains_melting_like_wax)"/>
+</g>
+</svg>

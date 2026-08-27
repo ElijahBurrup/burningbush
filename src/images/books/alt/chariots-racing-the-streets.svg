@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_chariots_racing_the_streets" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M14 84 H86" fill="none"/>
+<path d="M10 34 h13 M12 46 h10 M14 24 h9" fill="none"/>
+<circle cx="48" cy="18" r="4" fill="#c0392b"/>
+<path d="M30 62 V32 Q30 24 40 24 H58 Q66 24 66 32 V62 Z" fill="url(#g_chariots_racing_the_streets)"/>
+<path d="M66 58 L86 50" fill="none" stroke-width="3"/>
+<circle cx="56" cy="66" r="16" fill="#f6f2e8"/>
+<path d="M56 50 V82 M40 66 H72 M45 55 L67 77 M67 55 L45 77" fill="none"/>
+<circle cx="56" cy="66" r="4" fill="url(#g_chariots_racing_the_streets)"/>
+</g>
+</svg>

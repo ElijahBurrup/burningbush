@@ -2122,6 +2122,7 @@ const DAY = 86400000;
     const m = el('bookImgModal');
     const rows = [...m.querySelectorAll('[data-bimg]')];
     const out = { open: m.style.display === 'flex', rows: rows.length,
+      pictures: m.querySelectorAll('.bimgopt .bimg').length,
       hasDefault: rows.some(r => r.dataset.bimg === ''),
       named: /Genesis/.test(m.innerText), done: !!el('biDone'), cross: !!el('biClose') };
     rows.find(r => r.dataset.bimg === BOOK_IMAGES[n][2]).click();
@@ -2141,6 +2142,7 @@ const DAY = 86400000;
   });
   ok(pick.open, 'the picker opens');
   is(pick.rows, 5, '...offering the four pictures and the drawn icon');
+  is(pick.pictures, 5, '...every one of them shown as a picture, the way number images are chosen');
   ok(pick.hasDefault, '...including the way back to the default');
   ok(pick.named, '...named for the book');
   ok(pick.cross && pick.done, '...with a cross and a Done, like everything else');
