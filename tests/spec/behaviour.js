@@ -1997,6 +1997,29 @@ const DAY = 86400000;
   ok(card.w > 20 && card.h > 20, '...and it is actually sized, so it can be seen');
   is(card.name, 'Bible', '...on the Bible card');
 
+  describe('profile panels are lent, not lost', () => { });
+  const lent = await $(() => {
+    el('themeBtn').click();
+    openProfSection('theme');
+    const before = document.querySelectorAll('[data-th]').length;
+    openProfSection('bible-translation');          // rebuilds the popup while Theme is on loan
+    const after = document.querySelectorAll('[data-th]').length;
+    openProfSection('theme');
+    const backAgain = document.querySelectorAll('#profSecModal [data-th]').length;
+    const stowed = document.querySelectorAll('#profPanels .prof-panel').length;
+    const inPopup = document.querySelectorAll('#profSecModal .prof-panel').length;
+    el('psDone').click();
+    const afterClose = document.querySelectorAll('#profPanels .prof-panel').length;
+    document.querySelectorAll('.modal').forEach(m => (m.style.display = 'none'));
+    return { before, after, backAgain, stowed, inPopup, afterClose, total: PROF_PANELS.length };
+  });
+  is(lent.before, 5, 'the Theme popup holds all five themes');
+  is(lent.after, 5, 'opening another section does NOT destroy them');
+  is(lent.backAgain, 5, '...and Theme still has them when reopened');
+  is(lent.inPopup, 1, 'exactly one panel is on loan at a time');
+  is(lent.stowed, lent.total - 1, '...and the rest are stowed');
+  is(lent.afterClose, lent.total, 'closing returns every panel home');
+
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
   if (consoleErrs.length) { console.error(`  ✗ ${consoleErrs.length} console error(s):`); consoleErrs.slice(0, 5).forEach(e => console.error('      ' + e)); }

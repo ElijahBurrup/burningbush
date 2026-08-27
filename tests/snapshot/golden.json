@@ -261,13 +261,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "9cf789030aec33b2",
+  "h": "dbabc5a539b5841f",
   "len": 15769,
   "els": 370,
   "buttons": 45,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.29.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.30.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "classic/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -324,13 +324,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "cbc697e56a8e579a",
-  "len": 41999,
-  "els": 847,
+  "h": "b276e0615f767653",
+  "len": 42849,
+  "els": 860,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.29.0 August 26, 2026 Room for the long names FIX The phase prize fits its ticket. Phase names run l"
+  "text": "✕ Version history v1.30.0 August 27, 2026 A pass for bugs FIX Profile settings could vanish. Opening one section while a"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -729,13 +729,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "f31bf0984446cf6a",
+  "h": "b6452eee17c14f99",
   "len": 14975,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.29.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.30.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "illumined/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -792,13 +792,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "cbc697e56a8e579a",
-  "len": 41999,
-  "els": 847,
+  "h": "b276e0615f767653",
+  "len": 42849,
+  "els": 860,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.29.0 August 26, 2026 Room for the long names FIX The phase prize fits its ticket. Phase names run l"
+  "text": "✕ Version history v1.30.0 August 27, 2026 A pass for bugs FIX Profile settings could vanish. Opening one section while a"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -1197,13 +1197,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "f8c42fceef8691b5",
+  "h": "bc2bfd984d1382bb",
   "len": 14973,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.29.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.30.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "glass/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -1260,13 +1260,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "cbc697e56a8e579a",
-  "len": 41999,
-  "els": 847,
+  "h": "b276e0615f767653",
+  "len": 42849,
+  "els": 860,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.29.0 August 26, 2026 Room for the long names FIX The phase prize fits its ticket. Phase names run l"
+  "text": "✕ Version history v1.30.0 August 27, 2026 A pass for bugs FIX Profile settings could vanish. Opening one section while a"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1665,13 +1665,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "eb532af20897f2ae",
+  "h": "17ab5655ea41f680",
   "len": 14975,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.29.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.30.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "quest/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -1728,13 +1728,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "cbc697e56a8e579a",
-  "len": 41999,
-  "els": 847,
+  "h": "b276e0615f767653",
+  "len": 42849,
+  "els": 860,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.29.0 August 26, 2026 Room for the long names FIX The phase prize fits its ticket. Phase names run l"
+  "text": "✕ Version history v1.30.0 August 27, 2026 A pass for bugs FIX Profile settings could vanish. Opening one section while a"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -2133,13 +2133,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "5671568cb234e63a",
+  "h": "013decfec10bf7da",
   "len": 14971,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.29.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.30.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "buddy/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -2196,13 +2196,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "cbc697e56a8e579a",
-  "len": 41999,
-  "els": 847,
+  "h": "b276e0615f767653",
+  "len": 42849,
+  "els": 860,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.29.0 August 26, 2026 Room for the long names FIX The phase prize fits its ticket. Phase names run l"
+  "text": "✕ Version history v1.30.0 August 27, 2026 A pass for bugs FIX Profile settings could vanish. Opening one section while a"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",

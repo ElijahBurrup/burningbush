@@ -1685,8 +1685,12 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.29.0";
+const APP_VERSION="1.30.0";
 const CHANGELOG=[
+ {v:"1.30.0", d:"August 27, 2026", t:"A pass for bugs", items:[
+   ["fix","<b>Profile settings could vanish.</b> Opening one section while another was still open destroyed the first one’s controls for the rest of the session — the five themes, the translations, your backup buttons. They are lent to the popup and now always returned before it is rebuilt."],
+   ["fix","A damaged or tampered save could put a <b>word where a number belongs</b>, or a negative talent count. Those fields are now coerced and floored at zero on load, so a bad blob heals itself instead of showing nonsense and turning every later sum into NaN."]
+ ]},
  {v:"1.29.0", d:"August 26, 2026", t:"Room for the long names", items:[
    ["fix","<b>The phase prize fits its ticket.</b> Phase names run long — Psalms–Song of Solomon with 1–2 Thessalonians is the worst of them — and the box is taller now so nothing spills past the top or bottom. Everything else is the size it was."],
    ["fix","<b>Reveal my scene</b> no longer appears on book questions in number and book practice."]
@@ -2513,7 +2517,11 @@ function migrateProg(p){
   p=p||{};
   // coerce WRONG-typed fields (corrupt/tampered/older-shape saves), not just missing ones, so a parseable-but-malformed blob self-heals instead of throwing downstream
   const arr=x=>Array.isArray(x)?x:[]; const obj=x=>(x&&typeof x==="object"&&!Array.isArray(x))?x:{};
-  if(typeof p.level!=="number") p.level=0;
+  // A number that is actually a number. `p.talents=p.talents||0` kept a STRING ("lots" is truthy)
+  // and let negatives through, and every sum downstream then produced NaN or nonsense on screen.
+  const num=(v,d)=>{ const n=(typeof v==="number")?v:parseFloat(v); return isFinite(n)?n:d; };
+  const cnt=v=>Math.max(0, Math.floor(num(v,0)));
+  p.level=cnt(p.level);
   p.memorized=arr(p.memorized); p.doneSkills=arr(p.doneSkills); p.chosen=obj(p.chosen);
   if(typeof p.onboarded!=="boolean") p.onboarded=!!p.onboarded;
   p.saved=arr(p.saved); p.skipped=arr(p.skipped);               // green (come back later) / red (skip)
@@ -2530,9 +2538,9 @@ function migrateProg(p){
   p.tickets=arr(p.tickets); // support/feedback submissions {type,text,ts,...} — synced to the DB with progress
   p.palaces=p.palaces.map(pl=>{ if(pl&&typeof pl==="object"){ if(!pl.learnedAt) pl.learnedAt=Date.now(); if(!pl.step) pl.step=1; } return pl; }); // spaced repetition trail: D0 done at build
   p.verseSR=obj(p.verseSR); (p.memorized||[]).forEach(k=>{ if(!p.verseSR[k]) p.verseSR[k]={learnedAt:Date.now(),step:1}; }); // per-verse SR trail; back-fill existing memorized verses
-  p.talents=p.talents||0; p.streak=p.streak||0; p.bestStreak=p.bestStreak||0; p.talentLog=obj(p.talentLog); // Talents (verse-practice points), streaks, per-verse 24h earn log
-  if(typeof p.dayStreak!=="number") p.dayStreak=0; if(typeof p.bestDayStreak!=="number") p.bestDayStreak=0; if(typeof p.lastReviewDay!=="string") p.lastReviewDay=""; // daily review streak (distinct from the per-answer streak)
-  if(typeof p.freezes!=="number") p.freezes=0; p.freezeAwards=arr(p.freezeAwards); // Streak-Freeze power-ups + which milestones already granted one
+  p.talents=cnt(p.talents); p.streak=cnt(p.streak); p.bestStreak=cnt(p.bestStreak); p.talentLog=obj(p.talentLog); // Talents (verse-practice points), streaks, per-verse 24h earn log
+  p.dayStreak=cnt(p.dayStreak); p.bestDayStreak=cnt(p.bestDayStreak); if(typeof p.lastReviewDay!=="string") p.lastReviewDay=""; // daily review streak (distinct from the per-answer streak)
+  p.freezes=cnt(p.freezes); p.freezeAwards=arr(p.freezeAwards); // Streak-Freeze power-ups + which milestones already granted one
   if(typeof p.hints!=="number") p.hints=0; // "Peek" tokens spendable in the verse test
   if(typeof p.weekKey!=="string") p.weekKey=""; if(typeof p.weekDays!=="number") p.weekDays=0; if(typeof p.weekGoalHit!=="boolean") p.weekGoalHit=false; // Perfect-Week tracking
   // Caesar's weekly levy + the church it builds
@@ -7634,9 +7642,18 @@ const PROF_DIRECT={
   "what-s-new":        ()=>openWhatsNew(true),
   "get-the-app":       ()=>openInstallDialog(),
 };
+// Panels are LENT to the popup, not copied into it. Anything still on loan has to go home before
+// the popup is rebuilt: innerHTML would otherwise destroy it, and every control inside that section
+// would be gone for the rest of the session — the settings simply stop existing.
+function stowProfPanels(){
+  const m=el("profSecModal"), holder=el("profPanels");
+  if(!m||!holder) return;
+  m.querySelectorAll(".prof-panel").forEach(x=>{ x.style.display="none"; holder.appendChild(x); });
+}
 function openProfSection(slug){
   const p=PROF_PANELS.find(x=>x.slug===slug); if(!p) return;
   const m=el("profSecModal")||(()=>{ const d=document.createElement("div"); d.id="profSecModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  stowProfPanels();
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="psClose" style="margin:0">✕</button>
         <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${p.title}</div><span style="width:34px"></span></div>
@@ -7646,14 +7663,14 @@ function openProfSection(slug){
   const body=m.querySelector("#psBody");
   body.appendChild(p.el); p.el.style.display="";
   m.style.display="flex"; raiseModal(m);
-  const close=()=>{ p.el.style.display="none"; el("profPanels").appendChild(p.el); m.style.display="none"; paintProfileGrid(); };
+  const close=()=>{ stowProfPanels(); m.style.display="none"; paintProfileGrid(); };
   el("psClose").onclick=close; el("psDone").onclick=close;
   m.onclick=ev=>{ if(ev.target===m) close(); };
 }
 function closeProfile(){
   // an option chosen inside a section popup navigates somewhere — take BOTH layers with it,
   // or the new screen appears behind the popup that opened it
-  const s=el("profSecModal"); if(s && s.style.display==="flex"){ const p=s.querySelector(".prof-panel"); if(p && el("profPanels")){ p.style.display="none"; el("profPanels").appendChild(p); } s.style.display="none"; }
+  stowProfPanels(); const s=el("profSecModal"); if(s) s.style.display="none";
   const m=el("themeModal"); if(!m) return; m.style.display="none"; m.classList.remove("profscreen");
 }
 function applyAdminVisibility(){
