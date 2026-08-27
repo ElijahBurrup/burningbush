@@ -261,13 +261,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "bc08ff089a4aa69e",
+  "h": "468577ee3a8e4dcc",
   "len": 15769,
   "els": 370,
   "buttons": 45,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.31.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.32.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "classic/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -324,13 +324,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "baf401eacb81ac8a",
-  "len": 43655,
-  "els": 873,
+  "h": "1584ff9d32fb205a",
+  "len": 44537,
+  "els": 890,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.31.0 August 27, 2026 All sixty-six, one lesson FIX Genesis to Deuteronomy now use the same lesson a"
+  "text": "✕ Version history v1.32.0 August 27, 2026 A picture for every book NEW Change my book image replaces writing your own. E"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -358,6 +358,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "classic/modal/book-image": {
+  "h": "1faac1074e3e64e1",
+  "len": 1739,
+  "els": 30,
+  "buttons": 7,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "classic/verse/videos": {
   "h": "04cdde226b7820cc",
@@ -729,13 +738,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "68bfa346f624ee00",
+  "h": "d9ae6d40f9d88702",
   "len": 14975,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.31.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.32.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "illumined/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -792,13 +801,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "baf401eacb81ac8a",
-  "len": 43655,
-  "els": 873,
+  "h": "1584ff9d32fb205a",
+  "len": 44537,
+  "els": 890,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.31.0 August 27, 2026 All sixty-six, one lesson FIX Genesis to Deuteronomy now use the same lesson a"
+  "text": "✕ Version history v1.32.0 August 27, 2026 A picture for every book NEW Change my book image replaces writing your own. E"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -826,6 +835,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "illumined/modal/book-image": {
+  "h": "1faac1074e3e64e1",
+  "len": 1739,
+  "els": 30,
+  "buttons": 7,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "illumined/verse/videos": {
   "h": "04cdde226b7820cc",
@@ -1197,13 +1215,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "6ad5e5e20cf68f50",
+  "h": "5664778f718f2d7b",
   "len": 14973,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.31.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.32.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "glass/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -1260,13 +1278,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "baf401eacb81ac8a",
-  "len": 43655,
-  "els": 873,
+  "h": "1584ff9d32fb205a",
+  "len": 44537,
+  "els": 890,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.31.0 August 27, 2026 All sixty-six, one lesson FIX Genesis to Deuteronomy now use the same lesson a"
+  "text": "✕ Version history v1.32.0 August 27, 2026 A picture for every book NEW Change my book image replaces writing your own. E"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1294,6 +1312,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "glass/modal/book-image": {
+  "h": "1faac1074e3e64e1",
+  "len": 1739,
+  "els": 30,
+  "buttons": 7,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "glass/verse/videos": {
   "h": "04cdde226b7820cc",
@@ -1665,13 +1692,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "57b373618c3f5734",
+  "h": "29d84de4722f63f1",
   "len": 14975,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.31.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.32.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "quest/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -1728,13 +1755,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "baf401eacb81ac8a",
-  "len": 43655,
-  "els": 873,
+  "h": "1584ff9d32fb205a",
+  "len": 44537,
+  "els": 890,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.31.0 August 27, 2026 All sixty-six, one lesson FIX Genesis to Deuteronomy now use the same lesson a"
+  "text": "✕ Version history v1.32.0 August 27, 2026 A picture for every book NEW Change my book image replaces writing your own. E"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1762,6 +1789,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "quest/modal/book-image": {
+  "h": "1faac1074e3e64e1",
+  "len": 1739,
+  "els": 30,
+  "buttons": 7,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "quest/verse/videos": {
   "h": "04cdde226b7820cc",
@@ -2133,13 +2169,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "6b1218db98c5cabe",
+  "h": "3fff1f28a0f04ef2",
   "len": 14971,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.31.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.32.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "buddy/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -2196,13 +2232,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "baf401eacb81ac8a",
-  "len": 43655,
-  "els": 873,
+  "h": "1584ff9d32fb205a",
+  "len": 44537,
+  "els": 890,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.31.0 August 27, 2026 All sixty-six, one lesson FIX Genesis to Deuteronomy now use the same lesson a"
+  "text": "✕ Version history v1.32.0 August 27, 2026 A picture for every book NEW Change my book image replaces writing your own. E"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
@@ -2230,6 +2266,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "buddy/modal/book-image": {
+  "h": "1faac1074e3e64e1",
+  "len": 1739,
+  "els": 30,
+  "buttons": 7,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "buddy/verse/videos": {
   "h": "04cdde226b7820cc",

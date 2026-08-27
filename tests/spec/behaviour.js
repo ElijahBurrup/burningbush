@@ -2087,6 +2087,84 @@ const DAY = 86400000;
   ok(carried.untouched, '...leaving other number lessons alone');
   ok(carried.noSix, '...and inventing nothing');
 
+  // ================= A PICTURE FOR EVERY BOOK (v1.32) =================
+  describe('book images', () => { });
+  const imgs = await $(() => {
+    const keys = Object.keys(BOOK_IMAGES).map(Number).sort((a, b) => a - b);
+    const missing = [], short = [], dupInBook = [];
+    const all = {};
+    const repeated = [];
+    for (let n = 1; n <= 66; n++) {
+      const o = BOOK_IMAGES[n];
+      if (!o) { missing.push(n); continue; }
+      if (o.length < 3) short.push(n + ':' + o.length);
+      if (new Set(o).size !== o.length) dupInBook.push(n);
+      o.forEach(x => { if (all[x]) repeated.push(x); else all[x] = n; });
+    }
+    const tooLong = [];
+    Object.keys(all).forEach(x => { if (x.split(/\s+/).length > 5) tooLong.push(x); });
+    return { books: keys.length, missing: missing.join(','), short: short.join(','),
+      dupInBook: dupInBook.join(','), repeated: [...new Set(repeated)].join(','),
+      total: Object.keys(all).length, tooLong: tooLong.join(' | ') };
+  });
+  is(imgs.books, 66, 'every book has a set of pictures');
+  is(imgs.missing, '', '...none missing');
+  is(imgs.short, '', '...each offering at least three');
+  is(imgs.dupInBook, '', '...with no book repeating itself');
+  is(imgs.repeated, '', '...and no picture used for two different books');
+  is(imgs.total, 264, 'two hundred and sixty-four distinct pictures in all');
+  is(imgs.tooLong, '', '...every one short enough to hold in the mind');
+
+  const pick = await $(() => {
+    const n = 1;
+    delete Prog.customBookImg[n]; saveProg();
+    openBookImagePicker(n, () => { });
+    const m = el('bookImgModal');
+    const rows = [...m.querySelectorAll('[data-bimg]')];
+    const out = { open: m.style.display === 'flex', rows: rows.length,
+      hasDefault: rows.some(r => r.dataset.bimg === ''),
+      named: /Genesis/.test(m.innerText), done: !!el('biDone'), cross: !!el('biClose') };
+    rows.find(r => r.dataset.bimg === BOOK_IMAGES[n][2]).click();
+    out.chose = Prog.customBookImg[n];
+    out.closed = m.style.display === 'none';
+    // and the lesson shows the choice
+    const d = document.createElement('div'); d.innerHTML = teachCardBody('book', n);
+    out.onCard = /A serpent in Eden/.test(d.textContent);
+    out.stillHasButton = !!d.querySelector('#tcBookImg');
+    out.buttonSays = d.querySelector('#tcBookImg').textContent.trim();
+    // choosing the drawn icon again clears it
+    openBookImagePicker(n, () => { });
+    el('bookImgModal').querySelector('[data-bimg=""]').click();
+    out.cleared = Prog.customBookImg[n] === undefined;
+    document.querySelectorAll('.modal').forEach(x => (x.style.display = 'none'));
+    return out;
+  });
+  ok(pick.open, 'the picker opens');
+  is(pick.rows, 5, '...offering the four pictures and the drawn icon');
+  ok(pick.hasDefault, '...including the way back to the default');
+  ok(pick.named, '...named for the book');
+  ok(pick.cross && pick.done, '...with a cross and a Done, like everything else');
+  is(pick.chose, 'A serpent in Eden', 'choosing one records it');
+  ok(pick.closed, '...and closes the picker');
+  ok(pick.onCard, '...and the lesson shows it');
+  ok(pick.stillHasButton, 'the button stays available');
+  is(pick.buttonSays, '🖼️ Change my book image', '...and reads Change my book image, not Write my own');
+  ok(pick.cleared, 'picking the drawn icon puts it back to the default');
+
+  // the whole point: this works the same for the first five as for any other book
+  const everyBook = await $(() => {
+    const bad = [];
+    for (let n = 1; n <= 66; n++) {
+      const d = document.createElement('div'); d.innerHTML = teachCardBody('book', n);
+      const b = d.querySelector('#tcBookImg');
+      if (!b) { bad.push(n + ':no button'); continue; }
+      if (b.textContent.trim() !== '🖼️ Change my book image') bad.push(n + ':' + b.textContent.trim());
+      if (!bookImageOptions(n).length) bad.push(n + ':no options');
+    }
+    return bad.join(' | ');
+  });
+  is(everyBook, '', 'all sixty-six books offer the same Change my book image control — Genesis included');
+
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
   if (consoleErrs.length) { console.error(`  ✗ ${consoleErrs.length} console error(s):`); consoleErrs.slice(0, 5).forEach(e => console.error('      ' + e)); }

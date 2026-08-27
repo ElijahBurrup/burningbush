@@ -1685,8 +1685,13 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.31.0";
+const APP_VERSION="1.32.0";
 const CHANGELOG=[
+ {v:"1.32.0", d:"August 27, 2026", t:"A picture for every book", items:[
+   ["new","<b>Change my book image</b> replaces writing your own. Every book now offers <b>four pictures to choose from</b>, and each one is something that actually happens in that book — a burning bush, a plumb line dangling, a roof torn open, the chosen lady’s door. <b>264 in all</b>, no two alike."],
+   ["new","The drawn book icon is always one of the choices, so you can go back to it whenever you like."],
+   ["fix","It works identically for Genesis and for Revelation — which is the point of last release’s repair."]
+ ]},
  {v:"1.31.0", d:"August 27, 2026", t:"All sixty-six, one lesson", items:[
    ["fix","<b>Genesis to Deuteronomy now use the same lesson as every other book</b> — book image, book name, your own book image, book number, image name and image. They were never book lessons at all: they were <i>number</i> lessons wearing book names, so no change to the book lesson could ever reach them. They are built from the same one definition as the other sixty-one now, and anything changed there changes all sixty-six."],
    ["fix","If you had already finished those five, they stay finished."]
@@ -2465,6 +2470,104 @@ function pegPicker(n){
    Every "learn this number / book" card — the Learn path (renderStep) AND the ad-hoc learner
    (renderAdhoc) — renders through teachCardBody() and is wired through wireTeachCard(). Change the
    look or copy in ONE place and every teach page updates. Callers only add their own nav button. */
+/* Four pictures for every book, each drawn from something that actually happens in it. People no
+   longer invent their own: a blank box asks for authorship at the exact moment they are trying to
+   learn, and most left it empty. Choosing is faster and the choice is theirs either way. */
+const BOOK_IMAGES={
+ 1:["A coat of many colours","An ark on floodwaters","A serpent in Eden","A ladder reaching heaven"],
+ 2:["A burning bush","The parted Red Sea","A golden calf","Manna on the ground"],
+ 3:["A lamb without blemish","A priest's jewelled breastplate","A scapegoat sent away","Oil poured on Aaron"],
+ 4:["A bronze serpent raised","Grapes on a pole","Aaron's budding staff","Balaam's speaking donkey"],
+ 5:["Moses on Mount Nebo","Words written on doorposts","A basket of firstfruits","An unmarked mountain grave"],
+ 6:["Walls falling at Jericho","Rahab's scarlet cord","The sun standing still","Jordan riverbed stones"],
+ 7:["Gideon's wet fleece","Samson pushing down pillars","Jael's tent peg","Torches in clay jars"],
+ 8:["Ruth clinging to Naomi","A gleaner among sheaves","Boaz's threshing floor","An exchanged sandal"],
+ 9:["Hannah weeping in prayer","David's sling and stone","A horn of oil","Saul hurling a spear"],
+ 10:["Dancing before the ark","A stolen ewe lamb","Absalom caught in branches","The stronghold of Zion"],
+ 11:["Solomon's golden temple","Fire falling on Carmel","Ravens feeding Elijah","The Queen of Sheba"],
+ 12:["A chariot of fire","Naaman in the Jordan","A floating axe head","A shadow moving backwards"],
+ 13:["An angel's drawn sword","Water from Bethlehem's well","A scroll of names","Cedar stockpiled for building"],
+ 14:["Singers leading the army","A dusty book rediscovered","Hezekiah's water tunnel","The temple in flames"],
+ 15:["An altar among ruins","Silver vessels carried home","A king's decree unrolled","Ezra tearing his robe"],
+ 16:["The king's cupbearer","Nehemiah riding by night","Builders armed with swords","A rebuilt city wall"],
+ 17:["A golden sceptre extended","Haman's towering gallows","Mordecai paraded on horseback","Esther's royal crown"],
+ 18:["A potsherd scraping boils","A whirlwind speaking","Leviathan in the deep","Friends sitting in ashes"],
+ 19:["A shepherd's still waters","A harp under stars","A tree beside streams","A thirsty panting deer"],
+ 20:["An ant storing grain","Golden apples in silver","A virtuous wife spinning","Wisdom's banquet table"],
+ 21:["A broken golden bowl","A fading morning mist","Rivers running seaward","Royal gardens and pools"],
+ 22:["A rose of Sharon","A leaping gazelle","A sealed garden fountain","Foxes among the vines"],
+ 23:["A coal touching lips","Wolf dwelling with lamb","Swords beaten into plowshares","A straight desert highway"],
+ 24:["A potter reshaping clay","An almond branch budding","A boiling pot tilting","A fountain of tears"],
+ 25:["A city left desolate","Elders sitting in dust","A cup of wormwood","Dawn over broken walls"],
+ 26:["A valley of dry bones","Wheels within wheels","Eating a honeyed scroll","A temple river rising"],
+ 27:["A fiery furnace","Daniel among lions","Handwriting on the wall","A great statue toppled"],
+ 28:["A bride bought back","Morning dew vanishing","A heifer treading grain","Sowing wind, reaping whirlwind"],
+ 29:["A darkening locust swarm","Mountains dripping new wine","A blood red moon","A trumpet on Zion"],
+ 30:["A plumb line dangling","A summer fruit basket","A dresser of sycamores","A mighty rolling stream"],
+ 31:["A nest among stars","Clefts of the rock","Stubble set ablaze","Esau's mountain fortress"],
+ 32:["A great fish swallowing","A prophet thrown overboard","A withering gourd vine","A city in sackcloth"],
+ 33:["A ruler from Bethlehem","Mountains melting like wax","Sitting under fig trees","Samaria's tumbled stones"],
+ 34:["Chariots racing the streets","River gates thrown open","A plundered lions' den","Storm clouds underfoot"],
+ 35:["A prophet's watchtower","Plain words on tablets","Empty stalls yet singing","Hinds' feet on heights"],
+ 36:["Lamps searching Jerusalem","Owls roosting in pillars","Sheepfolds by the sea","Singing over his people"],
+ 37:["A bag with holes","Panelled houses, ruined temple","A chosen signet ring","Stone laid upon stone"],
+ 38:["A flying scroll","A lampstand between olives","King on a donkey","Filthy garments made clean"],
+ 39:["Windows of heaven opened","A refiner's fire","Sunrise with healing wings","A blemished lamb offered"],
+ 40:["A star over Bethlehem","Wise men bearing gifts","Sermon on the mount","Keys of the kingdom"],
+ 41:["A roof torn open","Legion among the tombs","A beggar's cast off cloak","A dove descending"],
+ 42:["A manger in Bethlehem","Shepherds keeping watch","The prodigal son","The road to Emmaus"],
+ 43:["Water turned to wine","A basin and towel","Lazarus unbound","The true vine"],
+ 44:["Tongues of fire","A road to Damascus","Prison doors flung open","A shipwreck at Malta"],
+ 45:["A grafted olive branch","The potter's clay","A living sacrifice","Heaped burning coals"],
+ 46:["A clanging cymbal","A dim bronze mirror","The last trumpet","Milk for infants"],
+ 47:["Treasure in clay jars","Thorn in the flesh","Basket over the wall","An unveiled face"],
+ 48:["Fruit of the Spirit","Hagar and Sarah","A slave's yoke","A little leaven"],
+ 49:["The armour of God","A broken dividing wall","A radiant bride","The chief cornerstone"],
+ 50:["The runner's prize","Every knee bowed","A rejoicing prisoner","Lights in the world"],
+ 51:["A well ordered household","A triumphal procession","Speech seasoned with salt","A letter for Laodicea"],
+ 52:["Thief in the night","Meeting in the air","A gentle nursing mother","Idols left behind"],
+ 53:["The man of lawlessness","Flaming fire from heaven","Bread earned by work","The apostle's signature"],
+ 54:["A young pastor","Fighting the good fight","Wine for the stomach","Scripture read aloud"],
+ 55:["A crown of righteousness","Cloak and parchments","A drink offering poured","Lois and Eunice"],
+ 56:["The island of Crete","Elders newly appointed","The washing of rebirth","Older women teaching younger"],
+ 57:["A runaway slave returning","Struck off chains","A prepared guest room","Paul's pledge to repay"],
+ 58:["A great high priest","A cloud of witnesses","The soul's anchor","The priest Melchizedek"],
+ 59:["A ship's small rudder","A gold ringed visitor","A farmer awaiting rain","A vanishing mist"],
+ 60:["Living stones","A prowling lion","Gold refined by fire","The Chief Shepherd"],
+ 61:["The rising morning star","Eyewitnesses on the mountain","The heavens set ablaze","Springs without water"],
+ 62:["Walking in the light","The children of God","Water and blood","Hands upon the Word"],
+ 63:["The chosen lady","A door kept shut","Paper and ink","Children walking in truth"],
+ 64:["Gaius the host","Diotrephes refusing guests","Demetrius commended","Talking face to face"],
+ 65:["Michael and Moses' body","Wandering stars","Snatched from the fire","Hidden reefs"],
+ 66:["A lampstand of gold","The enthroned Lamb","A rider called Faithful","The new Jerusalem"],
+};
+function bookImageOptions(n){ return BOOK_IMAGES[n] || []; }
+// Choosing one is a single tap; choosing the drawn icon again is the way back to the default.
+function openBookImagePicker(n, after){
+  const m=el("bookImgModal")||(()=>{ const d=document.createElement("div"); d.id="bookImgModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const cur=Prog.customBookImg[n]||"";
+  const opts=bookImageOptions(n);
+  const row=(val,label,sub)=>`<button type="button" class="mtradio ${cur===val?"sel":""}" data-bimg="${String(val).replace(/"/g,"&quot;")}" style="align-items:flex-start;text-align:left"><span class="rdot" style="margin-top:3px"></span><span><b>${label}</b>${sub?`<br><span style="font-weight:600;font-size:12px;color:var(--muted)">${sub}</span>`:""}</span></button>`;
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="biClose" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${bookName(n)}</div><span style="width:34px"></span></div>
+      <p class="hint" style="margin:0 0 4px">Pick the picture you will see when you think of ${bookName(n)}. Every one of them happens in the book itself.</p>
+      <div class="mtradiolist one" style="margin-top:10px">
+        ${row("", "The drawn book icon", "The picture the app gives you")}
+        ${opts.map(o=>row(o,o,"")).join("")}
+      </div>
+      <button class="btn" id="biDone" style="width:100%;margin-top:14px">Done</button>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; if(after) after(); };
+  el("biClose").onclick=close; el("biDone").onclick=close;
+  m.onclick=ev=>{ if(ev.target===m) close(); };
+  m.querySelectorAll("[data-bimg]").forEach(b=>b.onclick=()=>{
+    const v=b.dataset.bimg;
+    if(v) Prog.customBookImg[n]=v; else delete Prog.customBookImg[n];
+    saveProg(); close();
+  });
+}
 function teachCardBody(kind, n){
   const word=pegFor(n).word, snd=pegFor(n).sounds, decode=decodeSentence(n);
   if(kind==="book"){
@@ -2478,7 +2581,7 @@ function teachCardBody(kind, n){
     return `<div class="stage">
         <div class="tline">${pegImg("book",n,bookName(n),true)}<span class="tname">${bookName(n)}</span></div>
         ${bookImgNote}
-        <button class="btn ghost sm" id="tcBookImg" style="margin:2px auto 6px;display:block">✏️ ${Prog.customBookImg[n]?"Edit my book image":"Write my own book image"}</button>
+        <button class="btn ghost sm" id="tcBookImg" style="margin:2px auto 6px;display:block">🖼️ Change my book image</button>
         <div class="tnum">Book ${dispNum("book",n)}</div>
         <div class="tline"><span class="tword">${word}</span>${pegImg("num",n,word,true)}</div>
         <div class="sounds">sounds: <b>${snd}</b></div></div>
@@ -2496,9 +2599,7 @@ function teachCardBody(kind, n){
     <div class="teachbox"><b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${(!Prog.customPeg[n]&&NOTE[n])?" ("+NOTE[n]+")":""}.<br><br>${decode}</div>`;
 }
 function wireTeachCard(kind, n, rerender){
-  if(el("tcBookImg")) el("tcBookImg").onclick=()=>editText({
-    title:`My image for ${bookName(n)}`, hint:`A word or phrase to picture instead of the default book icon.`,
-    value:Prog.customBookImg[n]||"", onSave:v=>{ if(v){Prog.customBookImg[n]=v;} else {delete Prog.customBookImg[n];} saveProg(); rerender(); }});
+  if(el("tcBookImg")) el("tcBookImg").onclick=()=>openBookImagePicker(n, rerender);
   if(el("tcEdit")) el("tcEdit").onclick=()=>editText({
     title:`My scene for ${bookName(n)}`, hint:`Your own way to remember ${bookName(n)} (book ${dispNum("book",n)}, image “${pegFor(n).word}”).`,
     value:Prog.customBook[n]||"", onSave:v=>{ if(v){Prog.customBook[n]=v;} else {delete Prog.customBook[n];} saveProg(); rerender(); }});
