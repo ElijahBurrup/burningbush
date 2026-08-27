@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_the_rising_morning_star" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="48" cy="38" r="22" fill="#f6f2e8"/>
+<path fill="url(#g_the_rising_morning_star)" d="M48 8 L55 31 L78 38 L55 45 L48 68 L41 45 L18 38 L41 31 Z"/>
+<path fill="url(#g_the_rising_morning_star)" d="M20 14 L23 18 L20 22 L17 18 Z"/>
+<path fill="url(#g_the_rising_morning_star)" d="M78 16 L81 20 L78 24 L75 20 Z"/>
+<path fill="#3f8a2c" d="M10 86 V76 C22 66 34 68 46 74 C60 66 74 68 86 76 V86 Z"/>
+<path fill="#6fce4f" d="M48 86 C58 74 72 74 86 82 V86 Z"/>
+</g>
+</svg>

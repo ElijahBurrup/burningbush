@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_gold_ringed_visitor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path fill="url(#g_a_gold_ringed_visitor)" fill-rule="evenodd" d="M22 58a26 26 0 1 0 52 0a26 26 0 1 0-52 0ZM32 58a16 16 0 1 1 32 0a16 16 0 1 1-32 0Z"/>
+<path fill="url(#g_a_gold_ringed_visitor)" d="M39 32 L57 32 L53 24 L43 24 Z"/>
+<path fill="#2f6fd0" d="M48 8 L62 20 L48 32 L34 20 Z"/>
+<path fill="none" d="M34 20 H62"/>
+<path fill="#f6f2e8" d="M79 14 L81.5 21.5 L86 24 L81.5 26.5 L79 34 L76.5 26.5 L72 24 L76.5 21.5 Z"/>
+<path fill="#f6f2e8" d="M16 34 L18 39 L22 41 L18 43 L16 48 L14 43 L10 41 L14 39 Z"/>
+</g>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_letter_for_laodicea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<rect x="18" y="30" width="60" height="36" rx="4" fill="#f6f2e8"/>
+<rect x="10" y="24" width="12" height="48" rx="6" fill="url(#g_a_letter_for_laodicea)"/>
+<rect x="74" y="24" width="12" height="48" rx="6" fill="url(#g_a_letter_for_laodicea)"/>
+<rect x="40" y="26" width="16" height="44" fill="url(#g_a_letter_for_laodicea)"/>
+<path d="M44 68 L40 86 L48 78 Z" fill="#c0392b"/>
+<path d="M52 68 L56 86 L48 78 Z" fill="#c0392b"/>
+<circle cx="48" cy="48" r="11" fill="#c0392b"/>
+<circle cx="48" cy="48" r="4" fill="#f6f2e8"/>
+</g>
+</svg>

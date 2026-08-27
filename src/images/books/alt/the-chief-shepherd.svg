@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_the_chief_shepherd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path fill="url(#g_the_chief_shepherd)" d="M65 36 a14 14 0 0 0 -28 0 v6 h7 v-6 a7 7 0 0 1 14 0 Z"/>
+<rect x="58" y="34" width="7" height="50" fill="url(#g_the_chief_shepherd)"/>
+<path fill="url(#g_the_chief_shepherd)" d="M41 18 L41 7 L47 13 L52 5 L57 13 L63 7 L63 18 Z"/>
+<rect x="23" y="74" width="5" height="11" fill="#8d9aa5"/>
+<rect x="38" y="74" width="5" height="11" fill="#8d9aa5"/>
+<ellipse cx="32" cy="64" rx="19" ry="13" fill="#f6f2e8"/>
+<circle cx="15" cy="58" r="7.5" fill="#8d9aa5"/>
+<circle cx="13" cy="56" r="1.6" fill="#0e2c1d"/>
+</g>
+</svg>

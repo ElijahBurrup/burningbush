@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <defs><linearGradient id="g_demetrius_commended" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+  <g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="16" y="44" width="64" height="40" rx="4" fill="url(#g_demetrius_commended)"/>
+    <path d="M16 44 L48 68 L80 44 Z" fill="#ffe9a8"/>
+    <path d="M42 70 L37 84 L48 77 L59 84 L54 70 Z" fill="#c0392b"/>
+    <circle cx="48" cy="66" r="8" fill="#c0392b"/>
+    <path d="M48 6 A22 22 0 0 0 26 28 L34 28 A14 14 0 0 1 48 14 Z" fill="#3f8a2c"/>
+    <path d="M48 6 A22 22 0 0 1 70 28 L62 28 A14 14 0 0 0 48 14 Z" fill="#3f8a2c"/>
+    <ellipse cx="28" cy="34" rx="4" ry="6" fill="#6fce4f"/>
+    <ellipse cx="68" cy="34" rx="4" ry="6" fill="#6fce4f"/>
+  </g>
+</svg>

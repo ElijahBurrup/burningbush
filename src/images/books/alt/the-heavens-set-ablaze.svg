@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_the_heavens_set_ablaze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="48" cy="92" r="30" fill="#3f8a2c"/>
+<path d="M22,30 C28,38 32,44 32,52 C32,60 27,64 21,64 C15,64 11,59 11,52 C11,44 16,37 22,30 Z" fill="url(#g_the_heavens_set_ablaze)"/>
+<path d="M74,30 C80,37 85,44 85,52 C85,59 81,64 75,64 C69,64 64,60 64,52 C64,44 68,38 74,30 Z" fill="url(#g_the_heavens_set_ablaze)"/>
+<path d="M48,8 C60,22 68,32 68,48 C68,60 59,68 48,68 C37,68 28,60 28,48 C28,32 36,22 48,8 Z" fill="url(#g_the_heavens_set_ablaze)"/>
+<path d="M48,34 C54,42 57,47 57,54 C57,60 53,63 48,63 C43,63 39,60 39,54 C39,47 42,42 48,34 Z" fill="#ffe9a8"/>
+<path d="M17,12 l2.5,5.5 5.5,2.5 -5.5,2.5 -2.5,5.5 -2.5,-5.5 -5.5,-2.5 5.5,-2.5 Z" fill="#f6f2e8"/>
+<path d="M79,10 l2.5,5.5 5.5,2.5 -5.5,2.5 -2.5,5.5 -2.5,-5.5 -5.5,-2.5 5.5,-2.5 Z" fill="#f6f2e8"/>
+</g>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_the_children_of_god" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M10,86 Q48,70 86,86 Z" fill="#3f8a2c"/>
+<circle cx="48" cy="24" r="11" fill="url(#g_the_children_of_god)"/>
+<path d="M48,6 v5 M30,10 l3.5,4 M66,10 l-3.5,4 M26,24 h6 M64,24 h6" fill="none" stroke-width="3"/>
+<circle cx="32" cy="50" r="5.5" fill="url(#g_the_children_of_god)"/>
+<path d="M32,56 L24,79 H40 Z" fill="url(#g_the_children_of_god)"/>
+<path d="M28,61 L21,53 M36,61 L43,53" fill="none" stroke-width="3"/>
+<circle cx="63" cy="50" r="5.5" fill="url(#g_the_children_of_god)"/>
+<path d="M63,56 L55,79 H71 Z" fill="url(#g_the_children_of_god)"/>
+<path d="M59,61 L52,53 M67,61 L74,53" fill="none" stroke-width="3"/>
+</g>
+</svg>

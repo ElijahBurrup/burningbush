@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_road_to_damascus" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<rect x="10" y="54" width="76" height="32" fill="#3f8a2c"/>
+<path d="M40 54 L56 54 L80 86 L16 86 Z" fill="#8d9aa5"/>
+<path d="M47 58 L49 58 L50 66 L46 66 Z" fill="#f6f2e8"/>
+<path d="M45 72 L51 72 L53 84 L43 84 Z" fill="#f6f2e8"/>
+<path d="M48 6 L53 20 L43 20 Z M48 50 L43 36 L53 36 Z M27 28 L42 23 L42 33 Z M69 28 L54 33 L54 23 Z M32 12 L42 16 L36 22 Z M64 12 L60 22 L54 16 Z" fill="url(#g_a_road_to_damascus)"/>
+<circle cx="48" cy="28" r="11" fill="url(#g_a_road_to_damascus)"/>
+</g>
+</svg>

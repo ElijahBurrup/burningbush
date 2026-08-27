@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_paul_s_pledge_to_repay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M20 24 h48 v44 q-24 8 -48 0 z" fill="#f6f2e8"/>
+<rect x="14" y="12" width="60" height="12" rx="6" fill="url(#g_paul_s_pledge_to_repay)"/>
+<path d="M28 36 h32 M28 44 h32 M28 52 h20" fill="none"/>
+<circle cx="40" cy="75" r="10" fill="url(#g_paul_s_pledge_to_repay)"/>
+<circle cx="40" cy="75" r="5" fill="none"/>
+<circle cx="61" cy="70" r="12" fill="url(#g_paul_s_pledge_to_repay)"/>
+<circle cx="61" cy="70" r="6" fill="none"/>
+</g>
+</svg>

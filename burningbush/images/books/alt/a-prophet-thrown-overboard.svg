@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_prophet_thrown_overboard" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M46 30 L90 30 L78 50 L54 50 Z" fill="url(#g_a_prophet_thrown_overboard)"/>
+  <line x1="68" y1="30" x2="68" y2="12"/>
+  <path d="M68 12 L86 24 L68 24 Z" fill="#f6f2e8"/>
+  <circle cx="26" cy="34" r="7" fill="#0e2c1d"/>
+  <path d="M28 41 L20 56 L30 54 L26 68 M24 46 L12 42 M28 48 L38 52" fill="none" stroke="#0e2c1d" stroke-width="4"/>
+  <path d="M6 78 Q14 70 22 78 Q30 86 38 78 Q46 70 54 78 Q62 86 70 78 Q78 70 86 78" fill="none" stroke="#2f6fd0" stroke-width="5"/>
+  <circle cx="24" cy="70" r="3" fill="#f6f2e8"/>
+</g>
+</svg>

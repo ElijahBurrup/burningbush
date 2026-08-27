@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_basin_and_towel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M56 14 c4 6 4 9 0 11 c-4 -2 -4 -5 0 -11 z" fill="#2f6fd0"/>
+<path d="M70 22 c3 5 3 8 0 9 c-3 -1 -3 -4 0 -9 z" fill="#2f6fd0"/>
+<path d="M40 68 h16 l7 12 h-30 z" fill="url(#g_a_basin_and_towel)"/>
+<path d="M12 42 H84 A36 28 0 0 1 12 42 Z" fill="url(#g_a_basin_and_towel)"/>
+<ellipse cx="48" cy="42" rx="36" ry="7" fill="#2f6fd0"/>
+<path d="M10 34 h16 l2 40 c-6 5 -14 5 -20 0 z" fill="#f6f2e8"/>
+<path d="M19 36 v36" fill="none"/>
+</g>
+</svg>

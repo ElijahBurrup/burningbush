@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_the_chosen_lady" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M26,30 L26,12 L37,24 L48,10 L59,24 L70,12 L70,30 Z" fill="url(#g_the_chosen_lady)"/>
+<rect x="24" y="30" width="48" height="9" rx="2" fill="url(#g_the_chosen_lady)"/>
+<circle cx="48" cy="34.5" r="3" fill="#c0392b"/>
+<circle cx="34" cy="34.5" r="2.5" fill="#2f6fd0"/>
+<circle cx="62" cy="34.5" r="2.5" fill="#2f6fd0"/>
+<path d="M48,86 C48,74 47,64 48,56" fill="none" stroke-width="3"/>
+<path d="M48,76 C40,74 33,68 33,59 C42,61 48,68 48,76 Z" fill="#6fce4f"/>
+<path d="M48,76 C56,74 63,68 63,59 C54,61 48,68 48,76 Z" fill="#3f8a2c"/>
+<path d="M37,56 C34,46 39,42 43,47 C44,41 52,41 53,47 C57,42 62,46 59,56 C56,61 40,61 37,56 Z" fill="#f6f2e8"/>
+</g>
+</svg>

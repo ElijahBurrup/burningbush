@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_hands_upon_the_word" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M12,60 L48,68 L84,60 V36 L48,44 L12,36 Z" fill="url(#g_hands_upon_the_word)"/>
+<path d="M15,32 C26,26 39,28 48,38 V64 C39,56 26,54 15,58 Z" fill="#f6f2e8"/>
+<path d="M81,32 C70,26 57,28 48,38 V64 C57,56 70,54 81,58 Z" fill="#f6f2e8"/>
+<path d="M45,30 h6 v16 l-3,-4 -3,4 Z" fill="#c0392b"/>
+<path d="M22,86 V56 q0,-5 5,-5 h10 q5,0 5,5 v30 Z" fill="url(#g_hands_upon_the_word)"/>
+<path d="M29,51 v12 M35,51 v12" fill="none"/>
+<path d="M54,86 V56 q0,-5 5,-5 h10 q5,0 5,5 v30 Z" fill="url(#g_hands_upon_the_word)"/>
+<path d="M61,51 v12 M67,51 v12" fill="none"/>
+</g>
+</svg>

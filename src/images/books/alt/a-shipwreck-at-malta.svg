@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_shipwreck_at_malta" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M60 54 L66 16 L74 18 L68 55 Z" fill="url(#g_a_shipwreck_at_malta)"/>
+<path d="M68 16 L38 40 L64 44 Z" fill="#f6f2e8"/>
+<path d="M12 52 L40 58 L36 74 L14 68 Z" fill="url(#g_a_shipwreck_at_malta)"/>
+<path d="M46 56 L84 50 L78 74 L44 72 Z" fill="url(#g_a_shipwreck_at_malta)"/>
+<path d="M10 20 L24 26 L22 40 L8 34 Z" fill="#8d9aa5"/>
+<path d="M8 70 Q16 62 24 70 Q32 78 40 70 Q48 62 56 70 Q64 78 72 70 Q80 62 88 70 V86 H8 Z" fill="#2f6fd0"/>
+</g>
+</svg>

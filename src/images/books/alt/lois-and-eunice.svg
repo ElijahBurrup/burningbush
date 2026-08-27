@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_lois_and_eunice" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M32 31 q-15 5 -17 51 h34 q-2 -46 -17 -51 z" fill="url(#g_lois_and_eunice)"/>
+<circle cx="32" cy="22" r="9" fill="url(#g_lois_and_eunice)"/>
+<path d="M23 22 a9 9 0 0 1 18 0 q-9 -6 -18 0 z" fill="#8d9aa5"/>
+<path d="M64 44 q-13 4 -15 38 h30 q-2 -34 -15 -38 z" fill="url(#g_lois_and_eunice)"/>
+<circle cx="64" cy="36" r="8" fill="url(#g_lois_and_eunice)"/>
+<path d="M48 52 q-3 -5 -7 -2 q-4 3 0 8 l7 7 7 -7 q4 -5 0 -8 q-4 -3 -7 2 z" fill="#c0392b"/>
+</g>
+</svg>

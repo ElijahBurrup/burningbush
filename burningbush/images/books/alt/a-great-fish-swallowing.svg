@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_great_fish_swallowing" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M14 44 L34 26 C56 14 78 26 80 44 C78 62 56 74 34 62 Z" fill="url(#g_a_great_fish_swallowing)"/>
+  <path d="M78 34 L92 22 L88 44 L92 66 L78 54 Z" fill="url(#g_a_great_fish_swallowing)"/>
+  <path d="M14 44 L34 30 L30 44 L34 58 Z" fill="#0e2c1d" stroke="none"/>
+  <circle cx="56" cy="34" r="4" fill="#0e2c1d"/>
+  <path d="M20 34 L24 22 L28 32 M20 54 L24 66 L28 56" fill="none" stroke="#0e2c1d" stroke-width="4"/>
+  <path d="M10 80 Q18 74 26 80 Q34 86 42 80 Q50 74 58 80 Q66 86 74 80 Q82 74 86 78" fill="none" stroke="#2f6fd0" stroke-width="4"/>
+</g>
+</svg>

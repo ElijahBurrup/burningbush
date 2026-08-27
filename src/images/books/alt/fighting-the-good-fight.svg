@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_fighting_the_good_fight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M12,16 L18,10 L44,34 L38,42 Z" fill="#8d9aa5"/>
+  <path d="M56,60 L70,74 L64,80 L50,66 Z" fill="url(#g_fighting_the_good_fight)"/>
+  <circle cx="71" cy="79" r="5" fill="url(#g_fighting_the_good_fight)"/>
+  <path d="M48,22 L78,30 L78,50 C78,66 64,76 48,82 C32,76 18,66 18,50 L18,30 Z" fill="url(#g_fighting_the_good_fight)"/>
+  <path d="M48,28 L72,34 L72,49 C72,61 61,70 48,75 C35,70 24,61 24,49 L24,34 Z" fill="none"/>
+  <path d="M44,38 L52,38 L52,46 L62,46 L62,54 L52,54 L52,66 L44,66 L44,54 L34,54 L34,46 L44,46 Z" fill="#f6f2e8"/>
+</g>
+</svg>

@@ -261,13 +261,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "468577ee3a8e4dcc",
+  "h": "4fed8e1ccb3cd9d9",
   "len": 15769,
   "els": 370,
   "buttons": 45,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.32.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.33.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "classic/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -324,13 +324,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "1584ff9d32fb205a",
-  "len": 44537,
-  "els": 890,
+  "h": "05bd6e165ee7e081",
+  "len": 45502,
+  "els": 905,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.32.0 August 27, 2026 A picture for every book NEW Change my book image replaces writing your own. E"
+  "text": "✕ Version history v1.33.0 August 27, 2026 The pictures themselves NEW Every one of the 264 book pictures is now drawn. L"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -738,13 +738,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "d9ae6d40f9d88702",
+  "h": "6fa35a609148c787",
   "len": 14975,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.32.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.33.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "illumined/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -801,13 +801,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "1584ff9d32fb205a",
-  "len": 44537,
-  "els": 890,
+  "h": "05bd6e165ee7e081",
+  "len": 45502,
+  "els": 905,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.32.0 August 27, 2026 A picture for every book NEW Change my book image replaces writing your own. E"
+  "text": "✕ Version history v1.33.0 August 27, 2026 The pictures themselves NEW Every one of the 264 book pictures is now drawn. L"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -1215,13 +1215,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "5664778f718f2d7b",
+  "h": "4da91dd7c8753368",
   "len": 14973,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.32.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.33.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "glass/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -1278,13 +1278,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "1584ff9d32fb205a",
-  "len": 44537,
-  "els": 890,
+  "h": "05bd6e165ee7e081",
+  "len": 45502,
+  "els": 905,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.32.0 August 27, 2026 A picture for every book NEW Change my book image replaces writing your own. E"
+  "text": "✕ Version history v1.33.0 August 27, 2026 The pictures themselves NEW Every one of the 264 book pictures is now drawn. L"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1692,13 +1692,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "29d84de4722f63f1",
+  "h": "54923d9594a5e1ca",
   "len": 14975,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.32.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.33.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "quest/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -1755,13 +1755,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "1584ff9d32fb205a",
-  "len": 44537,
-  "els": 890,
+  "h": "05bd6e165ee7e081",
+  "len": 45502,
+  "els": 905,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.32.0 August 27, 2026 A picture for every book NEW Change my book image replaces writing your own. E"
+  "text": "✕ Version history v1.33.0 August 27, 2026 The pictures themselves NEW Every one of the 264 book pictures is now drawn. L"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -2169,13 +2169,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "3fff1f28a0f04ef2",
+  "h": "912372c4c66ffcb5",
   "len": 14971,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.32.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.33.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "buddy/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -2232,13 +2232,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "1584ff9d32fb205a",
-  "len": 44537,
-  "els": 890,
+  "h": "05bd6e165ee7e081",
+  "len": 45502,
+  "els": 905,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.32.0 August 27, 2026 A picture for every book NEW Change my book image replaces writing your own. E"
+  "text": "✕ Version history v1.33.0 August 27, 2026 The pictures themselves NEW Every one of the 264 book pictures is now drawn. L"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",

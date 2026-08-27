@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_the_washing_of_rebirth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M48 46 v-16" fill="none"/>
+<path d="M48 30 q-12 -1 -14 -12 q12 1 14 12 z" fill="#3f8a2c"/>
+<path d="M48 30 q12 -1 14 -12 q-12 1 -14 12 z" fill="#6fce4f"/>
+<path d="M24 18 q4 7 0 10 q-4 -3 0 -10 z" fill="#2f6fd0"/>
+<path d="M72 18 q4 7 0 10 q-4 -3 0 -10 z" fill="#2f6fd0"/>
+<path d="M14 46 h68 q0 16 -34 16 -34 0 -34 -16 z" fill="url(#g_the_washing_of_rebirth)"/>
+<ellipse cx="48" cy="47" rx="30" ry="4.5" fill="#2f6fd0"/>
+<path d="M42 62 l-4 12 h20 l-4 -12 z" fill="url(#g_the_washing_of_rebirth)"/>
+<path d="M28 74 h40 v8 h-40 z" fill="url(#g_the_washing_of_rebirth)"/>
+</g>
+</svg>

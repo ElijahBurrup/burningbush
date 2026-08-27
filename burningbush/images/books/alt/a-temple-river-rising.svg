@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_temple_river_rising" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M14 26 L48 10 L82 26 Z" fill="url(#g_a_temple_river_rising)"/>
+<rect x="20" y="26" width="10" height="20" fill="url(#g_a_temple_river_rising)"/>
+<rect x="43" y="26" width="10" height="20" fill="url(#g_a_temple_river_rising)"/>
+<rect x="66" y="26" width="10" height="20" fill="url(#g_a_temple_river_rising)"/>
+<rect x="16" y="46" width="64" height="6" fill="url(#g_a_temple_river_rising)"/>
+<path d="M44 52 L52 52 C56 64 62 74 74 86 L22 86 C34 74 40 64 44 52 Z" fill="#2f6fd0"/>
+<path d="M42 66 C46 63 50 63 54 66 M36 76 C42 72 54 72 60 76" fill="none" stroke="#f6f2e8"/>
+<path d="M14 66 C12 58 16 52 22 50 C24 58 20 64 14 66 Z" fill="#3f8a2c"/>
+<path d="M82 66 C84 58 80 52 74 50 C72 58 76 64 82 66 Z" fill="#6fce4f"/>
+</g>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_singing_over_his_people" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M15 86 V78 a11 11 0 0 1 22 0 a11 11 0 0 1 22 0 a11 11 0 0 1 22 0 V86 Z" fill="#3f8a2c"/>
+<path d="M37 57 V28 M63 51 V22" fill="none"/>
+<polygon points="37,24 63,18 63,26 37,32" fill="url(#g_singing_over_his_people)"/>
+<ellipse cx="30" cy="58" rx="7" ry="5" fill="url(#g_singing_over_his_people)"/>
+<ellipse cx="56" cy="52" rx="7" ry="5" fill="url(#g_singing_over_his_people)"/>
+<path d="M81 33 V16 q7 4 4 11" fill="none"/>
+<ellipse cx="76" cy="34" rx="5" ry="4" fill="url(#g_singing_over_his_people)"/>
+<line x1="14" y1="26" x2="21" y2="31"/>
+<line x1="12" y1="44" x2="21" y2="44"/>
+</g>
+</svg>

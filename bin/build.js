@@ -28,8 +28,8 @@ const RULES = [
   ['href="fonts/fonts.css"', 'href="/burningbush/fonts/fonts.css"', 1],
   ['href="manifest.webmanifest"', 'href="/burningbush/manifest.webmanifest"', 1],
   ['href="images/', 'href="/burningbush/images/', 2],
-  ['src="images/', 'src="/burningbush/images/', 2],
-  ['`images/books/', '`/burningbush/images/books/', 1],
+  ['src="images/', 'src="/burningbush/images/', 3],   // +1: the book-image picker's default-icon option
+  ['`images/books/', '`/burningbush/images/books/', 2],   // +1: images/books/alt, the chosen book picture
   ['`images/pegs/', '`/burningbush/images/pegs/', 1],
   // fetched by absolute path: a relative one would resolve to /sw.js against the trailing-slash-less URL
   ['register("sw.js")', 'register("/burningbush/sw.js")', 1],

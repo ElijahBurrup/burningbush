@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_the_last_trumpet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M18 74 L54 40 L62 48 L26 82 Z" fill="url(#g_the_last_trumpet)"/>
+<path d="M50 44 L78 10 Q84 14 88 22 L64 58 Q56 52 50 44 Z" fill="url(#g_the_last_trumpet)"/>
+<path d="M78 10 Q84 14 88 22 L92 18 Q88 10 82 6 Z" fill="#f6f2e8"/>
+<circle cx="20" cy="78" r="7" fill="url(#g_the_last_trumpet)"/>
+<rect x="42" y="46" width="8" height="14" fill="#f6f2e8" transform="rotate(-45 46 53)"/>
+<path d="M84 34 L92 40" fill="none"/>
+<path d="M76 12 L82 4" fill="none" transform="translate(14 22)"/>
+<path d="M74 24 L84 24" fill="none" transform="translate(6 6)"/>
+</g>
+</svg>

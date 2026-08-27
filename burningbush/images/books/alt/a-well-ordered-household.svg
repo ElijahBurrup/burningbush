@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_well_ordered_household" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<rect x="22" y="44" width="52" height="42" fill="url(#g_a_well_ordered_household)"/>
+<path d="M14 46 L48 14 L82 46 Z" fill="url(#g_a_well_ordered_household)"/>
+<rect x="62" y="20" width="9" height="14" fill="#c0392b"/>
+<rect x="41" y="60" width="14" height="26" rx="2" fill="#f6f2e8"/>
+<rect x="27" y="52" width="10" height="10" fill="#2f6fd0"/>
+<rect x="59" y="52" width="10" height="10" fill="#2f6fd0"/>
+<circle cx="17" cy="80" r="7" fill="#3f8a2c"/>
+<circle cx="79" cy="80" r="7" fill="#3f8a2c"/>
+</g>
+</svg>

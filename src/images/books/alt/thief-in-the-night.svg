@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_thief_in_the_night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M44 8 A28 28 0 1 0 44 64 A23 23 0 0 1 44 8 Z" fill="url(#g_thief_in_the_night)"/>
+<path d="M70 10 l4 6 -4 6 -4 -6 Z M84 26 l3.5 5 -3.5 5 -3.5 -5 Z M60 26 l3 4.5 -3 4.5 -3 -4.5 Z" fill="url(#g_thief_in_the_night)"/>
+<path d="M52 86 V58 L69 44 L86 58 V86 Z" fill="#8d9aa5"/>
+<rect x="63" y="60" width="13" height="13" fill="#0e2c1d"/>
+<path d="M63 60 L56 56 L56 70 L63 73 Z" fill="#f6f2e8"/>
+<path d="M32 86 L46 58 M40 86 L54 58 M35 78 L49 78 M38 70 L52 70 M42 63 L55 63" fill="none" stroke="#8d9aa5" stroke-width="4"/>
+</g>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_esau_s_mountain_fortress" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M10 86 L34 40 L48 52 L64 34 L86 86 Z" fill="url(#g_esau_s_mountain_fortress)"/>
+  <path d="M34 40 L40 58 L48 52 Z" fill="#e0561a"/>
+  <rect x="38" y="16" width="24" height="24" fill="#8d9aa5"/>
+  <path d="M36 16 L36 8 L42 8 L42 12 L47 12 L47 8 L53 8 L53 12 L58 12 L58 8 L64 8 L64 16 Z" fill="#8d9aa5"/>
+  <rect x="45" y="26" width="10" height="14" fill="#0e2c1d"/>
+  <line x1="22" y1="70" x2="34" y2="70"/>
+  <line x1="62" y1="62" x2="76" y2="62"/>
+</g>
+</svg>

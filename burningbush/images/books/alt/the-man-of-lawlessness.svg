@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_the_man_of_lawlessness" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M20,80 L20,36 C20,24 30,16 45,16 L47,16 L42,30 L48,44 L40,58 L46,70 L42,80 Z" fill="url(#g_the_man_of_lawlessness)"/>
+  <path d="M54,80 L50,70 L56,58 L48,44 L54,30 L51,16 C66,16 76,24 76,36 L76,80 Z" fill="url(#g_the_man_of_lawlessness)"/>
+  <path d="M30,30 L34,38 L30,46" fill="none"/>
+  <path d="M66,32 L62,40 L66,48" fill="none"/>
+  <circle cx="48" cy="48" r="34" fill="none" stroke="#c0392b" stroke-width="6"/>
+  <line x1="25" y1="72" x2="71" y2="24" stroke="#c0392b" stroke-width="6"/>
+</g>
+</svg>

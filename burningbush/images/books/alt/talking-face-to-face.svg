@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <defs><linearGradient id="g_talking_face_to_face" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+  <g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M14 84 Q16 54 30 42 Q40 38 44 50 L44 84 Z" fill="url(#g_talking_face_to_face)"/>
+    <path d="M82 84 Q80 54 66 42 Q56 38 52 50 L52 84 Z" fill="url(#g_talking_face_to_face)"/>
+    <circle cx="36" cy="26" r="10" fill="url(#g_talking_face_to_face)"/>
+    <circle cx="60" cy="26" r="10" fill="url(#g_talking_face_to_face)"/>
+    <rect x="30" y="72" width="30" height="11" rx="5.5" fill="#f6f2e8"/>
+    <path d="M62 78 Q72 62 84 54 Q80 68 68 80 Z" fill="#8d9aa5"/>
+  </g>
+</svg>

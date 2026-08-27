@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_the_soul_s_anchor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path fill="url(#g_the_soul_s_anchor)" fill-rule="evenodd" d="M38 17a10 10 0 1 0 20 0a10 10 0 1 0-20 0ZM43 17a5 5 0 1 1 10 0a5 5 0 1 1-10 0Z"/>
+<path fill="url(#g_the_soul_s_anchor)" d="M12 44 L27 48 C26 62 33 72 44 75 L44 60 H52 L52 75 C63 72 70 62 69 48 L84 44 L79 58 C73 76 62 85 48 85 C34 85 23 76 17 58 Z"/>
+<rect x="44" y="26" width="8" height="38" fill="url(#g_the_soul_s_anchor)"/>
+<rect x="28" y="34" width="40" height="7" rx="3.5" fill="url(#g_the_soul_s_anchor)"/>
+<circle cx="28" cy="37.5" r="4.5" fill="url(#g_the_soul_s_anchor)"/>
+<circle cx="68" cy="37.5" r="4.5" fill="url(#g_the_soul_s_anchor)"/>
+</g>
+</svg>

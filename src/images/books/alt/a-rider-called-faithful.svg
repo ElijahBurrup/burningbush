@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <defs><linearGradient id="g_a_rider_called_faithful" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+  <g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M78 58 Q88 60 86 74 Q84 64 76 66 Z" fill="#f6f2e8"/>
+    <path d="M55 13 L69 13 L67 5 L62 10 L57 5 Z" fill="url(#g_a_rider_called_faithful)"/>
+    <path d="M78 24 L86 5 L82 3 L74 20 Z" fill="#8d9aa5"/>
+    <path d="M66 34 L80 22 L84 26 L70 40 Z" fill="url(#g_a_rider_called_faithful)"/>
+    <circle cx="62" cy="19" r="7" fill="url(#g_a_rider_called_faithful)"/>
+    <path d="M52 46 Q50 32 58 26 Q68 22 70 34 L66 50 Q58 52 52 46 Z" fill="url(#g_a_rider_called_faithful)"/>
+    <path d="M36 46 Q26 50 26 60 L20 58 Q20 46 32 40 Z" fill="#f6f2e8"/>
+    <path d="M42 54 Q34 60 36 70 L30 68 Q30 56 38 50 Z" fill="#f6f2e8"/>
+    <path d="M30 18 L34 10 L38 18 Z" fill="#f6f2e8"/>
+    <path d="M24 32 Q18 30 20 24 Q22 18 30 18 L34 22 Q42 24 44 34 Q56 40 68 46 Q80 52 78 64 Q76 74 68 76 L70 86 L62 86 L60 74 Q50 70 44 62 Q36 56 34 44 Q26 40 24 32 Z" fill="#f6f2e8"/>
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_a_blemished_lamb_offered" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <rect x="14" y="78" width="68" height="8" fill="#8d9aa5"/>
+  <rect x="20" y="64" width="56" height="14" fill="#8d9aa5"/>
+  <rect x="34" y="56" width="4" height="8" fill="#f6f2e8"/>
+  <rect x="58" y="56" width="4" height="8" fill="#f6f2e8"/>
+  <path d="M28,50 C22,44 26,34 34,34 C36,26 48,22 56,26 C66,22 76,30 72,40 C76,46 72,54 64,56 C54,62 36,62 28,50 Z" fill="url(#g_a_blemished_lamb_offered)"/>
+  <circle cx="70" cy="34" r="9" fill="#f6f2e8"/>
+  <path d="M62,30 C56,28 54,22 58,18 C62,20 64,24 64,28 Z" fill="#f6f2e8"/>
+  <circle cx="42" cy="42" r="4.5" fill="#c0392b"/>
+  <circle cx="56" cy="48" r="3.5" fill="#c0392b"/>
+</g>
+</svg>

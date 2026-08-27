@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_prison_doors_flung_open" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<rect x="26" y="10" width="44" height="72" fill="#8d9aa5"/>
+<rect x="32" y="16" width="32" height="66" fill="url(#g_prison_doors_flung_open)"/>
+<path d="M26 12 L10 20 L10 84 L26 78 Z" fill="#8d9aa5"/>
+<path d="M15 22 V81 M21 20 V79" fill="none" stroke="#0e2c1d" stroke-width="3"/>
+<path d="M70 12 L86 20 L86 84 L70 78 Z" fill="#8d9aa5"/>
+<path d="M81 22 V81 M75 20 V79" fill="none" stroke="#0e2c1d" stroke-width="3"/>
+<circle cx="38" cy="80" r="6" fill="none" stroke="#0e2c1d" stroke-width="4"/>
+<circle cx="56" cy="82" r="6" fill="none" stroke="#0e2c1d" stroke-width="4"/>
+</g>
+</svg>

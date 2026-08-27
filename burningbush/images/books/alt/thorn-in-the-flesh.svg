@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><linearGradient id="g_thorn_in_the_flesh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".45" stop-color="#ffcf4d"/><stop offset=".8" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e0561a"/></linearGradient></defs>
+<g stroke="#0e2c1d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<path d="M12 88 L10 78 Q46 58 78 12 L86 18 Q54 64 12 88 Z" fill="url(#g_thorn_in_the_flesh)"/>
+<path d="M32 68 L20 54 L40 60 Z" fill="url(#g_thorn_in_the_flesh)"/>
+<path d="M44 58 L52 74 L54 52 Z" fill="url(#g_thorn_in_the_flesh)"/>
+<path d="M56 46 L46 32 L64 38 Z" fill="url(#g_thorn_in_the_flesh)"/>
+<path d="M68 32 L76 46 L76 24 Z" fill="url(#g_thorn_in_the_flesh)"/>
+<path d="M24 46 Q18 38 24 32 Q30 38 24 46 Z" fill="#c0392b"/>
+</g>
+</svg>
