@@ -9,7 +9,7 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
  },
  "classic/verse/hub": {
-  "h": "1747ee1e9523a025",
+  "h": "91fb97d9002fc3b2",
   "len": 2896,
   "els": 55,
   "buttons": 7,
@@ -36,13 +36,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "classic/verse/memorized": {
-  "h": "293d8a7a91cbb666",
-  "len": 2142,
-  "els": 64,
+  "h": "a0b9ad011de5177e",
+  "len": 2080,
+  "els": 61,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ★ Memorized verses 3 🧭 Locating 0 🗣️ Word for word 0 💛 Known by heart 🏛️ 2 verses are missing a scene, a pa"
+  "text": "← Verses 💛 My Verses 3 🧭 Located 0 💛 By heart 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so "
  },
  "classic/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -72,9 +72,9 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "classic/wizard/learned": {
-  "h": "273f0142e4da08b0",
-  "len": 4000,
-  "els": 90,
+  "h": "c4c2d5e2c1fa8753",
+  "len": 4009,
+  "els": 88,
   "buttons": 9,
   "svgs": 0,
   "imgs": 3,
@@ -261,13 +261,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "4fed8e1ccb3cd9d9",
+  "h": "3566deb6c7b96f4a",
   "len": 15769,
   "els": 370,
   "buttons": 45,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.33.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.34.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "classic/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -324,13 +324,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "05bd6e165ee7e081",
-  "len": 45502,
-  "els": 905,
+  "h": "63bd367bc24071da",
+  "len": 47314,
+  "els": 935,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.33.0 August 27, 2026 The pictures themselves NEW Every one of the 264 book pictures is now drawn. L"
+  "text": "✕ Version history v1.34.0 August 27, 2026 Say when you know it NEW Tell the app you already know a verse by heart — from"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -387,35 +387,35 @@
   "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "classic/modal/stage": {
-  "h": "e5865eea850e3261",
-  "len": 1745,
-  "els": 27,
-  "buttons": 4,
+  "h": "1d27af64d948220e",
+  "len": 1451,
+  "els": 21,
+  "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
+  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Located "
  },
  "classic/modal/promote-pool": {
-  "h": "c267c00669c17cab",
-  "len": 649,
+  "h": "484df6187b14664a",
+  "len": 634,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word for word testing? You will be a"
+  "text": "💛 Seven times through You have recited John 3:16 word for word 7 times. Do you know it by heart? From now on it is the "
  },
  "classic/modal/promote-heart": {
-  "h": "d3d5c66fb1828d8f",
-  "len": 753,
+  "h": "2fe56f488f3fc151",
+  "len": 742,
   "els": 9,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "💛 Five in a row, word for word Psalms 23:1 has come back to you clean five times running. Move it to Known by Heart? It"
+  "text": "💛 Seven times through You have recited Psalms 23:1 word for word 7 times. Do you know it by heart? From now on it is th"
  },
  "classic/practice/review-setup": {
-  "h": "4594434c7bbde234",
-  "len": 1154,
+  "h": "53309dab0b15ec3a",
+  "len": 1159,
   "els": 21,
   "buttons": 4,
   "svgs": 0,
@@ -486,7 +486,7 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
  },
  "illumined/verse/hub": {
-  "h": "764578355daddb83",
+  "h": "11f463bcfaac18b0",
   "len": 2877,
   "els": 55,
   "buttons": 7,
@@ -513,13 +513,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "illumined/verse/memorized": {
-  "h": "293d8a7a91cbb666",
-  "len": 2142,
-  "els": 64,
+  "h": "a0b9ad011de5177e",
+  "len": 2080,
+  "els": 61,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ★ Memorized verses 3 🧭 Locating 0 🗣️ Word for word 0 💛 Known by heart 🏛️ 2 verses are missing a scene, a pa"
+  "text": "← Verses 💛 My Verses 3 🧭 Located 0 💛 By heart 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so "
  },
  "illumined/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -549,9 +549,9 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "illumined/wizard/learned": {
-  "h": "273f0142e4da08b0",
-  "len": 4000,
-  "els": 90,
+  "h": "c4c2d5e2c1fa8753",
+  "len": 4009,
+  "els": 88,
   "buttons": 9,
   "svgs": 0,
   "imgs": 3,
@@ -738,13 +738,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "6fa35a609148c787",
+  "h": "e87ea252d97626c5",
   "len": 14975,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.33.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.34.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "illumined/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -801,13 +801,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "05bd6e165ee7e081",
-  "len": 45502,
-  "els": 905,
+  "h": "63bd367bc24071da",
+  "len": 47314,
+  "els": 935,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.33.0 August 27, 2026 The pictures themselves NEW Every one of the 264 book pictures is now drawn. L"
+  "text": "✕ Version history v1.34.0 August 27, 2026 Say when you know it NEW Tell the app you already know a verse by heart — from"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -864,35 +864,35 @@
   "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "illumined/modal/stage": {
-  "h": "e5865eea850e3261",
-  "len": 1745,
-  "els": 27,
-  "buttons": 4,
+  "h": "1d27af64d948220e",
+  "len": 1451,
+  "els": 21,
+  "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
+  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Located "
  },
  "illumined/modal/promote-pool": {
-  "h": "c267c00669c17cab",
-  "len": 649,
+  "h": "484df6187b14664a",
+  "len": 634,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word for word testing? You will be a"
+  "text": "💛 Seven times through You have recited John 3:16 word for word 7 times. Do you know it by heart? From now on it is the "
  },
  "illumined/modal/promote-heart": {
-  "h": "d3d5c66fb1828d8f",
-  "len": 753,
+  "h": "2fe56f488f3fc151",
+  "len": 742,
   "els": 9,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "💛 Five in a row, word for word Psalms 23:1 has come back to you clean five times running. Move it to Known by Heart? It"
+  "text": "💛 Seven times through You have recited Psalms 23:1 word for word 7 times. Do you know it by heart? From now on it is th"
  },
  "illumined/practice/review-setup": {
-  "h": "4594434c7bbde234",
-  "len": 1154,
+  "h": "53309dab0b15ec3a",
+  "len": 1159,
   "els": 21,
   "buttons": 4,
   "svgs": 0,
@@ -963,7 +963,7 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
  },
  "glass/verse/hub": {
-  "h": "764578355daddb83",
+  "h": "11f463bcfaac18b0",
   "len": 2877,
   "els": 55,
   "buttons": 7,
@@ -990,13 +990,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "glass/verse/memorized": {
-  "h": "293d8a7a91cbb666",
-  "len": 2142,
-  "els": 64,
+  "h": "a0b9ad011de5177e",
+  "len": 2080,
+  "els": 61,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ★ Memorized verses 3 🧭 Locating 0 🗣️ Word for word 0 💛 Known by heart 🏛️ 2 verses are missing a scene, a pa"
+  "text": "← Verses 💛 My Verses 3 🧭 Located 0 💛 By heart 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so "
  },
  "glass/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -1026,9 +1026,9 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "glass/wizard/learned": {
-  "h": "273f0142e4da08b0",
-  "len": 4000,
-  "els": 90,
+  "h": "c4c2d5e2c1fa8753",
+  "len": 4009,
+  "els": 88,
   "buttons": 9,
   "svgs": 0,
   "imgs": 3,
@@ -1215,13 +1215,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "4da91dd7c8753368",
+  "h": "9d2bf65c257f03b6",
   "len": 14973,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.33.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.34.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "glass/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -1278,13 +1278,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "05bd6e165ee7e081",
-  "len": 45502,
-  "els": 905,
+  "h": "63bd367bc24071da",
+  "len": 47314,
+  "els": 935,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.33.0 August 27, 2026 The pictures themselves NEW Every one of the 264 book pictures is now drawn. L"
+  "text": "✕ Version history v1.34.0 August 27, 2026 Say when you know it NEW Tell the app you already know a verse by heart — from"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1341,35 +1341,35 @@
   "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "glass/modal/stage": {
-  "h": "e5865eea850e3261",
-  "len": 1745,
-  "els": 27,
-  "buttons": 4,
+  "h": "1d27af64d948220e",
+  "len": 1451,
+  "els": 21,
+  "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
+  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Located "
  },
  "glass/modal/promote-pool": {
-  "h": "c267c00669c17cab",
-  "len": 649,
+  "h": "484df6187b14664a",
+  "len": 634,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word for word testing? You will be a"
+  "text": "💛 Seven times through You have recited John 3:16 word for word 7 times. Do you know it by heart? From now on it is the "
  },
  "glass/modal/promote-heart": {
-  "h": "d3d5c66fb1828d8f",
-  "len": 753,
+  "h": "2fe56f488f3fc151",
+  "len": 742,
   "els": 9,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "💛 Five in a row, word for word Psalms 23:1 has come back to you clean five times running. Move it to Known by Heart? It"
+  "text": "💛 Seven times through You have recited Psalms 23:1 word for word 7 times. Do you know it by heart? From now on it is th"
  },
  "glass/practice/review-setup": {
-  "h": "4594434c7bbde234",
-  "len": 1154,
+  "h": "53309dab0b15ec3a",
+  "len": 1159,
   "els": 21,
   "buttons": 4,
   "svgs": 0,
@@ -1440,7 +1440,7 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
  },
  "quest/verse/hub": {
-  "h": "764578355daddb83",
+  "h": "11f463bcfaac18b0",
   "len": 2877,
   "els": 55,
   "buttons": 7,
@@ -1467,13 +1467,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "quest/verse/memorized": {
-  "h": "293d8a7a91cbb666",
-  "len": 2142,
-  "els": 64,
+  "h": "a0b9ad011de5177e",
+  "len": 2080,
+  "els": 61,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ★ Memorized verses 3 🧭 Locating 0 🗣️ Word for word 0 💛 Known by heart 🏛️ 2 verses are missing a scene, a pa"
+  "text": "← Verses 💛 My Verses 3 🧭 Located 0 💛 By heart 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so "
  },
  "quest/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -1503,9 +1503,9 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "quest/wizard/learned": {
-  "h": "273f0142e4da08b0",
-  "len": 4000,
-  "els": 90,
+  "h": "c4c2d5e2c1fa8753",
+  "len": 4009,
+  "els": 88,
   "buttons": 9,
   "svgs": 0,
   "imgs": 3,
@@ -1692,13 +1692,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "54923d9594a5e1ca",
+  "h": "38a9cd109f61fce8",
   "len": 14975,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.33.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.34.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "quest/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -1755,13 +1755,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "05bd6e165ee7e081",
-  "len": 45502,
-  "els": 905,
+  "h": "63bd367bc24071da",
+  "len": 47314,
+  "els": 935,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.33.0 August 27, 2026 The pictures themselves NEW Every one of the 264 book pictures is now drawn. L"
+  "text": "✕ Version history v1.34.0 August 27, 2026 Say when you know it NEW Tell the app you already know a verse by heart — from"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1818,35 +1818,35 @@
   "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "quest/modal/stage": {
-  "h": "e5865eea850e3261",
-  "len": 1745,
-  "els": 27,
-  "buttons": 4,
+  "h": "1d27af64d948220e",
+  "len": 1451,
+  "els": 21,
+  "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
+  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Located "
  },
  "quest/modal/promote-pool": {
-  "h": "c267c00669c17cab",
-  "len": 649,
+  "h": "484df6187b14664a",
+  "len": 634,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word for word testing? You will be a"
+  "text": "💛 Seven times through You have recited John 3:16 word for word 7 times. Do you know it by heart? From now on it is the "
  },
  "quest/modal/promote-heart": {
-  "h": "d3d5c66fb1828d8f",
-  "len": 753,
+  "h": "2fe56f488f3fc151",
+  "len": 742,
   "els": 9,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "💛 Five in a row, word for word Psalms 23:1 has come back to you clean five times running. Move it to Known by Heart? It"
+  "text": "💛 Seven times through You have recited Psalms 23:1 word for word 7 times. Do you know it by heart? From now on it is th"
  },
  "quest/practice/review-setup": {
-  "h": "4594434c7bbde234",
-  "len": 1154,
+  "h": "53309dab0b15ec3a",
+  "len": 1159,
   "els": 21,
   "buttons": 4,
   "svgs": 0,
@@ -1917,7 +1917,7 @@
   "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
  },
  "buddy/verse/hub": {
-  "h": "764578355daddb83",
+  "h": "11f463bcfaac18b0",
   "len": 2877,
   "els": 55,
   "buttons": 7,
@@ -1944,13 +1944,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "buddy/verse/memorized": {
-  "h": "293d8a7a91cbb666",
-  "len": 2142,
-  "els": 64,
+  "h": "a0b9ad011de5177e",
+  "len": 2080,
+  "els": 61,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ★ Memorized verses 3 🧭 Locating 0 🗣️ Word for word 0 💛 Known by heart 🏛️ 2 verses are missing a scene, a pa"
+  "text": "← Verses 💛 My Verses 3 🧭 Located 0 💛 By heart 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so "
  },
  "buddy/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -1980,9 +1980,9 @@
   "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
  },
  "buddy/wizard/learned": {
-  "h": "273f0142e4da08b0",
-  "len": 4000,
-  "els": 90,
+  "h": "c4c2d5e2c1fa8753",
+  "len": 4009,
+  "els": 88,
   "buttons": 9,
   "svgs": 0,
   "imgs": 3,
@@ -2169,13 +2169,13 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "912372c4c66ffcb5",
+  "h": "b981712ec16a0916",
   "len": 14971,
   "els": 362,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.33.0 📲 Get the app Home screen ✨ Feature store all on 📗"
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 📋 What's new v1.34.0 📲 Get the app Home screen ✨ Feature store all on 📗"
  },
  "buddy/modal/prof-section": {
   "h": "ce62ac5b542b407a",
@@ -2232,13 +2232,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "05bd6e165ee7e081",
-  "len": 45502,
-  "els": 905,
+  "h": "63bd367bc24071da",
+  "len": 47314,
+  "els": 935,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.33.0 August 27, 2026 The pictures themselves NEW Every one of the 264 book pictures is now drawn. L"
+  "text": "✕ Version history v1.34.0 August 27, 2026 Say when you know it NEW Tell the app you already know a verse by heart — from"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
@@ -2295,35 +2295,35 @@
   "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "buddy/modal/stage": {
-  "h": "e5865eea850e3261",
-  "len": 1745,
-  "els": 27,
-  "buttons": 4,
+  "h": "1d27af64d948220e",
+  "len": 1451,
+  "els": 21,
+  "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Locating"
+  "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Located "
  },
  "buddy/modal/promote-pool": {
-  "h": "c267c00669c17cab",
-  "len": 649,
+  "h": "484df6187b14664a",
+  "len": 634,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "🗣️ Ten times through You have recited John 3:16 word for word ten times. Add it to word for word testing? You will be a"
+  "text": "💛 Seven times through You have recited John 3:16 word for word 7 times. Do you know it by heart? From now on it is the "
  },
  "buddy/modal/promote-heart": {
-  "h": "d3d5c66fb1828d8f",
-  "len": 753,
+  "h": "2fe56f488f3fc151",
+  "len": 742,
   "els": 9,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "💛 Five in a row, word for word Psalms 23:1 has come back to you clean five times running. Move it to Known by Heart? It"
+  "text": "💛 Seven times through You have recited Psalms 23:1 word for word 7 times. Do you know it by heart? From now on it is th"
  },
  "buddy/practice/review-setup": {
-  "h": "4594434c7bbde234",
-  "len": 1154,
+  "h": "53309dab0b15ec3a",
+  "len": 1159,
   "els": 21,
   "buttons": 4,
   "svgs": 0,
