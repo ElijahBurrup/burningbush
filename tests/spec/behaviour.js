@@ -1336,6 +1336,297 @@ const DAY = 86400000;
   ok(capSaid.mentions, 'the Daily goal screen says review counts toward the goal');
   ok(capSaid.says, '...and that it does so up to three a day');
 
+  describe('claiming a verse from the practice screen', () => { });
+  const claim = await $(() => {
+    const k = '43:11:35', b = 43, c = 11, v = 35;
+    setFeat('w4w', true);
+    Prog.memorized = [k]; Prog.verseStage = {}; Prog.stageAsk = {}; Prog.w4wSR = {};
+    Prog.w4w = { [k]: { count: 3, times: [Date.now() - 5 * 3600000] } };   // three practices behind them
+    Prog.palaces = [{ place: 'My Kitchen', stations: ['Front door'], learnedAt: Date.now(), step: 1 }];
+    Prog.verseLoc = { [k]: { p: 0, room: 'Front door' } }; Prog.locPast = {};
+    saveProg();
+
+    const out = {};
+    startWordForWord(b, c, v, () => { show('verse'); });
+    out.onEntry = !!el('tfHeart');
+    out.label = out.onEntry ? el('tfHeart').textContent.trim() : '';
+
+    // ...and it is gone once you are mid-practice
+    el('tfNext').click();
+    out.midPractice = !!el('tfHeart');
+    TF.stage = 0; renderTextFade();
+
+    // decline first — practice must carry on, and the offer at seven must survive
+    el('tfHeart').click();
+    el('prNo').click();
+    out.afterDecline = { stillPractising: !!el('tfNext'), stage: verseStage(k) };
+    Prog.w4w[k].count = W4W_PRACTICE_FOR_POOL; saveProg();
+    out.offerSurvives = shouldOfferHeart(k);
+    Prog.w4w[k].count = 3; Prog.stageAsk = {}; saveProg();
+
+    // now claim it
+    renderTextFade();
+    el('tfHeart').click();
+    const m = el('promoteModal');
+    out.modalText = m.innerText.replace(/\s+/g, ' ');
+    el('prYes').click();
+    out.stage = verseStage(k);
+    out.practicesKept = w4wCount(k);
+    out.leftPractice = !window.TF;
+
+    // miss the strict test — it must come back with those practices intact
+    startW4WTest(b, c, v, () => { });
+    const put = w => { const i = el('ttIn'); i.value = w; i.dispatchEvent(new Event('input')); };
+    put('elephant');                                         // a wholly different word, not a slip
+    TT.words.slice().forEach(put);
+    el('wtDone').click();
+    out.asked = !!el('demoteModal') && el('demoteModal').style.display === 'flex';
+    out.demoteText = out.asked ? el('demoteModal').innerText.replace(/\s+/g, ' ') : '';
+    el('dmYes').click();
+    out.backTo = verseStage(k);
+    out.countAfterFall = w4wCount(k);
+    out.stationBack = !!(Prog.verseLoc || {})[k];
+    return out;
+  });
+  ok(claim.onEntry, 'the practice screen offers "I already know this by heart" the moment you open it');
+  has(claim.label, 'already know this by heart', '...saying so plainly');
+  no(claim.midPractice, '...and stops offering once you are mid-practice, where it would only be noise');
+  ok(claim.afterDecline.stillPractising, 'declining leaves you in the practice you came for');
+  is(claim.afterDecline.stage, 'loc', '...with the verse where it was');
+  ok(claim.offerSurvives, '...and the offer that seven practices earns still arrives later');
+  has(claim.modalText, 'without practising it here first', 'the claim screen is honest about the practices done');
+  has(claim.modalText, '3 practices intact', '...and says what happens if you were wrong');
+  is(claim.stage, 'heart', 'claiming moves the verse to the strict test');
+  is(claim.practicesKept, 3, '...keeping every practice already done');
+  ok(claim.leftPractice, '...and leaves the practice screen, because it is tested from here');
+  ok(claim.asked, 'missing a word on it asks whether to hand the claim back');
+  is(claim.backTo, 'loc', '...and it returns to practice');
+  is(claim.countAfterFall, 3, '...with exactly the practices it had before the claim');
+  ok(claim.stationBack, '...and its place in the palace returned');
+
+  describe('a typo is not a miss', () => { });
+  const typoRule = await $(() => {
+    const W = ['shepherd', 'meditate', 'strength'];
+    return {
+      oneWrong:   isTypo('shepherb', 'shepherd', W),
+      swapped:    isTypo('shepehrd', 'shepherd', W),
+      extra:      isTypo('shepheerd', 'shepherd', W),
+      missing:    isTypo('shepherd'.replace('p', ''), 'shepherd', W),
+      exact:      isTypo('shepherd', 'shepherd', W),
+      punctuated: isTypo('shepherd,', 'shepherd', W),
+      twoWrong:   isTypo('shepharb', 'shepherd', W),
+      shortWord:  isTypo('thy', 'the', ['the', 'thy']),
+      otherWordOfVerse: isTypo('meditate', 'shepherd', W),
+      whollyOther: isTypo('elephant', 'shepherd', W),
+      limit: TYPO_LIMIT,
+    };
+  });
+  ok(typoRule.oneWrong, 'one wrong letter is a typo');
+  ok(typoRule.swapped, '...so are two letters swapped');
+  ok(typoRule.extra, '...an extra letter');
+  ok(typoRule.missing, '...and a missing one');
+  no(typoRule.exact, 'the right word is not a typo');
+  no(typoRule.punctuated, '...nor is the right word with punctuation, which already matches');
+  no(typoRule.twoWrong, 'two wrong letters is not a slip of the fingers');
+  no(typoRule.shortWord, 'short words are never typos — "thy" and "the" are different words');
+  no(typoRule.otherWordOfVerse, 'typing another word OF THIS VERSE is recall, not fingers');
+  no(typoRule.whollyOther, '...and a wholly different word is simply wrong');
+  is(typoRule.limit, 3, 'three crosses to a word');
+
+  const run = await $(() => {
+    const k = '19:23:1', b = 19, c = 23, v = 1;     // "The LORD is my shepherd; I shall not want."
+    Prog.memorized = [k]; Prog.verseStage = { [k]: 'heart' }; Prog.w4wSR = {}; saveProg();
+    startW4WTest(b, c, v, () => { });
+    const put = s => { const i = el('ttIn'); i.value = s; i.dispatchEvent(new Event('input')); };
+    const words = TT.words.slice();
+    const idxOf = w => words.findIndex(x => normWord(x) === normWord(w));
+    const out = { total: words.length };
+
+    // walk up to "shepherd"
+    const target = idxOf('shepherd');
+    for (let i = 0; i < target; i++) put(words[i]);
+    out.atWord = TT.idx === target;
+
+    put('shepherb');                                  // one letter wrong
+    out.afterOne = { typos: TT.typos, misses: TT.misses, crosses: (el('ttDisplay').innerHTML.match(/✗/g) || []).length, note: (document.querySelector('.tt-tryagain') || {}).textContent };
+    put('shepehrd');                                  // two letters swapped
+    out.afterTwo = { typos: TT.typos, misses: TT.misses, crosses: (el('ttDisplay').innerHTML.match(/✗/g) || []).length, note: (document.querySelector('.tt-tryagain') || {}).textContent };
+    put('shepherd');                                  // got it — slate wipes
+    out.afterRight = { typos: TT.typos, misses: TT.misses, idxMoved: TT.idx === target + 1 };
+
+    // finish clean: two typos must NOT have spoiled the run
+    for (let i = TT.idx; i < words.length; i++) put(words[i]);
+    const r = w4wsr(k) || {};
+    out.cleanDespiteTypos = { cr: r.cr, ok: r.ok };
+    out.resultText = el('verse').innerText;
+    return out;
+  });
+  ok(run.atWord, 'the test walks to the long word');
+  is(run.afterOne.typos, 1, 'a slip counts a cross');
+  is(run.afterOne.misses, 0, '...and no miss');
+  is(run.afterOne.crosses, 1, '...one cross on screen');
+  has(run.afterOne.note, 'does not count against you', '...saying it does not count');
+  is(run.afterTwo.typos, 2, 'a second slip counts a second cross');
+  is(run.afterTwo.misses, 0, '...still no miss');
+  is(run.afterTwo.crosses, 2, '...two crosses on screen');
+  has(run.afterTwo.note, 'one more', '...and warns what the third does');
+  is(run.afterRight.typos, 0, 'getting the word right wipes the crosses — they are per word');
+  ok(run.afterRight.idxMoved, '...and moves on');
+  is(run.cleanDespiteTypos.cr, 1, 'the run still counts as clean despite two typos');
+  is(run.cleanDespiteTypos.ok, 1, '...recorded as a pass');
+  has(run.resultText, 'Word for word', '...and says so');
+
+  const three = await $(() => {
+    const k = '19:23:1', b = 19, c = 23, v = 1;
+    Prog.memorized = [k]; Prog.verseStage = { [k]: 'heart' };
+    Prog.w4wSR = { [k]: { cr: 4, n: 4, ok: 4, at: 0 } };
+    Prog.w4w = { [k]: { count: 2, times: [] } };
+    Prog.palaces = [{ place: 'My Kitchen', stations: ['Front door'], learnedAt: Date.now(), step: 1 }];
+    Prog.verseLoc = { [k]: { p: 0, room: 'Front door' } }; Prog.locPast = {}; saveProg();
+    startW4WTest(b, c, v, () => { });
+    const put = s => { const i = el('ttIn'); i.value = s; i.dispatchEvent(new Event('input')); };
+    const words = TT.words.slice();
+    const target = words.findIndex(x => normWord(x) === 'shepherd');
+    for (let i = 0; i < target; i++) put(words[i]);
+    put('shepherb'); put('shepehrd'); put('shepherc');       // three slips on the one word
+    const out = { ended: !document.getElementById('ttIn'), text: el('verse').innerText };
+    const r = w4wsr(k) || {};
+    out.streakBroken = r.cr === 0;
+    out.countedAsTest = r.n === 5;
+    out.hasDone = !!el('wtDone');
+    out.idxAtEnd = window.TT ? TT.idx : 'TT cleared';
+    if (out.hasDone) {
+      el('wtDone').click();
+      out.offersDemote = !!el('demoteModal') && el('demoteModal').style.display === 'flex';
+      if (out.offersDemote) el('dmNo').click();
+    }
+    return out;
+  });
+  ok(three.ended, 'a third slip on the same word ends the run there');
+  has(three.text, 'more practice', '...saying the verse wants more practice, not that you failed');
+  ok(three.streakBroken, '...it counts as a loss, so the clean run resets');
+  ok(three.countedAsTest, '...and the attempt is still recorded as a test');
+  ok(three.offersDemote, '...and it asks whether to put the verse back in practice');
+
+  describe('three misses: the answer gets the screen', () => { });
+  const answer = await $(() => {
+    const k = '19:23:1', b = 19, c = 23, v = 1;
+    Prog.memorized = [k, '43:11:35']; Prog.verseStage = {}; saveProg();
+    const m0 = el('answerModal'); if (m0) m0.style.display = 'none';
+    show('verse'); askVerse(k);
+
+    // three wrong answers in a row — a different book each time so it is genuinely wrong
+    const wrongGuess = () => { mtSel = { b: 40, c: 5, v: 9 }; el('mtCheck').disabled = false; el('mtCheck').click(); };
+    const out = {};
+    wrongGuess();
+    out.afterOne = { popup: !!(el('answerModal') && el('answerModal').style.display === 'flex'),
+                     bar: (el('mtFb') || {}).innerHTML ? true : false };
+    wrongGuess();
+    out.afterTwo = { popup: !!(el('answerModal') && el('answerModal').style.display === 'flex') };
+    wrongGuess();
+    const m = el('answerModal');
+    out.afterThree = {
+      popup: !!m && m.style.display === 'flex',
+      barEmpty: !(el('mtFb') || {}).innerHTML,
+      text: m ? m.innerText : '',
+      ref: m ? (m.querySelector('.ansref') || {}).textContent : '',
+      hasVerseText: m ? !!m.querySelector('.anstext') : false,
+      verseScrolls: m && m.querySelector('.anstext') ? getComputedStyle(m.querySelector('.anstext')).overflowY : '',
+      btn: m ? (m.querySelector('#ansNext') || {}).textContent : '',
+    };
+    // the button moves the session on and closes the popup
+    let moved = false;
+    const realNext = window.nextMemVerse;
+    el('ansNext').click();
+    out.closed = m.style.display === 'none';
+    return out;
+  });
+  no(answer.afterOne.popup, 'one miss does not give the answer away');
+  no(answer.afterTwo.popup, '...nor does a second');
+  ok(answer.afterThree.popup, 'the third opens the answer on its own screen');
+  ok(answer.afterThree.barEmpty, '...and the bottom feedback bar is left empty, not duplicated');
+  is(answer.afterThree.ref, 'Psalms 23:1', '...naming the reference');
+  ok(answer.afterThree.hasVerseText, '...and showing the verse itself, not only its address');
+  has(answer.afterThree.text, 'The LORD is my shepherd', '...the actual words');
+  is(answer.afterThree.verseScrolls, 'auto', '...scrolling on its own so a long verse cannot push the button away');
+  is(answer.afterThree.btn, 'Next verse →', 'the button that moves you on is right there');
+  ok(answer.closed, '...and it closes when you take it');
+
+  describe('every named verse is a door', () => { });
+  const reflink = await $(() => {
+    const host = document.createElement('div');
+    host.innerHTML = 'Stand on John 3:16 today. Also 1 Samuel 17:45 and Song of Solomon 2:1 ' +
+                     'and Psalm 23:1, but not John 3:999 or Hobbits 2:3. ' +
+                     '<button>Genesis 1:1 in a button</button> ' +
+                     '<span data-vb="43:3:16">Romans 8:28 already a row</span>';
+    document.querySelector('.phone').appendChild(host);
+    linkifyRefs(host);
+    const links = [...host.querySelectorAll('[data-ref]')];
+    const out = {
+      refs: links.map(x => x.dataset.ref).join(' | '),
+      labels: links.map(x => x.textContent).join(' | '),
+      // things that must NOT be touched
+      badChapterLeft: /John 3:999/.test(host.innerText),
+      madeUpBookLeft: /Hobbits 2:3/.test(host.innerText),
+      insideButton: !host.querySelector('button [data-ref]'),
+      insideRow: !host.querySelector('[data-vb] [data-ref]'),
+      keyboardable: links.every(x => x.tabIndex === 0 && x.getAttribute('role') === 'button'),
+    };
+    // running it twice must not double-wrap
+    linkifyRefs(host);
+    out.stillOne = host.querySelectorAll('[data-ref]').length === links.length;
+    out.noNesting = !host.querySelector('[data-ref] [data-ref]');
+    host.remove();
+    return out;
+  });
+  is(reflink.refs, '43:3:16 | 9:17:45 | 22:2:1 | 19:23:1', 'plain, numbered and multi-word book names all resolve');
+  is(reflink.labels, 'John 3:16 | 1 Samuel 17:45 | Song of Solomon 2:1 | Psalm 23:1',
+     '...and the words on screen are left exactly as written, including "Psalm" for Psalms');
+  ok(reflink.badChapterLeft, 'a verse that does not exist is left as plain words');
+  ok(reflink.madeUpBookLeft, '...and so is something that is not a book at all');
+  ok(reflink.insideButton, 'references inside a button are left alone — the button already does something');
+  ok(reflink.insideRow, '...as are the ones inside a verse row, for the same reason');
+  ok(reflink.keyboardable, 'a linked reference can be reached and fired from a keyboard');
+  ok(reflink.stillOne, 'linkifying twice does not wrap anything twice');
+  ok(reflink.noNesting, '...and never nests a link inside a link');
+
+  const tapped = await $(async () => {
+    const out = {};
+    const k = '19:23:1';
+    // 1. a verse NOT yet memorized → the wizard, where it can be built or saved
+    Prog.memorized = []; Prog.saved = []; saveProg();
+    show('verse'); vView = 'hub'; renderVerse();
+    const probe = document.createElement('p');
+    probe.innerHTML = 'Consider Psalms 23:1 today.';
+    el('verse').appendChild(probe);
+    linkifyRefs(el('verse'));
+    const link = el('verse').querySelector('[data-ref="19:23:1"]');
+    out.linkFound = !!link;
+    if (link) link.click();
+    await new Promise(r => setTimeout(r, 30));
+    out.unlearned = { onVerseView: (document.querySelector('.view.active') || {}).id,
+                      screen: el('verse').innerText };
+
+    // 2. the same verse once memorized → its own page, to practise
+    Prog.memorized = [k]; Prog.verseStage = {}; saveProg();
+    show('verse'); vView = 'hub'; renderVerse();
+    const probe2 = document.createElement('p');
+    probe2.innerHTML = 'Consider Psalms 23:1 today.';
+    el('verse').appendChild(probe2);
+    linkifyRefs(el('verse'));
+    el('verse').querySelector('[data-ref="19:23:1"]').click();
+    await new Promise(r => setTimeout(r, 30));
+    const t = el('verse').innerText;
+    out.learned = { practice: /Learn Word for Word/.test(t), trail: /SPACED REPETITION/i.test(t), ref: /Psalms\s*23:1/.test(t) };
+    return out;
+  });
+  ok(tapped.linkFound, 'a reference written into a rendered screen becomes a link');
+  is(tapped.unlearned.onVerseView, 'verse', 'tapping one you have not built opens the verse area');
+  has(tapped.unlearned.screen, 'Now picture it', '...in the wizard, where it can be learned or saved');
+  ok(tapped.learned.practice, 'tapping one you already know opens its own page instead');
+  ok(tapped.learned.trail, '...with its review trail on it');
+  ok(tapped.learned.ref, '...for that very verse');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
@@ -1460,7 +1751,7 @@ const DAY = 86400000;
     Prog.w4wSR = { [k]: { cr: 3, n: 3, ok: 3, at: 0 } }; saveProg();
     startW4WTest(43, 11, 35, () => { });
     const put = w => { const i = el('ttIn'); i.value = w; i.dispatchEvent(new Event('input')); };
-    put('Jesux');                                            // same length, wrong word
+    put('elephant');                                         // a wholly different word — a typo would not count
     const misses = TT.misses;
     TT.words.slice().forEach(put);
     const r = w4wsr(k) || {};

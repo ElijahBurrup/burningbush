@@ -528,6 +528,12 @@
   .ttdisplay .ttcur{font-weight:800}
   .ttdisplay .ttcur.good{color:var(--gold-ink)}
   .ttdisplay .ttcur.bad{color:var(--miss-ink)}
+  .ttx{display:inline-block;color:var(--miss-ink);font-weight:800;font-size:15px;letter-spacing:3px;margin:0 5px;vertical-align:middle}
+  .ansref{font-size:23px;font-weight:800;color:var(--gold-ink);margin:6px 0 2px;line-height:1.2}
+  .anstext{font-size:14px;line-height:1.55;color:var(--ink);margin:8px 0 0;max-height:34vh;overflow-y:auto;overscroll-behavior:contain}
+  /* A named verse reads as itself, with just enough of a mark to say it can be tapped. */
+  .vref{color:var(--gold-ink);border-bottom:1px dashed var(--gold2);cursor:pointer;padding-bottom:1px}
+  .vref:active{opacity:.6}
   .tt-tryagain{display:inline-block;font-size:14px;font-weight:800;color:var(--miss-ink);background:var(--no-bg,rgba(255,120,120,.15));border:1px solid var(--miss-ink);border-radius:999px;padding:2px 10px;margin-left:4px;vertical-align:middle;animation:ttflash .5s ease}
   @keyframes ttflash{0%{transform:scale(.6);opacity:0}45%{transform:scale(1.12);opacity:1}100%{transform:scale(1);opacity:1}}
   .srcountflash{gap:4px}
@@ -1814,8 +1820,30 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.42.0";
+const APP_VERSION="1.46.0";
 const CHANGELOG=[
+ {v:"1.46.0", d:"August 28, 2026", t:"Tap any verse, anywhere", items:[
+   ["new","<b>Any verse named anywhere in Burning Bush is now tappable.</b> A badge, a milestone, a blessing, these release notes — tap the reference and it takes you to that verse."],
+   ["chg","Where it takes you depends on what you have already done with it: a verse you know opens <b>its own page</b> to practise word for word, and one you have not built yet opens the <b>wizard</b>, where you can learn it now or save it for later."],
+   ["chg","Only real references become links. A chapter and verse that does not exist is left as plain words."],
+   ["new","<b>Word for word practice shows how far along you are</b> — the count sits at the top of the screen while you practise, instead of only on the verse's page where you cannot see it."]
+ ]},
+ {v:"1.45.0", d:"August 28, 2026", t:"The answer, where you can see it", items:[
+   ["chg","<b>Miss a verse three times and the answer now fills the screen</b> — the reference, the words themselves, and the button to move on. It used to appear in a bar along the bottom of the card, under the pickers, where a thumb could scroll straight past it."],
+   ["new","The answer screen shows <b>the verse text</b>, not only its address, so the moment you got it wrong is the moment you read it again."]
+ ]},
+ {v:"1.44.0", d:"August 28, 2026", t:"A typo is not a miss", items:[
+   ["chg","<b>A typo no longer counts as missing a word.</b> One letter wrong, one extra, one missing, or two letters swapped — on a phone keyboard that is your fingers, not your memory, and the strict test now treats it that way."],
+   ["new","<b>Three red crosses per word.</b> A slip shows a cross and lets you try again, the second warns you, and the third stops the run and asks you to practise that verse a little more rather than pushing on."],
+   ["chg","The crosses are <b>per word, not per verse</b> — get the word right and the slate is clean again."],
+   ["chg","A genuinely wrong word still counts straight away, and short words are never read as typos: at three letters almost every near miss is a real and different word, and mistaking recall for fingers would be the worse error."]
+ ]},
+ {v:"1.43.0", d:"August 28, 2026", t:"Say it on the way in", items:[
+   ["new","<b>\"I already know this by heart\" is now on the practice screen itself</b>, the moment you open a verse to practise it. If you already know a verse, you no longer have to walk the whole fade to say so."],
+   ["chg","<b>Your practices are kept when you claim a verse.</b> Miss a word on the strict test later and it comes back to practice with exactly the count it had — the claim costs you nothing."],
+   ["fix","Saying <b>Not yet</b> no longer cancels the offer that seven practices earns. It used to be remembered as \"never ask again\", so declining on day one would have quietly killed it; now it simply waits for another round of practice."],
+   ["chg","The claim screen no longer says you have recited a verse seven times when you have not."]
+ ]},
  {v:"1.42.0", d:"August 28, 2026", t:"Review counts, up to three", items:[
    ["chg","<b>Spaced repetition now counts toward your daily goal up to three times a day.</b> Come back to a fortnight's backlog and clearing it used to tick the goal off by itself, which made the goal a measure of how long you had been away rather than what you did today."],
    ["chg","Reviews past the third still count for the verse — they move it along its trail exactly as before. They just stop moving the <b>goal</b>, so the rest of it has to come from new work."],
@@ -5274,6 +5302,25 @@ function resumeActiveTest(){
   if(p.length!==3 || !kjvText(p[0],p[1],p[2])){ clearActiveTest(); return false; }
   show("verse"); askVerse(k); return true;
 }
+// Three misses in a row and the answer is given. It used to appear in the feedback bar along the
+// bottom of the card, under the pickers, where the eye does not go and a thumb can scroll past it
+// without ever reading it. It gets the whole screen instead: the reference, the words, and the one
+// button that moves you on.
+function openAnswerPopup(b,c,v,onNext){
+  const m=el("answerModal")||(()=>{ const d=document.createElement("div"); d.id="answerModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const text=(kjvText(b,c,v)||"").trim();
+  const more=memArr().length>1;
+  m.innerHTML=`<div class="modal-card center">
+      <div style="font-size:40px">📖</div>
+      <div class="prof-sect" style="color:var(--gold-ink);margin-top:4px">Here's the answer</div>
+      <div class="ansref">${bookName(b)} ${c}:${v}</div>
+      ${text?`<div class="anstext">“${text.replace(/</g,"&lt;")}”</div>`:""}
+      <p class="hint" style="margin:12px 0 0">Take a moment with it. Getting one wrong is how it gets learned — it will come round again.</p>
+      <button class="btn" id="ansNext" style="width:100%;margin-top:16px">${more?"Next verse →":"Done"}</button>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  el("ansNext").onclick=()=>{ m.style.display="none"; if(onNext) onNext(); };
+}
 function askVerse(key){ setActiveTest(key); memTestCur=key.split(":").map(Number); memTestWrong=0; memHintUses=0; memTestRender(); }
 function nextMemVerse(){                       // the "go to next" hook fired after each answered verse
   if(MS && MS.phase==="sr"){
@@ -5719,15 +5766,32 @@ function noteStageAsk(k,to,at){ Prog.stageAsk=Prog.stageAsk||{}; Prog.stageAsk[k
 // ten practices is exactly where a verse leaves the practice pool, so this is the natural moment to ask
 // Seven practices EARNS the offer. It is not the only way up - the verse's own page will move it
 // any time - but it is the one moment the app volunteers the question.
+// Declining is remembered so it nudges rather than nags — but "remembered" used to mean "never
+// asked again", which now matters much more: saying "not yet" on day one, before practising at
+// all, would have silently cancelled the offer that seven practices is supposed to earn. It asks
+// again once another full round of practice has gone by.
 function shouldOfferHeart(k){ if(!feat("w4w")) return false;
-  return verseStage(k)==="loc" && w4wCount(k)>=W4W_PRACTICE_FOR_POOL && !stageAskAt(k,"heart"); }
+  const done=w4wCount(k), declinedAt=stageAskAt(k,"heart");
+  // Two different refusals, and they must not be treated alike. Turning down an EARLY claim (before
+  // seven practices) is only saying "not yet, let me practise it" — it must not cancel the offer
+  // that practising seven times is supposed to earn. Turning down the EARNED offer is the one that
+  // waits, and it waits a full round rather than never asking again.
+  const floor = declinedAt>=W4W_PRACTICE_FOR_POOL ? declinedAt+W4W_PRACTICE_FOR_POOL : W4W_PRACTICE_FOR_POOL;
+  return verseStage(k)==="loc" && done>=floor; }
 function openStagePromote(b,c,v,k,to,after){
   const m=el("promoteModal")||(()=>{ const d=document.createElement("div"); d.id="promoteModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   const ref=`${bookName(b)} ${c}:${v}`, here=stationName((Prog.verseLoc||{})[k]);
+  // This modal is reached two ways now: earned, after seven practices, and claimed from the practice
+  // screen by someone who already knew the verse. It must not tell the second person they have
+  // recited it seven times when they have recited it none.
+  const done=w4wCount(k), earned=done>=W4W_PRACTICE_FOR_POOL;
   const body = {
-      icon:"\u{1F49B}", ttl:"Seven times through",
-      lead:`You have recited <b class="gold">${ref}</b> word for word ${W4W_PRACTICE_FOR_POOL} times.`,
-      note:`Do you know it by heart? From now on it is the strict test \u2014 the reference at the top, type the whole verse, no warm up and no reveals.${here?` It keeps its place at <b class="gold">${here}</b> until it has come back clean ${W4W_TEST_CR} times running.`:""}`,
+      icon:"\u{1F49B}",
+      ttl: earned ? "Seven times through" : "Do you know it by heart?",
+      lead: earned
+        ? `You have recited <b class="gold">${ref}</b> word for word ${done} times.`
+        : `You are claiming <b class="gold">${ref}</b> without practising it here first.`,
+      note:`${earned?"Do you know it by heart? From":"From"} now on it is the strict test \u2014 the reference at the top, type the whole verse, no warm up and no reveals.${here?` It keeps its place at <b class="gold">${here}</b> until it has come back clean ${W4W_TEST_CR} times running.`:""}${earned?"":` Nothing is lost if you were wrong: miss a word and it comes back to practice${done?` with your ${done} practice${done===1?"":"s"} intact`:""}.`}`,
       yes:"Yes \u2014 I know it by heart", no:"Not yet" };
   m.innerHTML=`<div class="modal-card center">
       <div style="font-size:34px">${body.icon}</div>
@@ -7025,8 +7089,8 @@ function memTestRender(){
       if(memTestWrong>=3){ // three misses in a row → streak breaks and the app supplies the answer
         bumpStreak(false); refreshHUD();
         mtSel={b,c,v}; mtLock=true; paintAll(); el("mtCheck").disabled=true; el("mtWarn").textContent="";
-        el("mtFb").innerHTML=`<div class="feedback no" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Here's the answer 👇</div><div class="sub">This is <b class="gold">${bookName(b)} ${c}:${v}</b>. Take a moment, then keep going.</div>${nextBtn()}</div>`;
-        el("mtNext").onclick=goNext;
+        el("mtFb").innerHTML="";
+        openAnswerPopup(b,c,v,goNext);
       } else {
         el("mtWarn").textContent=warnText(memTestWrong);
         el("mtFb").innerHTML=`<div class="feedback no" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Not quite — try again</div><div class="sub">${warnText(memTestWrong)}</div></div>`;
@@ -7321,6 +7385,103 @@ function editVerseScene(b,c,v, doneRet, cancelRet){
 let walkReturn=renderVerse; // where to go on save/skip/finish
 function markSaved(){ const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.skipped=Prog.skipped.filter(x=>x!==k); if(!Prog.saved.includes(k))Prog.saved.push(k); saveProg(); }
 function markSkipped(){ const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.saved=Prog.saved.filter(x=>x!==k); if(!Prog.skipped.includes(k))Prog.skipped.push(k); saveProg(); }
+/* ---- Tappable references ---------------------------------------------------------------------
+   Anywhere a verse is named in ordinary text — a badge, a milestone, a blessing, release notes —
+   it becomes tappable and goes to that verse. Where it goes is already decided for us by
+   openVerseWizard: a verse you have memorized opens its own page to practise, and one you have
+   not opens the wizard, where you can build it or save it for later.
+   Done with an observer rather than by editing sixty render sites, so a reference written into
+   any NEW copy is live the day it is written and nobody has to remember to wire it up. */
+const REF_ALIAS={psalm:"Psalms", psalms:"Psalms", song:"Song of Solomon", songs:"Song of Solomon",
+  revelations:"Revelation", canticles:"Song of Solomon", ecclesiaste:"Ecclesiastes"};
+let _refBooks=null;
+function refBookNum(name){
+  if(!_refBooks){ _refBooks={}; BOOKS.forEach((b,i)=>{ _refBooks[b.toLowerCase()]=i+1; }); }
+  const k=String(name||"").trim().toLowerCase().replace(/\s+/g," ");
+  return _refBooks[k] || _refBooks[(REF_ALIAS[k]||"").toLowerCase()] || 0;
+}
+// "John 3:16", "1 Samuel 17:45", "Song of Solomon 2:1". Deliberately NOT ranges or comma lists:
+// one reference, one destination, or the tap is a guess at what the reader meant.
+const REF_RE=/\b((?:[1-3]\s+)?[A-Z][a-zA-Z]+(?:\s+of\s+[A-Z][a-zA-Z]+)?)\s+(\d{1,3}):(\d{1,3})\b/g;
+const REF_SKIP=new Set(["BUTTON","INPUT","TEXTAREA","SELECT","OPTION","SCRIPT","STYLE","SVG","PATH"]);
+let _linking=false;
+function linkifyRefs(root){
+  if(!root || _linking) return;
+  _linking=true;
+  try{
+    const nodes=[];
+    const walk=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    for(let n=walk.nextNode(); n; n=walk.nextNode()){
+      const s=n.nodeValue;
+      if(!s || s.length<6 || s.indexOf(":")<0) continue;
+      let skip=false;
+      for(let p=n.parentNode; p && p.nodeType===1; p=p.parentNode){
+        if(REF_SKIP.has(p.nodeName) || p.hasAttribute("data-ref") || p.hasAttribute("data-vb") || p.hasAttribute("data-noref")){ skip=true; break; }
+        if(p===root) break;
+      }
+      if(!skip) nodes.push(n);
+    }
+    nodes.forEach(n=>{
+      const s=n.nodeValue; REF_RE.lastIndex=0;
+      let m, last=0, frag=null;
+      while((m=REF_RE.exec(s))){
+        const bn=refBookNum(m[1]), c=+m[2], v=+m[3];
+        if(!bn || !kjvText(bn,c,v)) continue;             // not a real verse — leave the words alone
+        frag=frag||document.createDocumentFragment();
+        if(m.index>last) frag.appendChild(document.createTextNode(s.slice(last,m.index)));
+        const a=document.createElement("span");
+        a.className="vref"; a.setAttribute("role","button"); a.tabIndex=0;
+        a.dataset.ref=bn+":"+c+":"+v;
+        a.textContent=m[0];
+        frag.appendChild(a);
+        last=m.index+m[0].length;
+      }
+      if(frag){
+        if(last<s.length) frag.appendChild(document.createTextNode(s.slice(last)));
+        n.parentNode.replaceChild(frag,n);
+      }
+    });
+  }catch(err){ /* a reference that will not link is not worth breaking a screen over */ }
+  _linking=false;
+}
+// Where to come back to when they are done with the verse they tapped.
+const VIEW_RENDER={learn:()=>renderPath(), verse:()=>renderVerse(), palace:()=>renderPalace(),
+  journey:()=>renderJourney(), stories:()=>renderStories()};
+function hereAgain(){
+  const view=(document.querySelector(".view.active")||{}).id||"verse";
+  const sc=document.querySelector(".content"); const y=sc?sc.scrollTop:0;
+  return ()=>{
+    show(view); const r=VIEW_RENDER[view]; if(r) r();
+    requestAnimationFrame(()=>{ const s=document.querySelector(".content"); if(s) s.scrollTop=y; });
+  };
+}
+function wireRefTaps(){
+  const host=document.querySelector(".phone"); if(!host || host.dataset.refwired) return;
+  host.dataset.refwired="1";
+  const go=t=>{
+    const p=(t.dataset.ref||"").split(":").map(Number); if(p.length!==3) return;
+    document.querySelectorAll(".modal").forEach(m=>{ if(m.style.display==="flex") m.style.display="none"; });
+    openVerseWizard(p[0],p[1],p[2], hereAgain());
+  };
+  host.addEventListener("click", ev=>{
+    const t=ev.target.closest && ev.target.closest("[data-ref]"); if(!t) return;
+    ev.preventDefault(); ev.stopPropagation(); go(t);
+  }, true);
+  host.addEventListener("keydown", ev=>{
+    if(ev.key!=="Enter" && ev.key!==" ") return;
+    const t=ev.target.closest && ev.target.closest("[data-ref]"); if(!t) return;
+    ev.preventDefault(); go(t);
+  });
+  // Linkify whatever is already on screen, then anything drawn from here on.
+  linkifyRefs(host);
+  let queued=false;
+  new MutationObserver(muts=>{
+    if(_linking || queued) return;
+    if(!muts.some(mu=>mu.addedNodes && mu.addedNodes.length)) return;
+    queued=true;
+    requestAnimationFrame(()=>{ queued=false; linkifyRefs(host); });
+  }).observe(host, {childList:true, subtree:true});
+}
 function openVerseWizard(b,c,v,ret){
   walkReturn=ret||renderVerse; sceneNote="";   // a fresh verse never inherits a story's note
   // an already-learned verse opens a focused review page: no learning/save/skip — just word for word + its SR trail
@@ -8586,16 +8747,30 @@ function renderTextFade(){
     ? `<span class="w blank" data-wi="${i}">${blankForm(w)}</span>`
     : `<span class="w">${w}</span>`).join(" ");
   const done=hideCount>=TF.words.length;
+  // Offered only on the first screen of a practice run. Someone who already knows the verse should
+  // not have to walk the whole fade to say so — but once they are mid-practice the offer is noise.
+  const tfKey=refKey(TF.b,TF.c,TF.v), tfDone=Math.min(w4wCount(tfKey), W4W_PRACTICE_FOR_POOL);
+  const canClaim = TF.stage===0 && feat("w4w") && verseStage(tfKey)==="loc";
   host.innerHTML=`<div class="card">
-      <div class="lv-topbar"><button class="lclose" id="tfClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(TF.b)} ${TF.c}:${TF.v}</div><span style="width:22px;flex:0 0 22px"></span></div>
+      <div class="lv-topbar"><button class="lclose" id="tfClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(TF.b)} ${TF.c}:${TF.v}</div><div class="ttcount ${tfDone?"ttgood":""}" title="Recitations toward Known by heart">${tfDone}/${W4W_PRACTICE_FOR_POOL}</div></div>
       <div class="fadeverse">${html}</div>
       <p class="hint" style="text-align:center">${done?"Now recite the whole verse from memory — then type it to lock it in.":"Read it aloud. Each step hides more words. <b>Tap any blank to peek</b> for 2 seconds."}</p>
       <div class="btnrow">
         <button class="btn ghost" id="tfReveal">Reveal all</button>
         <button class="btn" id="tfNext">${done?"Type it from memory →":"Hide more →"}</button></div>
+      ${canClaim?`<button class="btn ghost sm" id="tfHeart" style="width:100%;margin-top:10px">💛 I already know this by heart →</button>`:""}
     </div>`;
   el("tfClose").onclick=()=>backFromTF();
   el("tfReveal").onclick=()=>{ TF.stage=0; renderTextFade(); };
+  if(el("tfHeart")) el("tfHeart").onclick=()=>{
+    const b=TF.b, c=TF.c, v=TF.v, k=tfKey;
+    // The practice count is never touched by the promotion, so a later missed test drops the verse
+    // back here with exactly the practices it already had (see demoteFromHeart).
+    openStagePromote(b,c,v,k,"heart", ()=>{
+      if(isHeart(k)) backFromTF();     // claimed — it is tested from here, not practised
+      else if(TF) renderTextFade();    // "Not yet" — carry on with the practice they came for
+    });
+  };
   el("tfNext").onclick=()=>{ if(done){ startWordPick(TF.b,TF.c,TF.v,TF.retFn); } else { TF.stage++; renderTextFade(); } };
   // tap a blank to peek at the word for 2 seconds, then it hides again
   host.querySelectorAll(".w.blank").forEach(sp=>sp.onclick=()=>{
@@ -8708,8 +8883,43 @@ function w4wLockScreen(b,c,v,ret){
 }
 
 let TT=null;
+/* ---- typos ---------------------------------------------------------------------------------
+   Fat fingers on a phone keyboard are not a failure of memory, and the strict test should not
+   treat them as one. A typo is forgiven and retried; three on the SAME WORD ends the run, because
+   at that point it is no longer clear the word is actually known. The count is per word — get the
+   word right and the slate is clean again.
+   What makes something a typo rather than a wrong word:
+     · one letter wrong, one extra, one missing, or two adjacent letters swapped
+     · in a word of four letters or more — at three, nearly every neighbour is a real and DIFFERENT
+       word ("thy" and "the"), and reading a genuine memory slip as a typo is the worse mistake
+     · and the thing typed is not some other word of this very verse, which is recall, not fingers */
+const TYPO_LIMIT=3;
+function offByOne(a,b){
+  const la=a.length, lb=b.length;
+  if(Math.abs(la-lb)>1) return false;
+  if(la===lb){
+    const d=[]; for(let i=0;i<la;i++) if(a[i]!==b[i]) d.push(i);
+    if(d.length===1) return true;                                          // one letter wrong
+    return d.length===2 && d[1]===d[0]+1 && a[d[0]]===b[d[1]] && a[d[1]]===b[d[0]];  // two swapped
+  }
+  const s=la<lb?a:b, l=la<lb?b:a;                                          // one extra or missing
+  let i=0, j=0, slipped=false;
+  while(i<s.length && j<l.length){
+    if(s[i]===l[j]){ i++; j++; continue; }
+    if(slipped) return false;
+    slipped=true; j++;
+  }
+  return true;
+}
+function isTypo(typed, expected, words){
+  const a=normWord(typed), b=normWord(expected);
+  if(!a || !b || a===b) return false;
+  if(b.length<4) return false;
+  if((words||[]).some(w=>normWord(w)===a)) return false;
+  return offByOne(a,b);
+}
 function startTypeTest(b,c,v,ret,isTest){ const words=(kjvText(b,c,v)||"").split(/\s+/).filter(Boolean);
-  TT={b,c,v,ret,words,idx:0,wrong:false,wrongWord:null,hintUsed:false,test:!!isTest,misses:0}; renderTypeTest(); }
+  TT={b,c,v,ret,words,idx:0,wrong:false,wrongWord:null,hintUsed:false,test:!!isTest,misses:0,typos:0,typoNote:"",typedOut:false}; renderTypeTest(); }
 function renderTypeTest(){
   const V=el("verse"), total=TT.words.length;
   // Build the shell ONCE. From here on we mutate only the top display + counter in place — the input element
@@ -8726,7 +8936,9 @@ function renderTypeTest(){
   // repaint ONLY the committed-words area + counter + placeholder (leaves the input/keyboard untouched)
   const paintTop=()=>{
     const done=TT.idx, committed=TT.words.slice(0,done).join(" ");
-    const wrongTop = TT.wrongWord ? ` <span class="ttcur bad">${TT.wrongWord.replace(/</g,"&lt;")}</span> <span class="tt-tryagain">↻ Try again</span>` : "";
+    const xs = TT.typos ? `<span class="ttx">${"✗".repeat(TT.typos)}</span>` : "";
+    const note = TT.typoNote || "↻ Try again";
+    const wrongTop = TT.wrongWord ? ` <span class="ttcur bad">${TT.wrongWord.replace(/</g,"&lt;")}</span>${xs} <span class="tt-tryagain">${note}</span>` : "";
     disp.innerHTML=`<span class="ttdone">${committed}</span>`+(wrongTop||(done||TT.wrongWord?"":`<span style="color:var(--muted)">your words appear here as you go…</span>`));
     disp.scrollTop=disp.scrollHeight;                                  // keep the newest words visible inside the fixed box
     cnt.textContent=`${done}/${total}`; cnt.className="ttcount "+(TT.wrong?"ttbad":(done>0?"ttgood":""));
@@ -8739,11 +8951,27 @@ function renderTypeTest(){
     const expected=TT.words[TT.idx]; if(expected===undefined) return;
     const typed=inp.value.trim(); if(!typed) return;
     if(normWord(typed)===normWord(expected)){          // correct → commit to the top (green), advance
-      TT.idx++; TT.wrong=false; TT.wrongWord=null; inp.value=""; inp.classList.remove("good","wrong");
+      TT.idx++; TT.wrong=false; TT.wrongWord=null; TT.typos=0; TT.typoNote="";   // the crosses are per WORD
+      inp.value=""; inp.classList.remove("good","wrong");
       if(TT.idx>=total){ typeTestComplete(); return; }
       paintTop();
     } else {                                            // wrong → show it red at top, clear the box to retry
-      TT.wrong=true; TT.wrongWord=typed; TT.misses=(TT.misses||0)+1; inp.value=""; inp.classList.remove("good","wrong"); paintTop();
+      TT.wrong=true; TT.wrongWord=typed;
+      // Only the strict test forgives typos. Practice already has hints and counts no misses, so
+      // there is nothing there to protect anyone from.
+      const slip = TT.test && isTypo(typed, expected, TT.words);
+      if(slip){
+        TT.typos=(TT.typos||0)+1;
+        if(TT.typos>=TYPO_LIMIT){                    // three on one word — it is not settled yet
+          TT.misses=(TT.misses||0)+1; TT.typedOut=true; inp.value=""; typeTestComplete(); return;
+        }
+        TT.typoNote = TT.typos>=TYPO_LIMIT-1
+          ? "Nearly — one more and we will call this one for more practice"
+          : "Just a slip — that does not count against you";
+      } else {
+        TT.typos=0; TT.typoNote=""; TT.misses=(TT.misses||0)+1;
+      }
+      inp.value=""; inp.classList.remove("good","wrong"); paintTop();
     }
   };
   // no space/enter needed: the moment the typed word is as long as the target, it jumps to the top
@@ -8808,7 +9036,7 @@ function typeTestComplete(){
 // The result of a TEST. A pass means every word right, first time, unaided - anything less breaks
 // the streak, because five of these is what retires a verse from review.
 function w4wTestResult(b,c,v,vkey,ret){
-  const clean=!TT.misses && !TT.hintUsed, slips=TT.misses||0;
+  const clean=!TT.misses && !TT.hintUsed, slips=TT.misses||0, typedOut=!!TT.typedOut;
   const r=w4wTestRecord(vkey, clean);
   const V=el("verse");
   // A clean run advances the review trail by one checkpoint, so being tested and being reviewed
@@ -8827,11 +9055,13 @@ function w4wTestResult(b,c,v,vkey,ret){
   const left=Math.max(0, W4W_TEST_CR-(r.cr||0));
   V.innerHTML=`<div class="card center">
       <div style="font-size:44px">${clean?"\u{1F54A}\uFE0F":"\u{1F331}"}</div>
-      <h2 style="font-size:21px;margin:8px 0 2px">${clean?"Word for word":"Not quite \u2014 but you finished"}</h2>
+      <h2 style="font-size:21px;margin:8px 0 2px">${clean?"Word for word":(typedOut?"Let's give this one more practice":"Not quite \u2014 but you finished")}</h2>
       <div style="font-weight:800;color:var(--gold-ink);margin:2px 0">${bookName(b)} ${c}:${v}</div>
       <p class="lead" style="margin:8px 0 0">${clean
         ? `Every word, unaided.${freed?` That is ${W4W_TEST_CR} in a row \u2014 <b class="gold">${stationName(freed)}</b> is free for another verse.`:(left?` <b class="gold">${left} more</b> like that and its place in the palace is freed.`:" That is five in a row.")}`
-        : `${slips} word${slips===1?"":"s"} came back slowly, so the run starts again. You still got to the end of it \u2014 that is the part that counts.`}</p>
+        : (typedOut
+            ? `Three slips on the same word. That usually means it is close but not quite settled \u2014 so we will stop here and let you practise it a little more rather than push on.`
+            : `${slips} word${slips===1?"":"s"} came back slowly, so the run starts again. You still got to the end of it \u2014 that is the part that counts.`)}</p>
       ${longName?`<p class="hint" style="margin:10px 0 0">That was the <b class="gold">${longName} review</b> — this verse has been with you a long while now.</p>`:""}
       ${clean?`<p class="hint" style="margin:8px 0 0">Rested a day, then asked again.</p>`:""}
       <div style="font-weight:800;color:var(--gold-ink);margin:10px 0 0">Clean runs in a row: ${r.cr||0} of ${W4W_TEST_CR}${clean?" \u00b7 +15 \u{1FA99}":""}</div>
@@ -9480,6 +9710,7 @@ function initPullRefresh(){
   sc.addEventListener("touchcancel",reset,{passive:true});
 }
 initPullRefresh();
+wireRefTaps();
 
 bootPopups();   // Rome's letter → any levy that has fallen due → the "What's new" card
 
