@@ -864,6 +864,80 @@ const DAY = 86400000;
   is(joins.dueInDays, 1, '...so it comes round tomorrow');
   ok(joins.inDeck, '...and it is in the deck');
 
+  describe('my verses: books three to a row', () => { });
+  const grid = await $(() => {
+    Prog.memorized = ['43:3:16', '43:11:35', '19:23:1', '40:5:9'];
+    Prog.verseStage = { '43:3:16': 'heart' };
+    Prog.verseSR = {}; saveProg();
+    show('verse'); vView = 'mem'; renderVerse();
+    const btns = [...document.querySelectorAll('#verse [data-bookgrid]')];
+    const out = {
+      books: btns.length,
+      cols: getComputedStyle(document.querySelector('#verse .bookgrid')).gridTemplateColumns.split(' ').length,
+      labels: btns.map(b => b.querySelector('.bg-n').textContent).join(' | '),
+      accordionGone: !document.querySelector('#verse .bookhead'),
+      heartsShown: !!document.querySelector('#verse .bookbtn .heart-etch'),
+    };
+    // tapping a book brings its verses up in a popup that scrolls on its own
+    btns.find(b => b.dataset.bookgrid.endsWith(':43')).click();
+    const m = document.getElementById('bkVerseModal');
+    out.popupOpen = !!m && m.style.display === 'flex';
+    out.popupTitle = m.querySelector('.lv-topbar div').textContent.trim();
+    out.rows = m.querySelectorAll('.vlist [data-vb]').length;
+    out.scrolls = getComputedStyle(m.querySelector('.bkverses')).overflowY;
+    out.onlyThatBook = [...m.querySelectorAll('[data-vb]')].every(r => r.dataset.vb.startsWith('43:'));
+    out.hasClose = !!m.querySelector('#bvClose') && !!m.querySelector('#bvDone');
+    m.style.display = 'none';
+    return out;
+  });
+  is(grid.books, 3, 'one button per book you have verses in');
+  is(grid.cols, 3, '...three to a row');
+  is(grid.labels, 'Psalms | Matthew | John', '...named and in book order');
+  ok(grid.accordionGone, '...and the old accordion is gone');
+  ok(grid.heartsShown, 'a book holding verses known by heart says so');
+  ok(grid.popupOpen, 'tapping a book opens its verses in a popup');
+  is(grid.popupTitle, 'John', '...titled with the book');
+  is(grid.rows, 2, '...listing its verses');
+  ok(grid.onlyThatBook, '...and only that book\'s');
+  is(grid.scrolls, 'auto', '...scrolling on its own rather than growing the page');
+  ok(grid.hasClose, '...with a cross and a Done, like every other popup');
+
+  describe('the bible screen', () => { });
+  const bib = await $(() => {
+    Prog.memorized = ['43:3:16', '43:11:35'];
+    Prog.verseStage = { '43:3:16': 'heart' }; saveProg();
+    show('journey'); renderJourney();
+    const top = el('journey').innerText;
+    const out = {
+      saysWhatItIs: /Every book, chapter and verse/.test(top),
+      mentionsUnlocking: /opening as you learn its numbers/.test(top),
+      mentionsYourVerses: /your own verses in that book/.test(top),
+      wholeBibleGone: !/whole Bible/i.test(top),
+      countShown: /of 66 books open/.test(top),
+    };
+    renderBookScreen(43);
+    const bk = el('journey').innerText;
+    out.inBook = /YOUR VERSES/.test(bk);
+    out.inBookCount = /2 in John/.test(bk);
+    out.inBookHearts = /1 known by heart/.test(bk);
+    out.inBookRows = document.querySelectorAll('#journey .bkverses [data-vb]').length;
+    out.backLabel = el('bkBack').textContent.trim();
+    renderBookScreen(1);
+    out.emptyBookQuiet = !/YOUR VERSES/.test(el('journey').innerText);
+    return out;
+  });
+  ok(bib.saysWhatItIs, 'the Bible screen says what it is');
+  ok(bib.mentionsUnlocking, '...that it opens as you learn the numbers');
+  ok(bib.mentionsYourVerses, '...and that your own verses are in there');
+  ok(bib.wholeBibleGone, '"The whole Bible" is gone — the screen already says Bible');
+  ok(bib.countShown, '...replaced by how many of the 66 books you have opened');
+  ok(bib.inBook, 'a book shows your verses in it, under the chapters');
+  ok(bib.inBookCount, '...counted');
+  ok(bib.inBookHearts, '...saying how many you know by heart');
+  is(bib.inBookRows, 2, '...and listing them');
+  is(bib.backLabel, '← All books', 'the way back does not repeat the word Bible either');
+  ok(bib.emptyBookQuiet, 'a book you have no verses in says nothing at all');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};

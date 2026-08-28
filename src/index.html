@@ -921,6 +921,18 @@
   #adminWrap > .btn .abtn-ic{font-size:32px;line-height:1}
   #adminWrap > .btn .abtn-t{display:block}
   .profgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
+  /* Books three to a row. The verses themselves come up in a popup that scrolls on its own, so
+     opening one book never pushes the next one below the fold. */
+  .bookgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:6px}
+  .bookbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:11px 5px;
+    color:var(--ink);font-weight:800;font-size:12.5px;line-height:1.15;text-align:center;
+    cursor:pointer;min-height:66px;min-width:0}
+  .bookbtn:active{transform:scale(.98)}
+  .bookbtn .bg-n{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bookbtn .bg-c{display:flex;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:700;color:var(--muted)}
+  .bookbtn .heart-etch{width:12px;height:12px;margin:0}
+  .bkverses{max-height:58vh;overflow-y:auto;overscroll-behavior:contain}
   .profbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px 8px;color:var(--ink);font-weight:800;font-size:14px;line-height:1.15;text-align:center;cursor:pointer;aspect-ratio:1.5}
   .profbtn .pi{font-size:26px;line-height:1}
   .profbtn small{font-size:11.5px;font-weight:700;color:var(--muted)}
@@ -1722,8 +1734,14 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.37.0";
+const APP_VERSION="1.38.0";
 const CHANGELOG=[
+ {v:"1.38.0", d:"August 27, 2026", t:"Your verses, by book", items:[
+   ["chg","<b>My Verses now shows your books three to a row</b>, and tapping one brings its verses up in a popup that scrolls on its own. The old list grew every time you opened a book, which pushed the next one further down the page."],
+   ["new","<b>Your verses in a book now appear inside that book</b>, under the chapters and the key — so the Bible screen shows you what you know where you would look for it."],
+   ["chg","The Bible screen <b>says what it is</b>: every book, chapter and verse, each opening as you learn its numbers."],
+   ["chg","\"The whole Bible\" is gone from the top of that screen — it already says Bible. In its place is <b>how many of the 66 books you have opened</b>."]
+ ]},
  {v:"1.37.0", d:"August 27, 2026", t:"One a day, and a long memory", items:[
    ["chg","<b>A verse you know by heart rests a day between clean runs.</b> Reciting something you proved an hour ago teaches nothing. Miss a word and you can try again straight away — only a clean run starts the wait."],
    ["new","<b>Claiming a verse puts it straight into spaced repetition at D1</b>, so it comes round tomorrow instead of waiting on a first-look timer."],
@@ -3288,10 +3306,12 @@ function renderJourney(){
   el("journey").classList.toggle("jfill", jfill);
   const VMODES=[["num","#","Book number"],["numimg","🔢","Number image"],["bookimg","📖","Book image"],["name","Aa","Book name"]];
   const viewToggle=`<div class="bible-viewtoggle">${VMODES.map(m=>`<button class="bvt ${mode===m[0]?"on":""}" data-vmode="${m[0]}" title="${m[2]}">${m[1]}</button>`).join("")}</div>`;
+  let booksOpen=0; for(let b=1;b<=66;b++) if(knownNum(b)) booksOpen++;
   J.innerHTML=`
-    <h2 style="margin:0 0 6px">Bible</h2>
+    <h2 style="margin:0 0 4px">Bible</h2>
+    <p class="lead" style="margin:0 0 10px;font-size:13px">Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses suggested next, and your own verses in that book.</p>
     <div class="card biblecard" style="margin-top:0;position:relative;padding:12px 14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><h2 style="font-size:15px;margin:0">The whole Bible</h2><div style="display:flex;gap:6px;align-items:center">${viewToggle}<button class="bible-search-btn" id="bibleSearchBtn" title="Jump to a book">🔍</button></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><span class="muted" style="font-size:12px;font-weight:800">${booksOpen} of 66 books open</span><div style="display:flex;gap:6px;align-items:center">${viewToggle}<button class="bible-search-btn" id="bibleSearchBtn" title="Jump to a book">🔍</button></div></div>
       <div class="otnt-label">Old Testament <span>books 1–39</span></div>
       <div class="biblestrip ot ${stripClass}">${stripFor(1,39)}</div>
       <div class="otnt-label" style="margin-top:8px">New Testament <span>books 40–66</span></div>
@@ -3344,9 +3364,11 @@ function renderBookScreen(bn){
     chips+=`<div class="chapbox ${ready?"ready":"locked"}" data-chap="${c}"><span class="ck">CH</span><span class="cn">${pad2(c)}</span>${story?`<span class="storymark" title="A Bible story begins in this chapter">📖</span>`:""}</div>`;
   }
   const prevB=bn>1?bn-1:null, nextB=bn<66?bn+1:null;
+  const mine=memArr().filter(a=>a[0]===bn);
+  const mineHearts=mine.filter(a=>isHeart(refKey(a[0],a[1],a[2]))).length;
   J.innerHTML=`
     <div class="navrow">
-      <button class="btn ghost sm" id="bkBack">← Whole Bible</button>
+      <button class="btn ghost sm" id="bkBack">← All books</button>
       <div style="display:flex;gap:6px">
         ${prevB?`<button class="btn ghost sm" data-gob="${prevB}" title="${bookName(prevB)}">← ${bookName(prevB)}</button>`:""}
         ${nextB?`<button class="btn ghost sm" data-gob="${nextB}" title="${bookName(nextB)}">${bookName(nextB)} →</button>`:""}
@@ -3361,7 +3383,16 @@ function renderBookScreen(bn){
       </div>
       <div class="chapboxes">${chips}</div>
       ${legendHTML(`<span><b style="border-color:var(--gold2)"></b>chapters you can memorize</span><span><b></b>not ready yet</span><span>📖 a story begins here</span>`)}
-    </div>`;
+    </div>
+    ${mine.length?`<div class="card">
+      <span class="screenkind vs">💛 YOUR VERSES</span>
+      <div class="hint" style="margin:0 0 6px">${mine.length} in ${bookName(bn)}${mineHearts?` · ${mineHearts} known by heart`:""}</div>
+      <div class="vlist bkverses">${mine.map(a=>verseRow(a[0],a[1],a[2],"mem")).join("")}</div>
+    </div>`:""}`;
+  J.querySelectorAll("[data-vb]").forEach(r=>r.onclick=()=>{
+    const [x,y,z]=r.dataset.vb.split(":").map(Number);
+    openVerseWizard(x,y,z, ()=>renderBookScreen(bn));
+  });
   el("bkBack").onclick=renderJourney;
   wireLegend(()=>renderBookScreen(bn));
   J.querySelectorAll("[data-gob]").forEach(b=>b.onclick=()=>renderBookScreen(+b.dataset.gob));
@@ -4570,6 +4601,42 @@ let verseScroll=0;
 function reVerse(){ const c=document.querySelector(".content"), y=c.scrollTop; renderVerse(); requestAnimationFrame(()=>{ c.scrollTop=y; }); }
 function backToVerse(){ renderVerse(); requestAnimationFrame(()=>{ document.querySelector(".content").scrollTop=verseScroll; }); }
 // render verses grouped under collapsible book headers
+// Books three to a row, each opening its own scrolling popup. Replaces the accordion for the
+// memorized list: with 60 verses across a dozen books the accordion turned the page into a
+// scroll-hunt, and every book you opened pushed the rest further down.
+function bookGrid(verses, section){
+  const groups={}; verses.forEach(a=>{ (groups[a[0]]=groups[a[0]]||[]).push(a); });
+  const bns=Object.keys(groups).map(Number).sort((x,y)=>x-y);
+  if(!bns.length) return "";
+  return `<div class="bookgrid">`+bns.map(bn=>{
+    const n=groups[bn].length, hearts=groups[bn].filter(a=>isHeart(refKey(a[0],a[1],a[2]))).length;
+    return `<button class="bookbtn" data-bookgrid="${section}:${bn}">
+      <span class="bg-n">${bookName(bn)}</span>
+      <span class="bg-c">${n}${hearts?heartEtchSVG()+hearts:""}</span></button>`;
+  }).join("")+`</div>`;
+}
+function versesInBook(bn){ return memArr().filter(a=>a[0]===bn); }
+// One book's verses, in a popup that scrolls by itself.
+function openBookVerses(bn, back){
+  const m=el("bkVerseModal")||(()=>{ const d=document.createElement("div"); d.id="bkVerseModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const list=versesInBook(bn);
+  const hearts=list.filter(a=>isHeart(refKey(a[0],a[1],a[2]))).length;
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="bvClose" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${bookName(bn)}</div><span style="width:34px"></span></div>
+      <div class="hint" style="text-align:center;margin:0 0 8px">${list.length} verse${list.length===1?"":"s"}${hearts?` · ${hearts} known by heart`:""}</div>
+      <div class="vlist bkverses">${list.map(a=>verseRow(a[0],a[1],a[2],"mem")).join("")}</div>
+      <button class="btn" id="bvDone" style="width:100%;margin-top:12px">Done</button>
+    </div>`;
+  const close=()=>{ m.style.display="none"; if(back) back(); };
+  el("bvClose").onclick=close; el("bvDone").onclick=close;
+  m.querySelectorAll("[data-vb]").forEach(r=>r.onclick=()=>{
+    const [b,c,v]=r.dataset.vb.split(":").map(Number);
+    m.style.display="none";
+    openVerseWizard(b,c,v, ()=>openBookVerses(bn, back));
+  });
+  m.style.display="flex"; raiseModal(m);
+}
 function bookGroupedList(verses, section){
   const groups={}; verses.forEach(a=>{ (groups[a[0]]=groups[a[0]]||[]).push(a); });
   const bns=Object.keys(groups).map(Number).sort((x,y)=>x-y);
@@ -4633,7 +4700,7 @@ function renderVerse(){
       // Located is every verse here - reaching this screen IS being located. By heart is the ones
       // you have claimed, a subset, marked through the list with the same gold heart.
       const stageSum=mem.length?`<div class="stagesum"><div><b>${mem.length}</b><span>\u{1F9ED} Located</span></div><div><b>${_sc.heart}</b><span>\u{1F49B} By heart</span></div></div>`:"";
-      body=mem.length? stageSum+nudge+`<p class="hint" style="margin:2px 0 8px">Tap a book, then a verse to rebuild it, add a scene, or practice it word for word.</p>`+bookGroupedList(mem,"mem")
+      body=mem.length? stageSum+nudge+`<p class="hint" style="margin:2px 0 8px">Tap a book to see your verses in it.</p>`+bookGrid(mem,"mem")
         :`<p class="hint">Verses you finish building show up here.</p>`;
     } else if(vView==="videos"){ title="🎬 Video Review";
       const list=videoReviewList();
@@ -4653,6 +4720,11 @@ function renderVerse(){
     V.querySelectorAll("[data-topic]").forEach(h=>h.onclick=()=>{ const ti=+h.dataset.topic; vTopic.has(ti)?vTopic.delete(ti):vTopic.add(ti); reVerse(); });
     V.querySelectorAll("[data-vid]").forEach(b=>b.onclick=()=>{ const k=b.dataset.vid; openVideoScreen(k, ()=>{ vView="videos"; renderVerse(); }); });
     V.querySelectorAll("[data-vb]").forEach(b=>b.onclick=()=>{ const [x,y,z]=b.dataset.vb.split(":").map(Number); verseScroll=document.querySelector(".content").scrollTop; openVerseWizard(x,y,z,backToVerse); });
+    V.querySelectorAll("[data-bookgrid]").forEach(b=>b.onclick=()=>{
+      const bn=+b.dataset.bookgrid.split(":")[1];
+      verseScroll=document.querySelector(".content").scrollTop;
+      openBookVerses(bn, ()=>{ show("verse"); renderVerse(); });
+    });
     if(el("memBackfill")) el("memBackfill").onclick=()=>{ const f=memBare[0]; if(!f) return; const back=()=>{ vView="mem"; renderVerse(); document.querySelector(".content").scrollTop=0; }; editVerseScene(f[0],f[1],f[2], back, back); };
     paintTheme(); return;
   }

@@ -36,9 +36,9 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "classic/verse/memorized": {
-  "h": "a0b9ad011de5177e",
-  "len": 2080,
-  "els": 61,
+  "h": "81f4596b87ac638d",
+  "len": 892,
+  "els": 25,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
@@ -189,22 +189,22 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "classic/bible/whole": {
-  "h": "10dcfaa690410783",
-  "len": 10181,
-  "els": 218,
+  "h": "4a6b2283d1f07e23",
+  "len": 10434,
+  "els": 219,
   "buttons": 71,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20"
+  "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
  },
  "classic/bible/book": {
-  "h": "eee6ef9a8311676a",
-  "len": 15888,
-  "els": 466,
+  "h": "cfed6ddb35f457cc",
+  "len": 17093,
+  "els": 503,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Whole Bible ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 C"
+  "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "classic/bible/chapter": {
   "h": "51fbb5724763c791",
@@ -261,7 +261,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "147fdbbcec314469",
+  "h": "c6011fd9452b6e46",
   "len": 15769,
   "els": 370,
   "buttons": 45,
@@ -324,13 +324,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "a16a65c3d629ade6",
-  "len": 51439,
-  "els": 1003,
+  "h": "690070324b877348",
+  "len": 52550,
+  "els": 1024,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.37.0 August 27, 2026 One a day, and a long memory FIX A verse you know by heart rests a day between"
+  "text": "✕ Version history v1.38.0 August 27, 2026 Your verses, by book FIX My Verses now shows your books three to a row , and t"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -513,9 +513,9 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "illumined/verse/memorized": {
-  "h": "a0b9ad011de5177e",
-  "len": 2080,
-  "els": 61,
+  "h": "81f4596b87ac638d",
+  "len": 892,
+  "els": 25,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
@@ -666,22 +666,22 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "illumined/bible/whole": {
-  "h": "10dcfaa690410783",
-  "len": 10181,
-  "els": 218,
+  "h": "4a6b2283d1f07e23",
+  "len": 10434,
+  "els": 219,
   "buttons": 71,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20"
+  "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
  },
  "illumined/bible/book": {
-  "h": "eee6ef9a8311676a",
-  "len": 15888,
-  "els": 466,
+  "h": "cfed6ddb35f457cc",
+  "len": 17093,
+  "els": 503,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Whole Bible ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 C"
+  "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "illumined/bible/chapter": {
   "h": "51fbb5724763c791",
@@ -738,7 +738,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "4e7b8d06a783209f",
+  "h": "f03069dbfc9ea80e",
   "len": 14975,
   "els": 362,
   "buttons": 43,
@@ -801,13 +801,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "a16a65c3d629ade6",
-  "len": 51439,
-  "els": 1003,
+  "h": "690070324b877348",
+  "len": 52550,
+  "els": 1024,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.37.0 August 27, 2026 One a day, and a long memory FIX A verse you know by heart rests a day between"
+  "text": "✕ Version history v1.38.0 August 27, 2026 Your verses, by book FIX My Verses now shows your books three to a row , and t"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -990,9 +990,9 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "glass/verse/memorized": {
-  "h": "a0b9ad011de5177e",
-  "len": 2080,
-  "els": 61,
+  "h": "81f4596b87ac638d",
+  "len": 892,
+  "els": 25,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
@@ -1143,22 +1143,22 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "glass/bible/whole": {
-  "h": "10dcfaa690410783",
-  "len": 10181,
-  "els": 218,
+  "h": "4a6b2283d1f07e23",
+  "len": 10434,
+  "els": 219,
   "buttons": 71,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20"
+  "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
  },
  "glass/bible/book": {
-  "h": "eee6ef9a8311676a",
-  "len": 15888,
-  "els": 466,
+  "h": "cfed6ddb35f457cc",
+  "len": 17093,
+  "els": 503,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Whole Bible ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 C"
+  "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "glass/bible/chapter": {
   "h": "51fbb5724763c791",
@@ -1215,7 +1215,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "db4fabbb9c96d538",
+  "h": "c6a0d65435e4e1fb",
   "len": 14973,
   "els": 362,
   "buttons": 43,
@@ -1278,13 +1278,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "a16a65c3d629ade6",
-  "len": 51439,
-  "els": 1003,
+  "h": "690070324b877348",
+  "len": 52550,
+  "els": 1024,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.37.0 August 27, 2026 One a day, and a long memory FIX A verse you know by heart rests a day between"
+  "text": "✕ Version history v1.38.0 August 27, 2026 Your verses, by book FIX My Verses now shows your books three to a row , and t"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1467,9 +1467,9 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "quest/verse/memorized": {
-  "h": "a0b9ad011de5177e",
-  "len": 2080,
-  "els": 61,
+  "h": "81f4596b87ac638d",
+  "len": 892,
+  "els": 25,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
@@ -1620,22 +1620,22 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "quest/bible/whole": {
-  "h": "10dcfaa690410783",
-  "len": 10181,
-  "els": 218,
+  "h": "4a6b2283d1f07e23",
+  "len": 10434,
+  "els": 219,
   "buttons": 71,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20"
+  "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
  },
  "quest/bible/book": {
-  "h": "eee6ef9a8311676a",
-  "len": 15888,
-  "els": 466,
+  "h": "cfed6ddb35f457cc",
+  "len": 17093,
+  "els": 503,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Whole Bible ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 C"
+  "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "quest/bible/chapter": {
   "h": "51fbb5724763c791",
@@ -1692,7 +1692,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "4fdb82e7c000e661",
+  "h": "8957e329cbd4bde3",
   "len": 14975,
   "els": 362,
   "buttons": 43,
@@ -1755,13 +1755,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "a16a65c3d629ade6",
-  "len": 51439,
-  "els": 1003,
+  "h": "690070324b877348",
+  "len": 52550,
+  "els": 1024,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.37.0 August 27, 2026 One a day, and a long memory FIX A verse you know by heart rests a day between"
+  "text": "✕ Version history v1.38.0 August 27, 2026 Your verses, by book FIX My Verses now shows your books three to a row , and t"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1944,9 +1944,9 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "buddy/verse/memorized": {
-  "h": "a0b9ad011de5177e",
-  "len": 2080,
-  "els": 61,
+  "h": "81f4596b87ac638d",
+  "len": 892,
+  "els": 25,
   "buttons": 5,
   "svgs": 0,
   "imgs": 0,
@@ -2097,22 +2097,22 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "buddy/bible/whole": {
-  "h": "10dcfaa690410783",
-  "len": 10181,
-  "els": 218,
+  "h": "4a6b2283d1f07e23",
+  "len": 10434,
+  "els": 219,
   "buttons": 71,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible The whole Bible # 🔢 📖 Aa 🔍 Old Testament books 1–39 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20"
+  "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
  },
  "buddy/bible/book": {
-  "h": "eee6ef9a8311676a",
-  "len": 15888,
-  "els": 466,
+  "h": "cfed6ddb35f457cc",
+  "len": 17093,
+  "els": 503,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Whole Bible ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 C"
+  "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "buddy/bible/chapter": {
   "h": "51fbb5724763c791",
@@ -2169,7 +2169,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "774fbd1037528c1e",
+  "h": "7edb4ee85205caff",
   "len": 14971,
   "els": 362,
   "buttons": 43,
@@ -2232,13 +2232,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "a16a65c3d629ade6",
-  "len": 51439,
-  "els": 1003,
+  "h": "690070324b877348",
+  "len": 52550,
+  "els": 1024,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.37.0 August 27, 2026 One a day, and a long memory FIX A verse you know by heart rests a day between"
+  "text": "✕ Version history v1.38.0 August 27, 2026 Your verses, by book FIX My Verses now shows your books three to a row , and t"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
