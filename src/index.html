@@ -1169,6 +1169,17 @@
   .vidph{border:1px dashed var(--gold2);border-radius:14px;padding:22px;text-align:center;background:var(--vidph-bg);margin:12px 0}
   .vidph .play{width:52px;height:52px;border-radius:50%;background:var(--gold);color:var(--on-accent);display:grid;place-items:center;font-size:22px;margin:0 auto 8px}
   .vidph .vt{font-weight:800;font-size:15px} .vidph .vs{font-size:12px;color:var(--muted);margin-top:3px}
+  .introfilm{display:flex;align-items:center;gap:13px;width:100%;text-align:left;cursor:pointer;
+             background:var(--panel2);border:1px solid var(--gold2);border-radius:14px;
+             padding:13px 15px;margin:2px 0 14px;font-family:inherit;color:var(--ink)}
+  .introfilm.seen{border-color:var(--line)}
+  .ifplay{flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
+          justify-content:center;font-size:16px;background:var(--accent);color:var(--on-accent)}
+  .introfilm.seen .ifplay{background:var(--panel0);color:var(--muted)}
+  .ift{flex:1;min-width:0;display:block}
+  .ift b{display:block;font-size:14.5px;font-weight:800;color:var(--gold-ink);line-height:1.3}
+  .ift small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+  .ifdone{flex:none;color:var(--good);font-weight:800}
   .tile.video{background:linear-gradient(135deg,var(--accent),var(--blue2,var(--accent)));color:var(--on-accent)}
   .tile.video .vface{font-size:26px;line-height:1}
   .tile.video.done{opacity:.9}
@@ -1837,8 +1848,13 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.50.1";
+const APP_VERSION="1.51.0";
 const CHANGELOG=[
+ {v:"1.51.0", d:"August 28, 2026", t:"The first film is in", items:[
+   ["new","<b>Start here: how Burning Bush works.</b> Four minutes on why chapter and verse numbers slide straight off the mind, and the two old ideas that fix it. It stands on its own above the first unit rather than sitting inside it, and once watched it keeps its place in Video Review."],
+   ["new","<b>A Year of Days.</b> A fifth Daily Devotion badge, for a review streak of 365. Every day for a year, without missing one."],
+   ["fix","<b>The film tile on the path said \"Intro\" whatever it was playing.</b> It now says what it plays, so the one inside the first unit reads <b>The Major System</b>."]
+ ]},
  {v:"1.50.1", d:"August 28, 2026", t:"Written on screen, not on paper", items:[
    ["fix","<b>Build the Book said to write the scene on paper.</b> It never meant that. The scene goes in the scene box on this screen, which is where review reads it back from, and the wording now says so."]
  ]},
@@ -2963,7 +2979,7 @@ const NUM_REFS={
  9:["a cat's nine lives","a baseball nine","nine innings","cloud nine","the whole nine yards","the front nine at golf"],
  10:["ten fingers","a perfect ten score","a bowling strike, ten pins","a ten dollar bill","a decade","a top ten list"],
  11:["a football eleven","11:11 on a clock","an amp that goes to eleven","the eleventh hour","two candles side by side"],
- 12:["a dozen eggs","the twelve months","a clock face","a jury of twelve","a ruler, twelve inches","a case of twelve"],
+ 12:["a dozen eggs","a dozen donuts","the twelve months","a clock face","a jury of twelve","a ruler, twelve inches","a case of twelve"],
  13:["a baker's dozen","unlucky thirteen","Friday the 13th","the thirteen original colonies","a black cat","the thirteenth floor that does not exist"],
  14:["Valentine's Day","a fortnight","a sonnet's fourteen lines","two weeks off","the fourteenth of February"],
  15:["a quinceanera","a rugby fifteen","the quarter hour","fifteen minutes of fame","fifteen love in tennis"],
@@ -3054,7 +3070,7 @@ function buildTheBookBox(n){
         <li><b>The code.</b> Your Major System picture, <b class="gold">${bbEsc(w)}</b>. That one never drifts, because the sounds build it back every time.</li>
       </ol>
       <p>Two of the three carry the number. That is deliberate. When one of them slips, the other one still holds.</p>
-      <p><b>Some of these land in four seconds and some will fight you.</b> Genesis to a genie is instant. Others take a few tries before anything clicks. Keep going. The ones you had to work for are the ones still standing in a year, because you paid something for them.</p>
+      <p><b>Some of these land in a few seconds and some will fight you.</b> Genesis to a genie is instant. Others take a few tries before anything clicks. Keep going. The ones you had to work for are the ones still standing in a year, because you paid something for them.</p>
       <p class="bbtip">Make it a moment, not a list. Put the three where they collide, give it motion, make the size wrong, and put yourself in the frame. Strange and slightly ridiculous is what the mind keeps.</p>
       <p><b>Write the scene out in the box below.</b> Not in your head, in words. This is not a nice extra, it is most of the work. Putting it into sentences forces you to actually look at the thing you are describing, and that looking is what builds the memory. What you write is then what review shows you back, at least for the first few weeks, until the scene arrives on its own with no prompt at all.</p>
       <p>It gets tidied as you go: capitals land where they belong while you write, and your three key images are spelled right and set in CAPITALS so your eye finds them the moment you open it.</p>
@@ -4003,7 +4019,10 @@ function storyReachKey(sk){ const s=sk.story; return Math.max(bookNum(s.b)||0, s
 // The films. None of them sit on the Learn path any more — each is triggered where it is needed
 // (see openVideoScreen / maybeVideo) and every one seen is kept in Video Review.
 const VIDEOS = {
- major: {src:"", skill:"video:major", title:"How the Major System works", sub:"Ten simple sounds turn any number into a picture. The key to everything.", done:"I watched it →"},
+  // The opening film. It is the only one with a src today; the rest are waiting on their recordings,
+  // and an empty src draws the placeholder rather than a broken player.
+  intro: {src:"videos/intro.mp4", skill:"video:intro", tile:"Intro", title:"Start here: how Burning Bush works", sub:"Four minutes on why chapter and verse numbers slide straight off the mind, and the two old ideas that fix it.", done:"I'm ready →"},
+ major: {src:"", skill:"video:major", tile:"The Major System", title:"The Major System", sub:"Ten simple sounds turn any number into a picture. The key to everything.", done:"I watched it →"},
   verse: {src:"", skill:"video:verse", title:"How to create a verse scene", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse", done:"I watched it →"},
  palace:{src:"", skill:"video:palace", title:"What is a Memory Palace?", sub:"Walk a place you know and leave each item at a spot. Do it once and the order sticks.", cta:"palace", done:"I watched it →"},
   sr:    {src:"", skill:"video:sr", title:"How spaced repetition locks it in", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long term memory.", cta:"sr", done:"I watched it →"},
@@ -4286,6 +4305,15 @@ function renderPath(focus){
   // the map IS the point, and the next lesson is brought to the top of the screen instead.
   let phase=0;
   let html=`${pageHead("\u{1F393}","Learn")}<p class="hint" style="margin:2px 0 10px">Your whole path, in order. The next lesson is marked.</p>`;
+  // The opening film stands on its own above the first unit rather than sitting in it as a step,
+  // because it is not part of the Major System: it is what the whole path is for.
+  {
+    const V=VIDEOS.intro, seen=videoSeen("intro");
+    html+=`<button class="introfilm${seen?" seen":""}" id="introFilm">
+      <span class="ifplay">${seen?"↺":"▶"}</span>
+      <span class="ift"><b>${V.title}</b><small>${seen?"Watched · play it again any time":"4 minutes · start here"}</small></span>
+      ${seen?'<span class="ifdone">✓</span>':""}</button>`;
+  }
   const upTo=ensurePhaseMax();
   UNITS.forEach((U,ui)=>{
     if(U.story) return;                       // stories live in their own tab
@@ -4297,7 +4325,7 @@ function renderPath(focus){
       if(sk.kind==="video"){
         // no state on this one — it is an access point, not a lesson to complete
         html+=`<button class="tile video" data-video="${sk.vkey}">
-          <span class="vface">🎬</span><small>Intro</small></button>`;
+          <span class="vface">🎬</span><small>${(VIDEOS[sk.vkey]||{}).tile||"Video"}</small></button>`;
         return;
       }
       const pro=skillPaywalled(sk);
@@ -4309,6 +4337,7 @@ function renderPath(focus){
     html+=`</div>`;
   });
   L.innerHTML=html;
+  if(el("introFilm")) el("introFilm").onclick=()=>openVideoScreen("intro", ()=>renderPath(true));
   L.querySelectorAll(".tile.video").forEach(t=>t.onclick=()=>openVideoScreen(t.dataset.video, ()=>renderPath(true)));
   L.querySelectorAll(".tile:not(.video)").forEach(t=>t.onclick=()=>{
     if(t.classList.contains("locked")) return;   // out of sequence — not even buyable
@@ -7515,7 +7544,8 @@ const BADGES=[
  {id:"day1", cat:"Daily Devotion", icon:"🕯️", name:"Daily Bread", sub:"3-day review streak", have:()=>Prog.bestDayStreak>=3},
  {id:"day2", cat:"Daily Devotion", icon:"📅", name:"Seven-fold", sub:"7-day review streak", have:()=>Prog.bestDayStreak>=7},
  {id:"day3", cat:"Daily Devotion", icon:"🗓️", name:"Faithful Month", sub:"30-day review streak", have:()=>Prog.bestDayStreak>=30},
- {id:"day4", cat:"Daily Devotion", icon:"💎", name:"Hundredfold", sub:"100-day review streak", have:()=>Prog.bestDayStreak>=100}
+ {id:"day4", cat:"Daily Devotion", icon:"💎", name:"Hundredfold", sub:"100-day review streak", have:()=>Prog.bestDayStreak>=100},
+ {id:"day5", cat:"Daily Devotion", icon:"🌞", name:"A Year of Days", sub:"365-day review streak", have:()=>Prog.bestDayStreak>=365}
 ];
 function earnedBadges(){ return BADGES.filter(b=>b.have()); }
 function nextBadge(){ const c=Prog.memorized.length; return BADGES.filter(b=>b.cat==="Verses Located").find(b=>b.n>c)||null; }

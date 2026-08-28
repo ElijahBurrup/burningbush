@@ -1773,6 +1773,16 @@ const DAY = 86400000;
   await $(() => { delete Prog.customPeg[7]; saveProg(); buildNumGrid(); });
 
   describe('Build the Book: three pictures, one scene', () => { });
+  const devotion = await $(() => {
+    const d = BADGES.filter(b => b.cat === 'Daily Devotion');
+    Prog.bestDayStreak = 365; saveProg();
+    return { n: d.length, top: Math.max.apply(null, d.map(b => +(String(b.sub).match(/[0-9]+/) || [0])[0])),
+             allEarned: d.every(b => b.have()) };
+  });
+  is(devotion.n, 5, 'five Daily Devotion badges');
+  is(devotion.top, 365, '...the last of them a full year of days');
+  ok(devotion.allEarned, '...and a 365 day streak earns every one of them');
+
   const bbData = await $(() => {
     const gaps = [], thin = [], dupes = [];
     for (let n = 1; n <= 66; n++) {
@@ -1872,6 +1882,49 @@ const DAY = 86400000;
   ok(bbSave.migrated, 'an older profile gains both stores rather than crashing');
   is(bbSave.kept, 'knee-high socks', '…without losing a choice already made');
   is(bbSave.merged, 'a genie|an exit sign|a bicycle', 'two devices merge their choices instead of one winning');
+
+  describe('the intro film', () => { });
+  const film = await $(() => {
+    Prog.doneSkills = (Prog.doneSkills || []).filter(s => !/^video:/.test(s));
+    Prog.videoOrder = []; saveProg();
+    const unit0 = UNITS[0].skills.filter(s => s.kind === 'video').map(s => s.vkey);
+    show('learn'); renderPath();
+    const introButton = !!document.getElementById('introFilm');
+    const majorTile = (document.querySelector('.tile.video small') || {}).textContent;
+    const before = videoSeen('intro');
+    openVideoScreen('intro', () => { });
+    const vd = document.querySelector('#videoModal video');
+    const out = {
+      unit0First: unit0[0], introButton, majorTile,
+      before,
+      declared: VIDEOS.intro.src,
+      element: !!vd,
+      // the runtime copies data-vsrc onto src, which is the only place the path is ever real
+      wired: vd ? vd.getAttribute('src') : null,
+      controls: vd ? vd.hasAttribute('controls') : false,
+      inReview: videoReviewList()[0],
+      seenYet: videoSeen('intro'),
+    };
+    document.getElementById('vsDone').click();
+    out.afterWatching = videoSeen('intro');
+    out.stillListed = videoReviewList().includes('intro');
+    return out;
+  });
+  is(film.unit0First, 'major', 'the film inside the first unit is the Major System one, not the intro');
+  ok(film.introButton, '…because the intro stands on its own above the first unit');
+  is(film.majorTile, 'The Major System', '…and the tile says what it plays rather than always saying Intro');
+  no(film.before, 'a new profile has not watched it');
+  is(film.declared, 'videos/intro.mp4', 'the film has a real source, not an empty placeholder');
+  ok(film.element, '…so the screen draws a player rather than the "add your video here" card');
+  is(film.wired, 'videos/intro.mp4', '…and the source reaches the element');
+  ok(film.controls, '…with controls, because a training film has to be scrubbable');
+  is(film.inReview, 'intro', 'showing it puts it at the head of Video Review');
+  no(film.seenYet, '…before it has been watched');
+  ok(film.afterWatching, 'finishing it marks it watched');
+  ok(film.stillListed, '…and it stays in Video Review afterwards');
+
+  const placeholders = await $(() => Object.keys(VIDEOS).filter(k => !VIDEOS[k].src));
+  is(placeholders.join(','), 'major,verse,palace,sr,recall', 'the other four films are still waiting on recordings');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
@@ -2472,7 +2525,7 @@ const DAY = 86400000;
       srcSlot: keys.every(k => VIDEOS[k].src !== undefined),
     };
   });
-  is(vids.n, 5, 'five films');
+  is(vids.n, 6, 'six films');
   has(vids.keys, 'recall', '...including one for when a verse will not come');
   ok(vids.titled, 'every film has a name');
   ok(vids.described, '...and a line saying what it is for');
@@ -2724,7 +2777,7 @@ const DAY = 86400000;
   no(lpath.lastPhaseHasPalace, '...least of all on the last phase');
   is(lpath.dividers, lpath.phaseCount, 'a named rule marks every phase');
   is(lpath.tilesShown, lpath.tilesTotal, '...and with everything revealed, every tile is drawn');
-  is(lpath.videoTiles, 1, 'the only film left on the path is the opening one');
+  is(lpath.videoTiles, 1, 'one film keeps a tile inside a unit: the Major System');
   is(lpath.videoSkills, 1, '...kept there because Video Review is out of reach this early');
   is(lpath.videoWhere, 'The Code: Major System Sounds', '...and it sits in the Code section');
   is(lpath.pathMilestones, 0, 'the learn-path milestones are gone');

@@ -1,12 +1,12 @@
 {
  "classic/learn/path": {
-  "h": "4fed77f24d4f383f",
-  "len": 5857,
-  "els": 127,
-  "buttons": 39,
+  "h": "0658ec1dbdd0c93e",
+  "len": 6053,
+  "els": 132,
+  "buttons": 40,
   "svgs": 0,
   "imgs": 0,
-  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ "
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start here: how Burning Bush works 4 minutes · start he"
  },
  "classic/verse/hub": {
   "h": "72be5ffd46dffcac",
@@ -252,8 +252,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "classic/learn/build-the-book": {
-  "h": "4f9ffe68e9b25efb",
-  "len": 5476,
+  "h": "ef55209998ba8358",
+  "len": 5477,
   "els": 89,
   "buttons": 9,
   "svgs": 0,
@@ -261,8 +261,8 @@
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "classic/learn/build-the-book-done": {
-  "h": "d6c3d02fbba82425",
-  "len": 5811,
+  "h": "2d9c04a22c34ec4f",
+  "len": 5812,
   "els": 93,
   "buttons": 9,
   "svgs": 0,
@@ -279,9 +279,9 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "9c61b85bf141f699",
-  "len": 18525,
-  "els": 459,
+  "h": "3917c5424fcef7df",
+  "len": 18648,
+  "els": 463,
   "buttons": 45,
   "svgs": 0,
   "imgs": 0,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "99cbaf1b881c772d",
-  "len": 69960,
-  "els": 1320,
+  "h": "386a9e1360533b89",
+  "len": 70919,
+  "els": 1338,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.50.1 August 28, 2026 Written on screen, not on paper FIX Build the Book said to write the scene on "
+  "text": "✕ Version history v1.51.0 August 28, 2026 The first film is in NEW Start here: how Burning Bush works. Four minutes on w"
  },
  "classic/modal/church": {
   "h": "cd4e47cc45a540a5",
@@ -376,6 +376,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "classic/modal/video-intro": {
+  "h": "b9be70be25a03e9c",
+  "len": 624,
+  "els": 8,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Start here: how Burning Bush works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
  },
  "classic/modal/book-image": {
   "h": "319048086e73bb96",
@@ -495,13 +504,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "illumined/learn/path": {
-  "h": "61042bd2b01cae21",
-  "len": 4371,
-  "els": 97,
-  "buttons": 39,
+  "h": "ace9780735159a85",
+  "len": 4567,
+  "els": 102,
+  "buttons": 40,
   "svgs": 0,
   "imgs": 0,
-  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ "
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start here: how Burning Bush works 4 minutes · start he"
  },
  "illumined/verse/hub": {
   "h": "ba9cd71cebc2e3f6",
@@ -747,8 +756,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "illumined/learn/build-the-book": {
-  "h": "4f9ffe68e9b25efb",
-  "len": 5476,
+  "h": "ef55209998ba8358",
+  "len": 5477,
   "els": 89,
   "buttons": 9,
   "svgs": 0,
@@ -756,8 +765,8 @@
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "illumined/learn/build-the-book-done": {
-  "h": "d6c3d02fbba82425",
-  "len": 5811,
+  "h": "2d9c04a22c34ec4f",
+  "len": 5812,
   "els": 93,
   "buttons": 9,
   "svgs": 0,
@@ -774,9 +783,9 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "a585aac00d9619d8",
-  "len": 17732,
-  "els": 451,
+  "h": "4d20b67487f4719a",
+  "len": 17855,
+  "els": 455,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
@@ -837,13 +846,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "99cbaf1b881c772d",
-  "len": 69960,
-  "els": 1320,
+  "h": "386a9e1360533b89",
+  "len": 70919,
+  "els": 1338,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.50.1 August 28, 2026 Written on screen, not on paper FIX Build the Book said to write the scene on "
+  "text": "✕ Version history v1.51.0 August 28, 2026 The first film is in NEW Start here: how Burning Bush works. Four minutes on w"
  },
  "illumined/modal/church": {
   "h": "f01e94f78fe6d84e",
@@ -871,6 +880,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "illumined/modal/video-intro": {
+  "h": "b9be70be25a03e9c",
+  "len": 624,
+  "els": 8,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Start here: how Burning Bush works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
  },
  "illumined/modal/book-image": {
   "h": "319048086e73bb96",
@@ -990,13 +1008,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "glass/learn/path": {
-  "h": "61042bd2b01cae21",
-  "len": 4371,
-  "els": 97,
-  "buttons": 39,
+  "h": "ace9780735159a85",
+  "len": 4567,
+  "els": 102,
+  "buttons": 40,
   "svgs": 0,
   "imgs": 0,
-  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ "
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start here: how Burning Bush works 4 minutes · start he"
  },
  "glass/verse/hub": {
   "h": "ba9cd71cebc2e3f6",
@@ -1242,8 +1260,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "glass/learn/build-the-book": {
-  "h": "4f9ffe68e9b25efb",
-  "len": 5476,
+  "h": "ef55209998ba8358",
+  "len": 5477,
   "els": 89,
   "buttons": 9,
   "svgs": 0,
@@ -1251,8 +1269,8 @@
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "glass/learn/build-the-book-done": {
-  "h": "d6c3d02fbba82425",
-  "len": 5811,
+  "h": "2d9c04a22c34ec4f",
+  "len": 5812,
   "els": 93,
   "buttons": 9,
   "svgs": 0,
@@ -1269,9 +1287,9 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "2127be8cd33e97e6",
-  "len": 17730,
-  "els": 451,
+  "h": "88e82dab469c5d7b",
+  "len": 17853,
+  "els": 455,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
@@ -1332,13 +1350,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "99cbaf1b881c772d",
-  "len": 69960,
-  "els": 1320,
+  "h": "386a9e1360533b89",
+  "len": 70919,
+  "els": 1338,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.50.1 August 28, 2026 Written on screen, not on paper FIX Build the Book said to write the scene on "
+  "text": "✕ Version history v1.51.0 August 28, 2026 The first film is in NEW Start here: how Burning Bush works. Four minutes on w"
  },
  "glass/modal/church": {
   "h": "c52148b126053ab1",
@@ -1366,6 +1384,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "glass/modal/video-intro": {
+  "h": "b9be70be25a03e9c",
+  "len": 624,
+  "els": 8,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Start here: how Burning Bush works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
  },
  "glass/modal/book-image": {
   "h": "319048086e73bb96",
@@ -1485,13 +1512,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "quest/learn/path": {
-  "h": "3428a05b12c11954",
-  "len": 5215,
-  "els": 112,
-  "buttons": 40,
+  "h": "312b85e60ef12dae",
+  "len": 5411,
+  "els": 117,
+  "buttons": 41,
   "svgs": 1,
   "imgs": 0,
-  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ "
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start here: how Burning Bush works 4 minutes · start he"
  },
  "quest/verse/hub": {
   "h": "ba9cd71cebc2e3f6",
@@ -1737,8 +1764,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "quest/learn/build-the-book": {
-  "h": "4f9ffe68e9b25efb",
-  "len": 5476,
+  "h": "ef55209998ba8358",
+  "len": 5477,
   "els": 89,
   "buttons": 9,
   "svgs": 0,
@@ -1746,8 +1773,8 @@
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "quest/learn/build-the-book-done": {
-  "h": "d6c3d02fbba82425",
-  "len": 5811,
+  "h": "2d9c04a22c34ec4f",
+  "len": 5812,
   "els": 93,
   "buttons": 9,
   "svgs": 0,
@@ -1764,9 +1791,9 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "1e61ff36e02dbf82",
-  "len": 17732,
-  "els": 451,
+  "h": "cf60b82431d71cf7",
+  "len": 17855,
+  "els": 455,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
@@ -1827,13 +1854,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "99cbaf1b881c772d",
-  "len": 69960,
-  "els": 1320,
+  "h": "386a9e1360533b89",
+  "len": 70919,
+  "els": 1338,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.50.1 August 28, 2026 Written on screen, not on paper FIX Build the Book said to write the scene on "
+  "text": "✕ Version history v1.51.0 August 28, 2026 The first film is in NEW Start here: how Burning Bush works. Four minutes on w"
  },
  "quest/modal/church": {
   "h": "3eb46251f349a19d",
@@ -1861,6 +1888,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "quest/modal/video-intro": {
+  "h": "b9be70be25a03e9c",
+  "len": 624,
+  "els": 8,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Start here: how Burning Bush works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
  },
  "quest/modal/book-image": {
   "h": "319048086e73bb96",
@@ -1980,13 +2016,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "buddy/learn/path": {
-  "h": "d8e801bde1d780c7",
-  "len": 5034,
-  "els": 106,
-  "buttons": 40,
+  "h": "68639cb4e34fc13b",
+  "len": 5230,
+  "els": 111,
+  "buttons": 41,
   "svgs": 1,
   "imgs": 0,
-  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ "
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start here: how Burning Bush works 4 minutes · start he"
  },
  "buddy/verse/hub": {
   "h": "ba9cd71cebc2e3f6",
@@ -2232,8 +2268,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "buddy/learn/build-the-book": {
-  "h": "4f9ffe68e9b25efb",
-  "len": 5476,
+  "h": "ef55209998ba8358",
+  "len": 5477,
   "els": 89,
   "buttons": 9,
   "svgs": 0,
@@ -2241,8 +2277,8 @@
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "buddy/learn/build-the-book-done": {
-  "h": "d6c3d02fbba82425",
-  "len": 5811,
+  "h": "2d9c04a22c34ec4f",
+  "len": 5812,
   "els": 93,
   "buttons": 9,
   "svgs": 0,
@@ -2259,9 +2295,9 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "71e6de87a933d91a",
-  "len": 17728,
-  "els": 451,
+  "h": "eb2cbcdcc653caba",
+  "len": 17851,
+  "els": 455,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
@@ -2322,13 +2358,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "99cbaf1b881c772d",
-  "len": 69960,
-  "els": 1320,
+  "h": "386a9e1360533b89",
+  "len": 70919,
+  "els": 1338,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.50.1 August 28, 2026 Written on screen, not on paper FIX Build the Book said to write the scene on "
+  "text": "✕ Version history v1.51.0 August 28, 2026 The first film is in NEW Start here: how Burning Bush works. Four minutes on w"
  },
  "buddy/modal/church": {
   "h": "8ddd1942b18689dd",
@@ -2356,6 +2392,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "buddy/modal/video-intro": {
+  "h": "b9be70be25a03e9c",
+  "len": 624,
+  "els": 8,
+  "buttons": 2,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "Start here: how Burning Bush works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
  },
  "buddy/modal/book-image": {
   "h": "319048086e73bb96",
