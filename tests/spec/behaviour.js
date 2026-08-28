@@ -1772,6 +1772,107 @@ const DAY = 86400000;
   ok((thumbs.chosen || '').includes('pegs/words/'), '…and a chosen word’s own picture once one is picked');
   await $(() => { delete Prog.customPeg[7]; saveProg(); buildNumGrid(); });
 
+  describe('Build the Book: three pictures, one scene', () => { });
+  const bbData = await $(() => {
+    const gaps = [], thin = [], dupes = [];
+    for (let n = 1; n <= 66; n++) {
+      const w = bookWordOptions(n), r = numRefOptions(n);
+      if (!w.length || !r.length) gaps.push(n);
+      if (w.length < 4 || r.length < 3) thin.push(n);
+      if (new Set(w).size !== w.length || new Set(r).size !== r.length) dupes.push(n);
+    }
+    return {
+      gaps: gaps.length, thin: thin.length, dupes: dupes.length,
+      words: Object.keys(BOOK_WORDS).length, refs: Object.keys(NUM_REFS).length,
+      // the two examples the lesson itself promises
+      nehemiah: bookWordOptions(16).some(o => /knee.high/i.test(o)),
+      exodus: bookWordOptions(2).some(o => /exit sign/i.test(o)),
+      sixteen: numRefOptions(16).some(o => /licence|license/i.test(o)),
+      twelve: numRefOptions(12).some(o => /dozen eggs/i.test(o)),
+      fiftyThree: numRefOptions(53).some(o => /NFL/i.test(o)),
+      fiftySix: numRefOptions(56).some(o => /Declaration/i.test(o)),
+    };
+  });
+  is(bbData.words, 66, 'a list of name pictures for every book');
+  is(bbData.refs, 66, '…and a list of number pictures for every book number');
+  is(bbData.gaps, 0, 'no book is left with an empty dropdown');
+  is(bbData.thin, 0, '…and none of them is a token list of one or two');
+  is(bbData.dupes, 0, 'no option is offered twice in the same list');
+  ok(bbData.nehemiah && bbData.exodus, 'the two examples the lesson names are actually offered');
+  ok(bbData.sixteen && bbData.twelve, '…as are the number examples, 16 and 12');
+  ok(bbData.fiftyThree && bbData.fiftySix, '…and the ones that belong to that number alone: 53 and 56');
+
+  const bbCard = await $(() => {
+    delete Prog.bookWord[16]; delete Prog.numRef[16]; saveProg();
+    show('verse'); startAdhocLearn(16, true, () => { });
+    const empty = { sent: el('bbSent').style.display, script: el('bbScript').style.display };
+    const opts = [...el('bbWord').options].map(o => o.value);
+    Prog.bookWord[16] = 'knee-high socks'; Prog.numRef[16] = "a driver's licence"; saveProg();
+    renderAdhoc();
+    const s = el('bbSent');
+    return {
+      empty,
+      hasOwn: opts.includes('__own'),
+      example: /Example · image → book/.test(el('verse').textContent),
+      shown: s.style.display,
+      text: s.textContent,
+      scriptHidden: el('bbScript').style.display,
+      coded: el('verse').textContent.includes('The code picks this one'),
+    };
+  });
+  is(bbCard.empty.sent, 'none', 'no sentence until both pictures are chosen');
+  is(bbCard.empty.script, 'block', '…and the instructions are open while there is still a choice to make');
+  ok(bbCard.hasOwn, 'every dropdown offers "write my own"');
+  no(bbCard.example, 'the ready-made example scene is gone from the book card');
+  is(bbCard.shown, 'block', 'choosing both raises the sentence');
+  ok(/knee-high socks/.test(bbCard.text), '…naming the picture for the book');
+  ok(/driver/.test(bbCard.text), '…the picture for the number');
+  ok(/Tissue/.test(bbCard.text), '…and the coded image, all three');
+  ok(/write it out by hand/i.test(bbCard.text), '…and it insists the scene is written by hand');
+  is(bbCard.scriptHidden, 'none', 'the instructions fold away once both are chosen');
+  ok(bbCard.coded, 'the third picture is stated as the code\u2019s, not a choice');
+
+  const bbOwn = await $(() => {
+    Prog.bookWord[16] = 'a kneecap the size of a house'; saveProg();
+    renderAdhoc();
+    const sel = el('bbWord');
+    return { value: sel.value, kept: [...sel.options].some(o => o.value === 'a kneecap the size of a house' && o.selected) };
+  });
+  ok(bbOwn.kept, 'a word of your own keeps its place in the dropdown');
+  is(bbOwn.value, 'a kneecap the size of a house', '…and stays selected across a re-render');
+
+  const tidy = await $(() => ({
+    cap: capAfterPunct('a sock stomps the wall. it shatters! then a licence floats down.'),
+    capNl: capAfterPunct('one line here\ntwo starts lower'),
+    keys: markKeyWords('A knee-high socs waves a drivers licance at the tisue box.',
+      ['knee-high socks', "a driver's licence", 'tissue']),
+    short: markKeyWords('The sea was calm and the pen was dry.', ['a green pea']),
+    none: markKeyWords('Nothing here matches at all.', []),
+    stop: markKeyWords('The wall and the box.', ['the wall of a box']),
+  }));
+  is(tidy.cap, 'A sock stomps the wall. It shatters! Then a licence floats down.', 'capitals land after every full stop');
+  is(tidy.capNl, 'One line here\nTwo starts lower', '…and at the start of a new line');
+  ok(/KNEE-HIGH/.test(tidy.keys), 'a key image is set in capitals');
+  ok(/SOCKS/.test(tidy.keys), '…with a one letter slip corrected on the way');
+  ok(/LICENCE/.test(tidy.keys) && /DRIVER/.test(tidy.keys), '…across a phrase of several words');
+  ok(/TISSUE/.test(tidy.keys), '…including the coded image');
+  is(tidy.short, 'The sea was calm and the pen was dry.', 'a three letter key never rewrites a word that merely rhymes');
+  is(tidy.none, 'Nothing here matches at all.', 'no keys means no changes');
+  is(tidy.stop, 'The WALL and the BOX.', 'the little words of a phrase are left alone');
+
+  const bbSave = await $(() => {
+    const p = migrateProg({ bookWord: { 16: 'knee-high socks' } });
+    const m = mergeProg({ bookWord: { 1: 'a genie' }, numRef: {} }, { bookWord: { 2: 'an exit sign' }, numRef: { 2: 'a bicycle' } });
+    return {
+      migrated: typeof p.bookWord === 'object' && typeof p.numRef === 'object',
+      kept: p.bookWord[16],
+      merged: (m.bookWord[1] || '') + '|' + (m.bookWord[2] || '') + '|' + (m.numRef[2] || ''),
+    };
+  });
+  ok(bbSave.migrated, 'an older profile gains both stores rather than crashing');
+  is(bbSave.kept, 'knee-high socks', '…without losing a choice already made');
+  is(bbSave.merged, 'a genie|an exit sign|a bicycle', 'two devices merge their choices instead of one winning');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};

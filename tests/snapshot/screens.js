@@ -54,6 +54,10 @@ module.exports = [
   { name: 'stories/section', sel: '#storySecModal', go: () => { const u = UNITS.findIndex(U => U.story); Billing.grant(); openStorySection(u); } },
   // a story now opens on the verse scene screen, so that is where it is captured
   { name: 'stories/lesson', sel: '#verse', go: () => { const u = UNITS.findIndex(U => U.story); startStoryLesson(UNITS[u].skills[0], 'stories', () => { }); } },
+  // Build the Book, both ways round: nothing chosen yet (instructions open, no sentence), and
+  // both pictures chosen (instructions folded, the sentence showing).
+  { name: 'learn/build-the-book', sel: '#verse', go: () => { delete Prog.bookWord[16]; delete Prog.numRef[16]; saveProg(); show('verse'); startAdhocLearn(16, true, () => { }); } },
+  { name: 'learn/build-the-book-done', sel: '#verse', go: () => { Prog.bookWord[16] = 'knee-high socks'; Prog.numRef[16] = "a driver's licence"; saveProg(); show('verse'); startAdhocLearn(16, true, () => { }); } },
   { name: 'reference/foundations', sel: '#foundations', go: () => { show('foundations'); buildNumGrid(); buildBookTable(); } },
 
   // ---- modals ----

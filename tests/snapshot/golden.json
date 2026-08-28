@@ -251,6 +251,24 @@
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
+ "classic/learn/build-the-book": {
+  "h": "160a18f8b886a5da",
+  "len": 5474,
+  "els": 89,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 6,
+  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+ },
+ "classic/learn/build-the-book-done": {
+  "h": "cc5755c84efed9c8",
+  "len": 5800,
+  "els": 93,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 6,
+  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+ },
  "classic/reference/foundations": {
   "h": "ec29e14be344e033",
   "len": 253383,
@@ -261,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "225ac581fcef66eb",
+  "h": "90800435deba7cec",
   "len": 18525,
   "els": 459,
   "buttons": 45,
@@ -324,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "460d633292a90746",
-  "len": 67679,
-  "els": 1282,
+  "h": "5a99bfef4144e150",
+  "len": 69476,
+  "els": 1311,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.49.0 August 28, 2026 Badges worth chasing NEW Verses by Heart is a badge section of its own, and it"
+  "text": "✕ Version history v1.50.0 August 28, 2026 Build the Book NEW Every book is now built from three pictures, not one. A pic"
  },
  "classic/modal/church": {
   "h": "cd4e47cc45a540a5",
@@ -728,6 +746,24 @@
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
+ "illumined/learn/build-the-book": {
+  "h": "160a18f8b886a5da",
+  "len": 5474,
+  "els": 89,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 6,
+  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+ },
+ "illumined/learn/build-the-book-done": {
+  "h": "cc5755c84efed9c8",
+  "len": 5800,
+  "els": 93,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 6,
+  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+ },
  "illumined/reference/foundations": {
   "h": "ec29e14be344e033",
   "len": 253383,
@@ -738,7 +774,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "878e2393c8dfecf6",
+  "h": "58f2761ad4868eef",
   "len": 17732,
   "els": 451,
   "buttons": 43,
@@ -801,13 +837,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "460d633292a90746",
-  "len": 67679,
-  "els": 1282,
+  "h": "5a99bfef4144e150",
+  "len": 69476,
+  "els": 1311,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.49.0 August 28, 2026 Badges worth chasing NEW Verses by Heart is a badge section of its own, and it"
+  "text": "✕ Version history v1.50.0 August 28, 2026 Build the Book NEW Every book is now built from three pictures, not one. A pic"
  },
  "illumined/modal/church": {
   "h": "f01e94f78fe6d84e",
@@ -1205,6 +1241,24 @@
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
+ "glass/learn/build-the-book": {
+  "h": "160a18f8b886a5da",
+  "len": 5474,
+  "els": 89,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 6,
+  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+ },
+ "glass/learn/build-the-book-done": {
+  "h": "cc5755c84efed9c8",
+  "len": 5800,
+  "els": 93,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 6,
+  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+ },
  "glass/reference/foundations": {
   "h": "ec29e14be344e033",
   "len": 253383,
@@ -1215,7 +1269,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "fa50c220ff201cc4",
+  "h": "360db0fc6364c102",
   "len": 17730,
   "els": 451,
   "buttons": 43,
@@ -1278,13 +1332,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "460d633292a90746",
-  "len": 67679,
-  "els": 1282,
+  "h": "5a99bfef4144e150",
+  "len": 69476,
+  "els": 1311,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.49.0 August 28, 2026 Badges worth chasing NEW Verses by Heart is a badge section of its own, and it"
+  "text": "✕ Version history v1.50.0 August 28, 2026 Build the Book NEW Every book is now built from three pictures, not one. A pic"
  },
  "glass/modal/church": {
   "h": "c52148b126053ab1",
@@ -1682,6 +1736,24 @@
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
+ "quest/learn/build-the-book": {
+  "h": "160a18f8b886a5da",
+  "len": 5474,
+  "els": 89,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 6,
+  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+ },
+ "quest/learn/build-the-book-done": {
+  "h": "cc5755c84efed9c8",
+  "len": 5800,
+  "els": 93,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 6,
+  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+ },
  "quest/reference/foundations": {
   "h": "ec29e14be344e033",
   "len": 253383,
@@ -1692,7 +1764,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "eb475ee6d2adb6e2",
+  "h": "89fd04691a638a61",
   "len": 17732,
   "els": 451,
   "buttons": 43,
@@ -1755,13 +1827,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "460d633292a90746",
-  "len": 67679,
-  "els": 1282,
+  "h": "5a99bfef4144e150",
+  "len": 69476,
+  "els": 1311,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.49.0 August 28, 2026 Badges worth chasing NEW Verses by Heart is a badge section of its own, and it"
+  "text": "✕ Version history v1.50.0 August 28, 2026 Build the Book NEW Every book is now built from three pictures, not one. A pic"
  },
  "quest/modal/church": {
   "h": "3eb46251f349a19d",
@@ -2159,6 +2231,24 @@
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
+ "buddy/learn/build-the-book": {
+  "h": "160a18f8b886a5da",
+  "len": 5474,
+  "els": 89,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 6,
+  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+ },
+ "buddy/learn/build-the-book-done": {
+  "h": "cc5755c84efed9c8",
+  "len": 5800,
+  "els": 93,
+  "buttons": 9,
+  "svgs": 0,
+  "imgs": 6,
+  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+ },
  "buddy/reference/foundations": {
   "h": "ec29e14be344e033",
   "len": 253383,
@@ -2169,7 +2259,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "01de80877c2372dd",
+  "h": "e29d4bff1fd3a4f9",
   "len": 17728,
   "els": 451,
   "buttons": 43,
@@ -2232,13 +2322,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "460d633292a90746",
-  "len": 67679,
-  "els": 1282,
+  "h": "5a99bfef4144e150",
+  "len": 69476,
+  "els": 1311,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.49.0 August 28, 2026 Badges worth chasing NEW Verses by Heart is a badge section of its own, and it"
+  "text": "✕ Version history v1.50.0 August 28, 2026 Build the Book NEW Every book is now built from three pictures, not one. A pic"
  },
  "buddy/modal/church": {
   "h": "8ddd1942b18689dd",
