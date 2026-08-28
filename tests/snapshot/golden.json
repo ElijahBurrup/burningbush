@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "dfa61e029b861252",
+  "h": "448a61ae4feaedcb",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "e25bee6531cc88dd",
-  "len": 75482,
-  "els": 1409,
+  "h": "f74e60d536e9b7ab",
+  "len": 75961,
+  "els": 1418,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.53.1 August 28, 2026 A live text that recovers on its own FIX If the New Living could not be reache"
+  "text": "✕ Version history v1.53.2 August 28, 2026 No chapter asked for twice FIX The New Living asked for the same chapter twice"
  },
  "classic/modal/church": {
   "h": "cd4e47cc45a540a5",
@@ -378,7 +378,7 @@
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
  },
  "classic/modal/translations": {
-  "h": "41bf99d20b6053e3",
+  "h": "8b5dcfee8a8ce050",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "c7636777f5280842",
+  "h": "636162bc6d90e3d4",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "e25bee6531cc88dd",
-  "len": 75482,
-  "els": 1409,
+  "h": "f74e60d536e9b7ab",
+  "len": 75961,
+  "els": 1418,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.53.1 August 28, 2026 A live text that recovers on its own FIX If the New Living could not be reache"
+  "text": "✕ Version history v1.53.2 August 28, 2026 No chapter asked for twice FIX The New Living asked for the same chapter twice"
  },
  "illumined/modal/church": {
   "h": "f01e94f78fe6d84e",
@@ -891,7 +891,7 @@
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
  },
  "illumined/modal/translations": {
-  "h": "c7636777f5280842",
+  "h": "636162bc6d90e3d4",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "d47aaf1d168aefd5",
+  "h": "c1382cb1ab919f46",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "e25bee6531cc88dd",
-  "len": 75482,
-  "els": 1409,
+  "h": "f74e60d536e9b7ab",
+  "len": 75961,
+  "els": 1418,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.53.1 August 28, 2026 A live text that recovers on its own FIX If the New Living could not be reache"
+  "text": "✕ Version history v1.53.2 August 28, 2026 No chapter asked for twice FIX The New Living asked for the same chapter twice"
  },
  "glass/modal/church": {
   "h": "c52148b126053ab1",
@@ -1404,7 +1404,7 @@
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
  },
  "glass/modal/translations": {
-  "h": "d47aaf1d168aefd5",
+  "h": "c1382cb1ab919f46",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "14ebabc94645ac9c",
+  "h": "7a7e22da09b0b918",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "e25bee6531cc88dd",
-  "len": 75482,
-  "els": 1409,
+  "h": "f74e60d536e9b7ab",
+  "len": 75961,
+  "els": 1418,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.53.1 August 28, 2026 A live text that recovers on its own FIX If the New Living could not be reache"
+  "text": "✕ Version history v1.53.2 August 28, 2026 No chapter asked for twice FIX The New Living asked for the same chapter twice"
  },
  "quest/modal/church": {
   "h": "3eb46251f349a19d",
@@ -1917,7 +1917,7 @@
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
  },
  "quest/modal/translations": {
-  "h": "14ebabc94645ac9c",
+  "h": "7a7e22da09b0b918",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "04c85b533522239c",
+  "h": "af80273d5cb1c89b",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "e25bee6531cc88dd",
-  "len": 75482,
-  "els": 1409,
+  "h": "f74e60d536e9b7ab",
+  "len": 75961,
+  "els": 1418,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.53.1 August 28, 2026 A live text that recovers on its own FIX If the New Living could not be reache"
+  "text": "✕ Version history v1.53.2 August 28, 2026 No chapter asked for twice FIX The New Living asked for the same chapter twice"
  },
  "buddy/modal/church": {
   "h": "8ddd1942b18689dd",
@@ -2430,7 +2430,7 @@
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
  },
  "buddy/modal/translations": {
-  "h": "04c85b533522239c",
+  "h": "af80273d5cb1c89b",
   "len": 17712,
   "els": 441,
   "buttons": 40,
