@@ -28,9 +28,9 @@ const RULES = [
   ['href="fonts/fonts.css"', 'href="/burningbush/fonts/fonts.css"', 1],
   ['href="manifest.webmanifest"', 'href="/burningbush/manifest.webmanifest"', 1],
   ['href="images/', 'href="/burningbush/images/', 2],
-  ['src="images/', 'src="/burningbush/images/', 3],   // +1: the book-image picker's default-icon option
-  ['`images/books/', '`/burningbush/images/books/', 2],   // +1: images/books/alt, the chosen book picture
-  ['`images/pegs/', '`/burningbush/images/pegs/', 1],
+  ['src="images/', 'src="/burningbush/images/', 4],   // +1 picker default, +1 the fallback when a chosen book image will not load
+  ['`images/books/', '`/burningbush/images/books/', 1],   // now only images/books/alt: the default icon moved to a plain src= above
+  ['`images/pegs/', '`/burningbush/images/pegs/', 3],   // +2 the tile thumbnail (chosen word, then the default)
   // fetched by absolute path: a relative one would resolve to /sw.js against the trailing-slash-less URL
   ['register("sw.js")', 'register("/burningbush/sw.js")', 1],
   ['one("strongs.js")', 'one("/burningbush/strongs.js")', 1],

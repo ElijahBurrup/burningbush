@@ -18,40 +18,40 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 more to reach today's goal 🔥 4 🧊 2 Spac"
  },
  "classic/verse/suggested": {
-  "h": "425687b4f3b1b039",
-  "len": 8598,
+  "h": "40da0dd103c31523",
+  "len": 8599,
   "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · lea"
+  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · le"
  },
  "classic/verse/topics": {
-  "h": "28976374319f240c",
-  "len": 4686,
+  "h": "8956a562840f7bff",
+  "len": 4687,
   "els": 121,
   "buttons": 23,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in reac"
+  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
  },
  "classic/verse/memorized": {
-  "h": "903f4d660b7caf7c",
-  "len": 2459,
+  "h": "5e03ea4e2e6987e8",
+  "len": 2460,
   "els": 66,
   "buttons": 5,
   "svgs": 1,
   "imgs": 0,
-  "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
+  "text": "← Library 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By he"
  },
  "classic/verse/saved": {
-  "h": "7df260e1fd1a7335",
-  "len": 653,
+  "h": "6ea77b06363669a9",
+  "len": 654,
   "els": 15,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are r"
+  "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "classic/wizard/visual": {
   "h": "0d60c977e55ce323",
@@ -63,10 +63,10 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy “ Seek y"
  },
  "classic/wizard/scene": {
-  "h": "814aad2387b29099",
-  "len": 3495,
-  "els": 63,
-  "buttons": 6,
+  "h": "7a585a4758f47324",
+  "len": 3354,
+  "els": 60,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
@@ -243,27 +243,27 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "classic/stories/lesson": {
-  "h": "cb8670acca945213",
-  "len": 3334,
-  "els": 58,
-  "buttons": 6,
+  "h": "0a91da4f1f4e55ea",
+  "len": 3193,
+  "els": 55,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "classic/reference/foundations": {
-  "h": "1a615a15668a1c7f",
-  "len": 233955,
-  "els": 4655,
+  "h": "ec29e14be344e033",
+  "len": 253383,
+  "els": 4831,
   "buttons": 455,
   "svgs": 0,
-  "imgs": 693,
+  "imgs": 869,
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "3c177a2131434c64",
-  "len": 15768,
-  "els": 370,
+  "h": "225ac581fcef66eb",
+  "len": 18525,
+  "els": 459,
   "buttons": 45,
   "svgs": 0,
   "imgs": 0,
@@ -324,13 +324,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "4e58d5896930003f",
-  "len": 64972,
-  "els": 1236,
+  "h": "460d633292a90746",
+  "len": 67679,
+  "els": 1282,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.47.0 August 28, 2026 Plainer words FIX The long dashes are gone from the writing. Every one of them"
+  "text": "✕ Version history v1.49.0 August 28, 2026 Badges worth chasing NEW Verses by Heart is a badge section of its own, and it"
  },
  "classic/modal/church": {
   "h": "cd4e47cc45a540a5",
@@ -369,13 +369,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "classic/verse/videos": {
-  "h": "75cb9ec5498a7d9d",
-  "len": 1099,
+  "h": "32ff00fd55bbdd5d",
+  "len": 1100,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced"
  },
  "classic/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -495,40 +495,40 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 🧊 2 Spaced Repetition "
  },
  "illumined/verse/suggested": {
-  "h": "425687b4f3b1b039",
-  "len": 8598,
+  "h": "40da0dd103c31523",
+  "len": 8599,
   "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · lea"
+  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · le"
  },
  "illumined/verse/topics": {
-  "h": "28976374319f240c",
-  "len": 4686,
+  "h": "8956a562840f7bff",
+  "len": 4687,
   "els": 121,
   "buttons": 23,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in reac"
+  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
  },
  "illumined/verse/memorized": {
-  "h": "903f4d660b7caf7c",
-  "len": 2459,
+  "h": "5e03ea4e2e6987e8",
+  "len": 2460,
   "els": 66,
   "buttons": 5,
   "svgs": 1,
   "imgs": 0,
-  "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
+  "text": "← Library 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By he"
  },
  "illumined/verse/saved": {
-  "h": "7df260e1fd1a7335",
-  "len": 653,
+  "h": "6ea77b06363669a9",
+  "len": 654,
   "els": 15,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are r"
+  "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "illumined/wizard/visual": {
   "h": "0d60c977e55ce323",
@@ -540,10 +540,10 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy “ Seek y"
  },
  "illumined/wizard/scene": {
-  "h": "814aad2387b29099",
-  "len": 3495,
-  "els": 63,
-  "buttons": 6,
+  "h": "7a585a4758f47324",
+  "len": 3354,
+  "els": 60,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
@@ -720,27 +720,27 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "illumined/stories/lesson": {
-  "h": "cb8670acca945213",
-  "len": 3334,
-  "els": 58,
-  "buttons": 6,
+  "h": "0a91da4f1f4e55ea",
+  "len": 3193,
+  "els": 55,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "illumined/reference/foundations": {
-  "h": "1a615a15668a1c7f",
-  "len": 233955,
-  "els": 4655,
+  "h": "ec29e14be344e033",
+  "len": 253383,
+  "els": 4831,
   "buttons": 455,
   "svgs": 0,
-  "imgs": 693,
+  "imgs": 869,
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "197dbab500e77991",
-  "len": 14975,
-  "els": 362,
+  "h": "878e2393c8dfecf6",
+  "len": 17732,
+  "els": 451,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
@@ -801,13 +801,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "4e58d5896930003f",
-  "len": 64972,
-  "els": 1236,
+  "h": "460d633292a90746",
+  "len": 67679,
+  "els": 1282,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.47.0 August 28, 2026 Plainer words FIX The long dashes are gone from the writing. Every one of them"
+  "text": "✕ Version history v1.49.0 August 28, 2026 Badges worth chasing NEW Verses by Heart is a badge section of its own, and it"
  },
  "illumined/modal/church": {
   "h": "f01e94f78fe6d84e",
@@ -846,13 +846,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "illumined/verse/videos": {
-  "h": "75cb9ec5498a7d9d",
-  "len": 1099,
+  "h": "32ff00fd55bbdd5d",
+  "len": 1100,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced"
  },
  "illumined/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -972,40 +972,40 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 🧊 2 Spaced Repetition "
  },
  "glass/verse/suggested": {
-  "h": "425687b4f3b1b039",
-  "len": 8598,
+  "h": "40da0dd103c31523",
+  "len": 8599,
   "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · lea"
+  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · le"
  },
  "glass/verse/topics": {
-  "h": "28976374319f240c",
-  "len": 4686,
+  "h": "8956a562840f7bff",
+  "len": 4687,
   "els": 121,
   "buttons": 23,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in reac"
+  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
  },
  "glass/verse/memorized": {
-  "h": "903f4d660b7caf7c",
-  "len": 2459,
+  "h": "5e03ea4e2e6987e8",
+  "len": 2460,
   "els": 66,
   "buttons": 5,
   "svgs": 1,
   "imgs": 0,
-  "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
+  "text": "← Library 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By he"
  },
  "glass/verse/saved": {
-  "h": "7df260e1fd1a7335",
-  "len": 653,
+  "h": "6ea77b06363669a9",
+  "len": 654,
   "els": 15,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are r"
+  "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "glass/wizard/visual": {
   "h": "0d60c977e55ce323",
@@ -1017,10 +1017,10 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy “ Seek y"
  },
  "glass/wizard/scene": {
-  "h": "814aad2387b29099",
-  "len": 3495,
-  "els": 63,
-  "buttons": 6,
+  "h": "7a585a4758f47324",
+  "len": 3354,
+  "els": 60,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
@@ -1197,27 +1197,27 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "glass/stories/lesson": {
-  "h": "cb8670acca945213",
-  "len": 3334,
-  "els": 58,
-  "buttons": 6,
+  "h": "0a91da4f1f4e55ea",
+  "len": 3193,
+  "els": 55,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "glass/reference/foundations": {
-  "h": "1a615a15668a1c7f",
-  "len": 233955,
-  "els": 4655,
+  "h": "ec29e14be344e033",
+  "len": 253383,
+  "els": 4831,
   "buttons": 455,
   "svgs": 0,
-  "imgs": 693,
+  "imgs": 869,
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "cbf3f778aaf6d7fe",
-  "len": 14973,
-  "els": 362,
+  "h": "fa50c220ff201cc4",
+  "len": 17730,
+  "els": 451,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
@@ -1278,13 +1278,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "4e58d5896930003f",
-  "len": 64972,
-  "els": 1236,
+  "h": "460d633292a90746",
+  "len": 67679,
+  "els": 1282,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.47.0 August 28, 2026 Plainer words FIX The long dashes are gone from the writing. Every one of them"
+  "text": "✕ Version history v1.49.0 August 28, 2026 Badges worth chasing NEW Verses by Heart is a badge section of its own, and it"
  },
  "glass/modal/church": {
   "h": "c52148b126053ab1",
@@ -1323,13 +1323,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "glass/verse/videos": {
-  "h": "75cb9ec5498a7d9d",
-  "len": 1099,
+  "h": "32ff00fd55bbdd5d",
+  "len": 1100,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced"
  },
  "glass/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -1449,40 +1449,40 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 🧊 2 Spaced Repetition "
  },
  "quest/verse/suggested": {
-  "h": "425687b4f3b1b039",
-  "len": 8598,
+  "h": "40da0dd103c31523",
+  "len": 8599,
   "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · lea"
+  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · le"
  },
  "quest/verse/topics": {
-  "h": "28976374319f240c",
-  "len": 4686,
+  "h": "8956a562840f7bff",
+  "len": 4687,
   "els": 121,
   "buttons": 23,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in reac"
+  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
  },
  "quest/verse/memorized": {
-  "h": "903f4d660b7caf7c",
-  "len": 2459,
+  "h": "5e03ea4e2e6987e8",
+  "len": 2460,
   "els": 66,
   "buttons": 5,
   "svgs": 1,
   "imgs": 0,
-  "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
+  "text": "← Library 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By he"
  },
  "quest/verse/saved": {
-  "h": "7df260e1fd1a7335",
-  "len": 653,
+  "h": "6ea77b06363669a9",
+  "len": 654,
   "els": 15,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are r"
+  "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "quest/wizard/visual": {
   "h": "0d60c977e55ce323",
@@ -1494,10 +1494,10 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy “ Seek y"
  },
  "quest/wizard/scene": {
-  "h": "814aad2387b29099",
-  "len": 3495,
-  "els": 63,
-  "buttons": 6,
+  "h": "7a585a4758f47324",
+  "len": 3354,
+  "els": 60,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
@@ -1674,27 +1674,27 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "quest/stories/lesson": {
-  "h": "cb8670acca945213",
-  "len": 3334,
-  "els": 58,
-  "buttons": 6,
+  "h": "0a91da4f1f4e55ea",
+  "len": 3193,
+  "els": 55,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "quest/reference/foundations": {
-  "h": "1a615a15668a1c7f",
-  "len": 233955,
-  "els": 4655,
+  "h": "ec29e14be344e033",
+  "len": 253383,
+  "els": 4831,
   "buttons": 455,
   "svgs": 0,
-  "imgs": 693,
+  "imgs": 869,
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "1153a8ebec29d92b",
-  "len": 14975,
-  "els": 362,
+  "h": "eb475ee6d2adb6e2",
+  "len": 17732,
+  "els": 451,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
@@ -1755,13 +1755,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "4e58d5896930003f",
-  "len": 64972,
-  "els": 1236,
+  "h": "460d633292a90746",
+  "len": 67679,
+  "els": 1282,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.47.0 August 28, 2026 Plainer words FIX The long dashes are gone from the writing. Every one of them"
+  "text": "✕ Version history v1.49.0 August 28, 2026 Badges worth chasing NEW Verses by Heart is a badge section of its own, and it"
  },
  "quest/modal/church": {
   "h": "3eb46251f349a19d",
@@ -1800,13 +1800,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "quest/verse/videos": {
-  "h": "75cb9ec5498a7d9d",
-  "len": 1099,
+  "h": "32ff00fd55bbdd5d",
+  "len": 1100,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced"
  },
  "quest/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -1926,40 +1926,40 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 🧊 2 Spaced Repetition "
  },
  "buddy/verse/suggested": {
-  "h": "425687b4f3b1b039",
-  "len": 8598,
+  "h": "40da0dd103c31523",
+  "len": 8599,
   "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · lea"
+  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · le"
  },
  "buddy/verse/topics": {
-  "h": "28976374319f240c",
-  "len": 4686,
+  "h": "8956a562840f7bff",
+  "len": 4687,
   "els": 121,
   "buttons": 23,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in reac"
+  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
  },
  "buddy/verse/memorized": {
-  "h": "903f4d660b7caf7c",
-  "len": 2459,
+  "h": "5e03ea4e2e6987e8",
+  "len": 2460,
   "els": 66,
   "buttons": 5,
   "svgs": 1,
   "imgs": 0,
-  "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
+  "text": "← Library 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By he"
  },
  "buddy/verse/saved": {
-  "h": "7df260e1fd1a7335",
-  "len": 653,
+  "h": "6ea77b06363669a9",
+  "len": 654,
   "els": 15,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are r"
+  "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "buddy/wizard/visual": {
   "h": "0d60c977e55ce323",
@@ -1971,10 +1971,10 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy “ Seek y"
  },
  "buddy/wizard/scene": {
-  "h": "814aad2387b29099",
-  "len": 3495,
-  "els": 63,
-  "buttons": 6,
+  "h": "7a585a4758f47324",
+  "len": 3354,
+  "els": 60,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
@@ -2151,27 +2151,27 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "buddy/stories/lesson": {
-  "h": "cb8670acca945213",
-  "len": 3334,
-  "els": 58,
-  "buttons": 6,
+  "h": "0a91da4f1f4e55ea",
+  "len": 3193,
+  "els": 55,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "buddy/reference/foundations": {
-  "h": "1a615a15668a1c7f",
-  "len": 233955,
-  "els": 4655,
+  "h": "ec29e14be344e033",
+  "len": 253383,
+  "els": 4831,
   "buttons": 455,
   "svgs": 0,
-  "imgs": 693,
+  "imgs": 869,
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "3b367bfc6d0f97e4",
-  "len": 14971,
-  "els": 362,
+  "h": "01de80877c2372dd",
+  "len": 17728,
+  "els": 451,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
@@ -2232,13 +2232,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "4e58d5896930003f",
-  "len": 64972,
-  "els": 1236,
+  "h": "460d633292a90746",
+  "len": 67679,
+  "els": 1282,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.47.0 August 28, 2026 Plainer words FIX The long dashes are gone from the writing. Every one of them"
+  "text": "✕ Version history v1.49.0 August 28, 2026 Badges worth chasing NEW Verses by Heart is a badge section of its own, and it"
  },
  "buddy/modal/church": {
   "h": "8ddd1942b18689dd",
@@ -2277,13 +2277,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "buddy/verse/videos": {
-  "h": "75cb9ec5498a7d9d",
-  "len": 1099,
+  "h": "32ff00fd55bbdd5d",
+  "len": 1100,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced"
  },
  "buddy/modal/learn-verses": {
   "h": "31893b97e5cae3f8",

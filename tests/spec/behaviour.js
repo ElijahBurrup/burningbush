@@ -1631,6 +1631,147 @@ const DAY = 86400000;
   ok(tapped.learned.trail, '...with its review trail on it');
   ok(tapped.learned.ref, '...for that very verse');
 
+  describe('a chosen picture follows the book everywhere', () => { });
+  const chosen = await $(() => {
+    const n = 19;                                   // Psalms
+    const opts = bookImageOptions(n).filter(w => BOOK_IMG_DRAWN.has(pegWordSlug(w)));
+    if (!opts.length) return { skipped: true };
+    const pick = opts[0];
+    Prog.customBookImg = { [n]: pick };
+    Prog.memorized = ['19:23:1']; Prog.verseStage = {}; saveProg();
+    const want = bookImgSrc(pick);
+    const has = html => html.indexOf(want) >= 0;
+
+    return {
+      skipped: false, pick, want,
+      // every renderer that draws a book icon
+      viaPegImg:        has(pegImg('book', n, bookName(n), false)),
+      viaPegImgBig:     has(pegImg('book', n, bookName(n), true)),
+      viaBookIcon:      has(bookImageIcon(n, true)),
+      onTheLesson:      has(teachCardBody('book', n)),
+      onTheBookTable:   (buildBookTable(), has(((el('booksBody')||{}).innerHTML)||'')),
+      // and a book with NO choice still gets its drawn icon
+      untouched:        pegImg('book', 40, bookName(40), false).indexOf('images/books/40.svg') >= 0,
+    };
+  });
+  ok(!chosen.skipped, 'Psalms has a drawn picture to choose');
+  ok(chosen.viaPegImg, 'the chosen picture is what pegImg draws for that book');
+  ok(chosen.viaPegImgBig, '...at either size');
+  ok(chosen.viaBookIcon, '...and through bookImageIcon, which now shares the one renderer');
+  ok(chosen.onTheLesson, '...it is on the lesson');
+  ok(chosen.onTheBookTable, '...and in the reference table, which used to show the original');
+  ok(chosen.untouched, 'a book you have not chosen a picture for still shows its drawn icon');
+
+  const inTests = await $(async () => {
+    const n = 19, k = '19:23:1';
+    const opts = bookImageOptions(n).filter(w => BOOK_IMG_DRAWN.has(pegWordSlug(w)));
+    Prog.customBookImg = { [n]: opts[0] };
+    Prog.memorized = [k]; Prog.verseStage = {}; Prog.verseSR = {}; saveProg();
+    const want = bookImgSrc(opts[0]);
+    const out = {};
+    // the Bible strip in book-image mode
+    try { Store.set('vv_bibleview', 'bookimg'); } catch (e) {}
+    show('journey'); renderJourney();
+    out.bibleStrip = el('journey').innerHTML.indexOf(want) >= 0;
+    try { Store.set('vv_bibleview', 'num'); } catch (e) {}
+    // the book screen header
+    renderBookScreen(n);
+    out.bookScreen = el('journey').innerHTML.indexOf(want) >= 0;
+    return out;
+  });
+  ok(inTests.bibleStrip, 'the Bible screen shows it when the strip is set to book images');
+  ok(inTests.bookScreen, '...and so does the book\'s own screen');
+
+  describe('hold to speak is out', () => { });
+  const mic = await $(() => {
+    const [b, c, v] = [19, 23, 1];
+    Prog.memorized = []; saveProg();
+    openVerseWizard(b, c, v, () => {});
+    // walk to the scene-writing step if the wizard exposes it directly
+    const anywhere = document.querySelector('.phone').innerHTML;
+    return { button: !!document.getElementById('wMic'),
+             cssStillThere: anywhere.indexOf('mic-btn') >= 0 ? 'markup' : 'none',
+             gone: typeof wireSceneMic === 'undefined' };
+  });
+  no(mic.button, 'the hold-to-speak button is gone from the scene screen');
+  ok(mic.gone, '...and its wiring taken out with it, rather than left pointing at a button that is not there');
+
+  describe('badges: located and by heart are two different achievements', () => { });
+  const badges = await $(() => {
+    // twelve verses built, three of them claimed and under the strict word-for-word test
+    Prog.memorized = ['43:3:16','43:11:35','19:23:1','19:119:11','40:5:9','45:8:28','50:4:13',
+                     '20:3:5','23:41:10','58:11:1','19:1:1','62:1:9'];
+    Prog.verseStage = { '43:3:16':'heart', '19:23:1':'heart', '50:4:13':'heart' };
+    Prog.palaces = []; Prog.badges = []; saveProg();
+    const cats = [...new Set(BADGES.map(b => b.cat))];
+    const heart = BADGES.filter(b => b.cat === 'Verses by Heart');
+    const located = BADGES.filter(b => b.cat === 'Verses Located');
+    const palaceNums = BADGES.filter(b => b.cat === 'Memory Palaces').map(b => +(String(b.sub).match(/[0-9]+/) || [0])[0]);
+    return {
+      firstCat: cats[0],
+      oldName: cats.includes('Verses Memorized'),
+      rungs: heart.length,
+      first: heart[0].n, last: heart[heart.length - 1].n,
+      heartEarned: heart.filter(b => b.have()).length,
+      locatedEarned: located.filter(b => b.have()).length,
+      counts: heartCount() + '/' + Prog.memorized.length,
+      nextHeart: (nextHeartBadge() || {}).n,
+      nextLocated: (nextBadge() || {}).n,
+      palaceTop: Math.max.apply(null, palaceNums),
+      stories: BADGES.filter(b => b.cat === 'Bible Stories').length,
+      idsUnique: new Set(BADGES.map(b => b.id)).size === BADGES.length,
+    };
+  });
+  is(badges.firstCat, 'Verses by Heart', 'by heart leads the badge list');
+  no(badges.oldName, '"Verses Memorized" is gone as a category name');
+  is(badges.rungs, 11, 'eleven rungs on the by-heart ladder');
+  is(badges.first, 1, '…from the first verse you hold');
+  is(badges.last, 250, '…to two hundred and fifty');
+  is(badges.counts, '3/12', 'the fixture holds three by heart out of twelve located');
+  is(badges.heartEarned, 2, '…earning two by-heart badges');
+  is(badges.locatedEarned, 6, '…and six located ones: one profile, two separate counts');
+  is(badges.nextHeart, 5, 'the next by-heart rung is named');
+  is(badges.nextLocated, 15, '…alongside the next located one');
+  ok(badges.palaceTop >= 50, 'palace badges run to fifty');
+  ok(badges.stories >= 11, 'the story ladder has rungs along the way to a hundred and fifty');
+  ok(badges.idsUnique, 'every badge id is unique, so none quietly overwrites another');
+
+  const parable = await $(() => {
+    const b = BADGES.find(x => x.name === 'Every Parable');
+    Prog.doneSkills = []; saveProg();
+    const before = b.have();
+    PARABLE_SECTIONS.forEach(t => { const r = sectionRange(t); for (let i = r[0]; i <= r[1]; i++) Prog.doneSkills.push('story:' + i); });
+    saveProg();
+    const after = b.have(), n = storiesLearned();
+    // the same number of stories, taken from the front of the collection instead
+    Prog.doneSkills = []; for (let i = 0; i < n; i++) Prog.doneSkills.push('story:' + i);
+    saveProg();
+    return { before, after, n, byCount: b.have(), sameCount: storiesLearned() === n };
+  });
+  no(parable.before, 'Every Parable is unearned with no stories done');
+  ok(parable.after, '…and earned by finishing the seven parable sections');
+  ok(parable.sameCount, 'the same number of stories done elsewhere in the collection');
+  no(parable.byCount, '…does NOT earn it: the badge counts the sections, not the total');
+
+  describe('the peg tiles carry their picture', () => { });
+  const thumbs = await $(() => {
+    delete Prog.customPeg[7]; saveProg(); buildNumGrid();
+    const t = document.querySelector('#numGrid .cellcard[data-n="7"] .pegthumb');
+    const dflt = t && t.getAttribute('src');
+    Prog.customPeg[7] = pegAlts(7)[0]; saveProg(); buildNumGrid();
+    const t2 = document.querySelector('#numGrid .cellcard[data-n="7"] .pegthumb');
+    return {
+      count: document.querySelectorAll('#numGrid .pegthumb').length,
+      dflt,
+      chosen: t2 && t2.getAttribute('src'),
+      word: Prog.customPeg[7],
+    };
+  });
+  is(thumbs.count, 176, 'every peg tile shows its number image without being opened');
+  ok((thumbs.dflt || '').endsWith('pegs/7.svg'), '…the drawn icon for that number by default');
+  ok((thumbs.chosen || '').includes('pegs/words/'), '…and a chosen word’s own picture once one is picked');
+  await $(() => { delete Prog.customPeg[7]; saveProg(); buildNumGrid(); });
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};

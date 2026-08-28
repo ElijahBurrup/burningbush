@@ -859,6 +859,11 @@
   td .k,td.k{color:var(--gold-ink);font-weight:700}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px}
   .cellcard{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:10px;cursor:pointer}
+  /* The picture is the thing being learned, so it belongs on the face of the tile, not one tap in.
+     It steps aside when the card opens, where the full-size image already is. */
+  .pegthumb{display:block;width:100%;height:46px;object-fit:contain;margin-bottom:6px;
+            filter:drop-shadow(0 2px 5px var(--shadow-soft))}
+  .cellcard.open .pegthumb{display:none}
   .cellcard .n{font-size:11px;color:var(--muted);font-weight:700}
   .cellcard .w{font-size:15px;color:var(--gold-ink);font-weight:800}
   .cellcard .s{font-size:10px;color:var(--muted)}
@@ -1820,8 +1825,21 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.47.0";
+const APP_VERSION="1.49.0";
 const CHANGELOG=[
+ {v:"1.49.0", d:"August 28, 2026", t:"Badges worth chasing", items:[
+   ["new","<b>Verses by Heart is a badge section of its own, and it leads.</b> Eleven rungs from your first held verse to two hundred and fifty. It counts only verses you have claimed and are being tested on word for word."],
+   ["chg","<b>Verses Memorized is now Verses Located</b>, which is what it always counted: every verse you have built. It was claiming credit for the harder thing."],
+   ["new","<b>Memory Palace badges run to fifty</b> — a city of rooms at 20, the cartographer at 30, the great court at 40, and fifty gates at the end."],
+   ["new","<b>Six more Bible Story badges</b>, spread along the way to 150: the patriarchs, kings and prophets, unto us a Son, the Word Pictures, the church begins, and all one hundred and fifty."],
+   ["fix","<b>Every Parable</b> now checks the parable sections by name rather than by a story number. Those sections have moved twice, and a number would quietly have started meaning something else."],
+   ["chg","Hold to speak and its wiring are fully removed, and the way back out of a Library page now says <b>Library</b> rather than Verses."]
+ ]},
+ {v:"1.48.0", d:"August 28, 2026", t:"Your pictures, everywhere", items:[
+   ["fix","<b>The picture you choose for a book now shows everywhere that book appears</b> — the lesson, the quizzes, the Bible strip and the reference table. It was only ever shown on the lesson card; every test still drew the original icon, so a book you had given your own picture looked like someone else's book the moment you were tested on it."],
+   ["chg","Number images already worked this way, and now both go through <b>one renderer</b>, so a picture chosen once cannot fail to appear somewhere."],
+   ["chg","<b>Hold to speak has been taken out for now.</b> It leaned on a browser feature that is unreliable on the phones people actually use, and a button that sometimes does nothing is worse than no button."]
+ ]},
  {v:"1.47.0", d:"August 28, 2026", t:"Plainer words", items:[
    ["chg","<b>The long dashes are gone from the writing.</b> Every one of them in the app has been replaced with the punctuation the sentence actually wanted: a full stop where it joined two thoughts, commas where it held a phrase apart, a middot where it was only separating a label."],
    ["chg","<b>Write it now</b> replaces Reveal all in word for word practice. Tapping a single blank already shows that word for two seconds, so revealing the whole verse only undid the exercise. The button takes you straight to writing it out whenever you are ready."],
@@ -2667,6 +2685,12 @@ function allVerses(){ return Object.values(_vm()); }
 function verseAt(k){ return _vm()[k]; }
 
 /* =================== IMAGE HELPERS (fallback to word/placeholder) =================== */
+// A tile-sized version of the number image, following a user's chosen word the same way pegImg does.
+function pegThumb(n){
+  const w=(typeof Prog!=="undefined" && Prog && Prog.customPeg) ? Prog.customPeg[n] : null;
+  const src = w ? `images/pegs/words/${pegWordSlug(w)}.svg` : `images/pegs/${n}.svg`;
+  return `<img class="pegthumb" src="${src}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`;
+}
 function pegImg(kind,n,word,big){
   // a user-chosen alternate image word — load its own drawn icon; fall back to the word as text if missing
   if(kind==="num" && typeof Prog!=="undefined" && Prog && Prog.customPeg && Prog.customPeg[n]){
@@ -2675,11 +2699,15 @@ function pegImg(kind,n,word,big){
     return `<img class="${c}" src="images/pegs/words/${slug}.svg" alt="${w}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="${ph}"><span>${w}</span></div>`;
   }
-  // The drawn book icon ALWAYS renders (every book has one). A user's own book-image words are shown
-  // as a caption beside the icon by the caller (teachCardBody) — they never replace the icon.
-  const src = kind==="book" ? `images/books/${n}.svg` : `images/pegs/${n}.svg`;
+  // A book the user has given their own picture shows THAT picture, everywhere a book icon appears:
+  // the lesson, the quiz, the Bible strip, the reference table. Book images used to be a caption
+  // beside the drawn icon rather than the icon itself, so a chosen one never reached the tests.
   const c = big ? "pegimg" : "pegimg-sm", ph = big ? "imgph" : "imgph-sm";
-  if(kind==="book") return `<img class="${c}" src="${src}" alt="${word}" onerror="this.style.display='none'">`;
+  if(kind==="book"){
+    const chosen=chosenBookImg(n, big);
+    return chosen || `<img class="${c}" src="images/books/${n}.svg" alt="${word}" onerror="this.style.display='none'">`;
+  }
+  const src = `images/pegs/${n}.svg`;
   return `<img class="${c}" src="${src}" alt="${word}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
     <div class="${ph}"><span>image coming</span></div>`;
 }
@@ -2779,12 +2807,15 @@ function bookImageOptions(n){ return BOOK_IMAGES[n] || []; }
 // The chosen picture has its own drawn icon under images/books/alt/. If the file is not there yet
 // the img hides itself and the default book icon shows through, so nothing ever renders blank.
 function bookImgSrc(word){ return `images/books/alt/${pegWordSlug(word)}.svg`; }
-function bookImageIcon(n, big){
+// The user's own picture for a book, or null if they have not chosen one (or it is not drawn yet).
+// Everything that draws a book icon goes through here, so a choice made once shows up everywhere.
+function chosenBookImg(n, big){
   const w=(Prog.customBookImg||{})[n];
+  if(!w || !BOOK_IMG_DRAWN.has(pegWordSlug(w))) return null;
   const c = big ? "pegimg" : "pegimg-sm";
-  if(!w || !BOOK_IMG_DRAWN.has(pegWordSlug(w))) return pegImg("book", n, bookName(n), big);
   return `<img class="${c}" src="${bookImgSrc(w)}" alt="${String(w).replace(/"/g,"&quot;")}" onerror="this.onerror=null;this.src='images/books/${n}.svg'">`;
 }
+function bookImageIcon(n, big){ return chosenBookImg(n, big) || pegImg("book", n, bookName(n), big); }
 // Choosing one is a single tap; choosing the drawn icon again is the way back to the default.
 function openBookImagePicker(n, after){
   const m=el("bookImgModal")||(()=>{ const d=document.createElement("div"); d.id="bookImgModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
@@ -5036,7 +5067,7 @@ function renderVerse(){
              <h2 style="font-size:19px;margin:8px 0 2px">Nothing set aside yet</h2>
              <p class="lead" style="margin:6px 0 0">Tap <b>Save · come back later</b> on any verse and it will wait for you here.</p></div>`;
     }
-    V.innerHTML=`<div class="navrow"><button class="btn sm ghost" id="vBack">← Verses</button></div><h2>${title}</h2>${body}`;
+    V.innerHTML=`<div class="navrow"><button class="btn sm ghost" id="vBack">← Library</button></div><h2>${title}</h2>${body}`;
     el("vBack").onclick=()=>{ vView="hub"; renderVerse(); document.querySelector(".content").scrollTop=0; };
     V.querySelectorAll("[data-topicopen]").forEach(b=>b.onclick=()=>{
       const ti=+b.dataset.topicopen;
@@ -7136,9 +7167,21 @@ function myVersesList(){
 /* =================== BADGES — biblical milestones across every discipline =================== */
 function palaceCount(){ return (Prog.palaces||[]).filter(Boolean).length; }
 function soundsDone(){ return Prog.doneSkills.includes("snd:0-4") && Prog.doneSkills.includes("snd:5-9"); }
-const vB=(n,icon,name,ref)=>({id:"v"+n, cat:"Verses Memorized", icon, name, sub:ref+` · ${n} verse${n>1?"s":""}`, have:()=>Prog.memorized.length>=n, n});
+// Two different achievements, and they were being counted as one. LOCATED is every verse you have
+// built — the old "Verses Memorized", renamed to say what it actually counts. BY HEART is the ones
+// you have claimed and are being tested on word for word, which is the harder thing, so it leads.
+const vB=(n,icon,name,ref)=>({id:"v"+n, cat:"Verses Located", icon, name, sub:ref+` · ${n} verse${n>1?"s":""}`, have:()=>Prog.memorized.length>=n, n});
+const hB=(n,icon,name,ref)=>({id:"h"+n, cat:"Verses by Heart", icon, name, sub:ref+` · ${n} by heart`, have:()=>heartCount()>=n, n});
 const BADGES=[
- // Verses memorized — many early, gaps widen
+ // Verses by heart — the hardest ladder in the app, so it comes first. heartCount() counts only
+ // verses claimed and under the strict word-for-word test, never ones merely located.
+ hB(1,"💛","First by Heart","the one you can say"), hB(3,"🕯️","Three Lights","held without the page"),
+ hB(5,"🪨","Five Stones","one for each finger"), hB(10,"📜","Ten by Heart","the commandments' number"),
+ hB(20,"🔥","Burning Within","Luke 24:32"), hB(35,"⚓","Anchored","Hebrews 6:19"),
+ hB(50,"🎺","Jubilee","the fiftieth year"), hB(75,"🌿","Deep Rooted","Colossians 2:7"),
+ hB(100,"🏔️","The Hundred","a hundred held fast"), hB(150,"🎶","The Whole Psalter","as many as the psalms"),
+ hB(250,"👑","Treasure of the Heart","Matthew 12:35"),
+ // Verses located — many early, gaps widen
  vB(1,"🌱","First Fruits","the first of the harvest"), vB(2,"🕊️","Two by Two","as into the ark"),
  vB(3,"🧵","Threefold Cord","Ecclesiastes 4:12"), vB(5,"🪨","Five Smooth Stones","1 Samuel 17"),
  vB(7,"🕯️","Sabbath Rest","the seventh day"), vB(10,"📜","The Ten Words","the commandments"),
@@ -7161,12 +7204,24 @@ const BADGES=[
  {id:"mp2", cat:"Memory Palaces", icon:"🏰", name:"Palace Builder", sub:"built 3 palaces", have:()=>palaceCount()>=3},
  {id:"mp3", cat:"Memory Palaces", icon:"🗝️", name:"Keeper of Rooms", sub:"built 7 palaces", have:()=>palaceCount()>=7},
  {id:"mp4", cat:"Memory Palaces", icon:"👑", name:"Palace Architect", sub:"built 12 palaces", have:()=>palaceCount()>=12},
+ {id:"mp5", cat:"Memory Palaces", icon:"🏙️", name:"A City of Rooms", sub:"built 20 palaces", have:()=>palaceCount()>=20},
+ {id:"mp6", cat:"Memory Palaces", icon:"🗺️", name:"The Cartographer", sub:"built 30 palaces", have:()=>palaceCount()>=30},
+ {id:"mp7", cat:"Memory Palaces", icon:"⛲", name:"The Great Court", sub:"built 40 palaces", have:()=>palaceCount()>=40},
+ {id:"mp8", cat:"Memory Palaces", icon:"🌇", name:"Fifty Gates", sub:"built 50 palaces", have:()=>palaceCount()>=50},
  // Bible Stories
  {id:"bs1", cat:"Bible Stories", icon:"🌍", name:"In the Beginning", sub:"5 stories located", have:()=>storiesLearned()>=5},
+ {id:"bs9", cat:"Bible Stories", icon:"🧥", name:"The Patriarchs", sub:"15 stories", have:()=>storiesLearned()>=15},
  {id:"bs2", cat:"Bible Stories", icon:"🗺️", name:"Story Traveler", sub:"25 stories", have:()=>storiesLearned()>=25},
+ {id:"bs10", cat:"Bible Stories", icon:"👑", name:"Kings and Prophets", sub:"40 stories", have:()=>storiesLearned()>=40},
  {id:"bs3", cat:"Bible Stories", icon:"⚔️", name:"The Old Story", sub:"the Old Testament narrative", have:()=>storiesLearned()>=55},
- {id:"bs4", cat:"Bible Stories", icon:"🌾", name:"Every Parable", sub:"all of Jesus' parables", have:()=>storiesLearned()>=85},
- {id:"bs5", cat:"Bible Stories", icon:"⭐", name:"All 100 Stories", sub:"every great story of Scripture", have:()=>storiesLearned()>=100},
+ {id:"bs11", cat:"Bible Stories", icon:"⭐", name:"Unto Us a Son", sub:"70 stories", have:()=>storiesLearned()>=70},
+ // Named rather than counted: "every parable" has to keep meaning every parable, and the parable
+ // sections have moved twice already.
+ {id:"bs4", cat:"Bible Stories", icon:"🌾", name:"Every Parable", sub:"all thirty-five of Jesus' parables", have:()=>storiesDoneIn.apply(null,PARABLE_SECTIONS)},
+ {id:"bs12", cat:"Bible Stories", icon:"🕊️", name:"Word Pictures", sub:"both Word Pictures sections", have:()=>storiesDoneIn("Word Pictures of Jesus I","Word Pictures of Jesus II")},
+ {id:"bs5", cat:"Bible Stories", icon:"✝️", name:"One Hundred", sub:"100 stories", have:()=>storiesLearned()>=100},
+ {id:"bs13", cat:"Bible Stories", icon:"⛪", name:"The Church Begins", sub:"125 stories", have:()=>storiesLearned()>=125},
+ {id:"bs14", cat:"Bible Stories", icon:"📖", name:"All 150 Stories", sub:"every story in the collection", have:()=>storiesLearned()>=STORY_TOTAL},
  // Verse Practice — Talents earned & best streak
  {id:"tal1", cat:"Verse Practice", icon:"🪙", name:"Faithful in Little", sub:"earn 50 talents", have:()=>Prog.talents>=50},
  {id:"tal2", cat:"Verse Practice", icon:"💰", name:"Good & Faithful Servant", sub:"250 talents", have:()=>Prog.talents>=250},
@@ -7181,7 +7236,9 @@ const BADGES=[
  {id:"day4", cat:"Daily Devotion", icon:"💎", name:"Hundredfold", sub:"100-day review streak", have:()=>Prog.bestDayStreak>=100}
 ];
 function earnedBadges(){ return BADGES.filter(b=>b.have()); }
-function nextBadge(){ const c=Prog.memorized.length; return BADGES.filter(b=>b.cat==="Verses Memorized").find(b=>b.n>c)||null; }
+function nextBadge(){ const c=Prog.memorized.length; return BADGES.filter(b=>b.cat==="Verses Located").find(b=>b.n>c)||null; }
+// The by-heart ladder has its own next rung, because it is the one worth chasing.
+function nextHeartBadge(){ const c=heartCount(); return BADGES.filter(b=>b.cat==="Verses by Heart").find(b=>b.n>c)||null; }
 // detect newly-earned badges across ALL categories and celebrate the newest
 function checkBadges(){
   if(!feat("badges")) return;
@@ -7677,7 +7734,6 @@ function renderWalk(){
       <div class="lv-versetext" style="font-size:13.5px;line-height:1.45;margin:0 0 12px">“${verseWordsHTML(b,c,v,curScene.text)}”</div>
       <label class="vplabel">Your scene</label>
       <textarea class="ed-ta" id="wScene" placeholder="e.g. In the kitchen, a giant ${bp.word} smashes into a ${cp.word} while a ${vp.word} …">${(Prog.customScene[vkey]||"").replace(/</g,"&lt;")}</textarea>
-      <button type="button" class="mic-btn" id="wMic"><span class="mic-ic">🎤</span><span class="mic-lbl">Hold to speak your scene</span></button>
       <div class="btnrow" style="margin-top:12px"><button class="btn ghost" id="wBack" style="flex:0 0 96px">← Back</button><button class="btn" id="wDone">Done ✓</button></div>
     </div>`;
   if(el("wClose")) el("wClose").onclick=()=> sceneBackfill ? (sceneBackfill=false, sceneCancel()) : walkReturn();
@@ -7717,44 +7773,11 @@ function renderWalk(){
   // auto-grow the scene box so it never needs its own scrollbar (grows AND shrinks with the text)
   const ta=el("wScene");
   if(ta){ const grow=()=>{ ta.style.height="auto"; ta.style.height=Math.max(96, ta.scrollHeight)+"px"; }; ta.addEventListener("input",grow); requestAnimationFrame(grow); }
-  wireSceneMic();   // hold-to-talk voice dictation for the scene
   document.querySelector(".content").scrollTop=0;   // Save Visual → start the entry screen at the top
 }
-/* ---- Hold-to-talk voice dictation for the scene (Web Speech API — Chrome/Android, Safari/iOS 14.5+) ---- */
-function wireSceneMic(){
-  const ta=el("wScene"), btn=el("wMic"); if(!ta||!btn) return;
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SR){ btn.style.display="none"; return; }   // no voice support on this browser → typing only
-  let rec=null, baseText="", live=false;
-  const start=()=>{ if(live) return; live=true;
-    try{ rec=new SR(); }catch(e){ btn.style.display="none"; live=false; return; }
-    rec.lang="en-US"; rec.interimResults=true; rec.continuous=true;
-    baseText=ta.value; if(baseText && !/\s$/.test(baseText)) baseText+=" ";
-    rec.onresult=(ev)=>{ let out=""; for(let i=0;i<ev.results.length;i++) out+=ev.results[i][0].transcript; ta.value=baseText+out; ta.dispatchEvent(new Event("input")); };
-    rec.onend=()=>{ live=false; btn.classList.remove("rec"); baseText=ta.value; };
- rec.onerror=(e)=>{ live=false; btn.classList.remove("rec"); if(e.error==="not-allowed"||e.error==="service-not-allowed") openMicHelp(); else if(e.error==="no-speech") toast("Didn't catch that. Hold and speak again."); };
-    try{ rec.start(); btn.classList.add("rec"); }catch(e){ live=false; btn.classList.remove("rec"); }
-  };
-  const stop=()=>{ if(rec){ try{ rec.stop(); }catch(e){} } btn.classList.remove("rec"); live=false; };
-  btn.addEventListener("pointerdown",e=>{ e.preventDefault(); start(); });
-  ["pointerup","pointerleave","pointercancel"].forEach(ev=>btn.addEventListener(ev,e=>{ e.preventDefault(); stop(); }));
-}
-function openMicHelp(){
-  const m=el("micHelpModal")||(()=>{ const d=document.createElement("div"); d.id="micHelpModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
-  const plat=(typeof devicePlatform==="function")?devicePlatform():"other";
- const ios=`<ol class="inst-steps"><li>Open your iPhone <b>Settings</b>.</li><li>Scroll to <b>Safari</b> (or the browser you're using).</li><li>Tap <b>Microphone</b> → choose <b>Ask</b> or <b>Allow</b>.</li><li>Return here and <b>hold the mic</b> again · tap <b>Allow</b> if prompted.</li></ol>`;
-  const android=`<ol class="inst-steps"><li>Tap the <b>lock</b> / tune icon at the left of the address bar.</li><li>Tap <b>Permissions</b> → <b>Microphone</b> → <b>Allow</b>.</li><li>(Or Settings → Site settings → Microphone → Allow.)</li><li>Return here and <b>hold the mic</b> again.</li></ol>`;
-  const body=(which)=> which==="ios"?ios:android;
-  m.innerHTML=`<div class="modal-card">
-    <div style="text-align:center"><div style="font-size:36px">🎤</div><h2 style="font-size:18px;margin:6px 0 2px">Allow microphone</h2>
-    <p class="hint" style="margin:0 0 12px">To speak your scene, your browser needs microphone permission.</p></div>
-    <div class="inst-tabs"><button class="inst-tab ${plat!=="android"?"on":""}" data-mplat="ios">🍎 iPhone</button><button class="inst-tab ${plat==="android"?"on":""}" data-mplat="android">🤖 Android</button></div>
-    <div id="micHelpBody" style="text-align:left">${body(plat==="android"?"android":"ios")}</div>
-    <button class="btn" id="micHelpClose" style="width:100%;margin-top:12px">Got it</button></div>`;
-  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
-  el("micHelpClose").onclick=()=>m.style.display="none";
-  m.querySelectorAll("[data-mplat]").forEach(t=>t.onclick=()=>{ m.querySelectorAll(".inst-tab").forEach(x=>x.classList.remove("on")); t.classList.add("on"); el("micHelpBody").innerHTML=body(t.dataset.mplat); });
-}
+/* Hold-to-talk voice dictation lived here (wireSceneMic + openMicHelp). Taken out because the
+   Web Speech API is unreliable on the phones people actually use, and a button that sometimes
+   does nothing is worse than no button. Recover it from git history rather than rewriting it. */
 // Encourage (never block) writing the scene — writing it IS the learning.
 function confirmBlankScene(onSkip){
   const msg=SCENE_NUDGES[Math.floor(Math.random()*SCENE_NUDGES.length)];
@@ -7820,7 +7843,7 @@ document.querySelectorAll(".subnav button").forEach(b=>b.onclick=()=>{
 function buildNumGrid(){
   let g="";
   for(let n=1;n<=176;n++){ const p=pegFor(n),w=p.word,d=defOf(w),nt=NOTE[n]||"",cust=Prog.customPeg&&Prog.customPeg[n];
-    g+=`<div class="cellcard${cellOpen.has(n)?" open":""}" data-n="${n}"><div class="n">${dispNum("num",n)}</div><div class="w">${w}</div><div class="s">${p.sounds}</div>
+    g+=`<div class="cellcard${cellOpen.has(n)?" open":""}" data-n="${n}">${pegThumb(n)}<div class="n">${dispNum("num",n)}</div><div class="w">${w}</div><div class="s">${p.sounds}</div>
       <div class="mnem"><div class="imgwrap">${pegImg("num",n,w,false)}</div>
  <div class="mnem-def"><span class="w2">${w}</span>${(!cust&&d)?", "+d:(!cust&&nt?", "+nt:"")}</div>
       ${(!cust&&DECODE[n])?`<div class="mnem-def" style="margin-top:6px"><b style="color:var(--good)">Image → ${n}:</b> ${DECODE[n]}</div>`:""}
@@ -8276,7 +8299,11 @@ function renderBadges(){
       }).join("")+`</div>`;
   }).join("");
   const nb=nextBadge(), c=Prog.memorized.length;
-  el("badgeNext").innerHTML = nb ? `Next verse badge: <b class="gold">${nb.icon} ${nb.name}</b> at ${nb.n} (${nb.n-c} to go).` : `Every verse badge earned. 👑`;
+  const hb=nextHeartBadge(), hc=heartCount();
+  const bits=[];
+  if(hb) bits.push(`Next by heart: <b class="gold">${hb.icon} ${hb.name}</b> at ${hb.n} (${hb.n-hc} to go).`);
+  if(nb) bits.push(`Next located: <b class="gold">${nb.icon} ${nb.name}</b> at ${nb.n} (${nb.n-c} to go).`);
+  el("badgeNext").innerHTML = bits.length ? bits.join("<br>") : `Every verse badge earned. 👑`;
 }
 /* ---- progress backup / restore (no backend yet — protects against localStorage loss) ---- */
 function exportBackup(){
