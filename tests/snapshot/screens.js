@@ -72,6 +72,7 @@ module.exports = [
   { name: 'modal/church', sel: '#churchModal', go: () => { Prog.church = { given: 1400, built: 3, total: 8900 }; openChurch(); } },
   { name: 'modal/feature-store', sel: '#featModal', go: () => { openFeatureStore(); } },
   { name: 'modal/video', sel: '#videoModal', go: () => { openVideoScreen('palace'); } },
+  { name: 'modal/translations', sel: '#themeModal', go: () => { el('themeBtn').click(); renderTransList(); } },
   { name: 'modal/video-intro', sel: '#videoModal', go: () => { openVideoScreen('intro', () => { }); } },
   { name: 'modal/book-image', sel: '#bookImgModal', go: () => { delete Prog.customBookImg[1]; saveProg(); openBookImagePicker(1, () => { }); } },
   // the Library (v1.17). videoOrder is set explicitly so the list is reproducible.

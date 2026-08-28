@@ -24,7 +24,6 @@ const CHECK = process.argv.includes('--check');
 // [find, replace, expected number of sites]
 const RULES = [
   ['src="kjv.js"', 'src="/burningbush/kjv.js"', 1],
-  ['src="bbe.js"', 'src="/burningbush/bbe.js"', 1],
   ['href="fonts/fonts.css"', 'href="/burningbush/fonts/fonts.css"', 1],
   ['href="manifest.webmanifest"', 'href="/burningbush/manifest.webmanifest"', 1],
   ['href="images/', 'href="/burningbush/images/', 2],
@@ -33,7 +32,9 @@ const RULES = [
   ['`images/pegs/', '`/burningbush/images/pegs/', 3],
   // VIDEOS[].src is handed to a <video> element at runtime, so a relative path would resolve
   // against /burningbush with no trailing slash and 404. One site per film that has a recording.
-  ['src:"videos/', 'src:"/burningbush/videos/', 1],   // +2 the tile thumbnail (chosen word, then the default)
+  ['src:"videos/', 'src:"/burningbush/videos/', 1],
+  // one per translation that is fetched on demand; the KJV is the only one loaded with the page
+  ['file:"bibles/', 'file:"/burningbush/bibles/', 5],   // +2 the tile thumbnail (chosen word, then the default)
   // fetched by absolute path: a relative one would resolve to /sw.js against the trailing-slash-less URL
   ['register("sw.js")', 'register("/burningbush/sw.js")', 1],
   ['one("strongs.js")', 'one("/burningbush/strongs.js")', 1],
@@ -41,8 +42,8 @@ const RULES = [
 ];
 
 // copied through untouched
-const COPY_FILES = ['sw.js', 'manifest.webmanifest', 'kjv.js', 'bbe.js', 'strongs.js', 'kjvtag.js'];
-const COPY_DIRS = ['images', 'fonts', 'videos'];
+const COPY_FILES = ['sw.js', 'manifest.webmanifest', 'kjv.js', 'strongs.js', 'kjvtag.js'];
+const COPY_DIRS = ['images', 'fonts', 'videos', 'bibles'];
 // dev-only helpers that live beside the art but must never ship
 const SKIP = new Set(['preview.html', 'books-preview.html', 'manifest.json']);
 

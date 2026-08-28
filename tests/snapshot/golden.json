@@ -279,9 +279,9 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "3917c5424fcef7df",
-  "len": 18648,
-  "els": 463,
+  "h": "4d67581b05c0b170",
+  "len": 19349,
+  "els": 470,
   "buttons": 45,
   "svgs": 0,
   "imgs": 0,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "386a9e1360533b89",
-  "len": 70919,
-  "els": 1338,
+  "h": "f979c481a61cd487",
+  "len": 72853,
+  "els": 1367,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.51.0 August 28, 2026 The first film is in NEW Start here: how Burning Bush works. Four minutes on w"
+  "text": "✕ Version history v1.52.0 August 28, 2026 Eight translations, and a ladder for each FIX The Bible translation tile in Pr"
  },
  "classic/modal/church": {
   "h": "cd4e47cc45a540a5",
@@ -376,6 +376,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "classic/modal/translations": {
+  "h": "5e2102c99e8891fe",
+  "len": 18548,
+  "els": 462,
+  "buttons": 43,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "classic/modal/video-intro": {
   "h": "b9be70be25a03e9c",
@@ -783,9 +792,9 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "4d20b67487f4719a",
-  "len": 17855,
-  "els": 455,
+  "h": "7d5ca4a24adad8cc",
+  "len": 18556,
+  "els": 462,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
@@ -846,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "386a9e1360533b89",
-  "len": 70919,
-  "els": 1338,
+  "h": "f979c481a61cd487",
+  "len": 72853,
+  "els": 1367,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.51.0 August 28, 2026 The first film is in NEW Start here: how Burning Bush works. Four minutes on w"
+  "text": "✕ Version history v1.52.0 August 28, 2026 Eight translations, and a ladder for each FIX The Bible translation tile in Pr"
  },
  "illumined/modal/church": {
   "h": "f01e94f78fe6d84e",
@@ -880,6 +889,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "illumined/modal/translations": {
+  "h": "7d5ca4a24adad8cc",
+  "len": 18556,
+  "els": 462,
+  "buttons": 43,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "illumined/modal/video-intro": {
   "h": "b9be70be25a03e9c",
@@ -1287,9 +1305,9 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "88e82dab469c5d7b",
-  "len": 17853,
-  "els": 455,
+  "h": "d194b4200a34f997",
+  "len": 18554,
+  "els": 462,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
@@ -1350,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "386a9e1360533b89",
-  "len": 70919,
-  "els": 1338,
+  "h": "f979c481a61cd487",
+  "len": 72853,
+  "els": 1367,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.51.0 August 28, 2026 The first film is in NEW Start here: how Burning Bush works. Four minutes on w"
+  "text": "✕ Version history v1.52.0 August 28, 2026 Eight translations, and a ladder for each FIX The Bible translation tile in Pr"
  },
  "glass/modal/church": {
   "h": "c52148b126053ab1",
@@ -1384,6 +1402,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "glass/modal/translations": {
+  "h": "d194b4200a34f997",
+  "len": 18554,
+  "els": 462,
+  "buttons": 43,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "glass/modal/video-intro": {
   "h": "b9be70be25a03e9c",
@@ -1791,9 +1818,9 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "cf60b82431d71cf7",
-  "len": 17855,
-  "els": 455,
+  "h": "4a6dec1849d6cede",
+  "len": 18556,
+  "els": 462,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
@@ -1854,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "386a9e1360533b89",
-  "len": 70919,
-  "els": 1338,
+  "h": "f979c481a61cd487",
+  "len": 72853,
+  "els": 1367,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.51.0 August 28, 2026 The first film is in NEW Start here: how Burning Bush works. Four minutes on w"
+  "text": "✕ Version history v1.52.0 August 28, 2026 Eight translations, and a ladder for each FIX The Bible translation tile in Pr"
  },
  "quest/modal/church": {
   "h": "3eb46251f349a19d",
@@ -1888,6 +1915,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "quest/modal/translations": {
+  "h": "4a6dec1849d6cede",
+  "len": 18556,
+  "els": 462,
+  "buttons": 43,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "quest/modal/video-intro": {
   "h": "b9be70be25a03e9c",
@@ -2295,9 +2331,9 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "eb2cbcdcc653caba",
-  "len": 17851,
-  "els": 455,
+  "h": "5d83bd9273e6f1c6",
+  "len": 18552,
+  "els": 462,
   "buttons": 43,
   "svgs": 0,
   "imgs": 0,
@@ -2358,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "386a9e1360533b89",
-  "len": 70919,
-  "els": 1338,
+  "h": "f979c481a61cd487",
+  "len": 72853,
+  "els": 1367,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.51.0 August 28, 2026 The first film is in NEW Start here: how Burning Bush works. Four minutes on w"
+  "text": "✕ Version history v1.52.0 August 28, 2026 Eight translations, and a ladder for each FIX The Bible translation tile in Pr"
  },
  "buddy/modal/church": {
   "h": "8ddd1942b18689dd",
@@ -2392,6 +2428,15 @@
   "svgs": 0,
   "imgs": 0,
   "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+ },
+ "buddy/modal/translations": {
+  "h": "5d83bd9273e6f1c6",
+  "len": 18552,
+  "els": 462,
+  "buttons": 43,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "buddy/modal/video-intro": {
   "h": "b9be70be25a03e9c",

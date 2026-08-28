@@ -1530,6 +1530,8 @@
   .bbfixed{padding:11px 12px;border-radius:10px;border:1px dashed var(--line);color:var(--ink-soft);font-size:13.5px}
   .bbsent{margin-top:14px;padding:13px 15px;border-radius:12px;border:1px solid var(--gold2);background:var(--panel0);font-size:14px;line-height:1.6}
   .bbsent b{color:var(--gold-ink)}
+  .trhearts{font-size:12px;color:var(--gold-ink);font-weight:700;margin-top:3px}
+  .trans-opt.loading{opacity:.6;pointer-events:none}
   .relbox{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;text-align:left;font-size:13.5px;line-height:1.5}
   .relbox .rl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--good);font-weight:800;margin-bottom:4px}
   .phon{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0}
@@ -1819,7 +1821,6 @@
 </div>
 
 <script src="kjv.js"></script>
-<script src="bbe.js"></script>
 <script>
 /* =================== STORAGE LAYER =================== */
 // Single choke-point for all persistence. Today it's localStorage; for the mobile app
@@ -1834,22 +1835,52 @@ const Store = {
   setJSON(k, v){ return Store.set(k, JSON.stringify(v)); }
 };
 /* =================== BIBLE TRANSLATIONS =================== */
-// Public-domain texts are bundled (KJV, BBE). Copyrighted translations (NKJV, NIV, NLT, ESV)
-// cannot be bundled — in the mobile app they load via a licensed Bible API. Structure is ready.
+// Every text here came from api.bible and is public domain or freely licensed, so it ships with the
+// app instead of needing a network call to read a verse. The placeholders that used to sit in this
+// list (NKJV, NIV, ESV) are gone: a translation that silently showed KJV text under another name was
+// worse than not offering it.
+//
+// Only the KJV loads with the page. Four megabytes each is far too much to load eight of, so every
+// other text is a script fetched the moment it is chosen, and never again.
 const TRANSLATIONS=[
- {id:"KJV", name:"King James Version", data:()=>window.KJV, licensed:false},
- {id:"NKJV",name:"New King James Version", data:()=>null, licensed:true},
- {id:"NIV", name:"New International Version", data:()=>null, licensed:true},
- {id:"NLT", name:"New Living Translation", data:()=>null, licensed:true},
- {id:"ESV", name:"English Standard Version", data:()=>null, licensed:true},
- {id:"BBE", name:"Bible in Basic English", data:()=>window.BBE, licensed:false, bonus:true}
+ {id:"KJV", name:"King James Version",       glob:"KJV", note:"1611 · the default, and what every scene in here was built on"},
+ {id:"ASV", name:"American Standard Version",glob:"ASV", file:"bibles/asv.js", note:"1901 · literal, and the KJV's closest descendant"},
+ {id:"BSB", name:"Berean Standard Bible",    glob:"BSB", file:"bibles/bsb.js", note:"2022 · modern English, close to the Greek and Hebrew"},
+ {id:"FBV", name:"Free Bible Version",       glob:"FBV", file:"bibles/fbv.js", note:"2018 · plain, unadorned, easy to read aloud"},
+ {id:"WEB", name:"World English Bible",      glob:"WEB", file:"bibles/web.js", note:"2000 · a modern update of the ASV"},
+ {id:"RV",  name:"Revised Version",          glob:"RV",  file:"bibles/rv.js",  note:"1885 · the first revision of the King James"}
 ];
+function transEntry(id){ return TRANSLATIONS.find(t=>t.id===id) || TRANSLATIONS[0]; }
+function transReady(id){ const t=transEntry(id); return !t.file || !!window[t.glob]; }
+const _trPromise={};
+// Resolves true when the text is in memory, false if the file would not load. It never rejects:
+// a failed download must leave the reader on the KJV, not on an error screen.
+function loadTranslation(id){
+  const t=transEntry(id);
+  if(transReady(id)) return Promise.resolve(true);
+  if(_trPromise[id]) return _trPromise[id];
+  _trPromise[id]=new Promise(res=>{
+    const s=document.createElement("script"); s.src=t.file; s.async=true;
+    s.onload=()=>res(!!window[t.glob]);
+    s.onerror=()=>{ delete _trPromise[id]; res(false); };
+    document.head.appendChild(s);
+  });
+  return _trPromise[id];
+}
 /* =================== VERSION & CHANGELOG =================== */
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.51.0";
+const APP_VERSION="1.52.0";
 const CHANGELOG=[
+ {v:"1.52.0", d:"August 28, 2026", t:"Eight translations, and a ladder for each", items:[
+   ["fix","<b>The Bible translation tile in Profile was showing the wrong thing entirely.</b> It read the onboarding question about how well you know the Bible, so it said DEEP or SOME where the translation belongs. It now says which translation you are reading."],
+   ["new","<b>Five more translations, all of them real text.</b> The American Standard, the Berean Standard, the Free Bible Version, the World English Bible and the Revised Version of 1885, alongside the King James."],
+   ["chg","<b>The placeholders are gone.</b> NKJV, NIV and ESV sat in the list and quietly showed King James text under another name. A translation that is not really there is worse than one that is not offered."],
+   ["new","<b>Word for word is now kept per translation.</b> Your located verses follow you everywhere, because where a verse lives does not change. The words do: each text keeps its own by heart list, its own practice counts and its own strict test record, all starting at zero."],
+   ["new","<b>Switching back finds everything where you left it.</b> Nothing is thrown away when you change text, so you can read the Berean for a month and come back to a King James ladder untouched."],
+   ["chg","<b>Only the King James loads with the page now.</b> Every other text is four megabytes and downloads once, the moment you pick it. That took four megabytes off every single visit."]
+ ]},
  {v:"1.51.0", d:"August 28, 2026", t:"The first film is in", items:[
    ["new","<b>Start here: how Burning Bush works.</b> Four minutes on why chapter and verse numbers slide straight off the mind, and the two old ideas that fix it. It stands on its own above the first unit rather than sitting inside it, and once watched it keeps its place in Video Review."],
    ["new","<b>A Year of Days.</b> A fifth Daily Devotion badge, for a review streak of 365. Every day for a year, without missing one."],
@@ -2252,8 +2283,8 @@ function checkVersionCard(){
   setTimeout(()=>openWhatsNew(false), 900);
 }
 function curTrans(){ return Store.get("vv_trans","KJV"); }
-function transData(){ const t=TRANSLATIONS.find(x=>x.id===curTrans()); const d=t&&t.data&&t.data(); return d||window.KJV; } // fallback KJV
-function transFellBack(){ const t=TRANSLATIONS.find(x=>x.id===curTrans()); return !!(t&&t.licensed); }
+function transData(){ const t=transEntry(curTrans()); return window[t.glob] || window.KJV; }   // fallback KJV
+function transFellBack(){ return !transReady(curTrans()); }   // chosen but not in memory yet
 /* KJV structure (chapter/verse counts) drives navigation for every translation */
 function kjvText(b,c,v){ try{ return (transData()[b-1][c-1][v-1])||(window.KJV[b-1][c-1][v-1])||""; }catch(e){ try{ return window.KJV[b-1][c-1][v-1]||""; }catch(e2){ return ""; } } }
 function chapCount(b){ return (window.KJV&&window.KJV[b-1]||[]).length; }
@@ -3233,6 +3264,10 @@ function migrateProg(p){
   if(!p.w4wSR||typeof p.w4wSR!=="object") p.w4wSR={};                // word for word TEST record (streak of clean passes)
   if(!p.locPast||typeof p.locPast!=="object") p.locPast={};          // the station "known by heart" released, kept so it can be given back
   if(!p.stageAsk||typeof p.stageAsk!=="object") p.stageAsk={};       // where a promotion was last declined, so it nudges but never nags
+  // Everything earned before translations were split belongs to whatever was being read at the time,
+  // which for all but a handful of people is the KJV.
+  if(!p.trStash||typeof p.trStash!=="object") p.trStash={};
+  if(typeof p.trActive!=="string" || !p.trActive) p.trActive=(typeof Store!=="undefined" ? Store.get("vv_trans","KJV") : "KJV");
   if(typeof p.phaseMax!=="number") p.phaseMax=-1;                     // -1 = work it out from what they have done
   p.videoOrder=arr(p.videoOrder);                                    // films unlocked, in the order they arrived
   if(!p.revPrefs||typeof p.revPrefs!=="object") p.revPrefs={};       // how the user wants to be asked in review
@@ -3310,7 +3345,6 @@ function mergeProg(a,b){
   m.customScene=Object.assign({},b.customScene,a.customScene); m.customPeg=Object.assign({},b.customPeg,a.customPeg); m.customBookImg=Object.assign({},b.customBookImg,a.customBookImg); m.bookWord=Object.assign({},b.bookWord,a.bookWord); m.numRef=Object.assign({},b.numRef,a.numRef); m.talentLog=Object.assign({},b.talentLog,a.talentLog); m.verseLoc=Object.assign({},b.verseLoc,a.verseLoc); m.msSeen=Object.assign({},b.msSeen,a.msSeen);
   m.firstWin=!!(a.firstWin||b.firstWin); m.persona=a.persona||b.persona; m.dailyMin=a.dailyMin||b.dailyMin; m.bibleFam=a.bibleFam||b.bibleFam; m.covenant=a.covenant||b.covenant;
   m.scratchWon=uniq(a.scratchWon,b.scratchWon); m.scratchInit=!!(a.scratchInit||b.scratchInit); m.fiveVerseHintShown=!!(a.fiveVerseHintShown||b.fiveVerseHintShown);
-  m.w4w=Object.assign({},b.w4w,a.w4w);
   m.tickets=[...(a.tickets||[]),...(b.tickets||[])].filter((t,i,arr)=>arr.findIndex(x=>x.ts===t.ts&&x.type===t.type)===i); // union by (ts,type)
   m.palaces=((a.palaces||[]).length>=(b.palaces||[]).length)?a.palaces:b.palaces;   // keep the fuller palace set
   m.verseSR=mergeSR(a.verseSR,b.verseSR);
@@ -3325,16 +3359,6 @@ function mergeProg(a,b){
   { const ca=(a.church||{}), cb=(b.church||{});   // never lose a finished church to a sync
     m.church={ built:Math.max(ca.built||0,cb.built||0), total:Math.max(ca.total||0,cb.total||0),
                given:Math.max(ca.given||0,cb.given||0) }; }
-  // THE LADDER ONLY EVER GOES UP on a merge: a promotion earned on the phone is never undone by the laptop.
-  { const up=s=>s==="w4w"?"heart":s;   // a device still on the old middle rung must not drag a verse down
-    const sa=a.verseStage||{}, sb=b.verseStage||{}; m.verseStage={};
-    new Set([...Object.keys(sa),...Object.keys(sb)]).forEach(k=>{
-      const x=sa[k]||"loc", y=sb[k]||"loc", win=(stageRank(x)>=stageRank(y))?x:y;
-      if(win!=="loc") m.verseStage[k]=win; }); }
-  { const wa=a.w4wSR||{}, wb=b.w4wSR||{}; m.w4wSR={};   // the record that has seen more tests is the fuller one
-    new Set([...Object.keys(wa),...Object.keys(wb)]).forEach(k=>{
-      const x=wa[k], y=wb[k];
-      m.w4wSR[k] = !y ? x : (!x ? y : (((x.n||0)>=(y.n||0)) ? x : y)); }); }
   m.locPast=Object.assign({},a.locPast||{},b.locPast||{});
   m.phaseMax=Math.max(a.phaseMax||0,b.phaseMax||0);
   m.videoOrder=[...(a.videoOrder||[])]; (b.videoOrder||[]).forEach(k=>{ if(!m.videoOrder.includes(k)) m.videoOrder.push(k); });
@@ -3343,7 +3367,27 @@ function mergeProg(a,b){
   m.featuresInit=!!(a.featuresInit||b.featuresInit);
   { const fa=a.features||{}, fb=b.features||{}; m.features={};
     new Set([...Object.keys(fa),...Object.keys(fb)]).forEach(k=>{ m.features[k]=!!(fa[k]||fb[k]); }); }
-  m.stageAsk=Object.assign({},a.stageAsk||{},b.stageAsk||{});
+  // Two devices can be reading two different translations, so the ladders are merged bucket by
+  // bucket. Merging the ASV's word-for-word record into the KJV's would be worse than losing it.
+  { const A=trBuckets(a), B=trBuckets(b), out={};
+    new Set([...Object.keys(A),...Object.keys(B)]).forEach(t=>{
+      const x=A[t]||{}, y=B[t]||{};
+      const st={};   // the ladder only ever goes up
+      { const sa=x.verseStage||{}, sb=y.verseStage||{};
+        new Set([...Object.keys(sa),...Object.keys(sb)]).forEach(k=>{
+          const p=sa[k]==="w4w"?"heart":(sa[k]||"loc"), q=sb[k]==="w4w"?"heart":(sb[k]||"loc");
+          const win=(stageRank(p)>=stageRank(q))?p:q; if(win!=="loc") st[k]=win; }); }
+      const sr={};   // the record that has seen more tests is the fuller one
+      { const wa=x.w4wSR||{}, wb=y.w4wSR||{};
+        new Set([...Object.keys(wa),...Object.keys(wb)]).forEach(k=>{
+          const p=wa[k], q=wb[k]; sr[k]=!q?p:(!p?q:(((p.n||0)>=(q.n||0))?p:q)); }); }
+      const pr={};   // the higher practice count is the one that was actually done
+      { const pa=x.w4w||{}, pb=y.w4w||{};
+        new Set([...Object.keys(pa),...Object.keys(pb)]).forEach(k=>{
+          const p=pa[k], q=pb[k]; pr[k]=!q?p:(!p?q:(((p.count||0)>=(q.count||0))?p:q)); }); }
+      out[t]={ verseStage:st, w4wSR:sr, w4w:pr, stageAsk:Object.assign({},x.stageAsk||{},y.stageAsk||{}) };
+    });
+    applyBuckets(m, out, a.trActive||b.trActive||"KJV"); }
   // A verse that came out of the merge at rest must not still be holding a station: one device may
   // have promoted it while the other still had the location recorded.
   Object.keys(m.verseStage).forEach(k=>{ if(m.verseStage[k]==="heart" && m.verseLoc && m.verseLoc[k]){
@@ -5779,6 +5823,46 @@ function openFeatureStore(){
    moved up on day one from its own page, which is the whole point of letting the user say so.
    The old middle rung ("w4w") is folded into heart; migrateProg carries anyone sitting on it up.
    Absent means "loc", so nothing is stored for the common case.                             */
+/* ---- one ladder per translation -------------------------------------------------------------
+   Locating a verse is about where it lives, so it holds across every text. Knowing it word for word
+   is about THESE words, and the ASV's words are not the KJV's, so the ladder, the practice count and
+   the strict-test record all belong to one translation and nothing else.
+
+   The four maps below stay at the top of Prog, always holding the ACTIVE translation, so the sixty
+   or so places that read Prog.verseStage never had to learn about any of this. The inactive ones sit
+   in Prog.trStash and are swapped in when the reader changes text.                              */
+const TR_FIELDS=["verseStage","w4w","w4wSR","stageAsk"];
+function trBuckets(p){
+  const out={}; Object.keys(p.trStash||{}).forEach(t=>out[t]=Object.assign({},p.trStash[t]));
+  const act=p.trActive||"KJV";
+  out[act]=out[act]||{};
+  TR_FIELDS.forEach(f=>{ out[act][f]=p[f]||{}; });
+  return out;
+}
+function applyBuckets(p, buckets, active){
+  p.trActive=active;
+  const cur=buckets[active]||{};
+  TR_FIELDS.forEach(f=>{ p[f]=cur[f]||{}; });
+  p.trStash={};
+  Object.keys(buckets).forEach(t=>{ if(t!==active) p.trStash[t]=buckets[t]; });
+  return p;
+}
+// How far along a translation is, without swapping to it. Used to label the picker.
+function transHeartCount(id){
+  if((Prog.trActive||"KJV")===id) return heartCount();
+  const b=(Prog.trStash||{})[id]; if(!b || !b.verseStage) return 0;
+  return (Prog.memorized||[]).filter(k=>b.verseStage[k]==="heart").length;
+}
+// Switching text keeps every located verse and puts the words back to the start. Nothing is thrown
+// away: come back to the KJV and the KJV's ladder is exactly where it was left.
+function setTranslation(id){
+  if(!TRANSLATIONS.some(t=>t.id===id)) return;
+  const b=trBuckets(Prog);
+  b[id]=b[id]||{};
+  applyBuckets(Prog, b, id);
+  Store.set("vv_trans", id);
+  saveProg(); bustCaches();
+}
 const V_STAGES=["loc","heart"];
 const STAGE_INFO={
   loc:  {n:"Located",       i:"\u{1F9ED}", d:"You know where it lives"},
@@ -8597,16 +8681,33 @@ function paintTheme(){
 }
 /* ===== END THEME DECORATORS ===== */
 function renderTransList(){
-  el("transList").innerHTML=TRANSLATIONS.map(t=>{
-    const sel=t.id===curTrans();
-    const badge = t.licensed?`<span class="badge lic">licensed</span>`:`<span class="badge free">free</span>`;
+  const cur=curTrans(), loc=(Prog.memorized||[]).length;
+  el("transList").innerHTML=
+    `<p class="hint" style="margin:0 0 10px">Your <b>${loc}</b> located verse${loc===1?"":"s"} follow you into every text, because where a verse lives does not change. Knowing it word for word does: each translation keeps its own by heart list and its own practice counts, and picking one back up finds it exactly where you left it.</p>`
+    + TRANSLATIONS.map(t=>{
+    const sel=t.id===cur, hearts=transHeartCount(t.id);
+    const state = transReady(t.id) ? "" : `<span class="badge free">${t.file?"downloads once":"ready"}</span>`;
     return `<button class="trans-opt ${sel?"sel":""}" data-tr="${t.id}">
-      <div class="ti"><b>${t.id}</b> ${badge}<div>${t.name}${t.bonus?" · bonus modern text":""}${t.licensed?" · needs license (shows KJV for now)":""}</div></div>
+      <div class="ti"><b>${t.id}</b> ${state}<div>${t.name} · ${t.note}</div>
+        <div class="trhearts">💛 ${hearts} by heart${hearts?"":" yet"}</div></div>
       <span class="check">✓</span></button>`;
   }).join("");
   el("transList").querySelectorAll("[data-tr]").forEach(b=>b.onclick=()=>{
-    Store.set("vv_trans",b.dataset.tr);
-    renderTransList(); refreshCurrentView();
+    const id=b.dataset.tr;
+    if(id===curTrans()) return;
+    const t=transEntry(id);
+    if(!transReady(id)){
+      b.classList.add("loading");
+      const ti=b.querySelector(".ti div"); const was=ti?ti.textContent:"";
+      if(ti) ti.textContent="Downloading "+t.name+"…";
+      loadTranslation(id).then(ok=>{
+        b.classList.remove("loading"); if(ti) ti.textContent=was;
+        if(!ok){ toast("That text would not download. Still on "+curTrans()+"."); return; }
+        setTranslation(id); renderTransList(); refreshCurrentView();
+      });
+      return;
+    }
+    setTranslation(id); renderTransList(); refreshCurrentView();
   });
 }
 function refreshCurrentView(){ const v=document.querySelector(".view.active"); if(v){ const id=v.id;
@@ -8783,7 +8884,10 @@ const PROF_SUBS={
   "Badges":()=>{ const n=BADGES.filter(b=>b.have()).length; return n+" earned"; },
   "Feature store":()=>{ const n=featOffCount(); return n?n+" to try":"all on"; },
   "Account":()=>((typeof Auth!=="undefined"&&Auth.user&&Auth.user.email)?"Signed in":"Not signed in"),
-  "Bible translation":()=>(Prog.bibleFam||"KJV").toUpperCase(),
+  // bibleFam is the onboarding question about how well you know the Bible (new/some/deep). This
+  // tile was showing THAT under the heading "Bible translation", so it read DEEP for anyone who
+  // answered it and KJV for everyone who did not.
+  "Bible translation":()=>curTrans(),
   "Reference library":()=>"Pegs & books",
   "What's new":()=>"v"+APP_VERSION,
   "Theme":()=>{ const t=(document.querySelector(".phone")||{getAttribute:()=>""}).getAttribute("data-theme")||"illumined";
@@ -10022,6 +10126,9 @@ if(!Prog.onboarded){
 } else {
   show(bootTab);   // returning user / page refresh — back to the tab they were on
 }
+// A text chosen last time is fetched again on boot. Until it lands every verse reads KJV, which is
+// the same thing that happens if the download fails, so nothing anywhere has to handle a blank.
+if(!transReady(curTrans())) loadTranslation(curTrans()).then(ok=>{ if(ok) refreshCurrentView(); });
 wireVerseWords();   // press-and-hold on any verse word → its Hebrew/Greek
 grandfatherFeatures();   // an account that predates the Feature Store keeps everything it had
 resumeActiveTest();      // straight back into an unfinished verse test, if there was one

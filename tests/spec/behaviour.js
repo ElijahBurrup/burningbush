@@ -1926,6 +1926,95 @@ const DAY = 86400000;
   const placeholders = await $(() => Object.keys(VIDEOS).filter(k => !VIDEOS[k].src));
   is(placeholders.join(','), 'major,verse,palace,sr,recall', 'the other four films are still waiting on recordings');
 
+  describe('translations: located is shared, word for word is not', () => { });
+  const trList = await $(() => ({
+    ids: TRANSLATIONS.map(t => t.id),
+    eager: TRANSLATIONS.filter(t => !t.file).map(t => t.id),
+    ready: TRANSLATIONS.filter(t => transReady(t.id)).map(t => t.id),
+    everyOneNamed: TRANSLATIONS.every(t => t.name && t.note),
+  }));
+  is(trList.ids.join(','), 'KJV,ASV,BSB,FBV,WEB,RV', 'six translations, and no placeholders');
+  is(trList.eager.join(','), 'KJV', 'only the King James loads with the page');
+  is(trList.ready.join(','), 'KJV', '…so it is the only one in memory before anything is chosen');
+  ok(trList.everyOneNamed, 'each one says what it is and when it is from');
+
+  const tile = await $(() => {
+    Prog.bibleFam = 'deep'; saveProg();          // the onboarding answer this tile used to show
+    Store.set('vv_trans', 'BSB');
+    const label = PROF_SUBS['Bible translation']();
+    Store.set('vv_trans', 'KJV');
+    return { label, back: PROF_SUBS['Bible translation']() };
+  });
+  is(tile.label, 'BSB', 'the Profile tile names the translation being read');
+  is(tile.back, 'KJV', '...and follows it when it changes');
+
+  const split = await $(() => {
+    // a profile part way up the KJV ladder
+    Prog.memorized = ['43:3:16', '19:23:1', '45:8:28', '50:4:13'];
+    applyBuckets(Prog, { KJV: { verseStage: { '43:3:16': 'heart', '19:23:1': 'heart' },
+                                w4w: { '45:8:28': { count: 5, times: [] } },
+                                w4wSR: { '43:3:16': { cr: 2, n: 4, ok: 3, at: 0 } }, stageAsk: {} } }, 'KJV');
+    Store.set('vv_trans', 'KJV'); saveProg();
+    const kjv = { located: Prog.memorized.length, hearts: heartCount(), practice: w4wCount('45:8:28'), streak: w4wTestStreak('43:3:16') };
+
+    setTranslation('ASV');
+    const asv = { trans: curTrans(), located: Prog.memorized.length, hearts: heartCount(),
+                  practice: w4wCount('45:8:28'), streak: w4wTestStreak('43:3:16'), stage: verseStage('43:3:16') };
+
+    // build something up in the ASV
+    setVerseStage('43:3:16', 'heart'); w4wRecord('50:4:13'); w4wRecord('50:4:13');
+    const asvBuilt = { hearts: heartCount(), practice: w4wCount('50:4:13') };
+
+    setTranslation('KJV');
+    const back = { hearts: heartCount(), practice: w4wCount('45:8:28'), streak: w4wTestStreak('43:3:16'),
+                   asvPractice: w4wCount('50:4:13') };
+    const seenFromHere = { kjv: transHeartCount('KJV'), asv: transHeartCount('ASV'), bsb: transHeartCount('BSB') };
+    return { kjv, asv, asvBuilt, back, seenFromHere, stash: Object.keys(Prog.trStash || {}) };
+  });
+  is(split.kjv.hearts, 2, 'the KJV starts with two verses by heart');
+  is(split.asv.trans, 'ASV', 'switching text changes the reader');
+  is(split.asv.located, 4, '…and every located verse comes along, because where a verse lives does not change');
+  is(split.asv.hearts, 0, '…while by heart starts again at zero');
+  is(split.asv.stage, 'loc', '…so a verse held by heart in the KJV is merely located in the ASV');
+  is(split.asv.practice, 0, '…and the practice count starts again at zero, not at five');
+  is(split.asv.streak, 0, '…as does the strict test record');
+  is(split.asvBuilt.hearts, 1, 'the ASV builds its own ladder');
+  is(split.asvBuilt.practice, 2, '…and its own practice counts');
+  is(split.back.hearts, 2, 'coming back to the KJV finds its two by heart untouched');
+  is(split.back.practice, 5, '…its practice count still at five');
+  is(split.back.streak, 2, '…and its test record intact');
+  is(split.back.asvPractice, 0, '…with nothing of the ASV bleeding into it');
+  is(split.seenFromHere.kjv + '/' + split.seenFromHere.asv + '/' + split.seenFromHere.bsb, '2/1/0',
+     'the picker can count each ladder without switching to it');
+  is(split.stash.join(','), 'ASV', 'only the inactive translations are stashed');
+
+  const trMerge = await $(() => {
+    // phone on the KJV, laptop on the ASV: neither ladder may leak into the other
+    const phone = migrateProg({ memorized: ['43:3:16'], trActive: 'KJV',
+      verseStage: { '43:3:16': 'heart' }, w4w: { '43:3:16': { count: 7, times: [] } } });
+    const laptop = migrateProg({ memorized: ['43:3:16'], trActive: 'ASV',
+      verseStage: { '43:3:16': 'heart' }, w4w: { '43:3:16': { count: 3, times: [] } } });
+    const m = mergeProg(phone, laptop);
+    const b = trBuckets(m);
+    return { active: m.trActive,
+             kjvStage: (b.KJV.verseStage || {})['43:3:16'], asvStage: (b.ASV.verseStage || {})['43:3:16'],
+             kjvCount: ((b.KJV.w4w || {})['43:3:16'] || {}).count,
+             asvCount: ((b.ASV.w4w || {})['43:3:16'] || {}).count };
+  });
+  is(trMerge.active, 'KJV', 'a merge keeps this device on the text it was reading');
+  is(trMerge.kjvStage, 'heart', 'the KJV ladder survives the merge');
+  is(trMerge.asvStage, 'heart', '…and so does the ASV one, separately');
+  is(trMerge.kjvCount, 7, 'each translation keeps its own practice count');
+  is(trMerge.asvCount, 3, '…rather than one overwriting the other');
+
+  const oldProfile = await $(() => {
+    const p = migrateProg({ verseStage: { '43:3:16': 'w4w' }, w4w: { '43:3:16': { count: 4, times: [] } } });
+    return { active: p.trActive, stash: JSON.stringify(p.trStash), stage: p.verseStage['43:3:16'] };
+  });
+  is(oldProfile.active, 'KJV', 'a profile from before the split belongs to the text it was read in');
+  is(oldProfile.stash, '{}', '…with nothing stashed under any other name');
+  is(oldProfile.stage, 'heart', '…and the old middle rung still promotes rather than resetting');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};

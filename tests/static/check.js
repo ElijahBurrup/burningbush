@@ -20,7 +20,11 @@ ok(script, 'the app has one inline script');
 try { new vm.Script(script); is(1, 1, 'the app script parses'); }
 catch (e) { is(String(e.message), '(parses)', 'the app script parses'); }
 
-for (const f of ['src/sw.js', 'src/strongs.js', 'src/kjvtag.js', 'src/kjv.js', 'src/bbe.js']) {
+// Every bundled text has to parse: one stray character in a 4 MB generated file would take the
+// whole app down at load, and the five under src/bibles are machine written from api.bible.
+const BIBLES = require('fs').readdirSync(require('path').join(__dirname, '../../src/bibles'))
+  .filter(n => n.endsWith('.js')).map(n => 'src/bibles/' + n);
+for (const f of ['src/sw.js', 'src/strongs.js', 'src/kjvtag.js', 'src/kjv.js', ...BIBLES]) {
   try { new vm.Script(read(f)); is(1, 1, `${path.basename(f)} parses`); }
   catch (e) { is(String(e.message).slice(0, 60), '(parses)', `${path.basename(f)} parses`); }
 }
