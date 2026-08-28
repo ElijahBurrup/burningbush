@@ -1876,8 +1876,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.53.0";
+const APP_VERSION="1.53.1";
 const CHANGELOG=[
+ {v:"1.53.1", d:"August 28, 2026", t:"A live text that recovers on its own", items:[
+   ["fix","<b>If the New Living could not be reached, it stayed unreachable until the app was reloaded.</b> One failure would stop it asking for the rest of the session. It now waits a minute and tries again, so a service coming back is noticed on its own."]
+ ]},
  {v:"1.53.0", d:"August 28, 2026", t:"The New Living Translation, and a film on every lesson", items:[
    ["new","<b>The New Living Translation.</b> It is Tyndale's and cannot be bundled the way the King James and the American Standard are, so it is read live through our own server, a chapter at a time, and the chapters you own are fetched the moment you choose it."],
    ["chg","<b>The translation list is now the three you asked for</b>: King James, American Standard, New Living."],
@@ -2315,6 +2318,14 @@ function wantChapter(id,b,c){
   _apiWant.add(k);
   clearTimeout(_apiTimer); _apiTimer=setTimeout(flushChapters, 60);   // one round trip per screen, not per verse
 }
+// A failure stops the asking, or a screen full of verses would fire a hundred doomed requests. It
+// must not stop it forever though: the service coming back should not need a reload to be noticed.
+function giveUpForNow(id){
+  if(_apiFailed) return;
+  _apiFailed=true;
+  toast("Could not reach the "+id+" just now. Showing King James.");
+  setTimeout(()=>{ _apiFailed=false; }, 60000);
+}
 function flushChapters(){
   const t=transEntry(curTrans());
   if(!t.api){ _apiWant.clear(); return; }
@@ -2326,12 +2337,12 @@ function flushChapters(){
   fetch(API_BASE+"/bible/"+t.api+"?refs="+encodeURIComponent(refs))
     .then(r=>r.ok?r.json():null)
     .then(d=>{
-      if(!d||!d.chapters){ _apiFailed=true; toast("Could not reach the "+t.id+". Showing King James."); return; }
+      if(!d||!d.chapters){ giveUpForNow(t.id); return; }
       Object.keys(d.chapters).forEach(ref=>{ const p=ref.split("."); _apiCh[t.id+":"+p[0]+":"+p[1]]=d.chapters[ref]; });
       if(d.copyright) _apiCopyright=d.copyright;
       refreshCurrentView();
     })
-    .catch(()=>{ _apiFailed=true; });
+    .catch(()=>{ giveUpForNow(t.id); });
   if(_apiWant.size) setTimeout(flushChapters, 150);
 }
 // The chapters somebody actually owns, asked for the moment they pick the text, so their own verses
