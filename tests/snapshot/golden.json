@@ -36,13 +36,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "classic/verse/memorized": {
-  "h": "81f4596b87ac638d",
-  "len": 892,
-  "els": 25,
+  "h": "05297989877002a6",
+  "len": 2460,
+  "els": 66,
   "buttons": 5,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
-  "text": "← Verses 💛 My Verses 3 🧭 Located 0 💛 By heart 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so "
+  "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
  },
  "classic/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -261,7 +261,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "c6011fd9452b6e46",
+  "h": "e10867cbab688820",
   "len": 15769,
   "els": 370,
   "buttons": 45,
@@ -324,13 +324,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "690070324b877348",
-  "len": 52550,
-  "els": 1024,
+  "h": "3b4ce831b2726fc0",
+  "len": 53552,
+  "els": 1041,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.38.0 August 27, 2026 Your verses, by book FIX My Verses now shows your books three to a row , and t"
+  "text": "✕ Version history v1.39.0 August 27, 2026 Your scoreboard NEW My Verses is a scoreboard now. A gold ring counts your ver"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -513,13 +513,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "illumined/verse/memorized": {
-  "h": "81f4596b87ac638d",
-  "len": 892,
-  "els": 25,
+  "h": "05297989877002a6",
+  "len": 2460,
+  "els": 66,
   "buttons": 5,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
-  "text": "← Verses 💛 My Verses 3 🧭 Located 0 💛 By heart 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so "
+  "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
  },
  "illumined/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -738,7 +738,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "f03069dbfc9ea80e",
+  "h": "fa33011ad2849f08",
   "len": 14975,
   "els": 362,
   "buttons": 43,
@@ -801,13 +801,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "690070324b877348",
-  "len": 52550,
-  "els": 1024,
+  "h": "3b4ce831b2726fc0",
+  "len": 53552,
+  "els": 1041,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.38.0 August 27, 2026 Your verses, by book FIX My Verses now shows your books three to a row , and t"
+  "text": "✕ Version history v1.39.0 August 27, 2026 Your scoreboard NEW My Verses is a scoreboard now. A gold ring counts your ver"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -990,13 +990,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "glass/verse/memorized": {
-  "h": "81f4596b87ac638d",
-  "len": 892,
-  "els": 25,
+  "h": "05297989877002a6",
+  "len": 2460,
+  "els": 66,
   "buttons": 5,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
-  "text": "← Verses 💛 My Verses 3 🧭 Located 0 💛 By heart 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so "
+  "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
  },
  "glass/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -1215,7 +1215,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "c6a0d65435e4e1fb",
+  "h": "a5e215a1d60c0ac0",
   "len": 14973,
   "els": 362,
   "buttons": 43,
@@ -1278,13 +1278,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "690070324b877348",
-  "len": 52550,
-  "els": 1024,
+  "h": "3b4ce831b2726fc0",
+  "len": 53552,
+  "els": 1041,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.38.0 August 27, 2026 Your verses, by book FIX My Verses now shows your books three to a row , and t"
+  "text": "✕ Version history v1.39.0 August 27, 2026 Your scoreboard NEW My Verses is a scoreboard now. A gold ring counts your ver"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1467,13 +1467,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "quest/verse/memorized": {
-  "h": "81f4596b87ac638d",
-  "len": 892,
-  "els": 25,
+  "h": "05297989877002a6",
+  "len": 2460,
+  "els": 66,
   "buttons": 5,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
-  "text": "← Verses 💛 My Verses 3 🧭 Located 0 💛 By heart 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so "
+  "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
  },
  "quest/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -1692,7 +1692,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "8957e329cbd4bde3",
+  "h": "708ac6384e27c94a",
   "len": 14975,
   "els": 362,
   "buttons": 43,
@@ -1755,13 +1755,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "690070324b877348",
-  "len": 52550,
-  "els": 1024,
+  "h": "3b4ce831b2726fc0",
+  "len": 53552,
+  "els": 1041,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.38.0 August 27, 2026 Your verses, by book FIX My Verses now shows your books three to a row , and t"
+  "text": "✕ Version history v1.39.0 August 27, 2026 Your scoreboard NEW My Verses is a scoreboard now. A gold ring counts your ver"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1944,13 +1944,13 @@
   "text": "← Verses 📚 Browse by topic Verses for what you're walking through — tap a topic. 🌊 Fear &amp; Anxiety · 25 ▾ Deuterono"
  },
  "buddy/verse/memorized": {
-  "h": "81f4596b87ac638d",
-  "len": 892,
-  "els": 25,
+  "h": "05297989877002a6",
+  "len": 2460,
+  "els": 66,
   "buttons": 5,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
-  "text": "← Verses 💛 My Verses 3 🧭 Located 0 💛 By heart 🏛️ 2 verses are missing a scene, a palace or a room — fill them in so "
+  "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
  },
  "buddy/verse/saved": {
   "h": "76bec92e0ad38b0b",
@@ -2169,7 +2169,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "7edb4ee85205caff",
+  "h": "45d028e494a690f4",
   "len": 14971,
   "els": 362,
   "buttons": 43,
@@ -2232,13 +2232,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "690070324b877348",
-  "len": 52550,
-  "els": 1024,
+  "h": "3b4ce831b2726fc0",
+  "len": 53552,
+  "els": 1041,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.38.0 August 27, 2026 Your verses, by book FIX My Verses now shows your books three to a row , and t"
+  "text": "✕ Version history v1.39.0 August 27, 2026 Your scoreboard NEW My Verses is a scoreboard now. A gold ring counts your ver"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",

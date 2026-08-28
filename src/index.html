@@ -953,10 +953,36 @@
   .stagepip{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:10px;border:2px solid var(--line);background:var(--panel2);color:var(--muted);font-size:11px;line-height:1.2;text-align:center}
   .stagepip b{font-weight:800;font-size:11px}
   .stagepip.on{border-color:var(--accent);color:var(--accent);background:var(--cell-bg)}
-  .stagesum{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:2px 0 10px}
-  .stagesum div{padding:8px 4px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);text-align:center;line-height:1.25}
-  .stagesum b{display:block;font-size:17px;color:var(--gold-ink)}
-  .stagesum span{font-size:11px;color:var(--muted);font-weight:700}
+  /* My Verses is the scoreboard. Every number on it is one the reader earned — none of it is
+     decoration, which is what keeps it worth coming back to look at. */
+  .scoreboard{display:flex;align-items:center;gap:14px;background:var(--panel2);border:1px solid var(--gold2);
+    border-radius:18px;padding:14px;margin:2px 0 9px}
+  .sb-ring{position:relative;flex:0 0 auto;width:86px;height:86px}
+  .sb-ring svg{width:86px;height:86px;display:block;transform:rotate(-90deg)}
+  .sb-track{fill:none;stroke:var(--line);stroke-width:8}
+  .sb-arc{fill:none;stroke:var(--gold);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+  .sb-mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+  .sb-n{font-size:27px;font-weight:800;color:var(--gold-ink);font-variant-numeric:tabular-nums}
+  .sb-u{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:.1em;margin-top:3px}
+  .sb-side{flex:1;min-width:0}
+  .sb-line{font-size:14px;font-weight:800;color:var(--ink);line-height:1.2}
+  .sb-sub{font-size:11.5px;color:var(--muted);font-weight:700;line-height:1.35}
+  .sb-next{margin-top:9px}
+  .sb-next .lbar{height:9px;margin-bottom:5px}
+  .sb-next .lbar > span{background:linear-gradient(90deg,var(--gold2),var(--gold))}
+
+  .statgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0 0 9px}
+  .statcell{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:9px 4px;text-align:center;line-height:1.2;min-width:0}
+  .st-i{display:block;font-size:15px;line-height:1}
+  .st-n{display:block;font-size:19px;font-weight:800;color:var(--gold-ink);font-variant-numeric:tabular-nums;margin-top:1px}
+  .st-l{display:block;font-size:9.5px;font-weight:800;color:var(--muted);letter-spacing:.02em;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .statcell.hot{border-color:var(--gold2)} .statcell.hot .st-n{color:var(--good)}
+  .medals{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 4px}
+  .medal{display:inline-flex;align-items:center;gap:5px;background:var(--panel2);border:1px solid var(--gold2);
+    border-radius:999px;padding:5px 10px;font-size:11px;font-weight:800;color:var(--gold-ink);white-space:nowrap}
+  .medal.off{border-color:var(--line);color:var(--muted);opacity:.55}
+  .sbhead{font-size:10.5px;font-weight:800;letter-spacing:.1em;color:var(--muted);margin:14px 0 0}
   .mtradio.chk .rdot{border-radius:5px}
   .mtradiolist.one{grid-template-columns:1fr}
   .mtsquares{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;max-height:172px;overflow-y:auto}
@@ -1734,8 +1760,13 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.38.0";
+const APP_VERSION="1.39.0";
 const CHANGELOG=[
+ {v:"1.39.0", d:"August 27, 2026", t:"Your scoreboard", items:[
+   ["new","<b>My Verses is a scoreboard now.</b> A gold ring counts your verses and fills toward your next badge, with the words you are carrying and the books you have reached beside it."],
+   ["new","<b>Six counts at a glance</b> — known by heart, sealed, day streak, books, clean runs and what is due today — and a row of <b>records and long-service medals</b>: your best clean run, your best streak, and how many verses have come back to you after two months, six months and two years."],
+   ["fix","The two counters at the top used to sit in a three-column grid, so there was always an empty third cell. They are gone, replaced by the scoreboard."]
+ ]},
  {v:"1.38.0", d:"August 27, 2026", t:"Your verses, by book", items:[
    ["chg","<b>My Verses now shows your books three to a row</b>, and tapping one brings its verses up in a popup that scrolls on its own. The old list grew every time you opened a book, which pushed the next one further down the page."],
    ["new","<b>Your verses in a book now appear inside that book</b>, under the chapters and the key — so the Bible screen shows you what you know where you would look for it."],
@@ -4616,6 +4647,65 @@ function bookGrid(verses, section){
   }).join("")+`</div>`;
 }
 function versesInBook(bn){ return memArr().filter(a=>a[0]===bn); }
+function commas(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }   // not toLocaleString: that moves with the machine
+// Everything the scoreboard shows, counted once. Words is the number people quote to themselves —
+// "I have five thousand words of Scripture by heart" is a truer measure of the work than a verse
+// count, because a verse can be two words or fifty.
+function verseScore(){
+  const mem=memArr(), keys=mem.map(a=>a.join(":"));
+  const sr=Prog.w4wSR||{};
+  const longs={}; SR_LONG.forEach(d=>{ longs[d]=keys.filter(k=>{ const o=vsr(k); return !!o && (o.lt||0)>=d; }).length; });
+  return {
+    n: mem.length,
+    heart: keys.filter(isHeart).length,
+    sealed: keys.filter(k=>{ const o=vsr(k); return !!o && (o.step||1)>=SR_TRAIL.length; }).length,
+    books: new Set(mem.map(a=>a[0])).size,
+    words: mem.reduce((n,a)=>n+((kjvText(a[0],a[1],a[2])||"").split(/\s+/).filter(Boolean).length), 0),
+    cleanRuns: keys.reduce((n,k)=>n+((sr[k]&&sr[k].ok)||0), 0),
+    bestRun: keys.reduce((n,k)=>Math.max(n,(sr[k]&&sr[k].cr)||0), 0),
+    due: versesDueCount(),
+    longs
+  };
+}
+function scoreboardHTML(){
+  const s=verseScore(), nb=nextBadge();
+  const pct = nb ? Math.max(3, Math.min(100, Math.round(s.n/nb.n*100))) : 100;
+  const R=35, C=2*Math.PI*R;
+  const off = (C*(1-pct/100)).toFixed(1);
+  const ring=`<div class="sb-ring">
+      <svg viewBox="0 0 86 86" aria-hidden="true">
+        <circle class="sb-track" cx="43" cy="43" r="${R}"></circle>
+        <circle class="sb-arc" cx="43" cy="43" r="${R}" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off}"></circle>
+      </svg>
+      <div class="sb-mid"><span class="sb-n">${s.n}</span><span class="sb-u">VERSES</span></div>
+    </div>`;
+  const side=`<div class="sb-side">
+      <div class="sb-line">${s.heart} known by heart</div>
+      <div class="sb-sub">${commas(s.words)} words · ${s.books} book${s.books===1?"":"s"} of the 66</div>
+      ${nb
+        ? `<div class="sb-next"><div class="lbar"><span style="width:${pct}%"></span></div>
+            <div class="sb-sub">${nb.n-s.n} more to <b class="gold">${nb.name}</b> ${nb.icon}</div></div>`
+        : `<div class="sb-next sb-sub">Every verse badge earned. 👑</div>`}
+    </div>`;
+  const cells=[
+    ["\u{1F49B}", s.heart, "By heart", false],
+    ["\u{1F451}", s.sealed, "Sealed", false],
+    ["\u{1F525}", Prog.dayStreak||0, "Day streak", (Prog.dayStreak||0)>0],
+    ["\u{1F4D6}", s.books, "Books", false],
+    ["\u{1F5E3}\uFE0F", s.cleanRuns, "Clean runs", false],
+    ["\u23F3", s.due, "Due today", s.due>0],
+  ];
+  const stats=`<div class="statgrid">${cells.map(([i,n,l,hot])=>
+    `<div class="statcell${hot?" hot":""}"><span class="st-i">${i}</span><span class="st-n">${n}</span><span class="st-l">${l}</span></div>`).join("")}</div>`;
+  // Records and the long-tail clubs. Shown greyed rather than hidden, so there is always something
+  // visible to go and earn.
+  const medals=`<div class="medals">
+      <span class="medal${s.bestRun?"":" off"}">\u{1F3AF} ${s.bestRun} best clean run</span>
+      <span class="medal${(Prog.bestDayStreak||0)?"":" off"}">\u{1F525} ${Prog.bestDayStreak||0} best streak</span>
+      ${SR_LONG.map(d=>`<span class="medal${s.longs[d]?"":" off"}">\u{1F3C5} ${s.longs[d]} · ${SR_LONG_NAME[d]}</span>`).join("")}
+    </div>`;
+  return `<div class="scoreboard">${ring}${side}</div>${stats}${medals}`;
+}
 // One book's verses, in a popup that scrolls by itself.
 function openBookVerses(bn, back){
   const m=el("bkVerseModal")||(()=>{ const d=document.createElement("div"); d.id="bkVerseModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
@@ -4696,12 +4786,11 @@ function renderVerse(){
         const loc=(Prog.verseLoc&&Prog.verseLoc[k])||null; const sc=((Prog.customScene&&Prog.customScene[k])||"").trim();
         return !sc || !loc || loc.p==null || !((loc.room||"").trim()); });
       const nudge = memBare.length ? `<div class="mem-backfill"><div class="mem-backfill-t"><b>🏛️ ${memBare.length} verse${memBare.length>1?"s":""}</b> ${memBare.length>1?"are":"is"} missing a scene, a palace or a room — fill ${memBare.length>1?"them":"it"} in so ${memBare.length>1?"they":"it"} stick${memBare.length>1?"":"s"}.</div><button class="btn sm" id="memBackfill">Finish ${memBare.length>1?"them":"it"} →</button></div>` : "";
-      const _sc=stageCounts();
-      // Located is every verse here - reaching this screen IS being located. By heart is the ones
-      // you have claimed, a subset, marked through the list with the same gold heart.
-      const stageSum=mem.length?`<div class="stagesum"><div><b>${mem.length}</b><span>\u{1F9ED} Located</span></div><div><b>${_sc.heart}</b><span>\u{1F49B} By heart</span></div></div>`:"";
-      body=mem.length? stageSum+nudge+`<p class="hint" style="margin:2px 0 8px">Tap a book to see your verses in it.</p>`+bookGrid(mem,"mem")
-        :`<p class="hint">Verses you finish building show up here.</p>`;
+      body=mem.length
+        ? scoreboardHTML()+nudge+`<div class="sbhead">YOUR BOOKS</div><p class="hint" style="margin:2px 0 8px">Tap one to see your verses in it.</p>`+bookGrid(mem,"mem")
+        : `<div class="card center" style="padding:26px 18px"><div style="font-size:44px">\u{1F49B}</div>
+             <h2 style="font-size:19px;margin:8px 0 2px">Your scoreboard starts here</h2>
+             <p class="lead" style="margin:6px 0 0">Every verse you finish building is counted on this page — how many you have, how many words, how many you know by heart, and how long you have held them.</p></div>`;
     } else if(vView==="videos"){ title="🎬 Video Review";
       const list=videoReviewList();
       body = list.length

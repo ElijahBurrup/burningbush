@@ -938,6 +938,69 @@ const DAY = 86400000;
   is(bib.backLabel, '← All books', 'the way back does not repeat the word Bible either');
   ok(bib.emptyBookQuiet, 'a book you have no verses in says nothing at all');
 
+  describe('my verses: the scoreboard', () => { });
+  const board = await $(() => {
+    Prog.memorized = ['43:11:35', '19:23:1', '43:3:16'];      // "Jesus wept." is two words
+    Prog.verseStage = { '43:3:16': 'heart', '19:23:1': 'heart' };
+    Prog.verseSR = {
+      '43:11:35': { learnedAt: 1, step: 6, dueAt: null, r0: 1 },              // visible trail done
+      '19:23:1':  { learnedAt: 1, step: 7, dueAt: null, r0: 1, lt: 60 },      // and past two months
+      '43:3:16':  { learnedAt: 1, step: 9, dueAt: null, r0: 1, lt: 730 },     // ...and past two years
+    };
+    Prog.w4wSR = { '43:3:16': { cr: 5, n: 9, ok: 7, at: 0 }, '19:23:1': { cr: 2, n: 3, ok: 2, at: 0 } };
+    Prog.dayStreak = 12; Prog.bestDayStreak = 19; Prog.badges = []; saveProg();
+    const s = verseScore();
+    show('verse'); vView = 'mem'; renderVerse();
+    const q = x => document.querySelector('#verse ' + x);
+    const words = (kjvText(43, 11, 35) + ' ' + kjvText(19, 23, 1) + ' ' + kjvText(43, 3, 16)).split(/\s+/).filter(Boolean).length;
+    return {
+      score: s, realWords: words,
+      ringN: q('.sb-n').textContent,
+      ringLabel: q('.sb-u').textContent,
+      arcSet: q('.sb-arc').getAttribute('stroke-dashoffset') !== null,
+      cells: [...document.querySelectorAll('#verse .statcell')].map(c => c.querySelector('.st-n').textContent).join(','),
+      labels: [...document.querySelectorAll('#verse .statcell .st-l')].map(c => c.textContent).join(','),
+      medals: [...document.querySelectorAll('#verse .medal')].map(m => m.textContent.replace(/\s+/g, ' ').trim()).join(' | '),
+      greyed: [...document.querySelectorAll('#verse .medal.off')].length,
+      stagesumGone: !q('.stagesum'),
+      booksHeading: !!/YOUR BOOKS/.test(el('verse').innerText),
+      dueIsHot: [...document.querySelectorAll('#verse .statcell')].pop().classList.contains('hot'),
+    };
+  });
+  is(board.score.n, 3, 'the scoreboard counts your verses');
+  is(board.score.heart, 2, '...how many you know by heart');
+  is(board.score.sealed, 3, '...how many have finished the visible trail');
+  is(board.score.books, 2, '...how many books they come from');
+  is(board.score.words, board.realWords, '...and how many words you are carrying, counted from the text itself');
+  is(board.score.cleanRuns, 9, 'clean runs are totalled across every verse');
+  is(board.score.bestRun, 5, '...and the best run is the longest of them');
+  is(board.ringN, '3', 'the ring shows the count');
+  is(board.ringLabel, 'VERSES', '...and says what it counts');
+  ok(board.arcSet, '...with its arc drawn to a real fraction rather than a fixed picture');
+  is(board.cells, '2,3,12,2,9,2', 'six counts: by heart, sealed, day streak, books, clean runs, due');
+  ok(board.dueIsHot, '...and anything due today is picked out rather than blending in');
+  is(board.labels, 'By heart,Sealed,Day streak,Books,Clean runs,Due today', '...each labelled');
+  // the long-service clubs are cumulative: two years is also past six months and two months
+  is(board.score.longs[60], 2, 'a verse past two months counts in the two month club');
+  is(board.score.longs[180], 1, '...and a two year verse counts in the six month club too');
+  is(board.score.longs[730], 1, '...and in its own');
+  has(board.medals, '5 best clean run', 'records are shown');
+  has(board.medals, '19 best streak', '...including the best day streak');
+  is(board.greyed, 0, 'a club you have reached is not greyed out');
+  ok(board.stagesumGone, 'the old two-in-a-three-column-grid counters are gone');
+  ok(board.booksHeading, 'the book grid keeps its place underneath');
+
+  const emptyBoard = await $(() => {
+    Prog.memorized = []; Prog.verseStage = {}; Prog.verseSR = {}; saveProg();
+    show('verse'); vView = 'mem'; renderVerse();
+    const t = el('verse').innerText;
+    return { invites: /scoreboard starts here/i.test(t), noRing: !document.querySelector('#verse .sb-ring'),
+             says: /how many you know by heart/i.test(t) };
+  });
+  ok(emptyBoard.invites, 'with no verses yet the page invites rather than sitting blank');
+  ok(emptyBoard.noRing, '...showing no ring of zeroes');
+  ok(emptyBoard.says, '...but saying what will be counted');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
