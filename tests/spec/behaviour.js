@@ -709,6 +709,76 @@ const DAY = 86400000;
   const ladderSnap = await $(() => JSON.stringify(Prog));
   await $(() => { setFeat('w4w', true); return true; });   // the ladder is a Feature Store switch now
 
+  describe('bible stories: the order, and what a reorder must not cost', () => { });
+  const order = await $(() => {
+    const titles = STORY_GROUPS.map(g => g.t);
+    const at = t => titles.indexOf(t);
+    return {
+      total: STORY_TOTAL, sections: titles.length,
+      parablesRun: [1,2,3,4,5,6,7].map((n, i) => at('Parables of Jesus ' + ['I','II','III','IV','V','VI','VII'][i])),
+      wp1: at('Word Pictures of Jesus I'), wp2: at('Word Pictures of Jesus II'),
+      cross: at('The Cross & Resurrection'), church: at('The Early Church'), paul: at('Paul & the End'),
+      icons: STORY_GROUPS.length,
+      tail: titles.slice(-3).join(' | '),
+    };
+  });
+  is(order.sections, 26, 'twenty-six sections');
+  is(order.total, 130, '...holding 130 stories');
+  is(order.parablesRun.join(','), '14,15,16,17,18,19,20', 'the seven parable sections run consecutively');
+  is(order.wp1, 21, '...then the word pictures');
+  is(order.wp2, 22, '...both of them');
+  is(order.tail, 'The Cross & Resurrection | The Early Church | Paul & the End', '...and the cross, the church and Paul close the list');
+
+  // The one that matters: a story is stored by its POSITION, so reordering the list renames every
+  // id. What must survive is not the id but the STORY — whatever was finished must still be.
+  const carriedOver = await $(() => {
+    const names = [];
+    let i = 0;
+    const byId = {};
+    STORY_GROUPS.forEach(g => g.s.forEach(st => { byId[i] = st[0]; i++; }));
+    // Rebuild the order as it shipped in v1.35.0 and pick some finished stories from it.
+    const V1 = ['Creation & the Fall','Abraham & the Patriarchs','Jacob & Joseph','Moses & the Exodus',
+      'Wilderness & the Law','Conquest & Judges','From Ruth to King David','David & Solomon','Elijah & Elisha',
+      'Prophets & Suffering','Exile & Deliverance','The Birth of Jesus','Jesus Begins His Ministry','Miracles of Jesus',
+      'Parables of Jesus I','Parables of Jesus II','Parables of Jesus III','The Cross & Resurrection','The Early Church',
+      'Paul & the End','Parables of Jesus IV','Parables of Jesus V','Parables of Jesus VI','Parables of Jesus VII',
+      'Word Pictures of Jesus I','Word Pictures of Jesus II'];
+    const oldName = {};
+    let j = 0;
+    V1.forEach(t => { const g = STORY_GROUPS.find(x => x.t === t); g.s.forEach(st => { oldName[j] = st[0]; j++; }); });
+
+    // one from each affected band, plus one that must not move at all
+    const oldIds = [3, 84, 85, 89, 99, 100, 119, 129];
+    const wanted = oldIds.map(n => oldName[n]);
+
+    const p = { doneSkills: oldIds.map(n => 'story:' + n), storySections: [] };
+    migrateProg(p);
+    const got = p.doneSkills.map(s => byId[+s.split(':')[1]]);
+    return { wanted: wanted.join(' | '), got: got.join(' | '), flag: !!p.storyOrderV2,
+             again: (() => { migrateProg(p); return p.doneSkills.map(s => byId[+s.split(':')[1]]).join(' | '); })() };
+  });
+  is(carriedOver.got, carriedOver.wanted, 'every finished story is still the same story after the reorder');
+  ok(carriedOver.flag, '...the migration marks itself done');
+  is(carriedOver.again, carriedOver.wanted, '...and running it twice moves nothing a second time');
+
+  // A bought section was stored by position too, which the reorder would have turned into a
+  // different section. They are stored by name now, and the old numbers are converted.
+  const bought = await $(() => {
+    const first = UNITS.findIndex(u => u.story);
+    Prog.storySections = [first + 17];           // v1.35.0: position 17 was The Cross & Resurrection
+    saveProg();
+    location.hash = '';                          // (no navigation needed; just re-run the upgrade)
+    const list = Prog.storySections;
+    // re-run the same upgrade the app runs at boot
+    Prog.storySections = list.map(x => typeof x === 'number' ? (STORY_ORDER_V1[x - first] || null) : x).filter(Boolean);
+    const owned = t => storySectionOwned(UNITS.findIndex(u => u.name === t));
+    return { stored: Prog.storySections.join(','), cross: owned('The Cross & Resurrection'),
+             parables4: owned('Parables of Jesus IV') };
+  });
+  is(bought.stored, 'The Cross & Resurrection', 'a section bought by position is converted to its name');
+  ok(bought.cross, '...and is still the section that was paid for');
+  no(bought.parables4, '...not whatever now sits at that position');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
@@ -1804,8 +1874,8 @@ const DAY = 86400000;
   ok(pgrid.allIconed, '...every one carrying an icon');
   ok(pgrid.allSubbed, '...and a line saying what is inside');
   is(pgrid.labels.split(' | ')[0], 'Admin', 'Admin comes first');
-  is(pgrid.labels.split(' | ')[1], "What's new", '...then the release notes');
-  is(pgrid.labels.split(' | ').slice(0,8).join(','), "Admin,What's new,Get the app,Feature store,Bible translation,Theme,Reference library,Back up your progress", '...then the rest, in the order asked for');
+  is(pgrid.labels.split(' | ')[1], "Badges", '...then the badges');
+  is(pgrid.labels.split(' | ').slice(0,9).join(','), "Admin,Badges,Get the app,Feature store,Bible translation,Theme,Reference library,Back up your progress,What's new", '...then the rest, in the order asked for, with the release notes last');
   has(pgrid.labels, 'Theme', 'Theme is one of them');
   has(pgrid.labels, 'Account', '...and Account');
   has(pgrid.labels, 'Back up', '...and the backup');

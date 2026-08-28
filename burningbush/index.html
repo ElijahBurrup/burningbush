@@ -1433,6 +1433,21 @@
   .storydivider{text-align:center;margin:26px 0 6px;font-family:inherit;font-size:22px;font-weight:800;color:var(--gold-ink);letter-spacing:.5px}
   .storydivider span{display:block;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.3px;margin-top:2px}
   .vlist .vrow .vt{flex:1} .vlist .vrow .vt .muted{font-size:12px;line-height:1.4}
+  /* A verse known by heart is shaded gold and its type reversed out of it. Every colour here is a
+     token, so the pair stays legible in all five themes rather than only the one it was drawn in. */
+  .vlist .vrow.heartrow{background:var(--gold);color:var(--on-accent);
+    border-top-color:transparent;border-radius:12px;padding:9px 12px;margin:6px 0}
+  .vlist .vrow.heartrow .vt b,
+  .vlist .vrow.heartrow .vt b.gold,
+  .vlist .vrow.heartrow .vt b.promise-ref,
+  .vlist .vrow.heartrow .vt .gold,
+  .vlist .vrow.heartrow > div:last-child{color:var(--on-accent)}
+  .vlist .vrow.heartrow .vt .muted{color:var(--on-accent);opacity:.74}
+  .vlist .vrow.heartrow + .vrow{border-top-color:transparent}
+  /* Filled with the row's own gold and outlined in the reversed ink, so the heart reads as cut
+     into the background rather than laid on top of it. */
+  .heart-etch{width:15px;height:15px;display:inline-block;vertical-align:-2px;margin-right:5px}
+  .heart-etch path{fill:var(--gold);stroke:var(--on-accent);stroke-width:2;stroke-linejoin:round}
   .vlock{font-size:12px;color:var(--muted);font-weight:700;white-space:nowrap}
 </style>
 </head>
@@ -1705,8 +1720,14 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.35.0";
+const APP_VERSION="1.36.0";
 const CHANGELOG=[
+ {v:"1.36.0", d:"August 27, 2026", t:"The parables in one run", items:[
+   ["chg","<b>Bible Stories now runs in order</b> — Parables of Jesus I to VII together, then the two Word Pictures sections, and only then the Cross &amp; Resurrection, the Early Church and Paul."],
+   ["fix","Everything you had already learned moved with it. A story is stored by its place in the list, so reordering the list renames them all — every finished story was carried across to where that same story now lives, and sections you had bought are now recorded by name so this can never bite again."],
+   ["chg","<b>Badges and What's new have swapped places</b> on the Profile screen."],
+   ["chg","On <b>My Verses</b>, a verse you know by heart is now <b>shaded gold with its type reversed out of it</b>, and its heart is drawn in that same reversed colour so it reads as etched into the gold."]
+ ]},
  {v:"1.35.0", d:"August 27, 2026", t:"Every parable, and the names are back", items:[
    ["new","<b>Twenty more parables.</b> All thirty-five of Jesus' parables are now here with the verse each one opens at — the lost coin, the two sons, the wicked tenants, the wedding feast, the hidden treasure, the net, the leaven, the growing seed, the shrewd manager, the persistent widow and the rest."],
    ["new","<b>Word Pictures of Jesus</b> — ten sayings too short to be called parables, but too good to leave out: the salt of the earth, the lamp under a bushel, the mote and the beam, new wine in old bottles, the vine and the branches."],
@@ -2726,6 +2747,17 @@ function migrateProg(p){
   p.piecesUsed=arr(p.piecesUsed);                       // church pieces already built, so none repeats early
   if(typeof p.palaceSlots!=="number") p.palaceSlots=0;  // extra palace slots bought with talents
   p.storySections=arr(p.storySections);                 // Bible story sections bought with talents
+  // The story sections were reordered so the parables run together. A story's id is its position
+  // in the list, so every finished id has to be carried to where that same story now lives -
+  // otherwise a story someone had learned would quietly become a different one.
+  //   old 0-84   the Old Testament through Parables III   unmoved
+  //   old 85-99  cross, church, Paul                      now last          +30
+  //   old 100-129 parables IV-VII and the word pictures   now in the middle -15
+  if(!p.storyOrderV2){
+    p.storyOrderV2=true;
+    const move=n=> n<85 ? n : (n<100 ? n+30 : (n<130 ? n-15 : n));
+    p.doneSkills=(p.doneSkills||[]).map(s=>{ const m=/^story:(\d+)$/.exec(s); return m ? "story:"+move(+m[1]) : s; });
+  }
   if(typeof p.blessIdx!=="number") p.blessIdx=0;        // rotates the word for word blessing
   if(typeof p.paceIdx!=="number") p.paceIdx=0;          // rotates the "little and often" verse
   if(typeof p.taxAt!=="number") p.taxAt=0;              // 0 = never assessed (set when the Rome letter lands)
@@ -3406,10 +3438,12 @@ function renderOnboard(){
 }
 
 /* =================== BIBLE STORIES — 130 stories, 26 sections of 5 ===================
-   The last six sections were added after the first hundred. They are APPENDED, never inserted:
-   a story's id is its running position across the whole list, so inserting a section in the
-   middle would silently hand every later story a different id and move people's progress onto
-   stories they had never learned.                                                          */
+   Walked in order: the Old Testament, then Jesus' birth, ministry and miracles, then all seven
+   parable sections and the word pictures, and only then the cross, the church and Paul.
+   A story's id is its running position across this list, so ANY reordering renames every id
+   after the first change. That is what migrateProg's storyOrderV2 step exists to repair, and
+   what the "a reordered list keeps every finished story" spec exists to prove. Never move a
+   section without both.                                                                    */
 // [name, book, chapter, verse] = where the story STARTS. Parables: no repeats; the fullest gospel version.
 const STORY_GROUPS=[
  {t:"Creation & the Fall", s:[["Creation","Genesis",1,1],["Adam & Eve in Eden","Genesis",2,7],["The Fall","Genesis",3,1],["Cain & Abel","Genesis",4,1],["Noah & the Flood","Genesis",6,9]]},
@@ -3429,9 +3463,6 @@ const STORY_GROUPS=[
  {t:"Parables of Jesus I", s:[["The Good Samaritan","Luke",10,30],["The Prodigal Son","Luke",15,11],["The Sower","Matthew",13,3],["The Lost Sheep","Luke",15,3],["The Mustard Seed","Matthew",13,31]]},
  {t:"Parables of Jesus II", s:[["The Wheat & the Tares","Matthew",13,24],["The Pearl of Great Price","Matthew",13,45],["The Unforgiving Servant","Matthew",18,23],["The Workers in the Vineyard","Matthew",20,1],["The Ten Virgins","Matthew",25,1]]},
  {t:"Parables of Jesus III", s:[["The Talents","Matthew",25,14],["The Rich Fool","Luke",12,16],["The Rich Man & Lazarus","Luke",16,19],["The Pharisee & the Tax Collector","Luke",18,9],["The Great Banquet","Luke",14,16]]},
- {t:"The Cross & Resurrection", s:[["The Triumphal Entry","Matthew",21,1],["The Last Supper","Luke",22,14],["Gethsemane","Matthew",26,36],["The Crucifixion","John",19,16],["The Resurrection","John",20,1]]},
- {t:"The Early Church", s:[["The Ascension","Acts",1,9],["Pentecost","Acts",2,1],["Peter & John Heal the Lame Man","Acts",3,1],["Ananias & Sapphira","Acts",5,1],["Stephen the First Martyr","Acts",6,8]]},
- {t:"Paul & the End", s:[["The Conversion of Saul","Acts",9,1],["Peter's Vision & Cornelius","Acts",10,1],["Paul & Silas in Prison","Acts",16,16],["Paul's Shipwreck","Acts",27,1],["The New Heaven & New Earth","Revelation",21,1]]},
  // Twenty more parables, so that all thirty-five of Jesus' parables are here with their opening verse.
  {t:"Parables of Jesus IV", s:[["The Lost Coin","Luke",15,8],["The Two Sons","Matthew",21,28],["The Wicked Tenants","Matthew",21,33],["The Wedding Feast","Matthew",22,2],["The Hidden Treasure","Matthew",13,44]]},
  {t:"Parables of Jesus V", s:[["The Net","Matthew",13,47],["The Leaven","Matthew",13,33],["The Growing Seed","Mark",4,26],["The Shrewd Manager","Luke",16,1],["The Persistent Widow","Luke",18,1]]},
@@ -3440,10 +3471,19 @@ const STORY_GROUPS=[
  // Too short to carry a story, so they are not called parables - but they are word pictures all the
  // same, and every one of them has a verse worth being able to find.
  {t:"Word Pictures of Jesus I", s:[["Salt of the Earth","Matthew",5,13],["The Lamp under a Bushel","Matthew",5,15],["The Mote & the Beam","Matthew",7,3],["The Strait Gate","Matthew",7,13],["A Tree & Its Fruit","Matthew",7,17]]},
- {t:"Word Pictures of Jesus II", s:[["New Cloth on an Old Coat","Matthew",9,16],["New Wine in Old Bottles","Matthew",9,17],["The Blind Leading the Blind","Luke",6,39],["The Fig Tree in Leaf","Matthew",24,32],["The Vine & the Branches","John",15,1]]}
+ {t:"Word Pictures of Jesus II", s:[["New Cloth on an Old Coat","Matthew",9,16],["New Wine in Old Bottles","Matthew",9,17],["The Blind Leading the Blind","Luke",6,39],["The Fig Tree in Leaf","Matthew",24,32],["The Vine & the Branches","John",15,1]]},
+ {t:"The Cross & Resurrection", s:[["The Triumphal Entry","Matthew",21,1],["The Last Supper","Luke",22,14],["Gethsemane","Matthew",26,36],["The Crucifixion","John",19,16],["The Resurrection","John",20,1]]},
+ {t:"The Early Church", s:[["The Ascension","Acts",1,9],["Pentecost","Acts",2,1],["Peter & John Heal the Lame Man","Acts",3,1],["Ananias & Sapphira","Acts",5,1],["Stephen the First Martyr","Acts",6,8]]},
+ {t:"Paul & the End", s:[["The Conversion of Saul","Acts",9,1],["Peter's Vision & Cornelius","Acts",10,1],["Paul & Silas in Prison","Acts",16,16],["Paul's Shipwreck","Acts",27,1],["The New Heaven & New Earth","Revelation",21,1]]}
 ];
 const STORY_TOTAL=STORY_GROUPS.reduce((n,g)=>n+g.s.length,0);   // never hardcode it again
 function storiesDone(a,b){ for(let g=a;g<=b;g++) if(!Prog.doneSkills.includes("story:"+g)) return false; return true; }
+// A milestone that names its sections keeps its meaning when the list is reordered. A raw id range
+// does not - it quietly starts asking for different stories, which is exactly what happened here.
+function sectionRange(title){ let i=0; for(const g of STORY_GROUPS){ if(g.t===title) return [i,i+g.s.length-1]; i+=g.s.length; } return null; }
+function storiesDoneIn(){ return Array.prototype.every.call(arguments, t=>{ const r=sectionRange(t); return !!r && storiesDone(r[0],r[1]); }); }
+const GOSPEL_SECTIONS=["The Birth of Jesus","Jesus Begins His Ministry","Miracles of Jesus","The Cross & Resurrection"];
+const PARABLE_SECTIONS=["Parables of Jesus I","Parables of Jesus II","Parables of Jesus III","Parables of Jesus IV","Parables of Jesus V","Parables of Jesus VI","Parables of Jesus VII"];
 // reachability sort key for a story: the largest number it needs (book #, chapter OR verse). Higher = harder to reach = lower in the list.
 function storyReachKey(sk){ const s=sk.story; return Math.max(bookNum(s.b)||0, s.c||0, s.v||0); }
 
@@ -3464,7 +3504,7 @@ function buildUnits(){
   const bk=n=>({id:"book:"+n,label:bookName(n),kind:"book",items:[n]});
   const units=[];
   const ROUND_ICONS=["👣","🥾","🛤️","🌄","⛰️","🧗","🏔️","🚩","🦅","🌟","🎖️","🏆","👑"];   // ascending climb, Round 1→13
-  const STORY_ICONS=["🍎","⭐","🧥","🌊","📜","🎺","🌾","👑","🔥","🌪️","🦁","👶","🕊️","🍞","🌱","🐑","💰","✝️","⛪","🌅","🕯️","🌿","🚪","🏗️","🧂","🍷"]; // one per story section
+  const STORY_ICONS=["🍎","⭐","🧥","🌊","📜","🎺","🌾","👑","🔥","🌪️","🦁","👶","🕊️","🍞","🌱","🐑","💰","🕯️","🌿","🚪","🏗️","🧂","🍷","✝️","⛪","🌅"]; // one per story section, in list order
   // 0) The Code — the Major System video first, then the sound↔digit map drilled both ways.
   units.push({name:"The Code: Major System Sounds", ic:"🔢", skills:[
     // Video Review is not reachable this early, so the opening film keeps a tile of its own here
@@ -3516,6 +3556,20 @@ function buildUnits(){
 }
 function range(a,b){ const r=[]; for(let i=a;i<=b;i++) r.push(i); return r; }
 const UNITS=buildUnits();
+// A bought section used to be recorded by its POSITION, which reordering the list silently
+// invalidates - you would come back owning a different section. It is recorded by NAME now.
+const STORY_ORDER_V1=["Creation & the Fall","Abraham & the Patriarchs","Jacob & Joseph","Moses & the Exodus",
+  "Wilderness & the Law","Conquest & Judges","From Ruth to King David","David & Solomon","Elijah & Elisha",
+  "Prophets & Suffering","Exile & Deliverance","The Birth of Jesus","Jesus Begins His Ministry","Miracles of Jesus",
+  "Parables of Jesus I","Parables of Jesus II","Parables of Jesus III","The Cross & Resurrection","The Early Church",
+  "Paul & the End","Parables of Jesus IV","Parables of Jesus V","Parables of Jesus VI","Parables of Jesus VII",
+  "Word Pictures of Jesus I","Word Pictures of Jesus II"];
+(function upgradeStorySections(){
+  const list=Prog.storySections; if(!Array.isArray(list) || !list.some(x=>typeof x==="number")) return;
+  const first=UNITS.findIndex(u=>u.story); if(first<0) return;
+  Prog.storySections=list.map(x=>typeof x==="number" ? (STORY_ORDER_V1[x-first]||null) : x).filter(Boolean);
+  saveProg();
+})();
 
 function skillDue(sk){ // min due across items (single-direction key)
   let min=Infinity, any=false;
@@ -3573,22 +3627,22 @@ const MILESTONES=[
  {after:"Miracles of Jesus", reached:()=>storiesDone(0,69), stories:true, e:"🌊", t:"He Calmed the Storm",
   c:"Water into wine, five thousand fed, a storm stilled with a word.",
   d:"Seventy stories. You can locate His works as readily as His words."},
- {after:"The Cross & Resurrection", reached:()=>storiesDone(0,89), stories:true, e:"✝️", t:"The Gospel Story",
+ {after:"The Cross & Resurrection", reached:()=>storiesDoneIn(...GOSPEL_SECTIONS), stories:true, e:"✝️", t:"The Gospel Story",
   c:"The whole story of Jesus — birth, ministry, cross and empty tomb.",
   d:"You can walk anyone from Bethlehem to the resurrection, story by story, chapter and verse."},
- {after:"Parables of Jesus III", reached:()=>storiesDone(70,84), stories:true, e:"🌾", t:"The Best Known Parables",
+ {after:"Parables of Jesus III", reached:()=>storiesDoneIn("Parables of Jesus I","Parables of Jesus II","Parables of Jesus III"), stories:true, e:"🌾", t:"The Best Known Parables",
   c:"The fifteen parables everyone has heard, located and learned.",
   d:"The Samaritan, the prodigal, the sower, the lost sheep — you can turn to any of them without hunting."},
- {after:"Parables of Jesus VII", reached:()=>storiesDone(70,84)&&storiesDone(100,119), stories:true, e:"🌱", t:"Every Parable",
+ {after:"Parables of Jesus VII", reached:()=>storiesDoneIn(...PARABLE_SECTIONS), stories:true, e:"🌱", t:"Every Parable",
   c:"All thirty-five of Jesus' parables, located and learned.",
   d:"When someone asks 'where's that parable?' — you'll know the book, chapter and verse in an instant."},
  {after:"Word Pictures of Jesus II", reached:()=>storiesDone(0,STORY_TOTAL-1), stories:true, e:"📖", t:"Every Story Told",
   c:"Every story, every parable and every word picture in the collection.",
   d:"A hundred and thirty openings, from 'In the beginning' to the new heaven and the new earth. There is nothing left in here you cannot find."},
- {after:"The Early Church", reached:()=>storiesDone(0,94), stories:true, e:"⛪", t:"The Church Begins",
+ {after:"The Early Church", reached:()=>storiesDoneIn(...GOSPEL_SECTIONS,"The Early Church"), stories:true, e:"⛪", t:"The Church Begins",
   c:"Pentecost, the first healings, the first martyr — the Church is on its feet.",
   d:"Ninety-five stories. Only the road to Rome remains."},
- {after:"Paul & the End", reached:()=>storiesDone(0,99), stories:true, e:"⭐", t:"100 Stories Mastered",
+ {after:"Paul & the End", reached:()=>storiesLearned()>=100, stories:true, e:"⭐", t:"100 Stories Mastered",
   c:"Every major story in the Bible, by heart.",
   d:"You can turn to any of the Bible's 100 great stories in a moment. Now go tell them."}
 ];
@@ -3791,13 +3845,14 @@ function finishStory(){
 }
 // A free account sees every section header — the shape of the whole Bible story — but the
 // stories inside stay closed until that section is bought. Subscribers see them all.
-function storySectionOwned(ui){ return Billing.isPro() || (Prog.storySections||[]).includes(ui); }
+function storySectionOwned(ui){ return Billing.isPro() || (Prog.storySections||[]).includes((UNITS[ui]||{}).name); }
 function buyStorySection(ui, after){
   if((Prog.talents||0) < STORY_SECTION_COST){ toast(`That section costs ${STORY_SECTION_COST} talents — you have ${talDisp(Prog.talents||0)}.`); return; }
   confirmSpend(`Open this section for <b class="gold">${STORY_SECTION_COST} 🪙</b>?`,
     `Five Bible stories, yours to keep. You'll have ${talDisp(Math.max(0,(Prog.talents||0)-STORY_SECTION_COST))} talents left.`,
     ()=>{ spendTalents(STORY_SECTION_COST);
-      Prog.storySections=Prog.storySections||[]; if(!Prog.storySections.includes(ui)) Prog.storySections.push(ui);
+      const nm=(UNITS[ui]||{}).name;
+      Prog.storySections=Prog.storySections||[]; if(nm && !Prog.storySections.includes(nm)) Prog.storySections.push(nm);
       saveProg(); toast("📜 Section opened ✓"); if(after) after(); },
     {icon:"📜", yes:`Yes, ${STORY_SECTION_COST} talents`});
 }
@@ -4411,9 +4466,10 @@ function verseRow(b,c,v,st,star){
       trail = `<div style="margin-top:6px">${srTrailHTML(o)}<span class="muted" style="font-size:11px;margin-left:8px">${statusTxt}${streakNote}</span></div>`;
     }
   }
-  const mst = st!=="mem" ? '' : (isHeart(refKey(b,c,v)) ? '💛 ' : (w4wMastered(refKey(b,c,v)) ? '★ ' : ''));
+  const hk = st==="mem" && isHeart(refKey(b,c,v));
+  const mst = st!=="mem" ? '' : (hk ? heartEtchSVG() : (w4wMastered(refKey(b,c,v)) ? '★ ' : ''));
   const prom = isPromiseVerse(b,c,v);
-  return `<div class="vrow clkrow" data-vb="${b}:${c}:${v}"><div class="vt"><b class="${prom?"promise-ref":"gold"}">${prom?"🤝 ":""}${star?"✨ ":""}${mst}${bookName(b)} ${c}:${v}${srBadge}</b><div class="muted">${t.length>56?t.slice(0,56).replace(/\s+\S*$/,"")+"…":t}</div>${trail}</div><div>${st==="mem"?'<span style="color:var(--good);font-weight:800">✓</span>':'→'}</div></div>`;
+  return `<div class="vrow clkrow${hk?" heartrow":""}" data-vb="${b}:${c}:${v}"><div class="vt"><b class="${prom?"promise-ref":"gold"}">${prom?"🤝 ":""}${star?"✨ ":""}${mst}${bookName(b)} ${c}:${v}${srBadge}</b><div class="muted">${t.length>56?t.slice(0,56).replace(/\s+\S*$/,"")+"…":t}</div>${trail}</div><div>${st==="mem"?'<span style="color:var('+(hk?'--on-accent':'--good')+');font-weight:800">✓</span>':'→'}</div></div>`;
 }
 function suggestedVerses(){
   // all curated heart-verses, not yet memorized/skipped; reachable ones first
@@ -4946,6 +5002,10 @@ const STAGE_WHAT={
 function verseStage(k){ let s=(Prog.verseStage||{})[k]; if(s==="w4w") s="heart"; return V_STAGES.includes(s)?s:"loc"; }
 function stageRank(s){ const i=V_STAGES.indexOf(s); return i<0?0:i; }
 function isHeart(k){ return verseStage(k)==="heart"; }
+// Drawn rather than an emoji, because an emoji cannot take the row's colours: this one is filled
+// with the same gold the row is shaded with and outlined in the reversed ink, which is what makes
+// it look etched into the background instead of sitting on it.
+function heartEtchSVG(){ return '<svg class="heart-etch" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.8 4.2 13a5.2 5.2 0 1 1 7.4-7.3l.4.4.4-.4A5.2 5.2 0 1 1 19.8 13Z"/></svg> '; }
 // Moving up to "known by heart" RELEASES the palace station so the space can be used again. The old
 // station is kept in locPast, so moving back down puts the verse exactly where it was - the whole
 // thing is reversible. Scene text is never touched at any stage; it is the user's writing.
@@ -7778,8 +7838,8 @@ const PROF_SUBS={
   "Back up your progress":()=>"Export or restore",
 };
 // The order Profile reads in. Anything not named here follows, in the order it was authored.
-const PROF_ORDER=["Admin","What's new","Get the app","Feature store","Bible translation","Theme",
-  "Reference library","Back up your progress"];
+const PROF_ORDER=["Admin","Badges","Get the app","Feature store","Bible translation","Theme",
+  "Reference library","Back up your progress","What's new"];
 // Installed already? Then there is nothing to install, and the button is noise.
 function isInstalledApp(){
   try{ return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone===true; }
