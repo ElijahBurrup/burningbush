@@ -34,7 +34,7 @@ const RULES = [
   // against /burningbush with no trailing slash and 404. One site per film that has a recording.
   ['src:"videos/', 'src:"/burningbush/videos/', 1],
   // one per translation that is fetched on demand; the KJV is the only one loaded with the page
-  ['file:"bibles/', 'file:"/burningbush/bibles/', 5],   // +2 the tile thumbnail (chosen word, then the default)
+  ['file:"bibles/', 'file:"/burningbush/bibles/', 1],   // +2 the tile thumbnail (chosen word, then the default)
   // fetched by absolute path: a relative one would resolve to /sw.js against the trailing-slash-less URL
   ['register("sw.js")', 'register("/burningbush/sw.js")', 1],
   ['one("strongs.js")', 'one("/burningbush/strongs.js")', 1],

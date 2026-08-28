@@ -512,7 +512,9 @@
   .mem-backfill-t{font-size:13px;line-height:1.4;color:var(--ink)}
   .mem-backfill .btn{width:auto;flex:0 0 auto;white-space:nowrap;margin:0}
   .lv-topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px}
-  .lv-navcluster{display:flex;align-items:center;gap:9px}
+  /* The two pairs used to sit side by side and filled the bar. Stacked, they leave the top right
+     corner for Review Lesson, which is where that button lives on every other screen. */
+  .lv-navcluster{display:flex;flex-direction:column;align-items:center;gap:5px}
   .lv-navpair{display:flex;gap:5px}
   .lv-navbtn{min-width:40px;height:34px;padding:0 9px;border-radius:10px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);font-weight:800;font-size:15px;line-height:1;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
   .lv-navbtn:disabled{opacity:.3;cursor:default}
@@ -997,6 +999,10 @@
      icon so neither is ever mistaken for the other. */
   /* A screen wears the icon of the tab that opened it, larger, beside its title — so the page you
      are on and the button that got you here are plainly the same thing. */
+  .revlesson{flex:0 0 auto;margin-left:auto;width:78px;padding:7px 6px;border-radius:10px;
+    background:var(--panel2);border:1px solid var(--line);color:var(--ink-soft);
+    font-family:inherit;font-size:11px;font-weight:800;line-height:1.25;text-align:center;cursor:pointer}
+  .revlesson:active{transform:translateY(1px)}
   .pagehead{display:flex;align-items:center;gap:10px;margin:0 0 2px;min-width:0}
   .pagehead h2{margin:0;min-width:0}
   .ph-i{flex:0 0 auto;font-size:33px;line-height:1;display:grid;place-items:center;width:36px;height:36px}
@@ -1169,19 +1175,16 @@
   .vidph{border:1px dashed var(--gold2);border-radius:14px;padding:22px;text-align:center;background:var(--vidph-bg);margin:12px 0}
   .vidph .play{width:52px;height:52px;border-radius:50%;background:var(--gold);color:var(--on-accent);display:grid;place-items:center;font-size:22px;margin:0 auto 8px}
   .vidph .vt{font-weight:800;font-size:15px} .vidph .vs{font-size:12px;color:var(--muted);margin-top:3px}
-  .introfilm{display:flex;align-items:center;gap:13px;width:100%;text-align:left;cursor:pointer;
-             background:var(--panel2);border:1px solid var(--gold2);border-radius:14px;
-             padding:13px 15px;margin:2px 0 14px;font-family:inherit;color:var(--ink)}
-  .introfilm.seen{border-color:var(--line)}
-  .ifplay{flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
-          justify-content:center;font-size:16px;background:var(--accent);color:var(--on-accent)}
-  .introfilm.seen .ifplay{background:var(--panel0);color:var(--muted)}
+  .introfilm{display:flex;align-items:center;gap:13px;text-align:left;padding:12px 15px;margin:2px 0 14px}
+  .ifplay{flex:none;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;
+          justify-content:center;font-size:15px;background:var(--panel0);color:var(--ink)}
   .ift{flex:1;min-width:0;display:block}
-  .ift b{display:block;font-size:14.5px;font-weight:800;color:var(--gold-ink);line-height:1.3}
-  .ift small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
-  .ifdone{flex:none;color:var(--good);font-weight:800}
-  .tile.video{background:linear-gradient(135deg,var(--accent),var(--blue2,var(--accent)));color:var(--on-accent)}
+  .ift b{display:block;font-size:14.5px;font-weight:800;line-height:1.3}
+  .ift small{display:block;font-size:12px;font-weight:700;opacity:.75;margin-top:2px}
+  .ifdone{flex:none;font-weight:800}
   .tile.video .vface{font-size:26px;line-height:1}
+  /* a film's name is longer than "Sounds 0-4", and a second line would land on the next tile */
+  .tile.video small{font-size:12px;width:106px}
   .tile.video.done{opacity:.9}
   @keyframes navflash{0%,100%{transform:translateY(0);filter:none}50%{transform:translateY(-5px);filter:drop-shadow(0 0 10px var(--gold2))}}
   .tabbar button.navflash{color:var(--gold-ink)!important}
@@ -1531,6 +1534,7 @@
   .bbsent{margin-top:14px;padding:13px 15px;border-radius:12px;border:1px solid var(--gold2);background:var(--panel0);font-size:14px;line-height:1.6}
   .bbsent b{color:var(--gold-ink)}
   .trhearts{font-size:12px;color:var(--gold-ink);font-weight:700;margin-top:3px}
+  .trcredit{font-size:10.5px;color:var(--muted);font-weight:600;line-height:1.4;margin-top:5px}
   .trans-opt.loading{opacity:.6;pointer-events:none}
   .relbox{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;text-align:left;font-size:13.5px;line-height:1.5}
   .relbox .rl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--good);font-weight:800;margin-bottom:4px}
@@ -1845,13 +1849,14 @@ const Store = {
 const TRANSLATIONS=[
  {id:"KJV", name:"King James Version",       glob:"KJV", note:"1611 · the default, and what every scene in here was built on"},
  {id:"ASV", name:"American Standard Version",glob:"ASV", file:"/burningbush/bibles/asv.js", note:"1901 · literal, and the KJV's closest descendant"},
- {id:"BSB", name:"Berean Standard Bible",    glob:"BSB", file:"/burningbush/bibles/bsb.js", note:"2022 · modern English, close to the Greek and Hebrew"},
- {id:"FBV", name:"Free Bible Version",       glob:"FBV", file:"/burningbush/bibles/fbv.js", note:"2018 · plain, unadorned, easy to read aloud"},
- {id:"WEB", name:"World English Bible",      glob:"WEB", file:"/burningbush/bibles/web.js", note:"2000 · a modern update of the ASV"},
- {id:"RV",  name:"Revised Version",          glob:"RV",  file:"/burningbush/bibles/rv.js",  note:"1885 · the first revision of the King James"}
+ // Tyndale's, so it cannot ship inside the app the way the other two do. It is read through our own
+ // server a chapter at a time, which keeps the api.bible key off every phone and means we hold a
+ // cache rather than a copy.
+ {id:"NLT", name:"New Living Translation", api:"nlt", note:"2015 · Tyndale · read live, a chapter at a time"}
 ];
 function transEntry(id){ return TRANSLATIONS.find(t=>t.id===id) || TRANSLATIONS[0]; }
-function transReady(id){ const t=transEntry(id); return !t.file || !!window[t.glob]; }
+// A live text is always "ready": it has nothing to download up front, it fills in chapter by chapter.
+function transReady(id){ const t=transEntry(id); return !!t.api || !t.file || !!window[t.glob]; }
 const _trPromise={};
 // Resolves true when the text is in memory, false if the file would not load. It never rejects:
 // a failed download must leave the reader on the KJV, not on an error screen.
@@ -1871,9 +1876,18 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.52.0";
+const APP_VERSION="1.53.0";
 const CHANGELOG=[
- {v:"1.52.0", d:"August 28, 2026", t:"Eight translations, and a ladder for each", items:[
+ {v:"1.53.0", d:"August 28, 2026", t:"The New Living Translation, and a film on every lesson", items:[
+   ["new","<b>The New Living Translation.</b> It is Tyndale's and cannot be bundled the way the King James and the American Standard are, so it is read live through our own server, a chapter at a time, and the chapters you own are fetched the moment you choose it."],
+   ["chg","<b>The translation list is now the three you asked for</b>: King James, American Standard, New Living."],
+   ["fix","<b>Poetry ran together in the American Standard.</b> \"Thy word is a lamp unto my feet,And light unto my path.\" Every line of Hebrew poetry is its own block with no space of its own, and 5,070 verses had lost the gap. All of them are fixed."],
+   ["new","<b>Review Lesson</b> now sits in the top right of every screen that teaches something: the two Major System lessons, every book lesson, Spaced Repetition, the Memory Palace and the verse screen. Same place, same size, every time."],
+   ["new","<b>The film arrives the first time it is needed.</b> Spaced Repetition plays its film the first time you open it, the Memory Palace plays its own the first time you walk in, and Building the Scene plays the first time you sit down to memorise a verse. Each one then stays in Video Review."],
+   ["chg","<b>Start here is a blue button now</b>, and it turns gold once you have watched it. The Major System tile on the path does the same."],
+   ["chg","<b>The four navigation buttons on the verse screen are stacked</b> rather than strung across the bar, which frees the top right corner for Review Lesson."]
+ ]},
+ {v:"1.52.0", d:"August 28, 2026", t:"Translations, and a ladder for each", items:[
    ["fix","<b>The Bible translation tile in Profile was showing the wrong thing entirely.</b> It read the onboarding question about how well you know the Bible, so it said DEEP or SOME where the translation belongs. It now says which translation you are reading."],
    ["new","<b>Five more translations, all of them real text.</b> The American Standard, the Berean Standard, the Free Bible Version, the World English Bible and the Revised Version of 1885, alongside the King James."],
    ["chg","<b>The placeholders are gone.</b> NKJV, NIV and ESV sat in the list and quietly showed King James text under another name. A translation that is not really there is worse than one that is not offered."],
@@ -2284,9 +2298,64 @@ function checkVersionCard(){
 }
 function curTrans(){ return Store.get("vv_trans","KJV"); }
 function transData(){ const t=transEntry(curTrans()); return window[t.glob] || window.KJV; }   // fallback KJV
+
+/* ---- live scripture ---------------------------------------------------------------------------
+   kjvText is called from about sixty places and every one of them expects an answer NOW, so a text
+   that arrives over the network cannot be awaited. Instead: answer from the chapter cache if it is
+   there, otherwise answer in the King James and quietly ask for the chapter. When it lands the
+   screen redraws. Nothing anywhere has to know a fetch happened.                                */
+const _apiCh={};              // "NLT:43:3" -> ["v1","v2",…]
+const _apiWant=new Set();
+let _apiTimer=null, _apiCopyright="", _apiFailed=false;
+function apiChapter(id,b,c){ return _apiCh[id+":"+b+":"+c]||null; }
+function scriptureCopyright(){ return _apiCopyright; }
+function wantChapter(id,b,c){
+  const k=id+":"+b+":"+c;
+  if(_apiCh[k] || _apiWant.has(k) || _apiFailed) return;
+  _apiWant.add(k);
+  clearTimeout(_apiTimer); _apiTimer=setTimeout(flushChapters, 60);   // one round trip per screen, not per verse
+}
+function flushChapters(){
+  const t=transEntry(curTrans());
+  if(!t.api){ _apiWant.clear(); return; }
+  const mine=[..._apiWant].filter(k=>k.indexOf(t.id+":")===0);
+  const batch=mine.slice(0,40);                                       // the server takes 40 at a time
+  batch.forEach(k=>_apiWant.delete(k));
+  if(!batch.length) return;
+  const refs=batch.map(k=>{ const p=k.split(":"); return p[1]+"."+p[2]; }).join(",");
+  fetch(API_BASE+"/bible/"+t.api+"?refs="+encodeURIComponent(refs))
+    .then(r=>r.ok?r.json():null)
+    .then(d=>{
+      if(!d||!d.chapters){ _apiFailed=true; toast("Could not reach the "+t.id+". Showing King James."); return; }
+      Object.keys(d.chapters).forEach(ref=>{ const p=ref.split("."); _apiCh[t.id+":"+p[0]+":"+p[1]]=d.chapters[ref]; });
+      if(d.copyright) _apiCopyright=d.copyright;
+      refreshCurrentView();
+    })
+    .catch(()=>{ _apiFailed=true; });
+  if(_apiWant.size) setTimeout(flushChapters, 150);
+}
+// The chapters somebody actually owns, asked for the moment they pick the text, so their own verses
+// are right before they go looking for them.
+function prefetchScripture(id){
+  const t=transEntry(id); if(!t.api) return;
+  _apiFailed=false;
+  const refs=new Set();
+  [].concat(Prog.memorized||[], Prog.saved||[]).forEach(k=>{ const p=k.split(":"); refs.add(p[0]+"|"+p[1]); });
+  [...refs].slice(0,80).forEach(r=>{ const p=r.split("|"); wantChapter(id,+p[0],+p[1]); });
+}
+function fallbackVerse(b,c,v){ try{ return window.KJV[b-1][c-1][v-1]||""; }catch(e){ return ""; } }
 function transFellBack(){ return !transReady(curTrans()); }   // chosen but not in memory yet
 /* KJV structure (chapter/verse counts) drives navigation for every translation */
-function kjvText(b,c,v){ try{ return (transData()[b-1][c-1][v-1])||(window.KJV[b-1][c-1][v-1])||""; }catch(e){ try{ return window.KJV[b-1][c-1][v-1]||""; }catch(e2){ return ""; } } }
+function kjvText(b,c,v){
+  const t=transEntry(curTrans());
+  if(t.api){
+    const ch=apiChapter(t.id,b,c);
+    if(ch) return ch[v-1] || fallbackVerse(b,c,v);
+    wantChapter(t.id,b,c);
+    return fallbackVerse(b,c,v);
+  }
+  try{ return (transData()[b-1][c-1][v-1])||fallbackVerse(b,c,v); }catch(e){ return fallbackVerse(b,c,v); }
+}
 function chapCount(b){ return (window.KJV&&window.KJV[b-1]||[]).length; }
 function verseCount(b,c){ try{ return window.KJV[b-1][c-1].length; }catch(e){ return 0; } }
 let _totVerses=0;
@@ -3802,7 +3871,8 @@ function show(tab){
   if(tab==="journey") renderJourney();
   if(tab==="learn"){ renderPath(true); setTimeout(()=>maybeVideo("major"), 400); }   // the film that opens the track
   if(tab==="verse") renderVerse();
-  if(tab==="palace") renderPalace();
+  // the film the first time the room is walked into, the same way Learn opens with the Major System
+  if(tab==="palace"){ renderPalace(); setTimeout(()=>maybeVideo("palace"), 400); }
   if(tab==="stories") renderStories();
   paintTheme();
 }
@@ -4066,9 +4136,10 @@ const VIDEOS = {
   // The opening film. It is the only one with a src today; the rest are waiting on their recordings,
   // and an empty src draws the placeholder rather than a broken player.
   intro: {src:"/burningbush/videos/intro.mp4", skill:"video:intro", tile:"Intro", title:"Start here: how Burning Bush works", sub:"Four minutes on why chapter and verse numbers slide straight off the mind, and the two old ideas that fix it.", done:"I'm ready →"},
- major: {src:"", skill:"video:major", tile:"The Major System", title:"The Major System", sub:"Ten simple sounds turn any number into a picture. The key to everything.", done:"I watched it →"},
+ major: {src:"", skill:"video:major", tile:"Major System", title:"The Major System", sub:"Ten simple sounds turn any number into a picture. The key to everything.", done:"I watched it →"},
   verse: {src:"", skill:"video:verse", title:"How to create a verse scene", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse", done:"I watched it →"},
  palace:{src:"", skill:"video:palace", title:"What is a Memory Palace?", sub:"Walk a place you know and leave each item at a spot. Do it once and the order sticks.", cta:"palace", done:"I watched it →"},
+  book:  {src:"", skill:"video:book", tile:"Build the Book", title:"Build the Book", sub:"Three pictures instead of one: the name, the number, and the coded image, woven into one scene.", done:"I watched it →"},
   sr:    {src:"", skill:"video:sr", title:"How spaced repetition locks it in", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long term memory.", cta:"sr", done:"I watched it →"},
  recall:{src:"", skill:"video:recall", title:"When a verse won't come", sub:"A blank is not a failure. It is the moment the scene gets stronger. Here is what to do with it.", done:"I watched it →"}
 };
@@ -4352,8 +4423,9 @@ function renderPath(focus){
   // The opening film stands on its own above the first unit rather than sitting in it as a step,
   // because it is not part of the Major System: it is what the whole path is for.
   {
+    // Blue until it has been watched, gold once it has, the same signal the film tiles use.
     const V=VIDEOS.intro, seen=videoSeen("intro");
-    html+=`<button class="introfilm${seen?" seen":""}" id="introFilm">
+    html+=`<button class="btn ${seen?"":"blue"} introfilm" id="introFilm">
       <span class="ifplay">${seen?"↺":"▶"}</span>
       <span class="ift"><b>${V.title}</b><small>${seen?"Watched · play it again any time":"4 minutes · start here"}</small></span>
       ${seen?'<span class="ifdone">✓</span>':""}</button>`;
@@ -4368,7 +4440,8 @@ function renderPath(focus){
       const unlocked=skillUnlocked(ui,si), color=skillColor(sk,unlocked), d=Prog.doneSkills.includes(sk.id)?"done":"";
       if(sk.kind==="video"){
         // no state on this one — it is an access point, not a lesson to complete
-        html+=`<button class="tile video" data-video="${sk.vkey}">
+        // gold once watched, so the path shows what has been done here the same way lessons do
+        html+=`<button class="tile video ${videoSeen(sk.vkey)?"gold":"new"}" data-video="${sk.vkey}">
           <span class="vface">🎬</span><small>${(VIDEOS[sk.vkey]||{}).tile||"Video"}</small></button>`;
         return;
       }
@@ -4789,7 +4862,7 @@ function renderSoundStep(s,pct){
     body=`<div class="prompt">Which number makes the sound…</div><div class="bigword">${SND[s.n]}</div>
       <div class="opts">${opts.map(d=>`<button class="opt" data-sok="${d===s.n?1:0}">${d}</button>`).join("")}</div>`;
   }
-  L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div></div><div id="lBody">${body}</div></div>`;
+  L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>${reviewLessonBtn("major")}</div><div id="lBody">${body}</div></div>`;
   el("lClose").onclick=()=>renderPath();
   if(s.type==="teach"){ el("lNext").onclick=advance; return; }
   document.querySelectorAll("[data-sok]").forEach(b=>b.onclick=()=>{
@@ -4803,6 +4876,14 @@ function renderSoundStep(s,pct){
       b.disabled=true; gradeKey(`sk:sound:${s.n}`,"miss");        // lesson: stay & retry
     }
   });
+}
+// The film belongs to the whole lesson, not the step being shown: a book lesson opens by teaching
+// its number peg, and those steps are kind "num" while still being part of Build the Book.
+function lessonFilm(){
+  const k=LZ && LZ.sk && LZ.sk.kind;
+  if(k==="book") return reviewLessonBtn("book");
+  if(k==="num" || k==="sound") return reviewLessonBtn("major");
+  return "";
 }
 function renderStep(){
   const L=el("learn");
@@ -4850,7 +4931,7 @@ function renderStep(){
   }
   const reviewChip = s.review ? `<div style="text-align:center;margin-bottom:6px"><span class="pill" style="border-color:var(--accent);color:var(--accent)">🔁 quick review</span></div>` : "";
   L.innerHTML=`<div class="lesson">
-    <div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div></div>
+    <div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>${lessonFilm()}</div>
     <div id="lBody">${reviewChip}${body}</div></div>`;
   const c=document.querySelector(".content"); if(c) c.scrollTop=0;   // every lesson step starts at the top
   el("lClose").onclick=()=>renderPath();
@@ -5619,7 +5700,7 @@ function openReviewSetup(){
     el("rvWarn").textContent=none?"Choose at least one way to be asked.":"";
   };
   V.innerHTML=`<div class="card">
-      <div class="lv-topbar"><button class="lclose" id="rvClose">\u2715</button><div style="flex:1;text-align:center;font-weight:800">Review</div><span style="width:34px"></span></div>
+      <div class="lv-topbar"><button class="lclose" id="rvClose">\u2715</button><div style="flex:1;text-align:center;font-weight:800">Review</div>${reviewLessonBtn("sr")}</div>
       <p class="hint" style="margin:6px 0 0">How would you like to be asked?</p>
       <div class="mtradiolist one" id="rvRows" style="margin-top:10px"></div>
       <div class="hint" id="rvWarn" style="min-height:18px;margin:6px 0 0"></div>
@@ -5861,6 +5942,7 @@ function setTranslation(id){
   b[id]=b[id]||{};
   applyBuckets(Prog, b, id);
   Store.set("vv_trans", id);
+  prefetchScripture(id);
   saveProg(); bustCaches();
 }
 const V_STAGES=["loc","heart"];
@@ -6938,7 +7020,26 @@ function heartIconSVG(){
 }
 // One Bible icon, used by the tab, the scratch off prize and the icon that flies between them.
 // Kept in one place so a screen and its tab can never drift apart.
-function pageHead(icon, text){ return `<div class="pagehead"><span class="ph-i">${icon}</span><h2>${text}</h2></div>`; }
+// Top right on every screen that teaches something, always the same size and the same two stacked
+// words, so it reads as one control rather than a different button on each page.
+function reviewLessonBtn(vkey){
+  const V=VIDEOS[vkey]; if(!V) return "";
+  return `<button class="revlesson" data-revlesson="${vkey}" title="Watch again: ${V.title}">Review Lesson</button>`;
+}
+function pageHead(icon, text, vkey){
+  return `<div class="pagehead"><span class="ph-i">${icon}</span><h2>${text}</h2>${vkey?reviewLessonBtn(vkey):""}</div>`;
+}
+// One delegated handler for all of them: the button is rendered by half a dozen screens and none of
+// them should have to remember to wire it.
+(function(){
+  const host=document.querySelector(".phone")||document.body;
+  host.addEventListener("click",ev=>{
+    const b=ev.target.closest && ev.target.closest("[data-revlesson]");
+    if(!b) return;
+    ev.preventDefault(); ev.stopPropagation();
+    openVideoScreen(b.dataset.revlesson, ()=>{});
+  }, true);
+})();
 function bibleIconSVG(){
   return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.8h15.2a2.1 2.1 0 0 1 2.1 2.1v14.2a2.1 2.1 0 0 1-2.1 2.1H4.2A1.6 1.6 0 0 1 2.6 19.6V4.4a1.6 1.6 0 0 1 1.6-1.6Z" fill="var(--bible)"/><path d="M2.6 18.1h17.9" stroke="var(--bible-ink)" stroke-opacity=".45" stroke-width="1"/><path d="M12 6.4v8.2M8.8 9.1h6.4" stroke="var(--bible-ink)" stroke-width="1.7" stroke-linecap="round"/></svg>`;
 }
@@ -7946,6 +8047,8 @@ function openVerseWizard(b,c,v,ret){
   walkReturn=ret||renderVerse; sceneNote="";   // a fresh verse never inherits a story's note
   // an already-learned verse opens a focused review page: no learning/save/skip — just word for word + its SR trail
   if(Prog.memorized.includes(refKey(b,c,v))){ renderLearnedVerse(b,c,v,walkReturn); return; }
+  // Building the Scene, the first time somebody actually sits down to memorise one
+  if(!videoSeen("verse")){ openVideoScreen("verse", ()=>openVerseWizard(b,c,v,ret)); return; }
   const vo=verseObj(b,c,v); show("verse"); curScene=vo; startSceneWalk(vo);
 }
 // ---- shared verse-navigation top bar (used by both the learned-verse page and the learn wizard) ----
@@ -7965,7 +8068,7 @@ function verseNavBar(b,c,v,closeId){
   const bPrev=adjVerse(b,c,v,-1), bNext=adjVerse(b,c,v,1);
   const html=`<div class="lv-topbar">
       <button class="lclose" id="${closeId}" style="margin:0">✕</button>
-      <div class="lv-navcluster">
+      <div class="lv-navcluster" style="flex:1">
         <div class="lv-navpair mem">
           <button class="lv-navbtn" data-nav="mprev" ${mPrev?"":"disabled"} title="${mPrev?"Previous memorized verse · "+refShort(mPrev):"No earlier memorized verse"}">★‹</button>
           <button class="lv-navbtn" data-nav="mnext" ${mNext?"":"disabled"} title="${mNext?"Next memorized verse · "+refShort(mNext):"No later memorized verse"}">›★</button>
@@ -7974,7 +8077,7 @@ function verseNavBar(b,c,v,closeId){
           <button class="lv-navbtn wlbl" data-nav="vprev" ${bPrev?"":"disabled"} title="Previous verse">${navVerseLabel(bPrev,b,c,-1)}</button>
           <button class="lv-navbtn wlbl" data-nav="vnext" ${bNext?"":"disabled"} title="Next verse">${navVerseLabel(bNext,b,c,1)}</button>
         </div>
-      </div></div>`;
+      </div>${reviewLessonBtn("verse")}</div>`;
   return {html,mPrev,mNext,bPrev,bNext};
 }
 function wireVerseNav(scopeEl, nav, ret){   // buttons route through openVerseWizard so memorized→learned page, others→wizard
@@ -8686,10 +8789,12 @@ function renderTransList(){
     `<p class="hint" style="margin:0 0 10px">Your <b>${loc}</b> located verse${loc===1?"":"s"} follow you into every text, because where a verse lives does not change. Knowing it word for word does: each translation keeps its own by heart list and its own practice counts, and picking one back up finds it exactly where you left it.</p>`
     + TRANSLATIONS.map(t=>{
     const sel=t.id===cur, hearts=transHeartCount(t.id);
-    const state = transReady(t.id) ? "" : `<span class="badge free">${t.file?"downloads once":"ready"}</span>`;
+    const credit = (t.api && sel && scriptureCopyright()) ? `<div class="trcredit">${scriptureCopyright()}</div>` : "";
+    const state = t.api ? `<span class="badge free">live</span>`
+                : (transReady(t.id) ? "" : `<span class="badge free">downloads once</span>`);
     return `<button class="trans-opt ${sel?"sel":""}" data-tr="${t.id}">
       <div class="ti"><b>${t.id}</b> ${state}<div>${t.name} · ${t.note}</div>
-        <div class="trhearts">💛 ${hearts} by heart${hearts?"":" yet"}</div></div>
+        <div class="trhearts">💛 ${hearts} by heart${hearts?"":" yet"}</div>${credit}</div>
       <span class="check">✓</span></button>`;
   }).join("");
   el("transList").querySelectorAll("[data-tr]").forEach(b=>b.onclick=()=>{
@@ -9629,7 +9734,7 @@ function renderPalace(){
   const P=el("palace");
   const mine=(Prog.palaces||[]).map((p,i)=>[p,i]).filter(x=>x[0]);
   const due=palacesDueCount();
-  P.innerHTML=`${pageHead("\u{1F3DB}\uFE0F","Memory Palace")}
+  P.innerHTML=`${pageHead("\u{1F3DB}\uFE0F","Memory Palace","palace")}
  <p class="lead" style="margin-bottom:12px">A <b>palace</b> is for sequences. Walk a familiar place and leave each item at a spot. Do it once and the order sticks.</p>
     <button class="btn" id="palAdd" style="width:100%">➕ Build a new palace</button>
     ${mine.length?`<div class="prof-sect" style="margin-top:16px">My palaces${due?` <span style="color:#ff8a8a;text-transform:none;letter-spacing:0;font-weight:800">· ${due} due</span>`:""}</div>`+(()=>{
@@ -10129,6 +10234,7 @@ if(!Prog.onboarded){
 // A text chosen last time is fetched again on boot. Until it lands every verse reads KJV, which is
 // the same thing that happens if the download fails, so nothing anywhere has to handle a blank.
 if(!transReady(curTrans())) loadTranslation(curTrans()).then(ok=>{ if(ok) refreshCurrentView(); });
+else if(transEntry(curTrans()).api) prefetchScripture(curTrans());
 wireVerseWords();   // press-and-hold on any verse word → its Hebrew/Greek
 grandfatherFeatures();   // an account that predates the Feature Store keeps everything it had
 resumeActiveTest();      // straight back into an unfinished verse test, if there was one

@@ -1912,7 +1912,7 @@ const DAY = 86400000;
   });
   is(film.unit0First, 'major', 'the film inside the first unit is the Major System one, not the intro');
   ok(film.introButton, '…because the intro stands on its own above the first unit');
-  is(film.majorTile, 'The Major System', '…and the tile says what it plays rather than always saying Intro');
+  is(film.majorTile, 'Major System', '…and the tile says what it plays rather than always saying Intro');
   no(film.before, 'a new profile has not watched it');
   is(film.declared, 'videos/intro.mp4', 'the film has a real source, not an empty placeholder');
   ok(film.element, '…so the screen draws a player rather than the "add your video here" card');
@@ -1924,18 +1924,23 @@ const DAY = 86400000;
   ok(film.stillListed, '…and it stays in Video Review afterwards');
 
   const placeholders = await $(() => Object.keys(VIDEOS).filter(k => !VIDEOS[k].src));
-  is(placeholders.join(','), 'major,verse,palace,sr,recall', 'the other four films are still waiting on recordings');
+  is(placeholders.join(','), 'major,verse,palace,book,sr,recall', 'the other six films are still waiting on recordings');
 
   describe('translations: located is shared, word for word is not', () => { });
   const trList = await $(() => ({
     ids: TRANSLATIONS.map(t => t.id),
-    eager: TRANSLATIONS.filter(t => !t.file).map(t => t.id),
+    // what the page actually carries: neither a file to fetch nor a live feed
+    withPage: TRANSLATIONS.filter(t => !t.file && !t.api).map(t => t.id),
+    onDemand: TRANSLATIONS.filter(t => t.file).map(t => t.id),
+    live: TRANSLATIONS.filter(t => t.api).map(t => t.id),
     ready: TRANSLATIONS.filter(t => transReady(t.id)).map(t => t.id),
     everyOneNamed: TRANSLATIONS.every(t => t.name && t.note),
   }));
-  is(trList.ids.join(','), 'KJV,ASV,BSB,FBV,WEB,RV', 'six translations, and no placeholders');
-  is(trList.eager.join(','), 'KJV', 'only the King James loads with the page');
-  is(trList.ready.join(','), 'KJV', '…so it is the only one in memory before anything is chosen');
+  is(trList.ids.join(','), 'KJV,ASV,NLT', 'three translations, and no placeholders');
+  is(trList.withPage.join(','), 'KJV', 'only the King James loads with the page');
+  is(trList.onDemand.join(','), 'ASV', 'the American Standard downloads once, when it is picked');
+  is(trList.live.join(','), 'NLT', 'the New Living is read live, so it bundles nothing at all');
+  is(trList.ready.join(','), 'KJV,NLT', '…and a live text needs no download to be usable');
   ok(trList.everyOneNamed, 'each one says what it is and when it is from');
 
   const tile = await $(() => {
@@ -2014,6 +2019,109 @@ const DAY = 86400000;
   is(oldProfile.active, 'KJV', 'a profile from before the split belongs to the text it was read in');
   is(oldProfile.stash, '{}', '…with nothing stashed under any other name');
   is(oldProfile.stage, 'heart', '…and the old middle rung still promotes rather than resetting');
+
+  describe('every lesson keeps its film one tap away', () => { });
+  const revBtn = await $(() => {
+    const seen = s => { Prog.doneSkills = (Prog.doneSkills || []).filter(x => x !== 'video:' + s); };
+    const btnIn = view => { const b = document.querySelector('#' + view + ' [data-revlesson]'); return b ? b.dataset.revlesson : null; };
+    const out = {};
+
+    show('palace'); renderPalace();
+    out.palace = btnIn('palace');
+
+    // a sound lesson and a book lesson, straight through startLesson
+    const sound = UNITS[0].skills.find(s => s.kind === 'sound');
+    startLesson(sound);
+    out.sound = btnIn('learn');
+    const book = UNITS.flatMap(U => U.skills).find(s => s.kind === 'book');
+    startLesson(book);
+    out.book = btnIn('learn');
+
+    // the verse screen, on a verse already memorised so the wizard is not in the way
+    markVideoSeen('verse');
+    Prog.memorized = ['43:3:16']; saveProg();
+    openVerseWizard(43, 3, 16, () => { });
+    out.verse = btnIn('verse');
+    // the four navigation buttons are stacked, which is what frees the corner
+    const cluster = document.querySelector('#verse .lv-navcluster');
+    out.pairs = cluster ? cluster.querySelectorAll('.lv-navpair').length : 0;
+    out.stacked = cluster ? getComputedStyle(cluster).flexDirection : '';
+    out.navButtons = cluster ? cluster.querySelectorAll('.lv-navbtn').length : 0;
+
+    seen('sr');
+    return out;
+  });
+  is(revBtn.palace, 'palace', 'the Memory Palace screen offers its own film');
+  is(revBtn.sound, 'major', 'a Major System lesson offers the Major System film');
+  is(revBtn.book, 'book', 'a book lesson offers Build the Book');
+  is(revBtn.verse, 'verse', 'the verse screen offers Building the Scene');
+  is(revBtn.pairs, 2, 'the verse bar still carries both pairs of navigation buttons');
+  is(revBtn.navButtons, 4, '…all four of them');
+  is(revBtn.stacked, 'column', '…stacked rather than strung across, which frees the corner');
+
+  const firstTime = await $(() => {
+    const clear = () => { Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x)); saveProg(); };
+    const open = () => { const m = document.getElementById('videoModal'); return m && m.style.display === 'flex' ? m.innerText : ''; };
+    const shut = () => { const m = document.getElementById('videoModal'); if (m) m.style.display = 'none'; };
+    const out = {};
+
+    clear(); show('palace');
+
+    clear(); Prog.memorized = []; saveProg();
+    openVerseWizard(40, 6, 33, () => { });
+    out.verseFirst = /verse scene/i.test(open()); shut();
+
+    // second time round, straight through
+    markVideoSeen('verse');
+    openVerseWizard(40, 6, 33, () => { });
+    out.verseSecond = open() === '';
+    return out;
+  });
+  await page.waitForTimeout(600);        // the palace film opens just after the tab paints
+  const palaceFilm = await $(() => {
+    const m = document.getElementById('videoModal');
+    const shown = m && m.style.display === 'flex' ? m.innerText : '';
+    const seen = videoSeen('palace');
+    if (m) m.style.display = 'none';
+    return { shown, seen };
+  });
+  ok(/Memory Palace/i.test(palaceFilm.shown), 'walking into the Memory Palace plays its film the first time');
+  no(palaceFilm.seen, '…and it is only marked watched once it is closed');
+  ok(firstTime.verseFirst, 'sitting down to a verse plays Building the Scene the first time');
+  ok(firstTime.verseSecond, '…and never interrupts again');
+
+  const gold = await $(() => {
+    Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x)); saveProg();
+    show('learn'); renderPath();
+    const intro = () => document.getElementById('introFilm');
+    const tile = () => document.querySelector('#learn .tile.video');
+    const before = { intro: intro().className, tile: tile().className };
+    markVideoSeen('intro'); markVideoSeen('major'); renderPath();
+    return { before, after: { intro: intro().className, tile: tile().className } };
+  });
+  has(gold.before.intro, 'blue', 'Start here is blue until it has been watched');
+  has(gold.before.tile, 'new', '…and the Major System tile is blue like an unstarted lesson');
+  no(/\bblue\b/.test(gold.after.intro), 'watching it drops the blue, which leaves it gold');
+  has(gold.after.tile, 'gold', '…and the Major System tile turns gold too');
+
+  describe('the New Living Translation is read live', () => { });
+  const live = await $(() => {
+    const t = TRANSLATIONS.find(x => x.id === 'NLT');
+    setTranslation('NLT');
+    const before = kjvText(43, 3, 16);
+    // pretend the server answered
+    _apiCh['NLT:43:3'] = []; _apiCh['NLT:43:3'][15] = 'For this is how God loved the world.';
+    const after = kjvText(43, 3, 16);
+    const missing = kjvText(19, 23, 1);            // a chapter we have not been given
+    setTranslation('KJV');
+    return { api: t.api, bundled: !t.file, before, after, missing, kjvBack: kjvText(43, 3, 16) };
+  });
+  is(live.api, 'nlt', 'the NLT is marked as a live text');
+  ok(live.bundled, '…and ships no file with the app');
+  has(live.before, 'whosoever believeth', 'a chapter not yet fetched reads King James rather than blank');
+  is(live.after, 'For this is how God loved the world.', '…and the fetched chapter takes over once it lands');
+  has(live.missing, 'my shepherd', 'a chapter still on its way falls back the same way');
+  has(live.kjvBack, 'whosoever believeth', 'switching back leaves the King James untouched');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
@@ -2292,7 +2400,9 @@ const DAY = 86400000;
     document.querySelector('#stageModal [data-stage="heart"]').click();
     out.stage = verseStage(k);
     out.ribbon = /Known by heart/i.test(el('verse').innerText);
-    // and it is NOT offered while building a new verse
+    // and it is NOT offered while building a new verse. The Building the Scene film plays before
+    // the first one, so mark it seen: this assertion is about the second verse onwards.
+    markVideoSeen('verse');
     openVerseWizard(40, 6, 33, () => { });
     out.inWizard = !!el('lvStage');
     return out;
@@ -2614,7 +2724,7 @@ const DAY = 86400000;
       srcSlot: keys.every(k => VIDEOS[k].src !== undefined),
     };
   });
-  is(vids.n, 6, 'six films');
+  is(vids.n, 7, 'seven films');
   has(vids.keys, 'recall', '...including one for when a verse will not come');
   ok(vids.titled, 'every film has a name');
   ok(vids.described, '...and a line saying what it is for');
