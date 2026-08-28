@@ -1814,8 +1814,17 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.41.0";
+const APP_VERSION="1.42.0";
 const CHANGELOG=[
+ {v:"1.42.0", d:"August 28, 2026", t:"Review counts, up to three", items:[
+   ["chg","<b>Spaced repetition now counts toward your daily goal up to three times a day.</b> Come back to a fortnight's backlog and clearing it used to tick the goal off by itself, which made the goal a measure of how long you had been away rather than what you did today."],
+   ["chg","Reviews past the third still count for the verse — they move it along its trail exactly as before. They just stop moving the <b>goal</b>, so the rest of it has to come from new work."],
+   ["new","The Daily goal screen says so, so a goal that stops moving mid-review is never a mystery."]
+ ]},
+ {v:"1.41.1", d:"August 28, 2026", t:"The review count was one short", items:[
+   ["fix","<b>The number on the Spaced Repetition screen was one lower than the work waiting.</b> Verses saved a few hours ago come back for their first look before anything else, and the count had left them out — so it disagreed with the <b>Due</b> figure on the Library button, and the item it forgot was the one that appeared next."],
+   ["chg","The screen now names the new verses in the list, and says they come first."]
+ ]},
  {v:"1.41.0", d:"August 28, 2026", t:"All four shelves", items:[
    ["chg","<b>Saved for later and Browse by topic now match the other two</b> — a panel at the top, then a grid, each opening a popup that scrolls on its own. The last of the old drop-down lists are gone."],
    ["chg","<b>And each keeps its own colours so you always know where you are.</b> My Verses is gold with a ring, Suggested green with a bar, Saved blue with a count, and Topics purple, two to a row, each with its own icon."],
@@ -4148,7 +4157,7 @@ function reviewVerseSR(k){ if(!Prog.memorized.includes(k)) return; Prog.verseSR=
   // counts toward today's goal, the same as a new verse or a word for word practice.
   const wasD1 = srDueIndex(o)===1;
   const advanced = srAdvance(o);
-  if(advanced && wasD1) bumpGoal();
+  if(advanced && wasD1) bumpGoalFromReview();
 }
 function srHuman(ms){ if(ms==null) return "—"; if(ms<=0) return "today"; const d=Math.round(ms/DAY); return d<=1?"1 day":d+" days"; }
 // the 6-node D0…D30 trail: done = filled gold, due = pulsing, upcoming = dim
@@ -5516,12 +5525,20 @@ function srFlash(cb){
 function srBanner(kind){
   const V=el("verse");
   if(kind==="start"){
-    const nn=(MS.numQueue||[]).length, nv=(MS.srQueue||[]).length, np=palacesDueCount(), total=nn+nv+np;
-    const parts=[]; if(nn)parts.push(`<b class="gold">${nn}</b> number${nn>1?"s":""}`); if(nv)parts.push(`<b class="gold">${nv}</b> verse${nv>1?"s":""}`); if(np)parts.push(`<b class="gold">${np}</b> palace${np>1?"s":""}`);
+    // The new verses — saved four hours ago and waiting for their first look — are reviewed FIRST
+    // (see beginDueReview), so leaving them out of this total made it one short of the "Due (N)" on
+    // the Library button, and the very item it forgot was the one that appeared next.
+    const nf=(MS.newQueue||[]).length, nn=(MS.numQueue||[]).length, nv=(MS.srQueue||[]).length, np=palacesDueCount();
+    const total=nf+nn+nv+np;
+    const parts=[];
+    if(nf)parts.push(`<b class="gold">${nf}</b> new verse${nf>1?"s":""}`);
+    if(nn)parts.push(`<b class="gold">${nn}</b> number${nn>1?"s":""}`);
+    if(nv)parts.push(`<b class="gold">${nv}</b> verse${nv>1?"s":""}`);
+    if(np)parts.push(`<b class="gold">${np}</b> palace${np>1?"s":""}`);
     V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🔔</div>
       <h2 class="gold">Spaced Repetition — Today</h2>
       <div class="srcount">${total}</div>
-      <p class="lead">${parts.join(" · ")} due for review. We'll lock them back in — <b>numbers, then verses, then palaces</b> — then move on to free practice + your streak.</p>
+      <p class="lead">${parts.join(" · ")} due for review. We'll lock them back in — ${nf?"<b>the new ones first</b>, then ":""}<b>numbers, then verses, then palaces</b> — then move on to free practice + your streak.</p>
       <button class="btn blue" id="srGo">Begin review →</button></div>`;
     el("srGo").onclick=beginDueReview; return;
   }
@@ -5606,6 +5623,20 @@ function goalToday(){
   else g=base;
   return Math.max(1, Math.min(GOAL_MAX, g|0)); }
 function goalState(){ const t=dayKey(new Date()); if(!Prog.goalDay || Prog.goalDay.date!==t) Prog.goalDay={date:t,count:0,celebrated:false}; return Prog.goalDay; }
+// Spaced repetition can carry the daily goal only so far. Come back to a fortnight's backlog and
+// clearing it would tick the goal off by itself, which turns the goal into a measure of how long
+// you were away rather than what you did today. Three, and the rest has to be new work.
+// The review still happens and the trail still advances past the cap — only the goal stops moving.
+// Kept per-day like goalDay, and like goalDay it is not cloud-merged: it is a counter for today.
+const SR_GOAL_MAX=3;
+function srGoalState(){ const t=dayKey(new Date()); if(!Prog.srGoalDay || Prog.srGoalDay.date!==t) Prog.srGoalDay={date:t,count:0}; return Prog.srGoalDay; }
+function srGoalLeft(){ return Math.max(0, SR_GOAL_MAX - srGoalState().count); }
+function bumpGoalFromReview(defer){
+  const s=srGoalState();
+  if(s.count>=SR_GOAL_MAX) return function(){};
+  s.count++; saveProg();
+  return bumpGoal(defer);
+}
 function goalCount(){ return goalState().count; }
 function goalMet(){ return goalCount()>=goalToday(); }
 // Returns a function that plays the goal celebration. Pass defer=true to hold it back and
@@ -5776,6 +5807,7 @@ function openGoalSettings(){
   };
   m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose lclose-red" id="gsClose">✕</button><div style="flex:1;text-align:center;font-weight:800">Daily goal</div><button class="lsave" id="gsTick" title="Save">✓</button><span style="display:none" style="width:34px"></span></div>
     <p class="hint">How many things — new verses, book images or word for word practices — will you do each day?</p>
+    <p class="hint" style="margin-top:6px">Spaced repetition counts toward it too, up to <b class="gold">${SR_GOAL_MAX} a day</b>. Reviews past that still move their verses along the trail — they just stop moving the goal, so a big catch-up day cannot finish it on its own.</p>
     <div class="prof-sect" style="margin-top:12px">How do you want to set it?</div>
     <div class="goalseg">${GOAL_MODES.map(x=>`<button class="goalseg-b ${draft.mode===x[0]?"on":""}" data-mode="${x[0]}">${x[1]}</button>`).join("")}</div>
     <div id="gsBody" style="margin-top:14px"></div>
@@ -8791,7 +8823,7 @@ function w4wTestResult(b,c,v,vkey,ret){
   }
   const longName = passedDay!=null ? SR_LONG_NAME[passedDay] : null;
   const freed = clean ? heartMaybeFreeStation(vkey) : null;
-  const showGoal = clean ? bumpGoal(true) : (()=>{});
+  const showGoal = clean ? bumpGoalFromReview(true) : (()=>{});
   const left=Math.max(0, W4W_TEST_CR-(r.cr||0));
   V.innerHTML=`<div class="card center">
       <div style="font-size:44px">${clean?"\u{1F54A}\uFE0F":"\u{1F331}"}</div>

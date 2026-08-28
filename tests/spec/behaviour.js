@@ -1253,6 +1253,89 @@ const DAY = 86400000;
   ok(afterLesson.rows > 0, '...and it is not an empty list');
   ok(afterLesson.restored, 'and the fixture is left exactly as it was found');
 
+  describe('the review count matches the work', () => { });
+  const srCount = await $(() => {
+    const FOUR_H = 4 * 3600000;
+    // Two verses waiting for their first look, one genuinely due on its trail.
+    const fresh1 = '43:11:35', fresh2 = '45:8:28', due1 = '19:23:1';
+    Prog.memorized = [fresh1, fresh2, due1];
+    Prog.verseStage = {};
+    Prog.verseSR = {
+      [fresh1]: { learnedAt: Date.now() - FOUR_H - 60000, step: 1, dueAt: Date.now() + DAY, r0: 0 },
+      [fresh2]: { learnedAt: Date.now() - FOUR_H - 60000, step: 1, dueAt: Date.now() + DAY, r0: 0 },
+      [due1]:   { learnedAt: Date.now() - 3 * DAY, step: 1, dueAt: Date.now() - 60000, r0: 1 },
+    };
+    saveProg();
+
+    const out = {
+      freshN: newVersesDueCount(),
+      dueN: versesDueCount(),
+      libraryTotal: reviewDueCount(),
+    };
+    show('verse'); startMemTest();
+    const t = el('verse').innerText;
+    out.banner = +(document.querySelector('#verse .srcount') || {}).textContent;
+    out.namesNew = /new verse/.test(t);
+    out.saysFirst = /the new ones first/.test(t);
+    // and the thing that actually comes next must be one of the new verses. There is no phase flag
+    // for that leg — it is observable only on screen, which is the honest thing to assert anyway.
+    el('srGo').click();
+    out.afterBegin = el('verse').innerText;
+    out.queueLeft = (MS.newQueue || []).length;
+    return out;
+  });
+  is(srCount.freshN, 2, 'two verses are waiting for their first look');
+  is(srCount.dueN, 1, '...and one is due on its trail');
+  is(srCount.banner, srCount.libraryTotal,
+     'the number on the review screen equals the Due figure on the Library button');
+  is(srCount.banner, 3, '...which is all three pieces of work, not two');
+  ok(srCount.namesNew, '...and the new verses are named in the list');
+  ok(srCount.saysFirst, '...and it says they come first');
+  has(srCount.afterBegin, 'First look back', 'and the first thing after Begin really is a new verse');
+  is(srCount.queueLeft, 1, '...one of the two, with the other still queued behind it');
+
+  describe('review carries the goal three times, then stops', () => { });
+  const cap = await $(() => {
+    const K = ['43:11:35', '45:8:28', '19:23:1', '40:5:9', '40:6:33'];
+    Prog.memorized = K.slice();
+    Prog.verseStage = {}; Prog.goalDay = null; Prog.srGoalDay = null;
+    Prog.verseSR = {};
+    K.forEach(k => { Prog.verseSR[k] = { learnedAt: Date.now() - 2 * DAY, step: 1, dueAt: Date.now() - 60000, r0: 1 }; });
+    saveProg();
+
+    const out = { max: SR_GOAL_MAX, steps: [], leftAsWeGo: [] };
+    K.forEach(k => { reviewVerseSR(k); out.steps.push(goalCount()); out.leftAsWeGo.push(srGoalLeft()); });
+    out.trailAdvanced = K.filter(k => (Prog.verseSR[k].step || 1) === 2).length;
+    out.srUsed = srGoalState().count;
+
+    // New work must still count after the cap — the cap is on review, not on the goal.
+    const before = goalCount();
+    bumpGoal();
+    out.newWorkCounts = goalCount() === before + 1;
+
+    // ...and tomorrow the allowance is fresh
+    Prog.srGoalDay = { date: 'not-today', count: SR_GOAL_MAX };
+    out.freshTomorrow = srGoalLeft();
+    return out;
+  });
+  is(cap.max, 3, 'review carries the goal three times a day');
+  is(cap.steps.join(','), '1,2,3,3,3', '...the fourth and fifth reviews leave the goal where it is');
+  is(cap.leftAsWeGo.join(','), '2,1,0,0,0', '...and the allowance counts down to nothing');
+  is(cap.trailAdvanced, 5, 'but every verse still moved along its trail — the cap is on the goal, not the review');
+  is(cap.srUsed, 3, '...with exactly three of the allowance spent');
+  ok(cap.newWorkCounts, 'new work still counts toward the goal after the cap is reached');
+  is(cap.freshTomorrow, 3, 'and the allowance is whole again the next day');
+
+  const capSaid = await $(() => {
+    openGoalSettings();
+    const m = el('goalSetModal');
+    const t = m ? m.innerText : '';
+    if (m) m.style.display = 'none';
+    return { says: /up to\s*3\s*a day/i.test(t.replace(/\s+/g, ' ')), mentions: /Spaced repetition counts toward it/i.test(t) };
+  });
+  ok(capSaid.mentions, 'the Daily goal screen says review counts toward the goal');
+  ok(capSaid.says, '...and that it does so up to three a day');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};

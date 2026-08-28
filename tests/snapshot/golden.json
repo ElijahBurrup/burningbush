@@ -261,7 +261,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "c12d3d46942b0c2e",
+  "h": "922c0d763a60d96f",
   "len": 15769,
   "els": 370,
   "buttons": 45,
@@ -279,31 +279,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "classic/modal/goal-same": {
-  "h": "add55e439d18ee06",
-  "len": 2091,
-  "els": 32,
+  "h": "580e45e1c6071005",
+  "len": 2352,
+  "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "classic/modal/goal-week": {
-  "h": "6dad394ce7663948",
-  "len": 2247,
-  "els": 35,
+  "h": "dc258b16623300da",
+  "len": 2508,
+  "els": 37,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "classic/modal/goal-days": {
-  "h": "4fd3471684b27f8b",
-  "len": 2856,
-  "els": 50,
+  "h": "8a55e9f8e13895bb",
+  "len": 3117,
+  "els": 52,
   "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "classic/modal/paywall": {
   "h": "31ced59608cf3cd6",
@@ -324,13 +324,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "55a120b3aaf7754e",
-  "len": 57165,
-  "els": 1103,
+  "h": "63306c00112d0c14",
+  "len": 58831,
+  "els": 1132,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.41.0 August 28, 2026 All four shelves FIX Saved for later and Browse by topic now match the other t"
+  "text": "✕ Version history v1.42.0 August 28, 2026 Review counts, up to three FIX Spaced repetition now counts toward your daily "
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -738,7 +738,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "57f54f0237d65e9d",
+  "h": "1034c93606a441e1",
   "len": 14975,
   "els": 362,
   "buttons": 43,
@@ -756,31 +756,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "illumined/modal/goal-same": {
-  "h": "add55e439d18ee06",
-  "len": 2091,
-  "els": 32,
+  "h": "580e45e1c6071005",
+  "len": 2352,
+  "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "illumined/modal/goal-week": {
-  "h": "6dad394ce7663948",
-  "len": 2247,
-  "els": 35,
+  "h": "dc258b16623300da",
+  "len": 2508,
+  "els": 37,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "illumined/modal/goal-days": {
-  "h": "4fd3471684b27f8b",
-  "len": 2856,
-  "els": 50,
+  "h": "8a55e9f8e13895bb",
+  "len": 3117,
+  "els": 52,
   "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "illumined/modal/paywall": {
   "h": "31ced59608cf3cd6",
@@ -801,13 +801,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "55a120b3aaf7754e",
-  "len": 57165,
-  "els": 1103,
+  "h": "63306c00112d0c14",
+  "len": 58831,
+  "els": 1132,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.41.0 August 28, 2026 All four shelves FIX Saved for later and Browse by topic now match the other t"
+  "text": "✕ Version history v1.42.0 August 28, 2026 Review counts, up to three FIX Spaced repetition now counts toward your daily "
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -1215,7 +1215,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "af690090788257a3",
+  "h": "c6ed8ebb0be30295",
   "len": 14973,
   "els": 362,
   "buttons": 43,
@@ -1233,31 +1233,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "glass/modal/goal-same": {
-  "h": "add55e439d18ee06",
-  "len": 2091,
-  "els": 32,
+  "h": "580e45e1c6071005",
+  "len": 2352,
+  "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "glass/modal/goal-week": {
-  "h": "6dad394ce7663948",
-  "len": 2247,
-  "els": 35,
+  "h": "dc258b16623300da",
+  "len": 2508,
+  "els": 37,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "glass/modal/goal-days": {
-  "h": "4fd3471684b27f8b",
-  "len": 2856,
-  "els": 50,
+  "h": "8a55e9f8e13895bb",
+  "len": 3117,
+  "els": 52,
   "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "glass/modal/paywall": {
   "h": "31ced59608cf3cd6",
@@ -1278,13 +1278,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "55a120b3aaf7754e",
-  "len": 57165,
-  "els": 1103,
+  "h": "63306c00112d0c14",
+  "len": 58831,
+  "els": 1132,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.41.0 August 28, 2026 All four shelves FIX Saved for later and Browse by topic now match the other t"
+  "text": "✕ Version history v1.42.0 August 28, 2026 Review counts, up to three FIX Spaced repetition now counts toward your daily "
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1692,7 +1692,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "1f71a4f845e4b77d",
+  "h": "8cc1cef2c3ea1984",
   "len": 14975,
   "els": 362,
   "buttons": 43,
@@ -1710,31 +1710,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "quest/modal/goal-same": {
-  "h": "add55e439d18ee06",
-  "len": 2091,
-  "els": 32,
+  "h": "580e45e1c6071005",
+  "len": 2352,
+  "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "quest/modal/goal-week": {
-  "h": "6dad394ce7663948",
-  "len": 2247,
-  "els": 35,
+  "h": "dc258b16623300da",
+  "len": 2508,
+  "els": 37,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "quest/modal/goal-days": {
-  "h": "4fd3471684b27f8b",
-  "len": 2856,
-  "els": 50,
+  "h": "8a55e9f8e13895bb",
+  "len": 3117,
+  "els": 52,
   "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "quest/modal/paywall": {
   "h": "31ced59608cf3cd6",
@@ -1755,13 +1755,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "55a120b3aaf7754e",
-  "len": 57165,
-  "els": 1103,
+  "h": "63306c00112d0c14",
+  "len": 58831,
+  "els": 1132,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.41.0 August 28, 2026 All four shelves FIX Saved for later and Browse by topic now match the other t"
+  "text": "✕ Version history v1.42.0 August 28, 2026 Review counts, up to three FIX Spaced repetition now counts toward your daily "
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -2169,7 +2169,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "dd2200713d4cfa1d",
+  "h": "caa1bd5de6e867cd",
   "len": 14971,
   "els": 362,
   "buttons": 43,
@@ -2187,31 +2187,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "buddy/modal/goal-same": {
-  "h": "add55e439d18ee06",
-  "len": 2091,
-  "els": 32,
+  "h": "580e45e1c6071005",
+  "len": 2352,
+  "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "buddy/modal/goal-week": {
-  "h": "6dad394ce7663948",
-  "len": 2247,
-  "els": 35,
+  "h": "dc258b16623300da",
+  "len": 2508,
+  "els": 37,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "buddy/modal/goal-days": {
-  "h": "4fd3471684b27f8b",
-  "len": 2856,
-  "els": 50,
+  "h": "8a55e9f8e13895bb",
+  "len": 3117,
+  "els": 52,
   "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? How do you w"
+  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
  },
  "buddy/modal/paywall": {
   "h": "31ced59608cf3cd6",
@@ -2232,13 +2232,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "55a120b3aaf7754e",
-  "len": 57165,
-  "els": 1103,
+  "h": "63306c00112d0c14",
+  "len": 58831,
+  "els": 1132,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.41.0 August 28, 2026 All four shelves FIX Saved for later and Browse by topic now match the other t"
+  "text": "✕ Version history v1.42.0 August 28, 2026 Review counts, up to three FIX Spaced repetition now counts toward your daily "
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
