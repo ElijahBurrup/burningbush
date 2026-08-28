@@ -497,6 +497,8 @@
   .mastered-ribbon{display:block;text-align:center;font-weight:800;font-size:13px;color:var(--on-accent);background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:999px;padding:6px 14px;margin:0 0 12px}
   .w4w-rect{display:flex;align-items:center;justify-content:space-between;width:100%;gap:10px;padding:16px 18px;border-radius:16px;border:1.5px solid var(--gold2);background:var(--panel2);color:var(--gold-ink);cursor:pointer;font-weight:800;font-size:16px}
   .w4w-rect:active{transform:scale(.99)}
+  .w4w-rect[disabled]{opacity:.55;cursor:default}
+  .w4w-rect[disabled]:active{transform:none}
   .w4w-rect .w4w-rect-count{min-width:56px;text-align:center;font-size:15px;border-radius:999px;padding:6px 12px;background:var(--gold);color:var(--on-accent)}
   .w4w-rect.done{border-color:var(--gold);background:linear-gradient(135deg,var(--panel2),var(--gold2))}
   .lv-sr{margin-top:18px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px 10px}
@@ -1720,8 +1722,14 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.36.0";
+const APP_VERSION="1.37.0";
 const CHANGELOG=[
+ {v:"1.37.0", d:"August 27, 2026", t:"One a day, and a long memory", items:[
+   ["chg","<b>A verse you know by heart rests a day between clean runs.</b> Reciting something you proved an hour ago teaches nothing. Miss a word and you can try again straight away — only a clean run starts the wait."],
+   ["new","<b>Claiming a verse puts it straight into spaced repetition at D1</b>, so it comes round tomorrow instead of waiting on a first-look timer."],
+   ["chg","<b>A clean run IS the review.</b> Each one moves the verse along its trail on its own, so three clean runs means D1, D3 and D7 are behind you and the verse is next asked at D16 — no separate list to keep."],
+   ["new","<b>The trail carries on quietly after D30</b> — at two months, six months and two years. There is no extra track to look at: the six dots stay six dots, and when one of the long reviews comes back clean the app simply tells you which it was."]
+ ]},
  {v:"1.36.0", d:"August 27, 2026", t:"The parables in one run", items:[
    ["chg","<b>Bible Stories now runs in order</b> — Parables of Jesus I to VII together, then the two Word Pictures sections, and only then the Cross &amp; Resurrection, the Early Church and Paul."],
    ["fix","Everything you had already learned moved with it. A story is stored by its place in the list, so reordering the list renames them all — every finished story was carried across to where that same story now lives, and sections you had bought are now recorded by name so this can never bite again."],
@@ -3922,25 +3930,45 @@ function openStorySection(ui){
 /* ---- Memory Palace builder (build 3 personal palaces) ---- */
 const PALACE_IDEAS=["A Home","A Commute","A Business","A Church","A School"];   // inspiration prompts on the naming page
 /* ---- palace spaced repetition trail: review at D0, D1, D3, D7, D16, D30 ---- */
-const SR_TRAIL=[0,1,3,7,16,30]; // checkpoint days. Intervals are RELATIVE: each completed review restarts the clock to the NEXT gap,
+const SR_TRAIL=[0,1,3,7,16,30]; // the trail you can SEE — six dots, and six is what stays on screen
+// The long tail: two months, six months, two years. The engine walks these exactly like the rest,
+// but they are deliberately NOT part of the drawn trail — a verse is "sealed" when the visible six
+// are done, and these come round quietly afterwards. What IS kept is which one a verse last came
+// back from, so the app can name it when you pass one without turning it into more track.
+const SR_LONG=[60,180,730];
+const SR_ALL=SR_TRAIL.concat(SR_LONG);
+const SR_LONG_NAME={60:"two month",180:"six month",730:"two year"};
+// checkpoint days. Intervals are RELATIVE: each completed review restarts the clock to the NEXT gap,
 // so a backlog only ever advances ONE checkpoint at a time (fall 3 days behind and D1+D3 due → doing it counts as D1, then D3 waits 2 more days).
 const SR_GRACE=60*60*1000;   // pull in anything due within the next hour so near-due items batch together (23h ≈ 24h)
-function srDueAt(o){ const step=o.step||1; return o.dueAt!=null ? o.dueAt : (o.learnedAt||0)+SR_TRAIL[step]*DAY; } // legacy saves without dueAt fall back to cumulative day
+function srDueAt(o){ const step=o.step||1; return o.dueAt!=null ? o.dueAt : (o.learnedAt||0)+(SR_ALL[step]||0)*DAY; } // legacy saves without dueAt fall back to cumulative day
 // index of the checkpoint currently due (its dueAt has passed and it isn't done yet), else -1
 function endOfToday(){ const d=new Date(); d.setHours(23,59,59,999); return d.getTime(); }
-function srDueIndex(o){ if(!o||!o.learnedAt) return -1; const step=o.step||1; if(step>=SR_TRAIL.length) return -1;
-  const due=srDueAt(o), gap=SR_TRAIL[step]-SR_TRAIL[step-1];   // the interval that led to this review
+function srDueIndex(o){ if(!o||!o.learnedAt) return -1; const step=o.step||1; if(step>=SR_ALL.length) return -1;
+  const due=srDueAt(o), gap=SR_ALL[step]-SR_ALL[step-1];   // the interval that led to this review
   // a 1-day review gets only a 1-hour grace; every longer review pulls in anything due later the SAME calendar day
   const limit = gap<=1 ? Date.now()+SR_GRACE : endOfToday();
   return limit>=due ? step : -1; }
 // complete the one due checkpoint, then restart the counter to the NEXT gap only (never skip ahead over a backlog)
-function srAdvance(o){ const di=srDueIndex(o); if(di<0) return false; o.step=di+1;
-  o.dueAt = o.step<SR_TRAIL.length ? Date.now()+(SR_TRAIL[o.step]-SR_TRAIL[o.step-1])*DAY : null; return true; }
+function srAdvance(o){ const di=srDueIndex(o); if(di<0) return false; return srStepOn(o, di+1, SR_ALL[di]); }
+// Move to a checkpoint and set the clock for the next gap. A long-tail checkpoint that has just
+// been completed is recorded on the verse — never drawn, only remembered.
+function srStepOn(o, step, completedDay){
+  o.step=step;
+  o.dueAt = step<SR_ALL.length ? Date.now()+(SR_ALL[step]-SR_ALL[step-1])*DAY : null;
+  if(SR_LONG_NAME[completedDay]){ o.lt=completedDay; o.ltAt=Date.now(); }
+  return true;
+}
+// A clean run IS the review, due or not: three clean runs means D1, D3 and D7 are behind you and
+// the verse is next asked at D16. The one-a-day lock below is the whole reason this is safe —
+// without it this would be a way to race down the trail in an afternoon.
+function srAdvanceClean(o){ const step=o.step||1; if(step>=SR_ALL.length) return null;
+  const completed=SR_ALL[step]; srStepOn(o, step+1, completed); return completed; }
 function palaceDueIndex(p){ return srDueIndex(p); }
 function palaceDue(p){ return srDueIndex(p)>=0; }
 function palaceTrailDone(p){ return (p&&(p.step||1))>=SR_TRAIL.length; }
 // ms until the next checkpoint comes due (0 if due now, null if the trail is complete)
-function palaceNextReviewMs(p){ const step=p&&p.step||1; if(step>=SR_TRAIL.length) return null;
+function palaceNextReviewMs(p){ const step=p&&p.step||1; if(step>=SR_ALL.length) return null;
   return Math.max(0, srDueAt(p) - Date.now()); }
 function palacesDueCount(){ return (Prog.palaces||[]).filter(pl=>pl&&palaceDue(pl)).length; }
 // verse spaced repetition trail — the SAME relative D0…D30 model as palaces, one per memorized verse.
@@ -4818,7 +4846,7 @@ function openReviewSetup(){
 // whether this verse is in the pool at all - a verse still being located is always asked by address.
 function askVerseIn(k){
   const p=revPrefs();
-  if(feat("w4w") && p.w4w && verseStage(k)!=="loc" && (!p.loc || Math.random()<0.5)){
+  if(feat("w4w") && p.w4w && verseStage(k)!=="loc" && !w4wTestLocked(k) && (!p.loc || Math.random()<0.5)){
     const [b,c,v]=k.split(":").map(Number); startW4WTest(b,c,v, nextMemVerse); return;
   }
   askVerse(k);
@@ -5015,6 +5043,16 @@ function setVerseStage(k,s){
   Prog.verseStage=Prog.verseStage||{};
   if(s==="loc") delete Prog.verseStage[k]; else Prog.verseStage[k]=s;
   let freed=null;
+  if(s==="heart"){
+    // A claimed verse joins the review trail immediately, at D1. It is being tested from now on,
+    // so it should come round tomorrow rather than wait on the four-hour first-look timer that a
+    // verse still being located uses. Anything already further along the trail is left where it is.
+    Prog.verseSR=Prog.verseSR||{};
+    const o=Prog.verseSR[k]||(Prog.verseSR[k]=newSR());
+    if(!o.r0) o.r0=Date.now();
+    if(!(o.step>=1)) o.step=1;
+    if(o.dueAt==null) o.dueAt=Date.now()+(SR_ALL[1]-SR_ALL[0])*DAY;
+  }
   // Claiming a verse does NOT give up its station any more: it is still being tested, and a single
   // missed word sends it back. The station is released later, by heartMaybeFreeStation, once the
   // verse has come back clean five times running - so nothing is lost by claiming a verse early.
@@ -5277,6 +5315,12 @@ function w4wTestRecord(k, clean){
   if(clean){ r.ok=(r.ok||0)+1; r.cr=(r.cr||0)+1; } else { r.cr=0; }
   saveProg(); return r;
 }
+// Once a verse has come back clean it rests a day before it can be tested again. Recall you have
+// just proved teaches nothing, and it is what lets a clean run advance the trail on its own.
+// A MISSED run does not lock: getting it wrong should never make you wait to try again.
+const W4W_TEST_GAP=DAY;
+function w4wTestNextAt(k){ const r=w4wsr(k); return (r && (r.cr||0)>0 && r.at) ? r.at+W4W_TEST_GAP : 0; }
+function w4wTestLocked(k){ return Date.now() < w4wTestNextAt(k); }
 function startW4WTest(b,c,v,ret){ startTypeTest(b,c,v,ret,true); }
 
 /* Promotions are OFFERED, never taken. Declining is remembered, so nothing asks twice - the
@@ -6940,9 +6984,9 @@ function renderLearnedVerse(b,c,v,ret){
       <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
       <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
       <div class="lv-versetext">${verseWordsHTML(b,c,v,text)}</div>
-      ${feat("w4w")?`<button class="w4w-rect ${mastered?"done":""}" id="lvWord">
-        <span class="w4w-rect-lbl">${inPool?"🗣️ Test Word for Word":"📖 Learn Word for Word"}</span>
-        <span class="w4w-rect-count">${inPool?`${w4wTestStreak(vkey)}/${W4W_TEST_CR} clean`:`${cnt}/${W4W_PRACTICE_FOR_POOL}${mastered?" ✓":""}`}</span>
+      ${feat("w4w")?`<button class="w4w-rect ${mastered?"done":""}" id="lvWord"${inPool&&w4wTestLocked(vkey)?" disabled":""}>
+        <span class="w4w-rect-lbl">${inPool?(w4wTestLocked(vkey)?"😴 Resting until tomorrow":"🗣️ Test Word for Word"):"📖 Learn Word for Word"}</span>
+        <span class="w4w-rect-count">${inPool?(w4wTestLocked(vkey)?fmtWhen(w4wTestNextAt(vkey)):`${w4wTestStreak(vkey)}/${W4W_TEST_CR} clean`):`${cnt}/${W4W_PRACTICE_FOR_POOL}${mastered?" ✓":""}`}</span>
       </button>
       ${inPool?"":`<p class="hint" style="text-align:center;margin:8px 0 0">${mastered?`Ready when you are — move it to <b class="gold">Known by heart</b> below.`:`Recite it word for word ${W4W_PRACTICE_FOR_POOL}× and it is ready for <b class="gold">Known by heart</b> — or say so below any time.`}</p>`}`:""}
       <div class="lv-sr">
@@ -8375,7 +8419,17 @@ function w4wTestResult(b,c,v,vkey,ret){
   const clean=!TT.misses && !TT.hintUsed, slips=TT.misses||0;
   const r=w4wTestRecord(vkey, clean);
   const V=el("verse");
-  if(clean){ reviewVerseSR(vkey); creditToday(); earnTalents(15); refreshHUD&&refreshHUD(); }
+  // A clean run advances the review trail by one checkpoint, so being tested and being reviewed
+  // are one act rather than two lists to keep. srCleanRun returns the checkpoint just completed.
+  let passedDay=null;
+  if(clean){
+    Prog.verseSR=Prog.verseSR||{};
+    const o=Prog.verseSR[vkey]||(Prog.verseSR[vkey]=newSR());
+    if(!o.r0) o.r0=Date.now();
+    passedDay=srAdvanceClean(o); saveProg();
+    creditToday(); earnTalents(15); refreshHUD&&refreshHUD();
+  }
+  const longName = passedDay!=null ? SR_LONG_NAME[passedDay] : null;
   const freed = clean ? heartMaybeFreeStation(vkey) : null;
   const showGoal = clean ? bumpGoal(true) : (()=>{});
   const left=Math.max(0, W4W_TEST_CR-(r.cr||0));
@@ -8386,6 +8440,8 @@ function w4wTestResult(b,c,v,vkey,ret){
       <p class="lead" style="margin:8px 0 0">${clean
         ? `Every word, unaided.${freed?` That is ${W4W_TEST_CR} in a row \u2014 <b class="gold">${stationName(freed)}</b> is free for another verse.`:(left?` <b class="gold">${left} more</b> like that and its place in the palace is freed.`:" That is five in a row.")}`
         : `${slips} word${slips===1?"":"s"} came back slowly, so the run starts again. You still got to the end of it \u2014 that is the part that counts.`}</p>
+      ${longName?`<p class="hint" style="margin:10px 0 0">That was the <b class="gold">${longName} review</b> — this verse has been with you a long while now.</p>`:""}
+      ${clean?`<p class="hint" style="margin:8px 0 0">Rested a day, then asked again.</p>`:""}
       <div style="font-weight:800;color:var(--gold-ink);margin:10px 0 0">Clean runs in a row: ${r.cr||0} of ${W4W_TEST_CR}${clean?" \u00b7 +15 \u{1FA99}":""}</div>
       <button class="btn" id="wtDone" style="margin-top:16px">Amen \u2014 done</button></div>`;
   el("wtDone").onclick=()=>{

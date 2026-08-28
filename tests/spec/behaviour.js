@@ -779,6 +779,91 @@ const DAY = 86400000;
   ok(bought.cross, '...and is still the section that was paid for');
   no(bought.parables4, '...not whatever now sits at that position');
 
+  describe('the long trail', () => { });
+  const trail = await $(() => ({
+    seen: SR_TRAIL.join(','), all: SR_ALL.join(','),
+    names: [60, 180, 730].map(d => SR_LONG_NAME[d]).join(','),
+    // the drawn trail must stay six dots no matter how far along a verse is
+    drawnAtEnd: (() => { const d = document.createElement('div');
+      d.innerHTML = srTrailHTML({ step: SR_ALL.length, learnedAt: 1 });
+      return d.querySelectorAll('.srn').length; })(),
+    sealedAtThirty: palaceTrailDone({ step: SR_TRAIL.length }),
+  }));
+  is(trail.seen, '0,1,3,7,16,30', 'the trail you can see is still six checkpoints');
+  is(trail.all, '0,1,3,7,16,30,60,180,730', '...and the engine walks three more behind it');
+  is(trail.names, 'two month,six month,two year', '...which have names for when you pass one');
+  is(trail.drawnAtEnd, 6, 'the long ones are never drawn — six dots stay six dots');
+  ok(trail.sealedAtThirty, '...and a verse is still sealed when the visible trail is done');
+
+  // Three clean runs should leave the verse asked again at D16.
+  const walk = await $(() => {
+    const o = { learnedAt: Date.now(), step: 1, dueAt: Date.now() + DAY, r0: 1 };
+    const steps = [];
+    for (let i = 0; i < 3; i++) {
+      const passed = srAdvanceClean(o);
+      steps.push(passed + '->' + Math.round((o.dueAt - Date.now()) / DAY));
+    }
+    return { steps: steps.join(' '), step: o.step, nextCheckpoint: SR_ALL[o.step], lt: o.lt || null };
+  });
+  is(walk.steps, '1->2 3->4 7->9', 'each clean run completes the next checkpoint and sets the gap to the one after');
+  is(walk.nextCheckpoint, 16, 'three clean runs and the verse is next asked at D16');
+  is(walk.lt, null, '...with nothing recorded from the long tail yet');
+
+  const longTail = await $(() => {
+    const o = { learnedAt: Date.now(), step: 5, dueAt: Date.now(), r0: 1 };   // about to complete D30
+    const out = [];
+    out.push(srAdvanceClean(o));            // D30 — still the visible trail
+    const afterThirty = o.lt || null;
+    out.push(srAdvanceClean(o));            // two month
+    const two = o.lt;
+    out.push(srAdvanceClean(o));            // six month
+    const six = o.lt;
+    out.push(srAdvanceClean(o));            // two year
+    const yr = o.lt;
+    return { passed: out.join(','), afterThirty, two, six, yr,
+             exhausted: srAdvanceClean(o), sealed: palaceTrailDone(o) };
+  });
+  is(longTail.passed, '30,60,180,730', 'past D30 the trail carries on at two months, six months and two years');
+  is(longTail.afterThirty, null, 'finishing the visible trail records nothing — it is not a long checkpoint');
+  is(longTail.two, 60, 'passing the two month review is remembered');
+  is(longTail.six, 180, '...and the six month');
+  is(longTail.yr, 730, '...and the two year');
+  is(longTail.exhausted, null, 'and there is nothing after the last one');
+  ok(longTail.sealed, '...the verse having been sealed since D30');
+
+  describe('one clean run a day', () => { });
+  const gap = await $(() => {
+    const k = '43:11:35';
+    Prog.memorized = [k]; Prog.verseStage = { [k]: 'heart' };
+    Prog.w4wSR = { [k]: { cr: 1, n: 1, ok: 1, at: Date.now() } }; saveProg();
+    const afterClean = w4wTestLocked(k);
+    Prog.revPrefs = { loc: false, w4w: true }; saveProg();
+    askVerseIn(k);
+    const askedByAddress = !el('ttIn');
+    Prog.w4wSR[k] = { cr: 0, n: 2, ok: 1, at: Date.now() }; saveProg();     // a MISS, just now
+    const afterMiss = w4wTestLocked(k);
+    Prog.w4wSR[k] = { cr: 3, n: 5, ok: 4, at: Date.now() - 25 * 3600000 }; saveProg();
+    return { afterClean, askedByAddress, afterMiss, aDayLater: w4wTestLocked(k) };
+  });
+  ok(gap.afterClean, 'a verse that just came back clean rests before it can be tested again');
+  ok(gap.askedByAddress, '...and review asks it by address meanwhile rather than skipping it');
+  no(gap.afterMiss, 'a MISSED run does not lock — getting it wrong should never make you wait');
+  no(gap.aDayLater, '...and a day later it can be tested again');
+
+  const joins = await $(() => {
+    const k = '19:23:1';
+    Prog.memorized = [k]; Prog.verseStage = {}; Prog.verseSR = {}; saveProg();
+    setVerseStage(k, 'heart');
+    const o = Prog.verseSR[k] || {};
+    return { has: !!Prog.verseSR[k], step: o.step, firstLookDone: !!o.r0,
+             dueInDays: Math.round((o.dueAt - Date.now()) / DAY), inDeck: deckKeys().includes(k) };
+  });
+  ok(joins.has, 'claiming a verse puts it into spaced repetition there and then');
+  is(joins.step, 1, '...at D1');
+  ok(joins.firstLookDone, '...past the four-hour first look, because it is being tested now');
+  is(joins.dueInDays, 1, '...so it comes round tomorrow');
+  ok(joins.inDeck, '...and it is in the deck');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};

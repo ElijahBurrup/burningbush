@@ -261,7 +261,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "a99cf7330b0b57a3",
+  "h": "147fdbbcec314469",
   "len": 15769,
   "els": 370,
   "buttons": 45,
@@ -324,13 +324,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "b7ee109bbee9940a",
-  "len": 50168,
-  "els": 982,
+  "h": "a16a65c3d629ade6",
+  "len": 51439,
+  "els": 1003,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.36.0 August 27, 2026 The parables in one run FIX Bible Stories now runs in order — Parables of Jesu"
+  "text": "✕ Version history v1.37.0 August 27, 2026 One a day, and a long memory FIX A verse you know by heart rests a day between"
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -738,7 +738,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "650d32f7ac8465b2",
+  "h": "4e7b8d06a783209f",
   "len": 14975,
   "els": 362,
   "buttons": 43,
@@ -801,13 +801,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "b7ee109bbee9940a",
-  "len": 50168,
-  "els": 982,
+  "h": "a16a65c3d629ade6",
+  "len": 51439,
+  "els": 1003,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.36.0 August 27, 2026 The parables in one run FIX Bible Stories now runs in order — Parables of Jesu"
+  "text": "✕ Version history v1.37.0 August 27, 2026 One a day, and a long memory FIX A verse you know by heart rests a day between"
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -1215,7 +1215,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "8c10f767c742e154",
+  "h": "db4fabbb9c96d538",
   "len": 14973,
   "els": 362,
   "buttons": 43,
@@ -1278,13 +1278,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "b7ee109bbee9940a",
-  "len": 50168,
-  "els": 982,
+  "h": "a16a65c3d629ade6",
+  "len": 51439,
+  "els": 1003,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.36.0 August 27, 2026 The parables in one run FIX Bible Stories now runs in order — Parables of Jesu"
+  "text": "✕ Version history v1.37.0 August 27, 2026 One a day, and a long memory FIX A verse you know by heart rests a day between"
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1692,7 +1692,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "652663a0f89388e3",
+  "h": "4fdb82e7c000e661",
   "len": 14975,
   "els": 362,
   "buttons": 43,
@@ -1755,13 +1755,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "b7ee109bbee9940a",
-  "len": 50168,
-  "els": 982,
+  "h": "a16a65c3d629ade6",
+  "len": 51439,
+  "els": 1003,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.36.0 August 27, 2026 The parables in one run FIX Bible Stories now runs in order — Parables of Jesu"
+  "text": "✕ Version history v1.37.0 August 27, 2026 One a day, and a long memory FIX A verse you know by heart rests a day between"
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -2169,7 +2169,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "ac08bf2509813c78",
+  "h": "774fbd1037528c1e",
   "len": 14971,
   "els": 362,
   "buttons": 43,
@@ -2232,13 +2232,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "b7ee109bbee9940a",
-  "len": 50168,
-  "els": 982,
+  "h": "a16a65c3d629ade6",
+  "len": 51439,
+  "els": 1003,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.36.0 August 27, 2026 The parables in one run FIX Bible Stories now runs in order — Parables of Jesu"
+  "text": "✕ Version history v1.37.0 August 27, 2026 One a day, and a long memory FIX A verse you know by heart rests a day between"
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
