@@ -46,7 +46,7 @@ const DAY = 86400000;
   is(data.blessingsUnresolved, 0, 'every blessing resolves to real KJV text');
   is(data.paceUnresolved, 0, 'every pacing verse resolves');
   is(data.growUnresolved + data.wordUnresolved, 0, 'every encouragement verse resolves');
-  is(data.storiesTagged, 130, 'a hundred and thirty Bible stories');
+  is(data.storiesTagged, 150, 'a hundred and fifty Bible stories');
 
   // ─────────────────────────────── the Major System ───────────────────────────────
   describe('major system', () => { });
@@ -722,12 +722,12 @@ const DAY = 86400000;
       tail: titles.slice(-3).join(' | '),
     };
   });
-  is(order.sections, 26, 'twenty-six sections');
-  is(order.total, 130, '...holding 130 stories');
+  is(order.sections, 30, 'thirty sections');
+  is(order.total, 150, '...holding 150 stories');
   is(order.parablesRun.join(','), '14,15,16,17,18,19,20', 'the seven parable sections run consecutively');
   is(order.wp1, 21, '...then the word pictures');
   is(order.wp2, 22, '...both of them');
-  is(order.tail, 'The Cross & Resurrection | The Early Church | Paul & the End', '...and the cross, the church and Paul close the list');
+  is(order.tail, "Paul & the End | Paul's Journeys | The Revelation", '...and the list ends after the resurrection, not at it');
 
   // The one that matters: a story is stored by its POSITION, so reordering the list renames every
   // id. What must survive is not the id but the STORY — whatever was finished must still be.
@@ -1000,6 +1000,120 @@ const DAY = 86400000;
   ok(emptyBoard.invites, 'with no verses yet the page invites rather than sitting blank');
   ok(emptyBoard.noRing, '...showing no ring of zeroes');
   ok(emptyBoard.says, '...but saying what will be counted');
+
+  describe('bible stories: the second reorder', () => { });
+  const afterEaster = await $(() => {
+    const titles = STORY_GROUPS.map(g => g.t);
+    const at = t => titles.indexOf(t);
+    const byId = {}; let i = 0;
+    STORY_GROUPS.forEach(g => g.s.forEach(st => { byId[i] = st[0]; i++; }));
+
+    // Rebuild v1.36-v1.39's order and take finished stories from every band it had.
+    const V2 = titles.filter(t => !['After the Resurrection','The Church Spreads',"Paul's Journeys",'The Revelation'].includes(t));
+    const oldName = {}; let j = 0;
+    V2.forEach(t => { const g = STORY_GROUPS.find(x => x.t === t); g.s.forEach(st => { oldName[j] = st[0]; j++; }); });
+    const oldIds = [0, 84, 114, 119, 120, 124, 125, 129];
+    const wanted = oldIds.map(n => oldName[n]);
+    const p = { doneSkills: oldIds.map(n => 'story:' + n), storyOrderV2: true };
+    migrateProg(p);
+    const got = p.doneSkills.map(s => byId[+s.split(':')[1]]);
+    const twice = (() => { migrateProg(p); return p.doneSkills.map(s => byId[+s.split(':')[1]]).join(' | '); })();
+
+    return {
+      order: [at('The Cross & Resurrection'), at('After the Resurrection'), at('The Early Church'),
+              at('The Church Spreads'), at('Paul & the End'), at("Paul's Journeys"), at('The Revelation')].join(','),
+      icons: STORY_GROUPS.length, wanted: wanted.join(' | '), got: got.join(' | '), twice, flag: !!p.storyOrderV3,
+    };
+  });
+  is(afterEaster.order, '23,24,25,26,27,28,29', 'the new sections sit in their chronological place, not on the end');
+  is(afterEaster.got, afterEaster.wanted, 'every finished story survives the second reorder as the same story');
+  is(afterEaster.twice, afterEaster.wanted, '...and running the migration again moves nothing');
+  ok(afterEaster.flag, '...with its own flag, so it is separate from the first reorder');
+
+  // A person who never saw v1.36 runs BOTH migrations in one go — the pair must compose.
+  const bothAtOnce = await $(() => {
+    const byId = {}; let i = 0;
+    STORY_GROUPS.forEach(g => g.s.forEach(st => { byId[i] = st[0]; i++; }));
+    // v1.35 order: the cross, church and Paul sat at ids 85-99.
+    const p = { doneSkills: ['story:85', 'story:94', 'story:99', 'story:3'] };
+    migrateProg(p);
+    return p.doneSkills.map(s => byId[+s.split(':')[1]]).join(' | ');
+  });
+  is(bothAtOnce, 'The Triumphal Entry | Stephen the First Martyr | The New Heaven & New Earth | Cain & Abel',
+     'someone arriving from v1.35 runs both reorders in sequence and lands on the right stories');
+
+  describe('suggested: the same shape, the other key', () => { });
+  const sugg = await $(() => {
+    Prog.memorized = ['43:3:16', '19:23:1']; Prog.verseStage = { '43:3:16': 'heart' }; saveProg();
+    show('verse'); vView = 'sugg'; renderVerse();
+    const q = s => document.querySelector('#verse ' + s);
+    const memHas = s => { vView = 'mem'; renderVerse(); const r = !!document.querySelector('#verse ' + s); vView = 'sugg'; renderVerse(); return r; };
+    return {
+      eyebrow: (q('.rb-k') || {}).textContent,
+      hasBar: !!q('.reachboard .lbar'),
+      hasRing: !!q('.sb-ring'),                       // the ring belongs to My Verses alone
+      cells: document.querySelectorAll('#verse .reachcell').length,
+      grid: !!q('.bookgrid.reach'),
+      accordionGone: !q('.bookhead'),
+      seedling: /🌱/.test(el('verse').innerText),
+      noHeart: !q('.heart-etch'),                     // the heart belongs to My Verses alone
+      memRingExists: memHas('.sb-ring'),
+      memHasNoReachboard: !memHas('.reachboard'),
+    };
+  });
+  is(sugg.eyebrow, 'WITHIN REACH', 'Suggested leads with what is open to you');
+  ok(sugg.hasBar, '...measured on a bar');
+  no(sugg.hasRing, '...and never the ring, which is My Verses\' alone');
+  is(sugg.cells, 2, 'two wide counts here, against six small ones there');
+  ok(sugg.grid, 'the books are a grid, the same shape as My Verses');
+  ok(sugg.accordionGone, '...and the old accordion is gone from here too');
+  ok(sugg.seedling, 'it is marked with a seedling');
+  ok(sugg.noHeart, '...and never the gold heart');
+  ok(sugg.memRingExists, 'My Verses still has its ring');
+  ok(sugg.memHasNoReachboard, '...and never the reach panel — the two pages share no furniture');
+
+  const dim = await $(() => {
+    // a book unlocked but with nothing in reach must still be shown, dimmed
+    const groups = { 43: [[43, 3, 16]] };
+    const html = suggBookGrid([43, 40], groups);
+    const d = document.createElement('div'); d.innerHTML = html;
+    const btns = [...d.querySelectorAll('.bookbtn')];
+    return { n: btns.length, dimmed: btns.filter(b => b.classList.contains('empty')).length,
+             counts: btns.map(b => b.querySelector('.bg-c').textContent.trim()).join(' | ') };
+  });
+  is(dim.n, 2, 'every unlocked book gets a button');
+  is(dim.dimmed, 1, '...one of them with nothing in reach yet');
+  is(dim.counts, '🌱 1 | —', '...shown as a dash rather than a zero, and dimmed rather than hidden');
+
+  describe('every screen wears its own icon', () => { });
+  const heads = await $(() => {
+    const grab = (view, fn) => { fn(); const hd = document.querySelector('#' + view + ' .pagehead');
+      if (!hd) return null;
+      const ic = hd.querySelector('.ph-i');
+      return { icon: ic.querySelector('svg') ? 'svg' : ic.textContent.trim(), title: hd.querySelector('h2').textContent.trim() }; };
+    return {
+      learn: grab('learn', () => { show('learn'); renderPath(); }),
+      library: grab('verse', () => { show('verse'); vView = 'hub'; renderVerse(); }),
+      palace: grab('palace', () => { show('palace'); renderPalace(); }),
+      bible: grab('journey', () => { show('journey'); renderJourney(); }),
+      stories: grab('stories', () => { show('stories'); renderStories(); }),
+    };
+  });
+  is(heads.learn.icon + ' ' + heads.learn.title, '🎓 Learn', 'Learn wears the Learn tab icon');
+  is(heads.library.icon + ' ' + heads.library.title, '📚 Library', '...Library its own');
+  is(heads.palace.icon + ' ' + heads.palace.title, '🏛️ Memory Palace', '...Palaces its own');
+  is(heads.bible.icon + ' ' + heads.bible.title, 'svg Bible', '...and Bible the drawn book, not an emoji');
+  is(heads.stories.icon + ' ' + heads.stories.title, '📖 Bible Stories', '...Stories its own');
+
+  const book = await $(() => {
+    show('journey'); renderJourney();
+    const bb = document.querySelector('#journey .pagehead svg path').getBBox();
+    const tb = document.querySelector('.tabbar [data-tab="journey"] svg path').getBBox();
+    return { w: +bb.width.toFixed(1), h: +bb.height.toFixed(1), tabW: +tb.width.toFixed(1), same: Math.abs(bb.width - tb.width) < 0.01 };
+  });
+  ok(book.w > 17, 'the Bible book is wider than it was — 14.9 of 24 read as narrow beside the other icons');
+  ok(book.w < book.h + 2, '...without becoming wider than it is tall');
+  ok(book.same, 'and the tab bar draws exactly the same book as the page head');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {

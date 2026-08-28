@@ -927,9 +927,11 @@
   .bookbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
     background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:11px 5px;
     color:var(--ink);font-weight:800;font-size:12.5px;line-height:1.15;text-align:center;
-    cursor:pointer;min-height:66px;min-width:0}
+    cursor:pointer;min-height:70px;min-width:0}
   .bookbtn:active{transform:scale(.98)}
-  .bookbtn .bg-n{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* Long names wrap rather than ellipsing: "1 Thessalonians" clipped to "1 Thessalon…" tells the
+     reader less than two short lines do. The grid sizes the whole row to the tallest button. */
+  .bookbtn .bg-n{display:block;max-width:100%;line-height:1.12;overflow-wrap:anywhere}
   .bookbtn .bg-c{display:flex;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:700;color:var(--muted)}
   .bookbtn .heart-etch{width:12px;height:12px;margin:0}
   .bkverses{max-height:58vh;overflow-y:auto;overscroll-behavior:contain}
@@ -978,6 +980,33 @@
   .st-l{display:block;font-size:9.5px;font-weight:800;color:var(--muted);letter-spacing:.02em;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .statcell.hot{border-color:var(--gold2)} .statcell.hot .st-n{color:var(--good)}
+  /* Suggested is the scoreboard's mirror, deliberately in the other key: GREEN not gold, a bar
+     not a ring, an icon on the left not a dial in the middle, and two wide counts not six small
+     ones. The two pages share a skeleton so they feel like one app, and share no colour, shape or
+     icon so neither is ever mistaken for the other. */
+  /* A screen wears the icon of the tab that opened it, larger, beside its title — so the page you
+     are on and the button that got you here are plainly the same thing. */
+  .pagehead{display:flex;align-items:center;gap:10px;margin:0 0 2px;min-width:0}
+  .pagehead h2{margin:0;min-width:0}
+  .ph-i{flex:0 0 auto;font-size:33px;line-height:1;display:grid;place-items:center;width:36px;height:36px}
+  .ph-i svg{width:36px;height:36px;display:block}
+  .reachboard{display:flex;gap:12px;align-items:flex-start;background:var(--panel2);
+    border:1px solid var(--good);border-left-width:4px;border-radius:14px;padding:13px 14px;margin:2px 0 9px}
+  .rb-i{font-size:26px;line-height:1;flex:0 0 auto}
+  .rb-body{flex:1;min-width:0}
+  .rb-k{font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--good)}
+  .rb-n{font-size:19px;font-weight:800;color:var(--ink);line-height:1.18;margin:1px 0 7px}
+  .rb-body .lbar{height:8px;margin-bottom:5px}
+  .rb-body .lbar > span{background:linear-gradient(90deg,var(--green),var(--good))}
+  .rb-sub{font-size:11.5px;color:var(--muted);font-weight:700;line-height:1.35}
+  .reachgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0 0 4px}
+  .reachcell{background:var(--panel2);border:1px solid var(--line);border-radius:12px;
+    padding:10px 9px;display:flex;align-items:center;gap:9px;min-width:0}
+  .rc-n{font-size:21px;font-weight:800;color:var(--good);font-variant-numeric:tabular-nums;flex:0 0 auto}
+  .rc-l{font-size:10.5px;font-weight:800;color:var(--muted);line-height:1.2;min-width:0}
+  .bookgrid.reach .bg-c{color:var(--good)}
+  .bookgrid.reach .bookbtn.empty{opacity:.5}
+  .bookgrid.reach .bookbtn.empty .bg-c{color:var(--muted)}
   .medals{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 4px}
   .medal{display:inline-flex;align-items:center;gap:5px;background:var(--panel2);border:1px solid var(--gold2);
     border-radius:999px;padding:5px 10px;font-size:11px;font-weight:800;color:var(--gold-ink);white-space:nowrap}
@@ -1574,7 +1603,7 @@
     <button data-tab="learn" class="on"><span class="ic">🎓</span><span class="lbl">Learn</span></button>
     <button data-tab="verse"><span class="tabbadge"></span><span class="ic">📚</span><span class="lbl">Library</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
     <button data-tab="palace"><span class="tabbadge"></span><span class="ic">🏛️</span><span class="lbl">Palaces</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
-    <button data-tab="journey"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 2.8h11.1a2.1 2.1 0 0 1 2.1 2.1v14.2a2.1 2.1 0 0 1-2.1 2.1H5.4A1.6 1.6 0 0 1 3.8 19.6V4.4a1.6 1.6 0 0 1 1.6-1.6Z" fill="var(--bible)"/><path d="M3.8 18.1h13.9" stroke="var(--bible-ink)" stroke-opacity=".45" stroke-width="1"/><path d="M11.3 6.4v8.2M8.4 9.1h5.8" stroke="var(--bible-ink)" stroke-width="1.7" stroke-linecap="round"/></svg></span><span class="lbl">Bible</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
+    <button data-tab="journey"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.8h15.2a2.1 2.1 0 0 1 2.1 2.1v14.2a2.1 2.1 0 0 1-2.1 2.1H4.2A1.6 1.6 0 0 1 2.6 19.6V4.4a1.6 1.6 0 0 1 1.6-1.6Z" fill="var(--bible)"/><path d="M2.6 18.1h17.9" stroke="var(--bible-ink)" stroke-opacity=".45" stroke-width="1"/><path d="M12 6.4v8.2M8.8 9.1h6.4" stroke="var(--bible-ink)" stroke-width="1.7" stroke-linecap="round"/></svg></span><span class="lbl">Bible</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
     <button data-tab="stories"><span class="ic">📖</span><span class="lbl">Stories</span><span class="tik" aria-hidden="true"><b>★</b></span></button>
   </div>
 
@@ -1760,8 +1789,18 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.39.0";
+const APP_VERSION="1.40.0";
 const CHANGELOG=[
+ {v:"1.40.0", d:"August 27, 2026", t:"What is within reach", items:[
+   ["chg","<b>Suggested to memorize is laid out like My Verses</b> — a panel at the top, then your books three to a row, each opening its verses in a popup that scrolls on its own."],
+   ["chg","<b>...and coloured so the two are never confused.</b> Suggested is green where My Verses is gold, a bar where that one has a ring, and a seedling where that one has a heart. One is what you have; the other is what is open to you."],
+   ["new","The panel says <b>how many verses you can build right now</b>, and how much of the whole collection your numbers have opened so far."],
+   ["new","Books with nothing in reach yet are <b>shown dimmed rather than hidden</b> — learning more of that book's numbers is the next move, so the book stays in front of you."],
+   ["chg","<b>Every screen now wears its own menu icon</b>, larger, beside its title — so the page you are on and the button that opened it are plainly the same thing."],
+   ["chg","<b>The Bible icon is wider.</b> The book was noticeably narrower than the other icons in the bottom bar; the spine has moved out and the cross has recentred."],
+   ["new","<b>Twenty more stories, all after the empty tomb</b> — <b>After the Resurrection</b> (Emmaus, Thomas, breakfast by the sea, Peter restored, the Great Commission), <b>The Church Spreads</b> (Philip and the Ethiopian, Dorcas, Peter freed by an angel, the council at Jerusalem), <b>Paul's Journeys</b> (Lydia, the Areopagus, the riot at Ephesus, Eutychus, Agrippa) and <b>The Revelation</b> (Patmos, the seven churches, the throne, the Lamb and the scroll)."],
+   ["chg","That is <b>150 stories in 30 sections</b>. The new ones sit in their proper place in the run rather than on the end, and everything you had already learned moved with them."]
+ ]},
  {v:"1.39.0", d:"August 27, 2026", t:"Your scoreboard", items:[
    ["new","<b>My Verses is a scoreboard now.</b> A gold ring counts your verses and fills toward your next badge, with the words you are carrying and the books you have reached beside it."],
    ["new","<b>Six counts at a glance</b> — known by heart, sealed, day streak, books, clean runs and what is due today — and a row of <b>records and long-service medals</b>: your best clean run, your best streak, and how many verses have come back to you after two months, six months and two years."],
@@ -2815,6 +2854,15 @@ function migrateProg(p){
     const move=n=> n<85 ? n : (n<100 ? n+30 : (n<130 ? n-15 : n));
     p.doneSkills=(p.doneSkills||[]).map(s=>{ const m=/^story:(\d+)$/.exec(s); return m ? "story:"+move(+m[1]) : s; });
   }
+  // Four sections were added after the resurrection, in their chronological place rather than on
+  // the end, which pushes the two that used to follow the cross further down the list.
+  //   The Early Church  ids 120-124 -> 125-129   (+5, one new section ahead of it)
+  //   Paul & the End    ids 125-129 -> 135-139   (+10, two new sections ahead of it)
+  if(!p.storyOrderV3){
+    p.storyOrderV3=true;
+    const move=n=> n<120 ? n : (n<125 ? n+5 : (n<130 ? n+10 : n));
+    p.doneSkills=(p.doneSkills||[]).map(s=>{ const m=/^story:(\d+)$/.exec(s); return m ? "story:"+move(+m[1]) : s; });
+  }
   if(typeof p.blessIdx!=="number") p.blessIdx=0;        // rotates the word for word blessing
   if(typeof p.paceIdx!=="number") p.paceIdx=0;          // rotates the "little and often" verse
   if(typeof p.taxAt!=="number") p.taxAt=0;              // 0 = never assessed (set when the Rome letter lands)
@@ -3339,7 +3387,7 @@ function renderJourney(){
   const viewToggle=`<div class="bible-viewtoggle">${VMODES.map(m=>`<button class="bvt ${mode===m[0]?"on":""}" data-vmode="${m[0]}" title="${m[2]}">${m[1]}</button>`).join("")}</div>`;
   let booksOpen=0; for(let b=1;b<=66;b++) if(knownNum(b)) booksOpen++;
   J.innerHTML=`
-    <h2 style="margin:0 0 4px">Bible</h2>
+    ${pageHead(bibleIconSVG(),"Bible")}
     <p class="lead" style="margin:0 0 10px;font-size:13px">Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses suggested next, and your own verses in that book.</p>
     <div class="card biblecard" style="margin-top:0;position:relative;padding:12px 14px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><span class="muted" style="font-size:12px;font-weight:800">${booksOpen} of 66 books open</span><div style="display:flex;gap:6px;align-items:center">${viewToggle}<button class="bible-search-btn" id="bibleSearchBtn" title="Jump to a book">🔍</button></div></div>
@@ -3507,7 +3555,7 @@ function renderOnboard(){
   el("obDone").onclick=()=>{ Prog.onboarded=true; saveProg(); show("learn"); }; // start on the Major System path
 }
 
-/* =================== BIBLE STORIES — 130 stories, 26 sections of 5 ===================
+/* =================== BIBLE STORIES — 150 stories, 30 sections of 5 ===================
    Walked in order: the Old Testament, then Jesus' birth, ministry and miracles, then all seven
    parable sections and the word pictures, and only then the cross, the church and Paul.
    A story's id is its running position across this list, so ANY reordering renames every id
@@ -3543,8 +3591,13 @@ const STORY_GROUPS=[
  {t:"Word Pictures of Jesus I", s:[["Salt of the Earth","Matthew",5,13],["The Lamp under a Bushel","Matthew",5,15],["The Mote & the Beam","Matthew",7,3],["The Strait Gate","Matthew",7,13],["A Tree & Its Fruit","Matthew",7,17]]},
  {t:"Word Pictures of Jesus II", s:[["New Cloth on an Old Coat","Matthew",9,16],["New Wine in Old Bottles","Matthew",9,17],["The Blind Leading the Blind","Luke",6,39],["The Fig Tree in Leaf","Matthew",24,32],["The Vine & the Branches","John",15,1]]},
  {t:"The Cross & Resurrection", s:[["The Triumphal Entry","Matthew",21,1],["The Last Supper","Luke",22,14],["Gethsemane","Matthew",26,36],["The Crucifixion","John",19,16],["The Resurrection","John",20,1]]},
+ // Everything after the empty tomb: the risen Christ, then the church He left behind.
+ {t:"After the Resurrection", s:[["The Road to Emmaus","Luke",24,13],["Doubting Thomas","John",20,24],["Breakfast by the Sea","John",21,1],["Peter Restored","John",21,15],["The Great Commission","Matthew",28,16]]},
  {t:"The Early Church", s:[["The Ascension","Acts",1,9],["Pentecost","Acts",2,1],["Peter & John Heal the Lame Man","Acts",3,1],["Ananias & Sapphira","Acts",5,1],["Stephen the First Martyr","Acts",6,8]]},
- {t:"Paul & the End", s:[["The Conversion of Saul","Acts",9,1],["Peter's Vision & Cornelius","Acts",10,1],["Paul & Silas in Prison","Acts",16,16],["Paul's Shipwreck","Acts",27,1],["The New Heaven & New Earth","Revelation",21,1]]}
+ {t:"The Church Spreads", s:[["Philip & the Ethiopian","Acts",8,26],["Dorcas Raised at Joppa","Acts",9,36],["Peter Freed by an Angel","Acts",12,5],["Barnabas & Saul Sent Out","Acts",13,1],["The Council at Jerusalem","Acts",15,1]]},
+ {t:"Paul & the End", s:[["The Conversion of Saul","Acts",9,1],["Peter's Vision & Cornelius","Acts",10,1],["Paul & Silas in Prison","Acts",16,16],["Paul's Shipwreck","Acts",27,1],["The New Heaven & New Earth","Revelation",21,1]]},
+ {t:"Paul's Journeys", s:[["Lydia by the River","Acts",16,13],["Paul at the Areopagus","Acts",17,22],["The Riot at Ephesus","Acts",19,23],["Eutychus at the Window","Acts",20,7],["Paul Before Agrippa","Acts",26,1]]},
+ {t:"The Revelation", s:[["John on Patmos","Revelation",1,9],["Letters to the Seven Churches","Revelation",2,1],["The Throne in Heaven","Revelation",4,1],["The Lamb & the Scroll","Revelation",5,1],["The Woman & the Dragon","Revelation",12,1]]}
 ];
 const STORY_TOTAL=STORY_GROUPS.reduce((n,g)=>n+g.s.length,0);   // never hardcode it again
 function storiesDone(a,b){ for(let g=a;g<=b;g++) if(!Prog.doneSkills.includes("story:"+g)) return false; return true; }
@@ -3574,7 +3627,7 @@ function buildUnits(){
   const bk=n=>({id:"book:"+n,label:bookName(n),kind:"book",items:[n]});
   const units=[];
   const ROUND_ICONS=["👣","🥾","🛤️","🌄","⛰️","🧗","🏔️","🚩","🦅","🌟","🎖️","🏆","👑"];   // ascending climb, Round 1→13
-  const STORY_ICONS=["🍎","⭐","🧥","🌊","📜","🎺","🌾","👑","🔥","🌪️","🦁","👶","🕊️","🍞","🌱","🐑","💰","🕯️","🌿","🚪","🏗️","🧂","🍷","✝️","⛪","🌅"]; // one per story section, in list order
+  const STORY_ICONS=["🍎","⭐","🧥","🌊","📜","🎺","🌾","👑","🔥","🌪️","🦁","👶","🕊️","🍞","🌱","🐑","💰","🕯️","🌿","🚪","🏗️","🧂","🍷","✝️","🌄","⛪","🕊️","🌅","⛵","👁️"]; // one per story section, in list order
   // 0) The Code — the Major System video first, then the sound↔digit map drilled both ways.
   units.push({name:"The Code: Major System Sounds", ic:"🔢", skills:[
     // Video Review is not reachable this early, so the opening film keeps a tile of its own here
@@ -3844,7 +3897,7 @@ function renderPath(focus){
   // The whole path, top to bottom, with a rule and a name between each phase. Nothing folds:
   // the map IS the point, and the next lesson is brought to the top of the screen instead.
   let phase=0;
-  let html=`<h2>Learn</h2><p class="hint" style="margin:2px 0 10px">Your whole path, in order. The next lesson is marked.</p>`;
+  let html=`${pageHead("\u{1F393}","Learn")}<p class="hint" style="margin:2px 0 10px">Your whole path, in order. The next lesson is marked.</p>`;
   const upTo=ensurePhaseMax();
   UNITS.forEach((U,ui)=>{
     if(U.story) return;                       // stories live in their own tab
@@ -3934,7 +3987,7 @@ function renderStories(){
   groups.forEach(({U,ui})=>U.skills.forEach((sk,si)=>{ total++; if(Prog.doneSkills.includes(sk.id)) doneCount++; else if(skillUnlocked(ui,si)) readyCount++; }));
   // A grid of sections, like the Library and Profile. The stories themselves live one tap behind,
   // in a popup with the same chrome: a cross at the top and Done at the foot.
-  let html=`<h2>Bible Stories</h2>
+  let html=`${pageHead("\u{1F4D6}","Bible Stories")}
     <p class="lead">100+ key stories, parables and word pictures. Each unlocks the moment you can address its opening verse, and joins your daily review.</p>
     <div class="hint" style="margin:0 0 10px">${doneCount} of ${total} located${readyCount?` · <b class="gold">${readyCount} ready now</b>`:""}</div>
     <div class="profgrid">${groups.map(({U,ui})=>{
@@ -4727,6 +4780,59 @@ function openBookVerses(bn, back){
   });
   m.style.display="flex"; raiseModal(m);
 }
+// What is open to you, rather than what you have. Deliberately NOT a scoreboard: nothing here is
+// a score, it is all an invitation, so it is measured against the whole collection rather than
+// against a badge.
+function reachboardHTML(books, groups, reach){
+  const withAny=books.filter(bn=>(groups[bn]||[]).length).length;
+  const rg=reachableGems(), tg=totalGems();
+  const pct = tg ? Math.max(2, Math.min(100, Math.round(rg/tg*100))) : 0;
+  return `<div class="reachboard">
+      <span class="rb-i">🌱</span>
+      <div class="rb-body">
+        <div class="rb-k">WITHIN REACH</div>
+        <div class="rb-n">${reach} verse${reach===1?"":"s"} you can build right now</div>
+        <div class="lbar"><span style="width:${pct}%"></span></div>
+        <div class="rb-sub">${commas(rg)} of ${commas(tg)} heart-verses opened \u00b7 learn more numbers to open more</div>
+      </div>
+    </div>
+    <div class="reachgrid">
+      <div class="reachcell"><span class="rc-n">${withAny}</span><span class="rc-l">books with one ready</span></div>
+      <div class="reachcell"><span class="rc-n">${books.length}</span><span class="rc-l">books unlocked</span></div>
+    </div>`;
+}
+// Every unlocked book appears, including the ones with nothing in reach yet — dimmed rather than
+// hidden, because "learn more of this book's numbers" is the actual next move.
+function suggBookGrid(books, groups){
+  if(!books.length) return "";
+  return `<div class="bookgrid reach">`+books.map(bn=>{
+    const n=(groups[bn]||[]).length;
+    return `<button class="bookbtn${n?"":" empty"}" data-suggbook="${bn}">
+      <span class="bg-n">${bookName(bn)}</span>
+      <span class="bg-c">${n?"🌱 "+n:"—"}</span></button>`;
+  }).join("")+`</div>`;
+}
+function openSuggBook(bn, back){
+  const m=el("suggBookModal")||(()=>{ const d=document.createElement("div"); d.id="suggBookModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const list=(suggestedByBook()[bn]||[]);
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="sgClose" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800;font-size:15px">🌱 ${bookName(bn)}</div><span style="width:34px"></span></div>
+      ${list.length
+        ? `<div class="hint" style="text-align:center;margin:0 0 8px">${list.length} verse${list.length===1?"":"s"} you can build now</div>
+           <div class="vlist bkverses">${list.map(a=>verseRow(a[0],a[1],a[2],"go")).join("")}</div>`
+        : `<p class="hint" style="text-align:center;margin:14px 0">Nothing in reach here yet. Learn more of ${bookName(bn)}'s chapter and verse numbers and its verses will appear.</p>`}
+      <button class="btn" id="sgDone" style="width:100%;margin-top:12px">Done</button>
+    </div>`;
+  const close=()=>{ m.style.display="none"; if(back) back(); };
+  el("sgClose").onclick=close; el("sgDone").onclick=close;
+  m.querySelectorAll("[data-vb]").forEach(r=>r.onclick=()=>{
+    const [b,c,v]=r.dataset.vb.split(":").map(Number);
+    m.style.display="none";
+    openVerseWizard(b,c,v, ()=>openSuggBook(bn, back));
+  });
+  m.style.display="flex"; raiseModal(m);
+}
 function bookGroupedList(verses, section){
   const groups={}; verses.forEach(a=>{ (groups[a[0]]=groups[a[0]]||[]).push(a); });
   const bns=Object.keys(groups).map(Number).sort((x,y)=>x-y);
@@ -4769,11 +4875,13 @@ function renderVerse(){
   if(vView!=="hub"){
     let title="", body="", memBare=[];
     if(vView==="sugg"){ title="✨ Suggested to memorize";
-      body=`<p class="hint">Every book you've unlocked — tap one to open its suggested heart-verses.</p>`
-        +(unlockedBooks.length?unlockedBooks.map(bn=>{ const list=suggGroups[bn]||[], open=vBook.sugg.has(bn);
-            return `<button class="bookhead" data-bk="sugg:${bn}"><span>${bookName(bn)} <span class="muted" style="font-weight:600">· ${list.length}</span></span><span class="gmeta">${open?"▾":"▸"}</span></button>`
-              +(open?(list.length?`<div class="vlist">`+list.map(a=>verseRow(a[0],a[1],a[2],"go")).join("")+`</div>`:`<p class="hint" style="margin:4px 0 8px">No suggested verses in range yet — learn more of ${bookName(bn)}'s numbers.</p>`):"");
-          }).join(""):`<p class="hint">Learn a book &amp; its numbers in <b class="gold">Learn</b> to unlock your first suggestions.</p>`);
+      body = unlockedBooks.length
+        ? reachboardHTML(unlockedBooks, suggGroups, suggReach)
+          + `<div class="sbhead">WHERE THEY ARE</div><p class="hint" style="margin:2px 0 8px">Tap a book to open its suggestions.</p>`
+          + suggBookGrid(unlockedBooks, suggGroups)
+        : `<div class="card center" style="padding:26px 18px"><div style="font-size:44px">🌱</div>
+             <h2 style="font-size:19px;margin:8px 0 2px">Nothing in reach yet</h2>
+             <p class="lead" style="margin:6px 0 0">Learn a book and its numbers in <b class="gold">Learn</b>, and the verses you can build will start appearing here.</p></div>`;
     } else if(vView==="topics"){ title="📚 Browse by topic";
       body=`<p class="hint">Verses for what you're walking through — tap a topic.</p>`
         +TOPICS.map((t,ti)=>{ const vs=versesForTopic(t), open=vTopic.has(ti);
@@ -4809,6 +4917,11 @@ function renderVerse(){
     V.querySelectorAll("[data-topic]").forEach(h=>h.onclick=()=>{ const ti=+h.dataset.topic; vTopic.has(ti)?vTopic.delete(ti):vTopic.add(ti); reVerse(); });
     V.querySelectorAll("[data-vid]").forEach(b=>b.onclick=()=>{ const k=b.dataset.vid; openVideoScreen(k, ()=>{ vView="videos"; renderVerse(); }); });
     V.querySelectorAll("[data-vb]").forEach(b=>b.onclick=()=>{ const [x,y,z]=b.dataset.vb.split(":").map(Number); verseScroll=document.querySelector(".content").scrollTop; openVerseWizard(x,y,z,backToVerse); });
+    V.querySelectorAll("[data-suggbook]").forEach(b=>b.onclick=()=>{
+      const bn=+b.dataset.suggbook;
+      verseScroll=document.querySelector(".content").scrollTop;
+      openSuggBook(bn, ()=>{ show("verse"); renderVerse(); });
+    });
     V.querySelectorAll("[data-bookgrid]").forEach(b=>b.onclick=()=>{
       const bn=+b.dataset.bookgrid.split(":")[1];
       verseScroll=document.querySelector(".content").scrollTop;
@@ -4820,7 +4933,7 @@ function renderVerse(){
 
   // ---- HUB: six big buttons; review last ----
   const dueAll=reviewDueCount();   // numbers + verses + palaces due for spaced repetition today
-  V.innerHTML=`<h2 style="margin:0 0 2px">Library</h2>
+  V.innerHTML=`${pageHead("\u{1F4DA}","Library")}
     <p class="hint" style="margin:0 0 10px">Everything you have hidden away, and every way to practise it.</p>
     ${taxWarnHTML()}${feat("goal")?`<div class="goalbar" id="goalBtn">${libStatusHTML()}</div>`:""}
     <div class="versehub">
@@ -6211,8 +6324,10 @@ function heartIconSVG(){
   </svg>`;
 }
 // One Bible icon, used by the tab, the scratch off prize and the icon that flies between them.
+// Kept in one place so a screen and its tab can never drift apart.
+function pageHead(icon, text){ return `<div class="pagehead"><span class="ph-i">${icon}</span><h2>${text}</h2></div>`; }
 function bibleIconSVG(){
-  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 2.8h11.1a2.1 2.1 0 0 1 2.1 2.1v14.2a2.1 2.1 0 0 1-2.1 2.1H5.4A1.6 1.6 0 0 1 3.8 19.6V4.4a1.6 1.6 0 0 1 1.6-1.6Z" fill="var(--bible)"/><path d="M3.8 18.1h13.9" stroke="var(--bible-ink)" stroke-opacity=".45" stroke-width="1"/><path d="M11.3 6.4v8.2M8.4 9.1h5.8" stroke="var(--bible-ink)" stroke-width="1.7" stroke-linecap="round"/></svg>`;
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 2.8h15.2a2.1 2.1 0 0 1 2.1 2.1v14.2a2.1 2.1 0 0 1-2.1 2.1H4.2A1.6 1.6 0 0 1 2.6 19.6V4.4a1.6 1.6 0 0 1 1.6-1.6Z" fill="var(--bible)"/><path d="M2.6 18.1h17.9" stroke="var(--bible-ink)" stroke-opacity=".45" stroke-width="1"/><path d="M12 6.4v8.2M8.8 9.1h6.4" stroke="var(--bible-ink)" stroke-width="1.7" stroke-linecap="round"/></svg>`;
 }
 let _rhSeq=0;
 // The Romans book icon (images/books/45.svg), redrawn on tokens so it can sit on any theme.
@@ -8707,7 +8822,7 @@ function renderPalace(){
   const P=el("palace");
   const mine=(Prog.palaces||[]).map((p,i)=>[p,i]).filter(x=>x[0]);
   const due=palacesDueCount();
-  P.innerHTML=`<h2>Memory Palace</h2>
+  P.innerHTML=`${pageHead("\u{1F3DB}\uFE0F","Memory Palace")}
     <p class="lead" style="margin-bottom:12px">A <b>palace</b> is for sequences — walk a familiar place and leave each item at a spot. Do it once and the order sticks.</p>
     <button class="btn" id="palAdd" style="width:100%">➕ Build a new palace</button>
     ${mine.length?`<div class="prof-sect" style="margin-top:16px">My palaces${due?` <span style="color:#ff8a8a;text-transform:none;letter-spacing:0;font-weight:800">· ${due} due</span>`:""}</div>`+(()=>{

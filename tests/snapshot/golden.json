@@ -1,30 +1,30 @@
 {
  "classic/learn/path": {
-  "h": "c8f44b62b61f90e1",
-  "len": 5801,
-  "els": 125,
+  "h": "4fed77f24d4f383f",
+  "len": 5857,
+  "els": 127,
   "buttons": 39,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ "
  },
  "classic/verse/hub": {
-  "h": "91fb97d9002fc3b2",
-  "len": 2896,
-  "els": 55,
+  "h": "72be5ffd46dffcac",
+  "len": 2929,
+  "els": 57,
   "buttons": 7,
   "svgs": 3,
   "imgs": 0,
-  "text": "Library Everything you have hidden away, and every way to practise it. 🎯 1 more to reach today's goal 🔥 4 🧊 2 Spaced "
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 more to reach today's goal 🔥 4 🧊 2 Spac"
  },
  "classic/verse/suggested": {
-  "h": "8d5508eb2ebdbcab",
-  "len": 19324,
-  "els": 494,
+  "h": "425687b4f3b1b039",
+  "len": 8598,
+  "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ✨ Suggested to memorize Every book you've unlocked — tap one to open its suggested heart-verses. Genesis · 18 ▸"
+  "text": "← Verses ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · lea"
  },
  "classic/verse/topics": {
   "h": "c9d6e14ed987faf7",
@@ -153,13 +153,13 @@
   "text": "✕ John 11:35 Jesus wept. Read it aloud. Each step hides more words. Tap any blank to peek for 2 seconds. Reveal all Hide"
  },
  "classic/palace/list": {
-  "h": "c41bb9538e0402e1",
-  "len": 2191,
-  "els": 56,
+  "h": "26bd54cb0217d4c8",
+  "len": 2248,
+  "els": 58,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the order "
+  "text": "🏛️ Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the or"
  },
  "classic/palace/mine": {
   "h": "a96cbe9a059b6bb7",
@@ -189,11 +189,11 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "classic/bible/whole": {
-  "h": "4a6b2283d1f07e23",
-  "len": 10434,
-  "els": 219,
+  "h": "d7b4dfe9aa7b9b16",
+  "len": 10874,
+  "els": 225,
   "buttons": 71,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
  },
@@ -225,13 +225,13 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "classic/stories/list": {
-  "h": "67b6b762c8732306",
-  "len": 4113,
-  "els": 109,
-  "buttons": 26,
+  "h": "17874a6064d38eaf",
+  "len": 4739,
+  "els": 127,
+  "buttons": 30,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible Stories 100+ key stories, parables and word pictures. Each unlocks the moment you can address its opening verse, a"
+  "text": "📖 Bible Stories 100+ key stories, parables and word pictures. Each unlocks the moment you can address its opening verse"
  },
  "classic/stories/section": {
   "h": "4ba3b293b569cd8d",
@@ -261,7 +261,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "e10867cbab688820",
+  "h": "0dff465a86b13590",
   "len": 15769,
   "els": 370,
   "buttons": 45,
@@ -324,13 +324,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "3b4ce831b2726fc0",
-  "len": 53552,
-  "els": 1041,
+  "h": "0ca3c5b6b76f7d64",
+  "len": 55959,
+  "els": 1082,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.39.0 August 27, 2026 Your scoreboard NEW My Verses is a scoreboard now. A gold ring counts your ver"
+  "text": "✕ Version history v1.40.0 August 27, 2026 What is within reach FIX Suggested to memorize is laid out like My Verses — a "
  },
  "classic/modal/church": {
   "h": "720afd39e6d324ee",
@@ -477,31 +477,31 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "illumined/learn/path": {
-  "h": "67f6d147aa87415d",
-  "len": 4315,
-  "els": 95,
+  "h": "61042bd2b01cae21",
+  "len": 4371,
+  "els": 97,
   "buttons": 39,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ "
  },
  "illumined/verse/hub": {
-  "h": "11f463bcfaac18b0",
-  "len": 2877,
-  "els": 55,
+  "h": "ba9cd71cebc2e3f6",
+  "len": 2910,
+  "els": 57,
   "buttons": 7,
   "svgs": 3,
   "imgs": 0,
-  "text": "Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 🧊 2 Spaced Repetition Due"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 🧊 2 Spaced Repetition "
  },
  "illumined/verse/suggested": {
-  "h": "8d5508eb2ebdbcab",
-  "len": 19324,
-  "els": 494,
+  "h": "425687b4f3b1b039",
+  "len": 8598,
+  "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ✨ Suggested to memorize Every book you've unlocked — tap one to open its suggested heart-verses. Genesis · 18 ▸"
+  "text": "← Verses ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · lea"
  },
  "illumined/verse/topics": {
   "h": "c9d6e14ed987faf7",
@@ -630,13 +630,13 @@
   "text": "✕ John 11:35 Jesus wept. Read it aloud. Each step hides more words. Tap any blank to peek for 2 seconds. Reveal all Hide"
  },
  "illumined/palace/list": {
-  "h": "c41bb9538e0402e1",
-  "len": 2191,
-  "els": 56,
+  "h": "26bd54cb0217d4c8",
+  "len": 2248,
+  "els": 58,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the order "
+  "text": "🏛️ Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the or"
  },
  "illumined/palace/mine": {
   "h": "a96cbe9a059b6bb7",
@@ -666,11 +666,11 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "illumined/bible/whole": {
-  "h": "4a6b2283d1f07e23",
-  "len": 10434,
-  "els": 219,
+  "h": "d7b4dfe9aa7b9b16",
+  "len": 10874,
+  "els": 225,
   "buttons": 71,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
  },
@@ -702,13 +702,13 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "illumined/stories/list": {
-  "h": "1bfaec8e6e7779a4",
-  "len": 4165,
-  "els": 109,
-  "buttons": 26,
+  "h": "f5125b76a2b1cc17",
+  "len": 4799,
+  "els": 127,
+  "buttons": 30,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible Stories 100+ key stories, parables and word pictures. Each unlocks the moment you can address its opening verse, a"
+  "text": "📖 Bible Stories 100+ key stories, parables and word pictures. Each unlocks the moment you can address its opening verse"
  },
  "illumined/stories/section": {
   "h": "4ba3b293b569cd8d",
@@ -738,7 +738,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "fa33011ad2849f08",
+  "h": "511be7bb611a1a0a",
   "len": 14975,
   "els": 362,
   "buttons": 43,
@@ -801,13 +801,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "3b4ce831b2726fc0",
-  "len": 53552,
-  "els": 1041,
+  "h": "0ca3c5b6b76f7d64",
+  "len": 55959,
+  "els": 1082,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.39.0 August 27, 2026 Your scoreboard NEW My Verses is a scoreboard now. A gold ring counts your ver"
+  "text": "✕ Version history v1.40.0 August 27, 2026 What is within reach FIX Suggested to memorize is laid out like My Verses — a "
  },
  "illumined/modal/church": {
   "h": "6c8ea18ac7262c60",
@@ -954,31 +954,31 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "glass/learn/path": {
-  "h": "67f6d147aa87415d",
-  "len": 4315,
-  "els": 95,
+  "h": "61042bd2b01cae21",
+  "len": 4371,
+  "els": 97,
   "buttons": 39,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ "
  },
  "glass/verse/hub": {
-  "h": "11f463bcfaac18b0",
-  "len": 2877,
-  "els": 55,
+  "h": "ba9cd71cebc2e3f6",
+  "len": 2910,
+  "els": 57,
   "buttons": 7,
   "svgs": 3,
   "imgs": 0,
-  "text": "Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 🧊 2 Spaced Repetition Due"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 🧊 2 Spaced Repetition "
  },
  "glass/verse/suggested": {
-  "h": "8d5508eb2ebdbcab",
-  "len": 19324,
-  "els": 494,
+  "h": "425687b4f3b1b039",
+  "len": 8598,
+  "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ✨ Suggested to memorize Every book you've unlocked — tap one to open its suggested heart-verses. Genesis · 18 ▸"
+  "text": "← Verses ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · lea"
  },
  "glass/verse/topics": {
   "h": "c9d6e14ed987faf7",
@@ -1107,13 +1107,13 @@
   "text": "✕ John 11:35 Jesus wept. Read it aloud. Each step hides more words. Tap any blank to peek for 2 seconds. Reveal all Hide"
  },
  "glass/palace/list": {
-  "h": "c41bb9538e0402e1",
-  "len": 2191,
-  "els": 56,
+  "h": "26bd54cb0217d4c8",
+  "len": 2248,
+  "els": 58,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the order "
+  "text": "🏛️ Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the or"
  },
  "glass/palace/mine": {
   "h": "a96cbe9a059b6bb7",
@@ -1143,11 +1143,11 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "glass/bible/whole": {
-  "h": "4a6b2283d1f07e23",
-  "len": 10434,
-  "els": 219,
+  "h": "d7b4dfe9aa7b9b16",
+  "len": 10874,
+  "els": 225,
   "buttons": 71,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
  },
@@ -1179,13 +1179,13 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "glass/stories/list": {
-  "h": "1bfaec8e6e7779a4",
-  "len": 4165,
-  "els": 109,
-  "buttons": 26,
+  "h": "f5125b76a2b1cc17",
+  "len": 4799,
+  "els": 127,
+  "buttons": 30,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible Stories 100+ key stories, parables and word pictures. Each unlocks the moment you can address its opening verse, a"
+  "text": "📖 Bible Stories 100+ key stories, parables and word pictures. Each unlocks the moment you can address its opening verse"
  },
  "glass/stories/section": {
   "h": "4ba3b293b569cd8d",
@@ -1215,7 +1215,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "a5e215a1d60c0ac0",
+  "h": "ffd56898a07673f9",
   "len": 14973,
   "els": 362,
   "buttons": 43,
@@ -1278,13 +1278,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "3b4ce831b2726fc0",
-  "len": 53552,
-  "els": 1041,
+  "h": "0ca3c5b6b76f7d64",
+  "len": 55959,
+  "els": 1082,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.39.0 August 27, 2026 Your scoreboard NEW My Verses is a scoreboard now. A gold ring counts your ver"
+  "text": "✕ Version history v1.40.0 August 27, 2026 What is within reach FIX Suggested to memorize is laid out like My Verses — a "
  },
  "glass/modal/church": {
   "h": "f7f0800366f345a2",
@@ -1431,31 +1431,31 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "quest/learn/path": {
-  "h": "c719006e7a44b7fa",
-  "len": 5159,
-  "els": 110,
+  "h": "3428a05b12c11954",
+  "len": 5215,
+  "els": 112,
   "buttons": 40,
   "svgs": 1,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ "
  },
  "quest/verse/hub": {
-  "h": "11f463bcfaac18b0",
-  "len": 2877,
-  "els": 55,
+  "h": "ba9cd71cebc2e3f6",
+  "len": 2910,
+  "els": 57,
   "buttons": 7,
   "svgs": 3,
   "imgs": 0,
-  "text": "Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 🧊 2 Spaced Repetition Due"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 🧊 2 Spaced Repetition "
  },
  "quest/verse/suggested": {
-  "h": "8d5508eb2ebdbcab",
-  "len": 19324,
-  "els": 494,
+  "h": "425687b4f3b1b039",
+  "len": 8598,
+  "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ✨ Suggested to memorize Every book you've unlocked — tap one to open its suggested heart-verses. Genesis · 18 ▸"
+  "text": "← Verses ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · lea"
  },
  "quest/verse/topics": {
   "h": "c9d6e14ed987faf7",
@@ -1584,13 +1584,13 @@
   "text": "✕ John 11:35 Jesus wept. Read it aloud. Each step hides more words. Tap any blank to peek for 2 seconds. Reveal all Hide"
  },
  "quest/palace/list": {
-  "h": "c41bb9538e0402e1",
-  "len": 2191,
-  "els": 56,
+  "h": "26bd54cb0217d4c8",
+  "len": 2248,
+  "els": 58,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the order "
+  "text": "🏛️ Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the or"
  },
  "quest/palace/mine": {
   "h": "a96cbe9a059b6bb7",
@@ -1620,11 +1620,11 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "quest/bible/whole": {
-  "h": "4a6b2283d1f07e23",
-  "len": 10434,
-  "els": 219,
+  "h": "d7b4dfe9aa7b9b16",
+  "len": 10874,
+  "els": 225,
   "buttons": 71,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
  },
@@ -1656,13 +1656,13 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "quest/stories/list": {
-  "h": "1bfaec8e6e7779a4",
-  "len": 4165,
-  "els": 109,
-  "buttons": 26,
+  "h": "f5125b76a2b1cc17",
+  "len": 4799,
+  "els": 127,
+  "buttons": 30,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible Stories 100+ key stories, parables and word pictures. Each unlocks the moment you can address its opening verse, a"
+  "text": "📖 Bible Stories 100+ key stories, parables and word pictures. Each unlocks the moment you can address its opening verse"
  },
  "quest/stories/section": {
   "h": "4ba3b293b569cd8d",
@@ -1692,7 +1692,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "708ac6384e27c94a",
+  "h": "9b9715d68e11d4a7",
   "len": 14975,
   "els": 362,
   "buttons": 43,
@@ -1755,13 +1755,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "3b4ce831b2726fc0",
-  "len": 53552,
-  "els": 1041,
+  "h": "0ca3c5b6b76f7d64",
+  "len": 55959,
+  "els": 1082,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.39.0 August 27, 2026 Your scoreboard NEW My Verses is a scoreboard now. A gold ring counts your ver"
+  "text": "✕ Version history v1.40.0 August 27, 2026 What is within reach FIX Suggested to memorize is laid out like My Verses — a "
  },
  "quest/modal/church": {
   "h": "13985df49c25e1d3",
@@ -1908,31 +1908,31 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "buddy/learn/path": {
-  "h": "b83a3dff3098258f",
-  "len": 4978,
-  "els": 104,
+  "h": "d8e801bde1d780c7",
+  "len": 5034,
+  "els": 106,
   "buttons": 40,
   "svgs": 1,
   "imgs": 0,
-  "text": "Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ Sou"
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. 🔢 The Code: Major System Sounds 🎬 Intro ★ Sounds 0–4 ★ "
  },
  "buddy/verse/hub": {
-  "h": "11f463bcfaac18b0",
-  "len": 2877,
-  "els": 55,
+  "h": "ba9cd71cebc2e3f6",
+  "len": 2910,
+  "els": 57,
   "buttons": 7,
   "svgs": 3,
   "imgs": 0,
-  "text": "Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 🧊 2 Spaced Repetition Due"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 🧊 2 Spaced Repetition "
  },
  "buddy/verse/suggested": {
-  "h": "8d5508eb2ebdbcab",
-  "len": 19324,
-  "els": 494,
+  "h": "425687b4f3b1b039",
+  "len": 8598,
+  "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses ✨ Suggested to memorize Every book you've unlocked — tap one to open its suggested heart-verses. Genesis · 18 ▸"
+  "text": "← Verses ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · lea"
  },
  "buddy/verse/topics": {
   "h": "c9d6e14ed987faf7",
@@ -2061,13 +2061,13 @@
   "text": "✕ John 11:35 Jesus wept. Read it aloud. Each step hides more words. Tap any blank to peek for 2 seconds. Reveal all Hide"
  },
  "buddy/palace/list": {
-  "h": "c41bb9538e0402e1",
-  "len": 2191,
-  "els": 56,
+  "h": "26bd54cb0217d4c8",
+  "len": 2248,
+  "els": 58,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the order "
+  "text": "🏛️ Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the or"
  },
  "buddy/palace/mine": {
   "h": "a96cbe9a059b6bb7",
@@ -2097,11 +2097,11 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3–17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: a"
  },
  "buddy/bible/whole": {
-  "h": "4a6b2283d1f07e23",
-  "len": 10434,
-  "els": 219,
+  "h": "d7b4dfe9aa7b9b16",
+  "len": 10874,
+  "els": 225,
   "buttons": 71,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
  },
@@ -2133,13 +2133,13 @@
   "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
  },
  "buddy/stories/list": {
-  "h": "1bfaec8e6e7779a4",
-  "len": 4165,
-  "els": 109,
-  "buttons": 26,
+  "h": "f5125b76a2b1cc17",
+  "len": 4799,
+  "els": 127,
+  "buttons": 30,
   "svgs": 0,
   "imgs": 0,
-  "text": "Bible Stories 100+ key stories, parables and word pictures. Each unlocks the moment you can address its opening verse, a"
+  "text": "📖 Bible Stories 100+ key stories, parables and word pictures. Each unlocks the moment you can address its opening verse"
  },
  "buddy/stories/section": {
   "h": "4ba3b293b569cd8d",
@@ -2169,7 +2169,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "45d028e494a690f4",
+  "h": "a83a626b08b9be74",
   "len": 14971,
   "els": 362,
   "buttons": 43,
@@ -2232,13 +2232,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "3b4ce831b2726fc0",
-  "len": 53552,
-  "els": 1041,
+  "h": "0ca3c5b6b76f7d64",
+  "len": 55959,
+  "els": 1082,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.39.0 August 27, 2026 Your scoreboard NEW My Verses is a scoreboard now. A gold ring counts your ver"
+  "text": "✕ Version history v1.40.0 August 27, 2026 What is within reach FIX Suggested to memorize is laid out like My Verses — a "
  },
  "buddy/modal/church": {
   "h": "29809701616ccf59",
