@@ -36,8 +36,8 @@
   "text": "← Verses 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in reac"
  },
  "classic/verse/memorized": {
-  "h": "05297989877002a6",
-  "len": 2460,
+  "h": "903f4d660b7caf7c",
+  "len": 2459,
   "els": 66,
   "buttons": 5,
   "svgs": 1,
@@ -45,17 +45,17 @@
   "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
  },
  "classic/verse/saved": {
-  "h": "937329c07bd235e1",
-  "len": 654,
+  "h": "7df260e1fd1a7335",
+  "len": 653,
   "els": 15,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires — build them whenever you are "
+  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are r"
  },
  "classic/wizard/visual": {
-  "h": "bbe5361792460352",
-  "len": 3049,
+  "h": "0d60c977e55ce323",
+  "len": 3047,
   "els": 63,
   "buttons": 8,
   "svgs": 0,
@@ -63,17 +63,17 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy “ Seek y"
  },
  "classic/wizard/scene": {
-  "h": "642a7be47340ff6d",
-  "len": 3494,
+  "h": "814aad2387b29099",
+  "len": 3495,
   "els": 63,
   "buttons": 6,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
+  "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
  },
  "classic/wizard/learned": {
-  "h": "c4c2d5e2c1fa8753",
-  "len": 4009,
+  "h": "0d0be9aed21d59cf",
+  "len": 4008,
   "els": 88,
   "buttons": 9,
   "svgs": 0,
@@ -81,8 +81,8 @@
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
  },
  "classic/practice/verse-test": {
-  "h": "407e010dc4629367",
-  "len": 3801,
+  "h": "40dffddf6fb71015",
+  "len": 3806,
   "els": 67,
   "buttons": 11,
   "svgs": 0,
@@ -90,16 +90,16 @@
   "text": "✕ 🔥 Streak 0 🏆 Best 0 \"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him"
  },
  "classic/practice/word-pick": {
-  "h": "b8165c949fecd7e1",
-  "len": 1313,
+  "h": "f82fa79970b447a8",
+  "len": 1311,
   "els": 21,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ John 11:35 0/2 Warm up — tap the word that comes next. the verse builds here as you go… Jesus grace truth house peace "
+  "text": "✕ John 11:35 0/2 Warm up. Tap the word that comes next. the verse builds here as you go… Jesus grace truth house peace e"
  },
  "classic/practice/type-test": {
-  "h": "f97e124cdb6016c0",
+  "h": "2a27c4b6f05da6bb",
   "len": 985,
   "els": 14,
   "buttons": 2,
@@ -108,7 +108,7 @@
   "text": "✕ John 11:35 0/2 your words appear here as you go… 🔎 Reveal a letter Each word jumps to the top the moment you finish i"
  },
  "classic/practice/w4w-win": {
-  "h": "b0bf2101e9927940",
+  "h": "2ecd6f44e14183fe",
   "len": 961,
   "els": 15,
   "buttons": 1,
@@ -144,22 +144,22 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "classic/practice/text-fade": {
-  "h": "02837932899b7b5f",
-  "len": 833,
+  "h": "6d77b107a351f4fd",
+  "len": 839,
   "els": 15,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ John 11:35 0/7 Jesus wept. Read it aloud. Each step hides more words. Tap any blank to peek for 2 seconds. Reveal all "
+  "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "classic/palace/list": {
-  "h": "9dbd16ba41c88411",
-  "len": 2605,
+  "h": "88f755baa06d9f75",
+  "len": 2604,
   "els": 63,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "🏛️ Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the or"
+  "text": "🏛️ Memory Palace A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it once and the ord"
  },
  "classic/palace/mine": {
   "h": "3a0d875344c4671c",
@@ -171,31 +171,31 @@
   "text": "✕ 🏛️ My Kitchen 3 memory stations · walk them in order D0 D1 D3 D7 D16 D30 Next review in 1 day 🎯 Practice this palace"
  },
  "classic/palace/edit": {
-  "h": "5d0f2a5c931275f7",
-  "len": 3128,
+  "h": "0cffa01440dd63b4",
+  "len": 3127,
   "els": 32,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Cancel ✏️ Edit palace Palace name Locations — in the order you walk them. Edit the text, use ↑ ↓ to reorder, ✕ to remo"
+  "text": "← Cancel ✏️ Edit palace Palace name Locations, in the order you walk them. Edit the text, use ↑ ↓ to reorder, ✕ to remov"
  },
  "classic/palace/ready-made": {
-  "h": "91143e2a5841ce60",
-  "len": 2048,
+  "h": "ce9f82dfbd237724",
+  "len": 2038,
   "els": 46,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: "
+  "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "classic/bible/whole": {
-  "h": "d7b4dfe9aa7b9b16",
-  "len": 10874,
+  "h": "56653746381fa8c2",
+  "len": 10873,
   "els": 225,
   "buttons": 71,
   "svgs": 1,
   "imgs": 0,
-  "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
+  "text": "Bible Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the verses "
  },
  "classic/bible/book": {
   "h": "cfed6ddb35f457cc",
@@ -207,22 +207,22 @@
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "classic/bible/chapter": {
-  "h": "51fbb5724763c791",
-  "len": 1193,
+  "h": "be4420a16df47d2f",
+  "len": 1192,
   "els": 25,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses — tap one to memoriz"
+  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
  },
  "classic/bible/chapter-long": {
-  "h": "a6ea82b8839016ff",
-  "len": 8827,
+  "h": "9087df87423b9052",
+  "len": 8826,
   "els": 195,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
+  "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses. Tap one to"
  },
  "classic/stories/list": {
   "h": "17874a6064d38eaf",
@@ -243,17 +243,17 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "classic/stories/lesson": {
-  "h": "105db63fae4749f2",
-  "len": 3333,
+  "h": "cb8670acca945213",
+  "len": 3334,
   "els": 58,
   "buttons": 6,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "classic/reference/foundations": {
-  "h": "b67886911576f856",
-  "len": 234220,
+  "h": "1a615a15668a1c7f",
+  "len": 233955,
   "els": 4655,
   "buttons": 455,
   "svgs": 0,
@@ -261,8 +261,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "07318c78d36c8d55",
-  "len": 15769,
+  "h": "3c177a2131434c64",
+  "len": 15768,
   "els": 370,
   "buttons": 45,
   "svgs": 0,
@@ -270,8 +270,8 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "classic/modal/prof-section": {
-  "h": "ce62ac5b542b407a",
-  "len": 1178,
+  "h": "7147616dbe41f31c",
+  "len": 1177,
   "els": 15,
   "buttons": 4,
   "svgs": 0,
@@ -279,40 +279,40 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "classic/modal/goal-same": {
-  "h": "580e45e1c6071005",
-  "len": 2352,
+  "h": "5e5312063777cb87",
+  "len": 2348,
   "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "classic/modal/goal-week": {
-  "h": "dc258b16623300da",
-  "len": 2508,
+  "h": "e54ab31e39ba015a",
+  "len": 2504,
   "els": 37,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "classic/modal/goal-days": {
-  "h": "8a55e9f8e13895bb",
-  "len": 3117,
+  "h": "8686bdfa19a15d24",
+  "len": 3113,
   "els": 52,
   "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "classic/modal/paywall": {
-  "h": "31ced59608cf3cd6",
+  "h": "f6ca2b319ed7f3db",
   "len": 2619,
   "els": 30,
   "buttons": 8,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
+  "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse, Genesis to Revelati"
  },
  "classic/modal/store": {
   "h": "6aa0d532b0ba1f23",
@@ -324,16 +324,16 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "27c1f482161cc833",
-  "len": 63387,
-  "els": 1210,
+  "h": "4e58d5896930003f",
+  "len": 64972,
+  "els": 1236,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.46.0 August 28, 2026 Tap any verse, anywhere NEW Any verse named anywhere in Burning Bush is now ta"
+  "text": "✕ Version history v1.47.0 August 28, 2026 Plainer words FIX The long dashes are gone from the writing. Every one of them"
  },
  "classic/modal/church": {
-  "h": "720afd39e6d324ee",
+  "h": "cd4e47cc45a540a5",
   "len": 4763,
   "els": 56,
   "buttons": 2,
@@ -342,17 +342,17 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "classic/modal/feature-store": {
-  "h": "7cea0bb13a2cc465",
-  "len": 3894,
+  "h": "d146eb1d997435aa",
+  "len": 3886,
   "els": 56,
   "buttons": 9,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
+  "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "classic/modal/video": {
-  "h": "4e53ecb4cd017cc4",
-  "len": 603,
+  "h": "c792e4d67c8545ab",
+  "len": 602,
   "els": 11,
   "buttons": 2,
   "svgs": 0,
@@ -369,8 +369,8 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "classic/verse/videos": {
-  "h": "04cdde226b7820cc",
-  "len": 1100,
+  "h": "75cb9ec5498a7d9d",
+  "len": 1099,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
@@ -378,8 +378,8 @@
   "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
  },
  "classic/modal/learn-verses": {
-  "h": "a643b4f04ba8d236",
-  "len": 1244,
+  "h": "31893b97e5cae3f8",
+  "len": 1243,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
@@ -387,8 +387,8 @@
   "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "classic/modal/stage": {
-  "h": "234ff67ee37f4b1c",
-  "len": 1523,
+  "h": "35bfba11e704df00",
+  "len": 1522,
   "els": 22,
   "buttons": 3,
   "svgs": 0,
@@ -396,8 +396,8 @@
   "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Located "
  },
  "classic/modal/promote-pool": {
-  "h": "4142a772b6e22e46",
-  "len": 804,
+  "h": "2ab24470d13536c6",
+  "len": 802,
   "els": 9,
   "buttons": 2,
   "svgs": 0,
@@ -405,8 +405,8 @@
   "text": "💛 Do you know it by heart? You are claiming John 3:16 without practising it here first. From now on it is the strict te"
  },
  "classic/modal/promote-heart": {
-  "h": "1eea6c5cee066de1",
-  "len": 883,
+  "h": "82f6ebff55952f38",
+  "len": 881,
   "els": 10,
   "buttons": 2,
   "svgs": 0,
@@ -414,8 +414,8 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "classic/practice/review-setup": {
-  "h": "53309dab0b15ec3a",
-  "len": 1159,
+  "h": "5d7f429cf4906cfa",
+  "len": 1158,
   "els": 21,
   "buttons": 4,
   "svgs": 0,
@@ -432,8 +432,8 @@
   "text": "😴 That's 5 in a row John 3:16 is holding well. Rest it for 14 days and it won't come up in practice until then, leaving"
  },
  "classic/modal/spqr": {
-  "h": "a55adb0ea727d140",
-  "len": 582,
+  "h": "72b98d8d7f4927b0",
+  "len": 581,
   "els": 6,
   "buttons": 1,
   "svgs": 0,
@@ -459,13 +459,13 @@
   "text": "✕ Turning on reminders Notifications are currently blocked on this device. 1 Click the padlock 🔒 in your browser's addr"
  },
  "classic/modal/pace": {
-  "h": "834df1be54a25de7",
-  "len": 938,
+  "h": "08777cfae8ba011d",
+  "len": 937,
   "els": 11,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "🌱 A little, and often That's 15 today — a full day's work and more. But Scripture settles by returning , not by rushing"
+  "text": "🌱 A little, and often That's 15 today · a full day's work and more. But Scripture settles by returning , not by rushing"
  },
  "classic/modal/goal-done": {
   "h": "c5a2ce8cfc02ebf1",
@@ -513,8 +513,8 @@
   "text": "← Verses 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in reac"
  },
  "illumined/verse/memorized": {
-  "h": "05297989877002a6",
-  "len": 2460,
+  "h": "903f4d660b7caf7c",
+  "len": 2459,
   "els": 66,
   "buttons": 5,
   "svgs": 1,
@@ -522,17 +522,17 @@
   "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
  },
  "illumined/verse/saved": {
-  "h": "937329c07bd235e1",
-  "len": 654,
+  "h": "7df260e1fd1a7335",
+  "len": 653,
   "els": 15,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires — build them whenever you are "
+  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are r"
  },
  "illumined/wizard/visual": {
-  "h": "bbe5361792460352",
-  "len": 3049,
+  "h": "0d60c977e55ce323",
+  "len": 3047,
   "els": 63,
   "buttons": 8,
   "svgs": 0,
@@ -540,17 +540,17 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy “ Seek y"
  },
  "illumined/wizard/scene": {
-  "h": "642a7be47340ff6d",
-  "len": 3494,
+  "h": "814aad2387b29099",
+  "len": 3495,
   "els": 63,
   "buttons": 6,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
+  "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
  },
  "illumined/wizard/learned": {
-  "h": "c4c2d5e2c1fa8753",
-  "len": 4009,
+  "h": "0d0be9aed21d59cf",
+  "len": 4008,
   "els": 88,
   "buttons": 9,
   "svgs": 0,
@@ -558,8 +558,8 @@
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
  },
  "illumined/practice/verse-test": {
-  "h": "407e010dc4629367",
-  "len": 3801,
+  "h": "40dffddf6fb71015",
+  "len": 3806,
   "els": 67,
   "buttons": 11,
   "svgs": 0,
@@ -567,16 +567,16 @@
   "text": "✕ 🔥 Streak 0 🏆 Best 0 \"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him"
  },
  "illumined/practice/word-pick": {
-  "h": "b8165c949fecd7e1",
-  "len": 1313,
+  "h": "f82fa79970b447a8",
+  "len": 1311,
   "els": 21,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ John 11:35 0/2 Warm up — tap the word that comes next. the verse builds here as you go… Jesus grace truth house peace "
+  "text": "✕ John 11:35 0/2 Warm up. Tap the word that comes next. the verse builds here as you go… Jesus grace truth house peace e"
  },
  "illumined/practice/type-test": {
-  "h": "f97e124cdb6016c0",
+  "h": "2a27c4b6f05da6bb",
   "len": 985,
   "els": 14,
   "buttons": 2,
@@ -585,7 +585,7 @@
   "text": "✕ John 11:35 0/2 your words appear here as you go… 🔎 Reveal a letter Each word jumps to the top the moment you finish i"
  },
  "illumined/practice/w4w-win": {
-  "h": "b0bf2101e9927940",
+  "h": "2ecd6f44e14183fe",
   "len": 961,
   "els": 15,
   "buttons": 1,
@@ -621,22 +621,22 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "illumined/practice/text-fade": {
-  "h": "02837932899b7b5f",
-  "len": 833,
+  "h": "6d77b107a351f4fd",
+  "len": 839,
   "els": 15,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ John 11:35 0/7 Jesus wept. Read it aloud. Each step hides more words. Tap any blank to peek for 2 seconds. Reveal all "
+  "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "illumined/palace/list": {
-  "h": "9dbd16ba41c88411",
-  "len": 2605,
+  "h": "88f755baa06d9f75",
+  "len": 2604,
   "els": 63,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "🏛️ Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the or"
+  "text": "🏛️ Memory Palace A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it once and the ord"
  },
  "illumined/palace/mine": {
   "h": "3a0d875344c4671c",
@@ -648,31 +648,31 @@
   "text": "✕ 🏛️ My Kitchen 3 memory stations · walk them in order D0 D1 D3 D7 D16 D30 Next review in 1 day 🎯 Practice this palace"
  },
  "illumined/palace/edit": {
-  "h": "5d0f2a5c931275f7",
-  "len": 3128,
+  "h": "0cffa01440dd63b4",
+  "len": 3127,
   "els": 32,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Cancel ✏️ Edit palace Palace name Locations — in the order you walk them. Edit the text, use ↑ ↓ to reorder, ✕ to remo"
+  "text": "← Cancel ✏️ Edit palace Palace name Locations, in the order you walk them. Edit the text, use ↑ ↓ to reorder, ✕ to remov"
  },
  "illumined/palace/ready-made": {
-  "h": "91143e2a5841ce60",
-  "len": 2048,
+  "h": "ce9f82dfbd237724",
+  "len": 2038,
   "els": 46,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: "
+  "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "illumined/bible/whole": {
-  "h": "d7b4dfe9aa7b9b16",
-  "len": 10874,
+  "h": "56653746381fa8c2",
+  "len": 10873,
   "els": 225,
   "buttons": 71,
   "svgs": 1,
   "imgs": 0,
-  "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
+  "text": "Bible Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the verses "
  },
  "illumined/bible/book": {
   "h": "cfed6ddb35f457cc",
@@ -684,22 +684,22 @@
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "illumined/bible/chapter": {
-  "h": "51fbb5724763c791",
-  "len": 1193,
+  "h": "be4420a16df47d2f",
+  "len": 1192,
   "els": 25,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses — tap one to memoriz"
+  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
  },
  "illumined/bible/chapter-long": {
-  "h": "a6ea82b8839016ff",
-  "len": 8827,
+  "h": "9087df87423b9052",
+  "len": 8826,
   "els": 195,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
+  "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses. Tap one to"
  },
  "illumined/stories/list": {
   "h": "f5125b76a2b1cc17",
@@ -720,17 +720,17 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "illumined/stories/lesson": {
-  "h": "105db63fae4749f2",
-  "len": 3333,
+  "h": "cb8670acca945213",
+  "len": 3334,
   "els": 58,
   "buttons": 6,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "illumined/reference/foundations": {
-  "h": "b67886911576f856",
-  "len": 234220,
+  "h": "1a615a15668a1c7f",
+  "len": 233955,
   "els": 4655,
   "buttons": 455,
   "svgs": 0,
@@ -738,7 +738,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "51d11f956f02ff54",
+  "h": "197dbab500e77991",
   "len": 14975,
   "els": 362,
   "buttons": 43,
@@ -747,8 +747,8 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "illumined/modal/prof-section": {
-  "h": "ce62ac5b542b407a",
-  "len": 1178,
+  "h": "7147616dbe41f31c",
+  "len": 1177,
   "els": 15,
   "buttons": 4,
   "svgs": 0,
@@ -756,40 +756,40 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "illumined/modal/goal-same": {
-  "h": "580e45e1c6071005",
-  "len": 2352,
+  "h": "5e5312063777cb87",
+  "len": 2348,
   "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "illumined/modal/goal-week": {
-  "h": "dc258b16623300da",
-  "len": 2508,
+  "h": "e54ab31e39ba015a",
+  "len": 2504,
   "els": 37,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "illumined/modal/goal-days": {
-  "h": "8a55e9f8e13895bb",
-  "len": 3117,
+  "h": "8686bdfa19a15d24",
+  "len": 3113,
   "els": 52,
   "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "illumined/modal/paywall": {
-  "h": "31ced59608cf3cd6",
+  "h": "f6ca2b319ed7f3db",
   "len": 2619,
   "els": 30,
   "buttons": 8,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
+  "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse, Genesis to Revelati"
  },
  "illumined/modal/store": {
   "h": "7edecf8482f661b9",
@@ -801,16 +801,16 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "27c1f482161cc833",
-  "len": 63387,
-  "els": 1210,
+  "h": "4e58d5896930003f",
+  "len": 64972,
+  "els": 1236,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.46.0 August 28, 2026 Tap any verse, anywhere NEW Any verse named anywhere in Burning Bush is now ta"
+  "text": "✕ Version history v1.47.0 August 28, 2026 Plainer words FIX The long dashes are gone from the writing. Every one of them"
  },
  "illumined/modal/church": {
-  "h": "6c8ea18ac7262c60",
+  "h": "f01e94f78fe6d84e",
   "len": 4763,
   "els": 56,
   "buttons": 2,
@@ -819,17 +819,17 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "illumined/modal/feature-store": {
-  "h": "7cea0bb13a2cc465",
-  "len": 3894,
+  "h": "d146eb1d997435aa",
+  "len": 3886,
   "els": 56,
   "buttons": 9,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
+  "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "illumined/modal/video": {
-  "h": "4e53ecb4cd017cc4",
-  "len": 603,
+  "h": "c792e4d67c8545ab",
+  "len": 602,
   "els": 11,
   "buttons": 2,
   "svgs": 0,
@@ -846,8 +846,8 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "illumined/verse/videos": {
-  "h": "04cdde226b7820cc",
-  "len": 1100,
+  "h": "75cb9ec5498a7d9d",
+  "len": 1099,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
@@ -855,8 +855,8 @@
   "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
  },
  "illumined/modal/learn-verses": {
-  "h": "a643b4f04ba8d236",
-  "len": 1244,
+  "h": "31893b97e5cae3f8",
+  "len": 1243,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
@@ -864,8 +864,8 @@
   "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "illumined/modal/stage": {
-  "h": "234ff67ee37f4b1c",
-  "len": 1523,
+  "h": "35bfba11e704df00",
+  "len": 1522,
   "els": 22,
   "buttons": 3,
   "svgs": 0,
@@ -873,8 +873,8 @@
   "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Located "
  },
  "illumined/modal/promote-pool": {
-  "h": "4142a772b6e22e46",
-  "len": 804,
+  "h": "2ab24470d13536c6",
+  "len": 802,
   "els": 9,
   "buttons": 2,
   "svgs": 0,
@@ -882,8 +882,8 @@
   "text": "💛 Do you know it by heart? You are claiming John 3:16 without practising it here first. From now on it is the strict te"
  },
  "illumined/modal/promote-heart": {
-  "h": "1eea6c5cee066de1",
-  "len": 883,
+  "h": "82f6ebff55952f38",
+  "len": 881,
   "els": 10,
   "buttons": 2,
   "svgs": 0,
@@ -891,8 +891,8 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "illumined/practice/review-setup": {
-  "h": "53309dab0b15ec3a",
-  "len": 1159,
+  "h": "5d7f429cf4906cfa",
+  "len": 1158,
   "els": 21,
   "buttons": 4,
   "svgs": 0,
@@ -909,8 +909,8 @@
   "text": "😴 That's 5 in a row John 3:16 is holding well. Rest it for 14 days and it won't come up in practice until then, leaving"
  },
  "illumined/modal/spqr": {
-  "h": "a55adb0ea727d140",
-  "len": 582,
+  "h": "72b98d8d7f4927b0",
+  "len": 581,
   "els": 6,
   "buttons": 1,
   "svgs": 0,
@@ -936,13 +936,13 @@
   "text": "✕ Turning on reminders Notifications are currently blocked on this device. 1 Click the padlock 🔒 in your browser's addr"
  },
  "illumined/modal/pace": {
-  "h": "834df1be54a25de7",
-  "len": 938,
+  "h": "08777cfae8ba011d",
+  "len": 937,
   "els": 11,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "🌱 A little, and often That's 15 today — a full day's work and more. But Scripture settles by returning , not by rushing"
+  "text": "🌱 A little, and often That's 15 today · a full day's work and more. But Scripture settles by returning , not by rushing"
  },
  "illumined/modal/goal-done": {
   "h": "c5a2ce8cfc02ebf1",
@@ -990,8 +990,8 @@
   "text": "← Verses 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in reac"
  },
  "glass/verse/memorized": {
-  "h": "05297989877002a6",
-  "len": 2460,
+  "h": "903f4d660b7caf7c",
+  "len": 2459,
   "els": 66,
   "buttons": 5,
   "svgs": 1,
@@ -999,17 +999,17 @@
   "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
  },
  "glass/verse/saved": {
-  "h": "937329c07bd235e1",
-  "len": 654,
+  "h": "7df260e1fd1a7335",
+  "len": 653,
   "els": 15,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires — build them whenever you are "
+  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are r"
  },
  "glass/wizard/visual": {
-  "h": "bbe5361792460352",
-  "len": 3049,
+  "h": "0d60c977e55ce323",
+  "len": 3047,
   "els": 63,
   "buttons": 8,
   "svgs": 0,
@@ -1017,17 +1017,17 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy “ Seek y"
  },
  "glass/wizard/scene": {
-  "h": "642a7be47340ff6d",
-  "len": 3494,
+  "h": "814aad2387b29099",
+  "len": 3495,
   "els": 63,
   "buttons": 6,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
+  "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
  },
  "glass/wizard/learned": {
-  "h": "c4c2d5e2c1fa8753",
-  "len": 4009,
+  "h": "0d0be9aed21d59cf",
+  "len": 4008,
   "els": 88,
   "buttons": 9,
   "svgs": 0,
@@ -1035,8 +1035,8 @@
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
  },
  "glass/practice/verse-test": {
-  "h": "407e010dc4629367",
-  "len": 3801,
+  "h": "40dffddf6fb71015",
+  "len": 3806,
   "els": 67,
   "buttons": 11,
   "svgs": 0,
@@ -1044,16 +1044,16 @@
   "text": "✕ 🔥 Streak 0 🏆 Best 0 \"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him"
  },
  "glass/practice/word-pick": {
-  "h": "b8165c949fecd7e1",
-  "len": 1313,
+  "h": "f82fa79970b447a8",
+  "len": 1311,
   "els": 21,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ John 11:35 0/2 Warm up — tap the word that comes next. the verse builds here as you go… Jesus grace truth house peace "
+  "text": "✕ John 11:35 0/2 Warm up. Tap the word that comes next. the verse builds here as you go… Jesus grace truth house peace e"
  },
  "glass/practice/type-test": {
-  "h": "f97e124cdb6016c0",
+  "h": "2a27c4b6f05da6bb",
   "len": 985,
   "els": 14,
   "buttons": 2,
@@ -1062,7 +1062,7 @@
   "text": "✕ John 11:35 0/2 your words appear here as you go… 🔎 Reveal a letter Each word jumps to the top the moment you finish i"
  },
  "glass/practice/w4w-win": {
-  "h": "b0bf2101e9927940",
+  "h": "2ecd6f44e14183fe",
   "len": 961,
   "els": 15,
   "buttons": 1,
@@ -1098,22 +1098,22 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "glass/practice/text-fade": {
-  "h": "02837932899b7b5f",
-  "len": 833,
+  "h": "6d77b107a351f4fd",
+  "len": 839,
   "els": 15,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ John 11:35 0/7 Jesus wept. Read it aloud. Each step hides more words. Tap any blank to peek for 2 seconds. Reveal all "
+  "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "glass/palace/list": {
-  "h": "9dbd16ba41c88411",
-  "len": 2605,
+  "h": "88f755baa06d9f75",
+  "len": 2604,
   "els": 63,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "🏛️ Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the or"
+  "text": "🏛️ Memory Palace A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it once and the ord"
  },
  "glass/palace/mine": {
   "h": "3a0d875344c4671c",
@@ -1125,31 +1125,31 @@
   "text": "✕ 🏛️ My Kitchen 3 memory stations · walk them in order D0 D1 D3 D7 D16 D30 Next review in 1 day 🎯 Practice this palace"
  },
  "glass/palace/edit": {
-  "h": "5d0f2a5c931275f7",
-  "len": 3128,
+  "h": "0cffa01440dd63b4",
+  "len": 3127,
   "els": 32,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Cancel ✏️ Edit palace Palace name Locations — in the order you walk them. Edit the text, use ↑ ↓ to reorder, ✕ to remo"
+  "text": "← Cancel ✏️ Edit palace Palace name Locations, in the order you walk them. Edit the text, use ↑ ↓ to reorder, ✕ to remov"
  },
  "glass/palace/ready-made": {
-  "h": "91143e2a5841ce60",
-  "len": 2048,
+  "h": "ce9f82dfbd237724",
+  "len": 2038,
   "els": 46,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: "
+  "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "glass/bible/whole": {
-  "h": "d7b4dfe9aa7b9b16",
-  "len": 10874,
+  "h": "56653746381fa8c2",
+  "len": 10873,
   "els": 225,
   "buttons": 71,
   "svgs": 1,
   "imgs": 0,
-  "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
+  "text": "Bible Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the verses "
  },
  "glass/bible/book": {
   "h": "cfed6ddb35f457cc",
@@ -1161,22 +1161,22 @@
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "glass/bible/chapter": {
-  "h": "51fbb5724763c791",
-  "len": 1193,
+  "h": "be4420a16df47d2f",
+  "len": 1192,
   "els": 25,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses — tap one to memoriz"
+  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
  },
  "glass/bible/chapter-long": {
-  "h": "a6ea82b8839016ff",
-  "len": 8827,
+  "h": "9087df87423b9052",
+  "len": 8826,
   "els": 195,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
+  "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses. Tap one to"
  },
  "glass/stories/list": {
   "h": "f5125b76a2b1cc17",
@@ -1197,17 +1197,17 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "glass/stories/lesson": {
-  "h": "105db63fae4749f2",
-  "len": 3333,
+  "h": "cb8670acca945213",
+  "len": 3334,
   "els": 58,
   "buttons": 6,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "glass/reference/foundations": {
-  "h": "b67886911576f856",
-  "len": 234220,
+  "h": "1a615a15668a1c7f",
+  "len": 233955,
   "els": 4655,
   "buttons": 455,
   "svgs": 0,
@@ -1215,7 +1215,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "1609dfe0001033e5",
+  "h": "cbf3f778aaf6d7fe",
   "len": 14973,
   "els": 362,
   "buttons": 43,
@@ -1224,8 +1224,8 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "glass/modal/prof-section": {
-  "h": "ce62ac5b542b407a",
-  "len": 1178,
+  "h": "7147616dbe41f31c",
+  "len": 1177,
   "els": 15,
   "buttons": 4,
   "svgs": 0,
@@ -1233,40 +1233,40 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "glass/modal/goal-same": {
-  "h": "580e45e1c6071005",
-  "len": 2352,
+  "h": "5e5312063777cb87",
+  "len": 2348,
   "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "glass/modal/goal-week": {
-  "h": "dc258b16623300da",
-  "len": 2508,
+  "h": "e54ab31e39ba015a",
+  "len": 2504,
   "els": 37,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "glass/modal/goal-days": {
-  "h": "8a55e9f8e13895bb",
-  "len": 3117,
+  "h": "8686bdfa19a15d24",
+  "len": 3113,
   "els": 52,
   "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "glass/modal/paywall": {
-  "h": "31ced59608cf3cd6",
+  "h": "f6ca2b319ed7f3db",
   "len": 2619,
   "els": 30,
   "buttons": 8,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
+  "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse, Genesis to Revelati"
  },
  "glass/modal/store": {
   "h": "8ea8123744fc6184",
@@ -1278,16 +1278,16 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "27c1f482161cc833",
-  "len": 63387,
-  "els": 1210,
+  "h": "4e58d5896930003f",
+  "len": 64972,
+  "els": 1236,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.46.0 August 28, 2026 Tap any verse, anywhere NEW Any verse named anywhere in Burning Bush is now ta"
+  "text": "✕ Version history v1.47.0 August 28, 2026 Plainer words FIX The long dashes are gone from the writing. Every one of them"
  },
  "glass/modal/church": {
-  "h": "f7f0800366f345a2",
+  "h": "c52148b126053ab1",
   "len": 4763,
   "els": 56,
   "buttons": 2,
@@ -1296,17 +1296,17 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "glass/modal/feature-store": {
-  "h": "7cea0bb13a2cc465",
-  "len": 3894,
+  "h": "d146eb1d997435aa",
+  "len": 3886,
   "els": 56,
   "buttons": 9,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
+  "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "glass/modal/video": {
-  "h": "4e53ecb4cd017cc4",
-  "len": 603,
+  "h": "c792e4d67c8545ab",
+  "len": 602,
   "els": 11,
   "buttons": 2,
   "svgs": 0,
@@ -1323,8 +1323,8 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "glass/verse/videos": {
-  "h": "04cdde226b7820cc",
-  "len": 1100,
+  "h": "75cb9ec5498a7d9d",
+  "len": 1099,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
@@ -1332,8 +1332,8 @@
   "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
  },
  "glass/modal/learn-verses": {
-  "h": "a643b4f04ba8d236",
-  "len": 1244,
+  "h": "31893b97e5cae3f8",
+  "len": 1243,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
@@ -1341,8 +1341,8 @@
   "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "glass/modal/stage": {
-  "h": "234ff67ee37f4b1c",
-  "len": 1523,
+  "h": "35bfba11e704df00",
+  "len": 1522,
   "els": 22,
   "buttons": 3,
   "svgs": 0,
@@ -1350,8 +1350,8 @@
   "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Located "
  },
  "glass/modal/promote-pool": {
-  "h": "4142a772b6e22e46",
-  "len": 804,
+  "h": "2ab24470d13536c6",
+  "len": 802,
   "els": 9,
   "buttons": 2,
   "svgs": 0,
@@ -1359,8 +1359,8 @@
   "text": "💛 Do you know it by heart? You are claiming John 3:16 without practising it here first. From now on it is the strict te"
  },
  "glass/modal/promote-heart": {
-  "h": "1eea6c5cee066de1",
-  "len": 883,
+  "h": "82f6ebff55952f38",
+  "len": 881,
   "els": 10,
   "buttons": 2,
   "svgs": 0,
@@ -1368,8 +1368,8 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "glass/practice/review-setup": {
-  "h": "53309dab0b15ec3a",
-  "len": 1159,
+  "h": "5d7f429cf4906cfa",
+  "len": 1158,
   "els": 21,
   "buttons": 4,
   "svgs": 0,
@@ -1386,8 +1386,8 @@
   "text": "😴 That's 5 in a row John 3:16 is holding well. Rest it for 14 days and it won't come up in practice until then, leaving"
  },
  "glass/modal/spqr": {
-  "h": "a55adb0ea727d140",
-  "len": 582,
+  "h": "72b98d8d7f4927b0",
+  "len": 581,
   "els": 6,
   "buttons": 1,
   "svgs": 0,
@@ -1413,13 +1413,13 @@
   "text": "✕ Turning on reminders Notifications are currently blocked on this device. 1 Click the padlock 🔒 in your browser's addr"
  },
  "glass/modal/pace": {
-  "h": "834df1be54a25de7",
-  "len": 938,
+  "h": "08777cfae8ba011d",
+  "len": 937,
   "els": 11,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "🌱 A little, and often That's 15 today — a full day's work and more. But Scripture settles by returning , not by rushing"
+  "text": "🌱 A little, and often That's 15 today · a full day's work and more. But Scripture settles by returning , not by rushing"
  },
  "glass/modal/goal-done": {
   "h": "c5a2ce8cfc02ebf1",
@@ -1467,8 +1467,8 @@
   "text": "← Verses 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in reac"
  },
  "quest/verse/memorized": {
-  "h": "05297989877002a6",
-  "len": 2460,
+  "h": "903f4d660b7caf7c",
+  "len": 2459,
   "els": 66,
   "buttons": 5,
   "svgs": 1,
@@ -1476,17 +1476,17 @@
   "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
  },
  "quest/verse/saved": {
-  "h": "937329c07bd235e1",
-  "len": 654,
+  "h": "7df260e1fd1a7335",
+  "len": 653,
   "els": 15,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires — build them whenever you are "
+  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are r"
  },
  "quest/wizard/visual": {
-  "h": "bbe5361792460352",
-  "len": 3049,
+  "h": "0d60c977e55ce323",
+  "len": 3047,
   "els": 63,
   "buttons": 8,
   "svgs": 0,
@@ -1494,17 +1494,17 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy “ Seek y"
  },
  "quest/wizard/scene": {
-  "h": "642a7be47340ff6d",
-  "len": 3494,
+  "h": "814aad2387b29099",
+  "len": 3495,
   "els": 63,
   "buttons": 6,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
+  "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
  },
  "quest/wizard/learned": {
-  "h": "c4c2d5e2c1fa8753",
-  "len": 4009,
+  "h": "0d0be9aed21d59cf",
+  "len": 4008,
   "els": 88,
   "buttons": 9,
   "svgs": 0,
@@ -1512,8 +1512,8 @@
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
  },
  "quest/practice/verse-test": {
-  "h": "407e010dc4629367",
-  "len": 3801,
+  "h": "40dffddf6fb71015",
+  "len": 3806,
   "els": 67,
   "buttons": 11,
   "svgs": 0,
@@ -1521,16 +1521,16 @@
   "text": "✕ 🔥 Streak 0 🏆 Best 0 \"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him"
  },
  "quest/practice/word-pick": {
-  "h": "b8165c949fecd7e1",
-  "len": 1313,
+  "h": "f82fa79970b447a8",
+  "len": 1311,
   "els": 21,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ John 11:35 0/2 Warm up — tap the word that comes next. the verse builds here as you go… Jesus grace truth house peace "
+  "text": "✕ John 11:35 0/2 Warm up. Tap the word that comes next. the verse builds here as you go… Jesus grace truth house peace e"
  },
  "quest/practice/type-test": {
-  "h": "f97e124cdb6016c0",
+  "h": "2a27c4b6f05da6bb",
   "len": 985,
   "els": 14,
   "buttons": 2,
@@ -1539,7 +1539,7 @@
   "text": "✕ John 11:35 0/2 your words appear here as you go… 🔎 Reveal a letter Each word jumps to the top the moment you finish i"
  },
  "quest/practice/w4w-win": {
-  "h": "b0bf2101e9927940",
+  "h": "2ecd6f44e14183fe",
   "len": 961,
   "els": 15,
   "buttons": 1,
@@ -1575,22 +1575,22 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "quest/practice/text-fade": {
-  "h": "02837932899b7b5f",
-  "len": 833,
+  "h": "6d77b107a351f4fd",
+  "len": 839,
   "els": 15,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ John 11:35 0/7 Jesus wept. Read it aloud. Each step hides more words. Tap any blank to peek for 2 seconds. Reveal all "
+  "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "quest/palace/list": {
-  "h": "9dbd16ba41c88411",
-  "len": 2605,
+  "h": "88f755baa06d9f75",
+  "len": 2604,
   "els": 63,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "🏛️ Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the or"
+  "text": "🏛️ Memory Palace A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it once and the ord"
  },
  "quest/palace/mine": {
   "h": "3a0d875344c4671c",
@@ -1602,31 +1602,31 @@
   "text": "✕ 🏛️ My Kitchen 3 memory stations · walk them in order D0 D1 D3 D7 D16 D30 Next review in 1 day 🎯 Practice this palace"
  },
  "quest/palace/edit": {
-  "h": "5d0f2a5c931275f7",
-  "len": 3128,
+  "h": "0cffa01440dd63b4",
+  "len": 3127,
   "els": 32,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Cancel ✏️ Edit palace Palace name Locations — in the order you walk them. Edit the text, use ↑ ↓ to reorder, ✕ to remo"
+  "text": "← Cancel ✏️ Edit palace Palace name Locations, in the order you walk them. Edit the text, use ↑ ↓ to reorder, ✕ to remov"
  },
  "quest/palace/ready-made": {
-  "h": "91143e2a5841ce60",
-  "len": 2048,
+  "h": "ce9f82dfbd237724",
+  "len": 2038,
   "els": 46,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: "
+  "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "quest/bible/whole": {
-  "h": "d7b4dfe9aa7b9b16",
-  "len": 10874,
+  "h": "56653746381fa8c2",
+  "len": 10873,
   "els": 225,
   "buttons": 71,
   "svgs": 1,
   "imgs": 0,
-  "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
+  "text": "Bible Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the verses "
  },
  "quest/bible/book": {
   "h": "cfed6ddb35f457cc",
@@ -1638,22 +1638,22 @@
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "quest/bible/chapter": {
-  "h": "51fbb5724763c791",
-  "len": 1193,
+  "h": "be4420a16df47d2f",
+  "len": 1192,
   "els": 25,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses — tap one to memoriz"
+  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
  },
  "quest/bible/chapter-long": {
-  "h": "a6ea82b8839016ff",
-  "len": 8827,
+  "h": "9087df87423b9052",
+  "len": 8826,
   "els": 195,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
+  "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses. Tap one to"
  },
  "quest/stories/list": {
   "h": "f5125b76a2b1cc17",
@@ -1674,17 +1674,17 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "quest/stories/lesson": {
-  "h": "105db63fae4749f2",
-  "len": 3333,
+  "h": "cb8670acca945213",
+  "len": 3334,
   "els": 58,
   "buttons": 6,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "quest/reference/foundations": {
-  "h": "b67886911576f856",
-  "len": 234220,
+  "h": "1a615a15668a1c7f",
+  "len": 233955,
   "els": 4655,
   "buttons": 455,
   "svgs": 0,
@@ -1692,7 +1692,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "0f611986aa7b5bad",
+  "h": "1153a8ebec29d92b",
   "len": 14975,
   "els": 362,
   "buttons": 43,
@@ -1701,8 +1701,8 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "quest/modal/prof-section": {
-  "h": "ce62ac5b542b407a",
-  "len": 1178,
+  "h": "7147616dbe41f31c",
+  "len": 1177,
   "els": 15,
   "buttons": 4,
   "svgs": 0,
@@ -1710,40 +1710,40 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "quest/modal/goal-same": {
-  "h": "580e45e1c6071005",
-  "len": 2352,
+  "h": "5e5312063777cb87",
+  "len": 2348,
   "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "quest/modal/goal-week": {
-  "h": "dc258b16623300da",
-  "len": 2508,
+  "h": "e54ab31e39ba015a",
+  "len": 2504,
   "els": 37,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "quest/modal/goal-days": {
-  "h": "8a55e9f8e13895bb",
-  "len": 3117,
+  "h": "8686bdfa19a15d24",
+  "len": 3113,
   "els": 52,
   "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "quest/modal/paywall": {
-  "h": "31ced59608cf3cd6",
+  "h": "f6ca2b319ed7f3db",
   "len": 2619,
   "els": 30,
   "buttons": 8,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
+  "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse, Genesis to Revelati"
  },
  "quest/modal/store": {
   "h": "ff14f6a6fd20cf1e",
@@ -1755,16 +1755,16 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "27c1f482161cc833",
-  "len": 63387,
-  "els": 1210,
+  "h": "4e58d5896930003f",
+  "len": 64972,
+  "els": 1236,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.46.0 August 28, 2026 Tap any verse, anywhere NEW Any verse named anywhere in Burning Bush is now ta"
+  "text": "✕ Version history v1.47.0 August 28, 2026 Plainer words FIX The long dashes are gone from the writing. Every one of them"
  },
  "quest/modal/church": {
-  "h": "13985df49c25e1d3",
+  "h": "3eb46251f349a19d",
   "len": 4763,
   "els": 56,
   "buttons": 2,
@@ -1773,17 +1773,17 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "quest/modal/feature-store": {
-  "h": "7cea0bb13a2cc465",
-  "len": 3894,
+  "h": "d146eb1d997435aa",
+  "len": 3886,
   "els": 56,
   "buttons": 9,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
+  "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "quest/modal/video": {
-  "h": "4e53ecb4cd017cc4",
-  "len": 603,
+  "h": "c792e4d67c8545ab",
+  "len": 602,
   "els": 11,
   "buttons": 2,
   "svgs": 0,
@@ -1800,8 +1800,8 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "quest/verse/videos": {
-  "h": "04cdde226b7820cc",
-  "len": 1100,
+  "h": "75cb9ec5498a7d9d",
+  "len": 1099,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
@@ -1809,8 +1809,8 @@
   "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
  },
  "quest/modal/learn-verses": {
-  "h": "a643b4f04ba8d236",
-  "len": 1244,
+  "h": "31893b97e5cae3f8",
+  "len": 1243,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
@@ -1818,8 +1818,8 @@
   "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "quest/modal/stage": {
-  "h": "234ff67ee37f4b1c",
-  "len": 1523,
+  "h": "35bfba11e704df00",
+  "len": 1522,
   "els": 22,
   "buttons": 3,
   "svgs": 0,
@@ -1827,8 +1827,8 @@
   "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Located "
  },
  "quest/modal/promote-pool": {
-  "h": "4142a772b6e22e46",
-  "len": 804,
+  "h": "2ab24470d13536c6",
+  "len": 802,
   "els": 9,
   "buttons": 2,
   "svgs": 0,
@@ -1836,8 +1836,8 @@
   "text": "💛 Do you know it by heart? You are claiming John 3:16 without practising it here first. From now on it is the strict te"
  },
  "quest/modal/promote-heart": {
-  "h": "1eea6c5cee066de1",
-  "len": 883,
+  "h": "82f6ebff55952f38",
+  "len": 881,
   "els": 10,
   "buttons": 2,
   "svgs": 0,
@@ -1845,8 +1845,8 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "quest/practice/review-setup": {
-  "h": "53309dab0b15ec3a",
-  "len": 1159,
+  "h": "5d7f429cf4906cfa",
+  "len": 1158,
   "els": 21,
   "buttons": 4,
   "svgs": 0,
@@ -1863,8 +1863,8 @@
   "text": "😴 That's 5 in a row John 3:16 is holding well. Rest it for 14 days and it won't come up in practice until then, leaving"
  },
  "quest/modal/spqr": {
-  "h": "a55adb0ea727d140",
-  "len": 582,
+  "h": "72b98d8d7f4927b0",
+  "len": 581,
   "els": 6,
   "buttons": 1,
   "svgs": 0,
@@ -1890,13 +1890,13 @@
   "text": "✕ Turning on reminders Notifications are currently blocked on this device. 1 Click the padlock 🔒 in your browser's addr"
  },
  "quest/modal/pace": {
-  "h": "834df1be54a25de7",
-  "len": 938,
+  "h": "08777cfae8ba011d",
+  "len": 937,
   "els": 11,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "🌱 A little, and often That's 15 today — a full day's work and more. But Scripture settles by returning , not by rushing"
+  "text": "🌱 A little, and often That's 15 today · a full day's work and more. But Scripture settles by returning , not by rushing"
  },
  "quest/modal/goal-done": {
   "h": "c5a2ce8cfc02ebf1",
@@ -1944,8 +1944,8 @@
   "text": "← Verses 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in reac"
  },
  "buddy/verse/memorized": {
-  "h": "05297989877002a6",
-  "len": 2460,
+  "h": "903f4d660b7caf7c",
+  "len": 2459,
   "els": 66,
   "buttons": 5,
   "svgs": 1,
@@ -1953,17 +1953,17 @@
   "text": "← Verses 💛 My Verses 3 VERSES 0 known by heart 59 words · 3 books of the 66 2 more to Five Smooth Stones 🪨 💛 0 By hea"
  },
  "buddy/verse/saved": {
-  "h": "937329c07bd235e1",
-  "len": 654,
+  "h": "7df260e1fd1a7335",
+  "len": 653,
   "els": 15,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires — build them whenever you are "
+  "text": "← Verses 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are r"
  },
  "buddy/wizard/visual": {
-  "h": "bbe5361792460352",
-  "len": 3049,
+  "h": "0d60c977e55ce323",
+  "len": 3047,
   "els": 63,
   "buttons": 8,
   "svgs": 0,
@@ -1971,17 +1971,17 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy “ Seek y"
  },
  "buddy/wizard/scene": {
-  "h": "642a7be47340ff6d",
-  "len": 3494,
+  "h": "814aad2387b29099",
+  "len": 3495,
   "els": 63,
   "buttons": 6,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ — palace — My Kitchen Which room / spot? — room / spot — 🏛️ Matthew 6:33 Book 40 image coming Rose Ch"
+  "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
  },
  "buddy/wizard/learned": {
-  "h": "c4c2d5e2c1fa8753",
-  "len": 4009,
+  "h": "0d0be9aed21d59cf",
+  "len": 4008,
   "els": 88,
   "buttons": 9,
   "svgs": 0,
@@ -1989,8 +1989,8 @@
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed The LORD "
  },
  "buddy/practice/verse-test": {
-  "h": "407e010dc4629367",
-  "len": 3801,
+  "h": "40dffddf6fb71015",
+  "len": 3806,
   "els": 67,
   "buttons": 11,
   "svgs": 0,
@@ -1998,16 +1998,16 @@
   "text": "✕ 🔥 Streak 0 🏆 Best 0 \"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him"
  },
  "buddy/practice/word-pick": {
-  "h": "b8165c949fecd7e1",
-  "len": 1313,
+  "h": "f82fa79970b447a8",
+  "len": 1311,
   "els": 21,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ John 11:35 0/2 Warm up — tap the word that comes next. the verse builds here as you go… Jesus grace truth house peace "
+  "text": "✕ John 11:35 0/2 Warm up. Tap the word that comes next. the verse builds here as you go… Jesus grace truth house peace e"
  },
  "buddy/practice/type-test": {
-  "h": "f97e124cdb6016c0",
+  "h": "2a27c4b6f05da6bb",
   "len": 985,
   "els": 14,
   "buttons": 2,
@@ -2016,7 +2016,7 @@
   "text": "✕ John 11:35 0/2 your words appear here as you go… 🔎 Reveal a letter Each word jumps to the top the moment you finish i"
  },
  "buddy/practice/w4w-win": {
-  "h": "b0bf2101e9927940",
+  "h": "2ecd6f44e14183fe",
   "len": 961,
   "els": 15,
   "buttons": 1,
@@ -2052,22 +2052,22 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "buddy/practice/text-fade": {
-  "h": "02837932899b7b5f",
-  "len": 833,
+  "h": "6d77b107a351f4fd",
+  "len": 839,
   "els": 15,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ John 11:35 0/7 Jesus wept. Read it aloud. Each step hides more words. Tap any blank to peek for 2 seconds. Reveal all "
+  "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "buddy/palace/list": {
-  "h": "9dbd16ba41c88411",
-  "len": 2605,
+  "h": "88f755baa06d9f75",
+  "len": 2604,
   "els": 63,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "🏛️ Memory Palace A palace is for sequences — walk a familiar place and leave each item at a spot. Do it once and the or"
+  "text": "🏛️ Memory Palace A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it once and the ord"
  },
  "buddy/palace/mine": {
   "h": "3a0d875344c4671c",
@@ -2079,31 +2079,31 @@
   "text": "✕ 🏛️ My Kitchen 3 memory stations · walk them in order D0 D1 D3 D7 D16 D30 Next review in 1 day 🎯 Practice this palace"
  },
  "buddy/palace/edit": {
-  "h": "5d0f2a5c931275f7",
-  "len": 3128,
+  "h": "0cffa01440dd63b4",
+  "len": 3127,
   "els": 32,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Cancel ✏️ Edit palace Palace name Locations — in the order you walk them. Edit the text, use ↑ ↓ to reorder, ✕ to remo"
+  "text": "← Cancel ✏️ Edit palace Palace name Locations, in the order you walk them. Edit the text, use ↑ ↓ to reorder, ✕ to remov"
  },
  "buddy/palace/ready-made": {
-  "h": "91143e2a5841ce60",
-  "len": 2048,
+  "h": "ce9f82dfbd237724",
+  "len": 2038,
   "els": 46,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door — 1 — No other gods before Me: "
+  "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "buddy/bible/whole": {
-  "h": "d7b4dfe9aa7b9b16",
-  "len": 10874,
+  "h": "56653746381fa8c2",
+  "len": 10873,
   "els": 225,
   "buttons": 71,
   "svgs": 1,
   "imgs": 0,
-  "text": "Bible Every book, chapter and verse — each one opening as you learn its numbers. Tap a book for its chapters, the verses"
+  "text": "Bible Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the verses "
  },
  "buddy/bible/book": {
   "h": "cfed6ddb35f457cc",
@@ -2115,22 +2115,22 @@
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "buddy/bible/chapter": {
-  "h": "51fbb5724763c791",
-  "len": 1193,
+  "h": "be4420a16df47d2f",
+  "len": 1192,
   "els": 25,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses — tap one to memoriz"
+  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
  },
  "buddy/bible/chapter-long": {
-  "h": "a6ea82b8839016ff",
-  "len": 8827,
+  "h": "9087df87423b9052",
+  "len": 8826,
   "els": 195,
   "buttons": 4,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses — tap one t"
+  "text": "← Psalms ← Ch 118 Ch 120 → ✒️ VERSES · Psalms 119 image coming Psalms 119 Chapter 119 = Hot Tub · 176 verses. Tap one to"
  },
  "buddy/stories/list": {
   "h": "f5125b76a2b1cc17",
@@ -2151,17 +2151,17 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "buddy/stories/lesson": {
-  "h": "105db63fae4749f2",
-  "len": 3333,
+  "h": "cb8670acca945213",
+  "len": 3334,
   "els": 58,
   "buttons": 6,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. — palace — My Kitchen"
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "buddy/reference/foundations": {
-  "h": "b67886911576f856",
-  "len": 234220,
+  "h": "1a615a15668a1c7f",
+  "len": 233955,
   "els": 4655,
   "buttons": 455,
   "svgs": 0,
@@ -2169,7 +2169,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "bf54d23ef2aa7486",
+  "h": "3b367bfc6d0f97e4",
   "len": 14971,
   "els": 362,
   "buttons": 43,
@@ -2178,8 +2178,8 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "buddy/modal/prof-section": {
-  "h": "ce62ac5b542b407a",
-  "len": 1178,
+  "h": "7147616dbe41f31c",
+  "len": 1177,
   "els": 15,
   "buttons": 4,
   "svgs": 0,
@@ -2187,40 +2187,40 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "buddy/modal/goal-same": {
-  "h": "580e45e1c6071005",
-  "len": 2352,
+  "h": "5e5312063777cb87",
+  "len": 2348,
   "els": 34,
   "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "buddy/modal/goal-week": {
-  "h": "dc258b16623300da",
-  "len": 2508,
+  "h": "e54ab31e39ba015a",
+  "len": 2504,
   "els": 37,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "buddy/modal/goal-days": {
-  "h": "8a55e9f8e13895bb",
-  "len": 3117,
+  "h": "8686bdfa19a15d24",
+  "len": 3113,
   "els": 52,
   "buttons": 16,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things — new verses, book images or word for word practices — will you do each day? Spaced repet"
+  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
  },
  "buddy/modal/paywall": {
-  "h": "31ced59608cf3cd6",
+  "h": "f6ca2b319ed7f3db",
   "len": 2619,
   "els": 30,
   "buttons": 8,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse — Genesis to Revelat"
+  "text": "✕ 🔥📖 Unlock the whole Bible You're on the free path. Go Pro to open every book, chapter and verse, Genesis to Revelati"
  },
  "buddy/modal/store": {
   "h": "67f3a4f4d7a48b54",
@@ -2232,16 +2232,16 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "27c1f482161cc833",
-  "len": 63387,
-  "els": 1210,
+  "h": "4e58d5896930003f",
+  "len": 64972,
+  "els": 1236,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.46.0 August 28, 2026 Tap any verse, anywhere NEW Any verse named anywhere in Burning Bush is now ta"
+  "text": "✕ Version history v1.47.0 August 28, 2026 Plainer words FIX The long dashes are gone from the writing. Every one of them"
  },
  "buddy/modal/church": {
-  "h": "29809701616ccf59",
+  "h": "8ddd1942b18689dd",
   "len": 4763,
   "els": 56,
   "buttons": 2,
@@ -2250,17 +2250,17 @@
   "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
  },
  "buddy/modal/feature-store": {
-  "h": "7cea0bb13a2cc465",
-  "len": 3894,
+  "h": "d146eb1d997435aa",
+  "len": 3886,
   "els": 56,
   "buttons": 9,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Feature Store Everything here is free and included — it is switched off so you are not handed the whole app at once. T"
+  "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "buddy/modal/video": {
-  "h": "4e53ecb4cd017cc4",
-  "len": 603,
+  "h": "c792e4d67c8545ab",
+  "len": 602,
   "els": 11,
   "buttons": 2,
   "svgs": 0,
@@ -2277,8 +2277,8 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "buddy/verse/videos": {
-  "h": "04cdde226b7820cc",
-  "len": 1100,
+  "h": "75cb9ec5498a7d9d",
+  "len": 1099,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
@@ -2286,8 +2286,8 @@
   "text": "← Verses 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced "
  },
  "buddy/modal/learn-verses": {
-  "h": "a643b4f04ba8d236",
-  "len": 1244,
+  "h": "31893b97e5cae3f8",
+  "len": 1243,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
@@ -2295,8 +2295,8 @@
   "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "buddy/modal/stage": {
-  "h": "234ff67ee37f4b1c",
-  "len": 1523,
+  "h": "35bfba11e704df00",
+  "len": 1522,
   "els": 22,
   "buttons": 3,
   "svgs": 0,
@@ -2304,8 +2304,8 @@
   "text": "✕ Psalms 23:1 Every verse counts as memorized at any of these. What changes is how much work it asks of you. 🧭 Located "
  },
  "buddy/modal/promote-pool": {
-  "h": "4142a772b6e22e46",
-  "len": 804,
+  "h": "2ab24470d13536c6",
+  "len": 802,
   "els": 9,
   "buttons": 2,
   "svgs": 0,
@@ -2313,8 +2313,8 @@
   "text": "💛 Do you know it by heart? You are claiming John 3:16 without practising it here first. From now on it is the strict te"
  },
  "buddy/modal/promote-heart": {
-  "h": "1eea6c5cee066de1",
-  "len": 883,
+  "h": "82f6ebff55952f38",
+  "len": 881,
   "els": 10,
   "buttons": 2,
   "svgs": 0,
@@ -2322,8 +2322,8 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "buddy/practice/review-setup": {
-  "h": "53309dab0b15ec3a",
-  "len": 1159,
+  "h": "5d7f429cf4906cfa",
+  "len": 1158,
   "els": 21,
   "buttons": 4,
   "svgs": 0,
@@ -2340,8 +2340,8 @@
   "text": "😴 That's 5 in a row John 3:16 is holding well. Rest it for 14 days and it won't come up in practice until then, leaving"
  },
  "buddy/modal/spqr": {
-  "h": "a55adb0ea727d140",
-  "len": 582,
+  "h": "72b98d8d7f4927b0",
+  "len": 581,
   "els": 6,
   "buttons": 1,
   "svgs": 0,
@@ -2367,13 +2367,13 @@
   "text": "✕ Turning on reminders Notifications are currently blocked on this device. 1 Click the padlock 🔒 in your browser's addr"
  },
  "buddy/modal/pace": {
-  "h": "834df1be54a25de7",
-  "len": 938,
+  "h": "08777cfae8ba011d",
+  "len": 937,
   "els": 11,
   "buttons": 1,
   "svgs": 0,
   "imgs": 0,
-  "text": "🌱 A little, and often That's 15 today — a full day's work and more. But Scripture settles by returning , not by rushing"
+  "text": "🌱 A little, and often That's 15 today · a full day's work and more. But Scripture settles by returning , not by rushing"
  },
  "buddy/modal/goal-done": {
   "h": "c5a2ce8cfc02ebf1",
@@ -2385,8 +2385,8 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "classic/rome/letter": {
-  "h": "bd445379f6c03efb",
-  "len": 2152,
+  "h": "82dfa1e31cfadd80",
+  "len": 2153,
   "els": 31,
   "buttons": 2,
   "svgs": 1,
@@ -2394,7 +2394,7 @@
   "text": "S · P · Q · R Rome Has Taken Notice By order of Caesar Word has reached the Palatine that your storehouse has grown full"
  },
  "classic/rome/wheel": {
-  "h": "95e7c213363116d0",
+  "h": "fd67b8f3639d1bdc",
   "len": 11130,
   "els": 121,
   "buttons": 4,
@@ -2403,7 +2403,7 @@
   "text": "S · P · Q · R A Census Is Decreed The governor requires an accounting of every talent in your purse. Spin, and learn Cae"
  },
  "classic/rome/wheel-poor": {
-  "h": "e856a0854dae64e0",
+  "h": "921e76d5cb42b456",
   "len": 11130,
   "els": 121,
   "buttons": 4,
@@ -2412,17 +2412,17 @@
   "text": "S · P · Q · R A Census Is Decreed The governor requires an accounting of every talent in your purse. Spin, and learn Cae"
  },
  "classic/rome/build": {
-  "h": "a3b60713727e06ae",
-  "len": 15522,
+  "h": "e3734b4b37bdd57c",
+  "len": 15520,
   "els": 131,
   "buttons": 1,
   "svgs": 1,
   "imgs": 0,
-  "text": "A section of wall This levy pays for a section of wall. Tap — quickly — to work. 0 / 25 Enough for today →"
+  "text": "A section of wall This levy pays for a section of wall. Tap, quickly, to work. 0 / 25 Enough for today →"
  },
  "illumined/rome/letter": {
-  "h": "143ddbbfc8173f09",
-  "len": 2152,
+  "h": "afce08a9731312af",
+  "len": 2153,
   "els": 31,
   "buttons": 2,
   "svgs": 1,
@@ -2430,7 +2430,7 @@
   "text": "S · P · Q · R Rome Has Taken Notice By order of Caesar Word has reached the Palatine that your storehouse has grown full"
  },
  "illumined/rome/wheel": {
-  "h": "1e2388af5b1433d6",
+  "h": "f61940a01884350a",
   "len": 11130,
   "els": 121,
   "buttons": 4,
@@ -2439,7 +2439,7 @@
   "text": "S · P · Q · R A Census Is Decreed The governor requires an accounting of every talent in your purse. Spin, and learn Cae"
  },
  "illumined/rome/wheel-poor": {
-  "h": "743125e2a3466b5e",
+  "h": "21c792ca2fcdb9fb",
   "len": 11130,
   "els": 121,
   "buttons": 4,
@@ -2448,17 +2448,17 @@
   "text": "S · P · Q · R A Census Is Decreed The governor requires an accounting of every talent in your purse. Spin, and learn Cae"
  },
  "illumined/rome/build": {
-  "h": "a3b60713727e06ae",
-  "len": 15522,
+  "h": "e3734b4b37bdd57c",
+  "len": 15520,
   "els": 131,
   "buttons": 1,
   "svgs": 1,
   "imgs": 0,
-  "text": "A section of wall This levy pays for a section of wall. Tap — quickly — to work. 0 / 25 Enough for today →"
+  "text": "A section of wall This levy pays for a section of wall. Tap, quickly, to work. 0 / 25 Enough for today →"
  },
  "glass/rome/letter": {
-  "h": "e2bf4e8945d5f033",
-  "len": 2152,
+  "h": "ac7d8185a559f287",
+  "len": 2153,
   "els": 31,
   "buttons": 2,
   "svgs": 1,
@@ -2466,7 +2466,7 @@
   "text": "S · P · Q · R Rome Has Taken Notice By order of Caesar Word has reached the Palatine that your storehouse has grown full"
  },
  "glass/rome/wheel": {
-  "h": "55b1af0880505d7f",
+  "h": "285e786186760da4",
   "len": 11130,
   "els": 121,
   "buttons": 4,
@@ -2475,7 +2475,7 @@
   "text": "S · P · Q · R A Census Is Decreed The governor requires an accounting of every talent in your purse. Spin, and learn Cae"
  },
  "glass/rome/wheel-poor": {
-  "h": "d0c311256cee7ec2",
+  "h": "55d7129e69bc88ac",
   "len": 11130,
   "els": 121,
   "buttons": 4,
@@ -2484,17 +2484,17 @@
   "text": "S · P · Q · R A Census Is Decreed The governor requires an accounting of every talent in your purse. Spin, and learn Cae"
  },
  "glass/rome/build": {
-  "h": "a3b60713727e06ae",
-  "len": 15522,
+  "h": "e3734b4b37bdd57c",
+  "len": 15520,
   "els": 131,
   "buttons": 1,
   "svgs": 1,
   "imgs": 0,
-  "text": "A section of wall This levy pays for a section of wall. Tap — quickly — to work. 0 / 25 Enough for today →"
+  "text": "A section of wall This levy pays for a section of wall. Tap, quickly, to work. 0 / 25 Enough for today →"
  },
  "quest/rome/letter": {
-  "h": "6aa00c655d5ac508",
-  "len": 2159,
+  "h": "dc319803a8c7f7ef",
+  "len": 2160,
   "els": 31,
   "buttons": 2,
   "svgs": 1,
@@ -2502,7 +2502,7 @@
   "text": "S · P · Q · R Rome Has Taken Notice By order of Caesar Word has reached the Palatine that your storehouse has grown full"
  },
  "quest/rome/wheel": {
-  "h": "753371e90761970e",
+  "h": "8564c3bc7dcad8a6",
   "len": 11137,
   "els": 121,
   "buttons": 4,
@@ -2511,7 +2511,7 @@
   "text": "S · P · Q · R A Census Is Decreed The governor requires an accounting of every talent in your purse. Spin, and learn Cae"
  },
  "quest/rome/wheel-poor": {
-  "h": "fa710579da5e898c",
+  "h": "1386bccfac68b92c",
   "len": 11137,
   "els": 121,
   "buttons": 4,
@@ -2520,17 +2520,17 @@
   "text": "S · P · Q · R A Census Is Decreed The governor requires an accounting of every talent in your purse. Spin, and learn Cae"
  },
  "quest/rome/build": {
-  "h": "a3b60713727e06ae",
-  "len": 15522,
+  "h": "e3734b4b37bdd57c",
+  "len": 15520,
   "els": 131,
   "buttons": 1,
   "svgs": 1,
   "imgs": 0,
-  "text": "A section of wall This levy pays for a section of wall. Tap — quickly — to work. 0 / 25 Enough for today →"
+  "text": "A section of wall This levy pays for a section of wall. Tap, quickly, to work. 0 / 25 Enough for today →"
  },
  "buddy/rome/letter": {
-  "h": "8a9d188fdbc3712f",
-  "len": 2159,
+  "h": "e274d9c700579172",
+  "len": 2160,
   "els": 31,
   "buttons": 2,
   "svgs": 1,
@@ -2538,7 +2538,7 @@
   "text": "S · P · Q · R Rome Has Taken Notice By order of Caesar Word has reached the Palatine that your storehouse has grown full"
  },
  "buddy/rome/wheel": {
-  "h": "3ec205d87754d11d",
+  "h": "5a261f2fea149b40",
   "len": 11137,
   "els": 121,
   "buttons": 4,
@@ -2547,7 +2547,7 @@
   "text": "S · P · Q · R A Census Is Decreed The governor requires an accounting of every talent in your purse. Spin, and learn Cae"
  },
  "buddy/rome/wheel-poor": {
-  "h": "da2d532b8d5920ab",
+  "h": "4ca6733639d6a2c5",
   "len": 11151,
   "els": 121,
   "buttons": 4,
@@ -2556,12 +2556,12 @@
   "text": "S · P · Q · R A Census Is Decreed The governor requires an accounting of every talent in your purse. Spin, and learn Cae"
  },
  "buddy/rome/build": {
-  "h": "a3b60713727e06ae",
-  "len": 15522,
+  "h": "e3734b4b37bdd57c",
+  "len": 15520,
   "els": 131,
   "buttons": 1,
   "svgs": 1,
   "imgs": 0,
-  "text": "A section of wall This levy pays for a section of wall. Tap — quickly — to work. 0 / 25 Enough for today →"
+  "text": "A section of wall This levy pays for a section of wall. Tap, quickly, to work. 0 / 25 Enough for today →"
  }
 }

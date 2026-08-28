@@ -1350,6 +1350,9 @@ const DAY = 86400000;
     startWordForWord(b, c, v, () => { show('verse'); });
     out.onEntry = !!el('tfHeart');
     out.label = out.onEntry ? el('tfHeart').textContent.trim() : '';
+    // DOCUMENT_POSITION_FOLLOWING === 4: the verse comes after the button
+    out.aboveTheVerse = out.onEntry &&
+      !!(el('tfHeart').compareDocumentPosition(document.querySelector('.fadeverse')) & 4);
 
     // ...and it is gone once you are mid-practice
     el('tfNext').click();
@@ -1389,6 +1392,7 @@ const DAY = 86400000;
     return out;
   });
   ok(claim.onEntry, 'the practice screen offers "I already know this by heart" the moment you open it');
+  ok(claim.aboveTheVerse, '...above the verse, not under the button you tap over and over');
   has(claim.label, 'already know this by heart', '...saying so plainly');
   no(claim.midPractice, '...and stops offering once you are mid-practice, where it would only be noise');
   ok(claim.afterDecline.stillPractising, 'declining leaves you in the practice you came for');
@@ -1469,7 +1473,7 @@ const DAY = 86400000;
   is(run.afterTwo.typos, 2, 'a second slip counts a second cross');
   is(run.afterTwo.misses, 0, '...still no miss');
   is(run.afterTwo.crosses, 2, '...two crosses on screen');
-  has(run.afterTwo.note, 'one more', '...and warns what the third does');
+  has(run.afterTwo.note, 'One more and we will call this one for more practice', '...and warns what the third does');
   is(run.afterRight.typos, 0, 'getting the word right wipes the crosses — they are per word');
   ok(run.afterRight.idxMoved, '...and moves on');
   is(run.cleanDespiteTypos.cr, 1, 'the run still counts as clean despite two typos');
@@ -1767,7 +1771,7 @@ const DAY = 86400000;
   is(dirty.ok, 3, '...but not as a pass');
   is(dirty.cr, 0, '...and a single slip breaks the run of five');
   ok(dirty.asked, 'missing a word on a claimed verse ASKS whether to put it back in practice');
-  has(dirty.txt, 'No — I know this one', '...and the claim is never taken back without an answer');
+  has(dirty.txt, 'No. I know this one', '...and the claim is never taken back without an answer');
 
   describe('ladder: the heartStation is earned back', () => { });
   const heartStation = await $(() => {
@@ -2208,7 +2212,7 @@ const DAY = 86400000;
   });
   is(reveal.cost, 50, 'a reveal costs 50 talents');
   is(reveal.max, 1, '...and there is exactly one per verse');
-  has(reveal.hintBefore, 'one reveal per verse', 'the screen says so before you spend');
+  has(reveal.hintBefore, 'One reveal per verse', 'the screen says so before you spend');
   is(reveal.spent, 50, 'taking it costs 50');
   ok(reveal.bookFilled, '...and fills the box');
   ok(reveal.othersClosed, 'the other two close off');
