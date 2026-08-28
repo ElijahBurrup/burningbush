@@ -1837,14 +1837,17 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.50.0";
+const APP_VERSION="1.50.1";
 const CHANGELOG=[
+ {v:"1.50.1", d:"August 28, 2026", t:"Written on screen, not on paper", items:[
+   ["fix","<b>Build the Book said to write the scene on paper.</b> It never meant that. The scene goes in the scene box on this screen, which is where review reads it back from, and the wording now says so."]
+ ]},
  {v:"1.50.0", d:"August 28, 2026", t:"Build the Book", items:[
    ["new","<b>Every book is now built from three pictures, not one.</b> A picture for the name, a picture for the number, and the coded image the Major System gives you. Two of the three carry the number on purpose, so when one slips the other still holds."],
    ["new","<b>Pick the picture for the name from a list</b>, or write your own. Sound-alikes where the name will bend (knee high socks for Nehemiah) and meaning where it will not (an exit sign for Exodus)."],
    ["new","<b>Pick the picture for the number too.</b> Things the world has already tied to that number, so they arrive with a picture attached: a driver\u2019s licence for 16, a dozen eggs for 12, blackjack for 21, an NFL roster for 53."],
    ["chg","<b>The example scene is gone.</b> A scene somebody else wrote is a scene you have to memorise. Yours is the one that sticks, so the screen now walks you through building it instead of showing you one."],
-   ["new","<b>Write the scene by hand.</b> The lesson says so plainly now, because the page you write is what you review from for the first few weeks."],
+   ["new","<b>Write the scene out.</b> The lesson says plainly that putting it into words in the scene box is most of the work, because what you write is what review shows you back."],
    ["new","<b>Typing it in tidies it.</b> Capitals land where they belong as you write, and on save your three key images are spelled right and set in CAPITALS so your eye finds them instantly."]
  ]},
  {v:"1.49.0", d:"August 28, 2026", t:"Badges worth chasing", items:[
@@ -3031,7 +3034,7 @@ function buildSentence(n){
   if(!b || !r) return "";
   return `Build one scene with <b>${bbEsc(b)}</b>, <b>${bbEsc(r)}</b> and your <b>${bbEsc(w)}</b>. `+
     `All three touching, all three moving, far too big to be real. `+
-    `Now <b>write it out by hand</b>, on paper. That page is what you will review from until the scene comes back on its own. You will need it later.`;
+    `Now <b>write it out in the scene box below</b>. What you write is what review shows you back, until the scene arrives on its own. You will need it later.`;
 }
 
 function buildTheBookBox(n){
@@ -3053,8 +3056,8 @@ function buildTheBookBox(n){
       <p>Two of the three carry the number. That is deliberate. When one of them slips, the other one still holds.</p>
       <p><b>Some of these land in four seconds and some will fight you.</b> Genesis to a genie is instant. Others take a few tries before anything clicks. Keep going. The ones you had to work for are the ones still standing in a year, because you paid something for them.</p>
       <p class="bbtip">Make it a moment, not a list. Put the three where they collide, give it motion, make the size wrong, and put yourself in the frame. Strange and slightly ridiculous is what the mind keeps.</p>
-      <p><b>Write the scene out by hand.</b> On paper, with a pen. This is not a nice extra, it is most of the work. Your hand moves slowly enough that you have to see the thing you are describing, and that seeing is what builds the memory. The page then becomes what you review from, at least for the first few weeks, until the scene comes back on its own without any page at all.</p>
-      <p>Type it in below as well and it gets tidied for you: capitals go where they belong as you write, and your three key images are spelled right and set in CAPITALS so your eye finds them the moment you open it.</p>
+      <p><b>Write the scene out in the box below.</b> Not in your head, in words. This is not a nice extra, it is most of the work. Putting it into sentences forces you to actually look at the thing you are describing, and that looking is what builds the memory. What you write is then what review shows you back, at least for the first few weeks, until the scene arrives on its own with no prompt at all.</p>
+      <p>It gets tidied as you go: capitals land where they belong while you write, and your three key images are spelled right and set in CAPITALS so your eye finds them the moment you open it.</p>
     </div>
     <button class="btn ghost sm bbtoggle" id="bbMore">${done?"Show me how this works":"Hide the instructions"}</button>
 
@@ -3157,7 +3160,7 @@ function wireTeachCard(kind, n, rerender){
   if(kind==="book") wireBuildTheBook(n, rerender);
   if(el("tcEdit")) el("tcEdit").onclick=()=>editText({
     title:`My scene for ${bookName(n)}`,
-    hint:`Write it on paper first. Typing it here keeps a copy, fixes your capitals as you go, and puts your three key images in CAPITALS so review is quick.`,
+    hint:`Write the scene out in full sentences. Capitals are fixed as you go, and your three key images are spelled right and set in CAPITALS so review is quick.`,
     value:Prog.customBook[n]||"", autoCap:true,
     keyWords:[bookWordOf(n), numRefOf(n), pegFor(n).word],
     onSave:v=>{ if(v){Prog.customBook[n]=v;} else {delete Prog.customBook[n];} saveProg(); rerender(); }});

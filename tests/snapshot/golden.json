@@ -252,8 +252,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "classic/learn/build-the-book": {
-  "h": "160a18f8b886a5da",
-  "len": 5474,
+  "h": "4f9ffe68e9b25efb",
+  "len": 5476,
   "els": 89,
   "buttons": 9,
   "svgs": 0,
@@ -261,8 +261,8 @@
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "classic/learn/build-the-book-done": {
-  "h": "cc5755c84efed9c8",
-  "len": 5800,
+  "h": "d6c3d02fbba82425",
+  "len": 5811,
   "els": 93,
   "buttons": 9,
   "svgs": 0,
@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "90800435deba7cec",
+  "h": "9c61b85bf141f699",
   "len": 18525,
   "els": 459,
   "buttons": 45,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "5a99bfef4144e150",
-  "len": 69476,
-  "els": 1311,
+  "h": "99cbaf1b881c772d",
+  "len": 69960,
+  "els": 1320,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.50.0 August 28, 2026 Build the Book NEW Every book is now built from three pictures, not one. A pic"
+  "text": "✕ Version history v1.50.1 August 28, 2026 Written on screen, not on paper FIX Build the Book said to write the scene on "
  },
  "classic/modal/church": {
   "h": "cd4e47cc45a540a5",
@@ -747,8 +747,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "illumined/learn/build-the-book": {
-  "h": "160a18f8b886a5da",
-  "len": 5474,
+  "h": "4f9ffe68e9b25efb",
+  "len": 5476,
   "els": 89,
   "buttons": 9,
   "svgs": 0,
@@ -756,8 +756,8 @@
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "illumined/learn/build-the-book-done": {
-  "h": "cc5755c84efed9c8",
-  "len": 5800,
+  "h": "d6c3d02fbba82425",
+  "len": 5811,
   "els": 93,
   "buttons": 9,
   "svgs": 0,
@@ -774,7 +774,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "58f2761ad4868eef",
+  "h": "a585aac00d9619d8",
   "len": 17732,
   "els": 451,
   "buttons": 43,
@@ -837,13 +837,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "5a99bfef4144e150",
-  "len": 69476,
-  "els": 1311,
+  "h": "99cbaf1b881c772d",
+  "len": 69960,
+  "els": 1320,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.50.0 August 28, 2026 Build the Book NEW Every book is now built from three pictures, not one. A pic"
+  "text": "✕ Version history v1.50.1 August 28, 2026 Written on screen, not on paper FIX Build the Book said to write the scene on "
  },
  "illumined/modal/church": {
   "h": "f01e94f78fe6d84e",
@@ -1242,8 +1242,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "glass/learn/build-the-book": {
-  "h": "160a18f8b886a5da",
-  "len": 5474,
+  "h": "4f9ffe68e9b25efb",
+  "len": 5476,
   "els": 89,
   "buttons": 9,
   "svgs": 0,
@@ -1251,8 +1251,8 @@
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "glass/learn/build-the-book-done": {
-  "h": "cc5755c84efed9c8",
-  "len": 5800,
+  "h": "d6c3d02fbba82425",
+  "len": 5811,
   "els": 93,
   "buttons": 9,
   "svgs": 0,
@@ -1269,7 +1269,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "360db0fc6364c102",
+  "h": "2127be8cd33e97e6",
   "len": 17730,
   "els": 451,
   "buttons": 43,
@@ -1332,13 +1332,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "5a99bfef4144e150",
-  "len": 69476,
-  "els": 1311,
+  "h": "99cbaf1b881c772d",
+  "len": 69960,
+  "els": 1320,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.50.0 August 28, 2026 Build the Book NEW Every book is now built from three pictures, not one. A pic"
+  "text": "✕ Version history v1.50.1 August 28, 2026 Written on screen, not on paper FIX Build the Book said to write the scene on "
  },
  "glass/modal/church": {
   "h": "c52148b126053ab1",
@@ -1737,8 +1737,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "quest/learn/build-the-book": {
-  "h": "160a18f8b886a5da",
-  "len": 5474,
+  "h": "4f9ffe68e9b25efb",
+  "len": 5476,
   "els": 89,
   "buttons": 9,
   "svgs": 0,
@@ -1746,8 +1746,8 @@
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "quest/learn/build-the-book-done": {
-  "h": "cc5755c84efed9c8",
-  "len": 5800,
+  "h": "d6c3d02fbba82425",
+  "len": 5811,
   "els": 93,
   "buttons": 9,
   "svgs": 0,
@@ -1764,7 +1764,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "89fd04691a638a61",
+  "h": "1e61ff36e02dbf82",
   "len": 17732,
   "els": 451,
   "buttons": 43,
@@ -1827,13 +1827,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "5a99bfef4144e150",
-  "len": 69476,
-  "els": 1311,
+  "h": "99cbaf1b881c772d",
+  "len": 69960,
+  "els": 1320,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.50.0 August 28, 2026 Build the Book NEW Every book is now built from three pictures, not one. A pic"
+  "text": "✕ Version history v1.50.1 August 28, 2026 Written on screen, not on paper FIX Build the Book said to write the scene on "
  },
  "quest/modal/church": {
   "h": "3eb46251f349a19d",
@@ -2232,8 +2232,8 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
  },
  "buddy/learn/build-the-book": {
-  "h": "160a18f8b886a5da",
-  "len": 5474,
+  "h": "4f9ffe68e9b25efb",
+  "len": 5476,
   "els": 89,
   "buttons": 9,
   "svgs": 0,
@@ -2241,8 +2241,8 @@
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "buddy/learn/build-the-book-done": {
-  "h": "cc5755c84efed9c8",
-  "len": 5800,
+  "h": "d6c3d02fbba82425",
+  "len": 5811,
   "els": 93,
   "buttons": 9,
   "svgs": 0,
@@ -2259,7 +2259,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "e29d4bff1fd3a4f9",
+  "h": "71e6de87a933d91a",
   "len": 17728,
   "els": 451,
   "buttons": 43,
@@ -2322,13 +2322,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "5a99bfef4144e150",
-  "len": 69476,
-  "els": 1311,
+  "h": "99cbaf1b881c772d",
+  "len": 69960,
+  "els": 1320,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.50.0 August 28, 2026 Build the Book NEW Every book is now built from three pictures, not one. A pic"
+  "text": "✕ Version history v1.50.1 August 28, 2026 Written on screen, not on paper FIX Build the Book said to write the scene on "
  },
  "buddy/modal/church": {
   "h": "8ddd1942b18689dd",

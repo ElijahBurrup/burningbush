@@ -1828,7 +1828,7 @@ const DAY = 86400000;
   ok(/knee-high socks/.test(bbCard.text), '…naming the picture for the book');
   ok(/driver/.test(bbCard.text), '…the picture for the number');
   ok(/Tissue/.test(bbCard.text), '…and the coded image, all three');
-  ok(/write it out by hand/i.test(bbCard.text), '…and it insists the scene is written by hand');
+  ok(/write it out in the scene box/i.test(bbCard.text), '…and it sends them to the scene box to write it');
   is(bbCard.scriptHidden, 'none', 'the instructions fold away once both are chosen');
   ok(bbCard.coded, 'the third picture is stated as the code\u2019s, not a choice');
 
