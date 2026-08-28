@@ -1115,6 +1115,144 @@ const DAY = 86400000;
   ok(book.w < book.h + 2, '...without becoming wider than it is tall');
   ok(book.same, 'and the tab bar draws exactly the same book as the page head');
 
+  describe('four shelves, one shape, four identities', () => { });
+  const shelves = await $(() => {
+    Prog.memorized = ['43:3:16', '19:23:1'];
+    Prog.verseStage = { '43:3:16': 'heart' };
+    Prog.saved = ['40:5:9', '40:6:33', '45:8:28']; saveProg();
+    const look = view => {
+      vView = view; show('verse'); renderVerse();
+      const q = s => document.querySelector('#verse ' + s);
+      return {
+        ring: !!q('.sb-ring'), bar: !!q('.reachboard'), shelf: !!q('.shelfboard:not(.topic)'),
+        topic: !!q('.shelfboard.topic'), heart: !!q('.heart-etch'),
+        grid3: !!q('.bookgrid'), grid2: !!q('.topicgrid'),
+        accordion: !!q('.bookhead'),
+      };
+    };
+    return { mem: look('mem'), sugg: look('sugg'), saved: look('saved'), topics: look('topics') };
+  });
+  // each page has exactly one hero, and it is its own
+  ok(shelves.mem.ring && !shelves.mem.bar && !shelves.mem.shelf && !shelves.mem.topic, 'My Verses wears the ring alone');
+  ok(shelves.sugg.bar && !shelves.sugg.ring && !shelves.sugg.shelf && !shelves.sugg.topic, 'Suggested wears the bar alone');
+  ok(shelves.saved.shelf && !shelves.saved.ring && !shelves.saved.bar && !shelves.saved.topic, 'Saved wears the count alone');
+  ok(shelves.topics.topic && !shelves.topics.ring && !shelves.topics.bar, 'Topics wears the purple panel alone');
+  // the gold heart belongs to one page only
+  ok(shelves.mem.heart, 'the gold heart marks My Verses');
+  ok(!shelves.sugg.heart && !shelves.saved.heart && !shelves.topics.heart, '...and appears on none of the others');
+  // grid widths differ where the content differs
+  ok(shelves.mem.grid3 && shelves.sugg.grid3 && shelves.saved.grid3, 'three shelves list books in the same grid');
+  ok(shelves.topics.grid2 && !shelves.topics.grid3, '...and Topics uses its own two-across grid instead');
+  ok(!shelves.mem.accordion && !shelves.sugg.accordion && !shelves.saved.accordion && !shelves.topics.accordion,
+     'no drop-down lists remain anywhere');
+
+  const savedShelf = await $(() => {
+    Prog.saved = ['40:5:9', '40:6:33', '45:8:28']; saveProg();
+    vView = 'saved'; show('verse'); renderVerse();
+    const q = s => document.querySelector('#verse ' + s);
+    const out = {
+      count: q('.sh-n').textContent, key: q('.sh-k').textContent,
+      noMeter: !q('.shelfboard .lbar'),
+      books: [...document.querySelectorAll('#verse .bookbtn')].map(b => b.querySelector('.bg-c').textContent.trim()).join(' | '),
+      tinted: !!q('.bookgrid.saved'),
+    };
+    document.querySelector('#verse [data-bookgrid$=":40"]').click();
+    const m = document.getElementById('bkVerseModal');
+    out.popupTitle = m.querySelector('.lv-topbar div').textContent.trim();
+    out.rows = m.querySelectorAll('[data-vb]').length;
+    out.saysSetAside = /set aside in Matthew/.test(m.innerText);
+    m.style.display = 'none';
+    return out;
+  });
+  is(savedShelf.count, '3', 'Saved counts what is on the shelf');
+  is(savedShelf.key, 'SAVED FOR LATER', '...and says what the shelf is');
+  ok(savedShelf.noMeter, '...with no progress bar, because a shelf is not progress');
+  is(savedShelf.books, '🔖 2 | 🔖 1', 'each book counts what you set aside in it');
+  ok(savedShelf.tinted, '...in its own colour');
+  is(savedShelf.popupTitle, '🔖 Matthew', 'a book opens its own saved verses');
+  is(savedShelf.rows, 2, '...listing only those');
+  ok(savedShelf.saysSetAside, '...and describing them as set aside, not memorized');
+
+  const topics = await $(() => {
+    vView = 'topics'; show('verse'); renderVerse();
+    const btns = [...document.querySelectorAll('#verse [data-topicopen]')];
+    const out = {
+      n: btns.length, total: TOPICS.length,
+      hasIcons: btns.every(b => (b.querySelector('.tp-i').textContent || '').trim().length > 0),
+      dimmed: btns.filter(b => b.classList.contains('empty')).length,
+      says: (document.querySelector('#verse .sh-t') || {}).textContent || '',
+    };
+    const live = btns.find(b => !b.classList.contains('empty'));
+    out.tapped = live ? live.querySelector('.tp-n').textContent : '';
+    if (live) live.click();
+    const m = document.getElementById('topicModal');
+    out.popup = !!m && m.style.display === 'flex';
+    out.popupTitle = m ? m.querySelector('.lv-topbar div').textContent.trim() : '';
+    if (m) m.style.display = 'none';
+    return out;
+  });
+  is(topics.n, topics.total, 'every topic gets a button');
+  ok(topics.hasIcons, '...each carrying its own icon, which no book grid has');
+  has(topics.says, 'topics have something you can build', 'the panel says how many are live');
+  ok(topics.popup, 'tapping a topic opens its verses in a popup');
+  has(topics.popupTitle, topics.tapped, '...titled with the topic');
+
+  const rebuild = await $(() => {
+    // "Build a new verse" after a lesson must land on THAT book's suggestions
+    ['bkVerseModal', 'suggBookModal', 'topicModal'].forEach(id => { const m = el(id); if (m) m.style.display = 'none'; });
+    openSuggestedForBook(19);
+    const m = el('suggBookModal');
+    return { open: !!m && m.style.display === 'flex',
+             title: m ? m.querySelector('.lv-topbar div').textContent.trim() : '',
+             onSuggested: vView === 'sugg' };
+  });
+  ok(rebuild.open, 'Build a new verse opens that book directly');
+  is(rebuild.title, '🌱 Psalms', '...the book the lesson was in');
+  ok(rebuild.onSuggested, '...with Suggested behind it, so closing lands somewhere sensible');
+
+  describe('finish a lesson, build a verse in that book', () => { });
+  const afterLesson = await $(() => {
+    ['bkVerseModal', 'suggBookModal', 'topicModal'].forEach(id => { const m = el(id); if (m) m.style.display = 'none'; });
+    // The seeded profile knows everything, so nothing can become NEWLY reachable on its own. A number
+    // is known from a done skill OR from extraKnown, so both have to give up 19 for Psalms to close.
+    const keepSkills = (Prog.doneSkills || []).slice();
+    const keepExtra = (Prog.extraKnown || []).slice();
+    const sk = UNITS.flatMap(u => u.skills).find(s => (s.kind === 'book' || s.kind === 'num') && (s.items || []).includes(19));
+    const out = { skipped: !sk, err: null };
+    if (!sk) return out;
+    try {
+      Prog.doneSkills = keepSkills.filter(id => id !== sk.id);
+      Prog.extraKnown = keepExtra.filter(n => n !== 19);
+      bustCaches();
+      out.lockedFirst = !reachable(19, 23, 1);
+
+      show('learn'); LZ = { sk, ok: 5, miss: 0 };
+      finishLesson();
+      out.hasButton = !!el('lBuild');
+      if (out.hasButton) {
+        el('lBuild').click();
+        const m = el('suggBookModal');
+        out.opened = !!m && m.style.display === 'flex';
+        out.title = m ? m.querySelector('.lv-topbar div').textContent.trim() : '';
+        out.behind = vView;
+        out.rows = m ? m.querySelectorAll('[data-vb]').length : 0;
+        if (m) m.style.display = 'none';
+      }
+    } catch (e) { out.err = e.message; }
+    Prog.doneSkills = keepSkills; Prog.extraKnown = keepExtra; bustCaches(); saveProg();
+    out.restored = reachable(19, 23, 1);
+    return out;
+  });
+  is(afterLesson.err, null, 'the journey runs without throwing');
+  ok(!afterLesson.skipped, 'there is a lesson that teaches the number Psalms needs');
+  ok(afterLesson.lockedFirst, '...and with it unlearned, Psalms 23:1 is out of reach');
+  ok(afterLesson.hasButton, 'finishing that lesson offers Build a new verse');
+  ok(afterLesson.opened, '...and tapping it opens a book straight away, with no hunting');
+  is(afterLesson.title, '🌱 Psalms', '...the book whose verses just came within reach');
+  is(afterLesson.behind, 'sugg', '...with Suggested behind it, so closing lands somewhere sensible');
+  ok(afterLesson.rows > 0, '...and it is not an empty list');
+  ok(afterLesson.restored, 'and the fixture is left exactly as it was found');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};

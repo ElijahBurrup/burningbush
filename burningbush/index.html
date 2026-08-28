@@ -999,6 +999,31 @@
   .rb-body .lbar{height:8px;margin-bottom:5px}
   .rb-body .lbar > span{background:linear-gradient(90deg,var(--green),var(--good))}
   .rb-sub{font-size:11.5px;color:var(--muted);font-weight:700;line-height:1.35}
+  /* Saved and Topics complete the set. All four pages share the panel-then-grid shape; none of
+     them shares a colour, a hero or a grid width, so the top of the page alone tells you where
+     you are:  My Verses gold ring + 3-up  ·  Suggested green bar + 3-up
+               Saved blue count + 3-up     ·  Topics purple + 2-up with its own icons          */
+  .shelfboard{display:flex;align-items:center;gap:12px;background:var(--panel2);
+    border:1px solid var(--accent);border-left-width:4px;border-radius:14px;padding:13px 14px;margin:2px 0 9px}
+  .shelfboard.topic{border-color:var(--purple)}
+  .sh-i{font-size:26px;line-height:1;flex:0 0 auto}
+  .sh-body{flex:1;min-width:0}
+  .sh-k{font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--accent)}
+  .shelfboard.topic .sh-k{color:var(--purple)}
+  .sh-t{font-size:12px;color:var(--muted);font-weight:700;line-height:1.35;margin-top:2px}
+  .sh-n{flex:0 0 auto;font-size:30px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1}
+  .bookgrid.saved .bg-c{color:var(--accent)}
+  .topicgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px}
+  .topicbtn{display:flex;align-items:center;gap:9px;background:var(--panel2);border:1px solid var(--line);
+    border-radius:14px;padding:11px 10px;color:var(--ink);font-weight:800;font-size:12.5px;line-height:1.15;
+    text-align:left;cursor:pointer;min-height:58px;min-width:0}
+  .topicbtn:active{transform:scale(.98)}
+  .tp-i{font-size:21px;line-height:1;flex:0 0 auto}
+  .tp-b{flex:1;min-width:0}
+  .tp-n{display:block;overflow-wrap:anywhere}
+  .tp-c{display:block;font-size:11px;font-weight:700;color:var(--purple);margin-top:2px}
+  .topicbtn.empty{opacity:.5}
+  .topicbtn.empty .tp-c{color:var(--muted)}
   .reachgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0 0 4px}
   .reachcell{background:var(--panel2);border:1px solid var(--line);border-radius:12px;
     padding:10px 9px;display:flex;align-items:center;gap:9px;min-width:0}
@@ -1789,8 +1814,14 @@ const TRANSLATIONS=[
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.40.0";
+const APP_VERSION="1.41.0";
 const CHANGELOG=[
+ {v:"1.41.0", d:"August 28, 2026", t:"All four shelves", items:[
+   ["chg","<b>Saved for later and Browse by topic now match the other two</b> — a panel at the top, then a grid, each opening a popup that scrolls on its own. The last of the old drop-down lists are gone."],
+   ["chg","<b>And each keeps its own colours so you always know where you are.</b> My Verses is gold with a ring, Suggested green with a bar, Saved blue with a count, and Topics purple, two to a row, each with its own icon."],
+   ["new","Topics says <b>how many of them have something you can build right now</b>, and a topic with nothing in reach yet is shown dimmed rather than hidden."],
+   ["fix","<b>\"Build a new verse\" after a lesson lands on that book's suggestions again.</b> It had been opening the list and scrolling to a row that no longer existed, so it just sat at the top."]
+ ]},
  {v:"1.40.0", d:"August 27, 2026", t:"What is within reach", items:[
    ["chg","<b>Suggested to memorize is laid out like My Verses</b> — a panel at the top, then your books three to a row, each opening its verses in a popup that scrolls on its own."],
    ["chg","<b>...and coloured so the two are never confused.</b> Suggested is green where My Verses is gold, a bar where that one has a ring, and a seedling where that one has a heart. One is what you have; the other is what is open to you."],
@@ -4550,7 +4581,15 @@ function finishLesson(){
     <div class="btnrow">
       ${newly.length?`<button class="btn" id="lBuild">Build a new verse →</button>`:`<button class="btn" id="lNextNum">Learn another →</button>`}
       <button class="btn ghost" id="lPath2">Back to path</button></div></div>`;
-  if(el("lBuild")) el("lBuild").onclick=()=>openSuggestedForBook(latestLearnedBook());
+  // Which book to land in. THE BOOK THIS LESSON WAS ABOUT wins: learning Psalms and being dropped
+  // into Leviticus is disorienting, and that is exactly what happens if you follow the newly opened
+  // verses instead — a number like 19 is a chapter in a dozen books, so the lowest-numbered one wins
+  // and it is never the one you were just working on. Only when the lesson names no book at all (a
+  // batch of numbers above 66) do the newly opened verses, and then the most recent book, decide.
+  const buildBook = ((sk.items||[]).find(n=>n>=1&&n<=66))
+    || (newly.length && bookNum(newly[0].b))
+    || latestLearnedBook();
+  if(el("lBuild")) el("lBuild").onclick=()=>openSuggestedForBook(buildBook);
   if(el("lNextNum")) el("lNextNum").onclick=()=>renderPath(true);
   el("lPath2").onclick=()=>renderPath(true);
   LZ=null;
@@ -4641,7 +4680,6 @@ function randomReachableVerse(){
   return null;
 }
 // per-section expanded books (module-level so they persist when you go back)
-const vBook={sugg:new Set(), mem:new Set(), saved:new Set()};
 // browse verses by life-topic
 const TOPICS=[
  {name:"Fear & Anxiety",icon:"🌊",kw:["fear not","be not afraid","afraid","dismayed"],refs:[[5,31,6],[6,1,9],[19,23,4],[19,27,1],[19,34,4],[19,56,3],[19,91,5],[23,41,10],[40,6,34],[43,14,27],[50,4,6],[55,1,7],[60,5,7],[62,4,18]]},
@@ -4667,7 +4705,6 @@ const TOPICS=[
  {name:"Wisdom",icon:"🦉",cat:"wisdom"},
  {name:"Worship & Praise",icon:"🎶",cat:"worship"}
 ];
-const vTopic=new Set();
 function versesForTopic(t){
   // Merge the topic's hand-picked refs with curated heart-verses matching its theme
   // (by category or keyword) so the topic keeps filling in as new books/numbers unlock.
@@ -4692,14 +4729,16 @@ function bookGrid(verses, section){
   const groups={}; verses.forEach(a=>{ (groups[a[0]]=groups[a[0]]||[]).push(a); });
   const bns=Object.keys(groups).map(Number).sort((x,y)=>x-y);
   if(!bns.length) return "";
-  return `<div class="bookgrid">`+bns.map(bn=>{
-    const n=groups[bn].length, hearts=groups[bn].filter(a=>isHeart(refKey(a[0],a[1],a[2]))).length;
+  const sv = section==="saved";
+  return `<div class="bookgrid${sv?" saved":""}">`+bns.map(bn=>{
+    const n=groups[bn].length, hearts=sv?0:groups[bn].filter(a=>isHeart(refKey(a[0],a[1],a[2]))).length;
     return `<button class="bookbtn" data-bookgrid="${section}:${bn}">
       <span class="bg-n">${bookName(bn)}</span>
-      <span class="bg-c">${n}${hearts?heartEtchSVG()+hearts:""}</span></button>`;
+      <span class="bg-c">${sv?"🔖 "+n:n+(hearts?heartEtchSVG()+hearts:"")}</span></button>`;
   }).join("")+`</div>`;
 }
-function versesInBook(bn){ return memArr().filter(a=>a[0]===bn); }
+function savedArr(){ return (Prog.saved||[]).map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2])); }
+function versesInBook(bn, section){ return (section==="saved" ? savedArr() : memArr()).filter(a=>a[0]===bn); }
 function commas(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }   // not toLocaleString: that moves with the machine
 // Everything the scoreboard shows, counted once. Words is the number people quote to themselves —
 // "I have five thousand words of Scripture by heart" is a truer measure of the work than a verse
@@ -4760,15 +4799,19 @@ function scoreboardHTML(){
   return `<div class="scoreboard">${ring}${side}</div>${stats}${medals}`;
 }
 // One book's verses, in a popup that scrolls by itself.
-function openBookVerses(bn, back){
+function openBookVerses(bn, back, section){
+  section = section==="saved" ? "saved" : "mem";
   const m=el("bkVerseModal")||(()=>{ const d=document.createElement("div"); d.id="bkVerseModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
-  const list=versesInBook(bn);
-  const hearts=list.filter(a=>isHeart(refKey(a[0],a[1],a[2]))).length;
+  const list=versesInBook(bn, section);
+  const hearts=section==="mem" ? list.filter(a=>isHeart(refKey(a[0],a[1],a[2]))).length : 0;
+  const sub = section==="saved"
+    ? `${list.length} set aside in ${bookName(bn)}`
+    : `${list.length} verse${list.length===1?"":"s"}${hearts?` · ${hearts} known by heart`:""}`;
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="bvClose" style="margin:0">✕</button>
-        <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${bookName(bn)}</div><span style="width:34px"></span></div>
-      <div class="hint" style="text-align:center;margin:0 0 8px">${list.length} verse${list.length===1?"":"s"}${hearts?` · ${hearts} known by heart`:""}</div>
-      <div class="vlist bkverses">${list.map(a=>verseRow(a[0],a[1],a[2],"mem")).join("")}</div>
+        <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${section==="saved"?"🔖 ":""}${bookName(bn)}</div><span style="width:34px"></span></div>
+      <div class="hint" style="text-align:center;margin:0 0 8px">${sub}</div>
+      <div class="vlist bkverses">${list.map(a=>verseRow(a[0],a[1],a[2], section==="saved"?"go":"mem")).join("")}</div>
       <button class="btn" id="bvDone" style="width:100%;margin-top:12px">Done</button>
     </div>`;
   const close=()=>{ m.style.display="none"; if(back) back(); };
@@ -4776,7 +4819,56 @@ function openBookVerses(bn, back){
   m.querySelectorAll("[data-vb]").forEach(r=>r.onclick=()=>{
     const [b,c,v]=r.dataset.vb.split(":").map(Number);
     m.style.display="none";
-    openVerseWizard(b,c,v, ()=>openBookVerses(bn, back));
+    openVerseWizard(b,c,v, ()=>openBookVerses(bn, back, section));
+  });
+  m.style.display="flex"; raiseModal(m);
+}
+// The shelf panels. Saved has no meter because there is nothing to progress toward — it is a place
+// to put things down, and saying so plainly is better than inventing a bar for it.
+function savedBoardHTML(saved){
+  return `<div class="shelfboard">
+      <span class="sh-i">🔖</span>
+      <div class="sh-body"><div class="sh-k">SAVED FOR LATER</div>
+        <div class="sh-t">Verses you set aside. Nothing here expires — build them whenever you are ready.</div></div>
+      <span class="sh-n">${saved.length}</span>
+    </div>`;
+}
+function topicBoardHTML(live, reach){
+  return `<div class="shelfboard topic">
+      <span class="sh-i">🧭</span>
+      <div class="sh-body"><div class="sh-k">FOR WHAT YOU ARE FACING</div>
+        <div class="sh-t">${live} of ${TOPICS.length} topics have something you can build \u00b7 ${reach} verse${reach===1?"":"s"} in reach</div></div>
+    </div>`;
+}
+// Two to a row, not three: topic names are sentences where book names are words, and each carries
+// its own icon, so this grid could not be mistaken for the book grids on the other three pages.
+function topicGrid(){
+  return `<div class="topicgrid">`+TOPICS.map((t,ti)=>{
+    const n=versesForTopic(t).length;
+    return `<button class="topicbtn${n?"":" empty"}" data-topicopen="${ti}">
+      <span class="tp-i">${t.icon}</span>
+      <span class="tp-b"><span class="tp-n">${t.name}</span><span class="tp-c">${n?n+" in reach":"none yet"}</span></span></button>`;
+  }).join("")+`</div>`;
+}
+function openTopic(ti, back){
+  const t=TOPICS[ti]; if(!t) return;
+  const m=el("topicModal")||(()=>{ const d=document.createElement("div"); d.id="topicModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const list=versesForTopic(t);
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="tpClose" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${t.icon} ${t.name}</div><span style="width:34px"></span></div>
+      ${list.length
+        ? `<div class="hint" style="text-align:center;margin:0 0 8px">${list.length} verse${list.length===1?"":"s"} you can build now</div>
+           <div class="vlist bkverses">${list.map(a=>verseRow(a[0],a[1],a[2],"go")).join("")}</div>`
+        : `<p class="hint" style="text-align:center;margin:14px 0">None in reach yet. Learn more numbers and this topic will fill in.</p>`}
+      <button class="btn" id="tpDone" style="width:100%;margin-top:12px">Done</button>
+    </div>`;
+  const close=()=>{ m.style.display="none"; if(back) back(); };
+  el("tpClose").onclick=close; el("tpDone").onclick=close;
+  m.querySelectorAll("[data-vb]").forEach(r=>r.onclick=()=>{
+    const [b,c,v]=r.dataset.vb.split(":").map(Number);
+    m.style.display="none";
+    openVerseWizard(b,c,v, ()=>openTopic(ti, back));
   });
   m.style.display="flex"; raiseModal(m);
 }
@@ -4833,33 +4925,19 @@ function openSuggBook(bn, back){
   });
   m.style.display="flex"; raiseModal(m);
 }
-function bookGroupedList(verses, section){
-  const groups={}; verses.forEach(a=>{ (groups[a[0]]=groups[a[0]]||[]).push(a); });
-  const bns=Object.keys(groups).map(Number).sort((x,y)=>x-y);
-  if(!bns.length) return "";
-  return bns.map(bn=>{
-    const open=vBook[section].has(bn);
-    return `<button class="bookhead" data-bk="${section}:${bn}"><span>${bookName(bn)} <span class="muted" style="font-weight:600">· ${groups[bn].length}</span></span><span class="gmeta">${open?"▾":"▸"}</span></button>`
-      + (open?`<div class="vlist">`+groups[bn].map(a=>verseRow(a[0],a[1],a[2], section==="mem"?"mem":"go")).join("")+`</div>`:"");
-  }).join("");
-}
 let vView="hub";   // "hub" (the 6 big buttons) or a sub-list: sugg|topics|mem|saved
 // The most recently learned book — where a user finishing a lesson most wants to go next.
 function latestLearnedBook(){
   const r=recentKnownNumbers().filter(n=>n>=1&&n<=66);
   return r.length?r[0]:null;
 }
-// Open Suggested with that book already expanded and its header pinned to the top.
+// "Build a new verse" after a lesson. This used to expand an accordion row and scroll to it; the
+// accordion is gone, so it opens that book's suggestions directly — which is where the tap was
+// always trying to get to anyway.
 function openSuggestedForBook(bn){
-  show("verse"); vView="sugg";
-  vBook.sugg.clear(); if(bn) vBook.sugg.add(bn);
-  renderVerse();
-  requestAnimationFrame(()=>{
-    const c=document.querySelector(".content"); if(!c) return;
-    const head=bn && document.querySelector(`#verse [data-bk="sugg:${bn}"]`);
-    if(head){ const cr=c.getBoundingClientRect(), hr=head.getBoundingClientRect(); c.scrollTop += (hr.top-cr.top)-6; }
-    else c.scrollTop=0;
-  });
+  show("verse"); vView="sugg"; renderVerse();
+  document.querySelector(".content").scrollTop=0;
+  if(bn) openSuggBook(bn, ()=>{ show("verse"); vView="sugg"; renderVerse(); });
 }
 function renderVerse(){
   updateMetrics();
@@ -4882,12 +4960,11 @@ function renderVerse(){
         : `<div class="card center" style="padding:26px 18px"><div style="font-size:44px">🌱</div>
              <h2 style="font-size:19px;margin:8px 0 2px">Nothing in reach yet</h2>
              <p class="lead" style="margin:6px 0 0">Learn a book and its numbers in <b class="gold">Learn</b>, and the verses you can build will start appearing here.</p></div>`;
-    } else if(vView==="topics"){ title="📚 Browse by topic";
-      body=`<p class="hint">Verses for what you're walking through — tap a topic.</p>`
-        +TOPICS.map((t,ti)=>{ const vs=versesForTopic(t), open=vTopic.has(ti);
-            return `<button class="bookhead" data-topic="${ti}"><span>${t.icon} ${t.name} <span class="muted" style="font-weight:600">· ${vs.length}</span></span><span class="gmeta">${open?"▾":"▸"}</span></button>`
-              +(open?(vs.length?`<div class="vlist">`+vs.map(a=>verseRow(a[0],a[1],a[2],"go")).join("")+`</div>`:`<p class="hint" style="margin:4px 0 8px">None in your range yet — learn more numbers.</p>`):"");
-          }).join("");
+    } else if(vView==="topics"){ title="🧭 Browse by topic";
+      const tCounts=TOPICS.map(t=>versesForTopic(t).length);
+      body=topicBoardHTML(tCounts.filter(Boolean).length, tCounts.reduce((a,b)=>a+b,0))
+        +`<div class="sbhead">WHAT ARE YOU WALKING THROUGH?</div><p class="hint" style="margin:2px 0 8px">Tap a topic to open its verses.</p>`
+        +topicGrid();
     } else if(vView==="mem"){ title="💛 My Verses";
       // anything still missing its scene text, its palace, OR its room shows up here
       memBare=mem.filter(a=>{ const k=a.join(":"); if(isHeart(k)) return false;   // known by heart -> never nagged for a scene or a station
@@ -4909,12 +4986,19 @@ function renderVerse(){
           +`<p class="hint" style="margin-top:10px">Complete more of the Learn track to unlock the rest.</p>`
         : `<p class="hint">No films yet. They arrive as you go — each one when it first becomes useful — and every one you have seen waits here.</p>`;
     } else if(vView==="saved"){ title="🔖 Saved for later";
-      body=saved.length?bookGroupedList(saved,"saved"):`<p class="hint">Tap "Save · come back later" on any verse and it lands here.</p>`;
+      body=saved.length
+        ? savedBoardHTML(saved)+`<div class="sbhead">WHERE THEY ARE</div><p class="hint" style="margin:2px 0 8px">Tap a book to see what you set aside in it.</p>`+bookGrid(saved,"saved")
+        : `<div class="card center" style="padding:26px 18px"><div style="font-size:44px">🔖</div>
+             <h2 style="font-size:19px;margin:8px 0 2px">Nothing set aside yet</h2>
+             <p class="lead" style="margin:6px 0 0">Tap <b>Save · come back later</b> on any verse and it will wait for you here.</p></div>`;
     }
     V.innerHTML=`<div class="navrow"><button class="btn sm ghost" id="vBack">← Verses</button></div><h2>${title}</h2>${body}`;
     el("vBack").onclick=()=>{ vView="hub"; renderVerse(); document.querySelector(".content").scrollTop=0; };
-    V.querySelectorAll("[data-bk]").forEach(h=>h.onclick=()=>{ const [sec,bn]=h.dataset.bk.split(":"); const set=vBook[sec]; const n=+bn; set.has(n)?set.delete(n):set.add(n); reVerse(); });
-    V.querySelectorAll("[data-topic]").forEach(h=>h.onclick=()=>{ const ti=+h.dataset.topic; vTopic.has(ti)?vTopic.delete(ti):vTopic.add(ti); reVerse(); });
+    V.querySelectorAll("[data-topicopen]").forEach(b=>b.onclick=()=>{
+      const ti=+b.dataset.topicopen;
+      verseScroll=document.querySelector(".content").scrollTop;
+      openTopic(ti, ()=>{ show("verse"); renderVerse(); });
+    });
     V.querySelectorAll("[data-vid]").forEach(b=>b.onclick=()=>{ const k=b.dataset.vid; openVideoScreen(k, ()=>{ vView="videos"; renderVerse(); }); });
     V.querySelectorAll("[data-vb]").forEach(b=>b.onclick=()=>{ const [x,y,z]=b.dataset.vb.split(":").map(Number); verseScroll=document.querySelector(".content").scrollTop; openVerseWizard(x,y,z,backToVerse); });
     V.querySelectorAll("[data-suggbook]").forEach(b=>b.onclick=()=>{
@@ -4923,9 +5007,9 @@ function renderVerse(){
       openSuggBook(bn, ()=>{ show("verse"); renderVerse(); });
     });
     V.querySelectorAll("[data-bookgrid]").forEach(b=>b.onclick=()=>{
-      const bn=+b.dataset.bookgrid.split(":")[1];
+      const [sec,bn]=b.dataset.bookgrid.split(":");
       verseScroll=document.querySelector(".content").scrollTop;
-      openBookVerses(bn, ()=>{ show("verse"); renderVerse(); });
+      openBookVerses(+bn, ()=>{ show("verse"); renderVerse(); }, sec);
     });
     if(el("memBackfill")) el("memBackfill").onclick=()=>{ const f=memBare[0]; if(!f) return; const back=()=>{ vView="mem"; renderVerse(); document.querySelector(".content").scrollTop=0; }; editVerseScene(f[0],f[1],f[2], back, back); };
     paintTheme(); return;

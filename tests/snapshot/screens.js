@@ -14,9 +14,9 @@ module.exports = [
 
   // ---- Verses ----
   { name: 'verse/hub', sel: '#verse', go: () => { show('verse'); vView = 'hub'; renderVerse(); } },
-  { name: 'verse/suggested', sel: '#verse', go: () => { show('verse'); vView = 'sugg'; vBook.sugg = new Set([19]); renderVerse(); } },
-  { name: 'verse/topics', sel: '#verse', go: () => { show('verse'); vView = 'topics'; vTopic.clear(); vTopic.add(0); renderVerse(); } },
-  { name: 'verse/memorized', sel: '#verse', go: () => { Prog.verseStage = {}; show('verse'); vView = 'mem'; vBook.mem = new Set([19]); renderVerse(); } },
+  { name: 'verse/suggested', sel: '#verse', go: () => { show('verse'); vView = 'sugg'; renderVerse(); } },
+  { name: 'verse/topics', sel: '#verse', go: () => { show('verse'); vView = 'topics'; renderVerse(); } },
+  { name: 'verse/memorized', sel: '#verse', go: () => { Prog.verseStage = {}; show('verse'); vView = 'mem'; renderVerse(); } },
   { name: 'verse/saved', sel: '#verse', go: () => { Prog.saved = ['40:6:33']; show('verse'); vView = 'saved'; renderVerse(); } },
 
   // ---- the verse wizard ----
