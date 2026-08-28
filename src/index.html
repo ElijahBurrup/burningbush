@@ -886,10 +886,27 @@
   .vpsel.correct{border-color:var(--green);background:var(--ok-bg)}
   .vpsel.wrong{border-color:var(--miss-ink);background:var(--no-bg)}
   /* room dropdown with a mini palace icon tucked inside on the right (jumps to the palace) */
+  .pickgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 2px}
+  .pickscroll{position:relative;max-height:250px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    border:1px solid var(--line);border-radius:12px;background:var(--panel0);padding:8px}
+  .pickscroll .pickgrid{margin:0}
+  .pickscroll.needpick,.pickgrid.needpick{outline:2px solid var(--miss);outline-offset:2px;border-radius:12px}
+  .pickbtn{position:relative;min-height:76px;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:3px;padding:11px 8px;border-radius:12px;background:var(--panel2);
+    border:1px solid var(--line);color:var(--ink);font-family:inherit;font-size:13.5px;font-weight:800;
+    line-height:1.22;text-align:center;cursor:pointer;overflow:hidden}
+  .pickbtn .pkt{display:block;overflow-wrap:break-word;max-width:100%}
+  .pickbtn .pks{font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.02em}
+  .pickbtn .pkn{position:absolute;top:5px;left:7px;font-size:10px;font-weight:800;color:var(--muted);opacity:.75}
+  .pickbtn.on{border-color:var(--gold2);color:var(--gold-ink);box-shadow:inset 0 0 0 1px var(--gold2)}
+  .pickbtn.on .pks{color:var(--gold-ink)}
+  .pickbtn.next{border-color:var(--good);border-style:dashed}
+  .pickbtn.taken{opacity:.62}
+  .pickbtn:active{transform:translateY(1px)}
   .wroomwrap{position:relative}
   .wroom-sel{padding-right:64px!important;background-position:right 12px center}
-  .wroom-go{position:absolute;right:38px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:18px;cursor:pointer;padding:2px 4px;z-index:2;opacity:.9;line-height:1}
-  .wroom-go:active{transform:translateY(-50%) scale(.88)}
+  .wroom-go{background:none;border:none;font-size:16px;cursor:pointer;padding:0 4px;opacity:.9;line-height:1;vertical-align:-2px}
+  .wroom-go:active{transform:scale(.88)}
   /* verse-quiz pickers: book = multiple choice, chapter/verse = number squares */
   /* tap-to-open dropdown field + its peek eye */
   .mtfieldwrap{position:relative}
@@ -1876,8 +1893,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.53.2";
+const APP_VERSION="1.54.0";
 const CHANGELOG=[
+ {v:"1.54.0", d:"August 28, 2026", t:"Pick a spot without scrolling blind", items:[
+   ["chg","<b>The palace and spot pickers are grids now, two to a row</b>, instead of dropdowns. On a phone a list of twenty stations was a spinning wheel you had to scroll through blind."],
+   ["new","<b>Each spot says whether it is free</b>, and each palace says how many free spots it has left, so you can see where there is room before you choose."],
+   ["chg","<b>The films have plain names now</b>: Start Here, The Major System, Building the Books, Building Scenes, Memory Palaces and Spaced Repetition."],
+   ["new","<b>It opens where the work is.</b> An established palace scrolls straight to the first spot that is still empty rather than starting back at the front door."]
+ ]},
  {v:"1.53.2", d:"August 28, 2026", t:"No chapter asked for twice", items:[
    ["fix","<b>The New Living asked for the same chapter twice.</b> A chapter already on its way could be queued again, so opening a screen fetched everything a second time. It now remembers what it has asked for until the answer arrives."]
  ]},
@@ -4154,13 +4177,13 @@ function storyReachKey(sk){ const s=sk.story; return Math.max(bookNum(s.b)||0, s
 const VIDEOS = {
   // The opening film. It is the only one with a src today; the rest are waiting on their recordings,
   // and an empty src draws the placeholder rather than a broken player.
-  intro: {src:"videos/intro.mp4", skill:"video:intro", tile:"Intro", title:"Start here: how Burning Bush works", sub:"Four minutes on why chapter and verse numbers slide straight off the mind, and the two old ideas that fix it.", done:"I'm ready →"},
+  intro: {src:"videos/intro.mp4", skill:"video:intro", tile:"Intro", title:"Start Here: How Burning Bush Works", sub:"Four minutes on why chapter and verse numbers slide straight off the mind, and the two old ideas that fix it.", done:"I'm ready →"},
  major: {src:"", skill:"video:major", tile:"Major System", title:"The Major System", sub:"Ten simple sounds turn any number into a picture. The key to everything.", done:"I watched it →"},
-  verse: {src:"", skill:"video:verse", title:"How to create a verse scene", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse", done:"I watched it →"},
- palace:{src:"", skill:"video:palace", title:"What is a Memory Palace?", sub:"Walk a place you know and leave each item at a spot. Do it once and the order sticks.", cta:"palace", done:"I watched it →"},
-  book:  {src:"", skill:"video:book", tile:"Build the Book", title:"Build the Book", sub:"Three pictures instead of one: the name, the number, and the coded image, woven into one scene.", done:"I watched it →"},
-  sr:    {src:"", skill:"video:sr", title:"How spaced repetition locks it in", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long term memory.", cta:"sr", done:"I watched it →"},
- recall:{src:"", skill:"video:recall", title:"When a verse won't come", sub:"A blank is not a failure. It is the moment the scene gets stronger. Here is what to do with it.", done:"I watched it →"}
+  verse: {src:"", skill:"video:verse", title:"Building Scenes", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse", done:"I watched it →"},
+ palace:{src:"", skill:"video:palace", title:"Memory Palaces", sub:"Walk a place you know and leave each item at a spot. Do it once and the order sticks.", cta:"palace", done:"I watched it →"},
+  book:  {src:"", skill:"video:book", tile:"Building the Books", title:"Building the Books", sub:"Three pictures instead of one: the name, the number, and the coded image, woven into one scene.", done:"I watched it →"},
+  sr:    {src:"", skill:"video:sr", title:"Spaced Repetition", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long term memory.", cta:"sr", done:"I watched it →"},
+ recall:{src:"", skill:"video:recall", title:"When a Verse Will Not Come", sub:"A blank is not a failure. It is the moment the scene gets stronger. Here is what to do with it.", done:"I watched it →"}
 };
 // Each entry carries an empty src until the films are recorded; the screen falls back to the
 // placeholder card until one is set. Give it an absolute path when the files are hosted.
@@ -8235,13 +8258,36 @@ function renderWalk(){
   // ---- scene phase: place it in a palace room + write the scene ----
   const palaces=(Prog.palaces||[]).map((p,i)=>[p,i]).filter(x=>x[0]);
   const loc=(Prog.verseLoc&&Prog.verseLoc[vkey])||{};
-  const selP = (loc.p!=null && palaces.some(x=>x[1]===loc.p)) ? loc.p : null;   // blank by default; the saved palace when there is one
+  const selP = (loc.p!=null && palaces.some(x=>x[1]===loc.p)) ? loc.p
+             : (palaces.length===1 ? palaces[0][1] : null);   // the saved palace, or the only one there is
   const roomsFor=(pi)=>{ const p=Prog.palaces[pi]; return (p&&Array.isArray(p.stations))?p.stations:[]; };
- const roomOpts=(pi)=>`<option value="" ${loc.room?"":"selected"}>. Room / spot, </option>`+roomsFor(pi).map(r=>`<option ${r===loc.room?"selected":""}>${r}</option>`).join("");
+  // A spot already holding a verse is not forbidden, but it is not where you want to be sent either.
+  const spotFree=(pi,room)=>versesAtLoc(pi,room).filter(k=>k!==vkey).length===0;
+  // Two tiles to a row instead of a dropdown. On a phone a <select> of twenty stations is a spinning
+  // wheel you have to scroll blind; this shows the whole palace at once and says which spots are free.
+  const palaceTiles=()=>palaces.map(([p,i])=>{
+    const st=roomsFor(i), free=st.filter(r=>spotFree(i,r)).length;
+    return `<button type="button" class="pickbtn${i===selP?" on":""}" data-p="${i}">
+      <span class="pkt">${bbEsc(p.place)}</span>
+      <span class="pks">${st.length?free+" free of "+st.length:"no spots yet"}</span></button>`;
+  }).join("");
+  const roomTiles=(pi)=>{
+    const st=roomsFor(pi);
+    if(!st.length) return `<div class="hint" style="grid-column:1/-1;text-align:center;margin:10px 0">Add some spots to this palace first.</div>`;
+    return st.map((r,n)=>{
+      const free=spotFree(pi,r), held=versesAtLoc(pi,r).filter(k=>k!==vkey).length;
+      return `<button type="button" class="pickbtn${r===loc.room?" on":""}${free?"":" taken"}" data-room="${bbEsc(r)}" data-free="${free?1:0}">
+        <span class="pkn">${n+1}</span><span class="pkt">${bbEsc(r)}</span>
+        <span class="pks">${free?"free":held+" here"}</span></button>`;
+    }).join("");
+  };
   const palaceSel = palaces.length
- ? `<select class="vpsel" id="wPalace" style="text-align:center;text-align-last:center"><option value="" ${selP==null?"selected":""}> · palace, </option>${palaces.map(x=>`<option value="${x[1]}" ${x[1]===selP?"selected":""}>${x[0].place}</option>`).join("")}</select>
-       <label class="vplabel" style="text-align:center;display:block;margin-top:10px">Which room / spot?</label>
- <div class="wroomwrap"><select class="vpsel wroom-sel" id="wRoom" style="text-align:center;text-align-last:center">${selP!=null?roomOpts(selP):`<option value="" selected>. Room / spot, </option>`}</select><button type="button" class="wroom-go" id="wRoomEye" title="Open this location in your palace">🏛️</button></div>`
+ ? `<input type="hidden" id="wPalace" value="${selP==null?"":selP}"><input type="hidden" id="wRoom" value="${bbEsc(loc.room||"")}">
+       <label class="vplabel" style="text-align:center;display:block">Which palace?</label>
+       <div class="pickgrid" id="wPalaceGrid">${palaceTiles()}</div>
+       <label class="vplabel" style="text-align:center;display:block;margin-top:12px">Which room / spot?
+         <button type="button" class="wroom-go" id="wRoomEye" title="Open this location in your palace">🏛️</button></label>
+       <div class="pickscroll" id="wRoomScroll"><div class="pickgrid" id="wRoomGrid">${selP!=null?roomTiles(selP):`<div class="hint" style="grid-column:1/-1;text-align:center;margin:10px 0">Pick a palace first.</div>`}</div></div>`
  : `<div class="hint" style="margin:2px 0 10px">You don't have a memory palace yet. Build one in the <b>Palaces</b> tab. For now, just describe where your scene happens.</div>`;
   V.innerHTML=`<div class="card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="wClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">${palaces.length?"Which palace?":"Write your scene"}</div><button class="lsave" id="wDoneTop" title="Save & done">✓</button></div>
@@ -8257,9 +8303,42 @@ function renderWalk(){
   if(el("wClose")) el("wClose").onclick=()=> sceneBackfill ? (sceneBackfill=false, sceneCancel()) : walkReturn();
   if(el("wBack")){ if(sceneBackfill){ el("wBack").textContent="✕ Cancel"; el("wBack").onclick=()=>{ sceneBackfill=false; sceneCancel(); }; }
     else el("wBack").onclick=()=>{ wPhase="visual"; renderWalk(); }; }
-  if(el("wPalace")) el("wPalace").onchange=()=>{ const val=el("wPalace").value;
- if(val===""){ el("wRoom").innerHTML=`<option value="" selected>. Room / spot, </option>`; return; }
- const rs=roomsFor(+val); el("wRoom").innerHTML=`<option value="" selected>. Room / spot, </option>`+(rs.map(r=>`<option>${r}</option>`).join("")||`<option value="">(add rooms to this palace first)</option>`); };
+  // Scroll the room list to the first spot that is still empty, so an established palace opens where
+  // the work actually is rather than back at the front door.
+  function showNextFree(){
+    const box=el("wRoomScroll"), grid=el("wRoomGrid"); if(!box||!grid) return;
+    const chosen=grid.querySelector(".pickbtn.on");
+    const target=chosen || grid.querySelector('.pickbtn[data-free="1"]');
+    if(!target){ box.scrollTop=0; return; }
+    // .pickscroll is position:relative, which makes it the offsetParent of every tile inside it.
+    // Without that, offsetTop is measured from the card and the list scrolls to the wrong end.
+    box.scrollTop=Math.max(0, target.offsetTop - 6);
+    if(!chosen) target.classList.add("next");
+  }
+  function paintRooms(pi){
+    const grid=el("wRoomGrid"); if(!grid) return;
+    grid.innerHTML = pi==null ? `<div class="hint" style="grid-column:1/-1;text-align:center;margin:10px 0">Pick a palace first.</div>` : roomTiles(pi);
+    wireRooms();
+    requestAnimationFrame(showNextFree);
+  }
+  function wireRooms(){
+    document.querySelectorAll("#wRoomGrid [data-room]").forEach(btn=>btn.onclick=()=>{
+      document.querySelectorAll("#wRoomGrid .pickbtn").forEach(x=>x.classList.remove("on","next"));
+      btn.classList.add("on");
+      el("wRoom").value=btn.dataset.room;
+      el("wRoomGrid").classList.remove("needpick");
+    });
+  }
+  document.querySelectorAll("#wPalaceGrid [data-p]").forEach(btn=>btn.onclick=()=>{
+    document.querySelectorAll("#wPalaceGrid .pickbtn").forEach(x=>x.classList.remove("on"));
+    btn.classList.add("on");
+    el("wPalace").value=btn.dataset.p;
+    el("wRoom").value="";                      // a new palace means the old room no longer exists
+    el("wPalaceGrid").classList.remove("needpick");
+    paintRooms(+btn.dataset.p);
+  });
+  wireRooms();
+  if(el("wRoomScroll")) requestAnimationFrame(showNextFree);
   if(el("wRoomEye")) el("wRoomEye").onclick=()=>{ const pv=el("wPalace")?el("wPalace").value:""; if(pv===""){ toast("Pick a palace first."); return; }
     const room=el("wRoom")?el("wRoom").value:""; sceneBackfill=false; show("palace"); startPalaceEdit(+pv, room||null); };   // 👁️ jump to this location in the palace editor
   const finish=()=>{
@@ -8275,8 +8354,8 @@ function renderWalk(){
     if(palaces.length){
       const pv=el("wPalace")?el("wPalace").value:"", rm=el("wRoom")?el("wRoom").value:"";
       if(pv==="" || !rm){
-        const t=el(pv===""?"wPalace":"wRoom");
-        if(t){ t.classList.add("needpick"); setTimeout(()=>t.classList.remove("needpick"),1400); }
+        const t=el(pv===""?"wPalaceGrid":"wRoomGrid");
+        if(t){ t.classList.add("needpick"); t.scrollIntoView({block:"center"}); setTimeout(()=>t.classList.remove("needpick"),1400); }
         toast(pv===""?"Pick the palace this verse lives in.":"Pick the room where the scene happens.");
         return;
       }

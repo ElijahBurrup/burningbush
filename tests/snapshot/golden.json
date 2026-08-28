@@ -1,12 +1,12 @@
 {
  "classic/learn/path": {
-  "h": "5e0f852b1ce96e23",
+  "h": "48a8ff499f3cf0c2",
   "len": 6062,
   "els": 132,
   "buttons": 40,
   "svgs": 0,
   "imgs": 0,
-  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start here: how Burning Bush works 4 minutes · start he"
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "classic/verse/hub": {
   "h": "72be5ffd46dffcac",
@@ -63,17 +63,17 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "classic/wizard/scene": {
-  "h": "7a585a4758f47324",
-  "len": 3354,
-  "els": 60,
-  "buttons": 5,
+  "h": "3d32608cf3d8b237",
+  "len": 4238,
+  "els": 75,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
+  "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 Which room / spot? 🏛️ 1 Front door free 2 Sink 1 here 3 Stove fr"
  },
  "classic/wizard/learned": {
-  "h": "de68e40a373a8ed5",
-  "len": 4143,
+  "h": "ef31226826c51078",
+  "len": 4131,
   "els": 89,
   "buttons": 10,
   "svgs": 0,
@@ -153,8 +153,8 @@
   "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "classic/palace/list": {
-  "h": "ccc063991048e4ce",
-  "len": 2722,
+  "h": "bb98a575f8affd77",
+  "len": 2712,
   "els": 64,
   "buttons": 2,
   "svgs": 0,
@@ -243,13 +243,13 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "classic/stories/lesson": {
-  "h": "0a91da4f1f4e55ea",
-  "len": 3193,
-  "els": 55,
-  "buttons": 5,
+  "h": "4283fbc0761109eb",
+  "len": 4077,
+  "els": 70,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "classic/learn/build-the-book": {
   "h": "ef55209998ba8358",
@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "448a61ae4feaedcb",
+  "h": "bf1dbdd0eb80174f",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "f74e60d536e9b7ab",
-  "len": 75961,
-  "els": 1418,
+  "h": "4b4d35b496b52b2e",
+  "len": 77072,
+  "els": 1439,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.53.2 August 28, 2026 No chapter asked for twice FIX The New Living asked for the same chapter twice"
+  "text": "✕ Version history v1.54.0 August 28, 2026 Pick a spot without scrolling blind FIX The palace and spot pickers are grids "
  },
  "classic/modal/church": {
   "h": "cd4e47cc45a540a5",
@@ -369,16 +369,16 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "classic/modal/video": {
-  "h": "c792e4d67c8545ab",
-  "len": 602,
+  "h": "703d1bc7676159de",
+  "len": 582,
   "els": 11,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+  "text": "Memory Palaces ✕ ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
  },
  "classic/modal/translations": {
-  "h": "8b5dcfee8a8ce050",
+  "h": "6ab13b00a13c4770",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -387,13 +387,13 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "classic/modal/video-intro": {
-  "h": "b9be70be25a03e9c",
+  "h": "736ccca15b748bf1",
   "len": 624,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "Start here: how Burning Bush works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
+  "text": "Start Here: How Burning Bush Works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
  },
  "classic/modal/book-image": {
   "h": "319048086e73bb96",
@@ -405,13 +405,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "classic/verse/videos": {
-  "h": "32ff00fd55bbdd5d",
-  "len": 1100,
+  "h": "2a54f3cba6441928",
+  "len": 1074,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced"
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ Spaced Rep"
  },
  "classic/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -450,8 +450,8 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "classic/practice/review-setup": {
-  "h": "f1d6214708ab5845",
-  "len": 1249,
+  "h": "a1545e9044dfd224",
+  "len": 1233,
   "els": 21,
   "buttons": 5,
   "svgs": 0,
@@ -513,13 +513,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "illumined/learn/path": {
-  "h": "ea2c6132f017e8bd",
+  "h": "9a6d584b9204efe2",
   "len": 4576,
   "els": 102,
   "buttons": 40,
   "svgs": 0,
   "imgs": 0,
-  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start here: how Burning Bush works 4 minutes · start he"
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "illumined/verse/hub": {
   "h": "ba9cd71cebc2e3f6",
@@ -567,8 +567,8 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "illumined/wizard/visual": {
-  "h": "8bca2767d0d91c0f",
-  "len": 3182,
+  "h": "cca99640439e4f43",
+  "len": 3170,
   "els": 64,
   "buttons": 9,
   "svgs": 0,
@@ -576,17 +576,17 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
  },
  "illumined/wizard/scene": {
-  "h": "7a585a4758f47324",
-  "len": 3354,
-  "els": 60,
-  "buttons": 5,
+  "h": "3d32608cf3d8b237",
+  "len": 4238,
+  "els": 75,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
+  "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 Which room / spot? 🏛️ 1 Front door free 2 Sink 1 here 3 Stove fr"
  },
  "illumined/wizard/learned": {
-  "h": "de68e40a373a8ed5",
-  "len": 4143,
+  "h": "ef31226826c51078",
+  "len": 4131,
   "els": 89,
   "buttons": 10,
   "svgs": 0,
@@ -666,8 +666,8 @@
   "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "illumined/palace/list": {
-  "h": "ccc063991048e4ce",
-  "len": 2722,
+  "h": "bb98a575f8affd77",
+  "len": 2712,
   "els": 64,
   "buttons": 2,
   "svgs": 0,
@@ -756,13 +756,13 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "illumined/stories/lesson": {
-  "h": "0a91da4f1f4e55ea",
-  "len": 3193,
-  "els": 55,
-  "buttons": 5,
+  "h": "4283fbc0761109eb",
+  "len": 4077,
+  "els": 70,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "illumined/learn/build-the-book": {
   "h": "ef55209998ba8358",
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "636162bc6d90e3d4",
+  "h": "14ce7c52d8ca3d30",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "f74e60d536e9b7ab",
-  "len": 75961,
-  "els": 1418,
+  "h": "4b4d35b496b52b2e",
+  "len": 77072,
+  "els": 1439,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.53.2 August 28, 2026 No chapter asked for twice FIX The New Living asked for the same chapter twice"
+  "text": "✕ Version history v1.54.0 August 28, 2026 Pick a spot without scrolling blind FIX The palace and spot pickers are grids "
  },
  "illumined/modal/church": {
   "h": "f01e94f78fe6d84e",
@@ -882,16 +882,16 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "illumined/modal/video": {
-  "h": "c792e4d67c8545ab",
-  "len": 602,
+  "h": "703d1bc7676159de",
+  "len": 582,
   "els": 11,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+  "text": "Memory Palaces ✕ ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
  },
  "illumined/modal/translations": {
-  "h": "636162bc6d90e3d4",
+  "h": "14ce7c52d8ca3d30",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -900,13 +900,13 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "illumined/modal/video-intro": {
-  "h": "b9be70be25a03e9c",
+  "h": "736ccca15b748bf1",
   "len": 624,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "Start here: how Burning Bush works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
+  "text": "Start Here: How Burning Bush Works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
  },
  "illumined/modal/book-image": {
   "h": "319048086e73bb96",
@@ -918,13 +918,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "illumined/verse/videos": {
-  "h": "32ff00fd55bbdd5d",
-  "len": 1100,
+  "h": "2a54f3cba6441928",
+  "len": 1074,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced"
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ Spaced Rep"
  },
  "illumined/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -963,8 +963,8 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "illumined/practice/review-setup": {
-  "h": "f1d6214708ab5845",
-  "len": 1249,
+  "h": "a1545e9044dfd224",
+  "len": 1233,
   "els": 21,
   "buttons": 5,
   "svgs": 0,
@@ -1026,13 +1026,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "glass/learn/path": {
-  "h": "ea2c6132f017e8bd",
+  "h": "9a6d584b9204efe2",
   "len": 4576,
   "els": 102,
   "buttons": 40,
   "svgs": 0,
   "imgs": 0,
-  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start here: how Burning Bush works 4 minutes · start he"
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "glass/verse/hub": {
   "h": "ba9cd71cebc2e3f6",
@@ -1080,8 +1080,8 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "glass/wizard/visual": {
-  "h": "8bca2767d0d91c0f",
-  "len": 3182,
+  "h": "cca99640439e4f43",
+  "len": 3170,
   "els": 64,
   "buttons": 9,
   "svgs": 0,
@@ -1089,17 +1089,17 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
  },
  "glass/wizard/scene": {
-  "h": "7a585a4758f47324",
-  "len": 3354,
-  "els": 60,
-  "buttons": 5,
+  "h": "3d32608cf3d8b237",
+  "len": 4238,
+  "els": 75,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
+  "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 Which room / spot? 🏛️ 1 Front door free 2 Sink 1 here 3 Stove fr"
  },
  "glass/wizard/learned": {
-  "h": "de68e40a373a8ed5",
-  "len": 4143,
+  "h": "ef31226826c51078",
+  "len": 4131,
   "els": 89,
   "buttons": 10,
   "svgs": 0,
@@ -1179,8 +1179,8 @@
   "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "glass/palace/list": {
-  "h": "ccc063991048e4ce",
-  "len": 2722,
+  "h": "bb98a575f8affd77",
+  "len": 2712,
   "els": 64,
   "buttons": 2,
   "svgs": 0,
@@ -1269,13 +1269,13 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "glass/stories/lesson": {
-  "h": "0a91da4f1f4e55ea",
-  "len": 3193,
-  "els": 55,
-  "buttons": 5,
+  "h": "4283fbc0761109eb",
+  "len": 4077,
+  "els": 70,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "glass/learn/build-the-book": {
   "h": "ef55209998ba8358",
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "c1382cb1ab919f46",
+  "h": "7f99b3da06aabd1f",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "f74e60d536e9b7ab",
-  "len": 75961,
-  "els": 1418,
+  "h": "4b4d35b496b52b2e",
+  "len": 77072,
+  "els": 1439,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.53.2 August 28, 2026 No chapter asked for twice FIX The New Living asked for the same chapter twice"
+  "text": "✕ Version history v1.54.0 August 28, 2026 Pick a spot without scrolling blind FIX The palace and spot pickers are grids "
  },
  "glass/modal/church": {
   "h": "c52148b126053ab1",
@@ -1395,16 +1395,16 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "glass/modal/video": {
-  "h": "c792e4d67c8545ab",
-  "len": 602,
+  "h": "703d1bc7676159de",
+  "len": 582,
   "els": 11,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+  "text": "Memory Palaces ✕ ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
  },
  "glass/modal/translations": {
-  "h": "c1382cb1ab919f46",
+  "h": "7f99b3da06aabd1f",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1413,13 +1413,13 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "glass/modal/video-intro": {
-  "h": "b9be70be25a03e9c",
+  "h": "736ccca15b748bf1",
   "len": 624,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "Start here: how Burning Bush works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
+  "text": "Start Here: How Burning Bush Works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
  },
  "glass/modal/book-image": {
   "h": "319048086e73bb96",
@@ -1431,13 +1431,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "glass/verse/videos": {
-  "h": "32ff00fd55bbdd5d",
-  "len": 1100,
+  "h": "2a54f3cba6441928",
+  "len": 1074,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced"
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ Spaced Rep"
  },
  "glass/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -1476,8 +1476,8 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "glass/practice/review-setup": {
-  "h": "f1d6214708ab5845",
-  "len": 1249,
+  "h": "a1545e9044dfd224",
+  "len": 1233,
   "els": 21,
   "buttons": 5,
   "svgs": 0,
@@ -1539,13 +1539,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "quest/learn/path": {
-  "h": "050f9cc73b5cafac",
+  "h": "dfbf245da1da8046",
   "len": 5420,
   "els": 117,
   "buttons": 41,
   "svgs": 1,
   "imgs": 0,
-  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start here: how Burning Bush works 4 minutes · start he"
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "quest/verse/hub": {
   "h": "ba9cd71cebc2e3f6",
@@ -1593,8 +1593,8 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "quest/wizard/visual": {
-  "h": "8bca2767d0d91c0f",
-  "len": 3182,
+  "h": "cca99640439e4f43",
+  "len": 3170,
   "els": 64,
   "buttons": 9,
   "svgs": 0,
@@ -1602,17 +1602,17 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
  },
  "quest/wizard/scene": {
-  "h": "7a585a4758f47324",
-  "len": 3354,
-  "els": 60,
-  "buttons": 5,
+  "h": "3d32608cf3d8b237",
+  "len": 4238,
+  "els": 75,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
+  "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 Which room / spot? 🏛️ 1 Front door free 2 Sink 1 here 3 Stove fr"
  },
  "quest/wizard/learned": {
-  "h": "de68e40a373a8ed5",
-  "len": 4143,
+  "h": "ef31226826c51078",
+  "len": 4131,
   "els": 89,
   "buttons": 10,
   "svgs": 0,
@@ -1692,8 +1692,8 @@
   "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "quest/palace/list": {
-  "h": "ccc063991048e4ce",
-  "len": 2722,
+  "h": "bb98a575f8affd77",
+  "len": 2712,
   "els": 64,
   "buttons": 2,
   "svgs": 0,
@@ -1782,13 +1782,13 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "quest/stories/lesson": {
-  "h": "0a91da4f1f4e55ea",
-  "len": 3193,
-  "els": 55,
-  "buttons": 5,
+  "h": "4283fbc0761109eb",
+  "len": 4077,
+  "els": 70,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "quest/learn/build-the-book": {
   "h": "ef55209998ba8358",
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "7a7e22da09b0b918",
+  "h": "47733df423f8e985",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "f74e60d536e9b7ab",
-  "len": 75961,
-  "els": 1418,
+  "h": "4b4d35b496b52b2e",
+  "len": 77072,
+  "els": 1439,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.53.2 August 28, 2026 No chapter asked for twice FIX The New Living asked for the same chapter twice"
+  "text": "✕ Version history v1.54.0 August 28, 2026 Pick a spot without scrolling blind FIX The palace and spot pickers are grids "
  },
  "quest/modal/church": {
   "h": "3eb46251f349a19d",
@@ -1908,16 +1908,16 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "quest/modal/video": {
-  "h": "c792e4d67c8545ab",
-  "len": 602,
+  "h": "703d1bc7676159de",
+  "len": 582,
   "els": 11,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+  "text": "Memory Palaces ✕ ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
  },
  "quest/modal/translations": {
-  "h": "7a7e22da09b0b918",
+  "h": "47733df423f8e985",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1926,13 +1926,13 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "quest/modal/video-intro": {
-  "h": "b9be70be25a03e9c",
+  "h": "736ccca15b748bf1",
   "len": 624,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "Start here: how Burning Bush works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
+  "text": "Start Here: How Burning Bush Works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
  },
  "quest/modal/book-image": {
   "h": "319048086e73bb96",
@@ -1944,13 +1944,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "quest/verse/videos": {
-  "h": "32ff00fd55bbdd5d",
-  "len": 1100,
+  "h": "2a54f3cba6441928",
+  "len": 1074,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced"
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ Spaced Rep"
  },
  "quest/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -1989,8 +1989,8 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "quest/practice/review-setup": {
-  "h": "f1d6214708ab5845",
-  "len": 1249,
+  "h": "a1545e9044dfd224",
+  "len": 1233,
   "els": 21,
   "buttons": 5,
   "svgs": 0,
@@ -2052,13 +2052,13 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "buddy/learn/path": {
-  "h": "f0ef1d5c38631332",
+  "h": "416ca095f18aff0e",
   "len": 5239,
   "els": 111,
   "buttons": 41,
   "svgs": 1,
   "imgs": 0,
-  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start here: how Burning Bush works 4 minutes · start he"
+  "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "buddy/verse/hub": {
   "h": "ba9cd71cebc2e3f6",
@@ -2106,8 +2106,8 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "buddy/wizard/visual": {
-  "h": "8bca2767d0d91c0f",
-  "len": 3182,
+  "h": "cca99640439e4f43",
+  "len": 3170,
   "els": 64,
   "buttons": 9,
   "svgs": 0,
@@ -2115,17 +2115,17 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
  },
  "buddy/wizard/scene": {
-  "h": "7a585a4758f47324",
-  "len": 3354,
-  "els": 60,
-  "buttons": 5,
+  "h": "3d32608cf3d8b237",
+  "len": 4238,
+  "els": 75,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ · palace, My Kitchen Which room / spot? . Room / spot, 🏛️ Matthew 6:33 Book 40 image coming Rose Ch 0"
+  "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 Which room / spot? 🏛️ 1 Front door free 2 Sink 1 here 3 Stove fr"
  },
  "buddy/wizard/learned": {
-  "h": "de68e40a373a8ed5",
-  "len": 4143,
+  "h": "ef31226826c51078",
+  "len": 4131,
   "els": 89,
   "buttons": 10,
   "svgs": 0,
@@ -2205,8 +2205,8 @@
   "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "buddy/palace/list": {
-  "h": "ccc063991048e4ce",
-  "len": 2722,
+  "h": "bb98a575f8affd77",
+  "len": 2712,
   "els": 64,
   "buttons": 2,
   "svgs": 0,
@@ -2295,13 +2295,13 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "buddy/stories/lesson": {
-  "h": "0a91da4f1f4e55ea",
-  "len": 3193,
-  "els": 55,
-  "buttons": 5,
+  "h": "4283fbc0761109eb",
+  "len": 4077,
+  "els": 70,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
-  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. · palace, My Kitchen "
+  "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "buddy/learn/build-the-book": {
   "h": "ef55209998ba8358",
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "af80273d5cb1c89b",
+  "h": "7d89ede580039b1d",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "f74e60d536e9b7ab",
-  "len": 75961,
-  "els": 1418,
+  "h": "4b4d35b496b52b2e",
+  "len": 77072,
+  "els": 1439,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.53.2 August 28, 2026 No chapter asked for twice FIX The New Living asked for the same chapter twice"
+  "text": "✕ Version history v1.54.0 August 28, 2026 Pick a spot without scrolling blind FIX The palace and spot pickers are grids "
  },
  "buddy/modal/church": {
   "h": "8ddd1942b18689dd",
@@ -2421,16 +2421,16 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "buddy/modal/video": {
-  "h": "c792e4d67c8545ab",
-  "len": 602,
+  "h": "703d1bc7676159de",
+  "len": 582,
   "els": 11,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "What is a Memory Palace? ✕ ▶ ▶ What is a Memory Palace? Add your video here. Walk a place you know and leave each item a"
+  "text": "Memory Palaces ✕ ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
  },
  "buddy/modal/translations": {
-  "h": "af80273d5cb1c89b",
+  "h": "7d89ede580039b1d",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2439,13 +2439,13 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 📗 "
  },
  "buddy/modal/video-intro": {
-  "h": "b9be70be25a03e9c",
+  "h": "736ccca15b748bf1",
   "len": 624,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "Start here: how Burning Bush works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
+  "text": "Start Here: How Burning Bush Works ✕ Four minutes on why chapter and verse numbers slide straight off the mind, and the "
  },
  "buddy/modal/book-image": {
   "h": "319048086e73bb96",
@@ -2457,13 +2457,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "buddy/verse/videos": {
-  "h": "32ff00fd55bbdd5d",
-  "len": 1100,
+  "h": "2a54f3cba6441928",
+  "len": 1074,
   "els": 18,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ How spaced"
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ Spaced Rep"
  },
  "buddy/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -2502,8 +2502,8 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "buddy/practice/review-setup": {
-  "h": "f1d6214708ab5845",
-  "len": 1249,
+  "h": "a1545e9044dfd224",
+  "len": 1233,
   "els": 21,
   "buttons": 5,
   "svgs": 0,

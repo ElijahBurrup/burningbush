@@ -242,9 +242,9 @@ const DAY = 86400000;
     el('wToScene').click();
     el('wScene').value = 'a scene';
     el('wDone').click(); const blockedNoPalace = !Prog.memorized.includes('40:6:33');
-    el('wPalace').value = '0'; el('wPalace').dispatchEvent(new Event('change'));
+    document.querySelector('#wPalaceGrid [data-p="0"]').click();
     el('wDone').click(); const blockedNoRoom = !Prog.memorized.includes('40:6:33');
-    el('wRoom').value = 'Sink'; el('wDone').click();
+    document.querySelector('#wRoomGrid [data-room="Sink"]').click(); el('wDone').click();
     return { noKnowButton, blockedNoPalace, blockedNoRoom, saved: Prog.memorized.includes('40:6:33'), loc: Prog.verseLoc['40:6:33'] };
   });
   ok(verse.noKnowButton, '"I already know this" is gone');
@@ -2069,7 +2069,7 @@ const DAY = 86400000;
 
     clear(); Prog.memorized = []; saveProg();
     openVerseWizard(40, 6, 33, () => { });
-    out.verseFirst = /verse scene/i.test(open()); shut();
+    out.verseFirst = /Building Scenes/i.test(open()); shut();
 
     // second time round, straight through
     markVideoSeen('verse');
@@ -2122,6 +2122,63 @@ const DAY = 86400000;
   is(live.after, 'For this is how God loved the world.', '…and the fetched chapter takes over once it lands');
   has(live.missing, 'my shepherd', 'a chapter still on its way falls back the same way');
   has(live.kjvBack, 'whosoever believeth', 'switching back leaves the King James untouched');
+
+  describe('picking a palace and a spot', () => { });
+  const picker = await $(() => {
+    // a palace with twelve spots, the first four already holding verses
+    const spots = ['Front door','Hall','Kitchen','Sink','Fridge','Table','Sofa','TV','Stairs','Bed','Desk','Window'];
+    Prog.palaces = [{ place: 'My House', stations: spots }];
+    Prog.memorized = ['19:23:1','19:23:2','19:23:3','19:23:4'];
+    Prog.verseLoc = { '19:23:1':{p:0,room:'Front door'}, '19:23:2':{p:0,room:'Hall'},
+                      '19:23:3':{p:0,room:'Kitchen'}, '19:23:4':{p:0,room:'Sink'} };
+    Prog.customScene = {}; delete Prog.verseLoc['40:6:33'];
+    markVideoSeen('verse');            // otherwise the film opens instead of the wizard
+    saveProg();
+    openVerseWizard(40, 6, 33, () => { });
+    el('wToScene').click();
+    const grid = el('wRoomGrid'), box = el('wRoomScroll');
+    const tiles = [...grid.querySelectorAll('.pickbtn')];
+    return {
+      noSelects: !document.querySelector('#wPalaceGrid select, #wRoomGrid select'),
+      palaceTiles: document.querySelectorAll('#wPalaceGrid .pickbtn').length,
+      palaceSub: document.querySelector('#wPalaceGrid .pks').textContent,
+      cols: getComputedStyle(grid).gridTemplateColumns.split(' ').length,
+      spots: tiles.length,
+      taken: tiles.filter(t => t.dataset.free === '0').map(t => t.dataset.room),
+    };
+  });
+  ok(picker.noSelects, 'the palace and spot pickers are no longer dropdowns');
+  is(picker.palaceTiles, 1, 'every palace gets a tile');
+  is(picker.palaceSub, '8 free of 12', '…saying how much room is left in it');
+  is(picker.cols, 2, 'the spots are laid out two to a row');
+  is(picker.spots, 12, '…all twelve of them');
+  is(picker.taken.join(','), 'Front door,Hall,Kitchen,Sink', 'the spots already holding a verse are marked');
+
+
+  await page.waitForTimeout(250);   // the scroll and the marker land on the next frame
+  const scrolled = await $(() => {
+    const box = el('wRoomScroll'), next = el('wRoomGrid').querySelector('.pickbtn.next');
+    return { scrollable: box.scrollHeight > box.clientHeight,
+             room: next && next.dataset.room, top: box.scrollTop,
+             scrollable: box.scrollHeight > box.clientHeight,
+             // measured for real, not with the same offsetTop on both sides: that is exactly how a
+             // list that scrolled to the wrong end still looked correct
+             inView: !!next && (() => { const t = next.getBoundingClientRect(), r = box.getBoundingClientRect();
+               return t.top >= r.top - 1 && t.bottom <= r.bottom + 1; })() };
+  });
+  ok(scrolled.scrollable, 'twelve spots do need scrolling, which is why any of this matters');
+  is(scrolled.room, 'Fridge', 'the first free spot is the one pointed at');
+  ok(scrolled.top > 0, 'an established palace does not open back at the front door');
+  ok(scrolled.inView, '…it opens on the next free spot');
+
+  const spotPicked = await $(() => {
+    document.querySelector('#wRoomGrid [data-room="Fridge"]').click();
+    const on = el('wRoomGrid').querySelectorAll('.pickbtn.on');
+    return { value: el('wRoom').value, onCount: on.length, cleared: !el('wRoomGrid').querySelector('.next') };
+  });
+  is(spotPicked.value, 'Fridge', 'tapping a spot records it');
+  is(spotPicked.onCount, 1, '…and only one spot is ever chosen');
+  ok(spotPicked.cleared, '…which replaces the suggestion with a real choice');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
@@ -2621,7 +2678,9 @@ const DAY = 86400000;
     const back = () => { show('palace'); startPalaceEdit(0, 'Sink', true); };
     editVerseScene(43, 3, 16, back, back);
     el('wScene').value = 'a scene I DO want kept';
-    if (el('wPalace')) { el('wPalace').value = '0'; el('wPalace').onchange(); el('wRoom').value = 'Sink'; }
+    // the palace and spot are tiles now, so choose them the way a finger would
+    const pt = document.querySelector('#wPalaceGrid [data-p="0"]'); if (pt) pt.click();
+    const rt = document.querySelector('#wRoomGrid [data-room="Sink"]'); if (rt) rt.click();
     el('wDoneTop').click();                                 // the GREEN tick
     return { saved: (Prog.customScene || {})[k] || '', backOnPalace: !!document.querySelector('.peLoc') };
   });
@@ -2765,7 +2824,7 @@ const DAY = 86400000;
     return out;
   });
   ok(firstVerse.shown, 'the first verse memorised brings up the spaced-repetition film');
-  has(firstVerse.txt, 'spaced repetition', '...that one, before any palace film');
+  has(firstVerse.txt, 'Spaced Repetition', '...that one, before any palace film');
 
   const recall = await $(() => {
     if (el('videoModal')) el('videoModal').style.display = 'none';
@@ -2780,7 +2839,7 @@ const DAY = 86400000;
     return out;
   });
   ok(recall.shown, 'the first walk back through a scene brings up its film');
-  has(recall.txt, "won't come", '...the one about a verse that will not come');
+  has(recall.txt, "Will Not Come", '...the one about a verse that will not come');
 
   describe('resume', () => { });
   const resume = await $(() => {
@@ -2886,7 +2945,7 @@ const DAY = 86400000;
   is(vreview.listed, 'sr,palace', '...and the list is drawn in that order');
   has(vreview.txt, 'Complete more of the Learn track', '...with the rest still to come');
   ok(vreview.opened, 'tapping one opens it');
-  has(vreview.openedTitle, 'spaced repetition', '...the one that was tapped');
+  has(vreview.openedTitle, 'Spaced Repetition', '...the one that was tapped');
   ok(vreview.backOnList, '...and closing it lands back on the list');
 
   const dismissed = await $(() => {
@@ -3116,8 +3175,8 @@ const DAY = 86400000;
     };
     // one screen: write the scene, choose the palace and the room, done
     el('wScene').value = 'the scene for this story';
-    el('wPalace').value = '0'; el('wPalace').onchange();
-    el('wRoom').value = 'Front door';
+    document.querySelector('#wPalaceGrid [data-p="0"]').click();
+    document.querySelector('#wRoomGrid [data-room="Front door"]').click();
     el('wDoneTop').click();
     out.memorized = Prog.memorized.includes(k);
     out.scene = (Prog.customScene || {})[k] || '';

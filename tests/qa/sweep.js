@@ -417,7 +417,8 @@ const drive = (page, go) => page.evaluate(fn => {
       if (el('wToScene')) el('wToScene').click();
       if (el('wScene')) {
         el('wScene').value = 'a scene';
-        if (el('wPalace')) { el('wPalace').value = '0'; el('wPalace').onchange(); el('wRoom').value = 'Door'; }
+        const pt = document.querySelector('#wPalaceGrid [data-p="0"]'); if (pt) pt.click();
+        const rt = document.querySelector('#wRoomGrid [data-room="Door"]'); if (rt) rt.click();
         const t0 = Prog.talents;
         el('wDoneTop').click();
         const after1 = { n: Prog.memorized.filter(x => x === k).length, t: Prog.talents };
