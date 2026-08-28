@@ -1784,23 +1784,26 @@ const DAY = 86400000;
   ok(devotion.allEarned, '...and a 365 day streak earns every one of them');
 
   const bbData = await $(() => {
-    const gaps = [], thin = [], dupes = [];
+    const gaps = [], thin = [], dupes = [], shape = [];
     for (let n = 1; n <= 66; n++) {
       const w = bookWordOptions(n), r = numRefOptions(n);
       if (!w.length || !r.length) gaps.push(n);
       if (w.length < 4 || r.length < 3) thin.push(n);
-      if (new Set(w).size !== w.length || new Set(r).size !== r.length) dupes.push(n);
+      const wn = w.map(optName), rn = r.map(optName);
+      if (new Set(wn).size !== wn.length || new Set(rn).size !== rn.length) dupes.push(n);
+      // every option must be a [picture, why] pair, and the picture must be one or two words
+      if (w.concat(r).some(o => !optName(o) || !optWhy(o) || optName(o).split(/\s+/).length > 2)) shape.push(n);
     }
     return {
-      gaps: gaps.length, thin: thin.length, dupes: dupes.length,
+      gaps: gaps.length, thin: thin.length, dupes: dupes.length, shape: shape.length,
       words: Object.keys(BOOK_WORDS).length, refs: Object.keys(NUM_REFS).length,
       // the two examples the lesson itself promises
-      nehemiah: bookWordOptions(16).some(o => /knee.high/i.test(o)),
-      exodus: bookWordOptions(2).some(o => /exit sign/i.test(o)),
-      sixteen: numRefOptions(16).some(o => /licence|license/i.test(o)),
-      twelve: numRefOptions(12).some(o => /dozen eggs/i.test(o)),
-      fiftyThree: numRefOptions(53).some(o => /NFL/i.test(o)),
-      fiftySix: numRefOptions(56).some(o => /Declaration/i.test(o)),
+      nehemiah: bookWordOptions(16).some(o => /knee.high/i.test(optName(o))),
+      exodus: bookWordOptions(2).some(o => /exit sign/i.test(optName(o))),
+      sixteen: numRefOptions(16).some(o => /licence|license/i.test(optName(o))),
+      twelve: numRefOptions(12).some(o => /dozen/i.test(optName(o))),
+      fiftyThree: numRefOptions(53).some(o => /NFL/i.test(optName(o))),
+      fiftySix: numRefOptions(56).some(o => /signer|declaration/i.test(optName(o) + ' ' + optWhy(o))),
     };
   });
   is(bbData.words, 66, 'a list of name pictures for every book');
@@ -1808,6 +1811,7 @@ const DAY = 86400000;
   is(bbData.gaps, 0, 'no book is left with an empty dropdown');
   is(bbData.thin, 0, '…and none of them is a token list of one or two');
   is(bbData.dupes, 0, 'no option is offered twice in the same list');
+  is(bbData.shape, 0, 'every option is one or two words with a line saying how it relates');
   ok(bbData.nehemiah && bbData.exodus, 'the two examples the lesson names are actually offered');
   ok(bbData.sixteen && bbData.twelve, '…as are the number examples, 16 and 12');
   ok(bbData.fiftyThree && bbData.fiftySix, '…and the ones that belong to that number alone: 53 and 56');
@@ -1816,7 +1820,7 @@ const DAY = 86400000;
     delete Prog.bookWord[16]; delete Prog.numRef[16]; saveProg();
     show('verse'); startAdhocLearn(16, true, () => { });
     const empty = { sent: el('bbSent').style.display, script: el('bbScript').style.display };
-    const opts = [...el('bbWord').options].map(o => o.value);
+    const opts = [...el('bbWord').querySelectorAll('[data-word],[data-own]')].map(o => o.dataset.word || '__own');
     Prog.bookWord[16] = 'knee-high socks'; Prog.numRef[16] = "a driver's licence"; saveProg();
     renderAdhoc();
     const s = el('bbSent');
@@ -1845,11 +1849,11 @@ const DAY = 86400000;
   const bbOwn = await $(() => {
     Prog.bookWord[16] = 'a kneecap the size of a house'; saveProg();
     renderAdhoc();
-    const sel = el('bbWord');
-    return { value: sel.value, kept: [...sel.options].some(o => o.value === 'a kneecap the size of a house' && o.selected) };
+    const tile = el('bbWord').querySelector('[data-word="a kneecap the size of a house"]');
+    return { kept: !!tile, on: !!tile && tile.classList.contains('on') };
   });
-  ok(bbOwn.kept, 'a word of your own keeps its place in the dropdown');
-  is(bbOwn.value, 'a kneecap the size of a house', '…and stays selected across a re-render');
+  ok(bbOwn.kept, 'a word of your own keeps a tile of its own');
+  ok(bbOwn.on, '…and stays chosen across a re-render');
 
   const tidy = await $(() => ({
     cap: capAfterPunct('a sock stomps the wall. it shatters! then a licence floats down.'),

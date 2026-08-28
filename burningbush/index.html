@@ -297,12 +297,17 @@
   .pegedit{margin:8px 0;border:1px solid var(--line);border-radius:12px;background:var(--panel2);padding:0 12px}
   .pegedit summary{cursor:pointer;padding:10px 2px;font-weight:700;color:var(--accent);list-style:none}
   .pegedit summary::-webkit-details-marker{display:none}
-  .pegopts{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:12px}
-  .pegchip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 6px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:700;font-size:15px;cursor:pointer}
-  .pegchip .pegchip-img{width:30px;height:30px;object-fit:contain;flex:0 0 auto}
-  .bimggrid{display:grid;grid-template-columns:1fr;gap:8px}
-  .bimgopt{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:var(--panel2);border:2px solid var(--line);color:var(--ink);font-weight:700;font-size:14px;padding:10px;border-radius:12px;cursor:pointer;line-height:1.2}
-  .bimgopt .bimg{width:46px;height:46px;object-fit:contain;flex:0 0 auto}
+  .pegopts{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-bottom:12px}
+  .pegchip{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+    min-height:94px;padding:11px 8px;border-radius:12px;border:1px solid var(--line);background:var(--panel);
+    color:var(--ink);font-weight:800;font-size:13.5px;line-height:1.2;text-align:center;cursor:pointer}
+  .pegchip .pegchip-img{width:38px;height:38px;object-fit:contain;flex:0 0 auto}
+  .bimggrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .bimgopt{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;
+    width:100%;min-height:130px;text-align:center;background:var(--panel2);border:2px solid var(--line);
+    color:var(--ink);font-weight:700;font-size:13px;padding:12px 8px;border-radius:12px;cursor:pointer;line-height:1.25}
+  .bimgopt .bimg{width:54px;height:54px;object-fit:contain;flex:0 0 auto}
+  .bimgopt .bimgt{display:block;overflow-wrap:break-word;max-width:100%}
   .bimgopt.sel{border-color:var(--accent);color:var(--accent)}
   .bimgopt:active{transform:scale(.98)}
   .pegchip.on{border-color:var(--gold2);color:var(--gold-ink)}
@@ -1546,7 +1551,9 @@
   .bbtoggle{width:100%;margin:2px 0 12px}
   .bbrow{margin:12px 0}
   .bbrow label{display:block;font-size:11.5px;font-weight:800;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
-  .bbsel{width:100%;padding:11px 10px;border-radius:10px;border:1px solid var(--line);background:var(--panel0);color:var(--ink);font-size:14px;font-weight:700;font-family:inherit}
+  .bbopt{min-height:82px}
+  .bbopt .pks{font-size:10px;line-height:1.3;opacity:.95}
+  .bbown{border-style:dashed}
   .bbfixed{padding:11px 12px;border-radius:10px;border:1px dashed var(--line);color:var(--ink-soft);font-size:13.5px}
   .bbsent{margin-top:14px;padding:13px 15px;border-radius:12px;border:1px solid var(--gold2);background:var(--panel0);font-size:14px;line-height:1.6}
   .bbsent b{color:var(--gold-ink)}
@@ -1893,8 +1900,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.54.0";
+const APP_VERSION="1.55.0";
 const CHANGELOG=[
+ {v:"1.55.0", d:"August 28, 2026", t:"Every picker is tiles now", items:[
+   ["chg","<b>Build the Book shows tiles instead of dropdowns.</b> Every picture is one or two words with a line underneath saying how it ties to the book or the number, because <b>Popsicle</b> on its own does not tell you why it is there."],
+   ["chg","<b>All 666 options were rewritten short.</b> \"a stopwatch (chrono)\" is now <b>Stopwatch</b>, \"Chrono means time, like a stopwatch.\" Nothing was dropped or reordered."],
+   ["chg","<b>The book image and image word pickers are two to a row as well</b>, so a whole set of choices fits on one screen instead of scrolling."]
+ ]},
  {v:"1.54.0", d:"August 28, 2026", t:"Pick a spot without scrolling blind", items:[
    ["chg","<b>The palace and spot pickers are grids now, two to a row</b>, instead of dropdowns. On a phone a list of twenty stations was a spinning wheel you had to scroll through blind."],
    ["new","<b>Each spot says whether it is free</b>, and each palace says how many free spots it has left, so you can see where there is room before you choose."],
@@ -3036,150 +3048,153 @@ function openBookImagePicker(n, after){
 // Two of the three carry the number on purpose: when one slips the other still holds. Only the third
 // has a drawn icon; the first two are the user's own words and stay text.
 
-// Sound-alikes first where the name will bend (Nehemiah → knee-high), meaning where it will not
-// (Exodus → an exit sign). Both work; which one lands is personal, which is why this is a list.
+// Each option is [picture, why]: one or two words for the thing you actually see, and one line
+// saying how it ties to the book. Sound-alikes where the name will bend (Nehemiah → Knee-High),
+// meaning where it will not (Exodus → Exit Sign). Which one lands is personal, hence the list.
 const BOOK_WORDS={
- 1:["a genie","a gene under a microscope","a pair of jeans","the very first sunrise","a garden gate","a glowing seed","a starting pistol"],
- 2:["an exit sign","an exit door flung open","a bus pulling out of town","the parted sea","a pair of worn sandals","an EXIT stairwell"],
- 3:["a priest levitating","a floating monk","a Levi's label","a lever being pulled","an altar of smoke","a lift going up"],
- 4:["a calculator","numbers floating in the air","a census clipboard","a numbered jersey","a tape measure","a lottery ball machine"],
- 5:["a duet at one microphone","two singers sharing a stage","a tennis deuce","a photocopier making a second copy","a DO IT AGAIN sign","a pair of stone tablets"],
- 6:["a giant shoe","a Joshua tree","a jaw dropping open","a ram's horn trumpet","a wall tumbling down","a jigsaw"],
- 7:["a judge's gavel","a black robe","a courtroom bench","a referee's whistle","a wrestling ring","a set of scales"],
- 8:["a roof","Babe Ruth's bat","a sheaf of barley","a widow's shawl","a ruthless pirate","a rooftop weather vane"],
- 9:["a camel","Uncle Sam pointing","a lamp burning in a temple","a boy in a nightshirt","a horn of oil","a sam-witch (sandwich)"],
- 10:["a second camel","two humps","Uncle Sam wearing a crown","a harp","a leather sling","a second sandwich"],
- 11:["a crown","a chess king","a throne","a paper burger crown","a golden sceptre","a royal robe"],
- 12:["a second crown","two chess kings","a chariot of fire","a crown on a crown","a double throne"],
- 13:["a popsicle","a stopwatch (chrono)","a family tree","a long scroll unrolling","a grandfather clock","a chronicle in leather"],
- 14:["a second popsicle","two stopwatches","a temple blueprint","two scrolls side by side","a double ice lolly"],
- 15:["an EXTRA sticker","a spare tyre","an EZ button","a razor","a scribe's quill","an extra chair squeezed in"],
- 16:["knee-high socks","a bare knee","a brick wall half built","a bricklayer's trowel","a cupbearer's cup","a knee-high fence"],
- 17:["Easter eggs","the Easter bunny","a star","a girl in a crown","a golden sceptre","an Easter basket"],
- 18:["a job application","a hard hat","a whirlwind","a resume","a man covered in boils","a JOB WANTED sign"],
- 19:["a pair of open palms","a palm tree","a harp","a hymn book","a shepherd's flute","palms raised in praise"],
- 20:["a chef's herbs (pro-herbs)","a fortune cookie","an owl in glasses","a wise old man","a plaque on a wall","an ant hill"],
- 21:["a clock with hands spinning","wind blowing through empty hands","a preacher's stool","a puff of vapour","an hourglass","a clock siastes"],
- 22:["a singing salmon","sheet music with a heart","a red rose","a wedding veil","a love letter","a serenade under a window"],
- 23:["a giant eye (I SAW YA)","a pair of eyes","a telescope","tongs holding a hot coal","a straight highway","a lookout squinting"],
- 24:["a bullfrog","a weeping man","a smashed clay jar","a scroll thrown in the fire","a potter's wheel","a jar of tears"],
- 25:["a pile of lemons","a puckered lemon face","a tissue box","a broken city wall","a mourner's black veil","lemonade with no sugar"],
- 26:["a wheel inside a wheel","a plate of nachos","a valley of dry bones","a boat's keel","a loaf of Ezekiel bread","a flaming wheel"],
- 27:["a spaniel","a lion","a lion's den","a fiery furnace","handwriting glowing on a wall","a dog named Dan"],
- 28:["a garden hose","a hose spraying wildly","a wedding ring returned","a bride coming home","a hose coiled on a wall"],
- 29:["a sparkling jewel","a jewellery box","a swarm of locusts","a trumpet on a hilltop","a jewel-encrusted door knob"],
- 30:["a mouse","a moose","a shepherd's crook","a plumb line dangling","a basket of summer fruit","a mouse on a moose"],
- 31:["a doormat groaning OH BAD IDEA","an eagle's nest on a cliff","a mountain fortress","a bad idea sign","a cliff edge"],
- 32:["a whale","a great fish","a boat in a storm","a gourd vine","a life jacket","a man overboard"],
- 33:["a microphone","my car honking","a mic stand","a plowshare","a small town on a hill","a mic drop"],
- 34:["a humming bee","a hammer","a hum you cannot place","a toppled city","a tuning fork humming"],
- 35:["a chef (HAVE A COOK)","a burnt pancake","a watchtower","a cook's tall hat","a lookout post","a bad cook's kitchen"],
- 36:["a zephyr breeze","a wind sock","a lantern searching in the dark","a match blown out","a gust down an alley"],
- 37:["a muddy hog","a hog with one eye","a builder with a hammer","a construction site","a rebuilt temple","a HOG EYE sign"],
- 38:["Zack at the movies","a screen full of night visions","a flying scroll","a golden lampstand","a popcorn bucket"],
- 39:["a mall key","a shopping mall","a ring of keys","a sealed letter","a refiner's fire","a locked mall gate"],
- 40:["a welcome mat","a maths book","a genealogy scroll","a mountain sermon","a doormat saying MATT","a tax collector's table"],
- 41:["a marker pen","a big check mark","a skid mark","a lion","a fast-forward button","a marked page"],
- 42:["a shout of LOOK!","a magnifying glass","a doctor's stethoscope","a manger","a lantern held high","a pair of binoculars"],
- 43:["long johns","an eagle","a lamb","a door standing open","a well at noon","a pair of red long underwear"],
- 44:["an axe","a stage act","a rushing wind","tongues of fire","a ship under sail","a theatre curtain"],
- 45:["a Roman soldier","someone roamin' around","a Roman helmet","an aqueduct","a scroll of law","a legionary's shield"],
- 46:["an ear of corn","a corn cob dripping butter","a stadium arch","a clanging cymbal","a heart for the love chapter","a corn field"],
- 47:["a second ear of corn","a cracked clay jar","a thorn in a hand","a comfort blanket","corn with a rock in it"],
- 48:["a pair of galoshes","a spiral galaxy","a gallon jug","fruit hanging heavy on a tree","broken chains","yellow rain boots"],
- 49:["a freezer (A-FREEZIN')","a suit of armour","a helmet of salvation","a wedding ring","an ice block","a frozen harp"],
- 50:["rubber flippers","a fillet of fish","a cup overflowing","a runner's prize","a joy balloon","a swimmer's fins"],
- 51:["a colossal statue","a giant pot lid","a colosseum","a crown above everything","a statue filling the sky"],
- 52:["a baloney sandwich","a trumpet blast","a thief in the night","a salon chair","a stack of deli meat"],
- 53:["a second baloney sandwich","a stretch limo","a man of lawlessness","a work bench","baloney out of every window"],
- 54:["a timid boy","a kitchen timer","a fishing lure","a young pastor's collar","a boy named Tim","a stopwatch"],
- 55:["a runner crossing a finish line","a crown of laurel","a cloak and parchments","a stopwatch stopped","Tim at the tape"],
- 56:["a bow tie","a tightrope","an island","a washing basin","a tie pulled tight","a TIE TUS name tag"],
- 57:["a lemon","a pitcher being filled","a broken chain","a servant coming home","a small padlock","fresh lemonade"],
- 58:["a hairbrush","a coffee pot (HE BREWS)","a high priest's robe","an anchor","a curtain torn in two","steam rising"],
- 59:["a jar of jam","sticky jam on a lip","a ship's small rudder","a mirror","a tiny spark starting a fire","a jam jar lid"],
- 60:["a green pea","Peter Pan","a rock","a prowling lion","a shepherd's staff","a pea on a plate"],
- 61:["a second green pea","a cheetah","the morning star","a burning sky","a pea and a cheetah"],
- 62:["long johns by the fire","a genie","a light bulb","a heart","water and blood","a warm lamp"],
- 63:["a second pair of long johns","a wind chime","a door kept shut","a noble lady","chimes on a porch"],
- 64:["a third pair of long johns","a cherry on top","a host laying a table","two people talking face to face","a third of anything"],
- 65:["a surfer saying DUDE","a chilli pepper","a shield","a wandering star","someone snatched from a fire","sunglasses"],
- 66:["a curtain pulled back","a judge's gavel","a big REVEAL","a golden lampstand","a white horse","a city coming down from the sky","a trumpet"]
+ 1:[["Genie","Genesis sounds like genie."],["Gene","Genesis begins with gene."],["Jeans","Genesis sounds like jean-esis."],["First Sunrise","Genesis means beginning."],["Garden Gate","Genesis opens in the Garden of Eden."],["Glowing Seed","Genesis is the seed of everything."],["Starting Pistol","Genesis is the start of it all."]],
+ 2:[["Exit Sign","Exodus is the way out."],["Exit Door","Exodus sounds like exit."],["Bus","Exodus ends with bus, pulling out of town."],["Parted Sea","Exodus crosses the parted Red Sea."],["Worn Sandals","Exodus is a long walk out of Egypt."],["Exit Stairwell","Exodus sounds like exit."]],
+ 3:[["Levitate","Leviticus sounds like levitate."],["Floating Monk","Leviticus sounds like levitating."],["Levi's Label","Leviticus starts with Levi."],["Lever","Leviticus starts like lever."],["Smoking Altar","Leviticus is the book of offerings."],["Lift","A lift levitates, like Leviticus."]],
+ 4:[["Calculator","A calculator is full of numbers."],["Floating Numbers","The book is called Numbers."],["Census Clipboard","Numbers counts Israel in a census."],["Numbered Jersey","It wears a number, like the book."],["Tape Measure","A tape measure is lined with numbers."],["Lottery Balls","Lottery balls are covered in numbers."]],
+ 5:[["Duet","Deuteronomy starts like duet."],["Two Singers","Deuteronomy sounds like duet, two singers."],["Tennis Deuce","Deuteronomy starts like deuce."],["Photocopier","Deuteronomy means second law, a copy."],["Again Sign","Deuteronomy repeats the law again."],["Stone Tablets","Deuteronomy restates the Ten Commandments."]],
+ 6:[["Giant Shoe","Joshua has shoe in the middle."],["Joshua Tree","A Joshua tree shares his name."],["Dropped Jaw","Joshua starts like jaw."],["Ram's Horn","Joshua's trumpets felled Jericho."],["Falling Wall","Joshua watched Jericho's walls fall."],["Jigsaw","Jigsaw sounds a bit like Joshua."]],
+ 7:[["Gavel","A judge bangs the gavel."],["Black Robe","Judges wear black robes."],["Courtroom Bench","The judge sits at the bench."],["Whistle","A referee is a judge with a whistle."],["Wrestling Ring","A ref judges every bout."],["Scales","The scales of justice belong to judges."]],
+ 8:[["Roof","Ruth sounds like roof."],["Ruth's Bat","Babe Ruth shares the name Ruth."],["Barley Sheaf","Ruth gleaned barley in Boaz's field."],["Widow's Shawl","Ruth was a young widow."],["Ruthless Pirate","Ruthless starts with Ruth."],["Weather Vane","It stands on a roof, like Ruth."]],
+ 9:[["Camel","Samuel rhymes with camel."],["Uncle Sam","Samuel starts with Sam."],["Temple Lamp","Samuel heard God by the temple lamp."],["Nightshirt Boy","Young Samuel was called at night."],["Oil Horn","Samuel anointed kings with oil."],["Sandwich","Sandwich sounds like sam-witch, like Samuel."]],
+ 10:[["Second Camel","Samuel sounds like camel, and this is book two."],["Two Humps","Two humps on the camel, for Samuel book two."],["Uncle Sam","Sam is short for Samuel."],["Harp","David the harp player fills 2 Samuel."],["Sling","David's sling, from the books of Samuel."],["Second Sandwich","Sam-wich sounds like Samuel, second helping."]],
+ 11:[["Crown","A king wears a crown."],["Chess King","The king piece in chess."],["Throne","A king sits on a throne."],["Burger Crown","A paper crown makes you a king."],["Sceptre","A king holds a golden sceptre."],["Royal Robe","A king wears a royal robe."]],
+ 12:[["Second Crown","A crown for Kings, the second book."],["Chess Kings","Two king pieces for 2 Kings."],["Fiery Chariot","Elijah's fiery chariot is in 2 Kings."],["Stacked Crowns","A crown on a crown, Kings book two."],["Double Throne","Two thrones for the second Kings."]],
+ 13:[["Popsicle","Chronicles sounds like chron-icle, like popsicle."],["Stopwatch","Chrono means time, like a stopwatch."],["Family Tree","Chronicles opens with long family trees."],["Long Scroll","A chronicle is a long written record."],["Grandfather Clock","Chrono means time, like a clock."],["Leather Chronicle","The book is literally a chronicle."]],
+ 14:[["Second Popsicle","Chron-icle again, the second Chronicles."],["Two Stopwatches","Chrono means time, twice for book two."],["Temple Blueprint","Solomon builds the temple in 2 Chronicles."],["Two Scrolls","Two Chronicles, so two scrolls."],["Double Lolly","An ice lolly for chron-icle, doubled."]],
+ 15:[["Extra Sticker","Ezra sounds like extra."],["Spare Tyre","A spare is an extra, like Ezra."],["EZ Button","EZ sounds like the start of Ezra."],["Razor","Razor sounds like Ezra."],["Quill","Ezra was a scribe with a quill."],["Extra Chair","An extra squeezed in, and extra sounds like Ezra."]],
+ 16:[["Knee Socks","Knee-high sounds like Nehemiah."],["Bare Knee","Nehemiah starts like knee."],["Half Wall","Nehemiah rebuilt Jerusalem's wall."],["Trowel","A tool for Nehemiah's wall building."],["Royal Cup","Nehemiah was the king's cupbearer."],["Knee-High Fence","Knee-high sounds like Nehemiah."]],
+ 17:[["Easter Eggs","Esther sounds like Easter."],["Easter Bunny","Easter sounds like Esther."],["Star","The name Esther means star."],["Crowned Girl","Esther became the Persian queen."],["Gold Sceptre","The king held his sceptre out to Esther."],["Easter Basket","Easter sounds like Esther."]],
+ 18:[["Job Application","Job is spelled like job."],["Hard Hat","Worn on the job, spelled like Job."],["Whirlwind","God speaks to Job from a whirlwind."],["Resume","You need one to get a job."],["Boils","Job was struck with painful boils."],["Wanted Sign","A JOB WANTED sign spells the name."]],
+ 19:[["Open Palms","Psalms sounds like palms."],["Palm Tree","Psalms sounds like palms."],["Harp","David sang the Psalms with a harp."],["Hymn Book","Psalms is the Bible's book of songs."],["Shepherd's Flute","David the shepherd wrote many Psalms."],["Raised Palms","Psalms sounds like palms raised in praise."]],
+ 20:[["Chef's Herbs","Proverbs sounds like pro herbs."],["Fortune Cookie","Proverbs are short wise sayings."],["Wise Owl","Owls stand for the wisdom in Proverbs."],["Wise Man","Solomon the wise wrote Proverbs."],["Wall Plaque","Proverbs get framed on walls."],["Ant Hill","Proverbs says to watch the ant."]],
+ 21:[["Spinning Clock","Ecclesiastes says a time for everything."],["Empty Hands","Ecclesiastes says all is chasing the wind."],["Preacher's Stool","Ecclesiastes means the Preacher."],["Vapour","Ecclesiastes says all is vapour."],["Hourglass","Ecclesiastes weighs our fleeting time."],["Clock","Ecclesiastes sounds like a clock siastes."]],
+ 22:[["Singing Salmon","Solomon sounds like salmon."],["Sheet Music","The book is a love song."],["Red Rose","The bride is called the rose of Sharon."],["Wedding Veil","The Song celebrates wedded love."],["Love Letter","The Song is love poetry."],["Serenade","The Song is a lover's serenade."]],
+ 23:[["Giant Eye","Isaiah sounds like I saw ya."],["Eyes","Isaiah starts with eye, he saw the Lord."],["Telescope","Isaiah saw far into the future."],["Hot Coal","A coal touched Isaiah's lips."],["Straight Highway","Isaiah says prepare a highway for God."],["Lookout","A seer like Isaiah watches ahead."]],
+ 24:[["Bullfrog","Jeremiah was a bullfrog in the song."],["Weeping Man","Jeremiah is the weeping prophet."],["Smashed Jar","Jeremiah smashed a clay jar as a sign."],["Burning Scroll","The king burned Jeremiah's scroll."],["Potter's Wheel","God sent Jeremiah to the potter's house."],["Tear Jar","Jeremiah wept over Jerusalem."]],
+ 25:[["Lemon Pile","Lamentations sounds like lemon-tations."],["Lemon Face","Lamentations sounds sour, like a lemon."],["Tissue Box","Lamentations is a book of weeping."],["Broken Wall","Lamentations mourns ruined Jerusalem."],["Black Veil","Lamentations is a funeral lament."],["Sour Lemonade","Lamentations sounds like sour lemonade."]],
+ 26:[["Nested Wheels","Ezekiel saw a wheel within a wheel."],["Nachos","Ezekiel ends like meal, so a plate of nachos."],["Dry Bones","Ezekiel saw the valley of dry bones."],["Boat Keel","Ezekiel ends in keel."],["Ezekiel Bread","The bread recipe comes from Ezekiel 4."],["Flaming Wheel","Ezekiel's vision had fiery wheels."]],
+ 27:[["Spaniel","Daniel rhymes with spaniel."],["Lion","Daniel survived the lions."],["Lion's Den","Daniel was thrown into the lion's den."],["Fiery Furnace","Daniel's friends survived the furnace."],["Wall Writing","Daniel read the writing on the wall."],["Dog Dan","A dog named Dan sounds like Daniel."]],
+ 28:[["Garden Hose","Hosea sounds like hose."],["Spraying Hose","Hosea sounds like a hose spraying."],["Wedding Ring","Hosea bought back his unfaithful wife."],["Returning Bride","Hosea's wife came home to him."],["Coiled Hose","Hosea sounds like hose."]],
+ 29:[["Jewel","Joel sounds like jewel."],["Jewellery Box","Joel sounds like jewel."],["Locust Swarm","Joel prophesied a locust plague."],["Trumpet","Joel says blow the trumpet in Zion."],["Jewelled Knob","Joel sounds like jewel."]],
+ 30:[["Mouse","Amos sounds like a mouse."],["Moose","Amos sounds like a moose."],["Shepherd's Crook","Amos was a shepherd."],["Plumb Line","God showed Amos a plumb line."],["Fruit Basket","Amos saw a basket of summer fruit."],["Moose Rider","A mouse rides a moose, both sound like Amos."]],
+ 31:[["Doormat","Obadiah sounds like oh bad idea."],["Eagle's Nest","Obadiah says Edom nests like the eagle."],["Mountain Fortress","Obadiah warns Edom in its strongholds."],["Bad Idea","Obadiah sounds like oh bad idea."],["Cliff Edge","Obadiah warns proud Edom on the cliffs."]],
+ 32:[["Whale","A whale swallowed Jonah."],["Great Fish","A great fish swallowed Jonah."],["Stormy Boat","Jonah's ship was caught in a storm."],["Gourd Vine","A vine shaded Jonah, then withered."],["Life Jacket","Jonah was thrown overboard at sea."],["Man Overboard","Sailors threw Jonah into the sea."]],
+ 33:[["Microphone","Micah sounds like mic."],["Honking Car","Micah sounds like my car."],["Mic Stand","Micah sounds like mic."],["Plowshare","Micah says beat swords into plowshares."],["Small Town","Micah foretold tiny Bethlehem."],["Mic Drop","Micah sounds like mic."]],
+ 34:[["Humming Bee","Nahum sounds like a hum."],["Hammer","Nahum sounds a bit like hammer."],["Mystery Hum","Nahum sounds like a hum."],["Toppled City","Nahum foretold Nineveh's fall."],["Tuning Fork","Nahum sounds like a hum."]],
+ 35:[["Chef","Habakkuk sounds like have a cook."],["Burnt Pancake","Habakkuk sounds like have a cook."],["Watchtower","Habakkuk stood watch on the tower."],["Chef's Hat","Habakkuk sounds like have a cook."],["Lookout Post","Habakkuk kept watch for God's answer."],["Messy Kitchen","Habakkuk sounds like have a cook."]],
+ 36:[["Zephyr","Zephaniah sounds like zephyr."],["Wind Sock","Zephaniah sounds like zephyr, a wind."],["Lantern","God searches Jerusalem with lamps."],["Blown Match","Zephaniah's breeze blows it out."],["Alley Gust","Zephaniah sounds like zephyr, a gust."]],
+ 37:[["Muddy Hog","Haggai sounds like hog-eye."],["One-Eyed Hog","A hog's one eye, hog-eye, sounds like Haggai."],["Builder","Haggai told the people to rebuild the temple."],["Construction Site","Haggai is about rebuilding God's house."],["Rebuilt Temple","Haggai urges rebuilding the temple."],["Hog Eye","A sign reading HOG EYE sounds like Haggai."]],
+ 38:[["Movie Zack","Zechariah sounds like Zack at the movies."],["Night Visions","Zechariah saw eight night visions."],["Flying Scroll","Zechariah saw a flying scroll."],["Golden Lampstand","Zechariah saw a golden lampstand."],["Popcorn Bucket","Popcorn for the movie of Zechariah's visions."]],
+ 39:[["Mall Key","Malachi sounds like mall key."],["Shopping Mall","Malachi starts with mall."],["Key Ring","Malachi ends with a key sound."],["Sealed Letter","Malachi means my messenger."],["Refiner's Fire","Malachi says God is like a refiner's fire."],["Mall Gate","The locked gate needs the mall key, Malachi."]],
+ 40:[["Welcome Mat","Matthew starts with mat."],["Maths Book","Matthew sounds like maths."],["Genealogy Scroll","Matthew opens with Jesus' genealogy."],["Mountain Sermon","Matthew records the Sermon on the Mount."],["MATT Doormat","The mat spells Matt, short for Matthew."],["Tax Table","Matthew collected taxes at his table."]],
+ 41:[["Marker Pen","Marker starts with Mark."],["Check Mark","A check mark is a mark."],["Skid Mark","Mark's Gospel moves fast, leaving skid marks."],["Lion","The lion is Mark's traditional symbol."],["Fast Forward","Mark rushes along, saying immediately often."],["Marked Page","A marked page carries a mark."]],
+ 42:[["Look!","Luke sounds like look."],["Magnifying Glass","Luke investigated everything carefully."],["Stethoscope","Luke was a doctor."],["Manger","Luke tells the manger birth story."],["Lantern","A lantern helps you look, Luke sounds like look."],["Binoculars","Binoculars are for looking, like Luke."]],
+ 43:[["Long Johns","Long johns share the name John."],["Eagle","The eagle is John's traditional symbol."],["Lamb","John calls Jesus the Lamb of God."],["Open Door","In John, Jesus says I am the door."],["Noon Well","In John, the woman at the well came at noon."],["Red Underwear","Red long johns carry the name John."]],
+ 44:[["Axe","Acts sounds like axe."],["Stage Act","Acts sounds like a stage act."],["Rushing Wind","In Acts, Pentecost came with a rushing wind."],["Fire Tongues","Tongues of fire appeared in Acts at Pentecost."],["Sailing Ship","Acts follows Paul's voyages by ship."],["Theatre Curtain","Curtains open on the acts of a play."]],
+ 45:[["Roman Soldier","Romans starts with Roman."],["Roamin' Man","Romans sounds like roamin' around."],["Roman Helmet","A helmet from Rome, where Romans was sent."],["Aqueduct","The Romans built the aqueducts."],["Law Scroll","Romans wrestles with law and grace."],["Legionary Shield","Legionaries were Rome's soldiers."]],
+ 46:[["Corn","Corinthians sounds like corn-inthians."],["Buttered Cob","A buttery cob for the corn in Corinthians."],["Stadium Arch","Corinth held games, Paul writes of races."],["Clanging Cymbal","Without love, a clanging cymbal, says this book."],["Heart","The love chapter is in 1 Corinthians."],["Corn Field","A whole field of corn for Corinthians."]],
+ 47:[["Two Corns","A second ear of corn for 2 Corinthians."],["Cracked Jar","Treasure in jars of clay is in this book."],["Thorn","Paul's thorn in the flesh is here."],["Comfort Blanket","The God of all comfort opens this book."],["Rocky Corn","Corn again, this time with a rock inside."]],
+ 48:[["Galoshes","Galatians sounds like galoshes."],["Galaxy","Galatians sounds like galaxy."],["Gallon Jug","Galatians starts like gallon."],["Fruit Tree","The fruit of the Spirit is in Galatians."],["Broken Chains","Galatians is about freedom from the law."],["Rain Boots","Boots like galoshes, like Galatians."]],
+ 49:[["Freezer","Ephesians sounds like a-freezin'."],["Armour","The armour of God is in Ephesians."],["Helmet","The helmet of salvation is in Ephesians."],["Wedding Ring","Ephesians pictures Christ and his bride."],["Ice Block","Frozen, like Ephesians, a-freezin'."],["Frozen Harp","An a-freezin' harp for Ephesians."]],
+ 50:[["Flippers","Philippians sounds like flippers."],["Fish Fillet","Philippians sounds like fillet-ians."],["Overflowing Cup","Philippians overflows with joy."],["Runner's Prize","Press on toward the prize, says Philippians."],["Joy Balloon","Philippians is the letter of joy."],["Swim Fins","Fins are flippers, like Philippians."]],
+ 51:[["Colossal Statue","Colossians sounds like colossal."],["Giant Lid","A colossal lid, like Colossians."],["Colosseum","Colossians sounds like colosseum."],["Crown","Colossians puts Christ above everything."],["Sky Statue","A statue so colossal it fills the sky."]],
+ 52:[["Baloney Sandwich","Thessalonians sounds like the-saloney."],["Trumpet","The Lord returns with a trumpet call here."],["Night Thief","The day comes like a thief in the night."],["Salon Chair","Thessalonians has salon in the middle."],["Deli Stack","Deli baloney, like Thessalonians."]],
+ 53:[["Two Sandwiches","A second baloney for 2 Thessalonians."],["Stretch Limo","Limo sounds like the loni in Thessalonians."],["Lawless Man","The man of lawlessness appears here."],["Work Bench","If you will not work, you shall not eat."],["Baloney Windows","Baloney everywhere for Thessalonians."]],
+ 54:[["Timid Boy","Timothy sounds like timid."],["Kitchen Timer","Timothy starts with Tim, like timer."],["Fishing Lure","Love of money is a trap in 1 Timothy."],["Pastor's Collar","Timothy was a young pastor."],["Tim","Tim is short for Timothy."],["Stopwatch","A stopwatch times, like Timothy."]],
+ 55:[["Finish Line","Paul tells Timothy he has finished the race."],["Laurel Crown","A crown is laid up for Paul in 2 Timothy."],["Cloak","Paul asks Timothy to bring his cloak and scrolls."],["Stopwatch","Paul's time of departure has come in 2 Timothy."],["Tim's Tape","Tim sounds like Timothy, finishing the race."]],
+ 56:[["Bow Tie","Tie sounds like the start of Titus."],["Tightrope","Titus sounds like tight-us."],["Island","Titus was left on the island of Crete."],["Washing Basin","Titus speaks of the washing of rebirth."],["Tight Tie","A tie pulled tight sounds like Titus."],["Name Tag","A tag reading TIE TUS spells out Titus."]],
+ 57:[["Lemon","Philemon sounds like fill-LEMON."],["Pitcher","A pitcher being filled, like the fill in Philemon."],["Broken Chain","Onesimus the slave goes free in Philemon."],["Returning Servant","Philemon takes his runaway servant back."],["Padlock","Paul asks Philemon to unlock his slave's bonds."],["Lemonade","Fill-lemon-ade sounds like Philemon."]],
+ 58:[["Hairbrush","Hebrews sounds like hairbrush."],["Coffee Pot","He brews coffee, like Hebrews."],["Priest's Robe","Hebrews shows Jesus as our high priest."],["Anchor","Hebrews calls hope an anchor for the soul."],["Torn Curtain","Hebrews opens the way through the curtain."],["Steam","Steam from what he brews, like Hebrews."]],
+ 59:[["Jam Jar","James sounds like jams."],["Sticky Jam","Jam on the lips sounds like James."],["Rudder","James compares the tongue to a small rudder."],["Mirror","James likens a forgetful hearer to a mirror."],["Spark","James says a small spark sets a forest ablaze."],["Jar Lid","A lid off the jam, and jam sounds like James."]],
+ 60:[["Green Pea","Peter sounds like pea-ter."],["Peter Pan","Peter Pan shares Peter's name."],["Rock","Peter means rock."],["Prowling Lion","Peter warns the devil prowls like a lion."],["Shepherd's Staff","Peter tells elders to shepherd the flock."],["Pea Plate","A single pea for 1 Peter."]],
+ 61:[["Two Peas","A second pea for 2 Peter, pea-ter."],["Cheetah","Cheetah rhymes with Peter."],["Morning Star","2 Peter says the morning star rises in hearts."],["Burning Sky","2 Peter says the heavens will melt with fire."],["Pea Cheetah","A pea and a cheetah both rhyme with Peter."]],
+ 62:[["Long Johns","Long johns sound like John."],["Genie","Genie sounds like Johnny."],["Light Bulb","1 John says God is light."],["Heart","1 John says God is love."],["Water Blood","1 John says Jesus came by water and blood."],["Warm Lamp","Walking in the light, as 1 John urges."]],
+ 63:[["Second Pair","A second pair of long johns for 2 John."],["Wind Chime","A small chime for John's tiny second letter."],["Shut Door","2 John says keep deceivers out of your house."],["Noble Lady","2 John is written to the elect lady."],["Porch Chimes","Chimes for John's brief second note."]],
+ 64:[["Long Johns","Third John sounds like a third pair of long johns."],["Cherry","3 John is the cherry on top of John's letters."],["Host","3 John praises Gaius for hosting travellers."],["Face-To-Face","John hopes to talk face to face, not with ink."],["One Third","3 John is John's third letter."]],
+ 65:[["Surfer Dude","Jude sounds like dude."],["Chilli Pepper","Jude is a short hot letter, fierce like a chilli."],["Shield","Jude says contend for the faith, so raise a shield."],["Wandering Star","Jude calls false teachers wandering stars."],["Fire Rescue","Jude says snatch others from the fire."],["Sunglasses","A cool dude wears shades, and Jude sounds like dude."]],
+ 66:[["Curtain","Revelation pulls back the curtain."],["Gavel","Revelation ends with final judgment."],["Big Reveal","Revelation is a reveal."],["Lampstand","Revelation opens with seven golden lampstands."],["White Horse","Revelation's rider on a white horse."],["Sky City","New Jerusalem descends from heaven in Revelation."],["Trumpet","Seven trumpets sound in Revelation."]]
 };
 
-// Not the Major System. These are the things the world has already tied to a number, so they arrive
-// with a picture already attached. Book numbers only, 1 to 66.
+// Not the Major System. The things the world has already tied to a number, so they arrive with a
+// picture attached. Same [picture, why] pair. Book numbers only, 1 to 66.
 const NUM_REFS={
- 1:["a hole in one","a number one foam finger","a single birthday candle","a gold medal","a lone wolf","a unicycle","the first place podium"],
- 2:["a pair of shoes","a bicycle","twins","two thumbs up","a duet","a domino","a peace sign"],
- 3:["a tricycle","a three legged stool","a hat trick","the three point line","a triangle","three strikes and you are out","a traffic light"],
- 4:["a four leaf clover","the four wheels of a car","the four seasons","a square","a golfer shouting FORE","the four points of a compass","four quarters of a game"],
- 5:["a hand of five fingers","a high five","the Olympic rings","a five dollar bill","a starfish","the Pentagon","a basketball five"],
- 6:["a six pack","half a dozen","a six shooter","the six strings of a guitar","a die showing six","an insect's six legs"],
- 7:["the seven days of a week","triple sevens on a slot machine","the seven continents","a rainbow's seven colours","a 7-Eleven sign","the seven seas","a touchdown, seven points"],
- 8:["an octopus","a figure eight on ice","a spider","a stop sign","the eight ball","a V8 engine","an octagon"],
- 9:["a cat's nine lives","a baseball nine","nine innings","cloud nine","the whole nine yards","the front nine at golf"],
- 10:["ten fingers","a perfect ten score","a bowling strike, ten pins","a ten dollar bill","a decade","a top ten list"],
- 11:["a football eleven","11:11 on a clock","an amp that goes to eleven","the eleventh hour","two candles side by side"],
- 12:["a dozen eggs","a dozen donuts","the twelve months","a clock face","a jury of twelve","a ruler, twelve inches","a case of twelve"],
- 13:["a baker's dozen","unlucky thirteen","Friday the 13th","the thirteen original colonies","a black cat","the thirteenth floor that does not exist"],
- 14:["Valentine's Day","a fortnight","a sonnet's fourteen lines","two weeks off","the fourteenth of February"],
- 15:["a quinceanera","a rugby fifteen","the quarter hour","fifteen minutes of fame","fifteen love in tennis"],
- 16:["a driver's licence","a sweet sixteen cake","sixteen ounces in a pound","a sixteenth note","sixteen candles"],
- 17:["a high school senior","a seventeen year cicada","Seventeen magazine","a haiku's seventeen syllables","one year short of eighteen"],
- 18:["a ballot, the voting age","eighteen holes of golf","an eighteen wheeler","turning eighteen","a legal adult"],
- 19:["the nineteenth hole","one shy of twenty","a nineteen year old","the last of the teens"],
- 20:["20/20 vision","a twenty dollar bill","a score, as in four score","twenty questions","the twenty on a dartboard","twenty twenty hindsight"],
- 21:["blackjack","the drinking age","a twenty one gun salute","turning twenty one","a key to the door"],
- 22:["a catch 22","a .22 rifle","two little ducks","twenty two, a pair of twos"],
- 23:["a Michael Jordan jersey","the twenty third Psalm","twenty three chromosome pairs","the 23rd of the month"],
- 24:["twenty four hours in a day","a case of twenty four","24 carat gold","the shot clock, twenty four seconds","a day and a night"],
- 25:["a quarter, twenty five cents","a silver anniversary","Christmas Day","a quarter of a hundred","the twenty fifth of December"],
- 26:["a marathon, 26.2 miles","the twenty six letters of the alphabet","a full alphabet chart"],
- 27:["three cubed","the 27 club","twenty seven, three threes of three"],
- 28:["February's twenty eight days","a lunar month","four weeks exactly","a twenty eight day cycle"],
- 29:["leap day","one short of thirty","the twenty ninth of February"],
- 30:["thirty days has September","thirty love in tennis","a thirty year mortgage","the big three oh birthday","half an hour, thirty minutes"],
- 31:["Halloween, the thirty first of October","thirty one flavours of ice cream","the longest month's thirty one days","New Year's Eve"],
- 32:["freezing point, thirty two degrees","thirty two adult teeth","thirty two chess pieces","a thirty second note"],
- 33:["a vinyl record at 33 rpm","the age of Christ","thirty three, a double three"],
- 34:["Miracle on 34th Street","a size 34 waist","a thirty four jersey","the thirty fourth floor"],
- 35:["35mm film","the age to run for president","a thirty five millimetre camera"],
- 36:["a yard, thirty six inches","a roulette wheel's thirty six numbers","six squared","a thirty six inch ruler"],
- 37:["body temperature, thirty seven degrees Celsius","a thirty seven cent stamp","thirty seven, one shy of a fever"],
- 38:["a .38 revolver","a thirty eight special","the thirty eighth parallel"],
- 39:["the thirty nine steps","thirty nine and holding","one short of forty"],
- 40:["forty winks","forty acres and a mule","the forty hour week","life begins at forty","a quarantine, forty days"],
- 41:["the forty first president","Tom Seaver's forty one","a forty one gun salute","Route 41"],
- 42:["the answer to everything","Jackie Robinson's forty two","a forty two inch television"],
- 43:["Richard Petty's number 43 car","the forty third president","a forty three inch screen"],
- 44:["a .44 magnum","the forty fourth president","a size forty four"],
- 45:["a 45 rpm record","a .45 pistol","a forty five degree angle","forty five minutes, three quarters of an hour"],
- 46:["forty six chromosomes in every cell","the forty sixth president","a European size forty six shoe"],
- 47:["an AK-47","a concert harp's forty seven strings","the number forty seven hidden in every Star Trek"],
- 48:["a forty eight hour weekend","the lower forty eight states","two full days"],
- 49:["the 49ers and the gold rush","seven squared","one short of fifty"],
- 50:["the fifty states","a fifty dollar bill","a golden anniversary","a fifty fifty split","half a century"],
- 51:["Area 51","the fifty first state","fifty one, one past half"],
- 52:["a deck of cards","the fifty two weeks of a year","a card for every week"],
- 53:["an NFL roster, fifty three players","Herbie the Love Bug","a fifty three man squad"],
- 54:["a deck with both jokers, fifty four","Studio 54","fifty four, nine sixes"],
- 55:["a fifty five mile an hour speed limit","a double nickel","fifty five, five elevens"],
- 56:["the fifty six signers of the Declaration of Independence","fifty six, seven eights","a 56k modem"],
- 57:["Heinz 57","fifty seven varieties","a fifty seven Chevy"],
- 58:["someone five foot eight","Route 58","a number fifty eight jersey","two shy of a minute"],
- 59:["the 59th Street Bridge","fifty nine seconds","the last minute before the hour","someone five foot nine"],
- 60:["sixty seconds in a minute","sixty minutes in an hour","the show 60 Minutes","a diamond anniversary","a stopwatch face"],
- 61:["Route 61","sixty one home runs in a season","one past sixty"],
- 62:["the sixty second home run of 1998","someone six foot two","Route 62"],
- 63:["a sixty three yard field goal","someone six foot three","the year sixty three"],
- 64:["a chessboard's sixty four squares","a box of sixty four crayons","when I'm sixty four","a Nintendo 64"],
- 65:["retirement at sixty five","a sixty five mile an hour limit","a pension card"],
- 66:["Route 66","the sixty six books of the Bible","the last exit on Route 66"]
+ 1:[["Hole-in-One","One stroke puts the ball in the hole."],["Foam Finger","The foam finger says number one."],["One Candle","A first birthday cake has one candle."],["Gold Medal","Gold is for first place."],["Lone Wolf","A lone wolf is one alone."],["Unicycle","A unicycle has one wheel."],["Podium","The top podium spot is number one."]],
+ 2:[["Shoes","Shoes come in twos."],["Bicycle","A bicycle has two wheels."],["Twins","Twins are two."],["Thumbs Up","The classic rating is two thumbs up."],["Duet","A duet is sung by two."],["Domino","A domino has two halves."],["Peace Sign","A peace sign holds up two fingers."]],
+ 3:[["Tricycle","A tricycle has three wheels."],["Stool","A milking stool stands on three legs."],["Hat Trick","A hat trick is three goals."],["Three-Point Line","Shots from there score three."],["Triangle","A triangle has three sides."],["Three Strikes","Three strikes and you are out."],["Traffic Light","Red, amber, green, three lights."]],
+ 4:[["Four-Leaf Clover","A lucky clover has four leaves."],["Car Wheels","A car rides on four wheels."],["Four Seasons","There are four seasons."],["Square","A square has four sides."],["Fore","A golfer's fore sounds like four."],["Compass","A compass has four points."],["Four Quarters","A game is played in four quarters."]],
+ 5:[["Hand","A hand has five fingers."],["High Five","A high five slaps five fingers."],["Olympic Rings","There are five Olympic rings."],["Five-Dollar Bill","It is worth five dollars."],["Starfish","A starfish has five arms."],["Pentagon","The Pentagon has five sides."],["Basketball Five","Basketball fields five on court."]],
+ 6:[["Six Pack","A six pack holds six cans."],["Half Dozen","Half a dozen is six."],["Six Shooter","A six shooter holds six rounds."],["Guitar","A guitar has six strings."],["Die","A die's highest roll is six."],["Insect","An insect has six legs."]],
+ 7:[["Week","A week has seven days."],["Slot Machine","The jackpot is triple sevens."],["Continents","There are seven continents."],["Rainbow","A rainbow has seven colours."],["7-Eleven","The 7-Eleven sign leads with seven."],["Seven Seas","Sailors sail the seven seas."],["Touchdown","A touchdown plus kick is seven."]],
+ 8:[["Octopus","An octopus has eight arms."],["Figure Eight","Skaters carve a figure eight."],["Spider","A spider has eight legs."],["Stop Sign","A stop sign has eight sides."],["Eight Ball","The black ball is the eight."],["V8 Engine","A V8 has eight cylinders."],["Octagon","An octagon has eight sides."]],
+ 9:[["Cat","A cat has nine lives."],["Baseball Team","A baseball team fields nine."],["Nine Innings","A baseball game has nine innings."],["Cloud Nine","Pure happiness is cloud nine."],["Nine Yards","Going all out is the whole nine yards."],["Front Nine","The first nine holes at golf."]],
+ 10:[["Ten Fingers","You have ten fingers."],["Perfect Ten","A perfect score is a ten."],["Bowling Strike","A strike knocks down all ten pins."],["Ten Dollars","A ten dollar bill."],["Decade","A decade is ten years."],["Top Ten","A top ten list counts ten."]],
+ 11:[["Football Team","A football side fields eleven players."],["Clock 11:11","Make a wish at 11:11."],["Amp Dial","The famous amp that goes up to eleven."],["Eleventh Hour","The last moment is the eleventh hour."],["Two Candles","Two candles side by side look like 11."]],
+ 12:[["Dozen Eggs","A dozen is twelve."],["Dozen Donuts","Donuts come twelve to a box."],["Twelve Months","The year holds twelve months."],["Clock Face","A clock face shows twelve hours."],["Jury","A jury seats twelve."],["Ruler","A ruler is twelve inches long."],["Case","A case of drinks holds twelve."]],
+ 13:[["Baker's Dozen","A baker's dozen is thirteen."],["Bad Luck","Thirteen is the unlucky number."],["Friday 13th","The spooky date is the thirteenth."],["Thirteen Colonies","America began with thirteen colonies."],["Black Cat","Black cats share thirteen's bad luck."],["Missing Floor","Hotels often skip floor thirteen."]],
+ 14:[["Valentine's Day","It falls on the fourteenth."],["Fortnight","A fortnight is fourteen days."],["Sonnet","A sonnet has fourteen lines."],["Two Weeks","Two weeks off is fourteen days."],["February 14th","The fourteenth day of February."]],
+ 15:[["Quinceanera","A quinceanera marks turning fifteen."],["Rugby Team","A rugby side has fifteen players."],["Quarter Hour","A quarter hour is fifteen minutes."],["Spotlight","Everyone gets fifteen minutes of fame."],["Tennis Score","The first tennis point is fifteen love."]],
+ 16:[["Driver's Licence","You get one at sixteen."],["Sweet Sixteen","Sweet sixteen is the sixteenth birthday."],["Pound Weight","A pound holds sixteen ounces."],["Sixteenth Note","Sixteenth notes fit sixteen to a bar."],["Sixteen Candles","Sixteen candles on the birthday cake."]],
+ 17:[["Senior","High school seniors are often seventeen."],["Cicada","Some cicadas emerge every seventeen years."],["Seventeen Magazine","The teen magazine named Seventeen."],["Haiku","A haiku has seventeen syllables."],["Almost Eighteen","Seventeen is one year short of eighteen."]],
+ 18:[["Ballot","You can vote at eighteen."],["Golf Course","A round of golf is eighteen holes."],["Eighteen Wheeler","The big truck has eighteen wheels."],["Eighteenth Birthday","Turning eighteen means adulthood."],["Legal Adult","You become an adult at eighteen."]],
+ 19:[["Nineteenth Hole","Golf's clubhouse is the nineteenth hole."],["One Shy","Nineteen is one shy of twenty."],["Teenager","A nineteen year old is a teenager."],["Last Teen","Nineteen is the last of the teens."]],
+ 20:[["20/20 Vision","Perfect eyesight is twenty twenty."],["$20 Bill","The bill worth twenty dollars."],["Score","A score is twenty."],["Twenty Questions","The game asks twenty questions."],["Dartboard Twenty","Twenty sits at the top of the dartboard."],["Hindsight","Hindsight is twenty twenty."]],
+ 21:[["Blackjack","Blackjack is twenty one."],["Drinking Age","The US drinking age is twenty one."],["Gun Salute","The salute fires twenty one guns."],["21st Birthday","You come of age at twenty one."],["Door Key","The key of the door comes at twenty one."]],
+ 22:[["Catch-22","The famous no-win bind is Catch-22."],[".22 Rifle","The rifle's calibre is twenty two."],["Two Ducks","Bingo calls twenty two two little ducks."],["Two Twos","Twenty two is a pair of twos."]],
+ 23:[["Jordan Jersey","Michael Jordan wore twenty three."],["Psalm 23","The shepherd psalm is number twenty three."],["Chromosomes","Humans have twenty three chromosome pairs."],["23rd","The twenty third day of the month."]],
+ 24:[["24 Hours","A day has twenty four hours."],["Full Case","A case holds twenty four cans."],["Pure Gold","Pure gold is twenty four carat."],["Shot Clock","The NBA shot clock is twenty four seconds."],["Full Day","A day and a night is twenty four hours."]],
+ 25:[["Quarter","A quarter is twenty five cents."],["Silver Anniversary","Twenty five years is the silver one."],["Christmas Day","Christmas falls on December twenty fifth."],["One Quarter","Twenty five is a quarter of a hundred."],["December 25th","Christmas is the twenty fifth."]],
+ 26:[["Marathon","A marathon runs twenty six point two miles."],["Alphabet","The alphabet has twenty six letters."],["Alphabet Chart","The chart shows all twenty six letters."]],
+ 27:[["Three Cubed","Three cubed is twenty seven."],["27 Club","Famous musicians who died at twenty seven."],["Triple Threes","Three by three by three is twenty seven."]],
+ 28:[["February","February has twenty eight days."],["Lunar Month","A lunar month is roughly twenty eight days."],["Four Weeks","Four weeks is twenty eight days."],["Cycle Calendar","A typical cycle is twenty eight days."]],
+ 29:[["Leap Day","Leap day is February twenty ninth."],["Almost Thirty","Twenty nine is one short of thirty."],["February 29th","Leap years add February twenty ninth."]],
+ 30:[["September","Thirty days has September."],["Thirty Love","Thirty love is a tennis score."],["Mortgage","A standard mortgage runs thirty years."],["Big Three-Oh","Turning thirty is the big three oh."],["Half Hour","Half an hour is thirty minutes."]],
+ 31:[["Halloween","Halloween is October thirty first."],["31 Flavours","Baskin Robbins boasts thirty one flavours."],["Calendar Page","The longest months have thirty one days."],["New Year","New Year's Eve is December thirty first."]],
+ 32:[["Freezing Point","Water freezes at thirty two Fahrenheit."],["Adult Teeth","Adults have thirty two teeth."],["Chess Set","A chess set has thirty two pieces."],["Music Note","The thirty second note is the fast one."]],
+ 33:[["Vinyl Record","An LP spins at thirty three rpm."],["Cross","Tradition says Jesus died at thirty three."],["Double Three","Thirty three is a pair of threes."]],
+ 34:[["34th Street","The film Miracle on 34th Street."],["Blue Jeans","A size thirty four waist."],["Jersey","A number 34 jersey."],["34th Floor","A skyscraper's thirty fourth floor."]],
+ 35:[["35mm Film","Classic camera film is thirty five mm."],["White House","US presidents must be thirty five."],["Camera","A thirty five millimetre camera."]],
+ 36:[["Yardstick","A yard is thirty six inches."],["Roulette Wheel","Roulette numbers run one to thirty six."],["Six Squared","Six times six is thirty six."],["Ruler","A thirty six inch ruler is a yard."]],
+ 37:[["Thermometer","Body temperature is 37 degrees Celsius."],["Stamp","A US stamp once cost 37 cents."],["Fever Line","At 38 you have a fever, 37 is one shy."]],
+ 38:[[".38 Revolver","A revolver chambered in .38."],["38 Special","The .38 Special is a classic revolver round."],["38th Parallel","The 38th parallel divides the two Koreas."]],
+ 39:[["39 Steps","The 39 Steps is a famous Hitchcock thriller."],["39 Candles","Jokers stay 39 and holding every birthday."],["Almost Forty","Thirty nine is one short of forty."]],
+ 40:[["Forty Winks","A quick nap is forty winks."],["Forty Acres","Freed slaves were promised forty acres and a mule."],["Timesheet","The standard work week is forty hours."],["Party Banner","They say life begins at forty."],["Quarantine","Quarantine comes from Italian for forty days."]],
+ 41:[["Bush Senior","George H. W. Bush was the 41st president."],["Seaver Jersey","Tom Seaver wore 41 for the Mets."],["Gun Salute","A royal salute in the parks fires 41 guns."],["Route 41","A highway sign for Route 41."]],
+ 42:[["Answer","In Hitchhiker's Guide, 42 answers everything."],["Robinson Jersey","Jackie Robinson wore number 42."],["Television","A 42 inch television screen."]],
+ 43:[["Petty Car","Richard Petty raced the number 43 car."],["Bush Junior","George W. Bush was the 43rd president."],["Big Screen","TVs commonly come in 43 inches."]],
+ 44:[[".44 Magnum","The Dirty Harry gun is a .44 Magnum."],["Obama","Barack Obama was the 44th president."],["Size 44","A jacket tagged size 44."]],
+ 45:[["45 Record","Singles spin at 45 rpm."],[".45 Pistol","The classic army pistol was a .45."],["Angle","A 45 degree angle is half a right angle."],["Clock Face","45 minutes is three quarters of an hour."]],
+ 46:[["Chromosomes","Human cells hold 46 chromosomes."],["President 46","Joe Biden was the 46th president."],["Size 46","Size 46 is a European shoe size."]],
+ 47:[["AK-47","The rifle is named the AK-47."],["Harp","A concert harp has 47 strings."],["Star Trek","47 hides in many Star Trek episodes."]],
+ 48:[["Weekend","A weekend is 48 hours."],["Lower 48","The mainland US has the lower 48 states."],["Two Days","Two days is 48 hours."]],
+ 49:[["49ers","The 1849 gold rush miners were 49ers."],["Seven Squared","Seven times seven is 49."],["Almost Fifty","49 is one short of fifty."]],
+ 50:[["Fifty States","The US has fifty states."],["Fifty Dollars","The bill worth fifty dollars."],["Golden Anniversary","The fiftieth anniversary is golden."],["Fifty Fifty","A fifty fifty split down the middle."],["Half Century","Fifty years is half a century."]],
+ 51:[["Area 51","The secret base is Area 51."],["51st State","A new state would be the 51st."],["Past Half","51 is one past halfway to 100."]],
+ 52:[["Card Deck","A deck holds 52 cards."],["Calendar","A year has 52 weeks."],["Weekly Card","One card for each of the 52 weeks."]],
+ 53:[["NFL Roster","An NFL team carries 53 players."],["Herbie","Herbie the Love Bug wears 53."],["Squad","A full NFL squad is 53 men."]],
+ 54:[["Joker Deck","A deck with both jokers has 54 cards."],["Studio 54","The famous disco was Studio 54."],["Nine Sixes","Nine times six is 54."]],
+ 55:[["Speed Limit","The old US speed limit was 55 mph."],["Double Nickel","Two nickels make fifty five."],["Five Elevens","Five times eleven is fifty five."]],
+ 56:[["Signers","Fifty six men signed the Declaration."],["Seven Eights","Seven times eight is fifty six."],["56k Modem","Dial-up modems ran at 56k."]],
+ 57:[["Heinz 57","Heinz ketchup bottles say 57."],["57 Varieties","Heinz's famous slogan counts 57 varieties."],["'57 Chevy","The classic Chevy is the 1957 model."]],
+ 58:[["Five Eight","Height five foot eight reads 58."],["Route 58","A road sign for Route 58."],["Jersey 58","A number 58 jersey."],["58 Seconds","Fifty eight seconds is two shy of a minute."]],
+ 59:[["59th Street","The 59th Street Bridge in New York."],["59 Seconds","Fifty nine seconds, one shy of a minute."],["Last Minute","Minute 59 is the last before the hour."],["Five Nine","Height five foot nine reads 59."]],
+ 60:[["60 Seconds","A minute has sixty seconds."],["Full Hour","An hour has sixty minutes."],["60 Minutes","The news show 60 Minutes."],["Diamond","A diamond anniversary marks sixty years."],["Stopwatch","A stopwatch dial counts to sixty."]],
+ 61:[["Route 61","A road sign for Route 61."],["Home Run","Roger Maris hit 61 homers in 1961."],["Plus One","Sixty one is one past sixty."]],
+ 62:[["62nd Homer","McGwire hit his record 62nd homer in 1998."],["Six Two","Height six foot two reads 62."],["Route 62","A road sign for Route 62."]],
+ 63:[["Field Goal","A 63 yard kick, the longtime NFL record."],["Six Three","Height six foot three reads 63."],["Year 63","The year sixty three on a calendar."]],
+ 64:[["Chessboard","A chessboard has sixty four squares."],["Crayon Box","The big crayon box holds sixty four."],["Beatles Record","The Beatles sang When I'm Sixty Four."],["Nintendo 64","The console is named Nintendo 64."]],
+ 65:[["Retirement","Traditional retirement age is sixty five."],["Speed Limit","A 65 mph speed limit sign."],["Pension Card","Pensions start at sixty five."]],
+ 66:[["Route 66","The famous highway is Route 66."],["Bible","The Bible has sixty six books."],["Last Exit","The last exit on Route 66."]]
 };
 
 function bookWordOptions(n){ return BOOK_WORDS[n] || []; }
 function numRefOptions(n){ return NUM_REFS[n] || []; }
+function optName(o){ return Array.isArray(o) ? o[0] : String(o||""); }   // [picture, why]
+function optWhy(o){ return Array.isArray(o) ? (o[1]||"") : ""; }
 // The two chosen words are the user's own text, never an icon, so they are stored as plain strings.
 function bookWordOf(n){ return (Prog.bookWord||{})[n] || ""; }
 function numRefOf(n){ return (Prog.numRef||{})[n] || ""; }
@@ -3198,9 +3213,17 @@ function buildSentence(n){
 function buildTheBookBox(n){
   const words=bookWordOptions(n), refs=numRefOptions(n), w=pegFor(n).word, snd=pegFor(n).sounds;
   const bw=bookWordOf(n), nr=numRefOf(n), done=!!(bw&&nr);
-  const opt=(list,cur)=>list.map(o=>`<option value="${bbEsc(o)}"${o===cur?" selected":""}>${bbEsc(o)}</option>`).join("");
-  // A chosen word that is not on the list is the user's own, so it keeps its place in the dropdown.
-  const own=(list,cur)=>(cur&&!list.includes(cur)) ? `<option value="${bbEsc(cur)}" selected>${bbEsc(cur)}</option>` : "";
+  // Two to a row, the picture in bold and the reason underneath, because "Popsicle" alone does not
+  // tell you why it is there and the whole point is the link.
+  const tiles=(list,cur,kind)=>list.map(o=>{
+    const nm=optName(o);
+    return `<button type="button" class="pickbtn bbopt${nm===cur?" on":""}" data-${kind}="${bbEsc(nm)}">
+      <span class="pkt">${bbEsc(nm)}</span><span class="pks">${bbEsc(optWhy(o))}</span></button>`;
+  }).join("");
+  // A word of their own is not on the list, so it keeps a tile of its own.
+  const ownTile=(list,cur,kind)=>(cur&&!list.some(o=>optName(o)===cur))
+    ? `<button type="button" class="pickbtn bbopt on" data-${kind}="${bbEsc(cur)}"><span class="pkt">${bbEsc(cur)}</span><span class="pks">your own</span></button>` : "";
+  const mine=kind=>`<button type="button" class="pickbtn bbopt bbown" data-own="${kind}"><span class="pkt">✎ My own</span><span class="pks">write your own picture</span></button>`;
   const sent=buildSentence(n);
   return `<div class="bb">
     <div class="bbhead">🔨 Build the Book</div>
@@ -3221,11 +3244,11 @@ function buildTheBookBox(n){
 
     <div class="bbrow">
       <label>1 · A picture for the name</label>
-      <select class="bbsel" id="bbWord"><option value="">Choose a picture for ${bbEsc(bookName(n))}…</option>${opt(words,bw)}${own(words,bw)}<option value="__own">✎ Write my own…</option></select>
+      <div class="pickscroll"><div class="pickgrid" id="bbWord">${tiles(words,bw,"word")}${ownTile(words,bw,"word")}${mine("word")}</div></div>
     </div>
     <div class="bbrow">
       <label>2 · A picture for the number ${dispNum("book",n)}</label>
-      <select class="bbsel" id="bbNum"><option value="">Choose a picture for ${dispNum("book",n)}…</option>${opt(refs,nr)}${own(refs,nr)}<option value="__own">✎ Write my own…</option></select>
+      <div class="pickscroll"><div class="pickgrid" id="bbNum">${tiles(refs,nr,"num")}${ownTile(refs,nr,"num")}${mine("num")}</div></div>
     </div>
     <div class="bbrow">
       <label>3 · The coded image</label>
@@ -3237,20 +3260,20 @@ function buildTheBookBox(n){
 
 // One handler for both dropdowns: pick from the list, or choose to write your own and get a prompt.
 function wireBuildTheBook(n, rerender){
-  const sel=(id,store,label)=>{
-    const s=el(id); if(!s) return;
-    s.onchange=()=>{
-      let v=s.value;
-      if(v==="__own"){
-        v=(prompt(label,(store===Prog.bookWord?bookWordOf(n):numRefOf(n))||"")||"").trim();
-        if(!v){ rerender(); return; }
-      }
+  const wire=(gridId,attr,store,label)=>{
+    const g=el(gridId); if(!g) return;
+    g.querySelectorAll("[data-"+attr+"]").forEach(btn=>btn.onclick=()=>{
+      store[n]=btn.getAttribute("data-"+attr); saveProg(); rerender();
+    });
+    const own=g.querySelector('[data-own="'+attr+'"]');
+    if(own) own.onclick=()=>{
+      const v=(prompt(label, store[n]||"")||"").trim();
       if(v) store[n]=v; else delete store[n];
       saveProg(); rerender();
     };
   };
-  sel("bbWord", Prog.bookWord, `A picture that reminds you of ${bookName(n)}:`);
-  sel("bbNum",  Prog.numRef,   `A picture that reminds you of the number ${dispNum("book",n)}:`);
+  wire("bbWord","word", Prog.bookWord, `A picture that reminds you of ${bookName(n)}:`);
+  wire("bbNum", "num",  Prog.numRef,   `A picture that reminds you of the number ${dispNum("book",n)}:`);
   if(el("bbMore")) el("bbMore").onclick=()=>{
     const s=el("bbScript"), shown=s.style.display!=="none";
     s.style.display=shown?"none":"block";
