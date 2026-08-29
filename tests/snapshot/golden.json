@@ -9,13 +9,13 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "classic/verse/hub": {
-  "h": "f69fefc85a566876",
+  "h": "a0117043acf3e8b7",
   "len": 3019,
   "els": 59,
   "buttons": 7,
   "svgs": 3,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 remaining 🔥 4 day streak Spaced Repetiti"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 Remaining 🔥 4 day streak Spaced Repetiti"
  },
  "classic/verse/suggested": {
   "h": "40da0dd103c31523",
@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "4514dc665a5fd098",
+  "h": "f72380b4ddfc7112",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "039b2de3fc66f9ff",
-  "len": 93370,
-  "els": 1740,
+  "h": "3ba0db8fd9f4e4e2",
+  "len": 93833,
+  "els": 1752,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.67.0 August 29, 2026 Twenty a day FIX A daily goal can go to twenty. It stopped at fifteen. FIX Ten"
+  "text": "✕ Version history v1.68.0 August 29, 2026 Title Case, and the handbook FIX Short labels use book title capitalisation. T"
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "8766ce91c8aefa1d",
+  "h": "424a050be2333830",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -522,13 +522,13 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "illumined/verse/hub": {
-  "h": "8663a0b376101b16",
+  "h": "214c1757bfe59401",
   "len": 3361,
   "els": 62,
   "buttons": 7,
   "svgs": 4,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught up today 🔥 4 day streak Spaced Repetit"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "illumined/verse/suggested": {
   "h": "40da0dd103c31523",
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "360a6c0a46b92829",
+  "h": "ec626370e05caff7",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "039b2de3fc66f9ff",
-  "len": 93370,
-  "els": 1740,
+  "h": "3ba0db8fd9f4e4e2",
+  "len": 93833,
+  "els": 1752,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.67.0 August 29, 2026 Twenty a day FIX A daily goal can go to twenty. It stopped at fifteen. FIX Ten"
+  "text": "✕ Version history v1.68.0 August 29, 2026 Title Case, and the handbook FIX Short labels use book title capitalisation. T"
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "360a6c0a46b92829",
+  "h": "ec626370e05caff7",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1035,13 +1035,13 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "glass/verse/hub": {
-  "h": "8663a0b376101b16",
+  "h": "214c1757bfe59401",
   "len": 3361,
   "els": 62,
   "buttons": 7,
   "svgs": 4,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught up today 🔥 4 day streak Spaced Repetit"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "glass/verse/suggested": {
   "h": "40da0dd103c31523",
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "d3cb43e1840b7ccc",
+  "h": "e754098601348908",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "039b2de3fc66f9ff",
-  "len": 93370,
-  "els": 1740,
+  "h": "3ba0db8fd9f4e4e2",
+  "len": 93833,
+  "els": 1752,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.67.0 August 29, 2026 Twenty a day FIX A daily goal can go to twenty. It stopped at fifteen. FIX Ten"
+  "text": "✕ Version history v1.68.0 August 29, 2026 Title Case, and the handbook FIX Short labels use book title capitalisation. T"
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "d3cb43e1840b7ccc",
+  "h": "e754098601348908",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1548,13 +1548,13 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "quest/verse/hub": {
-  "h": "8663a0b376101b16",
+  "h": "214c1757bfe59401",
   "len": 3361,
   "els": 62,
   "buttons": 7,
   "svgs": 4,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught up today 🔥 4 day streak Spaced Repetit"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "quest/verse/suggested": {
   "h": "40da0dd103c31523",
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "4c42bc3826f38826",
+  "h": "ba491df20db766ad",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "039b2de3fc66f9ff",
-  "len": 93370,
-  "els": 1740,
+  "h": "3ba0db8fd9f4e4e2",
+  "len": 93833,
+  "els": 1752,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.67.0 August 29, 2026 Twenty a day FIX A daily goal can go to twenty. It stopped at fifteen. FIX Ten"
+  "text": "✕ Version history v1.68.0 August 29, 2026 Title Case, and the handbook FIX Short labels use book title capitalisation. T"
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "4c42bc3826f38826",
+  "h": "ba491df20db766ad",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -2061,13 +2061,13 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "buddy/verse/hub": {
-  "h": "8663a0b376101b16",
+  "h": "214c1757bfe59401",
   "len": 3361,
   "els": 62,
   "buttons": 7,
   "svgs": 4,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught up today 🔥 4 day streak Spaced Repetit"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "buddy/verse/suggested": {
   "h": "40da0dd103c31523",
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "4dcc8574a2488883",
+  "h": "0f933267339fdd45",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "039b2de3fc66f9ff",
-  "len": 93370,
-  "els": 1740,
+  "h": "3ba0db8fd9f4e4e2",
+  "len": 93833,
+  "els": 1752,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.67.0 August 29, 2026 Twenty a day FIX A daily goal can go to twenty. It stopped at fifteen. FIX Ten"
+  "text": "✕ Version history v1.68.0 August 29, 2026 Title Case, and the handbook FIX Short labels use book title capitalisation. T"
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "4dcc8574a2488883",
+  "h": "0f933267339fdd45",
   "len": 17712,
   "els": 441,
   "buttons": 40,

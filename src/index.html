@@ -2055,8 +2055,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.67.0";
+const APP_VERSION="1.68.0";
 const CHANGELOG=[
+ {v:"1.68.0", d:"August 29, 2026", t:"Title Case, and the handbook", items:[
+   ["chg","<b>Short labels use book title capitalisation.</b> The goal button reads <b>4 Remaining</b>, <b>Caught Up Today</b> and <b>3 Still Due</b>. Prose stays as prose: hints and lesson copy still read like English."]
+ ]},
  {v:"1.67.0", d:"August 29, 2026", t:"Twenty a day", items:[
    ["chg","<b>A daily goal can go to twenty.</b> It stopped at fifteen."],
    ["chg","<b>Ten dots to a line, always.</b> They used to wrap wherever the words beside them left room, which gave nine on one screen and eleven on another. A goal of twenty is now plainly two rows of ten."],
@@ -6647,8 +6650,8 @@ function libStatusHTML(){
   const streak=`<span class="gb-streak${dstk?"":" off"}"><b><span class="gb-flame">🔥</span> ${dstk}</b><small>day streak</small></span>`;
   // The freeze count lived here and squeezed the streak into a corner. Freezes are still bought and
   // still spent; they are just not what this button is for.
-  const line = caught ? "Caught up today"
-    : (due ? `${due} still due` : `${Math.max(0,t-c)} remaining`);
+  const line = caught ? "Caught Up Today"
+    : (due ? `${due} Still Due` : `${Math.max(0,t-c)} Remaining`);
   // The tick is drawn rather than typed, because a drawn one can draw itself again.
   const tick=`<svg class="gb-tick" viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="10.4" fill="var(--ok-bg)" stroke="var(--green)" stroke-width="1.6"/>

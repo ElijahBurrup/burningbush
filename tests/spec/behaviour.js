@@ -2703,14 +2703,14 @@ const DAY = 86400000;
   is(goalRow.dots, 20, 'a goal of twenty draws twenty dots');
   is(goalRow.cols, 10, '…ten to a line, so twenty is two clean rows');
   is(goalRow.lit, 16, '…with the ones already done lit');
-  is(goalRow.line, '4 remaining', 'and it says what is left, plainly');
+  is(goalRow.line, '4 Remaining', 'and it says what is left, plainly');
 
   const goalDone = await $(() => {
     const st = goalState(); st.count = 20; saveProg();
     renderVerse();
     return document.querySelector('#verse .gb-title').textContent;
   });
-  is(goalDone, 'Caught up today', 'once the goal is met it says so instead of counting');
+  is(goalDone, 'Caught Up Today', 'once the goal is met it says so instead of counting');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
