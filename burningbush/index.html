@@ -922,6 +922,10 @@
   .pickbtn.on{border-color:var(--gold2);color:var(--gold-ink);box-shadow:inset 0 0 0 1px var(--gold2)}
   .pickbtn.on .pks{color:var(--gold-ink)}
   .pickbtn.next{border-color:var(--good);border-style:dashed}
+  /* the same three states the Memory Palace page uses, so a palace looks the same wherever it is seen */
+  .pickbtn.pal-full{background:var(--ok-bg);border-color:var(--green)}
+  .pickbtn.pal-partial{background:var(--no-bg);border-color:var(--miss-ink)}
+  .pickbtn.pal-empty{background:var(--sel-bg);border-color:var(--accent)}
   .pickbtn.taken{opacity:.62}
   .pickbtn:active{transform:translateY(1px)}
   .wroomwrap{position:relative}
@@ -1199,8 +1203,12 @@
   .palace-card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;cursor:pointer}
   .palace-card.pal-full{background:var(--ok-bg);border-color:var(--green)}
   .palace-card.pal-partial{background:var(--no-bg);border-color:var(--miss-ink)}
+  /* Empty was the plain default, which read as "nothing to say about this one". It is the opposite:
+     an untouched palace is the one with the most room in it. */
+  .palace-card.pal-empty{background:var(--sel-bg);border-color:var(--accent)}
   .pal-fill-tag{font-size:12.5px;font-weight:800}
-  .pal-fill-tag.full{color:var(--good)} .pal-fill-tag.partial{color:var(--miss-ink)}
+  .pal-fill-tag.full{color:var(--good)}
+  .pal-fill-tag.empty{color:var(--blue-ink)} .pal-fill-tag.partial{color:var(--miss-ink)}
   .palace-card h3{margin:0 0 3px;font-size:16px} .palace-card p{margin:0;font-size:12.5px;color:var(--muted)}
   /* spaced repetition trail */
   .srtrail{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:nowrap}
@@ -1949,8 +1957,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.59.0";
+const APP_VERSION="1.60.0";
 const CHANGELOG=[
+ {v:"1.60.0", d:"August 28, 2026", t:"A palace looks the same wherever you see it", items:[
+   ["chg","<b>The palace picker uses the Memory Palace colours.</b> Red for half filled, blue for untouched, green for full, so a palace you recognise on one screen is the same palace on the other."],
+   ["new","<b>An untouched palace is blue rather than plain.</b> It used to look like the app had nothing to say about it, when it is the one with the most room in it."],
+   ["chg","<b>The picker sorts by where the work is</b>: half filled first, then untouched, then full. A full palace has no room left, so it goes last."]
+ ]},
  {v:"1.59.0", d:"August 28, 2026", t:"The counts open", items:[
    ["new","<b>The three counts on My Verses are buttons.</b> Tap <b>By heart</b>, <b>Sealed</b> or <b>Due today</b> and the verses behind the number come up in a list you can scroll and tap straight into."],
    ["chg","<b>Books, day streak and clean runs are off the grid.</b> They are a number and nothing more, with no list behind them, so they sit with the records below instead of pretending to be a way in."],
@@ -8468,12 +8481,23 @@ function renderWalk(){
   const spotFree=(pi,room)=>versesAtLoc(pi,room).filter(k=>k!==vkey).length===0;
   // Two tiles to a row instead of a dropdown. On a phone a <select> of twenty stations is a spinning
   // wheel you have to scroll blind; this shows the whole palace at once and says which spots are free.
-  const palaceTiles=()=>palaces.map(([p,i])=>{
-    const st=roomsFor(i), free=st.filter(r=>spotFree(i,r)).length;
-    return `<button type="button" class="pickbtn${i===selP?" on":""}" data-p="${i}">
-      <span class="pkt">${bbEsc(p.place)}</span>
-      <span class="pks">${st.length?free+" free of "+st.length:"no spots yet"}</span></button>`;
-  }).join("");
+  // Same three colours as the Memory Palace page, but ordered by where a verse can actually go:
+  // half-filled first, because that is where the work is; then untouched; then full, which has no
+  // room left and is only here so it can be seen at all.
+  const palaceFill=(i)=>{ const st=roomsFor(i), used=st.filter(r=>!spotFree(i,r)).length;
+    return { st, used, fill: st.length>0 && used===st.length ? "full" : (used>0 ? "partial" : "empty") }; };
+  const PAL_ORDER={partial:0, empty:1, full:2};
+  const palaceTiles=()=>palaces.map(([p,i])=>Object.assign({p,i}, palaceFill(i)))
+    .sort((a,b)=>PAL_ORDER[a.fill]-PAL_ORDER[b.fill] || a.i-b.i)
+    .map(({p,i,st,used,fill})=>{
+      const free=st.length-used;
+      const say = fill==="full" ? "🟢 full, no room left"
+                : fill==="partial" ? `🔴 ${free} free of ${st.length}`
+                : (st.length ? `🔵 ${st.length} spots, all free` : "no spots yet");
+      return `<button type="button" class="pickbtn pal-${fill}${i===selP?" on":""}" data-p="${i}" data-fill="${fill}">
+        <span class="pkt">${bbEsc(p.place)}</span>
+        <span class="pks">${say}</span></button>`;
+    }).join("");
   const roomTiles=(pi)=>{
     const st=roomsFor(pi);
     if(!st.length) return `<div class="hint" style="grid-column:1/-1;text-align:center;margin:10px 0">Add some spots to this palace first.</div>`;
@@ -10081,8 +10105,8 @@ function renderPalace(){
         const ord={partial:0,full:1,none:2}; stat.sort((a,b)=>ord[a.fill]-ord[b.fill]);
         return stat.map(({p,i,used,total,fill})=>{
           const pdue=palaceDue(p), pdone=palaceTrailDone(p), status=pdue?`<span style="color:#ff8a8a;font-weight:800">● Review due now</span>`:(pdone?`<span class="gold">✓ Trail complete</span>`:`Next review in ${srHuman(palaceNextReviewMs(p))}`);
- const fillLbl = fill==="full"?`<span class="pal-fill-tag full">🟢 Full. Every spot holds a verse</span>`:(fill==="partial"?`<span class="pal-fill-tag partial">🔴 ${used}/${total} spots filled</span>`:`<span class="pal-fill-tag">${total} empty spots</span>`);
-          return `<div class="palace-card ${fill==="full"?"pal-full":(fill==="partial"?"pal-partial":"")}" data-mine="${i}"><h3>🏛️ ${p.place}${pdue?`<span class="due-dot"></span>`:""}</h3>
+ const fillLbl = fill==="full"?`<span class="pal-fill-tag full">🟢 Full. Every spot holds a verse</span>`:(fill==="partial"?`<span class="pal-fill-tag partial">🔴 ${used}/${total} spots filled</span>`:`<span class="pal-fill-tag empty">🔵 ${total} spots, all free</span>`);
+          return `<div class="palace-card ${fill==="full"?"pal-full":(fill==="partial"?"pal-partial":"pal-empty")}" data-mine="${i}"><h3>🏛️ ${p.place}${pdue?`<span class="due-dot"></span>`:""}</h3>
             <p style="margin-bottom:4px">${fillLbl}</p>
             <p>${p.stations.length} locations · ${status}</p>
             <div style="margin-top:12px">${srTrailHTML(p)}</div></div>`;

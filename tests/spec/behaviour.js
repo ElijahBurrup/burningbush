@@ -2221,7 +2221,7 @@ const DAY = 86400000;
   no(picker.onScreen.gridsInline, '…with no grid sitting open on the screen itself');
   ok(/My House/.test(picker.onScreen.asks), '…and a lone palace is already chosen, since there is no choice to make');
   is(picker.palaceTiles, 1, 'the sheet holds a tile for every palace');
-  is(picker.palaceSub, '8 free of 12', '…saying how much room is left in it');
+  is(picker.palaceSub, '🔴 8 free of 12', '…saying how much room is left in it, and colouring it red because it is half filled');
   is(picker.cols, 2, 'the spots are laid out two to a row');
   is(picker.spots, 12, '…all twelve of them');
   is(picker.taken.join(','), 'Front door,Hall,Kitchen,Sink', 'the spots already holding a verse are marked');
@@ -2340,6 +2340,44 @@ const DAY = 86400000;
   ok(/day streak/i.test(streakLabel.on), 'the goal button says the flame is a day streak');
   ok(/4/.test(streakLabel.on), '…alongside the number');
   ok(/day streak/i.test(streakLabel.off), '…and says it at zero too, so it can be started');
+
+  const palColours = await $(() => {
+    Prog.palaces = [
+      { place: 'Full House', stations: ['a', 'b'] },        // every spot taken
+      { place: 'Untouched',  stations: ['x', 'y', 'z'] },   // nothing in it
+      { place: 'Half Done',  stations: ['p', 'q'] },        // one of two
+    ];
+    Prog.memorized = ['19:23:1', '19:23:2', '19:23:3'];
+    Prog.verseLoc = { '19:23:1': { p: 0, room: 'a' }, '19:23:2': { p: 0, room: 'b' },
+                      '19:23:3': { p: 2, room: 'p' } };
+    Prog.customScene = {}; delete Prog.verseLoc['40:6:33'];
+    markVideoSeen('verse'); saveProg();
+    openVerseWizard(40, 6, 33, () => { });
+    el('wToScene').click();
+    el('wPalaceBtn').click();
+    const tiles = [...document.querySelectorAll('#psGrid [data-p]')];
+    const out = {
+      order: tiles.map(t => t.querySelector('.pkt').textContent),
+      fills: tiles.map(t => t.dataset.fill),
+      classes: tiles.map(t => /pal-(full|partial|empty)/.exec(t.className)[0]),
+      says: tiles.map(t => t.querySelector('.pks').textContent),
+    };
+    el('psClose').click();
+    // and the Memory Palace page paints the same three states
+    show('palace'); renderPalace();
+    out.pageClasses = [...document.querySelectorAll('#palace [data-mine]')]
+      .map(c => /pal-(full|partial|empty)/.exec(c.className)[0]);
+    return out;
+  });
+  is(palColours.order.join(' → '), 'Half Done → Untouched → Full House',
+     'the picker sorts by where a verse can actually go');
+  is(palColours.fills.join(','), 'partial,empty,full', '…half filled, then untouched, then full');
+  is(palColours.classes.join(','), 'pal-partial,pal-empty,pal-full',
+     'red, blue and green, the Memory Palace colours');
+  ok(/🔴/.test(palColours.says[0]) && /🔵/.test(palColours.says[1]) && /🟢/.test(palColours.says[2]),
+     '…and each one says which it is, not only shows it');
+  is([...palColours.pageClasses].sort().join(','), 'pal-empty,pal-full,pal-partial',
+     'the Memory Palace page paints the same three states, empty included');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
