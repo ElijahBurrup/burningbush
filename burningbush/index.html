@@ -1021,10 +1021,21 @@
      icon so neither is ever mistaken for the other. */
   /* A screen wears the icon of the tab that opened it, larger, beside its title — so the page you
      are on and the button that got you here are plainly the same thing. */
+  /* The film is where the instructions live now, so the way to it has to be seen. A double thump,
+     then a rest, which is why the keyframes bunch at the start and hold at the end. */
   .revlesson{flex:0 0 auto;margin-left:auto;width:78px;padding:7px 6px;border-radius:10px;
-    background:var(--panel2);border:1px solid var(--line);color:var(--ink-soft);
-    font-family:inherit;font-size:11px;font-weight:800;line-height:1.25;text-align:center;cursor:pointer}
-  .revlesson:active{transform:translateY(1px)}
+    background:linear-gradient(135deg,var(--blue),var(--blue2));border:1px solid var(--blue2);
+    color:var(--on-blue);font-family:inherit;font-size:11px;font-weight:800;line-height:1.25;
+    text-align:center;cursor:pointer;animation:revbeat 2.4s ease-in-out infinite}
+  .revlesson:active{transform:scale(.95);animation:none}
+  @keyframes revbeat{
+    0%{transform:scale(1);box-shadow:0 0 0 0 var(--blue-glow)}
+    8%{transform:scale(1.09)}
+    16%{transform:scale(1)}
+    24%{transform:scale(1.07)}
+    34%{transform:scale(1);box-shadow:0 0 0 12px var(--blue-glow0)}
+    100%{transform:scale(1);box-shadow:0 0 0 0 var(--blue-glow0)}}
+  @media (prefers-reduced-motion: reduce){ .revlesson{animation:none} }
   .pagehead{display:flex;align-items:center;gap:10px;margin:0 0 2px;min-width:0}
   .pagehead h2{margin:0;min-width:0}
   .ph-i{flex:0 0 auto;font-size:33px;line-height:1;display:grid;place-items:center;width:36px;height:36px}
@@ -1551,6 +1562,18 @@
   .bbtoggle{width:100%;margin:2px 0 12px}
   .bbrow{margin:12px 0}
   .bbrow label{display:block;font-size:11.5px;font-weight:800;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+  /* the chooser reads as one line of answer with its reason under it, and a caret that says it opens */
+  .bbchoose{display:flex;align-items:center;gap:10px;width:100%;text-align:left;cursor:pointer;
+    padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel0);
+    color:var(--muted);font-family:inherit;line-height:1.3}
+  .bbchoose.set{border-color:var(--gold2)}
+  .bbchoose:active{transform:translateY(1px)}
+  .bbc-t{flex:1;min-width:0}
+  .bbc-name{display:block;font-size:14.5px;font-weight:800;color:var(--ink)}
+  .bbchoose.set .bbc-name{color:var(--gold-ink)}
+  .bbchoose:not(.set) .bbc-name{color:var(--muted);font-weight:700}
+  .bbc-why{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:2px}
+  .bbc-caret{flex:none;color:var(--muted);font-size:12px}
   .bbopt{min-height:82px}
   .bbopt .pks{font-size:10px;line-height:1.3;opacity:.95}
   .bbown{border-style:dashed}
@@ -1900,8 +1923,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.55.0";
+const APP_VERSION="1.56.0";
 const CHANGELOG=[
+ {v:"1.56.0", d:"August 28, 2026", t:"One screen, one job", items:[
+   ["chg","<b>The written walkthrough is gone from the book screen.</b> Review Lesson plays the film, and two explanations of the same thing on one screen was one too many."],
+   ["chg","<b>Review Lesson stands out and beats like a heart</b>, on every screen that has one, because it is where the instructions live now."],
+   ["chg","<b>The two choices are named for what they are</b>: Book / Image Relationship and Number / Image Relationship. Each opens the same grid in a sheet of its own, the way picking a palace or a spot does."],
+   ["chg","<b>The book screen no longer asks for a scene.</b> It teaches the three pictures and stops there. Writing the scene belongs with the palace and the spot, on the screen that already asks for both."]
+ ]},
  {v:"1.55.0", d:"August 28, 2026", t:"Every picker is tiles now", items:[
    ["chg","<b>Build the Book shows tiles instead of dropdowns.</b> Every picture is one or two words with a line underneath saying how it ties to the book or the number, because <b>Popsicle</b> on its own does not tell you why it is there."],
    ["chg","<b>All 666 options were rewritten short.</b> \"a stopwatch (chrono)\" is now <b>Stopwatch</b>, \"Chrono means time, like a stopwatch.\" Nothing was dropped or reordered."],
@@ -3206,13 +3235,23 @@ function buildSentence(n){
   const b=bookWordOf(n), r=numRefOf(n), w=pegFor(n).word;
   if(!b || !r) return "";
   return `Build one scene with <b>${bbEsc(b)}</b>, <b>${bbEsc(r)}</b> and your <b>${bbEsc(w)}</b>. `+
-    `All three touching, all three moving, far too big to be real. `+
-    `Now <b>write it out in the scene box below</b>. What you write is what review shows you back, until the scene arrives on its own. You will need it later.`;
+    `All three touching, all three moving, far too big to be real.`;
 }
 
+// The written walkthrough that used to live here is gone: Review Lesson plays the film, and two
+// explanations of the same thing on one screen is one too many.
+function relationRow(n, kind){
+  const cur = kind==="word" ? bookWordOf(n) : numRefOf(n);
+  const list = kind==="word" ? bookWordOptions(n) : numRefOptions(n);
+  const hit = list.find(o=>optName(o)===cur);
+  const why = cur ? (hit ? optWhy(hit) : "your own") : "";
+  const ask = kind==="word" ? `Choose a picture for ${bbEsc(bookName(n))}` : `Choose a picture for ${dispNum("book",n)}`;
+  return `<button type="button" class="bbchoose${cur?" set":""}" data-rel="${kind}">
+    <span class="bbc-t"><span class="bbc-name">${cur?bbEsc(cur):ask}</span>${why?`<span class="bbc-why">${bbEsc(why)}</span>`:""}</span>
+    <span class="bbc-caret">▾</span></button>`;
+}
 function buildTheBookBox(n){
-  const words=bookWordOptions(n), refs=numRefOptions(n), w=pegFor(n).word, snd=pegFor(n).sounds;
-  const bw=bookWordOf(n), nr=numRefOf(n), done=!!(bw&&nr);
+  const w=pegFor(n).word, snd=pegFor(n).sounds;
   // Two to a row, the picture in bold and the reason underneath, because "Popsicle" alone does not
   // tell you why it is there and the whole point is the link.
   const tiles=(list,cur,kind)=>list.map(o=>{
@@ -3227,58 +3266,57 @@ function buildTheBookBox(n){
   const sent=buildSentence(n);
   return `<div class="bb">
     <div class="bbhead">🔨 Build the Book</div>
-    <div class="bbscript" id="bbScript" style="display:${done?"none":"block"}">
-      <p>You are about to tie <b>${bookName(n)}</b> to the number <b>${dispNum("book",n)}</b>, and you will use three pictures to do it, not one.</p>
-      <ol>
-        <li><b>The name.</b> A word that sounds like the book or points straight at it. Nehemiah becomes knee high socks. Exodus becomes an exit sign.</li>
-        <li><b>The number.</b> Something the world already ties to that number, so it arrives with a picture attached. Sixteen is a driver's licence. Twelve is a dozen eggs.</li>
-        <li><b>The code.</b> Your Major System picture, <b class="gold">${bbEsc(w)}</b>. That one never drifts, because the sounds build it back every time.</li>
-      </ol>
-      <p>Two of the three carry the number. That is deliberate. When one of them slips, the other one still holds.</p>
-      <p><b>Some of these land in a few seconds and some will fight you.</b> Genesis to a genie is instant. Others take a few tries before anything clicks. Keep going. The ones you had to work for are the ones still standing in a year, because you paid something for them.</p>
-      <p class="bbtip">Make it a moment, not a list. Put the three where they collide, give it motion, make the size wrong, and put yourself in the frame. Strange and slightly ridiculous is what the mind keeps.</p>
-      <p><b>Write the scene out in the box below.</b> Not in your head, in words. This is not a nice extra, it is most of the work. Putting it into sentences forces you to actually look at the thing you are describing, and that looking is what builds the memory. What you write is then what review shows you back, at least for the first few weeks, until the scene arrives on its own with no prompt at all.</p>
-      <p>It gets tidied as you go: capitals land where they belong while you write, and your three key images are spelled right and set in CAPITALS so your eye finds them the moment you open it.</p>
-    </div>
-    <button class="btn ghost sm bbtoggle" id="bbMore">${done?"Show me how this works":"Hide the instructions"}</button>
-
     <div class="bbrow">
-      <label>1 · A picture for the name</label>
-      <div class="pickscroll"><div class="pickgrid" id="bbWord">${tiles(words,bw,"word")}${ownTile(words,bw,"word")}${mine("word")}</div></div>
+      <label>Book / Image Relationship</label>
+      ${relationRow(n,"word")}
     </div>
     <div class="bbrow">
-      <label>2 · A picture for the number ${dispNum("book",n)}</label>
-      <div class="pickscroll"><div class="pickgrid" id="bbNum">${tiles(refs,nr,"num")}${ownTile(refs,nr,"num")}${mine("num")}</div></div>
+      <label>Number / Image Relationship</label>
+      ${relationRow(n,"num")}
     </div>
     <div class="bbrow">
-      <label>3 · The coded image</label>
+      <label>The coded image</label>
       <div class="bbfixed"><b class="gold">${bbEsc(w)}</b> · sounds ${bbEsc(snd)}. The code picks this one. Change it with the picker above.</div>
     </div>
     <div class="bbsent" id="bbSent" style="display:${sent?"block":"none"}">${sent}</div>
   </div>`;
 }
+// The same grid the palace and spot pickers use, in a sheet of its own so the lesson screen stays short.
+function openRelationPicker(n, kind, after){
+  const isWord = kind==="word";
+  const list = isWord ? bookWordOptions(n) : numRefOptions(n);
+  const cur  = isWord ? bookWordOf(n) : numRefOf(n);
+  const store= isWord ? Prog.bookWord : Prog.numRef;
+  const m=el("relModal")||(()=>{ const d=document.createElement("div"); d.id="relModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const tile=o=>{ const nm=optName(o);
+    return `<button type="button" class="pickbtn bbopt${nm===cur?" on":""}" data-pick="${bbEsc(nm)}">
+      <span class="pkt">${bbEsc(nm)}</span><span class="pks">${bbEsc(optWhy(o))}</span></button>`; };
+  const own = (cur && !list.some(o=>optName(o)===cur))
+    ? `<button type="button" class="pickbtn bbopt on" data-pick="${bbEsc(cur)}"><span class="pkt">${bbEsc(cur)}</span><span class="pks">your own</span></button>` : "";
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="relClose" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${isWord?"Book / Image":"Number / Image"}</div><span style="width:34px"></span></div>
+      <p class="hint" style="margin:0 0 10px">${isWord?`A picture that reminds you of <b>${bbEsc(bookName(n))}</b>.`:`A picture that reminds you of <b>${dispNum("book",n)}</b>.`}</p>
+      <div class="pickscroll" style="max-height:56vh"><div class="pickgrid" id="relGrid">${list.map(tile).join("")}${own}
+        <button type="button" class="pickbtn bbopt bbown" id="relOwn"><span class="pkt">✎ My own</span><span class="pks">write your own picture</span></button></div></div>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; if(after) after(); };
+  el("relClose").onclick=close;
+  m.onclick=ev=>{ if(ev.target===m) close(); };
+  m.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{ store[n]=b.getAttribute("data-pick"); saveProg(); close(); });
+  el("relOwn").onclick=()=>{
+    const v=(prompt(isWord?`A picture that reminds you of ${bookName(n)}:`:`A picture that reminds you of the number ${dispNum("book",n)}:`, store[n]||"")||"").trim();
+    if(v) store[n]=v; else delete store[n];
+    saveProg(); close();
+  };
+  // the first free-ish thing to look at is the top of the list, so no scroll fiddling here
+}
 
 // One handler for both dropdowns: pick from the list, or choose to write your own and get a prompt.
 function wireBuildTheBook(n, rerender){
-  const wire=(gridId,attr,store,label)=>{
-    const g=el(gridId); if(!g) return;
-    g.querySelectorAll("[data-"+attr+"]").forEach(btn=>btn.onclick=()=>{
-      store[n]=btn.getAttribute("data-"+attr); saveProg(); rerender();
-    });
-    const own=g.querySelector('[data-own="'+attr+'"]');
-    if(own) own.onclick=()=>{
-      const v=(prompt(label, store[n]||"")||"").trim();
-      if(v) store[n]=v; else delete store[n];
-      saveProg(); rerender();
-    };
-  };
-  wire("bbWord","word", Prog.bookWord, `A picture that reminds you of ${bookName(n)}:`);
-  wire("bbNum", "num",  Prog.numRef,   `A picture that reminds you of the number ${dispNum("book",n)}:`);
-  if(el("bbMore")) el("bbMore").onclick=()=>{
-    const s=el("bbScript"), shown=s.style.display!=="none";
-    s.style.display=shown?"none":"block";
-    el("bbMore").textContent=shown?"Show me how this works":"Hide the instructions";
-  };
+  document.querySelectorAll("[data-rel]").forEach(btn=>btn.onclick=()=>
+    openRelationPicker(n, btn.dataset.rel, rerender));
 }
 
 /* ---- writing the scene down ---------------------------------------------------------------- */
@@ -3314,7 +3352,6 @@ function markKeyWords(text, phrases){
 function teachCardBody(kind, n){
   const word=pegFor(n).word, snd=pegFor(n).sounds, decode=decodeSentence(n);
   if(kind==="book"){
-    const custom = Prog.customBook[n] ? `<div class="relbox" style="border:1px solid var(--gold2)"><div class="rl" style="color:var(--gold-ink)">★ My own scene</div>${Prog.customBook[n]}</div>` : "";
     const bookImgNote = Prog.customBookImg[n] ? `<div class="bookimg-note">✎ Your book image: <b>${Prog.customBookImg[n]}</b></div>` : "";
     return `<div class="stage">
         <div class="tline">${bookImageIcon(n,true)}<span class="tname">${bookName(n)}</span></div>
@@ -3324,9 +3361,7 @@ function teachCardBody(kind, n){
         <div class="tline"><span class="tword">${word}</span>${pegImg("num",n,word,true)}</div>
         <div class="sounds">sounds: <b>${snd}</b></div></div>
       ${pegPicker(n)}
-      ${buildTheBookBox(n)}
-      <button class="btn" id="tcEdit" style="width:100%;margin-top:8px">✏️ ${Prog.customBook[n]?"Edit my scene":"Type my scene in"}</button>${custom}
-      <div class="teachbox">${decode}</div>`;
+      ${buildTheBookBox(n)}`;
   }
   return `<div class="stage">
       <div class="prompt">Learn the picture for number</div>
@@ -3339,12 +3374,6 @@ function teachCardBody(kind, n){
 function wireTeachCard(kind, n, rerender){
   if(el("tcBookImg")) el("tcBookImg").onclick=()=>openBookImagePicker(n, rerender);
   if(kind==="book") wireBuildTheBook(n, rerender);
-  if(el("tcEdit")) el("tcEdit").onclick=()=>editText({
-    title:`My scene for ${bookName(n)}`,
-    hint:`Write the scene out in full sentences. Capitals are fixed as you go, and your three key images are spelled right and set in CAPITALS so review is quick.`,
-    value:Prog.customBook[n]||"", autoCap:true,
-    keyWords:[bookWordOf(n), numRefOf(n), pegFor(n).word],
-    onSave:v=>{ if(v){Prog.customBook[n]=v;} else {delete Prog.customBook[n];} saveProg(); rerender(); }});
   document.querySelectorAll("[data-peg]").forEach(bt=>bt.onclick=()=>{ const w=bt.getAttribute("data-peg"); if(w){Prog.customPeg[n]=w;} else {delete Prog.customPeg[n];} saveProg(); rerender(); });
 }
 

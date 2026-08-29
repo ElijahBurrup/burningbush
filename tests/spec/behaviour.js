@@ -1819,41 +1819,68 @@ const DAY = 86400000;
   const bbCard = await $(() => {
     delete Prog.bookWord[16]; delete Prog.numRef[16]; saveProg();
     show('verse'); startAdhocLearn(16, true, () => { });
-    const empty = { sent: el('bbSent').style.display, script: el('bbScript').style.display };
-    const opts = [...el('bbWord').querySelectorAll('[data-word],[data-own]')].map(o => o.dataset.word || '__own');
+    const rows = [...document.querySelectorAll('#verse [data-rel]')];
+    const empty = { sent: el('bbSent').style.display, rows: rows.map(r => r.dataset.rel),
+                    ask: rows[0].textContent.replace(/\s+/g, ' ').trim() };
     Prog.bookWord[16] = 'knee-high socks'; Prog.numRef[16] = "a driver's licence"; saveProg();
     renderAdhoc();
-    const s = el('bbSent');
+    const s = el('bbSent'), txt = el('verse').textContent;
     return {
       empty,
-      hasOwn: opts.includes('__own'),
-      example: /Example · image → book/.test(el('verse').textContent),
+      labels: [...document.querySelectorAll('#verse .bbrow label')].map(l => l.textContent.trim()),
+      walkthroughGone: !el('bbScript') && !el('bbMore'),
+      sceneEditorGone: !el('tcEdit') && !/My own scene/.test(txt),
+      decodeGone: !/Use the Major System/i.test(txt),
       shown: s.style.display,
-      text: s.textContent,
-      scriptHidden: el('bbScript').style.display,
-      coded: el('verse').textContent.includes('The code picks this one'),
+      text: s.textContent.replace(/\s+/g, ' ').trim(),
+      coded: txt.includes('The code picks this one'),
+      chosen: [...document.querySelectorAll('#verse [data-rel]')].map(r => r.classList.contains('set')),
     };
   });
   is(bbCard.empty.sent, 'none', 'no sentence until both pictures are chosen');
-  is(bbCard.empty.script, 'block', '…and the instructions are open while there is still a choice to make');
-  ok(bbCard.hasOwn, 'every dropdown offers "write my own"');
-  no(bbCard.example, 'the ready-made example scene is gone from the book card');
+  is(bbCard.empty.rows.join(','), 'word,num', 'two relationship rows, each opening its own sheet');
+  ok(/Choose a picture for Nehemiah/.test(bbCard.empty.ask), '…and an unchosen one says what it wants');
+  is(bbCard.labels.join(' | '), 'Book / Image Relationship | Number / Image Relationship | The coded image',
+     'the rows are named for the relationship they hold');
+  ok(bbCard.walkthroughGone, 'the written walkthrough is gone; the film carries it now');
+  ok(bbCard.sceneEditorGone, '…as is the scene editor, which belongs with the palace and the spot');
+  ok(bbCard.decodeGone, '…and the Major System decode line');
   is(bbCard.shown, 'block', 'choosing both raises the sentence');
   ok(/knee-high socks/.test(bbCard.text), '…naming the picture for the book');
   ok(/driver/.test(bbCard.text), '…the picture for the number');
   ok(/Tissue/.test(bbCard.text), '…and the coded image, all three');
-  ok(/write it out in the scene box/i.test(bbCard.text), '…and it sends them to the scene box to write it');
-  is(bbCard.scriptHidden, 'none', 'the instructions fold away once both are chosen');
+  ok(/far too big to be real\.$/.test(bbCard.text), '…and it ends once the scene is built');
+  no(/scene box/i.test(bbCard.text), '…without sending them anywhere else');
   ok(bbCard.coded, 'the third picture is stated as the code\u2019s, not a choice');
+  is(bbCard.chosen.join(','), 'true,true', 'both rows show what was chosen');
+
+  const bbSheet = await $(() => {
+    openRelationPicker(16, 'word', () => { });
+    const m = el('relModal');
+    const tiles = [...m.querySelectorAll('[data-pick]')].map(t => t.dataset.pick);
+    const cols = getComputedStyle(m.querySelector('.pickgrid')).gridTemplateColumns.split(' ').length;
+    const open = m.style.display, hasOwn = !!el('relOwn');
+    m.querySelector('[data-pick="Royal Cup"]').click();
+    return { open, tiles, cols, hasOwn, picked: bookWordOf(16), closed: el('relModal').style.display };
+  });
+  is(bbSheet.open, 'flex', 'the relationship row opens a sheet, like picking a palace does');
+  ok(bbSheet.tiles.includes('Knee Socks'), '…holding the same options');
+  is(bbSheet.cols, 2, '…two to a row');
+  ok(bbSheet.hasOwn, '…with a way to write your own');
+  is(bbSheet.picked, 'Royal Cup', 'tapping one records it');
+  is(bbSheet.closed, 'none', '…and closes the sheet');
 
   const bbOwn = await $(() => {
     Prog.bookWord[16] = 'a kneecap the size of a house'; saveProg();
     renderAdhoc();
-    const tile = el('bbWord').querySelector('[data-word="a kneecap the size of a house"]');
-    return { kept: !!tile, on: !!tile && tile.classList.contains('on') };
+    openRelationPicker(16, 'word', () => { });
+    const tile = el('relModal').querySelector('[data-pick="a kneecap the size of a house"]');
+    const out = { kept: !!tile, on: !!tile && tile.classList.contains('on') };
+    el('relClose').click();
+    return out;
   });
   ok(bbOwn.kept, 'a word of your own keeps a tile of its own');
-  ok(bbOwn.on, '…and stays chosen across a re-render');
+  ok(bbOwn.on, '…and shows as the one chosen');
 
   const tidy = await $(() => ({
     cap: capAfterPunct('a sock stomps the wall. it shatters! then a licence floats down.'),
@@ -2183,6 +2210,24 @@ const DAY = 86400000;
   is(spotPicked.value, 'Fridge', 'tapping a spot records it');
   is(spotPicked.onCount, 1, '…and only one spot is ever chosen');
   ok(spotPicked.cleared, '…which replaces the suggestion with a real choice');
+
+  const pulse = await $(() => {
+    show('palace'); renderPalace();
+    const css = [...document.querySelectorAll('style')].map(s => s.textContent).join('\n');
+    const rule = (css.match(/\.revlesson\{[^}]*\}/) || [''])[0];
+    return {
+      present: !!document.querySelector('#palace .revlesson'),
+      beats: /animation:\s*revbeat[^;}]*infinite/.test(rule),
+      keyframes: /@keyframes revbeat\{/.test(css),
+      stands: /linear-gradient\(135deg,var\(--blue\)/.test(rule),
+      calm: /prefers-reduced-motion[^{]*\{\s*\.revlesson\{animation:none\}/.test(css),
+    };
+  });
+  ok(pulse.present, 'the Memory Palace carries a Review Lesson button');
+  ok(pulse.beats, '…which beats rather than sitting there, and keeps beating');
+  ok(pulse.keyframes, '…with a double thump and a rest, not a throb');
+  ok(pulse.stands, '…and stands out, because it is where the instructions live now');
+  ok(pulse.calm, '…unless the reader has asked for less motion');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
@@ -3609,7 +3654,7 @@ const DAY = 86400000;
     const shape = n => {
       const d = document.createElement('div');
       d.innerHTML = teachCardBody('book', n);
-      return ['.tline img,.tline .imgph', '.tname', '#tcBookImg', '.tnum', '.tword', '.sounds', '#tcEdit']
+      return ['.tline img,.tline .imgph', '.tname', '#tcBookImg', '.tnum', '.tword', '.sounds']
         .map(sel => (d.querySelector(sel) ? 1 : 0)).join('');
     };
     return { genesis: shape(1), leviticus: shape(3), matthew: shape(40), corinthians: shape(46), revelation: shape(66) };
@@ -3618,7 +3663,7 @@ const DAY = 86400000;
   is(tmpl.leviticus, tmpl.corinthians, '...and Leviticus');
   is(tmpl.matthew, tmpl.corinthians, '...and Matthew');
   is(tmpl.revelation, tmpl.corinthians, '...and Revelation');
-  is(tmpl.genesis, '1111111', '...all seven parts present: image, name, write my own image, number, image name, sounds, write my own scene');
+  is(tmpl.genesis, '111111', '...all six parts present: image, name, write my own image, number, image name, sounds');
 
   const carried = await $(() => {
     // someone who finished Genesis when it was still a number lesson must not be asked again

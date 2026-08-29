@@ -252,19 +252,19 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "classic/learn/build-the-book": {
-  "h": "9908f3d98dd13223",
-  "len": 6856,
-  "els": 115,
-  "buttons": 22,
+  "h": "beef742ead18edae",
+  "len": 2636,
+  "els": 52,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "classic/learn/build-the-book-done": {
-  "h": "981a97ef84bfe2d2",
-  "len": 7486,
-  "els": 125,
-  "buttons": 24,
+  "h": "eac6a398a9fa3e74",
+  "len": 2856,
+  "els": 57,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "c5d42d3b5eb859e6",
+  "h": "c4154ee57b6cf674",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "557a700b2702b702",
-  "len": 78004,
-  "els": 1458,
+  "h": "935c3e57d9261eb8",
+  "len": 79162,
+  "els": 1479,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.55.0 August 28, 2026 Every picker is tiles now FIX Build the Book shows tiles instead of dropdowns."
+  "text": "✕ Version history v1.56.0 August 28, 2026 One screen, one job FIX The written walkthrough is gone from the book screen. "
  },
  "classic/modal/church": {
   "h": "cd4e47cc45a540a5",
@@ -378,7 +378,7 @@
   "text": "Memory Palaces ✕ ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
  },
  "classic/modal/translations": {
-  "h": "9f85a5529f04bd04",
+  "h": "555fdc43225592fe",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -765,19 +765,19 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "illumined/learn/build-the-book": {
-  "h": "9908f3d98dd13223",
-  "len": 6856,
-  "els": 115,
-  "buttons": 22,
+  "h": "beef742ead18edae",
+  "len": 2636,
+  "els": 52,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "illumined/learn/build-the-book-done": {
-  "h": "981a97ef84bfe2d2",
-  "len": 7486,
-  "els": 125,
-  "buttons": 24,
+  "h": "eac6a398a9fa3e74",
+  "len": 2856,
+  "els": 57,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "a59ace5029785e38",
+  "h": "6d938a1748bcec2b",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "557a700b2702b702",
-  "len": 78004,
-  "els": 1458,
+  "h": "935c3e57d9261eb8",
+  "len": 79162,
+  "els": 1479,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.55.0 August 28, 2026 Every picker is tiles now FIX Build the Book shows tiles instead of dropdowns."
+  "text": "✕ Version history v1.56.0 August 28, 2026 One screen, one job FIX The written walkthrough is gone from the book screen. "
  },
  "illumined/modal/church": {
   "h": "f01e94f78fe6d84e",
@@ -891,7 +891,7 @@
   "text": "Memory Palaces ✕ ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
  },
  "illumined/modal/translations": {
-  "h": "a59ace5029785e38",
+  "h": "6d938a1748bcec2b",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1278,19 +1278,19 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "glass/learn/build-the-book": {
-  "h": "9908f3d98dd13223",
-  "len": 6856,
-  "els": 115,
-  "buttons": 22,
+  "h": "beef742ead18edae",
+  "len": 2636,
+  "els": 52,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "glass/learn/build-the-book-done": {
-  "h": "981a97ef84bfe2d2",
-  "len": 7486,
-  "els": 125,
-  "buttons": 24,
+  "h": "eac6a398a9fa3e74",
+  "len": 2856,
+  "els": 57,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "e0035466649872ce",
+  "h": "db676f5263cc9dfb",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "557a700b2702b702",
-  "len": 78004,
-  "els": 1458,
+  "h": "935c3e57d9261eb8",
+  "len": 79162,
+  "els": 1479,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.55.0 August 28, 2026 Every picker is tiles now FIX Build the Book shows tiles instead of dropdowns."
+  "text": "✕ Version history v1.56.0 August 28, 2026 One screen, one job FIX The written walkthrough is gone from the book screen. "
  },
  "glass/modal/church": {
   "h": "c52148b126053ab1",
@@ -1404,7 +1404,7 @@
   "text": "Memory Palaces ✕ ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
  },
  "glass/modal/translations": {
-  "h": "e0035466649872ce",
+  "h": "db676f5263cc9dfb",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1791,19 +1791,19 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "quest/learn/build-the-book": {
-  "h": "9908f3d98dd13223",
-  "len": 6856,
-  "els": 115,
-  "buttons": 22,
+  "h": "beef742ead18edae",
+  "len": 2636,
+  "els": 52,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "quest/learn/build-the-book-done": {
-  "h": "981a97ef84bfe2d2",
-  "len": 7486,
-  "els": 125,
-  "buttons": 24,
+  "h": "eac6a398a9fa3e74",
+  "len": 2856,
+  "els": 57,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "6c2cc671f27dc0f4",
+  "h": "9c9fb6f3296b0ca5",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "557a700b2702b702",
-  "len": 78004,
-  "els": 1458,
+  "h": "935c3e57d9261eb8",
+  "len": 79162,
+  "els": 1479,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.55.0 August 28, 2026 Every picker is tiles now FIX Build the Book shows tiles instead of dropdowns."
+  "text": "✕ Version history v1.56.0 August 28, 2026 One screen, one job FIX The written walkthrough is gone from the book screen. "
  },
  "quest/modal/church": {
   "h": "3eb46251f349a19d",
@@ -1917,7 +1917,7 @@
   "text": "Memory Palaces ✕ ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
  },
  "quest/modal/translations": {
-  "h": "6c2cc671f27dc0f4",
+  "h": "9c9fb6f3296b0ca5",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -2304,19 +2304,19 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "buddy/learn/build-the-book": {
-  "h": "9908f3d98dd13223",
-  "len": 6856,
-  "els": 115,
-  "buttons": 22,
+  "h": "beef742ead18edae",
+  "len": 2636,
+  "els": 52,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "buddy/learn/build-the-book-done": {
-  "h": "981a97ef84bfe2d2",
-  "len": 7486,
-  "els": 125,
-  "buttons": 24,
+  "h": "eac6a398a9fa3e74",
+  "len": 2856,
+  "els": 57,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "a5e9b28aec5d2f34",
+  "h": "7d4ad8245bb92c84",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "557a700b2702b702",
-  "len": 78004,
-  "els": 1458,
+  "h": "935c3e57d9261eb8",
+  "len": 79162,
+  "els": 1479,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.55.0 August 28, 2026 Every picker is tiles now FIX Build the Book shows tiles instead of dropdowns."
+  "text": "✕ Version history v1.56.0 August 28, 2026 One screen, one job FIX The written walkthrough is gone from the book screen. "
  },
  "buddy/modal/church": {
   "h": "8ddd1942b18689dd",
@@ -2430,7 +2430,7 @@
   "text": "Memory Palaces ✕ ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
  },
  "buddy/modal/translations": {
-  "h": "a5e9b28aec5d2f34",
+  "h": "7d4ad8245bb92c84",
   "len": 17712,
   "els": 441,
   "buttons": 40,
