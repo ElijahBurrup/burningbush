@@ -1829,7 +1829,14 @@ const DAY = 86400000;
       empty,
       labels: [...document.querySelectorAll('#verse .bbrow label')].map(l => l.textContent.trim()),
       walkthroughGone: !el('bbScript') && !el('bbMore'),
-      sceneEditorGone: !el('tcEdit') && !/My own scene/.test(txt),
+      // the scene box sits under the sentence it was just asked for, above the way on
+      sceneAfterSentence: (() => {
+        const box = el('bbSent'), edit = el('tcEdit'), next = el('abNext') || el('lNext');
+        if (!box || !edit || !next) return false;
+        return (box.compareDocumentPosition(edit) & Node.DOCUMENT_POSITION_FOLLOWING) > 0
+            && (edit.compareDocumentPosition(next) & Node.DOCUMENT_POSITION_FOLLOWING) > 0;
+      })(),
+      doneLabel: (el('abNext') || el('lNext') || {}).textContent,
       decodeGone: !/Use the Major System/i.test(txt),
       shown: s.style.display,
       text: s.textContent.replace(/\s+/g, ' ').trim(),
@@ -1843,7 +1850,8 @@ const DAY = 86400000;
   is(bbCard.labels.join(' | '), 'Book / Image Relationship | Number / Image Relationship | The coded image',
      'the rows are named for the relationship they hold');
   ok(bbCard.walkthroughGone, 'the written walkthrough is gone; the film carries it now');
-  ok(bbCard.sceneEditorGone, '…as is the scene editor, which belongs with the palace and the spot');
+  ok(bbCard.sceneAfterSentence, 'the scene box sits between the scene it asked for and the way on');
+  is(bbCard.doneLabel, 'Done', 'a book card says Done, because by then you have built something');
   ok(bbCard.decodeGone, '…and the Major System decode line');
   is(bbCard.shown, 'block', 'choosing both raises the sentence');
   ok(/knee-high socks/.test(bbCard.text), '…naming the picture for the book');
@@ -1914,6 +1922,30 @@ const DAY = 86400000;
   is(bbSave.kept, 'knee-high socks', '…without losing a choice already made');
   is(bbSave.merged, 'a genie|an exit sign|a bicycle', 'two devices merge their choices instead of one winning');
 
+  const popup = await $(() => {
+    openVideoScreen('verse', () => { });
+    const m = document.getElementById('videoModal');
+    const bar = m.querySelector('.lv-topbar');
+    const first = bar.firstElementChild;
+    return {
+      recorded: Object.keys(VIDEOS).filter(k => VIDEOS[k].src).join(','),
+      src: VIDEOS.verse.src,
+      closeIsFirst: first.id === 'vsClose',
+      closeIsRed: first.className.indexOf('lclose-red') > -1,
+      button: document.getElementById('vsDone').textContent,
+      noDoneField: Object.keys(VIDEOS).every(k => VIDEOS[k].done === undefined),
+      player: !!m.querySelector('video'),
+    };
+  });
+  is(popup.recorded, 'intro,verse', 'two films are recorded: the intro and Building Scenes');
+  is(popup.src, 'videos/scenes.mp4', 'Building Scenes points at its own file');
+  ok(popup.player, '...so its screen draws a player, not the placeholder card');
+  ok(popup.closeIsFirst, 'the close button is the first thing in the bar, so it sits top left');
+  ok(popup.closeIsRed, '...and it is the red one used on every other screen');
+  is(popup.button, 'Got It!', 'one button, one wording, on every film');
+  ok(popup.noDoneField, '...and the per-film wording is gone rather than left as dead data');
+  await $(() => { document.getElementById('videoModal').style.display = 'none'; });
+
   describe('the intro film', () => { });
   const film = await $(() => {
     Prog.doneSkills = (Prog.doneSkills || []).filter(s => !/^video:/.test(s));
@@ -1955,7 +1987,7 @@ const DAY = 86400000;
   ok(film.stillListed, '…and it stays in Video Review afterwards');
 
   const placeholders = await $(() => Object.keys(VIDEOS).filter(k => !VIDEOS[k].src));
-  is(placeholders.join(','), 'major,verse,palace,book,sr,recall', 'the other six films are still waiting on recordings');
+  is(placeholders.join(','), 'major,palace,book,sr,recall', 'the other five films are still waiting on recordings');
 
   describe('translations: located is shared, word for word is not', () => { });
   const trList = await $(() => ({
@@ -2219,15 +2251,41 @@ const DAY = 86400000;
       present: !!document.querySelector('#palace .revlesson'),
       beats: /animation:\s*revbeat[^;}]*infinite/.test(rule),
       keyframes: /@keyframes revbeat\{/.test(css),
-      stands: /linear-gradient\(135deg,var\(--blue\)/.test(rule),
+      // it is a heart now, not a slab: no box of its own, gold ink, and a heart drawn inside it
+      stands: /background:none/.test(rule) && /color:var\(--gold-ink\)/.test(rule),
+      heart: !!document.querySelector('#palace .revlesson svg path[fill="var(--gold)"]'),
       calm: /prefers-reduced-motion[^{]*\{\s*\.revlesson\{animation:none\}/.test(css),
     };
   });
   ok(pulse.present, 'the Memory Palace carries a Review Lesson button');
   ok(pulse.beats, '…which beats rather than sitting there, and keeps beating');
   ok(pulse.keyframes, '…with a double thump and a rest, not a throb');
-  ok(pulse.stands, '…and stands out, because it is where the instructions live now');
+  ok(pulse.stands, '…and carries no slab of its own, because the heart is the shape');
+  ok(pulse.heart, '…which is a golden heart, the thing the beat was always doing');
   ok(pulse.calm, '…unless the reader has asked for less motion');
+
+  const filmDuringTest = await $(() => {
+    const book = UNITS.flatMap(U => U.skills).find(s => s.kind === 'book');
+    startLesson(book);
+    const onTeach = !!document.querySelector('#learn [data-revlesson]');
+    // walk to the first question
+    let guard = 0;
+    while (LZ.steps[LZ.i] && LZ.steps[LZ.i].type === 'teach' && guard++ < 20) { LZ.i++; renderStep(); }
+    const onTest = !!document.querySelector('#learn [data-revlesson]');
+    const type = LZ.steps[LZ.i] && LZ.steps[LZ.i].type;
+    const sound = UNITS[0].skills.find(s => s.kind === 'sound');
+    startLesson(sound);
+    const soundTeach = !!document.querySelector('#learn [data-revlesson]');
+    guard = 0;
+    while (LZ.steps[LZ.i] && LZ.steps[LZ.i].type === 'teach' && guard++ < 20) { LZ.i++; renderStep(); }
+    const soundTest = !!document.querySelector('#learn [data-revlesson]');
+    return { onTeach, onTest, type, soundTeach, soundTest };
+  });
+  ok(filmDuringTest.onTeach, 'a book card being taught offers its film');
+  no(filmDuringTest.onTest, '…and the questions that follow do not');
+  no(filmDuringTest.type === 'teach', '…which is checked on a real question, not another teach step');
+  ok(filmDuringTest.soundTeach, 'the same holds for a Major System lesson');
+  no(filmDuringTest.soundTest, '…film while teaching, nothing while testing');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {

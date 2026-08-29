@@ -27,12 +27,12 @@ const RULES = [
   ['href="fonts/fonts.css"', 'href="/burningbush/fonts/fonts.css"', 1],
   ['href="manifest.webmanifest"', 'href="/burningbush/manifest.webmanifest"', 1],
   ['href="images/', 'href="/burningbush/images/', 2],
-  ['src="images/', 'src="/burningbush/images/', 4],   // +1 picker default, +1 the fallback when a chosen book image will not load
+  ['src="images/', 'src="/burningbush/images/', 5],   // +1 the bush mark on Start Here in Video Review   // +1 picker default, +1 the fallback when a chosen book image will not load
   ['`images/books/', '`/burningbush/images/books/', 1],   // now only images/books/alt: the default icon moved to a plain src= above
   ['`images/pegs/', '`/burningbush/images/pegs/', 3],
   // VIDEOS[].src is handed to a <video> element at runtime, so a relative path would resolve
   // against /burningbush with no trailing slash and 404. One site per film that has a recording.
-  ['src:"videos/', 'src:"/burningbush/videos/', 1],
+  ['src:"videos/', 'src:"/burningbush/videos/', 2],
   // one per translation that is fetched on demand; the KJV is the only one loaded with the page
   ['file:"bibles/', 'file:"/burningbush/bibles/', 1],   // +2 the tile thumbnail (chosen word, then the default)
   // fetched by absolute path: a relative one would resolve to /sw.js against the trailing-slash-less URL

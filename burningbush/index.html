@@ -932,6 +932,10 @@
   .mtsheet{width:min(360px,92vw);max-height:78vh;overflow-y:auto;background:var(--panel);border:2px solid var(--gold2);border-radius:16px;padding:12px 12px 14px;box-shadow:0 20px 60px var(--scrim)}
   .mtsheet-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
   .mtsheet-h b{font-size:15px;color:var(--gold-ink)}
+  /* twice the old white arrow, and each film's own mark rather than the same triangle six times */
+  .vric{flex:none;width:42px;height:42px;display:grid;place-items:center;font-size:27px;line-height:1;margin-right:2px}
+  .vric svg{width:42px;height:42px;display:block}
+  .vric img{width:42px;height:42px;display:block;border-radius:10px}
   .mtradiolist{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}
   .mtradio{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:var(--panel2);border:2px solid var(--line);color:var(--ink);font-weight:700;font-size:14px;padding:12px 10px;border-radius:10px;cursor:pointer;line-height:1.15}
   .mtradio:active{transform:scale(.97)}
@@ -1023,18 +1027,15 @@
      are on and the button that got you here are plainly the same thing. */
   /* The film is where the instructions live now, so the way to it has to be seen. A double thump,
      then a rest, which is why the keyframes bunch at the start and hold at the end. */
-  .revlesson{flex:0 0 auto;margin-left:auto;width:78px;padding:7px 6px;border-radius:10px;
-    background:linear-gradient(135deg,var(--blue),var(--blue2));border:1px solid var(--blue2);
-    color:var(--on-blue);font-family:inherit;font-size:11px;font-weight:800;line-height:1.25;
-    text-align:center;cursor:pointer;animation:revbeat 2.4s ease-in-out infinite}
+  .revlesson{flex:0 0 auto;margin-left:auto;width:78px;padding:0;border:0;background:none;
+    color:var(--gold-ink);font-family:inherit;font-size:10.5px;font-weight:800;line-height:1.2;
+    text-align:center;cursor:pointer;display:grid;justify-items:center;gap:3px;
+    animation:revbeat 2.4s ease-in-out infinite}
+  .revlesson svg{width:38px;height:38px;display:block;filter:drop-shadow(0 2px 6px var(--shadow-soft))}
   .revlesson:active{transform:scale(.95);animation:none}
   @keyframes revbeat{
-    0%{transform:scale(1);box-shadow:0 0 0 0 var(--blue-glow)}
-    8%{transform:scale(1.09)}
-    16%{transform:scale(1)}
-    24%{transform:scale(1.07)}
-    34%{transform:scale(1);box-shadow:0 0 0 12px var(--blue-glow0)}
-    100%{transform:scale(1);box-shadow:0 0 0 0 var(--blue-glow0)}}
+    0%{transform:scale(1)} 8%{transform:scale(1.11)} 16%{transform:scale(1)}
+    24%{transform:scale(1.08)} 34%,100%{transform:scale(1)}}
   @media (prefers-reduced-motion: reduce){ .revlesson{animation:none} }
   .pagehead{display:flex;align-items:center;gap:10px;margin:0 0 2px;min-width:0}
   .pagehead h2{margin:0;min-width:0}
@@ -1923,8 +1924,20 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.56.0";
+const APP_VERSION="1.57.0";
 const CHANGELOG=[
+ {v:"1.57.0", d:"August 28, 2026", t:"Building Scenes is in", items:[
+   ["new","<b>Building Scenes, the second film.</b> Five minutes on turning a book, chapter and verse into three pictures woven into one scene. It plays the first time you build a scene, and it keeps its place in Video Review afterwards."],
+   ["chg","<b>Review Lesson is a golden heart</b> rather than a blue slab. It was already beating like one; now it looks like the thing it was doing."],
+   ["chg","<b>Video Review runs in the order the films teach</b> rather than the order they happened to arrive: Start Here, the Major System, Building the Books, Building Scenes, then Spaced Repetition."],
+   ["new","<b>Every film has its own mark in that list.</b> The burning bush for Start Here, a general's three stars for the Major System, the Bible for Building the Books, a director's chair for Building Scenes and the review trail for Spaced Repetition, all at twice the size of the white arrow they replace."],
+   ["chg","<b>The film popup reads the same as every other screen now.</b> The red \u2715 sits top left where it does everywhere else, and the button underneath simply says <b>Got It!</b> rather than a different sentence on every film."]
+ ]},
+ {v:"1.56.1", d:"August 28, 2026", t:"The book card, finished", items:[
+   ["chg","<b>Review Lesson is gone from the questions.</b> It belongs to the card being taught. During a test an answer is being asked for, and a film is a way out of answering it."],
+   ["new","<b>The scene box is back on the book card</b>, under the scene you have just been asked to build and above the way on."],
+   ["chg","<b>A book card says Done</b> rather than I can see it, because by then you have built something."]
+ ]},
  {v:"1.56.0", d:"August 28, 2026", t:"One screen, one job", items:[
    ["chg","<b>The written walkthrough is gone from the book screen.</b> Review Lesson plays the film, and two explanations of the same thing on one screen was one too many."],
    ["chg","<b>Review Lesson stands out and beats like a heart</b>, on every screen that has one, because it is where the instructions live now."],
@@ -3352,6 +3365,7 @@ function markKeyWords(text, phrases){
 function teachCardBody(kind, n){
   const word=pegFor(n).word, snd=pegFor(n).sounds, decode=decodeSentence(n);
   if(kind==="book"){
+    const custom = Prog.customBook[n] ? `<div class="relbox" style="border:1px solid var(--gold2)"><div class="rl" style="color:var(--gold-ink)">★ My scene</div>${Prog.customBook[n]}</div>` : "";
     const bookImgNote = Prog.customBookImg[n] ? `<div class="bookimg-note">✎ Your book image: <b>${Prog.customBookImg[n]}</b></div>` : "";
     return `<div class="stage">
         <div class="tline">${bookImageIcon(n,true)}<span class="tname">${bookName(n)}</span></div>
@@ -3361,7 +3375,8 @@ function teachCardBody(kind, n){
         <div class="tline"><span class="tword">${word}</span>${pegImg("num",n,word,true)}</div>
         <div class="sounds">sounds: <b>${snd}</b></div></div>
       ${pegPicker(n)}
-      ${buildTheBookBox(n)}`;
+      ${buildTheBookBox(n)}
+      <button class="btn ghost" id="tcEdit" style="width:100%;margin-top:10px">✏️ ${Prog.customBook[n]?"Edit my scene":"Write my scene"}</button>${custom}`;
   }
   return `<div class="stage">
       <div class="prompt">Learn the picture for number</div>
@@ -3374,6 +3389,12 @@ function teachCardBody(kind, n){
 function wireTeachCard(kind, n, rerender){
   if(el("tcBookImg")) el("tcBookImg").onclick=()=>openBookImagePicker(n, rerender);
   if(kind==="book") wireBuildTheBook(n, rerender);
+  if(el("tcEdit")) el("tcEdit").onclick=()=>editText({
+    title:`My scene for ${bookName(n)}`,
+    hint:`Write the scene out in full sentences. Capitals are fixed as you go, and your three key images are spelled right and set in CAPITALS so review is quick.`,
+    value:Prog.customBook[n]||"", autoCap:true,
+    keyWords:[bookWordOf(n), numRefOf(n), pegFor(n).word],
+    onSave:v=>{ if(v){Prog.customBook[n]=v;} else {delete Prog.customBook[n];} saveProg(); rerender(); }});
   document.querySelectorAll("[data-peg]").forEach(bt=>bt.onclick=()=>{ const w=bt.getAttribute("data-peg"); if(w){Prog.customPeg[n]=w;} else {delete Prog.customPeg[n];} saveProg(); rerender(); });
 }
 
@@ -4227,15 +4248,15 @@ function storyReachKey(sk){ const s=sk.story; return Math.max(bookNum(s.b)||0, s
 // The films. None of them sit on the Learn path any more — each is triggered where it is needed
 // (see openVideoScreen / maybeVideo) and every one seen is kept in Video Review.
 const VIDEOS = {
-  // The opening film. It is the only one with a src today; the rest are waiting on their recordings,
-  // and an empty src draws the placeholder rather than a broken player.
-  intro: {src:"/burningbush/videos/intro.mp4", skill:"video:intro", tile:"Intro", title:"Start Here: How Burning Bush Works", sub:"Four minutes on why chapter and verse numbers slide straight off the mind, and the two old ideas that fix it.", done:"I'm ready →"},
- major: {src:"", skill:"video:major", tile:"Major System", title:"The Major System", sub:"Ten simple sounds turn any number into a picture. The key to everything.", done:"I watched it →"},
-  verse: {src:"", skill:"video:verse", title:"Building Scenes", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse", done:"I watched it →"},
- palace:{src:"", skill:"video:palace", title:"Memory Palaces", sub:"Walk a place you know and leave each item at a spot. Do it once and the order sticks.", cta:"palace", done:"I watched it →"},
-  book:  {src:"", skill:"video:book", tile:"Building the Books", title:"Building the Books", sub:"Three pictures instead of one: the name, the number, and the coded image, woven into one scene.", done:"I watched it →"},
-  sr:    {src:"", skill:"video:sr", title:"Spaced Repetition", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long term memory.", cta:"sr", done:"I watched it →"},
- recall:{src:"", skill:"video:recall", title:"When a Verse Will Not Come", sub:"A blank is not a failure. It is the moment the scene gets stronger. Here is what to do with it.", done:"I watched it →"}
+  // Two are recorded. The rest are waiting, and an empty src draws the placeholder card rather than
+  // a broken player, so a film can be added by dropping a file in and setting one string.
+  intro: {src:"/burningbush/videos/intro.mp4", skill:"video:intro", tile:"Intro", title:"Start Here: How Burning Bush Works", sub:"Four minutes on why chapter and verse numbers slide straight off the mind, and the two old ideas that fix it."},
+ major: {src:"", skill:"video:major", tile:"Major System", title:"The Major System", sub:"Ten simple sounds turn any number into a picture. The key to everything."},
+  verse: {src:"/burningbush/videos/scenes.mp4", skill:"video:verse", tile:"Building Scenes", title:"Building Scenes", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse"},
+ palace:{src:"", skill:"video:palace", title:"Memory Palaces", sub:"Walk a place you know and leave each item at a spot. Do it once and the order sticks.", cta:"palace"},
+  book:  {src:"", skill:"video:book", tile:"Building the Books", title:"Building the Books", sub:"Three pictures instead of one: the name, the number, and the coded image, woven into one scene."},
+  sr:    {src:"", skill:"video:sr", title:"Spaced Repetition", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long term memory.", cta:"sr"},
+ recall:{src:"", skill:"video:recall", title:"When a Verse Will Not Come", sub:"A blank is not a failure. It is the moment the scene gets stronger. Here is what to do with it."}
 };
 // Each entry carries an empty src until the films are recorded; the screen falls back to the
 // placeholder card until one is set. Give it an absolute path when the files are hosted.
@@ -4459,16 +4480,37 @@ function noteVideoShown(k){
   Prog.videoOrder = Array.isArray(Prog.videoOrder) ? Prog.videoOrder : [];
   if(!Prog.videoOrder.includes(k)){ Prog.videoOrder.push(k); saveProg(); }
 }
-function videoReviewList(){ return (Prog.videoOrder||[]).filter(k=>!!VIDEOS[k]); }
+// Arrival order made the list read differently for every person, and the films build on each other.
+// This is the order they teach in. Anything not named here trails at the end rather than vanishing.
+const VIDEO_ORDER=["intro","major","book","verse","sr","palace","recall"];
+function videoReviewList(){
+  const seen=new Set(Prog.videoOrder||[]);
+  const known=VIDEO_ORDER.filter(k=>VIDEOS[k] && seen.has(k));
+  const rest=[...seen].filter(k=>VIDEOS[k] && !VIDEO_ORDER.includes(k));
+  return known.concat(rest);
+}
+// Its own mark for each film, so the list is scannable without reading a word of it. Lazy, because
+// the drawing helpers are declared further down the file.
+const VIDEO_ICON={
+  intro: ()=>`<img src="/burningbush/images/icon-512.png" alt="">`,
+  major: ()=>generalPinIconSVG(),
+  book:  ()=>bibleIconSVG(),
+  verse: ()=>chairIconSVG(),
+  sr:    ()=>srIconSVG(),
+  palace:()=>"🏛️",
+  recall:()=>"💭",
+};
+function videoIcon(k){ const f=VIDEO_ICON[k]; return f?f():"🎬"; }
 function openVideoScreen(key, after){
   const V=VIDEOS[key]; if(!V){ if(after) after(); return; }
   noteVideoShown(key);
   const m=el("videoModal")||(()=>{ const d=document.createElement("div"); d.id="videoModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   m.innerHTML=`<div class="modal-card">
-      <div class="lv-topbar"><span style="width:34px"></span><div style="flex:1;text-align:center;font-weight:800">${V.title}</div><button class="lclose" id="vsClose">✕</button></div>
+      <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="vsClose" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800">${V.title}</div><span style="width:34px"></span></div>
       ${videoPlayerHTML(V)}
       <p class="lead" style="text-align:center;margin:12px 0 0">${V.sub}</p>
-      <button class="btn" id="vsDone" style="width:100%;margin-top:14px">✓ ${V.done||"I watched it →"}</button>
+      <button class="btn" id="vsDone" style="width:100%;margin-top:14px">Got It!</button>
     </div>`;
   { const vd=m.querySelector("[data-vsrc]"); if(vd && vd.dataset.vsrc) vd.src=vd.dataset.vsrc; }
   m.style.display="flex"; raiseModal(m);
@@ -4956,7 +4998,7 @@ function renderSoundStep(s,pct){
     body=`<div class="prompt">Which number makes the sound…</div><div class="bigword">${SND[s.n]}</div>
       <div class="opts">${opts.map(d=>`<button class="opt" data-sok="${d===s.n?1:0}">${d}</button>`).join("")}</div>`;
   }
-  L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>${reviewLessonBtn("major")}</div><div id="lBody">${body}</div></div>`;
+  L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>${s.type==="teach"?reviewLessonBtn("major"):""}</div><div id="lBody">${body}</div></div>`;
   el("lClose").onclick=()=>renderPath();
   if(s.type==="teach"){ el("lNext").onclick=advance; return; }
   document.querySelectorAll("[data-sok]").forEach(b=>b.onclick=()=>{
@@ -4973,8 +5015,12 @@ function renderSoundStep(s,pct){
 }
 // The film belongs to the whole lesson, not the step being shown: a book lesson opens by teaching
 // its number peg, and those steps are kind "num" while still being part of Build the Book.
+// Only while a card is being taught. During the questions the corner stays empty: an answer is
+// being asked for, and the film is a way out of answering it.
 function lessonFilm(){
-  const k=LZ && LZ.sk && LZ.sk.kind;
+  const s=LZ && LZ.steps && LZ.steps[LZ.i];
+  if(!s || s.type!=="teach") return "";
+  const k=LZ.sk && LZ.sk.kind;
   if(k==="book") return reviewLessonBtn("book");
   if(k==="num" || k==="sound") return reviewLessonBtn("major");
   return "";
@@ -4988,7 +5034,7 @@ function renderStep(){
   let body="";
   const word=itemWord(s.kind,s.n), p=pegFor(s.n), snd=p.sounds;
   if(s.type==="teach"){
-    body = teachCardBody(s.kind, s.n) + `<button class="btn" id="lNext" style="margin-top:10px">I can see it →</button>`;
+    body = teachCardBody(s.kind, s.n) + `<button class="btn" id="lNext" style="margin-top:10px">${s.kind==="book"?"Done":"I can see it →"}</button>`;
   } else if(s.type==="q_n2i"){ // number → image
     const w=shuffle([word,...distract(s.kind,s.n,3).map(x=>pegFor(x).word)]);
     body=`<div class="prompt">Which image is number <b>${dispNum(s.kind,s.n)}</b>?</div>
@@ -5584,9 +5630,9 @@ function renderVerse(){
     } else if(vView==="videos"){ title="🎬 Video Review";
       const list=videoReviewList();
       body = list.length
-        ? `<p class="hint">Every film you have unlocked, in the order it arrived. Tap one to watch it again.</p>`
+        ? `<p class="hint">Every film you have unlocked, in the order they teach. Tap one to watch it again.</p>`
           +`<div style="margin-top:10px">`+list.map(k=>{ const V=VIDEOS[k];
-              return `<button type="button" class="mtradio" data-vid="${k}" style="align-items:flex-start;text-align:left;margin-bottom:8px"><span class="fic" style="font-size:20px">▶</span><span><b>${V.title}</b><br><span style="font-weight:600;font-size:12px;color:var(--muted)">${V.sub}</span></span></button>`;
+              return `<button type="button" class="mtradio" data-vid="${k}" style="align-items:flex-start;text-align:left;margin-bottom:8px"><span class="vric">${videoIcon(k)}</span><span><b>${V.title}</b><br><span style="font-weight:600;font-size:12px;color:var(--muted)">${V.sub}</span></span></button>`;
             }).join("")+`</div>`
           +`<p class="hint" style="margin-top:10px">Complete more of the Learn track to unlock the rest.</p>`
  : `<p class="hint">No films yet. They arrive as you go, each one when it first becomes useful, and every one you have seen waits here.</p>`;
@@ -7095,6 +7141,29 @@ function srIconSVG(){
     <circle cx="15.7" cy="13" r="1.9" fill="var(--miss)"/>
   </svg>`;
 }
+// A general's insignia: three stars on a bar. One star alone reads as a favourite; the row of them
+// reads as rank, which is what the Major System is, a code you are given the keys to.
+function generalPinIconSVG(){
+  const star="M0 -1 .26 -.36 .95 -.31 .42 .14 .59 .81 0 .45 -.59 .81 -.42 .14 -.95 -.31 -.26 -.36Z";
+  return `<svg viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="1.4" y="8.2" width="21.2" height="7.6" rx="1.7" fill="var(--panel2)" stroke="var(--gold-ink)" stroke-width="1"/>
+    <g fill="var(--gold)" stroke="var(--gold-ink)" stroke-width=".3" stroke-linejoin="round">
+      <path transform="translate(6.6 12) scale(3)" d="${star}"/>
+      <path transform="translate(12 12) scale(3)" d="${star}"/>
+      <path transform="translate(17.4 12) scale(3)" d="${star}"/>
+    </g>
+  </svg>`;
+}
+// The director's chair, for the film about building a scene.
+function chairIconSVG(){
+  return `<svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4.9 2.4h1.7v12H4.9ZM17.4 2.4h1.7v12h-1.7Z" fill="var(--bible)"/>
+    <rect x="5.2" y="3.4" width="13.6" height="4.2" rx="1.1" fill="var(--miss)"/>
+    <path d="M5.6 13.4 18.4 21.4M18.4 13.4 5.6 21.4" stroke="var(--bible)" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M4.2 12h15.6v3.1H4.2Z" fill="var(--miss)"/>
+    <path d="M4.2 21.6h15.6" stroke="var(--bible-ink)" stroke-width="1.6" stroke-linecap="round"/>
+  </svg>`;
+}
 // Word for word: an open book with the words leaving it.
 function speakIconSVG(){
   return `<svg viewBox="0 0 24 24" aria-hidden="true">
@@ -7118,7 +7187,7 @@ function heartIconSVG(){
 // words, so it reads as one control rather than a different button on each page.
 function reviewLessonBtn(vkey){
   const V=VIDEOS[vkey]; if(!V) return "";
-  return `<button class="revlesson" data-revlesson="${vkey}" title="Watch again: ${V.title}">Review Lesson</button>`;
+  return `<button class="revlesson" data-revlesson="${vkey}" title="Watch again: ${V.title}">${heartIconSVG()}<span>Review Lesson</span></button>`;
 }
 function pageHead(icon, text, vkey){
   return `<div class="pagehead"><span class="ph-i">${icon}</span><h2>${text}</h2>${vkey?reviewLessonBtn(vkey):""}</div>`;
@@ -8455,7 +8524,7 @@ function renderAdhoc(){
   let body="";
   if(s.t==="teach"){
     // SAME template as the Learn path — one card everywhere
-    body = teachCardBody(kind, n) + `<button class="btn" id="abNext" style="margin-top:10px">I can see it →</button>`;
+    body = teachCardBody(kind, n) + `<button class="btn" id="abNext" style="margin-top:10px">${kind==="book"?"Done":"I can see it →"}</button>`;
   } else if(s.t==="q_n2i"){
     const opts=shuffle([word,...distract(kind,n,3).map(x=>pegFor(x).word)]);
     body=`<div class="prompt">Which image is ${AB.isBook?"book "+dispNum("book",n):dispNum(kind,n)}?</div><div class="bignum">${dispNum(kind,n)}</div>
