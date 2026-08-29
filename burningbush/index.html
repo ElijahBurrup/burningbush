@@ -2043,8 +2043,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.63.0";
+const APP_VERSION="1.63.1";
 const CHANGELOG=[
+ {v:"1.63.1", d:"August 29, 2026", t:"Two small edges", items:[
+   ["chg","<b>The quick review chip is gone from the top of a test.</b> Whether a question is new or a revisit is not something you need told mid-answer."],
+   ["chg","<b>Writing your own picture for a book or a number uses the app\u2019s own editor</b>, the same one the scene is written in. It was the browser\u2019s bare prompt box, which looked like the browser rather than the app."]
+ ]},
  {v:"1.63.0", d:"August 28, 2026", t:"The Gospels open the Stories", items:[
    ["chg","<b>Bible Stories is earned by the four Gospels</b> rather than the first five New Testament books. Matthew, Mark, Luke and John are where the stories come from, and Acts was never part of that."],
    ["chg","<b>Phase 2 teaches Mark, Luke and John first</b>, then Joshua, Judges and Ruth. Matthew is already learned in Foundations, so the four Gospels finish together and the Stories ticket comes into reach as soon as it should."],
@@ -3471,10 +3475,19 @@ function openRelationPicker(n, kind, after){
   el("relClose").onclick=close;
   m.onclick=ev=>{ if(ev.target===m) close(); };
   m.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{ store[n]=b.getAttribute("data-pick"); saveProg(); close(); });
+  // The browser's own prompt was the one box in the app that looked like the browser rather than the
+  // app. It is the same editor the scene is written in now, so writing a picture and writing a scene
+  // feel like the same act.
   el("relOwn").onclick=()=>{
-    const v=(prompt(isWord?`A picture that reminds you of ${bookName(n)}:`:`A picture that reminds you of the number ${dispNum("book",n)}:`, store[n]||"")||"").trim();
-    if(v) store[n]=v; else delete store[n];
-    saveProg(); close();
+    m.style.display="none";
+    editText({
+      title: isWord ? `My picture for ${bookName(n)}` : `My picture for ${dispNum("book",n)}`,
+      hint: isWord
+        ? `One or two words for something that reminds you of <b>${bbEsc(bookName(n))}</b>. It can sound like the name or point at what happens in it.`
+        : `One or two words for something the world already ties to <b>${dispNum("book",n)}</b>. A driver's licence for 16, a dozen eggs for 12.`,
+      value: store[n]||"", autoCap:true,
+      onSave: v=>{ v=(v||"").trim(); if(v) store[n]=v; else delete store[n]; saveProg(); close(); }
+    });
   };
   // the first free-ish thing to look at is the top of the list, so no scroll fiddling here
 }
@@ -5225,10 +5238,9 @@ function renderStep(){
       <input class="typein" id="typeIn" inputmode="numeric" placeholder="?" autocomplete="off">
       <button class="btn" id="typeGo" style="margin-top:12px">Check</button>`;
   }
-  const reviewChip = s.review ? `<div style="text-align:center;margin-bottom:6px"><span class="pill" style="border-color:var(--accent);color:var(--accent)">🔁 quick review</span></div>` : "";
   L.innerHTML=`<div class="lesson">
     <div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>${lessonFilm()}</div>
-    <div id="lBody">${reviewChip}${body}</div></div>`;
+    <div id="lBody">${body}</div></div>`;
   const c=document.querySelector(".content"); if(c) c.scrollTop=0;   // every lesson step starts at the top
   el("lClose").onclick=()=>renderPath();
   wireStep(s);

@@ -2447,6 +2447,62 @@ const DAY = 86400000;
   });
   is(staggered.join(','), '0,240,480', 'palace goes first, then verse, then learn, one at a time');
 
+  describe('two small edges', () => { });
+  const noChip = await $(() => {
+    const sound = UNITS[0].skills.find(x => x.kind === 'sound');
+    startLesson(sound);
+    // walk to a step marked as a revisit, if the lesson has one
+    let guard = 0, sawReview = false;
+    while (guard++ < 40) {
+      if (LZ.steps[LZ.i] && LZ.steps[LZ.i].review) { sawReview = true; break; }
+      if (LZ.i >= LZ.steps.length - 1) break;
+      LZ.i++; renderStep();
+    }
+    renderStep();
+    const txt = el('learn').innerText;
+    return { chip: /quick review/i.test(txt), sawReview, anyInSource: false };
+  });
+  no(noChip.chip, 'no quick review chip at the top of a test');
+
+  const ownWord = await $(() => {
+    delete Prog.bookWord[16]; saveProg();
+    markVideoSeen('verse');
+    show('verse'); startAdhocLearn(16, true, () => { });
+    openRelationPicker(16, 'word', () => { });
+    el('relOwn').click();
+    const m = el('editModal');
+    const out = {
+      sheetClosed: el('relModal').style.display === 'none',
+      editorOpen: !!m && m.style.display === 'flex',
+      isTextarea: !!(m && m.querySelector('textarea.ed-ta')),
+      title: m ? (m.querySelector('.ed-head h2') || {}).textContent : '',
+      hint: m ? (m.querySelector('.hint') || {}).textContent : '',
+      hasTrash: !!(m && el('edTrash')),
+    };
+    el('edTa').value = 'a kneecap';
+    el('edSave').click();
+    out.saved = bookWordOf(16);
+    return out;
+  });
+  ok(ownWord.sheetClosed, 'writing your own closes the sheet behind it');
+  ok(ownWord.editorOpen, '…and opens the app\u2019s own editor, not the browser\u2019s prompt');
+  ok(ownWord.isTextarea, '…the same box the scene is written in');
+  ok(/My picture for Nehemiah/.test(ownWord.title), '…titled for what it is asking');
+  ok(/sound like the name/.test(ownWord.hint), '…with a line on what makes a good one');
+  ok(ownWord.hasTrash, '…and the same way to clear it');
+  is(ownWord.saved, 'A kneecap', 'what is typed is kept, with its capital fixed on the way');
+
+  const ownNumber = await $(() => {
+    delete Prog.numRef[16]; saveProg();
+    openRelationPicker(16, 'num', () => { });
+    el('relOwn').click();
+    const hint = (el('editModal').querySelector('.hint') || {}).textContent;
+    el('edCancel').click();
+    return { hint, untouched: numRefOf(16) };
+  });
+  ok(/driver/.test(ownNumber.hint), 'the number side asks for a number picture, and gives an example');
+  is(ownNumber.untouched, '', '…and cancelling leaves it unset');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
