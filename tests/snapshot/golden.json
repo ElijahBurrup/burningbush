@@ -72,11 +72,11 @@
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 Which room / spot? 🏛️ 1 Front door free 2 Sink 1 here 3 Stove fr"
  },
  "classic/wizard/learned": {
-  "h": "ef31226826c51078",
-  "len": 4131,
-  "els": 89,
+  "h": "abcd9d9110f54026",
+  "len": 4630,
+  "els": 93,
   "buttons": 10,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming "
  },
@@ -153,11 +153,11 @@
   "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "classic/palace/list": {
-  "h": "bb98a575f8affd77",
-  "len": 2712,
-  "els": 64,
+  "h": "12ce5f4787547c32",
+  "len": 3211,
+  "els": 68,
   "buttons": 2,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "🏛️ Memory Palace Review Lesson A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it on"
  },
@@ -342,22 +342,22 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "3f0b7d70e9700ff8",
-  "len": 80714,
-  "els": 1510,
+  "h": "8ea40f382345dd92",
+  "len": 82093,
+  "els": 1530,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Version history v1.57.0 August 28, 2026 Building Scenes is in NEW Building Scenes, the second film. Five minutes on tu"
  },
  "classic/modal/church": {
-  "h": "cd4e47cc45a540a5",
-  "len": 4763,
-  "els": 56,
+  "h": "10ac1b3596794575",
+  "len": 8439,
+  "els": 92,
   "buttons": 2,
-  "svgs": 1,
+  "svgs": 2,
   "imgs": 0,
-  "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+  "text": "✕ The Churches in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 5"
  },
  "classic/modal/feature-store": {
   "h": "d146eb1d997435aa",
@@ -405,13 +405,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "classic/verse/videos": {
-  "h": "2a54f3cba6441928",
-  "len": 1074,
-  "els": 18,
+  "h": "000bcda5547a4f1e",
+  "len": 1526,
+  "els": 24,
   "buttons": 3,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
-  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ Spaced Rep"
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order they teach. Tap one to watch it again. Spaced Repet"
  },
  "classic/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -450,11 +450,11 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "classic/practice/review-setup": {
-  "h": "a1545e9044dfd224",
-  "len": 1233,
-  "els": 21,
+  "h": "2a515f154fc2fd8d",
+  "len": 1732,
+  "els": 25,
   "buttons": 5,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "✕ Review Review Lesson How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for w"
  },
@@ -567,11 +567,11 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "illumined/wizard/visual": {
-  "h": "cca99640439e4f43",
-  "len": 3170,
-  "els": 64,
+  "h": "03f6b6e44d9b65d9",
+  "len": 3669,
+  "els": 68,
   "buttons": 9,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
  },
@@ -585,11 +585,11 @@
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 Which room / spot? 🏛️ 1 Front door free 2 Sink 1 here 3 Stove fr"
  },
  "illumined/wizard/learned": {
-  "h": "ef31226826c51078",
-  "len": 4131,
-  "els": 89,
+  "h": "abcd9d9110f54026",
+  "len": 4630,
+  "els": 93,
   "buttons": 10,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming "
  },
@@ -666,11 +666,11 @@
   "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "illumined/palace/list": {
-  "h": "bb98a575f8affd77",
-  "len": 2712,
-  "els": 64,
+  "h": "12ce5f4787547c32",
+  "len": 3211,
+  "els": 68,
   "buttons": 2,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "🏛️ Memory Palace Review Lesson A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it on"
  },
@@ -855,22 +855,22 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "3f0b7d70e9700ff8",
-  "len": 80714,
-  "els": 1510,
+  "h": "8ea40f382345dd92",
+  "len": 82093,
+  "els": 1530,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Version history v1.57.0 August 28, 2026 Building Scenes is in NEW Building Scenes, the second film. Five minutes on tu"
  },
  "illumined/modal/church": {
-  "h": "f01e94f78fe6d84e",
-  "len": 4763,
-  "els": 56,
+  "h": "8d36e7837a8f3952",
+  "len": 8439,
+  "els": 92,
   "buttons": 2,
-  "svgs": 1,
+  "svgs": 2,
   "imgs": 0,
-  "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+  "text": "✕ The Churches in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 5"
  },
  "illumined/modal/feature-store": {
   "h": "d146eb1d997435aa",
@@ -918,13 +918,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "illumined/verse/videos": {
-  "h": "2a54f3cba6441928",
-  "len": 1074,
-  "els": 18,
+  "h": "000bcda5547a4f1e",
+  "len": 1526,
+  "els": 24,
   "buttons": 3,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
-  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ Spaced Rep"
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order they teach. Tap one to watch it again. Spaced Repet"
  },
  "illumined/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -963,11 +963,11 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "illumined/practice/review-setup": {
-  "h": "a1545e9044dfd224",
-  "len": 1233,
-  "els": 21,
+  "h": "2a515f154fc2fd8d",
+  "len": 1732,
+  "els": 25,
   "buttons": 5,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "✕ Review Review Lesson How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for w"
  },
@@ -1080,11 +1080,11 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "glass/wizard/visual": {
-  "h": "cca99640439e4f43",
-  "len": 3170,
-  "els": 64,
+  "h": "03f6b6e44d9b65d9",
+  "len": 3669,
+  "els": 68,
   "buttons": 9,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
  },
@@ -1098,11 +1098,11 @@
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 Which room / spot? 🏛️ 1 Front door free 2 Sink 1 here 3 Stove fr"
  },
  "glass/wizard/learned": {
-  "h": "ef31226826c51078",
-  "len": 4131,
-  "els": 89,
+  "h": "abcd9d9110f54026",
+  "len": 4630,
+  "els": 93,
   "buttons": 10,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming "
  },
@@ -1179,11 +1179,11 @@
   "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "glass/palace/list": {
-  "h": "bb98a575f8affd77",
-  "len": 2712,
-  "els": 64,
+  "h": "12ce5f4787547c32",
+  "len": 3211,
+  "els": 68,
   "buttons": 2,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "🏛️ Memory Palace Review Lesson A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it on"
  },
@@ -1368,22 +1368,22 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "3f0b7d70e9700ff8",
-  "len": 80714,
-  "els": 1510,
+  "h": "8ea40f382345dd92",
+  "len": 82093,
+  "els": 1530,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Version history v1.57.0 August 28, 2026 Building Scenes is in NEW Building Scenes, the second film. Five minutes on tu"
  },
  "glass/modal/church": {
-  "h": "c52148b126053ab1",
-  "len": 4763,
-  "els": 56,
+  "h": "6c14ed818c146c25",
+  "len": 8439,
+  "els": 92,
   "buttons": 2,
-  "svgs": 1,
+  "svgs": 2,
   "imgs": 0,
-  "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+  "text": "✕ The Churches in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 5"
  },
  "glass/modal/feature-store": {
   "h": "d146eb1d997435aa",
@@ -1431,13 +1431,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "glass/verse/videos": {
-  "h": "2a54f3cba6441928",
-  "len": 1074,
-  "els": 18,
+  "h": "000bcda5547a4f1e",
+  "len": 1526,
+  "els": 24,
   "buttons": 3,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
-  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ Spaced Rep"
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order they teach. Tap one to watch it again. Spaced Repet"
  },
  "glass/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -1476,11 +1476,11 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "glass/practice/review-setup": {
-  "h": "a1545e9044dfd224",
-  "len": 1233,
-  "els": 21,
+  "h": "2a515f154fc2fd8d",
+  "len": 1732,
+  "els": 25,
   "buttons": 5,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "✕ Review Review Lesson How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for w"
  },
@@ -1593,11 +1593,11 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "quest/wizard/visual": {
-  "h": "cca99640439e4f43",
-  "len": 3170,
-  "els": 64,
+  "h": "03f6b6e44d9b65d9",
+  "len": 3669,
+  "els": 68,
   "buttons": 9,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
  },
@@ -1611,11 +1611,11 @@
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 Which room / spot? 🏛️ 1 Front door free 2 Sink 1 here 3 Stove fr"
  },
  "quest/wizard/learned": {
-  "h": "ef31226826c51078",
-  "len": 4131,
-  "els": 89,
+  "h": "abcd9d9110f54026",
+  "len": 4630,
+  "els": 93,
   "buttons": 10,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming "
  },
@@ -1692,11 +1692,11 @@
   "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "quest/palace/list": {
-  "h": "bb98a575f8affd77",
-  "len": 2712,
-  "els": 64,
+  "h": "12ce5f4787547c32",
+  "len": 3211,
+  "els": 68,
   "buttons": 2,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "🏛️ Memory Palace Review Lesson A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it on"
  },
@@ -1881,22 +1881,22 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "3f0b7d70e9700ff8",
-  "len": 80714,
-  "els": 1510,
+  "h": "8ea40f382345dd92",
+  "len": 82093,
+  "els": 1530,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Version history v1.57.0 August 28, 2026 Building Scenes is in NEW Building Scenes, the second film. Five minutes on tu"
  },
  "quest/modal/church": {
-  "h": "3eb46251f349a19d",
-  "len": 4763,
-  "els": 56,
+  "h": "b8340deb2e17e9e1",
+  "len": 8439,
+  "els": 92,
   "buttons": 2,
-  "svgs": 1,
+  "svgs": 2,
   "imgs": 0,
-  "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+  "text": "✕ The Churches in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 5"
  },
  "quest/modal/feature-store": {
   "h": "d146eb1d997435aa",
@@ -1944,13 +1944,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "quest/verse/videos": {
-  "h": "2a54f3cba6441928",
-  "len": 1074,
-  "els": 18,
+  "h": "000bcda5547a4f1e",
+  "len": 1526,
+  "els": 24,
   "buttons": 3,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
-  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ Spaced Rep"
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order they teach. Tap one to watch it again. Spaced Repet"
  },
  "quest/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -1989,11 +1989,11 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "quest/practice/review-setup": {
-  "h": "a1545e9044dfd224",
-  "len": 1233,
-  "els": 21,
+  "h": "2a515f154fc2fd8d",
+  "len": 1732,
+  "els": 25,
   "buttons": 5,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "✕ Review Review Lesson How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for w"
  },
@@ -2106,11 +2106,11 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "buddy/wizard/visual": {
-  "h": "cca99640439e4f43",
-  "len": 3170,
-  "els": 64,
+  "h": "03f6b6e44d9b65d9",
+  "len": 3669,
+  "els": 68,
   "buttons": 9,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
  },
@@ -2124,11 +2124,11 @@
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 Which room / spot? 🏛️ 1 Front door free 2 Sink 1 here 3 Stove fr"
  },
  "buddy/wizard/learned": {
-  "h": "ef31226826c51078",
-  "len": 4131,
-  "els": 89,
+  "h": "abcd9d9110f54026",
+  "len": 4630,
+  "els": 93,
   "buttons": 10,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 3,
   "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming "
  },
@@ -2205,11 +2205,11 @@
   "text": "✕ John 11:35 0/7 💛 I already know this by heart → Jesus wept. Read it aloud. Each step hides more words. Tap any blank "
  },
  "buddy/palace/list": {
-  "h": "bb98a575f8affd77",
-  "len": 2712,
-  "els": 64,
+  "h": "12ce5f4787547c32",
+  "len": 3211,
+  "els": 68,
   "buttons": 2,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "🏛️ Memory Palace Review Lesson A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it on"
  },
@@ -2394,22 +2394,22 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "3f0b7d70e9700ff8",
-  "len": 80714,
-  "els": 1510,
+  "h": "8ea40f382345dd92",
+  "len": 82093,
+  "els": 1530,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Version history v1.57.0 August 28, 2026 Building Scenes is in NEW Building Scenes, the second film. Five minutes on tu"
  },
  "buddy/modal/church": {
-  "h": "8ddd1942b18689dd",
-  "len": 4763,
-  "els": 56,
+  "h": "4be85325ef234c2d",
+  "len": 8463,
+  "els": 92,
   "buttons": 2,
-  "svgs": 1,
+  "svgs": 2,
   "imgs": 0,
-  "text": "✕ The church in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 56%"
+  "text": "✕ The Churches in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 5"
  },
  "buddy/modal/feature-store": {
   "h": "d146eb1d997435aa",
@@ -2457,13 +2457,13 @@
   "text": "✕ Genesis Pick the picture you will see when you think of Genesis. Every one of them happens in the book itself. The dra"
  },
  "buddy/verse/videos": {
-  "h": "2a54f3cba6441928",
-  "len": 1074,
-  "els": 18,
+  "h": "000bcda5547a4f1e",
+  "len": 1526,
+  "els": 24,
   "buttons": 3,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
-  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order it arrived. Tap one to watch it again. ▶ Spaced Rep"
+  "text": "← Library 🎬 Video Review Every film you have unlocked, in the order they teach. Tap one to watch it again. Spaced Repet"
  },
  "buddy/modal/learn-verses": {
   "h": "31893b97e5cae3f8",
@@ -2502,11 +2502,11 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "buddy/practice/review-setup": {
-  "h": "a1545e9044dfd224",
-  "len": 1233,
-  "els": 21,
+  "h": "2a515f154fc2fd8d",
+  "len": 1732,
+  "els": 25,
   "buttons": 5,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 0,
   "text": "✕ Review Review Lesson How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for w"
  },
