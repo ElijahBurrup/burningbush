@@ -9,13 +9,13 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "classic/verse/hub": {
-  "h": "39124a3dcfe4985b",
-  "len": 3036,
+  "h": "f69fefc85a566876",
+  "len": 3019,
   "els": 59,
   "buttons": 7,
   "svgs": 3,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 more to reach today's goal 🔥 4 day strea"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 remaining 🔥 4 day streak Spaced Repetiti"
  },
  "classic/verse/suggested": {
   "h": "40da0dd103c31523",
@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "d2d7aaf2a9726877",
+  "h": "4514dc665a5fd098",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "c0737a2f7890d7e1",
-  "len": 92634,
-  "els": 1722,
+  "h": "039b2de3fc66f9ff",
+  "len": 93370,
+  "els": 1740,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.66.0 August 29, 2026 The number says its number NEW Saving a book scene puts the number beside its "
+  "text": "✕ Version history v1.67.0 August 29, 2026 Twenty a day FIX A daily goal can go to twenty. It stopped at fifteen. FIX Ten"
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "49ef7c99a164e865",
+  "h": "8766ce91c8aefa1d",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "847cdd1cba6bf8c6",
+  "h": "360a6c0a46b92829",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "c0737a2f7890d7e1",
-  "len": 92634,
-  "els": 1722,
+  "h": "039b2de3fc66f9ff",
+  "len": 93370,
+  "els": 1740,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.66.0 August 29, 2026 The number says its number NEW Saving a book scene puts the number beside its "
+  "text": "✕ Version history v1.67.0 August 29, 2026 Twenty a day FIX A daily goal can go to twenty. It stopped at fifteen. FIX Ten"
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "847cdd1cba6bf8c6",
+  "h": "360a6c0a46b92829",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "975dea0b4e3614f7",
+  "h": "d3cb43e1840b7ccc",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "c0737a2f7890d7e1",
-  "len": 92634,
-  "els": 1722,
+  "h": "039b2de3fc66f9ff",
+  "len": 93370,
+  "els": 1740,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.66.0 August 29, 2026 The number says its number NEW Saving a book scene puts the number beside its "
+  "text": "✕ Version history v1.67.0 August 29, 2026 Twenty a day FIX A daily goal can go to twenty. It stopped at fifteen. FIX Ten"
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "975dea0b4e3614f7",
+  "h": "d3cb43e1840b7ccc",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "e9788276b010461c",
+  "h": "4c42bc3826f38826",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "c0737a2f7890d7e1",
-  "len": 92634,
-  "els": 1722,
+  "h": "039b2de3fc66f9ff",
+  "len": 93370,
+  "els": 1740,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.66.0 August 29, 2026 The number says its number NEW Saving a book scene puts the number beside its "
+  "text": "✕ Version history v1.67.0 August 29, 2026 Twenty a day FIX A daily goal can go to twenty. It stopped at fifteen. FIX Ten"
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "e9788276b010461c",
+  "h": "4c42bc3826f38826",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "6a3065347b058948",
+  "h": "4dcc8574a2488883",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "c0737a2f7890d7e1",
-  "len": 92634,
-  "els": 1722,
+  "h": "039b2de3fc66f9ff",
+  "len": 93370,
+  "els": 1740,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.66.0 August 29, 2026 The number says its number NEW Saving a book scene puts the number beside its "
+  "text": "✕ Version history v1.67.0 August 29, 2026 Twenty a day FIX A daily goal can go to twenty. It stopped at fifteen. FIX Ten"
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "6a3065347b058948",
+  "h": "4dcc8574a2488883",
   "len": 17712,
   "els": 441,
   "buttons": 40,

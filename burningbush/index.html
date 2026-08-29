@@ -502,7 +502,10 @@
   .goalbar .gb-ic{font-size:32px;line-height:1;flex:none}
   .goalbar .gb-mid{flex:1;min-width:0}
   .goalbar .gb-title{font-weight:800;font-size:17px}
-  .goalbar .gb-dots{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+  /* Ten to a line, always, whatever the goal is: a row of ten reads as a count without being
+     counted, and a goal of twenty is then plainly two of them. Flex-wrap gave nine or eleven
+     depending on how wide the words beside it happened to be. */
+  .goalbar .gb-dots{display:grid;grid-template-columns:repeat(10,auto);gap:4px;margin-top:5px;justify-content:start}
   .goalbar .gb-dot{width:13px;height:13px;border-radius:50%;background:var(--panel3);border:1px solid var(--line);
     animation:gbWave 2.6s ease-in-out infinite alternate;
     animation-delay:calc(var(--i,0) * (1.1s / max(var(--n,6),1)))}
@@ -2052,8 +2055,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.66.0";
+const APP_VERSION="1.67.0";
 const CHANGELOG=[
+ {v:"1.67.0", d:"August 29, 2026", t:"Twenty a day", items:[
+   ["chg","<b>A daily goal can go to twenty.</b> It stopped at fifteen."],
+   ["chg","<b>Ten dots to a line, always.</b> They used to wrap wherever the words beside them left room, which gave nine on one screen and eleven on another. A goal of twenty is now plainly two rows of ten."],
+   ["chg","<b>The goal button says <b>4 remaining</b></b> rather than four more to reach today\u2019s goal."]
+ ]},
  {v:"1.66.0", d:"August 29, 2026", t:"The number says its number", items:[
    ["new","<b>Saving a book scene puts the number beside its picture.</b> Type <b>NASA ship</b> for book 58 and it is kept as <b>NASA (58) ship</b>, so reading the scene back hands you the number instead of asking you to remember which of the three pictures held it."],
    ["fix","<b>Spaced repetition said \"1 left\" when two were due.</b> The verse about to be asked was taken off the queue before the count was read, so it was never counted."],
@@ -6567,7 +6575,7 @@ function creditToday(){
 /* ================= DAILY GOAL — verses + book images + word for word, combined (1–10/day) ================= */
 // Three ways to set the goal — same every day, weekdays vs weekends, or each day on its own.
 // The setup screen shows ONLY the chosen mode's controls; this reads whichever is in force.
-const GOAL_MAX=15;
+const GOAL_MAX=20;
 const GOAL_MODES=[["same","Same<br>every day"],["week","Weekdays<br>vs weekends"],["days","Each day<br>on its own"]];
 function goalMode(){ const m=Prog.goalMode; return (m==="week"||m==="days")?m:"same"; }
 function goalToday(){
@@ -6640,7 +6648,7 @@ function libStatusHTML(){
   // The freeze count lived here and squeezed the streak into a corner. Freezes are still bought and
   // still spent; they are just not what this button is for.
   const line = caught ? "Caught up today"
-    : (due ? `${due} still due` : `${Math.max(0,t-c)} more to reach today's goal`);
+    : (due ? `${due} still due` : `${Math.max(0,t-c)} remaining`);
   // The tick is drawn rather than typed, because a drawn one can draw itself again.
   const tick=`<svg class="gb-tick" viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="10.4" fill="var(--ok-bg)" stroke="var(--green)" stroke-width="1.6"/>

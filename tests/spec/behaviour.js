@@ -108,13 +108,17 @@ const DAY = 86400000;
   is(goal.paceAt, 20, 'the pacing word arrives at twenty');
 
   const goalMax = await $(() => {
-    Prog.goalMode = 'same'; Prog.dailyGoal = 15; saveProg(); const at15 = goalToday();
+    Prog.goalMode = 'same'; Prog.dailyGoal = 20; saveProg(); const atMax = goalToday();
     Prog.dailyGoal = 99; saveProg(); const clamped = goalToday();
-    return { max: GOAL_MAX, at15, clamped };
+    // the picker offers every number up to the ceiling, so raising it raises both
+    const offered = Array.from({length: GOAL_MAX}, (_, i) => i + 1);
+    return { max: GOAL_MAX, atMax, clamped, offers: offered.length, top: offered[offered.length - 1] };
   });
-  is(goalMax.max, 15, 'a daily goal may be as high as fifteen');
-  is(goalMax.at15, 15, '…and fifteen is honoured');
-  is(goalMax.clamped, 15, '…and nothing above it is');
+  is(goalMax.max, 20, 'a daily goal may be as high as twenty');
+  is(goalMax.atMax, 20, '…and twenty is honoured');
+  is(goalMax.clamped, 20, '…and nothing above it is');
+  is(goalMax.offers, 20, 'the picker offers twenty choices');
+  is(goalMax.top, 20, '…the last of them twenty');
 
   const d1 = await $(() => {
     Prog.memorized = ['43:3:16']; Prog.dailyGoal = 5;
@@ -2679,6 +2683,34 @@ const DAY = 86400000;
   has(bookScene.kept, 'NASA (58)', 'saving a book scene tags the number picture with its number');
   has(bookScene.kept, 'HAIRBRUSH', '…while the other key images are still set in capitals');
   ok(/^A nasa/.test(bookScene.kept) === false, '…and the capital at the front is fixed');
+
+  describe('the goal button, at twenty', () => { });
+  const goalRow = await $(() => {
+    Prog.goalMode = 'same'; Prog.dailyGoal = 20;
+    const st = goalState(); st.count = 16; st.celebrated = false;
+    Prog.memorized = []; Prog.verseSR = {}; Prog.palaces = []; saveProg();
+    show('verse'); vView = 'hub'; renderVerse();
+    const bar = document.querySelector('#verse .goalbar');
+    const dots = bar.querySelectorAll('.gb-dot');
+    const cols = getComputedStyle(bar.querySelector('.gb-dots')).gridTemplateColumns.split(' ').length;
+    return {
+      dots: dots.length,
+      cols,
+      lit: [...dots].filter(d => d.classList.contains('on')).length,
+      line: bar.querySelector('.gb-title').textContent,
+    };
+  });
+  is(goalRow.dots, 20, 'a goal of twenty draws twenty dots');
+  is(goalRow.cols, 10, '…ten to a line, so twenty is two clean rows');
+  is(goalRow.lit, 16, '…with the ones already done lit');
+  is(goalRow.line, '4 remaining', 'and it says what is left, plainly');
+
+  const goalDone = await $(() => {
+    const st = goalState(); st.count = 20; saveProg();
+    renderVerse();
+    return document.querySelector('#verse .gb-title').textContent;
+  });
+  is(goalDone, 'Caught up today', 'once the goal is met it says so instead of counting');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
