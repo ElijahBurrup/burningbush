@@ -2622,6 +2622,64 @@ const DAY = 86400000;
   ok(history.sixtySix.includes('Hastings'), '…now beside 1066');
   is(history.thin, 0, 'and no number is left with fewer than four pictures');
 
+  describe('the spaced repetition count', () => { });
+  const srDueFlash = await $(() => {
+    const now = Date.now(), D = 86400000;
+    const keys = ['43:3:16', '19:23:1'];
+    Prog.memorized = keys.slice(); Prog.palaces = []; Prog.verseSR = {};
+    keys.forEach(k => Prog.verseSR[k] = { learnedAt: now - 40 * D, step: 2, dueAt: now - D, r0: 1, r1: 1 });
+    Prog.extraKnown = [43, 3, 16, 19, 23, 1]; saveProg(); bustCaches();
+    MS = { phase: 'sr', srQueue: keys.slice() };
+    const out = { due: versesDueCount(), before: srRemaining(), flashes: [] };
+    const read = () => { const n = document.querySelector('.srcount-big'); return n ? n.textContent : '(none)'; };
+    nextMemVerse(); out.flashes.push(read());        // the flash before the FIRST question
+    return out;
+  });
+  is(srDueFlash.due, 2, 'two verses are due');
+  is(srDueFlash.before, 2, '…and the count knows it before anything is asked');
+  is(srDueFlash.flashes[0], '2', 'the flash before the first question says two, not one');
+
+  await page.waitForTimeout(850);
+  const srSecond = await $(() => {
+    const out = { mid: srRemaining(), queue: MS.srQueue.length };
+    nextMemVerse();
+    const n = document.querySelector('.srcount-big');
+    out.flash = n ? n.textContent : '(none)';
+    return out;
+  });
+  is(srSecond.queue, 1, 'one verse is still queued after the first is taken');
+  is(srSecond.mid, 1, '…and the count agrees');
+  is(srSecond.flash, '1', 'the flash before the last question says one');
+
+  describe('the number picture says its number', () => { });
+  const tag = await $(() => ({
+    plain: tagNumberWord('NASA ship crashes into the wall.', 'NASA', 58),
+    idempotent: tagNumberWord(tagNumberWord('NASA ship', 'NASA', 58), 'NASA', 58),
+    phrase: tagNumberWord('A DOZEN DONUTS roll past.', 'Dozen Donuts', 12),
+    fragment: tagNumberWord('NASAL spray is not NASA.', 'NASA', 58),
+    absent: tagNumberWord('nothing here', 'NASA', 58),
+    noWord: tagNumberWord('NASA ship', '', 58),
+  }));
+  is(tag.plain, 'NASA (58) ship crashes into the wall.', 'the number picture is followed by its number');
+  is(tag.idempotent, 'NASA (58) ship', 'saving twice does not tag it twice');
+  is(tag.phrase, 'A DOZEN DONUTS (12) roll past.', 'a two word picture is tagged as one thing');
+  is(tag.fragment, 'NASAL spray is not NASA (58).', 'a word that merely starts the same is left alone');
+  is(tag.absent, 'nothing here', 'a picture that is not in the scene changes nothing');
+  is(tag.noWord, 'NASA ship', '…and neither does having no picture chosen');
+
+  const bookScene = await $(() => {
+    Prog.bookWord[58] = 'Hairbrush'; Prog.numRef[58] = 'NASA'; delete Prog.customBook[58];
+    markVideoSeen('verse'); saveProg();
+    show('verse'); startAdhocLearn(58, true, () => { });
+    el('tcEdit').click();
+    el('edTa').value = 'a nasa ship lands on a hairbrush beside the lava.';
+    el('edSave').click();
+    return { kept: Prog.customBook[58] };
+  });
+  has(bookScene.kept, 'NASA (58)', 'saving a book scene tags the number picture with its number');
+  has(bookScene.kept, 'HAIRBRUSH', '…while the other key images are still set in capitals');
+  ok(/^A nasa/.test(bookScene.kept) === false, '…and the capital at the front is fixed');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};

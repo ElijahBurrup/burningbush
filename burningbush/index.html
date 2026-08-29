@@ -2052,8 +2052,16 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.65.0";
+const APP_VERSION="1.66.0";
 const CHANGELOG=[
+ {v:"1.66.0", d:"August 29, 2026", t:"The number says its number", items:[
+   ["new","<b>Saving a book scene puts the number beside its picture.</b> Type <b>NASA ship</b> for book 58 and it is kept as <b>NASA (58) ship</b>, so reading the scene back hands you the number instead of asking you to remember which of the three pictures held it."],
+   ["fix","<b>Spaced repetition said \"1 left\" when two were due.</b> The verse about to be asked was taken off the queue before the count was read, so it was never counted."],
+   ["fix","<b>Leaving a review mid-count could throw an error.</b> The count holds for a moment before the next verse is asked, and anything can happen in that moment, including the queue being emptied."]
+ ]},
+ {v:"1.65.1", d:"August 29, 2026", t:"The count was one short", items:[
+   ["fix","<b>Spaced repetition said \"1 left\" when two were due.</b> The verse about to be asked was taken off the queue before the count was read, so it was never counted. Two due now reads two."]
+ ]},
  {v:"1.65.0", d:"August 29, 2026", t:"The numbers teach some history", items:[
    ["chg","<b>The filler is gone from the number pictures.</b> Twenty two numbers had nothing real to offer and were padded with things that only restated the number: Route 58, five foot eight, 58 seconds, almost thirty. You cannot learn a number from those."],
    ["new","<b>In their place, history.</b> Fifty eight is the year NASA was founded and the first microchip was built. Sixty one is Fort Sumter, the Berlin Wall and Gagarin. Fifty five is Rosa Parks, Disneyland and the polio vaccine. Sixty six is Hastings, the Great Fire of London and England winning the World Cup."],
@@ -3541,6 +3549,18 @@ function keyWordList(phrases){
   }));
   return out;
 }
+// The number picture is the one that has an answer attached, so it carries it: type "NASA ship"
+// for book 58 and it is kept as "NASA (58) ship". Reviewing the scene then hands you the number
+// without you having to remember which of the three pictures was the number.
+function tagNumberWord(text, word, tag){
+  const w=String(word||"").trim();
+  if(!w || !tag) return text;
+  const up=w.toUpperCase();
+  const esc=up.replace(/[.*+?^${}()|[\]\\]/g,"\\function markKeyWords(text, phrases){").replace(/\s+/g,"\\s+");
+  // \b so it is a word and not a fragment, and the lookahead so saving twice does not tag twice
+  const re=new RegExp("\\b"+esc+"\\b(?!\\s*\\("+tag+"\\))","g");
+  return String(text||"").replace(re, up+" ("+tag+")");
+}
 function markKeyWords(text, phrases){
   const keys=keyWordList(phrases);
   if(!keys.length) return text;
@@ -3585,6 +3605,7 @@ function wireTeachCard(kind, n, rerender){
     hint:`Write the scene out in full sentences. Capitals are fixed as you go, and your three key images are spelled right and set in CAPITALS so review is quick.`,
     value:Prog.customBook[n]||"", autoCap:true,
     keyWords:[bookWordOf(n), numRefOf(n), pegFor(n).word],
+    tagWord:{ word:numRefOf(n), tag:n },
     onSave:v=>{ if(v){Prog.customBook[n]=v;} else {delete Prog.customBook[n];} saveProg(); rerender(); }});
   document.querySelectorAll("[data-peg]").forEach(bt=>bt.onclick=()=>{ const w=bt.getAttribute("data-peg"); if(w){Prog.customPeg[n]=w;} else {delete Prog.customPeg[n];} saveProg(); rerender(); });
 }
@@ -6168,7 +6189,9 @@ function askVerse(key){ setActiveTest(key); memTestCur=key.split(":").map(Number
 function nextMemVerse(){                       // the "go to next" hook fired after each answered verse
   if(MS && MS.phase==="sr"){
     while(MS.srQueue.length && !verseDue(MS.srQueue[0])) MS.srQueue.shift(); // drop any already cleared
-    if(MS.srQueue.length){ const k=MS.srQueue.shift(); srFlash(()=>askVerseIn(k)); return; }   // flash count, then ask the next due verse
+    // The flash holds for 720ms before this runs, and anything can happen in 720ms: leaving the
+    // review empties the queue, and shifting an empty one hands back undefined.
+    if(MS.srQueue.length){ srFlash(()=>{ const k=MS.srQueue.shift(); if(k) askVerseIn(k); }); return; }   // count what is still to come, INCLUDING this one, then ask it
     srBanner("complete"); return;              // all due verses handled → complete banner → palaces → practice
   }
   practiceNext(false);
@@ -6438,7 +6461,9 @@ function showGrowthEncouragement(){
     deckRoundReset(); practiceNext(true);
   };
 }
-// how many spaced repetition items are still to come this session: numbers left + verses left + palaces due (palaces counted, NOT their rooms)
+// How many spaced repetition items are still to come this session, counting the one about to be
+// asked: numbers left + verses left + palaces due (palaces counted, NOT their rooms). Callers must
+// read this BEFORE taking their item off the queue, or the count is one short.
 function srRemaining(){
   let n=0;
   if(NT && NT.ret) n += Math.max(0, NT.qs.length - NT.i);   // number questions not yet asked
@@ -9006,7 +9031,7 @@ function toast(msg){
   clearTimeout(t._h); t._h=setTimeout(()=>t.style.opacity="0",2600);
 }
 // A pretty in-app text editor (replaces the browser's ugly prompt) with a trash-can "clear all".
-function editText({title, hint, value, onSave, autoCap, keyWords}){
+function editText({title, hint, value, onSave, autoCap, keyWords, tagWord}){
   let m=el("editModal"); if(!m){ m=document.createElement("div"); m.id="editModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
   const esc=s=>(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   const close=()=>{ m.style.display="none"; };
@@ -9028,6 +9053,7 @@ function editText({title, hint, value, onSave, autoCap, keyWords}){
       let v=ta.value.trim();
       if(autoCap) v=capAfterPunct(v);
       if(keyWords && keyWords.length) v=markKeyWords(v, keyWords);   // spelled right, and shouted
+      if(tagWord) v=tagNumberWord(v, tagWord.word, tagWord.tag);      // and the number picture says its number
       close(); onSave(v);
     };
     el("edTrash").onclick=()=>{ value=el("edTa").value; confirmClear(); };
