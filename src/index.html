@@ -1940,8 +1940,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.57.0";
+const APP_VERSION="1.58.0";
 const CHANGELOG=[
+ {v:"1.58.0", d:"August 29, 2026", t:"Memory Palaces, the film", items:[
+   ["new","<b>Memory Palaces, the third film.</b> Walk a place you already know and leave each thing at a spot. It plays the first time you open Palaces, and it waits in Video Review afterwards."]
+ ]},
  {v:"1.57.0", d:"August 28, 2026", t:"Building Scenes is in", items:[
    ["new","<b>Building Scenes, the second film.</b> Five minutes on turning a book, chapter and verse into three pictures woven into one scene. It plays the first time you build a scene, and it keeps its place in Video Review afterwards."],
    ["chg","<b>The Churches in Rome</b>, plural, because the screen counts them. The half-built church on it is now the same drawing as the finished one beside the count, part-way up, rather than a plain emoji that looked like a different building."],
@@ -4266,12 +4269,12 @@ function storyReachKey(sk){ const s=sk.story; return Math.max(bookNum(s.b)||0, s
 // The films. None of them sit on the Learn path any more — each is triggered where it is needed
 // (see openVideoScreen / maybeVideo) and every one seen is kept in Video Review.
 const VIDEOS = {
-  // Two are recorded. The rest are waiting, and an empty src draws the placeholder card rather than
+  // Three are recorded. The rest are waiting, and an empty src draws the placeholder card rather than
   // a broken player, so a film can be added by dropping a file in and setting one string.
   intro: {src:"videos/intro.mp4", skill:"video:intro", tile:"Intro", title:"Start Here: How Burning Bush Works", sub:"Four minutes on why chapter and verse numbers slide straight off the mind, and the two old ideas that fix it."},
  major: {src:"", skill:"video:major", tile:"Major System", title:"The Major System", sub:"Ten simple sounds turn any number into a picture. The key to everything."},
   verse: {src:"videos/scenes.mp4", skill:"video:verse", tile:"Building Scenes", title:"Building Scenes", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse"},
- palace:{src:"", skill:"video:palace", title:"Memory Palaces", sub:"Walk a place you know and leave each item at a spot. Do it once and the order sticks.", cta:"palace"},
+ palace:{src:"videos/palace.mp4", skill:"video:palace", tile:"Memory Palaces", title:"Memory Palaces", sub:"Walk a place you know and leave each item at a spot. Do it once and the order sticks.", cta:"palace"},
   book:  {src:"", skill:"video:book", tile:"Building the Books", title:"Building the Books", sub:"Three pictures instead of one: the name, the number, and the coded image, woven into one scene."},
   sr:    {src:"", skill:"video:sr", title:"Spaced Repetition", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long term memory.", cta:"sr"},
  recall:{src:"", skill:"video:recall", title:"When a Verse Will Not Come", sub:"A blank is not a failure. It is the moment the scene gets stronger. Here is what to do with it."}

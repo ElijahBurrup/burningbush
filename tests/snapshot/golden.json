@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "5c6a135abbf4023e",
+  "h": "17a430f7b16ec5ee",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "8ea40f382345dd92",
-  "len": 82093,
-  "els": 1530,
+  "h": "550c2ff8edc130bd",
+  "len": 82527,
+  "els": 1539,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.57.0 August 28, 2026 Building Scenes is in NEW Building Scenes, the second film. Five minutes on tu"
+  "text": "✕ Version history v1.58.0 August 29, 2026 Memory Palaces, the film NEW Memory Palaces, the third film. Walk a place you "
  },
  "classic/modal/church": {
   "h": "10ac1b3596794575",
@@ -369,16 +369,16 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "classic/modal/video": {
-  "h": "486fb6e0c4175549",
-  "len": 626,
-  "els": 11,
+  "h": "d3ddcf51dcff7457",
+  "len": 629,
+  "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Memory Palaces ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
+  "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "fcf495d5f63f38ef",
+  "h": "6b7217713cbbc872",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "4904826e18ee7456",
+  "h": "c12511ed2c47cc17",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "8ea40f382345dd92",
-  "len": 82093,
-  "els": 1530,
+  "h": "550c2ff8edc130bd",
+  "len": 82527,
+  "els": 1539,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.57.0 August 28, 2026 Building Scenes is in NEW Building Scenes, the second film. Five minutes on tu"
+  "text": "✕ Version history v1.58.0 August 29, 2026 Memory Palaces, the film NEW Memory Palaces, the third film. Walk a place you "
  },
  "illumined/modal/church": {
   "h": "8d36e7837a8f3952",
@@ -882,16 +882,16 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "illumined/modal/video": {
-  "h": "486fb6e0c4175549",
-  "len": 626,
-  "els": 11,
+  "h": "d3ddcf51dcff7457",
+  "len": 629,
+  "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Memory Palaces ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
+  "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "4904826e18ee7456",
+  "h": "c12511ed2c47cc17",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "6328a5011498095f",
+  "h": "5339754d8b5b9b4d",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "8ea40f382345dd92",
-  "len": 82093,
-  "els": 1530,
+  "h": "550c2ff8edc130bd",
+  "len": 82527,
+  "els": 1539,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.57.0 August 28, 2026 Building Scenes is in NEW Building Scenes, the second film. Five minutes on tu"
+  "text": "✕ Version history v1.58.0 August 29, 2026 Memory Palaces, the film NEW Memory Palaces, the third film. Walk a place you "
  },
  "glass/modal/church": {
   "h": "6c14ed818c146c25",
@@ -1395,16 +1395,16 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "glass/modal/video": {
-  "h": "486fb6e0c4175549",
-  "len": 626,
-  "els": 11,
+  "h": "d3ddcf51dcff7457",
+  "len": 629,
+  "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Memory Palaces ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
+  "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "6328a5011498095f",
+  "h": "5339754d8b5b9b4d",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "f70a676c1572e119",
+  "h": "3d3b9c50789367e9",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "8ea40f382345dd92",
-  "len": 82093,
-  "els": 1530,
+  "h": "550c2ff8edc130bd",
+  "len": 82527,
+  "els": 1539,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.57.0 August 28, 2026 Building Scenes is in NEW Building Scenes, the second film. Five minutes on tu"
+  "text": "✕ Version history v1.58.0 August 29, 2026 Memory Palaces, the film NEW Memory Palaces, the third film. Walk a place you "
  },
  "quest/modal/church": {
   "h": "b8340deb2e17e9e1",
@@ -1908,16 +1908,16 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "quest/modal/video": {
-  "h": "486fb6e0c4175549",
-  "len": 626,
-  "els": 11,
+  "h": "d3ddcf51dcff7457",
+  "len": 629,
+  "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Memory Palaces ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
+  "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "f70a676c1572e119",
+  "h": "3d3b9c50789367e9",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "99517d458a64f7c4",
+  "h": "8e3db93e2438dd86",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "8ea40f382345dd92",
-  "len": 82093,
-  "els": 1530,
+  "h": "550c2ff8edc130bd",
+  "len": 82527,
+  "els": 1539,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.57.0 August 28, 2026 Building Scenes is in NEW Building Scenes, the second film. Five minutes on tu"
+  "text": "✕ Version history v1.58.0 August 29, 2026 Memory Palaces, the film NEW Memory Palaces, the third film. Walk a place you "
  },
  "buddy/modal/church": {
   "h": "4be85325ef234c2d",
@@ -2421,16 +2421,16 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "buddy/modal/video": {
-  "h": "486fb6e0c4175549",
-  "len": 626,
-  "els": 11,
+  "h": "d3ddcf51dcff7457",
+  "len": 629,
+  "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Memory Palaces ▶ ▶ Memory Palaces Add your video here. Walk a place you know and leave each item at a spot. Do it once"
+  "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "99517d458a64f7c4",
+  "h": "8e3db93e2438dd86",
   "len": 17712,
   "els": 441,
   "buttons": 40,

@@ -1937,7 +1937,7 @@ const DAY = 86400000;
       player: !!m.querySelector('video'),
     };
   });
-  is(popup.recorded, 'intro,verse', 'two films are recorded: the intro and Building Scenes');
+  is(popup.recorded, 'intro,verse,palace', 'three films are recorded: the intro, Building Scenes and Memory Palaces');
   is(popup.src, 'videos/scenes.mp4', 'Building Scenes points at its own file');
   ok(popup.player, '...so its screen draws a player, not the placeholder card');
   ok(popup.closeIsFirst, 'the close button is the first thing in the bar, so it sits top left');
@@ -1987,7 +1987,7 @@ const DAY = 86400000;
   ok(film.stillListed, '…and it stays in Video Review afterwards');
 
   const placeholders = await $(() => Object.keys(VIDEOS).filter(k => !VIDEOS[k].src));
-  is(placeholders.join(','), 'major,palace,book,sr,recall', 'the other five films are still waiting on recordings');
+  is(placeholders.join(','), 'major,book,sr,recall', 'the other four films are still waiting on recordings');
 
   describe('translations: located is shared, word for word is not', () => { });
   const trList = await $(() => ({
