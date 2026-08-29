@@ -9,8 +9,8 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "classic/verse/hub": {
-  "h": "527888053310a250",
-  "len": 2942,
+  "h": "39124a3dcfe4985b",
+  "len": 3036,
   "els": 59,
   "buttons": 7,
   "svgs": 3,
@@ -63,8 +63,8 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "classic/wizard/scene": {
-  "h": "fba53e0bda77c6d7",
-  "len": 3815,
+  "h": "9b7ddf13c0353edb",
+  "len": 3801,
   "els": 66,
   "buttons": 7,
   "svgs": 0,
@@ -243,8 +243,8 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "classic/stories/lesson": {
-  "h": "0c1fa54dabf843ce",
-  "len": 3654,
+  "h": "323175e3b5da1406",
+  "len": 3640,
   "els": 61,
   "buttons": 7,
   "svgs": 0,
@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "ef020f41fd1fa63b",
+  "h": "5ba0feebd0c40343",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,18 +342,18 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "b05c622552ee7aa5",
-  "len": 84708,
-  "els": 1581,
+  "h": "6e339bb295f1624f",
+  "len": 87052,
+  "els": 1626,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.60.0 August 28, 2026 A palace looks the same wherever you see it FIX The palace picker uses the Mem"
+  "text": "✕ Version history v1.62.0 August 28, 2026 The Library moves NEW Every icon on the Library screen has something to do. Th"
  },
  "classic/modal/church": {
-  "h": "10ac1b3596794575",
-  "len": 8439,
-  "els": 92,
+  "h": "20b67dd2aa77d2ea",
+  "len": 9471,
+  "els": 114,
   "buttons": 2,
   "svgs": 2,
   "imgs": 0,
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "0a9e926145fd01a4",
+  "h": "216f36ee550c367c",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -522,13 +522,13 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "illumined/verse/hub": {
-  "h": "205346d464e97083",
-  "len": 2923,
-  "els": 59,
+  "h": "8663a0b376101b16",
+  "len": 3361,
+  "els": 62,
   "buttons": 7,
-  "svgs": 3,
+  "svgs": 4,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 day streak 🧊 2 Spaced "
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught up today 🔥 4 day streak Spaced Repetit"
  },
  "illumined/verse/suggested": {
   "h": "40da0dd103c31523",
@@ -576,8 +576,8 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
  },
  "illumined/wizard/scene": {
-  "h": "fba53e0bda77c6d7",
-  "len": 3815,
+  "h": "9b7ddf13c0353edb",
+  "len": 3801,
   "els": 66,
   "buttons": 7,
   "svgs": 0,
@@ -756,8 +756,8 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "illumined/stories/lesson": {
-  "h": "0c1fa54dabf843ce",
-  "len": 3654,
+  "h": "323175e3b5da1406",
+  "len": 3640,
   "els": 61,
   "buttons": 7,
   "svgs": 0,
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "0143b062a79a55ad",
+  "h": "63a6a0e9f5e25908",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,18 +855,18 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "b05c622552ee7aa5",
-  "len": 84708,
-  "els": 1581,
+  "h": "6e339bb295f1624f",
+  "len": 87052,
+  "els": 1626,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.60.0 August 28, 2026 A palace looks the same wherever you see it FIX The palace picker uses the Mem"
+  "text": "✕ Version history v1.62.0 August 28, 2026 The Library moves NEW Every icon on the Library screen has something to do. Th"
  },
  "illumined/modal/church": {
-  "h": "8d36e7837a8f3952",
-  "len": 8439,
-  "els": 92,
+  "h": "936bc7fbbb4347a7",
+  "len": 9471,
+  "els": 114,
   "buttons": 2,
   "svgs": 2,
   "imgs": 0,
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "0143b062a79a55ad",
+  "h": "63a6a0e9f5e25908",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1035,13 +1035,13 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "glass/verse/hub": {
-  "h": "205346d464e97083",
-  "len": 2923,
-  "els": 59,
+  "h": "8663a0b376101b16",
+  "len": 3361,
+  "els": 62,
   "buttons": 7,
-  "svgs": 3,
+  "svgs": 4,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 day streak 🧊 2 Spaced "
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught up today 🔥 4 day streak Spaced Repetit"
  },
  "glass/verse/suggested": {
   "h": "40da0dd103c31523",
@@ -1089,8 +1089,8 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
  },
  "glass/wizard/scene": {
-  "h": "fba53e0bda77c6d7",
-  "len": 3815,
+  "h": "9b7ddf13c0353edb",
+  "len": 3801,
   "els": 66,
   "buttons": 7,
   "svgs": 0,
@@ -1269,8 +1269,8 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "glass/stories/lesson": {
-  "h": "0c1fa54dabf843ce",
-  "len": 3654,
+  "h": "323175e3b5da1406",
+  "len": 3640,
   "els": 61,
   "buttons": 7,
   "svgs": 0,
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "34afff290ba75573",
+  "h": "b69f1680e264bfd5",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,18 +1368,18 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "b05c622552ee7aa5",
-  "len": 84708,
-  "els": 1581,
+  "h": "6e339bb295f1624f",
+  "len": 87052,
+  "els": 1626,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.60.0 August 28, 2026 A palace looks the same wherever you see it FIX The palace picker uses the Mem"
+  "text": "✕ Version history v1.62.0 August 28, 2026 The Library moves NEW Every icon on the Library screen has something to do. Th"
  },
  "glass/modal/church": {
-  "h": "6c14ed818c146c25",
-  "len": 8439,
-  "els": 92,
+  "h": "ef770aae1ab44f16",
+  "len": 9471,
+  "els": 114,
   "buttons": 2,
   "svgs": 2,
   "imgs": 0,
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "34afff290ba75573",
+  "h": "b69f1680e264bfd5",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1548,13 +1548,13 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "quest/verse/hub": {
-  "h": "205346d464e97083",
-  "len": 2923,
-  "els": 59,
+  "h": "8663a0b376101b16",
+  "len": 3361,
+  "els": 62,
   "buttons": 7,
-  "svgs": 3,
+  "svgs": 4,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 day streak 🧊 2 Spaced "
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught up today 🔥 4 day streak Spaced Repetit"
  },
  "quest/verse/suggested": {
   "h": "40da0dd103c31523",
@@ -1602,8 +1602,8 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
  },
  "quest/wizard/scene": {
-  "h": "fba53e0bda77c6d7",
-  "len": 3815,
+  "h": "9b7ddf13c0353edb",
+  "len": 3801,
   "els": 66,
   "buttons": 7,
   "svgs": 0,
@@ -1782,8 +1782,8 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "quest/stories/lesson": {
-  "h": "0c1fa54dabf843ce",
-  "len": 3654,
+  "h": "323175e3b5da1406",
+  "len": 3640,
   "els": 61,
   "buttons": 7,
   "svgs": 0,
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "43f17f1700509b93",
+  "h": "b9c24186623fa1df",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,18 +1881,18 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "b05c622552ee7aa5",
-  "len": 84708,
-  "els": 1581,
+  "h": "6e339bb295f1624f",
+  "len": 87052,
+  "els": 1626,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.60.0 August 28, 2026 A palace looks the same wherever you see it FIX The palace picker uses the Mem"
+  "text": "✕ Version history v1.62.0 August 28, 2026 The Library moves NEW Every icon on the Library screen has something to do. Th"
  },
  "quest/modal/church": {
-  "h": "b8340deb2e17e9e1",
-  "len": 8439,
-  "els": 92,
+  "h": "78e0c5688274e42c",
+  "len": 9471,
+  "els": 114,
   "buttons": 2,
   "svgs": 2,
   "imgs": 0,
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "43f17f1700509b93",
+  "h": "b9c24186623fa1df",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -2061,13 +2061,13 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "buddy/verse/hub": {
-  "h": "205346d464e97083",
-  "len": 2923,
-  "els": 59,
+  "h": "8663a0b376101b16",
+  "len": 3361,
+  "els": 62,
   "buttons": 7,
-  "svgs": 3,
+  "svgs": 4,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. ✅ Caught up today 🔥 4 day streak 🧊 2 Spaced "
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught up today 🔥 4 day streak Spaced Repetit"
  },
  "buddy/verse/suggested": {
   "h": "40da0dd103c31523",
@@ -2115,8 +2115,8 @@
   "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
  },
  "buddy/wizard/scene": {
-  "h": "fba53e0bda77c6d7",
-  "len": 3815,
+  "h": "9b7ddf13c0353edb",
+  "len": 3801,
   "els": 66,
   "buttons": 7,
   "svgs": 0,
@@ -2295,8 +2295,8 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "buddy/stories/lesson": {
-  "h": "0c1fa54dabf843ce",
-  "len": 3654,
+  "h": "323175e3b5da1406",
+  "len": 3640,
   "els": 61,
   "buttons": 7,
   "svgs": 0,
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "dbdbe3ce1554160d",
+  "h": "c56081ba76471366",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,18 +2394,18 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "b05c622552ee7aa5",
-  "len": 84708,
-  "els": 1581,
+  "h": "6e339bb295f1624f",
+  "len": 87052,
+  "els": 1626,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.60.0 August 28, 2026 A palace looks the same wherever you see it FIX The palace picker uses the Mem"
+  "text": "✕ Version history v1.62.0 August 28, 2026 The Library moves NEW Every icon on the Library screen has something to do. Th"
  },
  "buddy/modal/church": {
-  "h": "4be85325ef234c2d",
-  "len": 8463,
-  "els": 92,
+  "h": "365b173a96d2fee3",
+  "len": 9488,
+  "els": 114,
   "buttons": 2,
   "svgs": 2,
   "imgs": 0,
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "dbdbe3ce1554160d",
+  "h": "c56081ba76471366",
   "len": 17712,
   "els": 441,
   "buttons": 40,

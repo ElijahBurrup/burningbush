@@ -200,8 +200,69 @@
   .versehub .vhub.wide{padding:14px 16px}
   .vhub.wide{grid-column:1/-1;flex-direction:row;gap:14px;aspect-ratio:auto;padding:11px}
   .vhub.wide .vi{font-size:28px}
+  /* One icon moves at a time and the rest sit still, so the eye is led down the screen and back up
+     rather than being shouted at by six things at once. The path zigzags:
+       spaced repetition · my verses · video · learn · practice verses · practice numbers
+       · video · learn · spaced repetition, then round again.
+     Nine steps over 8s, so each gets 11.11%. Every icon's motion is written into its own slice of
+     that cycle, which is why the percentages below look arbitrary: they are positions in the queue.
+     The two that appear twice simply have two slices. */
+  .ani{display:inline-block;animation-duration:8s;animation-iteration-count:infinite;animation-timing-function:ease-in-out}
   .vi-bounce{display:inline-block;animation:vibounce 1.8s ease-in-out infinite;transform-origin:center bottom}
   @keyframes vibounce{0%,72%,100%{transform:translateY(0) rotate(0)}80%{transform:translateY(-6px) rotate(-12deg)}88%{transform:translateY(-3px) rotate(10deg)}94%{transform:translateY(0) rotate(0)}}
+
+  /* 1st and 9th — one full turn of the circle */
+  .ani-spin{animation-name:aniSpin}
+  @keyframes aniSpin{
+    0%{transform:rotate(0)} 7.8%{transform:rotate(360deg)}
+    8%,88.8%{transform:rotate(0)} 96.6%{transform:rotate(360deg)} 100%{transform:rotate(0)} }
+
+  /* 2nd — a heart, so two thumps and a rest */
+  .ani-beat{animation-name:aniBeat}
+  @keyframes aniBeat{
+    0%,11.1%{transform:scale(1)} 13.4%{transform:scale(1.22)} 15.2%{transform:scale(1)}
+    17%{transform:scale(1.13)} 18.9%,100%{transform:scale(1)} }
+
+  /* 3rd and 7th — the clapper snaps shut from the top, then opens */
+  .ani-snap{animation-name:aniSnap;transform-origin:center top}
+  @keyframes aniSnap{
+    0%,22.2%{transform:scaleY(1)} 25%{transform:scaleY(.12)} 27%{transform:scaleY(1.06)}
+    30%,66.7%{transform:scaleY(1)} 69.4%{transform:scaleY(.12)} 71.5%{transform:scaleY(1.06)}
+    74.5%,100%{transform:scaleY(1)} }
+
+  /* 4th and 8th — a twinkle brightens, swells and turns a little */
+  .ani-twinkle{animation-name:aniTwinkle}
+  @keyframes aniTwinkle{
+    0%,33.3%{transform:scale(1) rotate(0);opacity:.92}
+    36%{transform:scale(1.28) rotate(18deg);opacity:1}
+    38.5%{transform:scale(.94) rotate(-10deg);opacity:.9}
+    41.1%,77.8%{transform:scale(1) rotate(0);opacity:.92}
+    80.4%{transform:scale(1.28) rotate(18deg);opacity:1}
+    83%{transform:scale(.94) rotate(-10deg);opacity:.9}
+    85.6%,100%{transform:scale(1) rotate(0);opacity:.92} }
+
+  /* 5th — a page turns */
+  .ani-flip{animation-name:aniFlip}
+  @keyframes aniFlip{
+    0%,44.4%{transform:perspective(320px) rotateY(0)}
+    47.5%{transform:perspective(320px) rotateY(-72deg)}
+    50%{transform:perspective(320px) rotateY(14deg)}
+    52.2%,100%{transform:perspective(320px) rotateY(0)} }
+
+  /* 6th — the die that was already rolling, now waiting its turn */
+  .ani-roll{animation-name:aniRoll;transform-origin:center bottom}
+  @keyframes aniRoll{
+    0%,55.6%{transform:translateY(0) rotate(0)}
+    57.5%{transform:translateY(-9px) rotate(-16deg)}
+    60%{transform:translateY(-4px) rotate(13deg)}
+    63.4%,100%{transform:translateY(0) rotate(0)} }
+
+  /* the wide button underneath keeps its own quiet pulse, off the queue */
+  .ani-speak{animation-name:aniSpeak;animation-duration:3.4s}
+  @keyframes aniSpeak{
+    0%,70%,100%{transform:scale(1);opacity:.95}
+    78%{transform:scale(1.1);opacity:1}
+    86%{transform:scale(1);opacity:.95} }
   /* All seven must be reachable without a scroll. The base sizes suit a tall phone; shorter
      screens step down. Measured at 320x568, 360x640 and 390x844 by the layout suite. */
   @media (max-height:760px){
@@ -437,12 +498,26 @@
   .inst-steps li{margin-bottom:7px}
   .inst-ic{display:inline-block;font-size:15px}
   /* daily goal bar (top of Verses) */
-  .goalbar{display:flex;align-items:center;gap:11px;background:var(--panel2);border:1px solid var(--gold2);border-radius:14px;padding:8px 13px;margin-bottom:8px;cursor:pointer}
-  .goalbar .gb-ic{font-size:22px;line-height:1;flex:none}
+  .goalbar{display:flex;align-items:center;gap:14px;background:var(--panel2);border:1px solid var(--gold2);border-radius:16px;padding:14px 16px;margin-bottom:10px;cursor:pointer}
+  .goalbar .gb-ic{font-size:32px;line-height:1;flex:none}
   .goalbar .gb-mid{flex:1;min-width:0}
-  .goalbar .gb-title{font-weight:800;font-size:13.5px}
+  .goalbar .gb-title{font-weight:800;font-size:17px}
   .goalbar .gb-dots{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
-  .goalbar .gb-dot{width:11px;height:11px;border-radius:50%;background:var(--panel3);border:1px solid var(--line)}
+  .goalbar .gb-dot{width:13px;height:13px;border-radius:50%;background:var(--panel3);border:1px solid var(--line);
+    animation:gbWave 2.6s ease-in-out infinite alternate;
+    animation-delay:calc(var(--i,0) * (1.1s / max(var(--n,6),1)))}
+  @keyframes gbWave{0%,62%,100%{transform:scale(1)} 78%{transform:scale(1.75)} 90%{transform:scale(1)}}
+  .gb-flame{display:inline-block;animation:gbFlame 1.5s ease-in-out infinite;transform-origin:center bottom}
+  @keyframes gbFlame{
+    0%,100%{transform:scale(1) rotate(0);filter:brightness(1)}
+    28%{transform:scale(1.1,1.16) rotate(-5deg);filter:brightness(1.18)}
+    54%{transform:scale(.96,1.05) rotate(4deg);filter:brightness(1.05)}
+    76%{transform:scale(1.06,1.1) rotate(-2deg);filter:brightness(1.12)}}
+  /* the tick draws itself, holds, and starts again */
+  .gb-ic-tick{display:grid;place-items:center}
+  .gb-tick{width:34px;height:34px;display:block}
+  .gb-tick path{stroke-dasharray:100;stroke-dashoffset:100;animation:gbDraw 2.8s ease-in-out infinite}
+  @keyframes gbDraw{0%{stroke-dashoffset:100} 30%,72%{stroke-dashoffset:0} 92%,100%{stroke-dashoffset:100}}
   .goalbar .gb-dot.on{background:var(--gold);border-color:var(--gold-ink)}
   .goalbar .gb-count{font-weight:900;font-size:18px;color:var(--gold-ink);font-variant-numeric:tabular-nums;flex:none}
   /* goal flash (node path) */
@@ -926,7 +1001,8 @@
   .pickbtn.pal-full{background:var(--ok-bg);border-color:var(--green)}
   .pickbtn.pal-partial{background:var(--no-bg);border-color:var(--miss-ink)}
   .pickbtn.pal-empty{background:var(--sel-bg);border-color:var(--accent)}
-  .pickbtn.taken{opacity:.62}
+  .pickbtn.spot-used{background:var(--ok-bg);border-color:var(--green)}
+  .pickbtn.spot-free{background:var(--no-bg);border-color:var(--miss-ink)}
   .pickbtn:active{transform:translateY(1px)}
   .wroomwrap{position:relative}
   .wroom-sel{padding-right:64px!important;background-position:right 12px center}
@@ -1060,6 +1136,10 @@
     0%{transform:scale(1)} 8%{transform:scale(1.11)} 16%{transform:scale(1)}
     24%{transform:scale(1.08)} 34%,100%{transform:scale(1)}}
   @media (prefers-reduced-motion: reduce){ .revlesson{animation:none} }
+  @media (prefers-reduced-motion: reduce){
+    .ani,.vi-bounce,.gb-dot,.gb-flame,.gb-tick path{animation:none}
+    .gb-tick path{stroke-dashoffset:0}
+  }
   .pagehead{display:flex;align-items:center;gap:10px;margin:0 0 2px;min-width:0}
   .pagehead h2{margin:0;min-width:0}
   .ph-i{flex:0 0 auto;font-size:33px;line-height:1;display:grid;place-items:center;width:36px;height:36px}
@@ -1594,6 +1674,11 @@
   .bbchoose{display:flex;align-items:center;gap:10px;width:100%;text-align:left;cursor:pointer;
     padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel0);
     color:var(--muted);font-family:inherit;line-height:1.3}
+  /* the palace and the spot are the question this screen is asking, so they are sized like one */
+  .bbchoose.big{padding:16px 16px;border-radius:13px;border-width:2px}
+  .bbchoose.big .bbc-name{font-size:20px}
+  .bbchoose.big .bbc-why{font-size:13.5px;margin-top:4px}
+  .bbchoose.big .bbc-caret{font-size:17px}
   .bbchoose.set{border-color:var(--gold2)}
   .bbchoose.waiting{opacity:.6}
   .bbchoose.needpick{border-color:var(--miss);box-shadow:0 0 0 2px var(--no-bg)}
@@ -1613,10 +1698,11 @@
   .trhearts{font-size:12px;color:var(--gold-ink);font-weight:700;margin-top:3px}
   .trcredit{font-size:10.5px;color:var(--muted);font-weight:600;line-height:1.4;margin-top:5px}
   .trans-opt.loading{opacity:.6;pointer-events:none}
-  .gb-streak{display:flex;flex-direction:column;align-items:center;line-height:1.1}
-  .gb-streak b{font-size:15px;font-weight:800;color:var(--gold-ink)}
-  .gb-streak small{font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .gb-streak{display:flex;flex-direction:column;align-items:center;line-height:1.12}
+  .gb-streak b{font-size:24px;font-weight:900;color:var(--gold-ink);white-space:nowrap}
+  .gb-streak small{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
   .gb-streak.off b{color:var(--muted)}
+  .vplabel-lg{font-size:13px;letter-spacing:.08em}
   .relbox{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;text-align:left;font-size:13.5px;line-height:1.5}
   .relbox .rl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--good);font-weight:800;margin-bottom:4px}
   .phon{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0}
@@ -1957,8 +2043,21 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.60.0";
+const APP_VERSION="1.62.0";
 const CHANGELOG=[
+ {v:"1.62.0", d:"August 28, 2026", t:"The Library moves", items:[
+   ["new","<b>Every icon on the Library screen has something to do.</b> The heart beats, a page turns, the clapperboard snaps shut and opens, Learn twinkles, the spaced repetition circle takes a full turn, and the die still rolls."],
+   ["new","<b>They take turns rather than all going at once.</b> One moves while the rest sit still, zigzagging down the screen and back up again, so the eye is led rather than shouted at."],
+   ["new","<b>The goal button is alive too.</b> The flame flickers, the tick draws itself over and over, and the dots run a wave along the row and back."],
+   ["chg","<b>The freeze count is off the goal button</b>, which gave the day streak the room to be read at a glance."],
+   ["chg","Every one of these stops for anyone who has asked for reduced motion."]
+ ]},
+ {v:"1.61.0", d:"August 28, 2026", t:"Bigger where it matters", items:[
+   ["chg","<b>A spot is green when it holds a verse and red when it is open.</b> The same way round as the palaces, where a full palace is the green one."],
+   ["chg","<b>The palace and spot boxes are bigger</b>, with type to match. They are the question that screen is asking."],
+   ["chg","<b>The reference, the three pictures and the verse itself are all larger</b> on the scene screen. They were shrunk to make room for two grids that are no longer there."],
+   ["chg","<b>The goal button is half again the size</b>, and the streak with it. The freeze count came out to make room: freezes are still bought and still spent, they are just not what that button is for."]
+ ]},
  {v:"1.60.0", d:"August 28, 2026", t:"A palace looks the same wherever you see it", items:[
    ["chg","<b>The palace picker uses the Memory Palace colours.</b> Red for half filled, blue for untouched, green for full, so a palace you recognise on one screen is the same palace on the other."],
    ["new","<b>An untouched palace is blue rather than plain.</b> It used to look like the app had nothing to say about it, when it is the one with the most room in it."],
@@ -5757,13 +5856,13 @@ function renderVerse(){
     <p class="hint" style="margin:0 0 10px">Everything you have hidden away, and every way to practise it.</p>
     ${taxWarnHTML()}${feat("goal")?`<div class="goalbar" id="goalBtn">${libStatusHTML()}</div>`:""}
     <div class="versehub">
-      <button class="vhub sq ${dueAll?"hasdue":""}" id="vMemTest"><span class="vi">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>
-      <button class="vhub sq" data-view="mem"><span class="vi">${heartIconSVG()}</span><span>My Verses</span><small>${mem.length}</small></button>
-      <button class="vhub sq" id="vLearn"><span class="vi">✨</span><span>Learn Verses</span><small>${suggReach} in reach</small></button>
-      <button class="vhub sq" data-view="videos"><span class="vi">🎬</span><span>Video Review</span><small>${videoReviewList().length||"none yet"}</small></button>
-      <button class="vhub sq" id="vPracVerse"><span class="vi">📖</span><span>Practice Verses</span><small>${mem.length} to draw on</small></button>
-      <button class="vhub sq" id="vPracNum"><span class="vi vi-bounce">🎲</span><span>Practice Numbers</span><small>${knownNumbers().size} known</small></button>
-      ${feat("w4w")?`<button class="vhub wide" id="vW4W"><span class="vi">${speakIconSVG()}</span><span>Practice Word for Word</span></button>`:""}
+      <button class="vhub sq ${dueAll?"hasdue":""}" id="vMemTest"><span class="vi ani ani-spin">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>
+      <button class="vhub sq" data-view="mem"><span class="vi ani ani-beat">${heartIconSVG()}</span><span>My Verses</span><small>${mem.length}</small></button>
+      <button class="vhub sq" id="vLearn"><span class="vi ani ani-twinkle">✨</span><span>Learn Verses</span><small>${suggReach} in reach</small></button>
+      <button class="vhub sq" data-view="videos"><span class="vi ani ani-snap">🎬</span><span>Video Review</span><small>${videoReviewList().length||"none yet"}</small></button>
+      <button class="vhub sq" id="vPracVerse"><span class="vi ani ani-flip">📖</span><span>Practice Verses</span><small>${mem.length} to draw on</small></button>
+      <button class="vhub sq" id="vPracNum"><span class="vi ani ani-roll">🎲</span><span>Practice Numbers</span><small>${knownNumbers().size} known</small></button>
+      ${feat("w4w")?`<button class="vhub wide" id="vW4W"><span class="vi ani ani-speak">${speakIconSVG()}</span><span>Practice Word for Word</span></button>`:""}
     </div>`;
   if(el("goalBtn")) el("goalBtn").onclick=openGoalSettings; wireTaxWarn();
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
@@ -6461,20 +6560,28 @@ function libStatusHTML(){
   const c=goalCount(), t=goalToday(), goalMet=c>=t;
   const dueV=versesDueCount(), dueP=palacesDueCount(), dueN=numbersDueCount(), due=dueV+dueP+dueN;
   const caught=goalMet && due===0;
-  const dots=Array.from({length:t},(_,i)=>`<span class="gb-dot ${i<c?"on":""}"></span>`).join("");
+  // Each dot is handed the same wave, one after another, and the whole thing runs back the way it
+  // came. --i and --n are what make one rule serve any goal from 3 to 15.
+  const dots=Array.from({length:t},(_,i)=>`<span class="gb-dot ${i<c?"on":""}" style="--i:${i};--n:${t}"></span>`).join("");
   // A bare flame and a number told nobody what it was. It says so now, and it says so even at zero,
   // because a streak you cannot see is a streak you will not start.
   const dstk=Prog.dayStreak||0;
-  const streak=`<span class="gb-streak${dstk?"":" off"}"><b>🔥 ${dstk}</b><small>day streak</small></span>`;
-  const freeze=(Prog.freezes>0)?` <span title="Streak Freezes">🧊 ${Prog.freezes}</span>`:"";
+  const streak=`<span class="gb-streak${dstk?"":" off"}"><b><span class="gb-flame">🔥</span> ${dstk}</b><small>day streak</small></span>`;
+  // The freeze count lived here and squeezed the streak into a corner. Freezes are still bought and
+  // still spent; they are just not what this button is for.
   const line = caught ? "Caught up today"
     : (due ? `${due} still due` : `${Math.max(0,t-c)} more to reach today's goal`);
-  return `<span class="gb-ic">${caught?"✅":(goalMet?"🙏":"🎯")}</span>
+  // The tick is drawn rather than typed, because a drawn one can draw itself again.
+  const tick=`<svg class="gb-tick" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="10.4" fill="var(--ok-bg)" stroke="var(--green)" stroke-width="1.6"/>
+      <path d="M6.7 12.4 L10.4 16 L17.3 8.6" fill="none" stroke="var(--green)" stroke-width="2.6"
+        stroke-linecap="round" stroke-linejoin="round" pathLength="100"/></svg>`;
+  return `<span class="gb-ic${caught?" gb-ic-tick":""}">${caught?tick:(goalMet?"🙏":"🎯")}</span>
     <div class="gb-mid"><div class="gb-title">${line}</div><div class="gb-dots">${dots}</div></div>
-    <span class="gb-count">${streak}${freeze}</span>`;
+    <span class="gb-count">${streak}</span>`;
 }
 function goalBarHTML(){ const c=goalCount(), t=goalToday(), met=c>=t;
-  const dots=Array.from({length:t},(_,i)=>`<span class="gb-dot ${i<c?"on":""}"></span>`).join("");
+  const dots=Array.from({length:t},(_,i)=>`<span class="gb-dot ${i<c?"on":""}" style="--i:${i};--n:${t}"></span>`).join("");
   return `<span class="gb-ic">${met?"🙏":"🎯"}</span><div class="gb-mid"><div class="gb-title">${met?"Faithful today":"Today's goal"}</div><div class="gb-dots">${dots}</div></div><div class="gb-count">${c}/${t}</div>`;
 }
 // the memorized verse with the FEWEST words that isn't mastered (10×) and hasn't been practiced yet today
@@ -6932,27 +7039,64 @@ let _chSeq=0;
 // A Roman basilica revealed from the ground up as the stones are paid for.
 function churchSVG(pct, cls){
   const id="ch"+(++_chSeq), H=151, y=H*(1-pct);
-  return `<svg class="${cls||"churchsvg"}" viewBox="0 0 240 158" role="img" aria-label="The church in Rome, ${Math.floor(pct*100)}% built">
+  // A stone chapel rather than a Roman portico: buttressed walls, a slate roof, a bell in its gable
+  // and lit windows. Everything is drawn from the ground up so the clip below reveals it course by
+  // course, and every colour is a token, so it themes itself five ways without a second drawing.
+  const lancet=(x,w,top,h)=>`<path d="M${x} ${top+h} v-${h-w/2} a${w/2} ${w/2} 0 0 1 ${w} 0 v${h-w/2} z"
+      fill="url(#${id}g)" stroke="var(--rome-gold)" stroke-width="1.1"/>
+    <path d="M${x+w/2} ${top+h} v-${h-1}" stroke="var(--rome-ink)" stroke-opacity=".28" stroke-width=".8"/>`;
+  return `<svg class="${cls||"churchsvg"}" viewBox="0 0 240 158" role="img" aria-label="The chapel in Rome, ${Math.floor(pct*100)}% built">
     <defs>
       <clipPath id="${id}"><rect x="0" y="${y.toFixed(1)}" width="240" height="${(158-y).toFixed(1)}"/></clipPath>
-      <pattern id="${id}b" width="14" height="8" patternUnits="userSpaceOnUse">
-        <rect width="14" height="8" fill="var(--rome-marble)"/>
-        <path d="M0 8h14M7 0v8" stroke="var(--rome-ink)" stroke-opacity=".16" stroke-width=".7"/>
+      <pattern id="${id}b" width="15" height="9" patternUnits="userSpaceOnUse">
+        <rect width="15" height="9" fill="var(--rome-marble)"/>
+        <path d="M0 9h15M7.5 0v9" stroke="var(--rome-ink)" stroke-opacity=".17" stroke-width=".7"/>
+        <rect x="1" y="1" width="5.6" height="7" fill="var(--rome-ink)" opacity=".05"/>
+        <rect x="8.5" y="1" width="5.6" height="7" fill="var(--rome-gold)" opacity=".07"/>
       </pattern>
+      <pattern id="${id}s" width="12" height="7" patternUnits="userSpaceOnUse">
+        <rect width="12" height="7" fill="var(--rome-ember)" opacity=".55"/>
+        <path d="M0 7h12" stroke="var(--rome-ink)" stroke-opacity=".38" stroke-width=".9"/>
+        <path d="M6 0v7" stroke="var(--rome-ink)" stroke-opacity=".22" stroke-width=".7"/>
+      </pattern>
+      <linearGradient id="${id}g" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0" stop-color="var(--rome-amber)"/><stop offset="1" stop-color="var(--rome-gold)"/>
+      </linearGradient>
+      <radialGradient id="${id}h" cx=".5" cy=".5" r=".5">
+        <stop offset="0" stop-color="var(--rome-gold)" stop-opacity=".55"/>
+        <stop offset="1" stop-color="var(--rome-gold)" stop-opacity="0"/>
+      </radialGradient>
     </defs>
     <rect x="8" y="151" width="224" height="7" rx="2" fill="var(--rome-ink)" opacity=".22"/>
     <g clip-path="url(#${id})">
-      <rect x="22" y="142" width="196" height="9" rx="1.5" fill="url(#${id}b)" stroke="var(--rome-ink)" stroke-opacity=".22"/>
-      <rect x="32" y="134" width="176" height="8" rx="1.5" fill="url(#${id}b)" stroke="var(--rome-ink)" stroke-opacity=".22"/>
-      <rect x="46" y="62" width="148" height="72" fill="var(--rome-ink)" opacity=".4"/>
-      <path d="M110 134 v-25 a10 10 0 0 1 20 0 v25 z" fill="var(--rome-red)" opacity=".75"/>
-      ${[52,76,100,124,148,172].map(x=>`<rect x="${x}" y="128" width="16" height="6" rx="1" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width=".8"/><rect x="${x+2}" y="70" width="12" height="58" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width=".8"/><rect x="${x}" y="64" width="16" height="6" rx="1" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width=".8"/>`).join("")}
-      <rect x="40" y="54" width="160" height="10" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width="1.2"/>
-      <path d="M36 54 L120 22 L204 54 Z" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width="1.6"/>
-      <path d="M104 50 L120 38 L136 50 Z" fill="var(--rome-red)" opacity=".5"/>
-      <path d="M94 22 a26 24 0 0 1 52 0 Z" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width="1.4"/>
-      <rect x="117" y="0" width="6" height="16" rx="1" fill="var(--rome-gold)"/>
-      <rect x="111" y="4" width="18" height="5" rx="1" fill="var(--rome-gold)"/>
+      <ellipse cx="120" cy="150" rx="96" ry="9" fill="url(#${id}h)"/>
+      <rect x="18" y="142" width="204" height="9" rx="1.5" fill="url(#${id}b)" stroke="var(--rome-ink)" stroke-opacity=".24"/>
+      <rect x="28" y="135" width="184" height="7" rx="1.5" fill="url(#${id}b)" stroke="var(--rome-ink)" stroke-opacity=".22"/>
+
+      <path d="M44 135 v-44 l11-7 v51 z" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width="1"/>
+      <path d="M196 135 v-44 l-11-7 v51 z" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width="1"/>
+      <rect x="55" y="76" width="130" height="59" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width="1.3"/>
+      <path d="M55 118 h130" stroke="var(--rome-ink)" stroke-opacity=".2" stroke-width=".9"/>
+
+      ${lancet(66,17,90,30)}${lancet(157,17,90,30)}
+      <path d="M108 135 v-27 a12 12 0 0 1 24 0 v27 z" fill="var(--rome-red)" stroke="var(--rome-gold)" stroke-width="1.3"/>
+      <path d="M120 135 v-27" stroke="var(--rome-ink)" stroke-opacity=".45" stroke-width=".9"/>
+      <circle cx="115" cy="122" r="1.5" fill="var(--rome-gold)"/><circle cx="125" cy="122" r="1.5" fill="var(--rome-gold)"/>
+      <path d="M104 135 h32" stroke="var(--rome-gold)" stroke-width="1.6"/>
+
+      <path d="M49 76 L120 40 L191 76 Z" fill="url(#${id}s)" stroke="var(--rome-gold)" stroke-width="1.5"/>
+      <path d="M62 69.5 h116M75 63 h90M88 56.5 h64" stroke="var(--rome-ink)" stroke-opacity=".3" stroke-width=".8"/>
+      <circle cx="120" cy="64" r="8.5" fill="url(#${id}g)" stroke="var(--rome-gold)" stroke-width="1.2"/>
+      <path d="M120 56v16M112 64h16" stroke="var(--rome-ink)" stroke-opacity=".4" stroke-width="1"/>
+
+      <path d="M104 40 h32 v-15 h-32 z" fill="url(#${id}b)" stroke="var(--rome-gold)" stroke-width="1.2"/>
+      <path d="M112 40 v-9 a8 8 0 0 1 16 0 v9 z" fill="var(--rome-ink)" opacity=".42"/>
+      <circle cx="120" cy="33" r="4.2" fill="url(#${id}g)" stroke="var(--rome-ink)" stroke-opacity=".3"/>
+      <path d="M120 37.4 v2" stroke="var(--rome-ink)" stroke-opacity=".4" stroke-width="1"/>
+      <path d="M99 25 L120 10 L141 25 Z" fill="url(#${id}s)" stroke="var(--rome-gold)" stroke-width="1.3"/>
+
+      <rect x="118.4" y="0" width="3.2" height="12" rx="1.2" fill="var(--rome-gold)"/>
+      <rect x="114" y="3.2" width="12" height="3" rx="1.2" fill="var(--rome-gold)"/>
     </g></svg>`;
 }
 function churchAdd(n){
@@ -8503,9 +8647,11 @@ function renderWalk(){
     if(!st.length) return `<div class="hint" style="grid-column:1/-1;text-align:center;margin:10px 0">Add some spots to this palace first.</div>`;
     return st.map((r,n)=>{
       const free=spotFree(pi,r), held=versesAtLoc(pi,r).filter(k=>k!==vkey).length;
-      return `<button type="button" class="pickbtn${r===loc.room?" on":""}${free?"":" taken"}" data-room="${bbEsc(r)}" data-free="${free?1:0}">
+      // Green is a spot doing its job, red is one standing empty. It reads backwards for a second
+      // and then never again, because it matches the palace tiles: a full palace is the green one.
+      return `<button type="button" class="pickbtn spot-${free?"free":"used"}${r===loc.room?" on":""}" data-room="${bbEsc(r)}" data-free="${free?1:0}">
         <span class="pkn">${n+1}</span><span class="pkt">${bbEsc(r)}</span>
-        <span class="pks">${free?"free":held+" here"}</span></button>`;
+        <span class="pks">${free?"open":held+" here"}</span></button>`;
     }).join("");
   };
   // A label over a box, and the choice itself in a sheet. Two grids inline pushed the verse, the
@@ -8515,12 +8661,12 @@ function renderWalk(){
   // The ids are written out rather than passed in: the static check scans the source for every id
   // that gets looked up, and an id built from a variable is invisible to it.
   const boxIn=(label,name,why)=>`<span class="bbc-t"><span class="bbc-name">${name?bbEsc(name):label}</span>${why?`<span class="bbc-why">${bbEsc(why)}</span>`:""}</span><span class="bbc-caret">▾</span>`;
-  const boxCls=(name,ready)=>`bbchoose${name?" set":""}${ready?"":" waiting"}`;
+  const boxCls=(name,ready)=>`bbchoose big${name?" set":""}${ready?"":" waiting"}`;
   const palaceSel = palaces.length
  ? `<input type="hidden" id="wPalace" value="${selP==null?"":selP}"><input type="hidden" id="wRoom" value="${bbEsc(loc.room||"")}">
-       <label class="vplabel" style="display:block;margin-bottom:4px">Which palace?</label>
+       <label class="vplabel vplabel-lg" style="display:block;margin-bottom:5px">Which palace?</label>
        <button type="button" class="${boxCls(chosenPalace,true)}" id="wPalaceBtn">${boxIn("Choose a palace…",chosenPalace,chosenPalace?`${freeIn(selP)} free of ${roomsFor(selP).length}`:"")}</button>
-       <label class="vplabel" style="display:block;margin:12px 0 4px">Which room / spot?
+       <label class="vplabel vplabel-lg" style="display:block;margin:14px 0 5px">Which room / spot?
          <button type="button" class="wroom-go" id="wRoomEye" title="Open this location in your palace">🏛️</button></label>
        <button type="button" class="${boxCls(loc.room||"",selP!=null)}" id="wRoomBtn">${boxIn(selP==null?"Pick a palace first…":"Choose a room or spot…", loc.room||"", loc.room?(spotFree(selP,loc.room)?"free":"already holds a verse"):"")}</button>`
  : `<div class="hint" style="margin:2px 0 10px">You don't have a memory palace yet. Build one in the <b>Palaces</b> tab. For now, just describe where your scene happens.</div>`;
@@ -8528,9 +8674,9 @@ function renderWalk(){
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="wClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">${palaces.length?"Which palace?":"Write your scene"}</div><button class="lsave" id="wDoneTop" title="Save & done">✓</button></div>
       ${sceneNote?`<div class="teachbox" style="margin:0 0 10px">${sceneNote}</div>`:""}
       ${palaceSel}
-      <div class="lv-ref" style="font-size:20px;margin:8px 0 4px">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
-      <div class="lv-triple lv-triple-sm">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
-      <div class="lv-versetext" style="font-size:13.5px;line-height:1.45;margin:0 0 12px">“${verseWordsHTML(b,c,v,curScene.text)}”</div>
+      <div class="lv-ref" style="font-size:30px;margin:16px 0 8px">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
+      <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
+      <div class="lv-versetext" style="margin:2px 0 14px">“${verseWordsHTML(b,c,v,curScene.text)}”</div>
       <label class="vplabel">Your scene</label>
       <textarea class="ed-ta" id="wScene" placeholder="e.g. In the kitchen, a giant ${bp.word} smashes into a ${cp.word} while a ${vp.word} …">${(Prog.customScene[vkey]||"").replace(/</g,"&lt;")}</textarea>
       <div class="btnrow" style="margin-top:12px"><button class="btn ghost" id="wBack" style="flex:0 0 96px">← Back</button><button class="btn" id="wDone">Done ✓</button></div>
