@@ -567,6 +567,15 @@
   .lv-triple-sm .lv-cell-w{font-size:11px}
   .lv-triple-sm .pegimg-sm,.lv-triple-sm .imgph-sm{width:50px;height:50px}
   .lv-versetext{font-size:16px;line-height:1.5;color:var(--ink);text-align:center;margin:6px 0 16px}
+  /* the verse just kept, read back once before leaving */
+  .keptcrown{font-size:44px;line-height:1;text-align:center;margin:2px 0 4px}
+  .kepth{text-align:center;font-size:22px;margin:0 0 4px;color:var(--gold-ink)}
+  .keptrow{display:flex;align-items:flex-start;gap:11px;background:var(--panel2);border:1px solid var(--line);
+    border-radius:12px;padding:11px 13px;margin-top:8px;text-align:left;font-size:14px}
+  .keptrow .kr-i{flex:none;font-size:22px;line-height:1.2;width:26px;display:grid;place-items:center}
+  .keptrow .kr-i svg{width:24px;height:24px;display:block}
+  .keptrow b{display:block;font-weight:800;color:var(--ink)}
+  .keptrow small{display:block;font-size:12.5px;line-height:1.45;color:var(--muted);margin-top:2px}
   /* press and hold a word for its Hebrew or Greek */
   .vw{cursor:pointer;border-radius:4px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   .vw.held{background:var(--gold-soft);box-shadow:0 0 0 2px var(--gold-soft)}
@@ -2043,8 +2052,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.63.1";
+const APP_VERSION="1.64.0";
 const CHANGELOG=[
+ {v:"1.64.0", d:"August 29, 2026", t:"Read it back before you go", items:[
+   ["chg","<b>Saving a new verse no longer throws you back to the list.</b> It stops on the verse you have just built and shows the whole of it: the address, the three pictures, the words, where it lives and the scene you wrote."],
+   ["chg","<b>The goal flash and any badge wait their turn.</b> They used to land on top of the verse the moment it was saved, which covered the one thing there was to look at. They fire once you leave."],
+   ["new","<b>Leave when you are ready.</b> There is a button at the foot of it, and one beside it to go back and change something if reading it back showed you a better idea."]
+ ]},
  {v:"1.63.1", d:"August 29, 2026", t:"Two small edges", items:[
    ["chg","<b>The quick review chip is gone from the top of a test.</b> Whether a question is new or a revisit is not something you need told mid-answer."],
    ["chg","<b>Writing your own picture for a book or a number uses the app\u2019s own editor</b>, the same one the scene is written in. It was the browser\u2019s bare prompt box, which looked like the browser rather than the app."]
@@ -8159,11 +8173,15 @@ function nextBadge(){ const c=Prog.memorized.length; return BADGES.filter(b=>b.c
 // The by-heart ladder has its own next rung, because it is the one worth chasing.
 function nextHeartBadge(){ const c=heartCount(); return BADGES.filter(b=>b.cat==="Verses by Heart").find(b=>b.n>c)||null; }
 // detect newly-earned badges across ALL categories and celebrate the newest
-function checkBadges(){
+function checkBadges(defer){
   if(!feat("badges")) return;
   const newly=[];
   BADGES.forEach(b=>{ if(b.have() && !Prog.badges.includes(b.id)){ Prog.badges.push(b.id); newly.push(b); } });
-  if(newly.length){ saveProg(); earnTalents(25*newly.length); showBadgeModal(newly[newly.length-1]); }
+  if(!newly.length) return function(){};
+  saveProg(); earnTalents(25*newly.length);
+  const show=()=>showBadgeModal(newly[newly.length-1]);
+  if(defer) return show;
+  show(); return function(){};
 }
 function showBadgeModal(b){
   let m=document.getElementById("badgeModal");
@@ -8179,13 +8197,18 @@ function showBadgeModal(b){
   document.getElementById("badgeClose").onclick=()=>{ m.style.display="none"; };
   document.getElementById("badgeShare").onclick=()=>{ m.style.display="none"; shareProgress(`the "${b.name}" badge`); };
 }
-function addMemorized(s){
+// Returns whatever applause was held back, so the caller can let it off when the screen is done with.
+function addMemorized(s, defer){
   const k=refKey(bookNum(s.b),s.c,s.v);
   Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k); // once learned, drop from saved/skip
-  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); saveProg(); updateMetrics(); earnTalents(15); checkBadges(); bumpGoal();   // a new verse counts toward today's goal
-    if(Prog.memorized.length===1) setTimeout(()=>maybeVideo("sr"), 900);   // one verse in hand is the moment spaced repetition means something
+  if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); saveProg(); updateMetrics(); earnTalents(15);
+    const badge=checkBadges(defer), cheer=bumpGoal(defer);   // a new verse counts toward today's goal
+    const first=Prog.memorized.length===1;
+    const after=()=>{ badge(); cheer(); if(first) setTimeout(()=>maybeVideo("sr"), 900); };
+    if(defer) return after;
+    after(); return function(){};
   }
-  else saveProg();
+  saveProg(); return function(){};
 }
 // "I forgot this": pull a verse OUT of memorized so it returns to the pool to encode again later.
 // It lands in "Saved for later" (the come-back queue) and its spaced repetition strength is cleared.
@@ -8337,7 +8360,8 @@ function vpCheck(){
     }
   }
 }
-let wPhase="visual";   // the Learn-a-verse wizard: "visual" (see it) → "scene" (write & place it)
+let wPhase="visual";   // the Learn-a-verse wizard: "visual" (see it) → "scene" (write & place it) → "kept" (read it back)
+let wKeptCheer=null;   // the goal flash and any badge earned, held until the reader leaves "kept"
 // Gentle, rotating nudges when someone tries to finish without writing their scene (writing IS the learning).
 const SCENE_NUDGES=[
   "You'll remember it far better if you picture and write your scene. Leave it blank anyway?",
@@ -8607,6 +8631,31 @@ function renderWalk(){
   const canLearn=reachable(b,c,v), hasPrev=v>1, hasNext=v<verseCount(b,c);
   const cell=(lbl,n)=>`<div class="lv-cell"><div class="lv-cell-k">${lbl}</div>${pegImg("num",n,pegFor(n).word)}<div class="lv-cell-w">${pegFor(n).word}</div></div>`;
 
+  if(wPhase==="kept"){
+    const loc=(Prog.verseLoc&&Prog.verseLoc[vkey])||{};
+    const place=(loc.p!=null && Prog.palaces[loc.p]) ? Prog.palaces[loc.p].place : "";
+    const scene=(Prog.customScene[vkey]||"").trim();
+    V.innerHTML=`<div class="card">
+        <div class="keptcrown">👑</div>
+        <h2 class="kepth">Hidden in your heart</h2>
+        <p class="hint" style="text-align:center;margin:0 0 14px">Read it back once before you go. This is the whole of it.</p>
+        <div class="lv-ref" style="font-size:30px;margin:2px 0 10px">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
+        <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
+        <div class="lv-versetext" style="margin:2px 0 14px">“${verseWordsHTML(b,c,v,curScene.text)}”</div>
+        ${place?`<div class="keptrow"><span class="kr-i">🏛️</span><div><b>${bbEsc(place)}</b>${loc.room?` · ${bbEsc(loc.room)}`:""}<small>where it lives</small></div></div>`:""}
+        ${scene?`<div class="keptrow"><span class="kr-i">✍️</span><div><b>Your scene</b><small>${bbEsc(scene)}</small></div></div>`:""}
+        <div class="keptrow"><span class="kr-i">${srIconSVG()}</span><div><b>D0 today</b><small>it comes back tomorrow, then D3, D7, D16 and D30</small></div></div>
+        <button class="btn ghost sm" id="wKeptEdit" style="width:100%;margin-top:12px">✏️ Change something</button>
+        <button class="btn" id="wKeptDone" style="width:100%;margin-top:8px">Done, take me back →</button>
+      </div>`;
+    el("wKeptEdit").onclick=()=>{ wPhase="scene"; renderWalk(); };
+    el("wKeptDone").onclick=()=>{
+      sceneBackfill=false; walkReturn();
+      const cheer=wKeptCheer; wKeptCheer=null;
+      if(cheer) setTimeout(cheer, 260);   // once the list is back, so it lands on the list and not on this
+    };
+    paintTheme(); return;
+  }
   if(wPhase==="visual"){
     const missing=[];
     if(!knownNum(b)) missing.push({n:b,book:true,lbl:`Book ${b}: ${bookName(b)}`});
@@ -8775,7 +8824,14 @@ function renderWalk(){
     if(text) Prog.customScene[vkey]=text; else delete Prog.customScene[vkey];
     if(el("wPalace")){ Prog.verseLoc=Prog.verseLoc||{}; const pv=el("wPalace").value;   // blank palace → don't record a bogus location
       if(pv!=="") Prog.verseLoc[vkey]={p:+pv, room:(el("wRoom")?el("wRoom").value:"")}; else delete Prog.verseLoc[vkey]; }
-    saveProg(); addMemorized(curScene); sceneBackfill=false; walkReturn();
+    saveProg();
+    // Saving used to drop straight back to the list, which is the one moment somebody actually wants
+    // to sit and look at what they just built. It stops here now and waits to be dismissed, and the
+    // goal flash and any badge wait with it rather than landing on top of what there is to read.
+    if(sceneBackfill){ sceneBackfill=false; addMemorized(curScene); walkReturn(); return; }
+    wKeptCheer = addMemorized(curScene, true);
+    wPhase="kept"; renderWalk();
+    const sc=document.querySelector(".content"); if(sc) sc.scrollTop=0;
   };
   // A verse counts as learned once it LIVES somewhere: pick the palace and the room. That
   // location is the proof. (Scene text stays optional — the placement is what we require.)

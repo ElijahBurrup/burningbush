@@ -2503,6 +2503,91 @@ const DAY = 86400000;
   ok(/driver/.test(ownNumber.hint), 'the number side asks for a number picture, and gives an example');
   is(ownNumber.untouched, '', '…and cancelling leaves it unset');
 
+  describe('read it back before you go', () => { });
+  const kept = await $(() => {
+    Prog.palaces = [{ place: 'My Kitchen', stations: ['Sink', 'Fridge', 'Table'], learnedAt: Date.now(), step: 1 }];
+    Prog.memorized = []; Prog.customScene = {}; Prog.verseLoc = {}; Prog.badges = [];
+    // an earlier block left extraKnown holding other books, and an unreachable verse renders the
+    // 'learn these numbers first' state instead of the wizard
+    Prog.extraKnown = [40, 6, 33]; Prog.dailyGoal = 1; markVideoSeen('verse'); saveProg(); bustCaches();
+    let left = false;
+    // stale flashes from earlier blocks linger, so clear the field before measuring this one
+    document.querySelectorAll('.goalflash').forEach(x => x.remove());
+    openVerseWizard(40, 6, 33, () => { left = true; vView = 'hub'; show('verse'); renderVerse(); });
+    el('wToScene').click();
+    el('wScene').value = 'A giant ROSE crashes onto a plate of SUSHI.';
+    el('wRoomBtn').click(); document.querySelector('#psGrid [data-room="Fridge"]').click();
+    el('wDone').click();
+    const txt = el('verse').innerText;
+    return {
+      leftAtOnce: left,
+      phase: wPhase,
+      memorized: Prog.memorized.includes('40:6:33'),
+      ref: /Matthew/.test(txt) && /6:33/.test(txt),
+      words: /Seek ye first the kingdom/.test(txt),
+      pictures: document.querySelectorAll('#verse .lv-triple .lv-cell').length,
+      place: /My Kitchen/.test(txt) && /Fridge/.test(txt),
+      scene: /crashes onto a plate/.test(txt),
+      trail: /D0 today/.test(txt),
+      leaveBtn: (el('wKeptDone') || {}).textContent,
+      editBtn: !!el('wKeptEdit'),
+      // and nothing is covering it
+      goalFlash: !!document.querySelector('.goalflash'),
+      badgeUp: !!(el('badgeModal') && el('badgeModal').style.display === 'flex'),
+      cheerHeld: typeof wKeptCheer === 'function',
+    };
+  });
+  no(kept.leftAtOnce, 'saving a new verse does not throw you back to the list');
+  is(kept.phase, 'kept', '…it stops on the verse you just built');
+  ok(kept.memorized, '…which is kept all the same');
+  ok(kept.ref, 'the address is there');
+  ok(kept.words, '…the words');
+  is(kept.pictures, 3, '…all three pictures');
+  ok(kept.place, '…where it lives');
+  ok(kept.scene, '…and the scene that was written');
+  ok(kept.trail, '…with what happens to it next');
+  ok(/Done/.test(kept.leaveBtn), 'there is a button at the foot to leave by');
+  ok(kept.editBtn, '…and one to go back and change something');
+  no(kept.goalFlash, 'the goal flash is not covering it');
+  no(kept.badgeUp, '…nor a badge card');
+  ok(kept.cheerHeld, '…because both are being held');
+
+  const letOff = await $(() => {
+    document.querySelectorAll('.goalflash').forEach(x => x.remove());
+    el('wKeptDone').click();
+    return { held: wKeptCheer, onList: !!document.querySelector('#verse .versehub') };
+  });
+  is(letOff.held, null, 'leaving lets the applause go');
+  ok(letOff.onList, '…and lands back on the Library');
+  // whether a flash is due depends on today's goal, which other blocks have already moved. What is
+  // worth pinning is the contract: held back when asked, and nothing shown until it is let go.
+  const contract = await $(() => {
+    Prog.memorized = []; Prog.dailyGoal = 5; goalState().count = 0; goalState().celebrated = false; saveProg();
+    document.querySelectorAll('.goalflash').forEach(x => x.remove());
+    const held = addMemorized({ b: 'Matthew', c: 6, v: 33 }, true);
+    const quiet = !document.querySelector('.goalflash');
+    held();
+    const loud = !!document.querySelector('.goalflash');
+    document.querySelectorAll('.goalflash').forEach(x => x.remove());
+    return { isFn: typeof held === 'function', quiet, loud };
+  });
+  ok(contract.isFn, 'adding a verse with the applause deferred hands the applause back');
+  ok(contract.quiet, '…and shows nothing while it is held');
+  ok(contract.loud, '…until it is let go');
+
+  const backfill = await $(() => {
+    Prog.customScene = {}; saveProg();
+    let back = false;
+    editVerseScene(43, 3, 16, () => { back = true; }, () => { back = true; });
+    el('wScene').value = 'a scene written from somewhere else';
+    if (el('wPalaceBtn')) { el('wPalaceBtn').click(); const p = document.querySelector('#psGrid [data-p="0"]'); if (p) p.click(); }
+    if (el('wRoomBtn')) { el('wRoomBtn').click(); const r = document.querySelector('#psGrid [data-room="Sink"]'); if (r) r.click(); }
+    el('wDoneTop').click();
+    return { back, phase: wPhase };
+  });
+  ok(backfill.back, 'a scene edited from elsewhere still goes straight back where it came from');
+  no(backfill.phase === 'kept', '…without stopping on the read-it-back screen');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
