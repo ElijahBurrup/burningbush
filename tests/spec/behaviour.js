@@ -2379,6 +2379,74 @@ const DAY = 86400000;
   is([...palColours.pageClasses].sort().join(','), 'pal-empty,pal-full,pal-partial',
      'the Memory Palace page paints the same three states, empty included');
 
+  describe('winning the Bible', () => { });
+  const gospels = await $(() => {
+    const rung = SCRATCH_LADDER.findIndex(r => r.tab === 'stories');
+    const req = SCRATCH_LADDER[rung].reqs[2];
+    // knownNumbers caches on doneSkills.length + extraKnown.length, so swapping one entry for
+    // another of the same count returns the old set. It only ever grows in real use; here it does not.
+    Prog.extraKnown = []; Prog.doneSkills = []; saveProg(); bustCaches();
+    const none = req.prog();
+    // the four Gospels, and nothing else
+    GOSPELS.forEach(n => Prog.extraKnown.push(n));
+    saveProg(); bustCaches();
+    const all = { prog: req.prog(), done: req.done() };
+    // Acts must not be needed, and must not count
+    Prog.extraKnown = GOSPELS.slice(0, 3).concat([44]); saveProg(); bustCaches();
+    const withActs = req.done();
+    return { none, all, withActs, label: req.label, books: GOSPELS.slice() };
+  });
+  is(gospels.books.join(','), '40,41,42,43', 'the four Gospels are Matthew, Mark, Luke and John');
+  is(gospels.none, '0/4', 'none of them learned reads zero of four');
+  is(gospels.all.prog, '4/4', '…and all four reads four of four');
+  ok(gospels.all.done, '…which earns the ticket');
+  no(gospels.withActs, 'three Gospels and Acts does not, because Acts is not one of them');
+  ok(/Matthew/.test(gospels.label) && /John/.test(gospels.label), 'the requirement names them');
+
+  const phase2 = await $(() => {
+    const u = UNITS.find(x => /^Phase 2:/.test(x.name));
+    return { name: u.name, order: u.skills.filter(s => s.kind === 'book').map(s => s.items[0]) };
+  });
+  is(phase2.order.join(','), '41,42,43,6,7,8',
+     'Phase 2 finishes the Gospels first, then turns to Joshua, Judges and Ruth');
+  ok(/Mark–John \+ Joshua–Ruth/.test(phase2.name), '…and its name says so');
+
+  const cascade = await $(() => {
+    Prog.scratchWon = ['verse', 'palace']; saveProg();
+    updateTabLocks(); syncTabOrder(false);
+    const bar = document.querySelector('.tabbar');
+    const order = () => [...bar.children].map(b => b.dataset.tab);
+    const out = { before: order(), fn: typeof bibleTakesItsPlace === 'function' };
+    // the cascade moves these three, right to left, each into the slot the one before it left
+    bibleTakesItsPlace('📕', () => { });
+    out.dom = order();                       // the DOM is reordered up front…
+    const bible = bar.querySelector('[data-tab="journey"]');
+    out.hidden = bible.style.visibility;     // …but the Bible is not shown until the end
+    const held = ['palace', 'verse', 'learn'].map(t => bar.querySelector('[data-tab="' + t + '"]').style.transform);
+    out.held = held.every(t => /translateX/.test(t));
+    out.delays = ['palace', 'verse', 'learn'].map(t => bar.querySelector('[data-tab="' + t + '"]').style.transition);
+    return out;
+  });
+  is(cascade.before.join(','), 'learn,verse,palace,journey,stories', 'the Bible starts in the fourth slot');
+  ok(cascade.fn, 'winning it runs a cascade of its own');
+  is(cascade.dom.join(','), 'journey,learn,verse,palace,stories', '…which puts it at the front');
+  is(cascade.hidden, 'hidden', '…while keeping it out of sight until the others have moved');
+  ok(cascade.held, 'the three to its left are pinned where they were, so nothing jumps');
+
+  await page.waitForTimeout(60);
+  const staggered = await $(() => {
+    const bar = document.querySelector('.tabbar');
+    return ['palace', 'verse', 'learn'].map(t => {
+      const d = bar.querySelector('[data-tab="' + t + '"]').style.transition;
+      // the browser normalises the shorthand, and the cubic-bezier has commas in it, so take the
+      // LAST duration in the string: that is the delay
+      const m = d.match(/(\d+)ms/g);
+      // a zero delay is dropped by the browser, so one duration means the delay is 0
+      return m ? (m.length > 1 ? +m[m.length - 1].replace('ms', '') : 0) : -1;
+    });
+  });
+  is(staggered.join(','), '0,240,480', 'palace goes first, then verse, then learn, one at a time');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
@@ -3227,7 +3295,7 @@ const DAY = 86400000;
   is(lpath.numbered, 'Phase 2,Phase 3,Phase 4,Phase 5,Phase 6,Phase 7,Phase 8,Phase 9,Phase 10,Phase 11,Phase 12', 'numbered Phase 2 through Phase 12, with Foundations as the first');
   has(lpath.names, 'The Code: Major System Sounds', 'the first is the Code');
   has(lpath.names, 'Foundations', '...then Foundations');
-  has(lpath.names, 'Phase 2: Joshua–Ruth + Mark–John', '...then Joshua–Ruth with Mark–John');
+  has(lpath.names, 'Phase 2: Mark–John + Joshua–Ruth', '...then Mark–John first, which finishes the four Gospels, and Joshua–Ruth after');
   has(lpath.names, 'Phase 12: All the Numbers', '...and the numbers alone at the end');
   hasNot(lpath.names, 'Memory Palace', 'the Memory Palace section is gone from the path');
   is(lpath.palaceSkills, 0, 'and no Add Palace tile is left anywhere on it');

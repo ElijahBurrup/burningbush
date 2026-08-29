@@ -1,6 +1,6 @@
 {
  "classic/learn/path": {
-  "h": "48a8ff499f3cf0c2",
+  "h": "7c479c91e33fa34a",
   "len": 6062,
   "els": 132,
   "buttons": 40,
@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "5ba0feebd0c40343",
+  "h": "f4c3760159c40575",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "6e339bb295f1624f",
-  "len": 87052,
-  "els": 1626,
+  "h": "97d53c62bca8ecd0",
+  "len": 88174,
+  "els": 1643,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.62.0 August 28, 2026 The Library moves NEW Every icon on the Library screen has something to do. Th"
+  "text": "✕ Version history v1.63.0 August 28, 2026 The Gospels open the Stories FIX Bible Stories is earned by the four Gospels r"
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "216f36ee550c367c",
+  "h": "e6d53b18d559ced4",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -513,7 +513,7 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "illumined/learn/path": {
-  "h": "9a6d584b9204efe2",
+  "h": "15ce71fa0256c2c7",
   "len": 4576,
   "els": 102,
   "buttons": 40,
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "63a6a0e9f5e25908",
+  "h": "7417ad55101366f5",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "6e339bb295f1624f",
-  "len": 87052,
-  "els": 1626,
+  "h": "97d53c62bca8ecd0",
+  "len": 88174,
+  "els": 1643,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.62.0 August 28, 2026 The Library moves NEW Every icon on the Library screen has something to do. Th"
+  "text": "✕ Version history v1.63.0 August 28, 2026 The Gospels open the Stories FIX Bible Stories is earned by the four Gospels r"
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "63a6a0e9f5e25908",
+  "h": "7417ad55101366f5",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1026,7 +1026,7 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "glass/learn/path": {
-  "h": "9a6d584b9204efe2",
+  "h": "15ce71fa0256c2c7",
   "len": 4576,
   "els": 102,
   "buttons": 40,
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "b69f1680e264bfd5",
+  "h": "c384ef95b3d5e034",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "6e339bb295f1624f",
-  "len": 87052,
-  "els": 1626,
+  "h": "97d53c62bca8ecd0",
+  "len": 88174,
+  "els": 1643,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.62.0 August 28, 2026 The Library moves NEW Every icon on the Library screen has something to do. Th"
+  "text": "✕ Version history v1.63.0 August 28, 2026 The Gospels open the Stories FIX Bible Stories is earned by the four Gospels r"
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "b69f1680e264bfd5",
+  "h": "c384ef95b3d5e034",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1539,8 +1539,8 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "quest/learn/path": {
-  "h": "dfbf245da1da8046",
-  "len": 5420,
+  "h": "e8bc98fbf95c9fa3",
+  "len": 5418,
   "els": 117,
   "buttons": 41,
   "svgs": 1,
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "b9c24186623fa1df",
+  "h": "a2ed5e6685cb0ee4",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "6e339bb295f1624f",
-  "len": 87052,
-  "els": 1626,
+  "h": "97d53c62bca8ecd0",
+  "len": 88174,
+  "els": 1643,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.62.0 August 28, 2026 The Library moves NEW Every icon on the Library screen has something to do. Th"
+  "text": "✕ Version history v1.63.0 August 28, 2026 The Gospels open the Stories FIX Bible Stories is earned by the four Gospels r"
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "b9c24186623fa1df",
+  "h": "a2ed5e6685cb0ee4",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -2052,8 +2052,8 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "buddy/learn/path": {
-  "h": "416ca095f18aff0e",
-  "len": 5239,
+  "h": "851a1eb5c6603643",
+  "len": 5237,
   "els": 111,
   "buttons": 41,
   "svgs": 1,
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "c56081ba76471366",
+  "h": "07d68fa03844d461",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "6e339bb295f1624f",
-  "len": 87052,
-  "els": 1626,
+  "h": "97d53c62bca8ecd0",
+  "len": 88174,
+  "els": 1643,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.62.0 August 28, 2026 The Library moves NEW Every icon on the Library screen has something to do. Th"
+  "text": "✕ Version history v1.63.0 August 28, 2026 The Gospels open the Stories FIX Bible Stories is earned by the four Gospels r"
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "c56081ba76471366",
+  "h": "07d68fa03844d461",
   "len": 17712,
   "els": 441,
   "buttons": 40,

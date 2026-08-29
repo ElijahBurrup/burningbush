@@ -2043,8 +2043,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.62.0";
+const APP_VERSION="1.63.0";
 const CHANGELOG=[
+ {v:"1.63.0", d:"August 28, 2026", t:"The Gospels open the Stories", items:[
+   ["chg","<b>Bible Stories is earned by the four Gospels</b> rather than the first five New Testament books. Matthew, Mark, Luke and John are where the stories come from, and Acts was never part of that."],
+   ["chg","<b>Phase 2 teaches Mark, Luke and John first</b>, then Joshua, Judges and Ruth. Matthew is already learned in Foundations, so the four Gospels finish together and the Stories ticket comes into reach as soon as it should."],
+   ["fix","<b>Winning the Bible now arrives in order.</b> The fourth slot empties, the three tabs to its left step right one after another to close the gap, and only then does the Bible drop into the space at the front. It used to slide the whole bar at once, which read as a shuffle rather than something arriving."]
+ ]},
  {v:"1.62.0", d:"August 28, 2026", t:"The Library moves", items:[
    ["new","<b>Every icon on the Library screen has something to do.</b> The heart beats, a page turns, the clapperboard snaps shut and opens, Learn twinkles, the spaced repetition circle takes a full turn, and the die still rolls."],
    ["new","<b>They take turns rather than all going at once.</b> One moves while the rest sit still, zigzagging down the screen and back up again, so the eye is led rather than shouted at."],
@@ -3977,8 +3982,8 @@ function updateAppBadge(){
 function foundationsDone(){ return [1,2,3,4,5,40].every(n=>knownNum(n)); }   // Torah + Matthew (palace is earned later)
 function palaceCount(){ return (Prog.palaces||[]).filter(Boolean).length; }
 const GTIK='<span class="gtik" role="img" aria-label="golden ticket"></span>';   // inline golden-ticket badge for criteria text
-const NT5=[40,41,42,43,44];   // the first five New Testament books (Matthew–Acts) — Mark+ are Pro
-function nt5Done(){ return NT5.every(n=>knownNum(n)); }
+const GOSPELS=[40,41,42,43];   // Matthew, Mark, Luke, John — the four accounts the stories come out of
+function gospelsDone(){ return GOSPELS.every(n=>knownNum(n)); }
 const SCRATCH_LADDER=[
  {tab:"verse", icon:"📚", name:"Library", desc:"Your shelf. The films, the verses to learn, your review and everything you have memorized.", gate:()=>foundationsDone(),
  reqs:[{label:"Finish the Foundation. Books 1–5 &amp; Matthew", done:()=>foundationsDone()}]},
@@ -3988,10 +3993,10 @@ const SCRATCH_LADDER=[
  {tab:"journey", icon:"📕", iconHtml:()=>bibleIconSVG(), name:"Bible", desc:"See the whole Bible open before you. Every book, chapter and verse you can reach.", gate:()=>Prog.memorized.length>=15 && palaceCount()>=3,
      reqs:[{label:"Memorize 15 verses", done:()=>Prog.memorized.length>=15, prog:()=>`${Math.min(15,Prog.memorized.length)}/15`},
            {label:"Build 3 memory palaces", done:()=>palaceCount()>=3, prog:()=>`${Math.min(3,palaceCount())}/3`}]},
- {tab:"stories", icon:"📖", name:"Bible Stories", desc:"100+ of the Bible's great stories. Located, learned, and ready to tell.", gate:()=>Prog.memorized.length>=25 && palaceCount()>=5 && nt5Done(),
+ {tab:"stories", icon:"📖", name:"Bible Stories", desc:"100+ of the Bible's great stories. Located, learned, and ready to tell.", gate:()=>Prog.memorized.length>=25 && palaceCount()>=5 && gospelsDone(),
      reqs:[{label:"Memorize 25 verses", done:()=>Prog.memorized.length>=25, prog:()=>`${Math.min(25,Prog.memorized.length)}/25`},
            {label:"Build 5 memory palaces", done:()=>palaceCount()>=5, prog:()=>`${Math.min(5,palaceCount())}/5`},
-           {label:"Learn the first 5 New Testament books (Matthew–Acts)", done:()=>nt5Done(), prog:()=>`${NT5.filter(n=>knownNum(n)).length}/5`}]}
+           {label:"Learn the four Gospels: Matthew, Mark, Luke &amp; John", done:()=>gospelsDone(), prog:()=>`${GOSPELS.filter(n=>knownNum(n)).length}/4`}]}
 ];
 function tabWon(t){ return t==="learn" || (Prog.scratchWon||[]).includes(t); }
 function tabUnlocked(tab){ return tabWon(tab); }
@@ -4437,13 +4442,16 @@ function buildUnits(){
   for(let r=1;r<=PHASES;r++){
     const otTake=Math.floor(r*OT_ALL/PHASES)-Math.floor((r-1)*OT_ALL/PHASES);
     const ntTake=PER_PHASE-otTake;
-    const skills=[];
-    for(let j=0;j<otTake&&ot.length;j++) skills.push(bk(ot.shift()));
-    const ntStart=skills.length;
-    for(let j=0;j<ntTake&&nt.length;j++) skills.push(bk(nt.shift()));
-    const otN=skills.slice(0,ntStart).map(s=>s.items[0]);
-    const ntN=skills.slice(ntStart).map(s=>s.items[0]);
-    const label=`Phase ${r+1}: ${rng(otN)}${ntN.length?(otN.length?" + ":"")+rng(ntN):""}`;
+    // Phase 2 is the only one that leads with the New Testament: Matthew is learned in Foundations,
+    // so Mark, Luke and John finish the four Gospels straight away, which is what opens Bible Stories.
+    const gospelsFirst = r===1;
+    const otBooks=[], ntBooks=[];
+    for(let j=0;j<otTake&&ot.length;j++) otBooks.push(ot.shift());
+    for(let j=0;j<ntTake&&nt.length;j++) ntBooks.push(nt.shift());
+    const order = gospelsFirst ? ntBooks.concat(otBooks) : otBooks.concat(ntBooks);
+    const skills=order.map(bk);
+    const first = gospelsFirst ? ntBooks : otBooks, second = gospelsFirst ? otBooks : ntBooks;
+    const label=`Phase ${r+1}: ${rng(first)}${second.length?(first.length?" + ":"")+rng(second):""}`;
     units.push({name:label, ic:ROUND_ICONS[r-1], skills});
   }
   // 4) Round 13 — the remaining number pegs (67-176) as batch tiles, for chapter/verse numbers
@@ -10639,12 +10647,20 @@ const Scratch = (()=>{
     const L=SCRATCH_LADDER[rung];
     ov.classList.remove("on"); ov.setAttribute("aria-hidden","true");
     const btn=document.querySelector(`.tabbar button[data-tab="${L.tab}"]`);
-    flyToNav(L.iconHtml?L.iconHtml():L.icon, btn, ()=>{   // the drawn icon when there is one
+    const icon=L.iconHtml?L.iconHtml():L.icon;   // the drawn icon when there is one
+    // The Bible is the one that changes the shape of the bar, so it is marked won first: the tab
+    // has to be unlocked before it is asked to move, or it lands still wearing its ticket.
+    if(L.tab==="journey"){
+      if(!Prog.scratchWon.includes(L.tab)) Prog.scratchWon.push(L.tab);
+      if(!sim) saveProg();
+      updateTabLocks();
+    }
+    const arrive = L.tab==="journey" ? bibleTakesItsPlace : (ic,b,cb)=>flyToNav(ic,b,cb);
+    arrive(icon, btn, ()=>{
       if(!Prog.scratchWon.includes(L.tab)) Prog.scratchWon.push(L.tab);   // in a sim this is temporary (restored on exit); real runs persist
       if(L.tab==="verse" && Prog.dailyGoal==null){ Prog.dailyGoal=1; }   // unlocking Verses sets a starter daily goal of 1
       if(!sim) saveProg();
       updateTabLocks();
-      if(L.tab==="journey") syncTabOrder(true);   // the others slide right; the Bible slots in on the left
       if(!sim && document.querySelector(".view.active")?.id==="learn") renderPath();   // reveal a newly-unlocked Learn lesson (e.g. the palace)
       if(btn){ btn.classList.add("justwon"); setTimeout(()=>btn.classList.remove("justwon"),700); }
       if(sim && opts.onClaimed) opts.onClaimed(rung);
@@ -10673,6 +10689,38 @@ const Scratch = (()=>{
   };
 })();
 // float a big icon from the scratch card down into its bottom-nav slot, shrinking as it lands
+// Winning the Bible used to slide the whole bar at once, which read as a shuffle rather than a
+// thing arriving. It happens in order now: the fourth slot empties, the three to its left step
+// right one after another to close the gap, and only then does the Bible drop into the space left
+// at the front. Each step waits for the one before it, which is the whole point.
+function bibleTakesItsPlace(iconChar, done){
+  const bar=document.querySelector(".tabbar");
+  const bible=bar && bar.querySelector('button[data-tab="journey"]');
+  if(!bar || !bible){ done&&done(); return; }
+  if(bar.firstElementChild===bible){ flyToNav(iconChar, bible, done); return; }   // already there
+  // right to left, because each one is moving into the slot the one before it just left
+  const movers=["palace","verse","learn"].map(t=>bar.querySelector(`button[data-tab="${t}"]`)).filter(Boolean);
+  const before=new Map(movers.map(b=>[b, b.getBoundingClientRect().left]));
+  bible.style.visibility="hidden";
+  bar.insertBefore(bible, bar.firstElementChild);
+  // hold each one where it was, so the DOM has already moved while the eye has not seen it
+  movers.forEach(b=>{
+    const dx=before.get(b)-b.getBoundingClientRect().left;
+    b.style.transition="none"; b.style.transform=`translateX(${dx}px)`;
+  });
+  const STEP=240, RUN=330;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    movers.forEach((b,i)=>{
+      b.style.transition=`transform ${RUN}ms cubic-bezier(.2,.75,.25,1) ${i*STEP}ms`;
+      b.style.transform="";
+    });
+  }));
+  setTimeout(()=>{
+    movers.forEach(b=>{ b.style.transition=""; b.style.transform=""; });
+    bible.style.visibility="";
+    flyToNav(iconChar, bible, done);
+  }, STEP*(movers.length-1) + RUN + 90);
+}
 function flyToNav(iconChar, targetBtn, done){
   const phone=document.querySelector(".phone");
   if(!targetBtn||!phone){ done&&done(); return; }
