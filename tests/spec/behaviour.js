@@ -242,9 +242,10 @@ const DAY = 86400000;
     el('wToScene').click();
     el('wScene').value = 'a scene';
     el('wDone').click(); const blockedNoPalace = !Prog.memorized.includes('40:6:33');
-    document.querySelector('#wPalaceGrid [data-p="0"]').click();
+    el('wPalaceBtn').click(); document.querySelector('#psGrid [data-p="0"]').click();
     el('wDone').click(); const blockedNoRoom = !Prog.memorized.includes('40:6:33');
-    document.querySelector('#wRoomGrid [data-room="Sink"]').click(); el('wDone').click();
+    el('wRoomBtn').click(); document.querySelector('#psGrid [data-room="Sink"]').click();
+    el('wDone').click();
     return { noKnowButton, blockedNoPalace, blockedNoRoom, saved: Prog.memorized.includes('40:6:33'), loc: Prog.verseLoc['40:6:33'] };
   });
   ok(verse.noKnowButton, '"I already know this" is gone');
@@ -977,9 +978,9 @@ const DAY = 86400000;
   is(board.ringN, '3', 'the ring shows the count');
   is(board.ringLabel, 'VERSES', '...and says what it counts');
   ok(board.arcSet, '...with its arc drawn to a real fraction rather than a fixed picture');
-  is(board.cells, '2,3,12,2,9,2', 'six counts: by heart, sealed, day streak, books, clean runs, due');
+  is(board.cells, '2,3,2', 'three counts: by heart, sealed, due today');
   ok(board.dueIsHot, '...and anything due today is picked out rather than blending in');
-  is(board.labels, 'By heart,Sealed,Day streak,Books,Clean runs,Due today', '...each labelled');
+  is(board.labels, 'By heart,Sealed,Due today', '...each labelled, and each one a way in');
   // the long-service clubs are cumulative: two years is also past six months and two months
   is(board.score.longs[60], 2, 'a verse past two months counts in the two month club');
   is(board.score.longs[180], 1, '...and a two year verse counts in the six month club too');
@@ -2199,19 +2200,27 @@ const DAY = 86400000;
     saveProg();
     openVerseWizard(40, 6, 33, () => { });
     el('wToScene').click();
-    const grid = el('wRoomGrid'), box = el('wRoomScroll');
+    const onScreen = { boxes: !!el('wPalaceBtn') && !!el('wRoomBtn'),
+                       gridsInline: !!document.querySelector('#verse #psGrid'),
+                       asks: el('wPalaceBtn').textContent.replace(/\s+/g, ' ').trim() };
+    el('wPalaceBtn').click();
+    const palaceTiles = document.querySelectorAll('#psGrid [data-p]').length;
+    const palaceSub = document.querySelector('#psGrid .pks').textContent;
+    document.querySelector('#psGrid [data-p="0"]').click();
+    el('wRoomBtn').click();
+    const grid = el('psGrid'), box = el('psScroll');
     const tiles = [...grid.querySelectorAll('.pickbtn')];
     return {
-      noSelects: !document.querySelector('#wPalaceGrid select, #wRoomGrid select'),
-      palaceTiles: document.querySelectorAll('#wPalaceGrid .pickbtn').length,
-      palaceSub: document.querySelector('#wPalaceGrid .pks').textContent,
+      onScreen, palaceTiles, palaceSub,
       cols: getComputedStyle(grid).gridTemplateColumns.split(' ').length,
       spots: tiles.length,
       taken: tiles.filter(t => t.dataset.free === '0').map(t => t.dataset.room),
     };
   });
-  ok(picker.noSelects, 'the palace and spot pickers are no longer dropdowns');
-  is(picker.palaceTiles, 1, 'every palace gets a tile');
+  ok(picker.onScreen.boxes, 'the palace and the spot are boxes on the screen');
+  no(picker.onScreen.gridsInline, '…with no grid sitting open on the screen itself');
+  ok(/My House/.test(picker.onScreen.asks), '…and a lone palace is already chosen, since there is no choice to make');
+  is(picker.palaceTiles, 1, 'the sheet holds a tile for every palace');
   is(picker.palaceSub, '8 free of 12', '…saying how much room is left in it');
   is(picker.cols, 2, 'the spots are laid out two to a row');
   is(picker.spots, 12, '…all twelve of them');
@@ -2220,7 +2229,7 @@ const DAY = 86400000;
 
   await page.waitForTimeout(250);   // the scroll and the marker land on the next frame
   const scrolled = await $(() => {
-    const box = el('wRoomScroll'), next = el('wRoomGrid').querySelector('.pickbtn.next');
+    const box = el('psScroll'), next = el('psGrid').querySelector('.pickbtn.next');
     return { scrollable: box.scrollHeight > box.clientHeight,
              room: next && next.dataset.room, top: box.scrollTop,
              scrollable: box.scrollHeight > box.clientHeight,
@@ -2235,13 +2244,13 @@ const DAY = 86400000;
   ok(scrolled.inView, '…it opens on the next free spot');
 
   const spotPicked = await $(() => {
-    document.querySelector('#wRoomGrid [data-room="Fridge"]').click();
-    const on = el('wRoomGrid').querySelectorAll('.pickbtn.on');
-    return { value: el('wRoom').value, onCount: on.length, cleared: !el('wRoomGrid').querySelector('.next') };
+    document.querySelector('#psGrid [data-room="Fridge"]').click();
+    return { value: el('wRoom').value, sheetClosed: el('pickSheet').style.display === 'none',
+             onBox: el('wRoomBtn').textContent.replace(/\s+/g, ' ').trim() };
   });
   is(spotPicked.value, 'Fridge', 'tapping a spot records it');
-  is(spotPicked.onCount, 1, '…and only one spot is ever chosen');
-  ok(spotPicked.cleared, '…which replaces the suggestion with a real choice');
+  ok(spotPicked.sheetClosed, '…and closes the sheet, because the choice is made');
+  ok(/Fridge/.test(spotPicked.onBox), '…with the box now showing it');
 
   const pulse = await $(() => {
     show('palace'); renderPalace();
@@ -2286,6 +2295,51 @@ const DAY = 86400000;
   no(filmDuringTest.type === 'teach', '…which is checked on a real question, not another teach step');
   ok(filmDuringTest.soundTeach, 'the same holds for a Major System lesson');
   no(filmDuringTest.soundTest, '…film while teaching, nothing while testing');
+
+  describe('the scoreboard counts open', () => { });
+  const counts = await $(() => {
+    Prog.memorized = ['43:3:16', '19:23:1', '45:8:28'];
+    Prog.verseStage = { '43:3:16': 'heart', '19:23:1': 'heart' };
+    Prog.verseSR = { '45:8:28': { step: SR_TRAIL.length, learnedAt: 0, dueAt: 0, r0: 1 } };
+    saveProg();
+    show('verse'); vView = 'mem'; renderVerse();
+    const cells = [...document.querySelectorAll('#verse .statcell')];
+    const out = {
+      n: cells.length,
+      keys: cells.map(c => c.dataset.score),
+      labels: cells.map(c => c.querySelector('.st-l').textContent),
+      areButtons: cells.every(c => c.tagName === 'BUTTON'),
+      gone: !/Day streak|Books|Clean runs/.test(
+        [...document.querySelectorAll('#verse .statgrid')].map(g => g.textContent).join(' ')),
+      medalsKept: /of the 66 books/.test(document.querySelector('#verse .medals').textContent),
+    };
+    cells.find(c => c.dataset.score === 'heart').click();
+    const m = el('scoreListModal');
+    out.opened = m.style.display;
+    out.rows = m.querySelectorAll('[data-vb]').length;
+    out.title = m.querySelector('.lv-topbar div').textContent.trim();
+    el('slDone').click();
+    return out;
+  });
+  is(counts.n, 3, 'three counts, not six');
+  is(counts.keys.join(','), 'heart,sealed,due', '…by heart, sealed and due today');
+  is(counts.labels.join(','), 'By heart,Sealed,Due today', '…labelled plainly');
+  ok(counts.areButtons, '…and every one of them is a button');
+  ok(counts.gone, 'day streak, books and clean runs are off the grid');
+  ok(counts.medalsKept, '…but kept below, where a number with no list belongs');
+  is(counts.opened, 'flex', 'tapping a count opens the verses behind it');
+  is(counts.rows, 2, '…all of them, and only them');
+  ok(/Known by heart/.test(counts.title), '…under the name of the count that was tapped');
+
+  const streakLabel = await $(() => {
+    Prog.dayStreak = 4; saveProg();
+    const on = libStatusHTML();
+    Prog.dayStreak = 0; saveProg();
+    return { on, off: libStatusHTML() };
+  });
+  ok(/day streak/i.test(streakLabel.on), 'the goal button says the flame is a day streak');
+  ok(/4/.test(streakLabel.on), '…alongside the number');
+  ok(/day streak/i.test(streakLabel.off), '…and says it at zero too, so it can be started');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
@@ -2785,9 +2839,9 @@ const DAY = 86400000;
     const back = () => { show('palace'); startPalaceEdit(0, 'Sink', true); };
     editVerseScene(43, 3, 16, back, back);
     el('wScene').value = 'a scene I DO want kept';
-    // the palace and spot are tiles now, so choose them the way a finger would
-    const pt = document.querySelector('#wPalaceGrid [data-p="0"]'); if (pt) pt.click();
-    const rt = document.querySelector('#wRoomGrid [data-room="Sink"]'); if (rt) rt.click();
+    // the palace and spot each open a sheet now, so choose them the way a finger would
+    if (el('wPalaceBtn')) { el('wPalaceBtn').click(); const p = document.querySelector('#psGrid [data-p="0"]'); if (p) p.click(); }
+    if (el('wRoomBtn')) { el('wRoomBtn').click(); const r = document.querySelector('#psGrid [data-room="Sink"]'); if (r) r.click(); }
     el('wDoneTop').click();                                 // the GREEN tick
     return { saved: (Prog.customScene || {})[k] || '', backOnPalace: !!document.querySelector('.peLoc') };
   });
@@ -3275,15 +3329,15 @@ const DAY = 86400000;
     const out = {
       walkGone: typeof renderStoryStep === 'undefined',
       onScene: !!el('wScene'),
-      palacePicker: !!el('wPalace'),
-      roomPicker: !!el('wRoom'),
+      palacePicker: !!el('wPalaceBtn'),
+      roomPicker: !!el('wRoomBtn'),
       cells: document.querySelectorAll('.lv-triple .lv-cell').length,
       txt: el('verse').innerText,
     };
     // one screen: write the scene, choose the palace and the room, done
     el('wScene').value = 'the scene for this story';
-    document.querySelector('#wPalaceGrid [data-p="0"]').click();
-    document.querySelector('#wRoomGrid [data-room="Front door"]').click();
+    el('wPalaceBtn').click(); document.querySelector('#psGrid [data-p="0"]').click();
+    el('wRoomBtn').click(); document.querySelector('#psGrid [data-room="Front door"]').click();
     el('wDoneTop').click();
     out.memorized = Prog.memorized.includes(k);
     out.scene = (Prog.customScene || {})[k] || '';

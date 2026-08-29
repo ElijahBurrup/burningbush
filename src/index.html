@@ -1029,7 +1029,10 @@
   .sb-next .lbar > span{background:linear-gradient(90deg,var(--gold2),var(--gold))}
 
   .statgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0 0 9px}
-  .statcell{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:9px 4px;text-align:center;line-height:1.2;min-width:0}
+  .statcell{position:relative;background:var(--panel2);border:1px solid var(--line);border-radius:12px;
+    padding:9px 4px;text-align:center;line-height:1.2;min-width:0;font-family:inherit;color:var(--ink);cursor:pointer}
+  .statcell::after{content:"›";position:absolute;top:4px;right:7px;font-size:12px;font-weight:800;color:var(--muted);opacity:.65}
+  .statcell:active{transform:translateY(1px)}
   .st-i{display:block;font-size:15px;line-height:1}
   .st-n{display:block;font-size:19px;font-weight:800;color:var(--gold-ink);font-variant-numeric:tabular-nums;margin-top:1px}
   .st-l{display:block;font-size:9.5px;font-weight:800;color:var(--muted);letter-spacing:.02em;
@@ -1584,6 +1587,8 @@
     padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel0);
     color:var(--muted);font-family:inherit;line-height:1.3}
   .bbchoose.set{border-color:var(--gold2)}
+  .bbchoose.waiting{opacity:.6}
+  .bbchoose.needpick{border-color:var(--miss);box-shadow:0 0 0 2px var(--no-bg)}
   .bbchoose:active{transform:translateY(1px)}
   .bbc-t{flex:1;min-width:0}
   .bbc-name{display:block;font-size:14.5px;font-weight:800;color:var(--ink)}
@@ -1600,6 +1605,10 @@
   .trhearts{font-size:12px;color:var(--gold-ink);font-weight:700;margin-top:3px}
   .trcredit{font-size:10.5px;color:var(--muted);font-weight:600;line-height:1.4;margin-top:5px}
   .trans-opt.loading{opacity:.6;pointer-events:none}
+  .gb-streak{display:flex;flex-direction:column;align-items:center;line-height:1.1}
+  .gb-streak b{font-size:15px;font-weight:800;color:var(--gold-ink)}
+  .gb-streak small{font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .gb-streak.off b{color:var(--muted)}
   .relbox{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;text-align:left;font-size:13.5px;line-height:1.5}
   .relbox .rl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--good);font-weight:800;margin-bottom:4px}
   .phon{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0}
@@ -1940,8 +1949,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.58.0";
+const APP_VERSION="1.59.0";
 const CHANGELOG=[
+ {v:"1.59.0", d:"August 28, 2026", t:"The counts open", items:[
+   ["new","<b>The three counts on My Verses are buttons.</b> Tap <b>By heart</b>, <b>Sealed</b> or <b>Due today</b> and the verses behind the number come up in a list you can scroll and tap straight into."],
+   ["chg","<b>Books, day streak and clean runs are off the grid.</b> They are a number and nothing more, with no list behind them, so they sit with the records below instead of pretending to be a way in."],
+   ["chg","<b>The palace and the spot are boxes that open a sheet</b>, the same as everywhere else. Two grids sitting open pushed the verse, the pictures and the scene box off the screen, and this screen is for writing the scene."],
+   ["chg","<b>The goal button says what the flame means.</b> It read 🔥 3 and left you to guess. It now says <b>day streak</b> underneath, and shows at zero too, because a streak you cannot see is one you will not start."]
+ ]},
  {v:"1.58.0", d:"August 29, 2026", t:"Memory Palaces, the film", items:[
    ["new","<b>Memory Palaces, the third film.</b> Walk a place you already know and leave each thing at a spot. It plays the first time you open Palaces, and it waits in Video Review afterwards."]
  ]},
@@ -5431,6 +5446,43 @@ function verseScore(){
     longs
   };
 }
+// The three counts on the scoreboard are questions, and every one of them has an answer that is a
+// list of verses. Day streak, books and clean runs are not: they are a number and nothing more, so
+// they belong on the medals row rather than pretending to be a way in.
+function scoreVerseList(kind){
+  const keys=(Prog.memorized||[]).filter(k=>kjvText.apply(null,k.split(":").map(Number)));
+  const pick = kind==="heart" ? isHeart
+             : kind==="sealed" ? (k=>{ const o=vsr(k); return !!o && (o.step||1)>=SR_TRAIL.length; })
+             : verseDue;
+  return keys.filter(pick).map(k=>k.split(":").map(Number))
+             .sort((A,B)=>A[0]-B[0]||A[1]-B[1]||A[2]-B[2]);
+}
+const SCORE_LIST={
+  heart:  {icon:"\u{1F49B}", title:"Known by heart", empty:"None yet. Claim a verse on its own page once you can say it without looking."},
+  sealed: {icon:"\u{1F451}", title:"Sealed",         empty:"None yet. A verse is sealed once it has come back to you the whole way along its trail."},
+  due:    {icon:"\u23F3",    title:"Due today",      empty:"Nothing due. You are caught up."}
+};
+function openScoreList(kind, back){
+  const cfg=SCORE_LIST[kind]||SCORE_LIST.heart, list=scoreVerseList(kind);
+  const m=el("scoreListModal")||(()=>{ const d=document.createElement("div"); d.id="scoreListModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="slClose" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${cfg.icon} ${cfg.title}</div><span style="width:34px"></span></div>
+      <div class="hint" style="text-align:center;margin:0 0 8px">${list.length} verse${list.length===1?"":"s"}</div>
+      ${list.length
+        ? `<div class="vlist bkverses">${list.map(a=>verseRow(a[0],a[1],a[2],"mem")).join("")}</div>`
+        : `<p class="lead" style="text-align:center;margin:18px 0">${cfg.empty}</p>`}
+      <button class="btn" id="slDone" style="width:100%;margin-top:12px">Done</button>
+    </div>`;
+  const close=()=>{ m.style.display="none"; if(back) back(); };
+  el("slClose").onclick=close; el("slDone").onclick=close;
+  m.querySelectorAll("[data-vb]").forEach(r=>r.onclick=()=>{
+    const [b,c,v]=r.dataset.vb.split(":").map(Number);
+    m.style.display="none";
+    openVerseWizard(b,c,v, ()=>openScoreList(kind, back));
+  });
+  m.style.display="flex"; raiseModal(m);
+}
 function scoreboardHTML(){
   const s=verseScore(), nb=nextBadge();
   const pct = nb ? Math.max(3, Math.min(100, Math.round(s.n/nb.n*100))) : 100;
@@ -5452,18 +5504,17 @@ function scoreboardHTML(){
         : `<div class="sb-next sb-sub">Every verse badge earned. 👑</div>`}
     </div>`;
   const cells=[
-    ["\u{1F49B}", s.heart, "By heart", false],
-    ["\u{1F451}", s.sealed, "Sealed", false],
-    ["\u{1F525}", Prog.dayStreak||0, "Day streak", (Prog.dayStreak||0)>0],
-    ["\u{1F4D6}", s.books, "Books", false],
-    ["\u{1F5E3}\uFE0F", s.cleanRuns, "Clean runs", false],
-    ["\u23F3", s.due, "Due today", s.due>0],
+    ["heart",  "\u{1F49B}", s.heart,  "By heart",  false],
+    ["sealed", "\u{1F451}", s.sealed, "Sealed",    false],
+    ["due",    "\u23F3",    s.due,    "Due today", s.due>0],
   ];
-  const stats=`<div class="statgrid">${cells.map(([i,n,l,hot])=>
-    `<div class="statcell${hot?" hot":""}"><span class="st-i">${i}</span><span class="st-n">${n}</span><span class="st-l">${l}</span></div>`).join("")}</div>`;
+  const stats=`<div class="statgrid">${cells.map(([k,i,n,l,hot])=>
+    `<button type="button" class="statcell${hot?" hot":""}" data-score="${k}"><span class="st-i">${i}</span><span class="st-n">${n}</span><span class="st-l">${l}</span></button>`).join("")}</div>`;
   // Records and the long-tail clubs. Shown greyed rather than hidden, so there is always something
   // visible to go and earn.
   const medals=`<div class="medals">
+      <span class="medal${s.books?"":" off"}">\u{1F4D6} ${s.books} of the 66 books</span>
+      <span class="medal${s.cleanRuns?"":" off"}">\u{1F5E3}\uFE0F ${s.cleanRuns} clean runs</span>
       <span class="medal${s.bestRun?"":" off"}">\u{1F3AF} ${s.bestRun} best clean run</span>
       <span class="medal${(Prog.bestDayStreak||0)?"":" off"}">\u{1F525} ${Prog.bestDayStreak||0} best streak</span>
       ${SR_LONG.map(d=>`<span class="medal${s.longs[d]?"":" off"}">\u{1F3C5} ${s.longs[d]} · ${SR_LONG_NAME[d]}</span>`).join("")}
@@ -6398,7 +6449,10 @@ function libStatusHTML(){
   const dueV=versesDueCount(), dueP=palacesDueCount(), dueN=numbersDueCount(), due=dueV+dueP+dueN;
   const caught=goalMet && due===0;
   const dots=Array.from({length:t},(_,i)=>`<span class="gb-dot ${i<c?"on":""}"></span>`).join("");
-  const streak=(Prog.dayStreak>0)?`<span class="gold" style="font-weight:800">🔥 ${Prog.dayStreak}</span>`:"";
+  // A bare flame and a number told nobody what it was. It says so now, and it says so even at zero,
+  // because a streak you cannot see is a streak you will not start.
+  const dstk=Prog.dayStreak||0;
+  const streak=`<span class="gb-streak${dstk?"":" off"}"><b>🔥 ${dstk}</b><small>day streak</small></span>`;
   const freeze=(Prog.freezes>0)?` <span title="Streak Freezes">🧊 ${Prog.freezes}</span>`:"";
   const line = caught ? "Caught up today"
     : (due ? `${due} still due` : `${Math.max(0,t-c)} more to reach today's goal`);
@@ -7222,6 +7276,13 @@ function pageHead(icon, text, vkey){
     if(!b) return;
     ev.preventDefault(); ev.stopPropagation();
     openVideoScreen(b.dataset.revlesson, ()=>{});
+  }, true);
+  // the scoreboard counts, wherever the scoreboard happens to be drawn
+  host.addEventListener("click",ev=>{
+    const b=ev.target.closest && ev.target.closest("[data-score]");
+    if(!b) return;
+    ev.preventDefault(); ev.stopPropagation();
+    openScoreList(b.dataset.score, ()=>{ vView="mem"; renderVerse(); });
   }, true);
 })();
 function bibleIconSVG(){
@@ -8423,13 +8484,21 @@ function renderWalk(){
         <span class="pks">${free?"free":held+" here"}</span></button>`;
     }).join("");
   };
+  // A label over a box, and the choice itself in a sheet. Two grids inline pushed the verse, the
+  // pictures and the scene box off the screen, and this screen is about writing the scene.
+  const chosenPalace = selP!=null ? (Prog.palaces[selP]||{}).place : "";
+  const freeIn = pi => roomsFor(pi).filter(r=>spotFree(pi,r)).length;
+  // The ids are written out rather than passed in: the static check scans the source for every id
+  // that gets looked up, and an id built from a variable is invisible to it.
+  const boxIn=(label,name,why)=>`<span class="bbc-t"><span class="bbc-name">${name?bbEsc(name):label}</span>${why?`<span class="bbc-why">${bbEsc(why)}</span>`:""}</span><span class="bbc-caret">▾</span>`;
+  const boxCls=(name,ready)=>`bbchoose${name?" set":""}${ready?"":" waiting"}`;
   const palaceSel = palaces.length
  ? `<input type="hidden" id="wPalace" value="${selP==null?"":selP}"><input type="hidden" id="wRoom" value="${bbEsc(loc.room||"")}">
-       <label class="vplabel" style="text-align:center;display:block">Which palace?</label>
-       <div class="pickgrid" id="wPalaceGrid">${palaceTiles()}</div>
-       <label class="vplabel" style="text-align:center;display:block;margin-top:12px">Which room / spot?
+       <label class="vplabel" style="display:block;margin-bottom:4px">Which palace?</label>
+       <button type="button" class="${boxCls(chosenPalace,true)}" id="wPalaceBtn">${boxIn("Choose a palace…",chosenPalace,chosenPalace?`${freeIn(selP)} free of ${roomsFor(selP).length}`:"")}</button>
+       <label class="vplabel" style="display:block;margin:12px 0 4px">Which room / spot?
          <button type="button" class="wroom-go" id="wRoomEye" title="Open this location in your palace">🏛️</button></label>
-       <div class="pickscroll" id="wRoomScroll"><div class="pickgrid" id="wRoomGrid">${selP!=null?roomTiles(selP):`<div class="hint" style="grid-column:1/-1;text-align:center;margin:10px 0">Pick a palace first.</div>`}</div></div>`
+       <button type="button" class="${boxCls(loc.room||"",selP!=null)}" id="wRoomBtn">${boxIn(selP==null?"Pick a palace first…":"Choose a room or spot…", loc.room||"", loc.room?(spotFree(selP,loc.room)?"free":"already holds a verse"):"")}</button>`
  : `<div class="hint" style="margin:2px 0 10px">You don't have a memory palace yet. Build one in the <b>Palaces</b> tab. For now, just describe where your scene happens.</div>`;
   V.innerHTML=`<div class="card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="wClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">${palaces.length?"Which palace?":"Write your scene"}</div><button class="lsave" id="wDoneTop" title="Save & done">✓</button></div>
@@ -8445,42 +8514,70 @@ function renderWalk(){
   if(el("wClose")) el("wClose").onclick=()=> sceneBackfill ? (sceneBackfill=false, sceneCancel()) : walkReturn();
   if(el("wBack")){ if(sceneBackfill){ el("wBack").textContent="✕ Cancel"; el("wBack").onclick=()=>{ sceneBackfill=false; sceneCancel(); }; }
     else el("wBack").onclick=()=>{ wPhase="visual"; renderWalk(); }; }
-  // Scroll the room list to the first spot that is still empty, so an established palace opens where
-  // the work actually is rather than back at the front door.
-  function showNextFree(){
-    const box=el("wRoomScroll"), grid=el("wRoomGrid"); if(!box||!grid) return;
-    const chosen=grid.querySelector(".pickbtn.on");
-    const target=chosen || grid.querySelector('.pickbtn[data-free="1"]');
-    if(!target){ box.scrollTop=0; return; }
-    // .pickscroll is position:relative, which makes it the offsetParent of every tile inside it.
-    // Without that, offsetTop is measured from the card and the list scrolls to the wrong end.
-    box.scrollTop=Math.max(0, target.offsetTop - 6);
-    if(!chosen) target.classList.add("next");
+  // Each box opens its own sheet. The spot sheet scrolls itself to the first empty spot, so an
+  // established palace opens where the work actually is rather than back at the front door.
+  function sheet(title, hint, body, onOpen){
+    const m=el("pickSheet")||(()=>{ const d=document.createElement("div"); d.id="pickSheet"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+    m.innerHTML=`<div class="modal-card">
+        <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="psClose" style="margin:0">✕</button>
+          <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${title}</div><span style="width:34px"></span></div>
+        ${hint?`<p class="hint" style="margin:0 0 10px">${hint}</p>`:""}
+        <div class="pickscroll" id="psScroll" style="max-height:58vh"><div class="pickgrid" id="psGrid">${body}</div></div>
+      </div>`;
+    m.style.display="flex"; raiseModal(m);
+    el("psClose").onclick=()=>{ m.style.display="none"; };
+    m.onclick=ev=>{ if(ev.target===m) m.style.display="none"; };
+    if(onOpen) onOpen(m);
+    return m;
   }
-  function paintRooms(pi){
-    const grid=el("wRoomGrid"); if(!grid) return;
-    grid.innerHTML = pi==null ? `<div class="hint" style="grid-column:1/-1;text-align:center;margin:10px 0">Pick a palace first.</div>` : roomTiles(pi);
-    wireRooms();
-    requestAnimationFrame(showNextFree);
+  const closeSheet=()=>{ const m=el("pickSheet"); if(m) m.style.display="none"; };
+  // Repaint the two boxes from the hidden inputs. Re-rendering the whole screen would take the
+  // half-written scene with it, and the scene is the reason this screen exists.
+  function paintBoxes(){
+    const pv=el("wPalace").value, room=el("wRoom").value;
+    const pi = pv==="" ? null : +pv;
+    const pb=el("wPalaceBtn"), rb=el("wRoomBtn");
+    if(pb){
+      const nm = pi==null ? "" : ((Prog.palaces[pi]||{}).place||"");
+      pb.className=boxCls(nm,true);
+      pb.innerHTML=boxIn("Choose a palace…", nm, nm?`${roomsFor(pi).filter(r=>spotFree(pi,r)).length} free of ${roomsFor(pi).length}`:"");
+    }
+    if(rb){
+      rb.className=boxCls(room, pi!=null);
+      rb.innerHTML=boxIn(pi==null?"Pick a palace first…":"Choose a room or spot…", room,
+                         room?(spotFree(pi,room)?"free":"already holds a verse"):"");
+    }
   }
-  function wireRooms(){
-    document.querySelectorAll("#wRoomGrid [data-room]").forEach(btn=>btn.onclick=()=>{
-      document.querySelectorAll("#wRoomGrid .pickbtn").forEach(x=>x.classList.remove("on","next"));
-      btn.classList.add("on");
-      el("wRoom").value=btn.dataset.room;
-      el("wRoomGrid").classList.remove("needpick");
+  if(el("wPalaceBtn")) el("wPalaceBtn").onclick=()=>{
+    const m=sheet("Which palace?", "", palaceTiles());
+    m.querySelectorAll("[data-p]").forEach(btn=>btn.onclick=()=>{
+      el("wPalace").value=btn.dataset.p;
+      el("wRoom").value="";                       // a new palace means the old room is gone
+      el("wPalaceBtn").classList.remove("needpick");
+      closeSheet(); paintBoxes();
     });
-  }
-  document.querySelectorAll("#wPalaceGrid [data-p]").forEach(btn=>btn.onclick=()=>{
-    document.querySelectorAll("#wPalaceGrid .pickbtn").forEach(x=>x.classList.remove("on"));
-    btn.classList.add("on");
-    el("wPalace").value=btn.dataset.p;
-    el("wRoom").value="";                      // a new palace means the old room no longer exists
-    el("wPalaceGrid").classList.remove("needpick");
-    paintRooms(+btn.dataset.p);
-  });
-  wireRooms();
-  if(el("wRoomScroll")) requestAnimationFrame(showNextFree);
+  };
+  if(el("wRoomBtn")) el("wRoomBtn").onclick=()=>{
+    const pv=el("wPalace").value;
+    if(pv===""){ toast("Pick a palace first."); return; }
+    const pi=+pv;
+    const m=sheet("Which room or spot?", `In <b>${bbEsc((Prog.palaces[pi]||{}).place||"")}</b>. The first free spot is marked.`, roomTiles(pi), mm=>{
+      requestAnimationFrame(()=>{
+        const box=el("psScroll"), grid=el("psGrid"); if(!box||!grid) return;
+        const chosen=grid.querySelector(".pickbtn.on");
+        const target=chosen || grid.querySelector('.pickbtn[data-free="1"]');
+        if(!target){ box.scrollTop=0; return; }
+        // .pickscroll is position:relative, so offsetTop is measured against the box it scrolls in
+        box.scrollTop=Math.max(0, target.offsetTop - 6);
+        if(!chosen) target.classList.add("next");
+      });
+    });
+    m.querySelectorAll("[data-room]").forEach(btn=>btn.onclick=()=>{
+      el("wRoom").value=btn.dataset.room;
+      el("wRoomBtn").classList.remove("needpick");
+      closeSheet(); paintBoxes();
+    });
+  };
   if(el("wRoomEye")) el("wRoomEye").onclick=()=>{ const pv=el("wPalace")?el("wPalace").value:""; if(pv===""){ toast("Pick a palace first."); return; }
     const room=el("wRoom")?el("wRoom").value:""; sceneBackfill=false; show("palace"); startPalaceEdit(+pv, room||null); };   // 👁️ jump to this location in the palace editor
   const finish=()=>{
@@ -8496,7 +8593,7 @@ function renderWalk(){
     if(palaces.length){
       const pv=el("wPalace")?el("wPalace").value:"", rm=el("wRoom")?el("wRoom").value:"";
       if(pv==="" || !rm){
-        const t=el(pv===""?"wPalaceGrid":"wRoomGrid");
+        const t=el(pv===""?"wPalaceBtn":"wRoomBtn");
         if(t){ t.classList.add("needpick"); t.scrollIntoView({block:"center"}); setTimeout(()=>t.classList.remove("needpick"),1400); }
         toast(pv===""?"Pick the palace this verse lives in.":"Pick the room where the scene happens.");
         return;
