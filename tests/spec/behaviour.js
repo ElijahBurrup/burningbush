@@ -2588,6 +2588,40 @@ const DAY = 86400000;
   ok(backfill.back, 'a scene edited from elsewhere still goes straight back where it came from');
   no(backfill.phase === 'kept', '…without stopping on the read-it-back screen');
 
+  describe('the numbers teach some history', () => { });
+  const history = await $(() => {
+    const filler = /five foot|six foot|shy of|one past|almost (thirty|forty|fifty|eighteen)|^route d+$|^d+ seconds$/i;
+    const bad = [], noYear = [];
+    for (let n = 1; n <= 66; n++) numRefOptions(n).forEach(o => {
+      if (filler.test(optName(o)) || filler.test(optWhy(o))) bad.push(n + ': ' + optName(o));
+      // every year named must end in the two digits of the number it belongs to, unless the number
+      // is in the name itself (Apollo 13, the 62nd homer)
+      const inName = new RegExp('\b' + n + '\b').test(optName(o));
+      (optWhy(o).match(/d{3,4}/g) || []).forEach(y => {
+        if (+String(y).slice(-2) !== n && !inName) noYear.push(n + ': ' + y + ' ' + optName(o));
+      });
+    });
+    const has = (n, name) => numRefOptions(n).some(o => optName(o) === name);
+    return {
+      filler: bad, mismatched: noYear,
+      fiftyEight: numRefOptions(58).map(optName),
+      keptDonuts: has(12, 'Dozen Donuts'),
+      keptCat: has(13, 'Black Cat'),
+      sixtySix: numRefOptions(66).map(optName),
+      thin: (() => { let c = 0; for (let n = 1; n <= 66; n++) if (numRefOptions(n).length < 4) c++; return c; })(),
+    };
+  });
+  is(history.filler.join(' | '), '', 'no reference is left that only restates the number');
+  is(history.mismatched.join(' | '), '', 'every year named ends in the two digits of its number');
+  ok(history.fiftyEight.includes('Jersey 58'), '58 keeps its jersey');
+  ok(history.fiftyEight.includes('NASA'), '…and gains the year NASA was founded');
+  ok(history.fiftyEight.length >= 5, '…where it had nothing usable at all before');
+  ok(history.keptDonuts, 'the merge kept the dozen donuts');
+  ok(history.keptCat, '…and the black cat');
+  ok(history.sixtySix.includes('Route 66'), 'Route 66 was never filler and stays');
+  ok(history.sixtySix.includes('Hastings'), '…now beside 1066');
+  is(history.thin, 0, 'and no number is left with fewer than four pictures');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
