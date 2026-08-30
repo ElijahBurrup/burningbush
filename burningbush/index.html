@@ -2061,8 +2061,16 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.70.0";
+const APP_VERSION="1.71.0";
 const CHANGELOG=[
+ {v:"1.71.0", d:"August 29, 2026", t:"Three strikes, and the by-heart test", items:[
+   ["fix","<b>One slip no longer breaks a by-heart run.</b> You get three goes at a word before it counts, whatever went wrong. The crosses only ever appeared for near misses on words of four letters or more, so a slip on <i>the</i>, <i>God</i> or <i>him</i> ended the run outright with no cross shown at all. Get the word right and the slate is clean again."],
+   ["new","<b>Test what you know by heart, from the practice screen.</b> A fourth option lists every by-heart verse whose day of rest is up and tests them one at a time, strictly, with no hints."],
+   ["fix","Picking a palace on the practice screen now works exactly like picking one on the verse scene screen: the same box, the same sheet of palaces. It was a plain dropdown because that chooser had been built inside the scene screen and could not be reached from anywhere else."]
+ ]},
+ {v:"1.70.1", d:"August 29, 2026", t:"One palace chooser", items:[
+   ["fix","<b>Picking a palace on the practice screen now works exactly like picking one on the verse scene screen.</b> The same box, the same bottom sheet of palaces, the same look. It was a plain dropdown because the chooser had been built inside the scene screen and could not be reached from anywhere else; it is now one control that both screens share."]
+ ]},
  {v:"1.70.0", d:"August 29, 2026", t:"Practice, three ways", items:[
    ["new","<b>Practice Word for Word now asks how you want to practise.</b> Shortest first, closest to their seventh practice, or walk a palace from top to bottom in the order you built it. Finishing a verse moves straight to the next one; backing out ends the run."],
    ["chg","<b>The location-or-word-for-word chooser is gone.</b> Those are the two buttons on the Library hub, so review no longer asks which you meant. It keeps doing both, because they are not alternatives: a verse still being located is asked by address, and one held by heart gets its strict test."],
@@ -4853,6 +4861,31 @@ function renderPath(focus){
   }
   paintTheme();
 }
+/* ---- the palace chooser, shared by the verse scene screen and word for word practice ----------
+   One control, one look: a box showing what is chosen, which opens a bottom sheet of palace tiles.
+   The caller supplies the tiles, because each screen has something different to say about a palace
+   (free spots when placing a verse, verses due when practising).                                */
+function pkRoomsFor(pi){ const p=(Prog.palaces||[])[pi]; return (p&&Array.isArray(p.stations))?p.stations:[]; }
+function pkBoxIn(label,name,why){
+  return `<span class="bbc-t"><span class="bbc-name">${name?bbEsc(name):label}</span>${why?`<span class="bbc-why">${bbEsc(why)}</span>`:""}</span><span class="bbc-caret">▾</span>`;
+}
+function pkBoxCls(name,ready){ return `bbchoose big${name?" set":""}${ready?"":" waiting"}`; }
+function pkSheet(title, hint, body, onOpen){
+  const m=el("pickSheet")||(()=>{ const d=document.createElement("div"); d.id="pickSheet"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="psClose" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${title}</div><span style="width:34px"></span></div>
+      ${hint?`<p class="hint" style="margin:0 0 10px">${hint}</p>`:""}
+      <div class="pickscroll" id="psScroll" style="max-height:58vh"><div class="pickgrid" id="psGrid">${body}</div></div>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  el("psClose").onclick=()=>{ m.style.display="none"; };
+  m.onclick=ev=>{ if(ev.target===m) m.style.display="none"; };
+  if(onOpen) onOpen(m);
+  return m;
+}
+function pkCloseSheet(){ const m=el("pickSheet"); if(m) m.style.display="none"; }
+
 
 /* ---- lesson runner ---- */
 // the six reversible pairings across number / image / book
@@ -6152,11 +6185,12 @@ function askVerseIn(k){
 // Word for word practice, and nothing else. Location has its own button on the hub.
 let w4wPick={mode:"shortest", slot:null};
 function openPracticeSetup(){
-  const pool=w4wPracticePool();
-  if(!pool.length){
-    toast((Prog.memorized||[]).length ? "Every verse is practised for today. Come back tomorrow." : "Memorize a verse first, tap Suggested!");
+  const pool=w4wPracticePool(), hearts=w4wOrder("heart");
+  if(!pool.length && !hearts.length){
+    toast((Prog.memorized||[]).length ? "Everything is practised or resting for today. Come back tomorrow." : "Memorize a verse first, tap Suggested!");
     show("verse"); renderVerse(); return;
   }
+  if(!pool.length) w4wPick={mode:"heart", slot:null};        // nothing to climb, but something to test
   const palaces=(Prog.palaces||[]).map((p,i)=>({i,p})).filter(x=>x.p && w4wOrder("palace",x.i).length);
   if(w4wPick.mode==="palace" && !palaces.some(x=>x.i===w4wPick.slot)) w4wPick={mode:"shortest", slot:null};
   if(w4wPick.mode==="palace" && w4wPick.slot===null) w4wPick.slot=palaces[0].i;
@@ -6166,11 +6200,13 @@ function openPracticeSetup(){
     {k:"shortest", t:"Shortest first",  s:"The quickest wins on the board, easiest verse to hardest."},
     {k:"closest",  t:"Closest to seven",s:"The ones nearest their seventh practice, so they cross the line soonest."},
     {k:"palace",   t:"Walk a palace",   s:palaces.length ? "Practise one palace in the order you built it." : "No palace holds a verse that is due today."},
+    {k:"heart",    t:"Test what I know by heart", s:hearts.length ? "The strict test, no hints, on every by-heart verse that is rested and ready." : "Nothing by heart is ready to be tested yet."},
   ];
   const paint=()=>{
     const n=w4wOrder(w4wPick.mode, w4wPick.slot).length;
     el("pcRows").innerHTML=ROWS.map(r=>{
-      const off=(r.k==="palace" && !palaces.length);
+      const off=(r.k==="palace" && !palaces.length) || (r.k==="heart" && !hearts.length)
+             || (r.k!=="heart" && r.k!=="palace" && !pool.length);
       return `<button type="button" class="mtradio ${w4wPick.mode===r.k?"sel":""}" data-pk="${r.k}" ${off?"disabled":""}
         style="align-items:flex-start;text-align:left;${off?"opacity:.45":""}"><span class="rdot" style="margin-top:3px"></span>
         <span><b>${r.t}</b><br><span style="font-weight:600;font-size:12px;color:var(--muted)">${r.s}</span></span></button>`;
@@ -6182,25 +6218,39 @@ function openPracticeSetup(){
     });
     el("pcPal").style.display = (w4wPick.mode==="palace" && palaces.length) ? "block" : "none";
     if(w4wPick.mode==="palace" && palaces.length){
-      el("pcPalSel").innerHTML=palaces.map(x=>`<option value="${x.i}" ${x.i===w4wPick.slot?"selected":""}>${bbEsc(x.p.place)} · ${w4wOrder("palace",x.i).length} due</option>`).join("");
-      el("pcPalSel").onchange=()=>{ w4wPick.slot=+el("pcPalSel").value; paint(); };
+      const due=i=>w4wOrder("palace",i).length;
+      const name=w4wPick.slot==null ? "" : ((Prog.palaces[w4wPick.slot]||{}).place||"");
+      const btn=el("pcPalBtn");
+      btn.className=pkBoxCls(name,true);
+      btn.innerHTML=pkBoxIn("Choose a palace…", name,
+        name ? `${due(w4wPick.slot)} due of ${pkRoomsFor(w4wPick.slot).length} spots` : "");
+      btn.onclick=()=>{
+        const tiles=palaces.map(x=>`<button type="button" class="pickbtn${x.i===w4wPick.slot?" on":""}" data-p="${x.i}">
+            <span class="pkt">${bbEsc(x.p.place)}</span>
+            <span class="pks">${due(x.i)} verse${due(x.i)===1?"":"s"} due of ${pkRoomsFor(x.i).length} spots</span></button>`).join("");
+        const m=pkSheet("Which palace?", "Practise the verses kept here, in the order you built it.", tiles);
+        m.querySelectorAll("[data-p]").forEach(t=>t.onclick=()=>{ w4wPick.slot=+t.dataset.p; pkCloseSheet(); paint(); });
+      };
     }
-    el("pcCount").textContent = n ? (n+" verse"+(n===1?"":"s")+" ready") : "Nothing due this way today.";
+    el("pcCount").textContent = n
+      ? (n+" verse"+(n===1?"":"s")+(w4wPick.mode==="heart"?" ready to test, one at a time":" ready"))
+      : "Nothing due this way today.";
+    el("pcGo").textContent = w4wPick.mode==="heart" ? "Begin the test" : "Begin practice";
     el("pcGo").disabled=!n; el("pcGo").style.opacity=n?"":".5";
   };
   V.innerHTML=`<div class="card">
       <div class="lv-topbar"><button class="lclose lclose-red" id="pcClose" style="margin:0">\u2715</button><div style="flex:1;text-align:center;font-weight:800">Practice Word for Word</div><span style="width:34px"></span></div>
       <p class="hint" style="margin:6px 0 0">Which ones would you like to practise?</p>
       <div class="mtradiolist one" id="pcRows" style="margin-top:10px"></div>
-      <div id="pcPal" style="display:none;margin-top:10px">
-        <label class="vplabel">Which palace</label>
-        <select class="bbsel" id="pcPalSel"></select>
+      <div id="pcPal" style="display:none;margin-top:12px">
+        <label class="vplabel vplabel-lg" style="display:block;margin-bottom:5px">Which palace?</label>
+        <button type="button" class="bbchoose big waiting" id="pcPalBtn"></button>
       </div>
       <div class="hint" id="pcCount" style="min-height:18px;margin:8px 0 0"></div>
       <button class="btn" id="pcGo" style="width:100%;margin-top:8px">Begin practice</button>
     </div>`;
   el("pcClose").onclick=renderVerse;
-  el("pcGo").onclick=()=>{ const list=w4wOrder(w4wPick.mode, w4wPick.slot); if(list.length) runW4WQueue(list); };
+  el("pcGo").onclick=()=>{ const list=w4wOrder(w4wPick.mode, w4wPick.slot); if(list.length) runW4WQueue(list, w4wPick.mode); };
   paint();
 }
 function startMemTest(){
@@ -6839,6 +6889,12 @@ function w4wOrder(mode, slot){
     return pool.filter(a=>{ const l=(Prog.verseLoc||{})[a.join(":")]; return l && l.p===slot; })
                .sort((A,B)=> seat(A)-seat(B) || w4wWords(A)-w4wWords(B));
   }
+  if(mode==="heart"){
+    // Everything claimed by heart whose day of rest is up, longest-waiting first.
+    return (Prog.memorized||[]).map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2]))
+      .filter(a=>{ const k=a.join(":"); return isHeart(k) && !w4wTestLocked(k); })
+      .sort((A,B)=>((w4wsr(A.join(":"))||{}).at||0)-((w4wsr(B.join(":"))||{}).at||0));
+  }
   if(mode==="closest")
     return pool.slice().sort((A,B)=> w4wCount(B.join(":"))-w4wCount(A.join(":")) || w4wWords(A)-w4wWords(B));
   return pool.slice().sort((A,B)=> w4wWords(A)-w4wWords(B));          // shortest
@@ -6846,13 +6902,18 @@ function w4wOrder(mode, slot){
 // Practise straight down a list. Finishing a verse moves to the next; backing out of one ends the
 // run, so the close button is still a way out rather than a way to the next verse.
 let W4WQ=null;
-function runW4WQueue(list){
+function runW4WQueue(list, mode){
   W4WQ=(list||[]).slice();
+  const strict = mode==="heart";
   const step=()=>{
     if(!W4WQ || !W4WQ.length){ W4WQ=null; show("verse"); renderVerse(); return; }
     const a=W4WQ[0], k=refKey(a[0],a[1],a[2]);
-    startWordForWord(a[0],a[1],a[2], ()=>{
-      const finished=!!(Prog.w4wToday && Prog.w4wToday.set && Prog.w4wToday.set[k]);
+    // Both ways out call the same callback, so the queue asks whether the verse was actually
+    // finished. A practice run marks the day; a strict run adds to its test record.
+    const before = strict ? ((w4wsr(k)||{}).n||0) : 0;
+    (strict?startW4WTest:startWordForWord)(a[0],a[1],a[2], ()=>{
+      const finished = strict ? (((w4wsr(k)||{}).n||0) > before)
+                              : !!(Prog.w4wToday && Prog.w4wToday.set && Prog.w4wToday.set[k]);
       if(W4WQ) W4WQ.shift();
       if(finished && W4WQ && W4WQ.length) step();
       else { W4WQ=null; show("verse"); renderVerse(); }
@@ -8893,8 +8954,7 @@ function renderWalk(){
   const freeIn = pi => roomsFor(pi).filter(r=>spotFree(pi,r)).length;
   // The ids are written out rather than passed in: the static check scans the source for every id
   // that gets looked up, and an id built from a variable is invisible to it.
-  const boxIn=(label,name,why)=>`<span class="bbc-t"><span class="bbc-name">${name?bbEsc(name):label}</span>${why?`<span class="bbc-why">${bbEsc(why)}</span>`:""}</span><span class="bbc-caret">▾</span>`;
-  const boxCls=(name,ready)=>`bbchoose big${name?" set":""}${ready?"":" waiting"}`;
+  const boxIn=pkBoxIn, boxCls=pkBoxCls;
   const palaceSel = palaces.length
  ? `<input type="hidden" id="wPalace" value="${selP==null?"":selP}"><input type="hidden" id="wRoom" value="${bbEsc(loc.room||"")}">
        <label class="vplabel vplabel-lg" style="display:block;margin-bottom:5px">Which palace?</label>
@@ -8926,21 +8986,7 @@ function renderWalk(){
     else el("wBack").onclick=()=>{ wPhase="visual"; renderWalk(); }; }
   // Each box opens its own sheet. The spot sheet scrolls itself to the first empty spot, so an
   // established palace opens where the work actually is rather than back at the front door.
-  function sheet(title, hint, body, onOpen){
-    const m=el("pickSheet")||(()=>{ const d=document.createElement("div"); d.id="pickSheet"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
-    m.innerHTML=`<div class="modal-card">
-        <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="psClose" style="margin:0">✕</button>
-          <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${title}</div><span style="width:34px"></span></div>
-        ${hint?`<p class="hint" style="margin:0 0 10px">${hint}</p>`:""}
-        <div class="pickscroll" id="psScroll" style="max-height:58vh"><div class="pickgrid" id="psGrid">${body}</div></div>
-      </div>`;
-    m.style.display="flex"; raiseModal(m);
-    el("psClose").onclick=()=>{ m.style.display="none"; };
-    m.onclick=ev=>{ if(ev.target===m) m.style.display="none"; };
-    if(onOpen) onOpen(m);
-    return m;
-  }
-  const closeSheet=()=>{ const m=el("pickSheet"); if(m) m.style.display="none"; };
+  const sheet=pkSheet, closeSheet=pkCloseSheet;   // the shared chooser, see pkSheet above
   // Repaint the two boxes from the hidden inputs. Re-rendering the whole screen would take the
   // half-written scene with it, and the scene is the reason this screen exists.
   function paintBoxes(){
@@ -10290,17 +10336,18 @@ function renderTypeTest(){
       TT.wrong=true; TT.wrongWord=typed;
       // Only the strict test forgives typos. Practice already has hints and counts no misses, so
       // there is nothing there to protect anyone from.
-      const slip = TT.test && isTypo(typed, expected, TT.words);
-      if(slip){
+      if(TT.test){
         TT.typos=(TT.typos||0)+1;
         if(TT.typos>=TYPO_LIMIT){                    // three on one word — it is not settled yet
           TT.misses=(TT.misses||0)+1; TT.typedOut=true; inp.value=""; typeTestComplete(); return;
         }
+        const slip = isTypo(typed, expected, TT.words);   // only changes what we SAY about it
         TT.typoNote = TT.typos>=TYPO_LIMIT-1
  ? "Nearly. One more and we will call this one for more practice"
- : "Just a slip. That does not count against you";
+ : (slip ? "Just a slip. That does not count against you"
+ : "Not quite. Try that word again, it does not count against you yet");
       } else {
-        TT.typos=0; TT.typoNote=""; TT.misses=(TT.misses||0)+1;
+        TT.typos=0; TT.typoNote=""; TT.misses=(TT.misses||0)+1;   // practice has hints; nothing to protect
       }
       inp.value=""; inp.classList.remove("good","wrong"); paintTop();
     }

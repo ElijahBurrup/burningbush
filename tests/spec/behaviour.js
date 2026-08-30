@@ -1385,8 +1385,9 @@ const DAY = 86400000;
     // miss the strict test — it must come back with those practices intact
     startW4WTest(b, c, v, () => { });
     const put = w => { const i = el('ttIn'); i.value = w; i.dispatchEvent(new Event('input')); };
-    put('elephant');                                         // a wholly different word, not a slip
-    TT.words.slice().forEach(put);
+    // One wrong word is no longer a failed run: it takes three goes at the SAME word. So this
+    // deliberately burns all three, which ends the run there and then.
+    put('elephant'); put('zzzzzzzzz'); put('qqqqqqqqq');
     el('wtDone').click();
     out.asked = !!el('demoteModal') && el('demoteModal').style.display === 'flex';
     out.demoteText = out.asked ? el('demoteModal').innerText.replace(/\s+/g, ' ') : '';
@@ -2799,7 +2800,7 @@ const DAY = 86400000;
       closeFirst: (document.querySelector('#verse .lv-topbar').firstElementChild||{}).id,
     };
   });
-  is(prac.rows.join(','), 'shortest,closest,palace', 'three ways to practise, and no location option');
+  is(prac.rows.join(','), 'shortest,closest,palace,heart', 'four ways to practise, and no location option');
   is(prac.title, 'Practice Word for Word', '...on a screen that says what it is');
   is(prac.closeFirst, 'pcClose', '...with its close button top left');
   ok(prac.gone, 'the old location-or-word-for-word chooser is gone entirely');
@@ -2807,7 +2808,79 @@ const DAY = 86400000;
   ok(prac.ascending, 'shortest first really is shortest first');
   is(prac.closest[0], '45:8:28', 'closest to seven leads with the verse on six practices');
   is(prac.palace.join(','), '43:3:16,50:4:13', 'a palace walks its stations in the order they were built');
+
+  const palPicker = await $(() => {
+    Prog.palaces = [{ place:'My house', stations:['Front door','Kitchen','Sofa'], learnedAt:1, step:1 },
+                    { place:'The church', stations:['Porch','Pew','Pulpit'], learnedAt:1, step:1 }];
+    Prog.verseLoc = { '43:3:16':{p:0,room:'Kitchen'}, '50:4:13':{p:0,room:'Sofa'}, '19:23:1':{p:1,room:'Pew'} };
+    saveProg(); openPracticeSetup();
+    document.querySelector('[data-pk="palace"]').click();
+    const btn = el('pcPalBtn');
+    const isBox = /bbchoose/.test(btn.className) && btn.tagName === 'BUTTON';
+    const noSelect = !document.querySelector('#verse select');
+    btn.click();
+    const sheetUp = getComputedStyle(el('pickSheet')).display !== 'none';
+    const tiles = [...document.querySelectorAll('#psGrid [data-p]')].map(t => t.dataset.p);
+    document.querySelectorAll('#psGrid [data-p]')[1].click();
+    return { isBox, noSelect, sheetUp, tiles,
+             shut: el('pickSheet').style.display,
+             face: el('pcPalBtn').textContent,
+             slot: w4wPick.slot,
+             shared: typeof pkSheet === 'function' && typeof pkBoxIn === 'function' };
+  });
+  ok(palPicker.isBox, 'the palace control is the same box the verse screen uses, not a dropdown');
+  ok(palPicker.noSelect, '...and no bare select is left on the screen');
+  ok(palPicker.shared, '...drawn by the one shared chooser, so the two cannot drift apart');
+  ok(palPicker.sheetUp, 'tapping it opens the bottom sheet');
+  is(palPicker.tiles.join(','), '0,1', '...listing every palace that has a verse due');
+  is(palPicker.slot, 1, 'choosing a tile selects that palace');
+  is(palPicker.shut, 'none', '...and closes the sheet behind it');
+  has(palPicker.face, 'The church', '...with the box now showing what was chosen');
+  has(palPicker.face, 'due of', '...and how much is waiting there');
   ok(prac.palace.every(k => k !== '19:23:1'), '...and never includes a verse kept somewhere else');
+
+  describe('by heart: three strikes, and a test queue of its own', () => { });
+  const strikes = await $(() => {
+    startW4WTest(43, 3, 16, () => { });
+    const inp = document.querySelector('#verse input');
+    const type = t => { inp.value = t; inp.dispatchEvent(new Event('input')); };
+    const first = TT.words[0];                       // 'For' — three letters
+    const out = { word: first, len: first.length };
+    type('Fro'); out.one = { typos: TT.typos, misses: TT.misses };
+    type('Fpr'); out.two = { typos: TT.typos, misses: TT.misses };
+    type(first);  out.recovered = { typos: TT.typos, misses: TT.misses, idx: TT.idx };
+    return out;
+  });
+  ok(strikes.len < 4, 'the first word is shorter than four letters, which isTypo never forgave');
+  is(strikes.one.misses, 0, 'one wrong go at it does not count against the run');
+  is(strikes.two.misses, 0, '...nor does a second');
+  is(strikes.one.typos + ',' + strikes.two.typos, '1,2', '...they show as crosses instead');
+  is(strikes.recovered.typos, 0, 'getting the word right wipes the crosses');
+  is(strikes.recovered.misses, 0, '...and the run is still clean');
+  is(strikes.recovered.idx, 1, '...and it moves on');
+
+  const heartQ = await $(() => {
+    setFeat('w4w', true);
+    Prog.memorized = ['43:3:16','19:23:1','45:8:28','50:4:13'];
+    Prog.w4w = {}; Prog.w4wToday = null; Prog.palaces = []; Prog.verseLoc = {};
+    Prog.verseStage = { '43:3:16':'heart', '19:23:1':'heart' };
+    Prog.w4wSR = { '43:3:16': { cr:1, n:3, ok:3, at: Date.now() - 3*86400000 },
+                   '19:23:1': { cr:2, n:4, ok:4, at: Date.now() } };
+    saveProg();
+    const ready = w4wOrder('heart').map(x => x.join(':'));
+    openPracticeSetup();
+    const rows = [...document.querySelectorAll('[data-pk]')].map(x => x.dataset.pk);
+    document.querySelector('[data-pk="heart"]').click();
+    return { ready, rows, count: el('pcCount').textContent, go: el('pcGo').textContent,
+             resting: w4wTestLocked('19:23:1'),
+             notInPractice: !w4wOrder('shortest').some(x => x.join(':') === '43:3:16') };
+  });
+  is(heartQ.rows.join(','), 'shortest,closest,palace,heart', 'a fourth way to be asked: the by-heart test');
+  is(heartQ.ready.join(','), '43:3:16', 'only by-heart verses whose day of rest is up');
+  ok(heartQ.resting, '...the one still resting is held back');
+  ok(heartQ.notInPractice, '...and a by-heart verse is never in the practice queue');
+  has(heartQ.count, 'one at a time', 'the screen says they come one at a time');
+  is(heartQ.go, 'Begin the test', '...and the button knows it is a test, not practice');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
@@ -2933,21 +3006,24 @@ const DAY = 86400000;
     Prog.w4wSR = { [k]: { cr: 3, n: 3, ok: 3, at: 0 } }; saveProg();
     startW4WTest(43, 11, 35, () => { });
     const put = w => { const i = el('ttIn'); i.value = w; i.dispatchEvent(new Event('input')); };
-    put('elephant');                                         // a wholly different word — a typo would not count
+    put('elephant');                                         // strike one, on any wrong word at all
+    const afterOne = { misses: TT.misses, typos: TT.typos };
+    put('zzzzzzzzz'); put('qqqqqqqqq');                      // strikes two and three end the run
     const misses = TT.misses;
-    TT.words.slice().forEach(put);
     const r = w4wsr(k) || {};
-    const out = { misses, cr: r.cr, n: r.n, ok: r.ok };
+    const out = { misses, cr: r.cr, n: r.n, ok: r.ok, afterOne };
     el('wtDone').click();                                     // a miss on a CLAIMED verse asks about it
     const m = el('demoteModal');
     out.asked = !!m && m.style.display === 'flex';
     out.txt = m ? m.innerText : '';
     return out;
   });
-  is(dirty.misses, 1, 'a wrong word is counted');
+  is(dirty.afterOne.misses, 0, 'one wrong word does not count against the run');
+  is(dirty.afterOne.typos, 1, '...it shows as a single cross instead');
+  is(dirty.misses, 1, 'the third go at the same word is what counts');
   is(dirty.n, 4, '...the attempt still counts as a test');
   is(dirty.ok, 3, '...but not as a pass');
-  is(dirty.cr, 0, '...and a single slip breaks the run of five');
+  is(dirty.cr, 0, '...and it breaks the run of five');
   ok(dirty.asked, 'missing a word on a claimed verse ASKS whether to put it back in practice');
   has(dirty.txt, 'No. I know this one', '...and the claim is never taken back without an answer');
 
@@ -3057,19 +3133,14 @@ const DAY = 86400000;
     Prog.revPrefs = { loc: false, w4w: true }; saveProg();
     askVerseIn(k);
     const byTyping = !!el('ttIn');
-    Prog.revPrefs = { loc: true, w4w: false }; saveProg();
-    askVerseIn(k);
-    const byAddress = !!el('mtFieldB');
-    Prog.verseStage = {}; Prog.revPrefs = { loc: false, w4w: true }; saveProg();
+    Prog.verseStage = {}; saveProg();
     askVerseIn(k);                                            // still only located
     const stage1 = !!el('mtFieldB');
-    Prog.revPrefs = { loc: false, w4w: false }; saveProg();
-    return { byTyping, byAddress, stage1, guard: revPrefs().loc };
+    return { byTyping, stage1, both: revPrefs().loc && revPrefs().w4w };
   });
-  ok(routed.byTyping, 'choose word for word and the verse is asked by typing');
-  ok(routed.byAddress, 'choose location and the same verse is asked by address');
+  ok(routed.byTyping, 'a verse held by heart is asked by typing it');
   ok(routed.stage1, 'a verse that is only located is ALWAYS asked by address');
-  ok(routed.guard, 'unticking both falls back to location rather than asking nothing');
+  ok(routed.both, 'review asks both ways, and that is no longer a setting anyone can switch off');
 
   describe('ladder: the verse page', () => { });
   const vPage = await $(() => {

@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "76fa1ded870f5342",
+  "h": "3896f6fcd27ffd73",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "2700e746fdc5669c",
-  "len": 96949,
-  "els": 1798,
+  "h": "8fd68f26a42e5c0d",
+  "len": 98754,
+  "els": 1826,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.70.0 August 29, 2026 Practice, three ways NEW Practice Word for Word now asks how you want to pract"
+  "text": "✕ Version history v1.71.0 August 29, 2026 Three strikes, and the by-heart test FIX One slip no longer breaks a by-heart "
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "782cfd5b2e4ee2ec",
+  "h": "360eb6a8cddf917f",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -450,10 +450,10 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "classic/practice/setup": {
-  "h": "244a13891ab65edf",
-  "len": 1739,
-  "els": 30,
-  "buttons": 5,
+  "h": "8621f3c12e9091c9",
+  "len": 2168,
+  "els": 36,
+  "buttons": 7,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Practice Word for Word Which ones would you like to practise? Shortest first The quickest wins on the board, easiest v"
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "f5670567fca6ebae",
+  "h": "657ba13b9b15d6db",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "2700e746fdc5669c",
-  "len": 96949,
-  "els": 1798,
+  "h": "8fd68f26a42e5c0d",
+  "len": 98754,
+  "els": 1826,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.70.0 August 29, 2026 Practice, three ways NEW Practice Word for Word now asks how you want to pract"
+  "text": "✕ Version history v1.71.0 August 29, 2026 Three strikes, and the by-heart test FIX One slip no longer breaks a by-heart "
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "f5670567fca6ebae",
+  "h": "657ba13b9b15d6db",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -963,10 +963,10 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "illumined/practice/setup": {
-  "h": "244a13891ab65edf",
-  "len": 1739,
-  "els": 30,
-  "buttons": 5,
+  "h": "8621f3c12e9091c9",
+  "len": 2168,
+  "els": 36,
+  "buttons": 7,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Practice Word for Word Which ones would you like to practise? Shortest first The quickest wins on the board, easiest v"
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "d951efb1f0b63813",
+  "h": "32ae9aaf47b2efe8",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "2700e746fdc5669c",
-  "len": 96949,
-  "els": 1798,
+  "h": "8fd68f26a42e5c0d",
+  "len": 98754,
+  "els": 1826,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.70.0 August 29, 2026 Practice, three ways NEW Practice Word for Word now asks how you want to pract"
+  "text": "✕ Version history v1.71.0 August 29, 2026 Three strikes, and the by-heart test FIX One slip no longer breaks a by-heart "
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "d951efb1f0b63813",
+  "h": "32ae9aaf47b2efe8",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1476,10 +1476,10 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "glass/practice/setup": {
-  "h": "244a13891ab65edf",
-  "len": 1739,
-  "els": 30,
-  "buttons": 5,
+  "h": "8621f3c12e9091c9",
+  "len": 2168,
+  "els": 36,
+  "buttons": 7,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Practice Word for Word Which ones would you like to practise? Shortest first The quickest wins on the board, easiest v"
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "b02ac7b6e56d3e55",
+  "h": "c199f9d36808e993",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "2700e746fdc5669c",
-  "len": 96949,
-  "els": 1798,
+  "h": "8fd68f26a42e5c0d",
+  "len": 98754,
+  "els": 1826,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.70.0 August 29, 2026 Practice, three ways NEW Practice Word for Word now asks how you want to pract"
+  "text": "✕ Version history v1.71.0 August 29, 2026 Three strikes, and the by-heart test FIX One slip no longer breaks a by-heart "
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "b02ac7b6e56d3e55",
+  "h": "c199f9d36808e993",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1989,10 +1989,10 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "quest/practice/setup": {
-  "h": "244a13891ab65edf",
-  "len": 1739,
-  "els": 30,
-  "buttons": 5,
+  "h": "8621f3c12e9091c9",
+  "len": 2168,
+  "els": 36,
+  "buttons": 7,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Practice Word for Word Which ones would you like to practise? Shortest first The quickest wins on the board, easiest v"
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "a8c2e01d84c2d987",
+  "h": "81900b4769e0b373",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "2700e746fdc5669c",
-  "len": 96949,
-  "els": 1798,
+  "h": "8fd68f26a42e5c0d",
+  "len": 98754,
+  "els": 1826,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.70.0 August 29, 2026 Practice, three ways NEW Practice Word for Word now asks how you want to pract"
+  "text": "✕ Version history v1.71.0 August 29, 2026 Three strikes, and the by-heart test FIX One slip no longer breaks a by-heart "
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "a8c2e01d84c2d987",
+  "h": "81900b4769e0b373",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2502,10 +2502,10 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "buddy/practice/setup": {
-  "h": "244a13891ab65edf",
-  "len": 1739,
-  "els": 30,
-  "buttons": 5,
+  "h": "8621f3c12e9091c9",
+  "len": 2168,
+  "els": 36,
+  "buttons": 7,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Practice Word for Word Which ones would you like to practise? Shortest first The quickest wins on the board, easiest v"
