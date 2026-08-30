@@ -2712,6 +2712,67 @@ const DAY = 86400000;
   });
   is(goalDone, 'Caught Up Today', 'once the goal is met it says so instead of counting');
 
+  describe('book questions: three pictures, no drawings, never mixed', () => { });
+  const bq = await $(() => {
+    delete Prog.bookWord[16]; delete Prog.numRef[16]; saveProg();
+    const none = pairTypesFor(16).slice();
+    Prog.bookWord[16] = 'knee-high socks'; saveProg();
+    const nameOnly = pairTypesFor(16).slice();
+    Prog.numRef[16] = "a driver's licence"; saveProg();
+    const both = pairTypesFor(16).slice();
+
+    const shot = t => {
+      LZ = { sk: { kind: 'book' }, steps: [{ type: t, kind: 'book', n: 16 }], i: 0, total: 1, ok: 0 };
+      renderStep();
+      const L = document.getElementById('learn');
+      return { prompt: (L.querySelector('.prompt') || {}).textContent || '',
+               opts: [...L.querySelectorAll('.opt')].map(o => o.textContent),
+               imgs: L.querySelectorAll('img').length };
+    };
+    const types = ['q_n2i','q_i2n','q_n2b','q_b2n','q_i2b','q_b2i','q_n2w','q_w2n','q_n2r','q_r2n'];
+    const shots = {}; types.forEach(t => shots[t] = shot(t));
+    const pegWords = [];
+    for (let i = 1; i <= 176; i++) pegWords.push(pegFor(i).word);
+    return {
+      none, nameOnly, both, shots,
+      // no book question anywhere may draw a picture
+      anyImage: types.reduce((a, t) => a + shots[t].imgs, 0),
+      // the Major System question must not offer the number picture, and the reverse
+      majorHasNumRef: shots.q_n2i.opts.includes("a driver's licence") || shots.q_b2i.opts.includes("a driver's licence"),
+      numRefHasPeg: shots.q_n2r.opts.some(o => pegWords.includes(o)),
+      nameHasPeg: shots.q_n2w.opts.some(o => pegWords.includes(o)),
+      numRefHasMine: shots.q_n2r.opts.includes("a driver's licence"),
+      nameHasMine: shots.q_n2w.opts.includes('knee-high socks'),
+      // a fallback distractor is a plain label, not a [label, why] pair
+      commas: shots.q_n2w.opts.concat(shots.q_n2r.opts).some(o => /,/.test(o) && o.length > 40),
+    };
+  });
+  is(bq.none.join(','), 'q_n2i,q_i2n,q_n2b,q_b2n,q_i2b,q_b2i', 'a book with no chosen pictures is asked the six original ways');
+  ok(bq.nameOnly.includes('q_n2w') && bq.nameOnly.includes('q_w2n'), 'choosing a name picture adds its two questions');
+  no(bq.nameOnly.includes('q_n2r'), '…and does not add the number picture questions, which are still blank');
+  ok(bq.both.includes('q_n2r') && bq.both.includes('q_r2n'), 'choosing a number picture adds its two as well');
+  is(bq.both.length, 10, 'ten ways to be asked once all three pictures exist');
+
+  is(bq.anyImage, 0, 'no book question draws a picture: books are examined in words');
+  no(bq.majorHasNumRef, 'the Major System question never offers the number picture as an answer');
+  no(bq.numRefHasPeg, '…and the number picture question never offers a Major System peg');
+  no(bq.nameHasPeg, '…nor does the name picture question');
+  ok(bq.numRefHasMine && bq.nameHasMine, 'each question does offer the reader\u2019s own answer');
+  no(bq.commas, 'a stand-in answer is a plain label, not a label and its explanation');
+
+  const bqWords = await $(() => {
+    LZ = { sk: { kind: 'book' }, steps: [{ type: 'q_n2i', kind: 'book', n: 16 }], i: 0, total: 1, ok: 0 };
+    renderStep();
+    const a = (document.querySelector('#learn .prompt') || {}).textContent || '';
+    LZ = { sk: { kind: 'book' }, steps: [{ type: 'q_n2r', kind: 'book', n: 16 }], i: 0, total: 1, ok: 0 };
+    renderStep();
+    const b = (document.querySelector('#learn .prompt') || {}).textContent || '';
+    return { major: a, num: b };
+  });
+  ok(/Major System/.test(bqWords.major), 'the Major System question says which of the three it means');
+  no(/Major System/.test(bqWords.num), '…and the number picture question says it is asking for that one');
+  no(bqWords.major === bqWords.num, 'the two never read as the same question');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
@@ -3209,14 +3270,14 @@ const DAY = 86400000;
     Prog.customScene = {}; saveProg();
     const back = () => { show('palace'); startPalaceEdit(0, 'Sink', true); };
     editVerseScene(43, 3, 16, back, back);
-    el('wScene').value = 'a scene I DO want kept';
+    el('wScene').value = 'A scene I DO want kept';
     // the palace and spot each open a sheet now, so choose them the way a finger would
     if (el('wPalaceBtn')) { el('wPalaceBtn').click(); const p = document.querySelector('#psGrid [data-p="0"]'); if (p) p.click(); }
     if (el('wRoomBtn')) { el('wRoomBtn').click(); const r = document.querySelector('#psGrid [data-room="Sink"]'); if (r) r.click(); }
     el('wDoneTop').click();                                 // the GREEN tick
     return { saved: (Prog.customScene || {})[k] || '', backOnPalace: !!document.querySelector('.peLoc') };
   });
-  is(tripSave.saved, 'a scene I DO want kept', 'the green tick saves what was typed');
+  is(tripSave.saved, 'A scene I DO want kept', 'the green tick saves what was typed');
   ok(tripSave.backOnPalace, '...and lands back on the palace location screen too');
 
   describe('the first look back', () => { });
@@ -3706,7 +3767,7 @@ const DAY = 86400000;
       txt: el('verse').innerText,
     };
     // one screen: write the scene, choose the palace and the room, done
-    el('wScene').value = 'the scene for this story';
+    el('wScene').value = 'The scene for this story';
     el('wPalaceBtn').click(); document.querySelector('#psGrid [data-p="0"]').click();
     el('wRoomBtn').click(); document.querySelector('#psGrid [data-room="Front door"]').click();
     el('wDoneTop').click();
@@ -3724,7 +3785,7 @@ const DAY = 86400000;
   is(bstory.cells, 3, '...and all three pictures, on the same screen');
   has(bstory.txt, 'begins at', '...naming where the story begins');
   ok(bstory.memorized, 'finishing it memorizes the opening verse');
-  is(bstory.scene, 'the scene for this story', '...keeps the scene that was written');
+  is(bstory.scene, 'The scene for this story', '...keeps the scene that was written');
   is(bstory.room, 'Front door', '...and the room it was given');
   ok(bstory.marked, '...records the story as learned');
   ok(bstory.celebrated, '...and says so');

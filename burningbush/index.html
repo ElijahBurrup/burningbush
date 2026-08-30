@@ -2055,8 +2055,16 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.68.0";
+const APP_VERSION="1.69.0";
 const CHANGELOG=[
+ {v:"1.69.0", d:"August 29, 2026", t:"Three pictures, three questions", items:[
+   ["new","<b>Your own two pictures are now examined too.</b> Once you have chosen a name picture or a number picture for a book, it is asked both ways: the picture for the number, and the number for the picture. Leave one blank and it is never asked about."],
+   ["chg","<b>Book questions are text only.</b> No drawings anywhere in them. Three pictures stand behind a book and only one of them is drawn, so a drawing in the question quietly gave away which of the three was being asked about."],
+   ["fix","<b>The Major System question and the number picture question can never be confused.</b> Each one says which picture it means, and neither ever offers the other’s answer among its choices. Both stand for the same number, so offering one against the other was asking you to choose between two right answers."],
+   ["new","<b>The verse scene box tidies itself as you write</b>, the way the book one already did. Capitals land where they belong, and on save your three pictures are spelled right, set in CAPITALS and given their number: a giant SEED (01) smashes into a SUN (02)."],
+   ["chg","<b>Spaced repetition starts straight away.</b> It is a daily habit and a habit should not ask a question before it will begin. Choosing how you are asked has moved to <b>Practice Word for Word</b>, which is where you went looking for a particular drill."],
+   ["fix","The last close button that was not in the top left corner now is."]
+ ]},
  {v:"1.68.0", d:"August 29, 2026", t:"Title Case, and the handbook", items:[
    ["chg","<b>Short labels use book title capitalisation.</b> The goal button reads <b>4 Remaining</b>, <b>Caught Up Today</b> and <b>3 Still Due</b>. Prose stays as prose: hints and lesson copy still read like English."]
  ]},
@@ -3567,7 +3575,7 @@ function tagNumberWord(text, word, tag){
   const w=String(word||"").trim();
   if(!w || !tag) return text;
   const up=w.toUpperCase();
-  const esc=up.replace(/[.*+?^${}()|[\]\\]/g,"\\function markKeyWords(text, phrases){").replace(/\s+/g,"\\s+");
+  const esc=up.replace(/[.*+?^${}()|[\]\\]/g,"\\$&").replace(/\s+/g,"\\s+");
   // \b so it is a word and not a fragment, and the lookahead so saving twice does not tag twice
   const re=new RegExp("\\b"+esc+"\\b(?!\\s*\\("+tag+"\\))","g");
   return String(text||"").replace(re, up+" ("+tag+")");
@@ -4838,7 +4846,34 @@ function renderPath(focus){
 /* ---- lesson runner ---- */
 // the six reversible pairings across number / image / book
 const PAIRQ=["q_n2i","q_i2n","q_n2b","q_b2n","q_i2b","q_b2i"];
-function pairTypesFor(n){ return (n>=1&&n<=66) ? PAIRQ : ["q_n2i","q_i2n"]; } // >66 = not a book, image↔number only
+// A book now carries three pictures, and two of them are the reader's own. Those two are only worth
+// asking about once they have been chosen, so a blank one is simply never examined.
+//   q_n2w / q_w2n  the NAME picture  (Prog.bookWord)
+//   q_n2r / q_r2n  the NUMBER picture (Prog.numRef)
+function pairTypesFor(n){
+  if(!(n>=1&&n<=66)) return ["q_n2i","q_i2n"];        // >66 = not a book, image↔number only
+  const t=PAIRQ.slice();
+  if(bookWordOf(n)) t.push("q_n2w","q_w2n");
+  if(numRefOf(n))   t.push("q_n2r","q_r2n");
+  return t;
+}
+// Wrong answers for a chosen picture come from OTHER books' pictures of the SAME kind. A Major
+// System peg must never appear among them, and a number picture must never appear among Major
+// System pegs: those two both stand for the number, so offering one against the other asks the
+// reader to pick between two right answers.
+function otherPictures(kind, n, howMany){
+  const mine=(kind==="name"?bookWordOf(n):numRefOf(n)).toLowerCase();
+  const seen=new Set([mine]), out=[];
+  const take=v=>{ const s=String(v||"").trim(); if(!s) return; const k=s.toLowerCase();
+    if(seen.has(k)) return; seen.add(k); out.push(s); };
+  shuffle(range(1,66).filter(x=>x!==n)).forEach(x=>{
+    if(out.length>=howMany) return;
+    const first=o=>Array.isArray(o) ? o[0] : o;                       // the lists are [label, why] pairs
+    take(kind==="name" ? (bookWordOf(x) || first((bookWordOptions(x)||[])[0]))
+                       : (numRefOf(x)   || first((numRefOptions(x)||[])[0])));
+  });
+  return out.slice(0, howMany);
+}
 let LZ=null; // lesson state
 let ST=null;
 function startStoryLesson(sk, host, ret){
@@ -5263,13 +5298,13 @@ function renderStep(){
     body = teachCardBody(s.kind, s.n) + `<button class="btn" id="lNext" style="margin-top:10px">${s.kind==="book"?"Done":"I can see it →"}</button>`;
   } else if(s.type==="q_n2i"){ // number → image
     const w=shuffle([word,...distract(s.kind,s.n,3).map(x=>pegFor(x).word)]);
-    body=`<div class="prompt">Which image is number <b>${dispNum(s.kind,s.n)}</b>?</div>
+    body=`<div class="prompt">Which <b>Major System</b> image is number <b>${dispNum(s.kind,s.n)}</b>?</div>
       <div class="bignum">${dispNum(s.kind,s.n)}</div><div class="sounds">${snd}</div>
       <div class="opts">${w.map(o=>`<button class="opt" data-ans="${o===word?1:0}">${o}</button>`).join("")}</div>`;
   } else if(s.type==="q_i2n"){ // image → number
     const w=shuffle([s.n,...distract(s.kind,s.n,3)]);
     body=`<div class="prompt">Which number is the <b>${word}</b>?</div>
-      <div class="imgwrap">${pegImg(s.kind,s.n,word,true)}</div>
+      ${s.kind==="book" ? `<div class="bigword">${word}</div>` : `<div class="imgwrap">${pegImg(s.kind,s.n,word,true)}</div>`}
       <div class="opts">${w.map(o=>`<button class="opt" data-ans="${o===s.n?1:0}">${dispNum(s.kind,o)}</button>`).join("")}</div>`;
   } else if(s.type==="q_n2b"){ // number → book
     const w=shuffle([bookName(s.n),...distract("book",s.n,3).map(bookName)]);
@@ -5282,16 +5317,32 @@ function renderStep(){
       <div class="opts" style="margin-top:16px">${w.map(o=>`<button class="opt" data-ans="${o===s.n?1:0}">${dispNum("book",o)}</button>`).join("")}</div>`;
   } else if(s.type==="q_i2b"){ // image → book
     const w=shuffle([bookName(s.n),...distract("book",s.n,3).map(bookName)]);
-    body=`<div class="prompt">Which book has the <b>${word}</b> image?</div>
-      <div class="imgwrap">${pegImg(s.kind,s.n,word,true)}</div>
+    body=`<div class="prompt">Which book has this <b>Major System</b> image?</div>
+      <div class="bigword">${word}</div>
       <div class="opts">${w.map(o=>`<button class="opt" data-ans="${o===bookName(s.n)?1:0}">${o}</button>`).join("")}</div>`;
   } else if(s.type==="q_b2i"){ // book → image
     const w=shuffle([word,...distract("book",s.n,3).map(x=>pegFor(x).word)]);
-    body=`<div class="prompt">Which image is <b class="gold">${bookName(s.n)}</b>?</div>
+    body=`<div class="prompt">Which <b>Major System</b> image is <b class="gold">${bookName(s.n)}</b>?</div>
       <div class="opts" style="margin-top:16px">${w.map(o=>`<button class="opt" data-ans="${o===word?1:0}">${o}</button>`).join("")}</div>`;
+  } else if(s.type==="q_n2w"){ // book → the reader's NAME picture
+    const mine=bookWordOf(s.n), w=shuffle([mine,...otherPictures("name",s.n,3)]);
+    body=`<div class="prompt">Which picture did you choose for the <b>name</b> of <b class="gold">${bookName(s.n)}</b>?</div>
+      <div class="opts" style="margin-top:16px">${w.map(o=>`<button class="opt" data-ans="${o===mine?1:0}">${bbEsc(o)}</button>`).join("")}</div>`;
+  } else if(s.type==="q_w2n"){ // the NAME picture → book
+    const w=shuffle([bookName(s.n),...distract("book",s.n,3).map(bookName)]);
+    body=`<div class="prompt"><b class="gold">${bbEsc(bookWordOf(s.n))}</b> is your name picture for which book?</div>
+      <div class="opts" style="margin-top:16px">${w.map(o=>`<button class="opt" data-ans="${o===bookName(s.n)?1:0}">${o}</button>`).join("")}</div>`;
+  } else if(s.type==="q_n2r"){ // number → the reader's NUMBER picture
+    const mine=numRefOf(s.n), w=shuffle([mine,...otherPictures("num",s.n,3)]);
+    body=`<div class="prompt">Which picture did you choose for the <b>number</b> <b class="gold">${dispNum("book",s.n)}</b>?</div>
+      <div class="opts" style="margin-top:16px">${w.map(o=>`<button class="opt" data-ans="${o===mine?1:0}">${bbEsc(o)}</button>`).join("")}</div>`;
+  } else if(s.type==="q_r2n"){ // the NUMBER picture → number
+    const w=shuffle([s.n,...distract("book",s.n,3)]);
+    body=`<div class="prompt"><b class="gold">${bbEsc(numRefOf(s.n))}</b> is your number picture for which number?</div>
+      <div class="opts" style="margin-top:16px">${w.map(o=>`<button class="opt" data-ans="${o===s.n?1:0}">${dispNum("book",o)}</button>`).join("")}</div>`;
   } else if(s.type==="type"){
     body=`<div class="prompt">Type the number for "${word}"</div>
-      <div class="imgwrap">${pegImg(s.kind,s.n,word,true)}</div>
+      ${s.kind==="book" ? `<div class="bigword">${word}</div>` : `<div class="imgwrap">${pegImg(s.kind,s.n,word,true)}</div>`}
       <input class="typein" id="typeIn" inputmode="numeric" placeholder="?" autocomplete="off">
       <button class="btn" id="typeGo" style="margin-top:12px">Check</button>`;
   }
@@ -5952,12 +6003,8 @@ function renderVerse(){
   if(el("vPracNum")) el("vPracNum").onclick=()=> knownNumbers().size>=2
     ? (feat("ntsetup")?openNumTestSetup():startNumberTest())
     : toast("Learn a few numbers first in the Learn tab!");
-  if(el("vW4W")) el("vW4W").onclick=()=>{
-    const a=pickW4WVerse();
- if(!a){ toast(mem.length?"All your verses are done for now, great work!":"Memorize a verse first."); return; }
-    startWordForWord(a[0],a[1],a[2],()=>{ show("verse"); renderVerse(); });
-  };
- el("vMemTest").onclick=()=> mem.length ? maybeVideo("sr", openReviewSetup) : toast("Memorize a verse first, tap Suggested!");
+  if(el("vW4W")) el("vW4W").onclick=()=>openReviewSetup(true);
+ el("vMemTest").onclick=()=> mem.length ? maybeVideo("sr", startMemTest) : toast("Memorize a verse first, tap Suggested!");
   if(srFlashPending && el("vMemTest")){ srFlashPending=false; const rb=el("vMemTest"); rb.classList.add("srbtn-flash"); setTimeout(()=>rb.classList.remove("srbtn-flash"),6000); }
   paintTheme();
 }
@@ -6086,8 +6133,14 @@ function revPrefs(){
   if(!out.loc && !out.w4w) out.loc=true;   // never start a session with nothing it can ask
   return out;
 }
-function openReviewSetup(){
-  if(!w4wPoolSize()){ startMemTest(); return; }
+// Spaced repetition is a daily habit, and a habit should not ask a question before it will start: it
+// now runs straight off the preferences already saved here. Choosing HOW to be asked is a deliberate
+// act, so it belongs to Practice, which is where somebody went looking for a particular drill.
+function openReviewSetup(fromPractice){
+  if(!w4wPoolSize()){
+    if(fromPractice){ toast("Nothing to practise word for word yet. Claim a verse by heart first."); renderVerse(); return; }
+    startMemTest(); return;
+  }
   const draft=revPrefs(), V=el("verse"); show("verse");
   const ROWS=[
     {k:"loc",   t:"Location",      s:"Where is this verse? Book, chapter and verse."},
@@ -6101,7 +6154,7 @@ function openReviewSetup(){
     el("rvWarn").textContent=none?"Choose at least one way to be asked.":"";
   };
   V.innerHTML=`<div class="card">
-      <div class="lv-topbar"><button class="lclose" id="rvClose">\u2715</button><div style="flex:1;text-align:center;font-weight:800">Review</div>${reviewLessonBtn("sr")}</div>
+      <div class="lv-topbar"><button class="lclose" id="rvClose">\u2715</button><div style="flex:1;text-align:center;font-weight:800">${fromPractice?"Practice":"Review"}</div>${reviewLessonBtn("sr")}</div>
       <p class="hint" style="margin:6px 0 0">How would you like to be asked?</p>
       <div class="mtradiolist one" id="rvRows" style="margin-top:10px"></div>
       <div class="hint" id="rvWarn" style="min-height:18px;margin:6px 0 0"></div>
@@ -7726,7 +7779,7 @@ function encourageHTML(){ const r=WORD_VERSES[Math.floor(Date.now()/DAY)%WORD_VE
 function libSheet(title, rows, extra){
   const m=el("libModal")||(()=>{ const d=document.createElement("div"); d.id="libModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   m.innerHTML=`<div class="modal-card">
-      <div class="lv-topbar"><span style="width:34px"></span><div style="flex:1;text-align:center;font-weight:800">${title}</div><button class="lclose" id="lbClose">✕</button></div>
+      <div class="lv-topbar"><button class="lclose" id="lbClose">✕</button><div style="flex:1;text-align:center;font-weight:800">${title}</div><span style="width:34px"></span></div>
       <div class="mtradiolist one" id="lbRows" style="margin-top:10px">${rows.map(r=>`<button type="button" class="mtradio" data-lb="${r.id}" style="align-items:flex-start;text-align:left"><span class="rdot" style="margin-top:3px"></span><span><b>${r.icon} ${r.name}</b><br><span style="font-weight:600;font-size:12px;color:var(--muted)">${r.sub}</span></span></button>`).join("")}</div>
       ${extra||""}
     </div>`;
@@ -8797,6 +8850,13 @@ function renderWalk(){
       <textarea class="ed-ta" id="wScene" placeholder="e.g. In the kitchen, a giant ${bp.word} smashes into a ${cp.word} while a ${vp.word} …">${(Prog.customScene[vkey]||"").replace(/</g,"&lt;")}</textarea>
       <div class="btnrow" style="margin-top:12px"><button class="btn ghost" id="wBack" style="flex:0 0 96px">← Back</button><button class="btn" id="wDone">Done ✓</button></div>
     </div>`;
+  // capAfterPunct never changes the length, so putting the caret back where it was is all it takes
+  // to keep typing from jumping to the end.
+  { const ta=el("wScene");
+    if(ta) ta.addEventListener("input",()=>{
+      const p=ta.selectionStart, val=capAfterPunct(ta.value);
+      if(val!==ta.value){ ta.value=val; try{ ta.setSelectionRange(p,p); }catch(err){} }
+    }); }
   if(el("wClose")) el("wClose").onclick=()=> sceneBackfill ? (sceneBackfill=false, sceneCancel()) : walkReturn();
   if(el("wBack")){ if(sceneBackfill){ el("wBack").textContent="✕ Cancel"; el("wBack").onclick=()=>{ sceneBackfill=false; sceneCancel(); }; }
     else el("wBack").onclick=()=>{ wPhase="visual"; renderWalk(); }; }
@@ -8867,7 +8927,17 @@ function renderWalk(){
   if(el("wRoomEye")) el("wRoomEye").onclick=()=>{ const pv=el("wPalace")?el("wPalace").value:""; if(pv===""){ toast("Pick a palace first."); return; }
     const room=el("wRoom")?el("wRoom").value:""; sceneBackfill=false; show("palace"); startPalaceEdit(+pv, room||null); };   // 👁️ jump to this location in the palace editor
   const finish=()=>{
-    const text=(el("wScene").value||"").trim();
+    // All three pictures get shouted and numbered, so the scene reads back as an address:
+    // "a giant SEED (01) smashes into a SUN (02) while a SUMO (03) …". Saving twice never doubles a
+    // tag, and a verse whose pictures repeat simply tags the same word with the same number.
+    let text=(el("wScene").value||"").trim();
+    if(text){
+      text=capAfterPunct(text);
+      text=markKeyWords(text, [bp.word, cp.word, vp.word]);
+      text=tagNumberWord(text, bp.word, dispNum("num",b));
+      text=tagNumberWord(text, cp.word, dispNum("num",c));
+      text=tagNumberWord(text, vp.word, dispNum("num",v));
+    }
     if(text) Prog.customScene[vkey]=text; else delete Prog.customScene[vkey];
     if(el("wPalace")){ Prog.verseLoc=Prog.verseLoc||{}; const pv=el("wPalace").value;   // blank palace → don't record a bogus location
       if(pv!=="") Prog.verseLoc[vkey]={p:+pv, room:(el("wRoom")?el("wRoom").value:"")}; else delete Prog.verseLoc[vkey]; }

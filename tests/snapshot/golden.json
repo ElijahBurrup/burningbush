@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "f72380b4ddfc7112",
+  "h": "b0079218866597ab",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "3ba0db8fd9f4e4e2",
-  "len": 93833,
-  "els": 1752,
+  "h": "cc74302f104dbb5d",
+  "len": 95811,
+  "els": 1781,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.68.0 August 29, 2026 Title Case, and the handbook FIX Short labels use book title capitalisation. T"
+  "text": "✕ Version history v1.69.0 August 29, 2026 Three pictures, three questions NEW Your own two pictures are now examined too"
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "424a050be2333830",
+  "h": "bb5119979d93e608",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -414,13 +414,13 @@
   "text": "← Library 🎬 Video Review Every film you have unlocked, in the order they teach. Tap one to watch it again. Spaced Repet"
  },
  "classic/modal/learn-verses": {
-  "h": "31893b97e5cae3f8",
+  "h": "05fbe7a2307ed615",
   "len": 1243,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
+  "text": "✕ Learn Verses ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "classic/modal/stage": {
   "h": "35bfba11e704df00",
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "ec626370e05caff7",
+  "h": "2493e6e078c9d9e3",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "3ba0db8fd9f4e4e2",
-  "len": 93833,
-  "els": 1752,
+  "h": "cc74302f104dbb5d",
+  "len": 95811,
+  "els": 1781,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.68.0 August 29, 2026 Title Case, and the handbook FIX Short labels use book title capitalisation. T"
+  "text": "✕ Version history v1.69.0 August 29, 2026 Three pictures, three questions NEW Your own two pictures are now examined too"
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "ec626370e05caff7",
+  "h": "2493e6e078c9d9e3",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -927,13 +927,13 @@
   "text": "← Library 🎬 Video Review Every film you have unlocked, in the order they teach. Tap one to watch it again. Spaced Repet"
  },
  "illumined/modal/learn-verses": {
-  "h": "31893b97e5cae3f8",
+  "h": "05fbe7a2307ed615",
   "len": 1243,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
+  "text": "✕ Learn Verses ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "illumined/modal/stage": {
   "h": "35bfba11e704df00",
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "e754098601348908",
+  "h": "4f660e2e6adc140e",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "3ba0db8fd9f4e4e2",
-  "len": 93833,
-  "els": 1752,
+  "h": "cc74302f104dbb5d",
+  "len": 95811,
+  "els": 1781,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.68.0 August 29, 2026 Title Case, and the handbook FIX Short labels use book title capitalisation. T"
+  "text": "✕ Version history v1.69.0 August 29, 2026 Three pictures, three questions NEW Your own two pictures are now examined too"
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "e754098601348908",
+  "h": "4f660e2e6adc140e",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1440,13 +1440,13 @@
   "text": "← Library 🎬 Video Review Every film you have unlocked, in the order they teach. Tap one to watch it again. Spaced Repet"
  },
  "glass/modal/learn-verses": {
-  "h": "31893b97e5cae3f8",
+  "h": "05fbe7a2307ed615",
   "len": 1243,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
+  "text": "✕ Learn Verses ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "glass/modal/stage": {
   "h": "35bfba11e704df00",
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "ba491df20db766ad",
+  "h": "b285f27090c87911",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "3ba0db8fd9f4e4e2",
-  "len": 93833,
-  "els": 1752,
+  "h": "cc74302f104dbb5d",
+  "len": 95811,
+  "els": 1781,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.68.0 August 29, 2026 Title Case, and the handbook FIX Short labels use book title capitalisation. T"
+  "text": "✕ Version history v1.69.0 August 29, 2026 Three pictures, three questions NEW Your own two pictures are now examined too"
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "ba491df20db766ad",
+  "h": "b285f27090c87911",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1953,13 +1953,13 @@
   "text": "← Library 🎬 Video Review Every film you have unlocked, in the order they teach. Tap one to watch it again. Spaced Repet"
  },
  "quest/modal/learn-verses": {
-  "h": "31893b97e5cae3f8",
+  "h": "05fbe7a2307ed615",
   "len": 1243,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
+  "text": "✕ Learn Verses ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "quest/modal/stage": {
   "h": "35bfba11e704df00",
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "0f933267339fdd45",
+  "h": "46dd419229af33a9",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "3ba0db8fd9f4e4e2",
-  "len": 93833,
-  "els": 1752,
+  "h": "cc74302f104dbb5d",
+  "len": 95811,
+  "els": 1781,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.68.0 August 29, 2026 Title Case, and the handbook FIX Short labels use book title capitalisation. T"
+  "text": "✕ Version history v1.69.0 August 29, 2026 Three pictures, three questions NEW Your own two pictures are now examined too"
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "0f933267339fdd45",
+  "h": "46dd419229af33a9",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2466,13 +2466,13 @@
   "text": "← Library 🎬 Video Review Every film you have unlocked, in the order they teach. Tap one to watch it again. Spaced Repet"
  },
  "buddy/modal/learn-verses": {
-  "h": "31893b97e5cae3f8",
+  "h": "05fbe7a2307ed615",
   "len": 1243,
   "els": 24,
   "buttons": 4,
   "svgs": 0,
   "imgs": 0,
-  "text": "Learn Verses ✕ ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
+  "text": "✕ Learn Verses ✨ Suggested The next verses within reach of the books and numbers you know. 📚 Topics Verses for what you"
  },
  "buddy/modal/stage": {
   "h": "35bfba11e704df00",
