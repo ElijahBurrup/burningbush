@@ -2908,6 +2908,42 @@ const DAY = 86400000;
   is(plur.twice, 'Two DIMES (13) roll away.', 'saving again never doubles the number');
   is(plur.spare, 'The times were good and the dimension held.', 'a word that merely looks similar is left alone');
 
+  describe('walking a palace: in order, with a way past a station', () => { });
+  const palWalk = await $(() => {
+    setFeat('w4w', true);
+    Prog.memorized = ['43:3:16','19:23:1','45:8:28','50:4:13'];
+    Prog.verseStage = {}; Prog.w4w = {}; Prog.w4wToday = null;
+    Prog.palaces = [{ place:'My house', stations:['Front door','Kitchen','Sofa','Porch'], learnedAt:1, step:1 }];
+    Prog.verseLoc = { '43:3:16':{p:0,room:'Front door'}, '19:23:1':{p:0,room:'Kitchen'},
+                      '45:8:28':{p:0,room:'Sofa'}, '50:4:13':{p:0,room:'Porch'} };
+    saveProg();
+    const order = w4wOrder('palace', 0).map(x => x.join(':'));
+    runW4WQueue(w4wOrder('palace', 0), 'palace');
+    const here = () => TF ? refKey(TF.b, TF.c, TF.v) : (TT ? refKey(TT.b, TT.c, TT.v) : null);
+    const btn = () => document.getElementById('w4wSkip');
+    const visited = [here()], labels = [btn() ? btn().textContent.trim() : null];
+    btn().click(); visited.push(here()); labels.push(btn() ? btn().textContent.trim() : null);
+    btn().click(); visited.push(here()); labels.push(btn() ? btn().textContent.trim() : null);
+    btn().click(); visited.push(here()); labels.push(btn() ? btn().textContent.trim() : null);
+    return { order, visited, labels };
+  });
+  is(palWalk.order.join(','), '43:3:16,19:23:1,45:8:28,50:4:13', 'a palace is walked in station order');
+  is(palWalk.visited.join(','), palWalk.order.join(','), '...and skipping keeps that order, never reshuffling it');
+  has(palWalk.labels[0], 'Skip Location', 'a walk offers a way past the station you are standing at');
+  has(palWalk.labels[0], '3 more to go', '...and says how much of the walk is left');
+  has(palWalk.labels[2], '1 more to go', '...counting down as you go');
+  is(palWalk.labels[3], null, '...and the offer is gone at the last one, where there is nothing to skip to');
+
+  const solo = await $(() => {
+    runW4WQueue(w4wOrder('shortest').slice(0, 1), 'shortest');
+    const one = !document.getElementById('w4wSkip');
+    runW4WQueue(w4wOrder('shortest'), 'shortest');
+    const many = document.getElementById('w4wSkip');
+    return { one, label: many ? many.textContent.trim() : null };
+  });
+  ok(solo.one, 'a run of one verse offers no skip at all');
+  has(solo.label, 'Skip this verse', 'outside a palace the same control says what it really does');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};

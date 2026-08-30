@@ -2061,8 +2061,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.71.1";
+const APP_VERSION="1.72.0";
 const CHANGELOG=[
+ {v:"1.72.0", d:"August 29, 2026", t:"Skip Location", items:[
+   ["new","<b>A palace walk can be walked past.</b> If a verse will not come today, <b>Skip Location</b> steps to the next station instead of ending the whole walk, and it tells you how many stations are left. It sits on every screen of a run: the fade, the warm up and the typing."],
+   ["chg","<b>A walk always keeps its order.</b> The list is sorted by station when the walk begins and is only ever taken from the front, so skipping never reshuffles what is ahead of you."]
+ ]},
  {v:"1.71.1", d:"August 29, 2026", t:"Plurals count", items:[
    ["fix","<b>A plural is the same picture.</b> Scenes are hardly ever written with the bare peg word, and only the exact form was recognised, so <i>two dimes roll off the table</i> left DIMES in lower case with no number. Both forms are now shouted and numbered, and the plural keeps its S rather than being forced back to the singular."]
  ]},
@@ -6916,9 +6920,25 @@ function w4wOrder(mode, slot){
 }
 // Practise straight down a list. Finishing a verse moves to the next; backing out of one ends the
 // run, so the close button is still a way out rather than a way to the next verse.
-let W4WQ=null;
+let W4WQ=null, W4WQMODE=null, W4WQSTEP=null;
+// A palace walk has to stay walkable. If a verse will not come today you step to the next station
+// rather than losing the whole walk, and the order never changes: the list was sorted by station
+// when the run began and is only ever shifted from the front.
+function w4wQueueSkip(){
+  if(!W4WQ) return;
+  W4WQ.shift();
+  if(W4WQ.length && W4WQSTEP) W4WQSTEP();
+  else { W4WQ=null; W4WQMODE=null; W4WQSTEP=null; show("verse"); renderVerse(); }
+}
+function w4wSkipHTML(){
+  if(!W4WQ || W4WQ.length<=1) return "";
+  const left=W4WQ.length-1;
+  const label = W4WQMODE==="palace" ? "Skip Location" : "Skip this verse";
+  return `<button class="btn ghost sm" id="w4wSkip" style="width:100%;margin:0 0 8px">⏭ ${label} · ${left} more to go</button>`;
+}
+function wireW4WSkip(){ const b=el("w4wSkip"); if(b) b.onclick=w4wQueueSkip; }
 function runW4WQueue(list, mode){
-  W4WQ=(list||[]).slice();
+  W4WQ=(list||[]).slice(); W4WQMODE=mode||"shortest";
   const strict = mode==="heart";
   const step=()=>{
     if(!W4WQ || !W4WQ.length){ W4WQ=null; show("verse"); renderVerse(); return; }
@@ -6931,9 +6951,10 @@ function runW4WQueue(list, mode){
                               : !!(Prog.w4wToday && Prog.w4wToday.set && Prog.w4wToday.set[k]);
       if(W4WQ) W4WQ.shift();
       if(finished && W4WQ && W4WQ.length) step();
-      else { W4WQ=null; show("verse"); renderVerse(); }
+      else { W4WQ=null; W4WQMODE=null; W4WQSTEP=null; show("verse"); renderVerse(); }
     });
   };
+  W4WQSTEP=step;
   step();
 }
 function pickW4WVerse(){
@@ -10148,10 +10169,12 @@ function renderTextFade(){
       ${canClaim?`<button class="btn ghost sm" id="tfHeart" style="width:100%;margin:2px 0 12px">💛 I already know this by heart →</button>`:""}
       <div class="fadeverse">${html}</div>
  <p class="hint" style="text-align:center">${done?"Now recite the whole verse from memory. Then type it to lock it in.":"Read it aloud. Each step hides more words. <b>Tap any blank to peek</b> for 2 seconds."}</p>
+      ${w4wSkipHTML()}
       <div class="btnrow">
         ${done?"":`<button class="btn ghost" id="tfWrite">Write it now →</button>`}
         <button class="btn" id="tfNext"${done?' style="width:100%"':""}>${done?"Type it from memory →":"Hide more →"}</button></div>
     </div>`;
+  wireW4WSkip();
   el("tfClose").onclick=()=>backFromTF();
   if(el("tfWrite")) el("tfWrite").onclick=()=>startWordPick(TF.b,TF.c,TF.v,TF.retFn);   // ready early: skip the fade
   if(el("tfHeart")) el("tfHeart").onclick=()=>{
@@ -10244,7 +10267,9 @@ function renderWordPick(){
       <div class="wpgrid">${WP.opts.map(w=>`<button type="button" class="wpopt" data-w="${w.replace(/"/g,"&quot;")}">${wpLabel(w)}</button>`).join("")}</div>
       <div class="hint" id="wpFb" style="text-align:center;margin-top:10px">&nbsp;</div>
  <button class="btn ghost sm" id="wpSkip" style="width:100%;margin-top:8px">Skip the warm up. Type it from memory →</button>
+      ${w4wSkipHTML()}
     </div>`;
+  wireW4WSkip();
   const disp=el("wpDisplay"); disp.scrollTop=disp.scrollHeight;
   el("wpClose").onclick=()=>{ const r=WP.ret; WP=null; r?r():renderVerse(); };
   el("wpSkip").onclick=()=>{ const {b,c,v,ret}=WP; WP=null; startTypeTest(b,c,v,ret); };
@@ -10320,9 +10345,11 @@ function renderTypeTest(){
       <div class="lv-topbar"><button class="lclose" id="ttClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(TT.b)} ${TT.c}:${TT.v}</div><div class="ttcount" id="ttCount">0/${total}</div></div>
       <div class="ttdisplay" id="ttDisplay"></div>
       <button class="btn ghost sm" id="ttHint" style="width:100%;margin:0 0 8px${TT.test?";display:none":""}">🔎 Reveal a letter</button>
+      ${w4wSkipHTML()}
       <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type word 1…">
  <p class="hint" style="text-align:center;margin-top:8px">Each word jumps to the top the moment you finish it · <b>green</b> if right, <b>red</b> if wrong (then it clears to retry).</p>
     </div>`;
+  wireW4WSkip();
   const inp=el("ttIn"), disp=el("ttDisplay"), cnt=el("ttCount"), hintBtn=el("ttHint");
   el("ttClose").onclick=()=>{ const r=TT.ret; TT=null; r?r():renderVerse(); };
   // repaint ONLY the committed-words area + counter + placeholder (leaves the input/keyboard untouched)
