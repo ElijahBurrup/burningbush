@@ -252,19 +252,19 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "classic/learn/build-the-book": {
-  "h": "54db595e2b92952b",
-  "len": 2723,
-  "els": 53,
-  "buttons": 10,
+  "h": "df5cbbe39b7c4187",
+  "len": 2804,
+  "els": 56,
+  "buttons": 11,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "classic/learn/build-the-book-done": {
-  "h": "98e82e04f35d9a6a",
-  "len": 2943,
-  "els": 58,
-  "buttons": 10,
+  "h": "ac8f9c6a2ee96e65",
+  "len": 3024,
+  "els": 61,
+  "buttons": 11,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "f84fecea3c490357",
+  "h": "eb033f9eab0e75f5",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "c11feb7465d02b99",
-  "len": 100083,
-  "els": 1850,
+  "h": "cea21abe2df9d796",
+  "len": 101182,
+  "els": 1867,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.72.0 August 29, 2026 Skip Location NEW A palace walk can be walked past. If a verse will not come t"
+  "text": "✕ Version history v1.73.0 August 29, 2026 Three rows, and your place kept NEW The Major System image is a row like the o"
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "84d8a7721d311ec2",
+  "h": "0db9fc0f1167ebdd",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -765,19 +765,19 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "illumined/learn/build-the-book": {
-  "h": "54db595e2b92952b",
-  "len": 2723,
-  "els": 53,
-  "buttons": 10,
+  "h": "df5cbbe39b7c4187",
+  "len": 2804,
+  "els": 56,
+  "buttons": 11,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "illumined/learn/build-the-book-done": {
-  "h": "98e82e04f35d9a6a",
-  "len": 2943,
-  "els": 58,
-  "buttons": 10,
+  "h": "ac8f9c6a2ee96e65",
+  "len": 3024,
+  "els": 61,
+  "buttons": 11,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "8979232e018eebaf",
+  "h": "d9c9dc064f596626",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "c11feb7465d02b99",
-  "len": 100083,
-  "els": 1850,
+  "h": "cea21abe2df9d796",
+  "len": 101182,
+  "els": 1867,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.72.0 August 29, 2026 Skip Location NEW A palace walk can be walked past. If a verse will not come t"
+  "text": "✕ Version history v1.73.0 August 29, 2026 Three rows, and your place kept NEW The Major System image is a row like the o"
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "8979232e018eebaf",
+  "h": "d9c9dc064f596626",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1278,19 +1278,19 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "glass/learn/build-the-book": {
-  "h": "54db595e2b92952b",
-  "len": 2723,
-  "els": 53,
-  "buttons": 10,
+  "h": "df5cbbe39b7c4187",
+  "len": 2804,
+  "els": 56,
+  "buttons": 11,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "glass/learn/build-the-book-done": {
-  "h": "98e82e04f35d9a6a",
-  "len": 2943,
-  "els": 58,
-  "buttons": 10,
+  "h": "ac8f9c6a2ee96e65",
+  "len": 3024,
+  "els": 61,
+  "buttons": 11,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "368fb90f08f1761c",
+  "h": "7461cf3937817950",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "c11feb7465d02b99",
-  "len": 100083,
-  "els": 1850,
+  "h": "cea21abe2df9d796",
+  "len": 101182,
+  "els": 1867,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.72.0 August 29, 2026 Skip Location NEW A palace walk can be walked past. If a verse will not come t"
+  "text": "✕ Version history v1.73.0 August 29, 2026 Three rows, and your place kept NEW The Major System image is a row like the o"
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "368fb90f08f1761c",
+  "h": "7461cf3937817950",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1791,19 +1791,19 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "quest/learn/build-the-book": {
-  "h": "54db595e2b92952b",
-  "len": 2723,
-  "els": 53,
-  "buttons": 10,
+  "h": "df5cbbe39b7c4187",
+  "len": 2804,
+  "els": 56,
+  "buttons": 11,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "quest/learn/build-the-book-done": {
-  "h": "98e82e04f35d9a6a",
-  "len": 2943,
-  "els": 58,
-  "buttons": 10,
+  "h": "ac8f9c6a2ee96e65",
+  "len": 3024,
+  "els": 61,
+  "buttons": 11,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "5b66dd341fa14a31",
+  "h": "6b5606fd695d3bdc",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "c11feb7465d02b99",
-  "len": 100083,
-  "els": 1850,
+  "h": "cea21abe2df9d796",
+  "len": 101182,
+  "els": 1867,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.72.0 August 29, 2026 Skip Location NEW A palace walk can be walked past. If a verse will not come t"
+  "text": "✕ Version history v1.73.0 August 29, 2026 Three rows, and your place kept NEW The Major System image is a row like the o"
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "5b66dd341fa14a31",
+  "h": "6b5606fd695d3bdc",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -2304,19 +2304,19 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "buddy/learn/build-the-book": {
-  "h": "54db595e2b92952b",
-  "len": 2723,
-  "els": 53,
-  "buttons": 10,
+  "h": "df5cbbe39b7c4187",
+  "len": 2804,
+  "els": 56,
+  "buttons": 11,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
  },
  "buddy/learn/build-the-book-done": {
-  "h": "98e82e04f35d9a6a",
-  "len": 2943,
-  "els": 58,
-  "buttons": 10,
+  "h": "ac8f9c6a2ee96e65",
+  "len": 3024,
+  "els": 61,
+  "buttons": 11,
   "svgs": 0,
   "imgs": 6,
   "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "ca60b004ca5390d7",
+  "h": "f0207553d2980da4",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "c11feb7465d02b99",
-  "len": 100083,
-  "els": 1850,
+  "h": "cea21abe2df9d796",
+  "len": 101182,
+  "els": 1867,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.72.0 August 29, 2026 Skip Location NEW A palace walk can be walked past. If a verse will not come t"
+  "text": "✕ Version history v1.73.0 August 29, 2026 Three rows, and your place kept NEW The Major System image is a row like the o"
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "ca60b004ca5390d7",
+  "h": "f0207553d2980da4",
   "len": 17712,
   "els": 441,
   "buttons": 40,

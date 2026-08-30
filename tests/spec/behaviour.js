@@ -1846,14 +1846,14 @@ const DAY = 86400000;
       decodeGone: !/Use the Major System/i.test(txt),
       shown: s.style.display,
       text: s.textContent.replace(/\s+/g, ' ').trim(),
-      coded: txt.includes('The code picks this one'),
+      coded: !!document.querySelector('#verse [data-rel="peg"]') && !document.querySelector('.bbfixed'),
       chosen: [...document.querySelectorAll('#verse [data-rel]')].map(r => r.classList.contains('set')),
     };
   });
   is(bbCard.empty.sent, 'none', 'no sentence until both pictures are chosen');
-  is(bbCard.empty.rows.join(','), 'word,num', 'two relationship rows, each opening its own sheet');
+  is(bbCard.empty.rows.join(','), 'word,num,peg', 'three relationship rows, each opening its own sheet');
   ok(/Choose a picture for Nehemiah/.test(bbCard.empty.ask), '…and an unchosen one says what it wants');
-  is(bbCard.labels.join(' | '), 'Book / Image Relationship | Number / Image Relationship | The coded image',
+  is(bbCard.labels.join(' | '), 'Book / Image Relationship | Number / Image Relationship | Major System Image',
      'the rows are named for the relationship they hold');
   ok(bbCard.walkthroughGone, 'the written walkthrough is gone; the film carries it now');
   ok(bbCard.sceneAfterSentence, 'the scene box sits between the scene it asked for and the way on');
@@ -1865,8 +1865,8 @@ const DAY = 86400000;
   ok(/Tissue/.test(bbCard.text), '…and the coded image, all three');
   ok(/far too big to be real\.$/.test(bbCard.text), '…and it ends once the scene is built');
   no(/scene box/i.test(bbCard.text), '…without sending them anywhere else');
-  ok(bbCard.coded, 'the third picture is stated as the code\u2019s, not a choice');
-  is(bbCard.chosen.join(','), 'true,true', 'both rows show what was chosen');
+  ok(bbCard.coded, 'the third picture is stated as the code\u2019s, chosen the same way as the other two');
+  is(bbCard.chosen.join(','), 'true,true,true', 'every row shows what was chosen');
 
   const bbSheet = await $(() => {
     openRelationPicker(16, 'word', () => { });
@@ -2944,6 +2944,62 @@ const DAY = 86400000;
   ok(solo.one, 'a run of one verse offers no skip at all');
   has(solo.label, 'Skip this verse', 'outside a palace the same control says what it really does');
 
+  describe('the coded image is a row like the other two', () => { });
+  const coded = await $(() => {
+    const n = 16;
+    delete Prog.customPeg[n]; saveProg();
+    show('verse'); startAdhocLearn(n, true, () => { });
+    const row = () => document.querySelector('[data-rel="peg"]');
+    const rows = [...document.querySelectorAll('[data-rel]')].map(x => x.dataset.rel);
+    const out = { rows, def: pegFor(n).word, choices: pegChoices(n), hadRow: !!row(),
+                  noFixed: !document.querySelector('.bbfixed') };
+    row().click();
+    out.tiles = [...document.querySelectorAll('#pgGrid [data-peg]')].map(t => t.getAttribute('data-peg'));
+    document.querySelectorAll('#pgGrid [data-peg]')[1].click();
+    out.fromSheet = { peg: pegFor(n).word, custom: Prog.customPeg[n],
+                      chipOn: [...document.querySelectorAll('.pegchip.on')].map(c => c.textContent.trim()) };
+    // and back the other way: the chips above write the same setting
+    const other = out.tiles[2];
+    const chip = [...document.querySelectorAll('.pegchip')].find(c => c.getAttribute('data-peg') === other);
+    chip.click();
+    out.fromChip = { peg: pegFor(n).word, rowSays: row().textContent.replace(/s+/g, ' ').trim() };
+    // choosing the code's own word again clears the override rather than storing it
+    row().click();
+    document.querySelectorAll('#pgGrid [data-peg]')[0].click();
+    out.reset = { peg: pegFor(n).word, custom: Prog.customPeg[n] };
+    return out;
+  });
+  is(coded.rows.join(','), 'word,num,peg', 'three rows, chosen the same way');
+  ok(coded.noFixed, '...and the old read-only note is gone');
+  is(coded.def, 'Tissue', 'book 16 starts on the code’s own word');
+  is(coded.tiles.join(','), coded.choices.join(','), 'the sheet offers exactly the words that decode to that number');
+  is(coded.fromSheet.peg, 'Dish', 'choosing from the row changes the image');
+  is(coded.fromSheet.chipOn.join(','), 'Dish', '...and the picker above shows the same choice');
+  is(coded.fromChip.peg, coded.tiles[2], 'choosing from the picker above changes it too');
+  has(coded.fromChip.rowSays, coded.tiles[2], '...and the row follows: one setting, seen twice');
+  is(coded.reset.peg, 'Tissue', 'picking the code’s own word puts it back');
+  is(coded.reset.custom, undefined, '...by clearing the override rather than storing it');
+
+  const stay = await $(async () => {
+    const n = 16;
+    show('verse'); startAdhocLearn(n, true, () => { });
+    const sc = document.querySelector('.content');
+    sc.scrollTop = sc.scrollHeight;
+    const before = sc.scrollTop;
+    document.querySelector('[data-rel="peg"]').click();
+    document.querySelectorAll('#pgGrid [data-peg]')[1].click();
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const afterPeg = document.querySelector('.content').scrollTop;
+    document.querySelector('.content').scrollTop = before;
+    document.querySelector('[data-rel="word"]').click();
+    document.querySelectorAll('#relGrid [data-pick]')[0].click();
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    return { before, afterPeg, afterWord: document.querySelector('.content').scrollTop };
+  });
+  ok(stay.before > 0, 'the lesson card is long enough to scroll');
+  is(stay.afterPeg, stay.before, 'choosing an image leaves you where you were, not back at the top');
+  is(stay.afterWord, stay.before, '...and so does choosing a book picture');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
@@ -3191,16 +3247,21 @@ const DAY = 86400000;
 
   const routed = await $(() => {
     const k = '43:11:35';
-    Prog.memorized = [k]; Prog.verseStage = { [k]: 'heart' };
-    Prog.revPrefs = { loc: false, w4w: true }; saveProg();
-    askVerseIn(k);
+    Prog.memorized = [k]; Prog.verseStage = { [k]: 'heart' }; Prog.w4wSR = {}; saveProg();
+    // A claimed verse is asked one way or the other on a coin toss, so the toss is held still here.
+    // Leaving it to the seeded generator made this test depend on how many shuffles ran before it.
+    const rig = v => { const real = Math.random; Math.random = () => v; try { askVerseIn(k); } finally { Math.random = real; } };
+    rig(0);                                                   // heads: word for word
     const byTyping = !!el('ttIn');
+    rig(0.99);                                                // tails: by address
+    const byAddress = !!el('mtFieldB');
     Prog.verseStage = {}; saveProg();
-    askVerseIn(k);                                            // still only located
+    rig(0);                                                   // still only located, so no toss applies
     const stage1 = !!el('mtFieldB');
-    return { byTyping, stage1, both: revPrefs().loc && revPrefs().w4w };
+    return { byTyping, byAddress, stage1, both: revPrefs().loc && revPrefs().w4w };
   });
   ok(routed.byTyping, 'a verse held by heart is asked by typing it');
+  ok(routed.byAddress, '...or by address, whichever the toss gives');
   ok(routed.stage1, 'a verse that is only located is ALWAYS asked by address');
   ok(routed.both, 'review asks both ways, and that is no longer a setting anyone can switch off');
 

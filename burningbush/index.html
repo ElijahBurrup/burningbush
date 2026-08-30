@@ -2061,8 +2061,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.72.0";
+const APP_VERSION="1.73.0";
 const CHANGELOG=[
+ {v:"1.73.0", d:"August 29, 2026", t:"Three rows, and your place kept", items:[
+   ["new","<b>The Major System image is a row like the other two.</b> It opens its own sheet listing every word that decodes to that number, so all three pictures are chosen the same way instead of two being chosen and one being read out at you."],
+   ["chg","<b>Change it in either place and it changes in both.</b> The row and the picker above it are one setting seen twice: they write the same thing, so they can never disagree. Picking the code’s own word again clears the override rather than storing it."],
+   ["fix","<b>Choosing a picture no longer throws you back to the top of the lesson.</b> The card is rebuilt after every choice, and it used to lose your place on a long screen. You now come back exactly where you were."]
+ ]},
  {v:"1.72.0", d:"August 29, 2026", t:"Skip Location", items:[
    ["new","<b>A palace walk can be walked past.</b> If a verse will not come today, <b>Skip Location</b> steps to the next station instead of ending the whole walk, and it tells you how many stations are left. It sits on every screen of a run: the fade, the warm up and the typing."],
    ["chg","<b>A walk always keeps its order.</b> The list is sorted by station when the walk begins and is only ever taken from the front, so skipping never reshuffles what is ahead of you."]
@@ -3488,7 +3493,15 @@ function buildSentence(n){
 
 // The written walkthrough that used to live here is gone: Review Lesson plays the film, and two
 // explanations of the same thing on one screen is one too many.
+// Every word the Major System allows for this number: the default first, then the alternatives.
+function pegChoices(n){ return [defaultPegWord(n)].concat(pegAlts(n)).filter(Boolean); }
 function relationRow(n, kind){
+  if(kind==="peg"){
+    const cur=pegFor(n).word, def=defaultPegWord(n);
+    return `<button type="button" class="bbchoose set" data-rel="peg">
+      <span class="bbc-t"><span class="bbc-name">${bbEsc(cur)}</span><span class="bbc-why">sounds ${bbEsc(pegFor(n).sounds)}${cur===def?"":" · your choice"}</span></span>
+      <span class="bbc-caret">▾</span></button>`;
+  }
   const cur = kind==="word" ? bookWordOf(n) : numRefOf(n);
   const list = kind==="word" ? bookWordOptions(n) : numRefOptions(n);
   const hit = list.find(o=>optName(o)===cur);
@@ -3523,11 +3536,35 @@ function buildTheBookBox(n){
       ${relationRow(n,"num")}
     </div>
     <div class="bbrow">
-      <label>The coded image</label>
-      <div class="bbfixed"><b class="gold">${bbEsc(w)}</b> · sounds ${bbEsc(snd)}. The code picks this one. Change it with the picker above.</div>
+      <label>Major System Image</label>
+      ${relationRow(n,"peg")}
     </div>
     <div class="bbsent" id="bbSent" style="display:${sent?"block":"none"}">${sent}</div>
   </div>`;
+}
+// The Major System row opens the same sheet, but its list is fixed by the code rather than by taste:
+// every word here decodes to the same number, so choosing among them changes the picture and nothing
+// else. Writing the choice to Prog.customPeg is what keeps this and the chip picker in step.
+function openPegPicker(n, after){
+  const cur=pegFor(n).word, def=defaultPegWord(n), code=pegCode(n);
+  const m=el("relModal")||(()=>{ const d=document.createElement("div"); d.id="relModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const tile=w=>`<button type="button" class="pickbtn bbopt${w===cur?" on":""}" data-peg="${bbEsc(w)}">
+      <span class="pkt">${bbEsc(w)}</span><span class="pks">${w===def?"the code's own word":"decodes to "+bbEsc(code)+" as well"}</span></button>`;
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="pgClose" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800;font-size:15px">Major System Image</div><span style="width:34px"></span></div>
+      <p class="hint" style="margin:0 0 10px">Every one of these decodes to <b class="gold">${bbEsc(code)}</b>. Pick the picture you see most easily.</p>
+      <div class="pickscroll" style="max-height:56vh"><div class="pickgrid" id="pgGrid">${pegChoices(n).map(tile).join("")}</div></div>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; if(after) after(); };
+  el("pgClose").onclick=close;
+  m.onclick=ev=>{ if(ev.target===m) close(); };
+  m.querySelectorAll("[data-peg]").forEach(b=>b.onclick=()=>{
+    const w=b.getAttribute("data-peg");
+    if(w===def) delete Prog.customPeg[n]; else Prog.customPeg[n]=w;   // same store the chips write
+    saveProg(); close();
+  });
 }
 // The same grid the palace and spot pickers use, in a sheet of its own so the lesson screen stays short.
 function openRelationPicker(n, kind, after){
@@ -3572,8 +3609,15 @@ function openRelationPicker(n, kind, after){
 
 // One handler for both dropdowns: pick from the list, or choose to write your own and get a prompt.
 function wireBuildTheBook(n, rerender){
+  // Re-rendering a card is not a reason to lose your place on it.
+  const keepPlace=()=>{
+    const sc=document.querySelector(".content"), y=sc?sc.scrollTop:0;
+    rerender();
+    requestAnimationFrame(()=>{ const s=document.querySelector(".content"); if(s) s.scrollTop=y; });
+  };
   document.querySelectorAll("[data-rel]").forEach(btn=>btn.onclick=()=>
-    openRelationPicker(n, btn.dataset.rel, rerender));
+    btn.dataset.rel==="peg" ? openPegPicker(n, keepPlace)
+                            : openRelationPicker(n, btn.dataset.rel, keepPlace));
 }
 
 /* ---- writing the scene down ---------------------------------------------------------------- */
@@ -3664,7 +3708,13 @@ function wireTeachCard(kind, n, rerender){
     keyWords:[bookWordOf(n), numRefOf(n), pegFor(n).word],
     tagWord:{ word:numRefOf(n), tag:n },
     onSave:v=>{ if(v){Prog.customBook[n]=v;} else {delete Prog.customBook[n];} saveProg(); rerender(); }});
-  document.querySelectorAll("[data-peg]").forEach(bt=>bt.onclick=()=>{ const w=bt.getAttribute("data-peg"); if(w){Prog.customPeg[n]=w;} else {delete Prog.customPeg[n];} saveProg(); rerender(); });
+  document.querySelectorAll("[data-peg]").forEach(bt=>bt.onclick=()=>{
+    const w=bt.getAttribute("data-peg"); if(w){Prog.customPeg[n]=w;} else {delete Prog.customPeg[n];}
+    saveProg();
+    const sc=document.querySelector(".content"), y=sc?sc.scrollTop:0;
+    rerender();
+    requestAnimationFrame(()=>{ const s=document.querySelector(".content"); if(s) s.scrollTop=y; });
+  });
 }
 
 /* =================== SRS (Leitner) + PROGRESS STATE =================== */
