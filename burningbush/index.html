@@ -654,6 +654,18 @@
     .tthelp{font-size:11px;line-height:1.35;margin-top:6px}
     .typein{padding:12px;font-size:20px}
   }
+  /* An SE with the keyboard up leaves about 400px. Everything that matters while typing — the words
+     so far, the box, and Reveal a letter — has to be inside that, so the sentence explaining the
+     colours steps aside. It has been read by the time it matters. */
+  @media (max-height:560px){
+    .ttcard{padding:12px}
+    .ttcard .ttstick{margin:-12px -12px 0;padding:12px 12px 0}
+    .ttcard .lv-topbar{margin-bottom:2px}
+    .ttcard .ttdisplay{height:46px;margin:4px 0;font-size:16px;line-height:1.45}
+    .ttcard .typein{padding:9px;font-size:18px}
+    .ttcard .tthelp{display:none}
+    .ttcard #ttHint{margin-top:6px;padding:8px}
+  }
   .tt-in.wrong{border-color:var(--miss);color:var(--miss-ink)}
   .tt-in.good{border-color:var(--good)}
   .ttwin .ttburst{font-size:64px;animation:ttpop .7s ease}
@@ -2078,8 +2090,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.76.0";
+const APP_VERSION="1.77.0";
 const CHANGELOG=[
+ {v:"1.77.0", d:"August 30, 2026", t:"Books come back too", items:[
+   ["new","<b>The books you have learned now come back for review, on the same clock as everything else.</b> A book lesson always kept a card and moved it along the same day 0, 1, 3, 7, 16, 30 trail, but nothing ever read those cards back, so a book was scheduled and then never asked for. They have their own phase in the daily review, after the numbers."],
+   ["new","<b>A book is reviewed on everything its lesson taught.</b> Its number, its name, the coded image, and whichever of your own two pictures you have chosen. Leave one blank and it is never asked about."],
+   ["chg","<b>The day’s count and the review banner include them</b>, so what is waiting is what you are told is waiting."],
+   ["fix","<b>Everything you need while typing a verse fits a phone with the keyboard up.</b> The words so far, the box, and Reveal a letter now share the screen even on the smallest one, where the sentence explaining the colours steps aside to make room."]
+ ]},
  {v:"1.76.0", d:"August 30, 2026", t:"Nothing takes your place away", items:[
    ["fix","<b>The app was throwing readers back to the Library at random.</b> When a translation or a chapter finished downloading in the background it redrew whatever screen you were on, and for a verse that meant the Library hub. A verse being read, a verse being typed, a lesson half done: any of them could vanish the moment a download landed. A screen showing anything deeper than its own top level is now left alone."],
    ["fix","<b>Moving to the next verse keeps your place on the page.</b> Swiping or tapping an arrow used to drop you back at the reference every time."],
@@ -4148,6 +4166,14 @@ function gradeKey(k,g){
 }
 // set-based mastery: every completed skill contributes its item numbers to "known"
 let _known=null, _knownLen=-1;
+// Every book whose lesson is behind you. Book skills carry their book number as their only item.
+function knownBooks(){
+  const out=[];
+  UNITS.forEach(U=>U.skills.forEach(sk=>{
+    if(sk.kind==="book" && Prog.doneSkills.includes(sk.id)) (sk.items||[]).forEach(n=>{ if(n>=1&&n<=66 && out.indexOf(n)<0) out.push(n); });
+  }));
+  return out;
+}
 function knownNumbers(){
   const tag=Prog.doneSkills.length+"_"+(Prog.extraKnown||[]).length;
   if(_known && _knownLen===tag) return _known;
@@ -5199,7 +5225,15 @@ function numbersDueList(){ const soon=Date.now()+SR_GRACE, eod=endOfToday(), out
   const gap=INTERVAL[st.box]||0, limit = gap<=1 ? soon : eod;   // 1-day boxes get 1-hour grace; longer boxes batch the whole calendar day
   if(st.due<=limit) out.push(n); }); return out.sort((a,b)=>a-b); }
 function numbersDueCount(){ return numbersDueList().length; }
-function reviewDueCount(){ return newVersesDueCount()+numbersDueCount()+versesDueCount()+palacesDueCount(); }   // everything due for spaced repetition today
+// Books carry their own card, because knowing that 16 is a tissue and knowing that 16 is Nehemiah
+// are two different pieces of learning that fade at their own rates.
+function booksDueList(){ const soon=Date.now()+SR_GRACE, eod=endOfToday(), out=[];
+  knownBooks().forEach(n=>{ const st=SRS['sk:book:'+n]; if(!st || typeof st.box!=='number') return;
+    const gap=INTERVAL[st.box]||0, limit = gap<=1 ? soon : eod;
+    if(st.due<=limit) out.push(n); });
+  return out.sort((a,b)=>a-b); }
+function booksDueCount(){ return booksDueList().length; }
+function reviewDueCount(){ return newVersesDueCount()+numbersDueCount()+booksDueCount()+versesDueCount()+palacesDueCount(); }   // everything due for spaced repetition today
 /* A verse you saved an hour ago has not been forgotten yet, so testing it proves nothing. Four
    hours after it is saved it comes back ONCE - the palace, the location and the scene you wrote,
    to read over and confirm. Only after that does it join the testing rotation. r0 holds when that
@@ -6396,20 +6430,22 @@ function startMemTest(){
   // and it starts again at nothing - only the best you have ever reached is kept.
   Prog.streak=0; saveProg(); refreshHUD&&refreshHUD();
   memTestRecent=[]; suppressGrowth=false; reviewedThisSession=[];
-  const numDue=numbersDueList();
+  const numDue=numbersDueList(), bookDue=booksDueList();
   const due=mem.map(a=>a.join(":")).filter(k=>verseDue(k));   // verses whose next SR checkpoint has come due
   const fresh=newVersesDueList();                             // saved 4h+ ago and not yet read back once
-  const anyDue = fresh.length>0 || numDue.length>0 || due.length>0 || palacesDueCount()>0;
+  const anyDue = fresh.length>0 || numDue.length>0 || bookDue.length>0 || due.length>0 || palacesDueCount()>0;
   if(!mem.length && !anyDue){ renderVerse(); return; }
   // shuffle each group so items aren't quizzed in the fixed order they were learned (numbers ascending, verses in memorized order)
-  MS={ phase:"start", newQueue:fresh.slice(), numQueue:shuffle(numDue.slice()), srQueue:shuffle(due.slice()), dueWork:anyDue };
+  MS={ phase:"start", newQueue:fresh.slice(), numQueue:shuffle(numDue.slice()), bookQueue:shuffle(bookDue.slice()), srQueue:shuffle(due.slice()), dueWork:anyDue };
   if(anyDue) srBanner("start");       // combined counter → Begin → numbers → verses → palaces → practice
   else practiceNext(true);            // nothing due → straight to free practice (skip the "done for today" moment)
 }
 // run the numbers phase (the due numbers), then continue to verses; called from the Begin button
 function beginDueReview(){
   if(MS.newQueue && MS.newQueue.length) return runNewVerseReview();   // new verses first, always
-  if(MS.numQueue && MS.numQueue.length){ startNumberReview(MS.numQueue.slice(), startVersePhase); return; }
+  // Each phase empties its own queue and comes back here, so the order is decided in one place.
+  if(MS.numQueue && MS.numQueue.length){ const q=MS.numQueue.slice(); MS.numQueue=[]; startNumberReview(q, beginDueReview, "num"); return; }
+  if(MS.bookQueue && MS.bookQueue.length){ const q=MS.bookQueue.slice(); MS.bookQueue=[]; startNumberReview(q, startVersePhase, "book"); return; }
   startVersePhase();
 }
 // One new verse, shown as the screen it was built on: palace, location and the scene, ready to be
@@ -6429,10 +6465,19 @@ function startVersePhase(){
   else afterSR();                                                          // no verses due → palaces / finish
 }
 // a due-numbers quiz that, when finished, calls `ret` (chaining into the verse phase) instead of the standalone end screen
-function startNumberReview(nums, ret){
-  const withBook=nums.filter(n=>n<=66);
-  const qs=nums.map(n=>({n, type: pick((n<=66 && withBook.length>=1) ? ["q_n2i","q_i2n","q_n2b","q_b2n"] : ["q_n2i","q_i2n"]) }));
-  NT={qs, i:0, ok:0, wrong:0, ret}; renderNumTest();
+function startNumberReview(nums, ret, kind){
+  const isBook = kind==="book";
+  // A book is asked about the things a book lesson taught: its number, its name, the coded image,
+  // and whichever of the reader's own two pictures they have actually chosen.
+  const qs=nums.map(n=>({n, type: pick(isBook ? bookReviewTypes(n)
+    : ((n<=66 && nums.filter(x=>x<=66).length>=1) ? ["q_n2i","q_i2n","q_n2b","q_b2n"] : ["q_n2i","q_i2n"])) }));
+  NT={qs, i:0, ok:0, wrong:0, ret, kind:isBook?"book":"num"}; renderNumTest();
+}
+function bookReviewTypes(n){
+  const t=["q_n2b","q_b2n","q_i2b","q_b2i"];
+  if(bookWordOf(n)) t.push("q_n2w","q_w2n");
+  if(numRefOf(n))   t.push("q_n2r","q_r2n");
+  return t;
 }
 /* Close the app in the middle of a verse test and it is waiting for you when you come back -
    the same verse, not the hub. The marker is dropped the moment you leave the test yourself. */
@@ -6764,17 +6809,19 @@ function srBanner(kind){
     // The new verses — saved four hours ago and waiting for their first look — are reviewed FIRST
     // (see beginDueReview), so leaving them out of this total made it one short of the "Due (N)" on
     // the Library button, and the very item it forgot was the one that appeared next.
-    const nf=(MS.newQueue||[]).length, nn=(MS.numQueue||[]).length, nv=(MS.srQueue||[]).length, np=palacesDueCount();
-    const total=nf+nn+nv+np;
+    const nf=(MS.newQueue||[]).length, nn=(MS.numQueue||[]).length, nb=(MS.bookQueue||[]).length,
+          nv=(MS.srQueue||[]).length, np=palacesDueCount();
+    const total=nf+nn+nb+nv+np;
     const parts=[];
     if(nf)parts.push(`<b class="gold">${nf}</b> new verse${nf>1?"s":""}`);
     if(nn)parts.push(`<b class="gold">${nn}</b> number${nn>1?"s":""}`);
+    if(nb)parts.push(`<b class="gold">${nb}</b> book${nb>1?"s":""}`);
     if(nv)parts.push(`<b class="gold">${nv}</b> verse${nv>1?"s":""}`);
     if(np)parts.push(`<b class="gold">${np}</b> palace${np>1?"s":""}`);
     V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🔔</div>
  <h2 class="gold">Spaced Repetition · Today</h2>
       <div class="srcount">${total}</div>
- <p class="lead">${parts.join(" · ")} due for review. We'll lock them back in, ${nf?"<b>the new ones first</b>, then ":""}<b>numbers, then verses, then palaces</b>, then move on to free practice + your streak.</p>
+ <p class="lead">${parts.join(" · ")} due for review. We'll lock them back in, ${nf?"<b>the new ones first</b>, then ":""}<b>numbers, then books, then verses, then palaces</b>, then move on to free practice + your streak.</p>
       <button class="btn blue" id="srGo">Begin review →</button></div>`;
     el("srGo").onclick=beginDueReview; return;
   }
@@ -8242,7 +8289,15 @@ function renderNumTest(){
     correct=dispNum("book",n); options=shuffle([n,...distract("book",n,3)]).map(x=>dispNum("book",x)); }
   else if(q.type==="q_i2b"){ prompt=`Which book has this image?`; stimulus=`<div class="bigword">${word}</div>`;
     correct=bookName(n); options=shuffle([bookName(n),...distract("book",n,3).map(bookName)]); }
-  else { prompt=`Which image is this book?`; stimulus=`<div class="bigword">${bookName(n)}</div>`;
+  else if(q.type==="q_n2w"){ prompt=`Which picture did you choose for the NAME of this book?`; stimulus=`<div class="bigword">${bookName(n)}</div>`;
+    correct=bookWordOf(n); options=shuffle([correct,...otherPictures("name",n,3)]); }
+  else if(q.type==="q_w2n"){ prompt=`This is your name picture for which book?`; stimulus=`<div class="bigword">${bbEsc(bookWordOf(n))}</div>`;
+    correct=bookName(n); options=shuffle([bookName(n),...distract("book",n,3).map(bookName)]); }
+  else if(q.type==="q_n2r"){ prompt=`Which picture did you choose for this NUMBER?`; stimulus=`<div class="bignum">${dispNum("book",n)}</div>`;
+    correct=numRefOf(n); options=shuffle([correct,...otherPictures("num",n,3)]); }
+  else if(q.type==="q_r2n"){ prompt=`This is your number picture for which number?`; stimulus=`<div class="bigword">${bbEsc(numRefOf(n))}</div>`;
+    correct=dispNum("book",n); options=shuffle([n,...distract("book",n,3)]).map(x=>dispNum("book",x)); }
+  else { prompt=`Which Major System image is this book?`; stimulus=`<div class="bigword">${bookName(n)}</div>`;
     correct=word; options=shuffle([word,...distract("book",n,3).map(x=>pegFor(x).word)]); }
   V.innerHTML=`<div class="qhead"><button class="lclose" id="ntClose">✕</button>
       <div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>
@@ -8265,7 +8320,7 @@ function renderNumTest(){
       }, 550);
     } else {                                       // wrong → red, stay to retry
       b.classList.add("wrong"); b.disabled=true; NT.wrong++;
-      gradeKey(`sk:num:${n}`,"miss");
+      gradeKey(`sk:${(NT&&NT.kind)==="book"?"book":"num"}:${n}`,"miss");
     }
   });
 }
@@ -10512,7 +10567,7 @@ function renderTypeTest(){
   const V=el("verse"), total=TT.words.length;
   // Build the shell ONCE. From here on we mutate only the top display + counter in place — the input element
   // is never recreated, so focus and the on-screen keyboard hold steady (no flashing, no jump).
-  V.innerHTML=`<div class="card">
+  V.innerHTML=`<div class="card ttcard">
       <div class="ttstick">
         <div class="lv-topbar"><button class="lclose" id="ttClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(TT.b)} ${TT.c}:${TT.v}</div><div class="ttcount" id="ttCount">0/${total}</div></div>
         <div class="ttdisplay" id="ttDisplay"></div>

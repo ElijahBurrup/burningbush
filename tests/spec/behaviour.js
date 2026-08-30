@@ -3299,6 +3299,107 @@ const DAY = 86400000;
   ok(quest.started, '...and on an open one it starts the lesson');
   ok(quest.showing, '...putting it on the screen');
 
+  describe('books come back before they are forgotten', () => { });
+  const bookSR = await $(() => {
+    const r = {};
+    const wasDone = (Prog.doneSkills || []).slice(), wasMem = (Prog.memorized || []).slice();
+    // Earlier blocks leave palaces dated to the epoch, which are due forever. This one measures
+    // the day's total, so it clears them and puts them back.
+    const wasPalaces = Prog.palaces; Prog.palaces = [];
+    const bookSkills = []; UNITS.forEach(U => U.skills.forEach(sk => { if (sk.kind === 'book') bookSkills.push(sk); }));
+    const first = bookSkills.slice(0, 5);
+    Prog.doneSkills = first.map(s => s.id);
+    Prog.memorized = []; Prog.bookWord = {}; Prog.numRef = {};
+    first.forEach(s => s.items.forEach(n => gradeKey('sk:book:' + n, 'good')));
+    saveProg();
+    r.known = knownBooks();
+    r.freshlyLearned = booksDueList().length;
+    r.known.forEach(n => { SRS['sk:book:' + n].due = Date.now() - 86400000; });
+    r.aged = booksDueList();
+    r.inDayTotal = reviewDueCount();
+    show('verse'); startMemTest();
+    r.queue = (MS.bookQueue || []).length;
+    r.banner = (document.getElementById('verse').textContent || '').split(/\s+/).join(' ');
+    document.getElementById('srGo').click();
+    r.kind = NT ? NT.kind : null;
+    const n = NT.qs[0].n, before = SRS['sk:book:' + n].due;
+    document.querySelector('#verse [data-ok="1"]').click();
+    r.advanced = SRS['sk:book:' + n].due > before;
+    // hand back a clean world: these cards would otherwise show as due for every later block
+    r.known.forEach(x => { delete SRS['sk:book:' + x]; delete SRS['sk:num:' + x]; });
+    Prog.doneSkills = wasDone; Prog.memorized = wasMem; Prog.palaces = wasPalaces;
+    saveProg(); bustCaches();
+    return r;
+  });
+  is(bookSR.known.join(','), '1,2,3,4,5', 'five book lessons behind us');
+  is(bookSR.freshlyLearned, 0, 'a book just learned is not due yet');
+  is(bookSR.aged.join(','), '1,2,3,4,5', '...but once its checkpoint passes it is');
+  ok(bookSR.inDayTotal >= 5, '...and they count toward what is due today');
+  is(bookSR.queue, 5, 'the session carries a phase of its own for them');
+  has(bookSR.banner, '5 books', '...and the banner says so');
+  has(bookSR.banner, 'numbers, then books, then verses', '...and where they come in the order');
+  is(bookSR.kind, 'book', 'beginning the review reaches the book phase');
+  ok(bookSR.advanced, '...and answering one pushes its next checkpoint out');
+
+  const bookQ = await $(() => {
+    const r = { plain: bookReviewTypes(16) };
+    Prog.bookWord[16] = 'Knee Socks'; saveProg(); r.withName = bookReviewTypes(16);
+    Prog.numRef[16] = "Driver's Licence"; saveProg(); r.withBoth = bookReviewTypes(16);
+    const shot = t => { NT = { qs: [{ n: 16, type: t }], i:0, ok:0, wrong:0, ret:null, kind:'book' }; renderNumTest();
+      return { q: (document.querySelector('#verse .prompt')||{}).textContent || '',
+               opts: [...document.querySelectorAll('#verse .opt')].map(o => o.textContent),
+               imgs: document.querySelectorAll('#verse img').length }; };
+    r.name = shot('q_n2w'); r.num = shot('q_n2r');
+    // a miss in a book phase marks the book's card and leaves the number's alone
+    SRS['sk:book:16'] = { box:3, due:Date.now()+99999 }; SRS['sk:num:16'] = { box:3, due:Date.now()+99999 };
+    NT = { qs:[{n:16,type:'q_b2n'}], i:0, ok:0, wrong:0, ret:null, kind:'book' }; renderNumTest();
+    document.querySelector('#verse [data-ok="0"]').click();
+    r.miss = { book: SRS['sk:book:16'].box, num: SRS['sk:num:16'].box };
+    return r;
+  });
+  is(bookQ.plain.join(','), 'q_n2b,q_b2n,q_i2b,q_b2i', 'a book with no chosen pictures is asked the four it has');
+  ok(bookQ.withName.includes('q_n2w'), 'choosing a name picture adds it to the review');
+  no(bookQ.plain.includes('q_n2r'), '...and an unchosen number picture is never asked about');
+  is(bookQ.withBoth.length, 8, 'with all three pictures there are eight ways to be asked');
+  is(bookQ.name.imgs + bookQ.num.imgs, 0, 'a book is reviewed in words, the way it is taught');
+  ok(bookQ.name.opts.includes('Knee Socks'), 'the name question offers what was chosen');
+  ok(bookQ.num.opts.includes("Driver's Licence"), '...and so does the number one');
+  is(bookQ.miss.book, 1, 'a miss on a book sends its own card back to the start');
+  is(bookQ.miss.num, 3, '...and leaves the number card where it was');
+
+  describe('typing fits a phone with the keyboard up', () => { });
+  const fits = await $(() => {
+    setFeat('w4w', true);
+    Prog.memorized = ['43:3:16']; Prog.verseStage = {}; Prog.w4w = {}; saveProg();
+    show('verse'); startTypeTest(43, 3, 16, () => { }, false);
+    const inp = document.getElementById('ttIn');
+    TT.words.slice(0, 8).forEach(w => { inp.value = w; inp.dispatchEvent(new Event('input')); });
+    const css = [...document.querySelectorAll('style')].map(s => s.textContent).join('');
+    const card = document.querySelector('#verse .card');
+    return {
+      named: card.classList.contains('ttcard'),
+      order: [...card.children].map(x => x.id || (x.className||'').split(' ')[0]),
+      // the four things that have to share the screen while typing
+      band: !!card.querySelector('.ttstick .ttcount'),
+      words: !!card.querySelector('.ttstick #ttDisplay'),
+      box: !!card.querySelector('#ttIn'),
+      reveal: !!card.querySelector('#ttHint'),
+      typed: (card.querySelector('.ttdone') || {}).textContent.trim(),
+      tierOne: /max-height:700px/.test(css),
+      tierTwo: /max-height:560px/.test(css),
+      helpHides: /.ttcard .tthelp{display:none}/.test(css),
+      scoped: !/{s*.card{padding:12px}/.test(css),
+    };
+  });
+  ok(fits.named, 'the typing card is named, so the short-screen rules cannot reach any other screen');
+  is(fits.order.join(','), 'ttstick,ttIn,ttHint,hint', 'words, box, reveal, help: in that order down the card');
+  ok(fits.band && fits.words, 'the reference, the counter and the words are one pinned band');
+  ok(fits.box, '...with the box you type in right under it');
+  ok(fits.reveal, '...and Reveal a letter under that');
+  ok(/^For God so loved/.test(fits.typed), 'the words typed so far are the ones shown');
+  ok(fits.tierOne && fits.tierTwo, 'two tiers of trimming: short, and shorter still');
+  ok(fits.helpHides, 'on the shortest screens the sentence about colours is what gives way');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
@@ -4002,7 +4103,13 @@ const DAY = 86400000;
 
   describe('library', () => { });
   const lib = await $(() => {
-    Prog.memorized = ['43:3:16']; Prog.videoOrder = []; saveProg();
+    // This block asserts what is due, so it sets what is due. Earlier blocks leave palaces dated to
+    // the epoch, which are due forever, and inheriting those made the assertion depend on run order.
+    // This block asserts what is due, so it decides what is due. Books count toward that total now,
+    // and earlier blocks finish book lessons whose cards then fall due for good.
+    Prog.memorized = ['43:3:16']; Prog.videoOrder = []; Prog.palaces = []; Prog.verseSR = {};
+    Object.keys(SRS).forEach(k => { if (/^sk:(num|book):/.test(k)) delete SRS[k]; });
+    saveProg(); bustCaches();
     show('verse'); vView = 'hub'; renderVerse();
     const btns = [...document.querySelectorAll('.versehub .vhub')];
     return {
