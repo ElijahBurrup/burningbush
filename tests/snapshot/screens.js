@@ -84,12 +84,14 @@ module.exports = [
   { name: 'modal/stage', sel: '#stageModal', go: () => { openStagePicker(19, 23, 1, '19:23:1', () => { }); } },
   { name: 'modal/promote-pool', sel: '#promoteModal', go: () => { openStagePromote(43, 3, 16, '43:3:16', 'w4w', () => { }); } },
   { name: 'modal/promote-heart', sel: '#promoteModal', go: () => { openStagePromote(19, 23, 1, '19:23:1', 'heart', () => { }); } },
-  // openReviewSetup only draws a chooser when something is in the pool, so the stage is set for the
-  // render and put straight back — the screen is already in the DOM by then.
-  { name: 'practice/review-setup', sel: '#verse', go: () => {
-      Prog.verseStage = { '43:3:16': 'w4w' }; Prog.revPrefs = {}; saveProg();
-      openReviewSetup();
-      Prog.verseStage = {}; saveProg(); } },
+  // The review chooser is gone; Practice has its own screen now. A palace and a placed verse are
+  // staged so all three orders are offered, then put straight back.
+  { name: 'practice/setup', sel: '#verse', go: () => {
+      const wasP = Prog.palaces, wasL = Prog.verseLoc;
+      Prog.palaces = [{ place: 'My house', stations: ['Front door', 'Kitchen', 'Sofa'], learnedAt: 1, step: 1 }];
+      Prog.verseLoc = { '43:3:16': { p: 0, room: 'Kitchen' } }; saveProg();
+      openPracticeSetup();
+      Prog.palaces = wasP; Prog.verseLoc = wasL; saveProg(); } },
   { name: 'modal/snooze', sel: '#snoozeModal', go: () => { openSnoozeAsk(43, 3, 16, '43:3:16', () => { }); } },
   { name: 'modal/spqr', sel: '#spqrModal', go: () => { openSpqrNote(); } },
   { name: 'modal/word-def', sel: '#wordDefModal', go: () => { openWordDef(19, 23, 1, 1, 'LORD'); } },

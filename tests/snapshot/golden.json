@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "b0079218866597ab",
+  "h": "76fa1ded870f5342",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "cc74302f104dbb5d",
-  "len": 95811,
-  "els": 1781,
+  "h": "2700e746fdc5669c",
+  "len": 96949,
+  "els": 1798,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.69.0 August 29, 2026 Three pictures, three questions NEW Your own two pictures are now examined too"
+  "text": "✕ Version history v1.70.0 August 29, 2026 Practice, three ways NEW Practice Word for Word now asks how you want to pract"
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "bb5119979d93e608",
+  "h": "782cfd5b2e4ee2ec",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -449,14 +449,14 @@
   "imgs": 0,
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
- "classic/practice/review-setup": {
-  "h": "2a515f154fc2fd8d",
-  "len": 1732,
-  "els": 25,
+ "classic/practice/setup": {
+  "h": "244a13891ab65edf",
+  "len": 1739,
+  "els": 30,
   "buttons": 5,
-  "svgs": 1,
+  "svgs": 0,
   "imgs": 0,
-  "text": "✕ Review Review Lesson How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for w"
+  "text": "✕ Practice Word for Word Which ones would you like to practise? Shortest first The quickest wins on the board, easiest v"
  },
  "classic/modal/snooze": {
   "h": "aa5a8747879d2af6",
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "2493e6e078c9d9e3",
+  "h": "f5670567fca6ebae",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "cc74302f104dbb5d",
-  "len": 95811,
-  "els": 1781,
+  "h": "2700e746fdc5669c",
+  "len": 96949,
+  "els": 1798,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.69.0 August 29, 2026 Three pictures, three questions NEW Your own two pictures are now examined too"
+  "text": "✕ Version history v1.70.0 August 29, 2026 Practice, three ways NEW Practice Word for Word now asks how you want to pract"
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "2493e6e078c9d9e3",
+  "h": "f5670567fca6ebae",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -962,14 +962,14 @@
   "imgs": 0,
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
- "illumined/practice/review-setup": {
-  "h": "2a515f154fc2fd8d",
-  "len": 1732,
-  "els": 25,
+ "illumined/practice/setup": {
+  "h": "244a13891ab65edf",
+  "len": 1739,
+  "els": 30,
   "buttons": 5,
-  "svgs": 1,
+  "svgs": 0,
   "imgs": 0,
-  "text": "✕ Review Review Lesson How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for w"
+  "text": "✕ Practice Word for Word Which ones would you like to practise? Shortest first The quickest wins on the board, easiest v"
  },
  "illumined/modal/snooze": {
   "h": "aa5a8747879d2af6",
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "4f660e2e6adc140e",
+  "h": "d951efb1f0b63813",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "cc74302f104dbb5d",
-  "len": 95811,
-  "els": 1781,
+  "h": "2700e746fdc5669c",
+  "len": 96949,
+  "els": 1798,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.69.0 August 29, 2026 Three pictures, three questions NEW Your own two pictures are now examined too"
+  "text": "✕ Version history v1.70.0 August 29, 2026 Practice, three ways NEW Practice Word for Word now asks how you want to pract"
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "4f660e2e6adc140e",
+  "h": "d951efb1f0b63813",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1475,14 +1475,14 @@
   "imgs": 0,
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
- "glass/practice/review-setup": {
-  "h": "2a515f154fc2fd8d",
-  "len": 1732,
-  "els": 25,
+ "glass/practice/setup": {
+  "h": "244a13891ab65edf",
+  "len": 1739,
+  "els": 30,
   "buttons": 5,
-  "svgs": 1,
+  "svgs": 0,
   "imgs": 0,
-  "text": "✕ Review Review Lesson How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for w"
+  "text": "✕ Practice Word for Word Which ones would you like to practise? Shortest first The quickest wins on the board, easiest v"
  },
  "glass/modal/snooze": {
   "h": "aa5a8747879d2af6",
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "b285f27090c87911",
+  "h": "b02ac7b6e56d3e55",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "cc74302f104dbb5d",
-  "len": 95811,
-  "els": 1781,
+  "h": "2700e746fdc5669c",
+  "len": 96949,
+  "els": 1798,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.69.0 August 29, 2026 Three pictures, three questions NEW Your own two pictures are now examined too"
+  "text": "✕ Version history v1.70.0 August 29, 2026 Practice, three ways NEW Practice Word for Word now asks how you want to pract"
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "b285f27090c87911",
+  "h": "b02ac7b6e56d3e55",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1988,14 +1988,14 @@
   "imgs": 0,
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
- "quest/practice/review-setup": {
-  "h": "2a515f154fc2fd8d",
-  "len": 1732,
-  "els": 25,
+ "quest/practice/setup": {
+  "h": "244a13891ab65edf",
+  "len": 1739,
+  "els": 30,
   "buttons": 5,
-  "svgs": 1,
+  "svgs": 0,
   "imgs": 0,
-  "text": "✕ Review Review Lesson How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for w"
+  "text": "✕ Practice Word for Word Which ones would you like to practise? Shortest first The quickest wins on the board, easiest v"
  },
  "quest/modal/snooze": {
   "h": "aa5a8747879d2af6",
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "46dd419229af33a9",
+  "h": "a8c2e01d84c2d987",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "cc74302f104dbb5d",
-  "len": 95811,
-  "els": 1781,
+  "h": "2700e746fdc5669c",
+  "len": 96949,
+  "els": 1798,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.69.0 August 29, 2026 Three pictures, three questions NEW Your own two pictures are now examined too"
+  "text": "✕ Version history v1.70.0 August 29, 2026 Practice, three ways NEW Practice Word for Word now asks how you want to pract"
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "46dd419229af33a9",
+  "h": "a8c2e01d84c2d987",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2501,14 +2501,14 @@
   "imgs": 0,
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
- "buddy/practice/review-setup": {
-  "h": "2a515f154fc2fd8d",
-  "len": 1732,
-  "els": 25,
+ "buddy/practice/setup": {
+  "h": "244a13891ab65edf",
+  "len": 1739,
+  "els": 30,
   "buttons": 5,
-  "svgs": 1,
+  "svgs": 0,
   "imgs": 0,
-  "text": "✕ Review Review Lesson How would you like to be asked? Location Where is this verse? Book, chapter and verse. Word for w"
+  "text": "✕ Practice Word for Word Which ones would you like to practise? Shortest first The quickest wins on the board, easiest v"
  },
  "buddy/modal/snooze": {
   "h": "aa5a8747879d2af6",

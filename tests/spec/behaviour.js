@@ -2773,6 +2773,42 @@ const DAY = 86400000;
   no(/Major System/.test(bqWords.num), '…and the number picture question says it is asking for that one');
   no(bqWords.major === bqWords.num, 'the two never read as the same question');
 
+  describe('practice word for word: three orders, and only word for word', () => { });
+  const prac = await $(() => {
+    setFeat('w4w', true);
+    Prog.memorized = ['43:3:16','19:23:1','45:8:28','50:4:13'];
+    Prog.verseStage = {}; Prog.w4w = {}; Prog.w4wToday = null;
+    Prog.w4w['45:8:28'] = { count:6, times:[] };      // closest to seven
+    Prog.w4w['19:23:1'] = { count:1, times:[] };
+    Prog.palaces = [{ place:'My house', stations:['Front door','Kitchen','Sofa'], learnedAt:1, step:1 }];
+    Prog.verseLoc = { '50:4:13':{p:0,room:'Sofa'}, '43:3:16':{p:0,room:'Front door'} };
+    saveProg();
+    const key = a => a.join(':');
+    const shortest = w4wOrder('shortest').map(key);
+    const closest  = w4wOrder('closest').map(key);
+    const palace   = w4wOrder('palace', 0).map(key);
+    openPracticeSetup();
+    const rows = [...document.querySelectorAll('[data-pk]')].map(x => x.dataset.pk);
+    const words = a => (kjvText(a[0],a[1],a[2])||'').split(/[ ]+/).filter(Boolean).length;
+    return {
+      shortest, closest, palace, rows,
+      gone: typeof openReviewSetup === 'undefined',
+      prefs: JSON.stringify(revPrefs()),
+      ascending: w4wOrder('shortest').every((a,i,arr) => i===0 || words(arr[i-1]) <= words(a)),
+      title: (document.querySelector('#verse .lv-topbar>div')||{}).textContent,
+      closeFirst: (document.querySelector('#verse .lv-topbar').firstElementChild||{}).id,
+    };
+  });
+  is(prac.rows.join(','), 'shortest,closest,palace', 'three ways to practise, and no location option');
+  is(prac.title, 'Practice Word for Word', '...on a screen that says what it is');
+  is(prac.closeFirst, 'pcClose', '...with its close button top left');
+  ok(prac.gone, 'the old location-or-word-for-word chooser is gone entirely');
+  is(prac.prefs, '{"loc":true,"w4w":true}', 'review asks both ways, because they are not alternatives');
+  ok(prac.ascending, 'shortest first really is shortest first');
+  is(prac.closest[0], '45:8:28', 'closest to seven leads with the verse on six practices');
+  is(prac.palace.join(','), '43:3:16,50:4:13', 'a palace walks its stations in the order they were built');
+  ok(prac.palace.every(k => k !== '19:23:1'), '...and never includes a verse kept somewhere else');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
@@ -3002,18 +3038,18 @@ const DAY = 86400000;
   is(earlyClaim.stage, 'heart', '...and claiming it works with nothing practised first');
 
   describe('ladder: how you are asked', () => { });
+  // The chooser is gone. Review is no longer a question with two answers: a verse still being
+  // located is asked by address, and one held by heart gets its strict word-for-word test, and the
+  // engine decides that per verse rather than asking up front.
   const chooser = await $(() => {
     Prog.memorized = ['43:3:16']; Prog.verseStage = {}; saveProg();
-    show('verse'); openReviewSetup();
-    const noneToChoose = !el('rvRows');
+    const emptyPool = w4wPoolSize();
     Prog.verseStage = { '43:3:16': 'heart' }; saveProg();
-    show('verse'); openReviewSetup();
-    const rows = [...document.querySelectorAll('#rvRows [data-rk]')].map(b => b.dataset.rk);
-    return { noneToChoose, rows: rows.join(','), pool: w4wPoolSize() };
+    return { emptyPool, pool: w4wPoolSize(), prefs: JSON.stringify(revPrefs()) };
   });
-  ok(chooser.noneToChoose, 'with nothing claimed there is nothing to choose — review starts as it always did');
+  is(chooser.emptyPool, 0, 'with nothing claimed there is nothing to test word for word');
   is(chooser.pool, 1, 'once a verse is claimed');
-  is(chooser.rows, 'loc,w4w', '...the chooser offers both ways of being asked, and nothing else');
+  is(chooser.prefs, '{"loc":true,"w4w":true}', '...and review asks both ways without asking you first');
 
   const routed = await $(() => {
     const k = '43:11:35';
