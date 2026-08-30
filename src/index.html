@@ -2061,8 +2061,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.71.0";
+const APP_VERSION="1.71.1";
 const CHANGELOG=[
+ {v:"1.71.1", d:"August 29, 2026", t:"Plurals count", items:[
+   ["fix","<b>A plural is the same picture.</b> Scenes are hardly ever written with the bare peg word, and only the exact form was recognised, so <i>two dimes roll off the table</i> left DIMES in lower case with no number. Both forms are now shouted and numbered, and the plural keeps its S rather than being forced back to the singular."]
+ ]},
  {v:"1.71.0", d:"August 29, 2026", t:"Three strikes, and the by-heart test", items:[
    ["fix","<b>One slip no longer breaks a by-heart run.</b> You get three goes at a word before it counts, whatever went wrong. The crosses only ever appeared for near misses on words of four letters or more, so a slip on <i>the</i>, <i>God</i> or <i>him</i> ended the run outright with no cross shown at all. Get the word right and the slate is clean again."],
    ["new","<b>Test what you know by heart, from the practice screen.</b> A fourth option lists every by-heart verse whose day of rest is up and tests them one at a time, strictly, with no hints."],
@@ -3596,9 +3599,15 @@ function tagNumberWord(text, word, tag){
   const up=w.toUpperCase();
   const esc=up.replace(/[.*+?^${}()|[\]\\]/g,"\\$&").replace(/\s+/g,"\\s+");
   // \b so it is a word and not a fragment, and the lookahead so saving twice does not tag twice
-  const re=new RegExp("\\b"+esc+"\\b(?!\\s*\\("+tag+"\\))","g");
-  return String(text||"").replace(re, up+" ("+tag+")");
+  // an optional plural ending, so DIMES is tagged as readily as DIME, and keeps its S
+  const re=new RegExp("\\b"+esc+"(S|ES|IES)?\\b(?!\\s*\\("+tag+"\\))","g");
+  return String(text||"").replace(re, m => m + " ("+tag+")");
 }
+// dime/dimes, box/boxes, story/stories: the same picture either way round.
+function pluralOf(x, y){
+  return y===x+"s" || y===x+"es" || (x.length>2 && x.slice(-1)==="y" && y===x.slice(0,-1)+"ies");
+}
+function samePicture(a, b){ return a===b || pluralOf(a,b) || pluralOf(b,a); }
 function markKeyWords(text, phrases){
   const keys=keyWordList(phrases);
   if(!keys.length) return text;
@@ -3606,8 +3615,14 @@ function markKeyWords(text, phrases){
   return String(text||"").replace(/[A-Za-z][A-Za-z''-]*/g, w=>{
     const b=bare(w);
     if(!b) return w;
-    const hit=keys.find(k=>{ const kb=bare(k); return kb===b || (kb.length>=5 && offByOne(kb,b)); });
-    return hit ? hit.toUpperCase() : w;
+    // An exact match or a typo is corrected to the key. A plural keeps the form that was written,
+    // because "TWO DIMES" is right and "TWO DIME" is not.
+    const exact=keys.find(k=>bare(k)===b);
+    if(exact) return exact.toUpperCase();
+    const plural=keys.find(k=>samePicture(b, bare(k)));
+    if(plural) return w.toUpperCase();
+    const slip=keys.find(k=>{ const kb=bare(k); return kb.length>=5 && offByOne(kb,b); });
+    return slip ? slip.toUpperCase() : w;
   });
 }
 

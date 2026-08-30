@@ -2882,6 +2882,32 @@ const DAY = 86400000;
   has(heartQ.count, 'one at a time', 'the screen says they come one at a time');
   is(heartQ.go, 'Begin the test', '...and the button knows it is a test, not practice');
 
+  describe('scene tidy: a plural is the same picture', () => { });
+  const plur = await $(() => {
+    const tidy = (txt, bb, cc, vv) => {
+      let x = capAfterPunct(txt);
+      x = markKeyWords(x, [pegFor(bb).word, pegFor(cc).word, pegFor(vv).word]);
+      x = tagNumberWord(x, pegFor(bb).word, dispNum('num', bb));
+      x = tagNumberWord(x, pegFor(cc).word, dispNum('num', cc));
+      x = tagNumberWord(x, pegFor(vv).word, dispNum('num', vv));
+      return x;
+    };
+    return {
+      pegs: [13, 8, 1].map(n => pegFor(n).word).join(','),
+      one:    tidy('a dime lands on the sofa.', 13, 8, 1),
+      many:   tidy('two dimes land on the sofas.', 13, 8, 1),
+      seeds:  tidy('a handful of seeds.', 13, 8, 1),
+      twice:  tidy('Two DIMES (13) roll away.', 13, 8, 1),
+      spare:  tidy('the times were good and the dimension held.', 13, 8, 1),
+    };
+  });
+  is(plur.pegs, 'Dime,Sofa,Seed', 'the fixture is Dime, Sofa and Seed');
+  is(plur.one, 'A DIME (13) lands on the SOFA (08).', 'the singular is shouted and numbered');
+  is(plur.many, 'Two DIMES (13) land on the SOFAS (08).', 'and so is the plural, keeping its S');
+  is(plur.seeds, 'A handful of SEEDS (01).', 'a plural on its own is still the picture');
+  is(plur.twice, 'Two DIMES (13) roll away.', 'saving again never doubles the number');
+  is(plur.spare, 'The times were good and the dimension held.', 'a word that merely looks similar is left alone');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
