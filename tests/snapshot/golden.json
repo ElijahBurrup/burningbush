@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "3ce975917050fc57",
+  "h": "bd30bf889013cd89",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "2039cba8830f5b30",
-  "len": 106135,
-  "els": 1955,
+  "h": "90224b2604c38a39",
+  "len": 107610,
+  "els": 1976,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.75.1 August 30, 2026 The words you have typed stay put FIX Typing a verse no longer pushes your own"
+  "text": "✕ Version history v1.76.0 August 30, 2026 Nothing takes your place away FIX The app was throwing readers back to the Lib"
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "af7052c538f11f02",
+  "h": "56e836df30f974a5",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "acf33da230862fb6",
+  "h": "87f165b497b2d6b0",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "2039cba8830f5b30",
-  "len": 106135,
-  "els": 1955,
+  "h": "90224b2604c38a39",
+  "len": 107610,
+  "els": 1976,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.75.1 August 30, 2026 The words you have typed stay put FIX Typing a verse no longer pushes your own"
+  "text": "✕ Version history v1.76.0 August 30, 2026 Nothing takes your place away FIX The app was throwing readers back to the Lib"
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "acf33da230862fb6",
+  "h": "87f165b497b2d6b0",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "56ed85cdd25a6173",
+  "h": "018fe5a19090c64e",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "2039cba8830f5b30",
-  "len": 106135,
-  "els": 1955,
+  "h": "90224b2604c38a39",
+  "len": 107610,
+  "els": 1976,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.75.1 August 30, 2026 The words you have typed stay put FIX Typing a verse no longer pushes your own"
+  "text": "✕ Version history v1.76.0 August 30, 2026 Nothing takes your place away FIX The app was throwing readers back to the Lib"
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "56ed85cdd25a6173",
+  "h": "018fe5a19090c64e",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1539,11 +1539,11 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "quest/learn/path": {
-  "h": "e8bc98fbf95c9fa3",
-  "len": 5418,
-  "els": 117,
+  "h": "e0665553ed49a8a4",
+  "len": 4711,
+  "els": 105,
   "buttons": 41,
-  "svgs": 1,
+  "svgs": 0,
   "imgs": 0,
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "d96fa17d9c99c9c5",
+  "h": "160b4e33aaaa488a",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "2039cba8830f5b30",
-  "len": 106135,
-  "els": 1955,
+  "h": "90224b2604c38a39",
+  "len": 107610,
+  "els": 1976,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.75.1 August 30, 2026 The words you have typed stay put FIX Typing a verse no longer pushes your own"
+  "text": "✕ Version history v1.76.0 August 30, 2026 Nothing takes your place away FIX The app was throwing readers back to the Lib"
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "d96fa17d9c99c9c5",
+  "h": "160b4e33aaaa488a",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "587b30a9b30291d3",
+  "h": "b18fafeafb4b4c2b",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "2039cba8830f5b30",
-  "len": 106135,
-  "els": 1955,
+  "h": "90224b2604c38a39",
+  "len": 107610,
+  "els": 1976,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.75.1 August 30, 2026 The words you have typed stay put FIX Typing a verse no longer pushes your own"
+  "text": "✕ Version history v1.76.0 August 30, 2026 Nothing takes your place away FIX The app was throwing readers back to the Lib"
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "587b30a9b30291d3",
+  "h": "b18fafeafb4b4c2b",
   "len": 17712,
   "els": 441,
   "buttons": 40,

@@ -3194,6 +3194,111 @@ const DAY = 86400000;
   is(typedTop.overlap, 0, '...with the band not sitting on top of it');
   ok(typedTop.roomForInput > 100, 'the input reserves room above itself, for when the browser scrolls it into view');
 
+  describe('an async load never takes your place away', () => { });
+  const notKicked = await $(() => {
+    Prog.doneSkills = (Prog.doneSkills||[]).concat(Object.values(VIDEOS).map(x => x.skill));
+    Prog.memorized = ['43:3:16']; Prog.verseStage = {}; saveProg();
+    const at = () => {
+      const v = document.querySelector('.view.active'); if (!v) return 'nothing';
+      if (v.id === 'journey') return v.querySelector('.biblecard') ? 'strip' : (v.querySelector('[data-v]') ? 'chapter' : 'book');
+      if (v.id === 'verse') {
+        if (v.querySelector('.vhub')) return 'hub';
+        if (v.querySelector('#ttIn')) return 'typing';
+        if (v.querySelector('#vBack')) return 'sublist';
+        if (v.querySelector('[data-nav]')) return 'verse';
+        return 'other';
+      }
+      if (v.id === 'learn') return v.querySelector('.path') ? 'path' : 'lesson';
+      return v.id;
+    };
+    const probe = setup => { setup(); const was = at(); refreshCurrentView(); return was + '>' + at(); };
+    return {
+      verse:   probe(() => { show('journey'); renderChapterScreen(43,3);
+                             openVerseWizard(43,3,16, () => { show('journey'); renderChapterScreen(43,3); }); }),
+      chapter: probe(() => { show('journey'); renderChapterScreen(43,3); }),
+      book:    probe(() => { show('journey'); renderBookScreen(43); }),
+      typing:  probe(() => { show('verse'); Prog.verseStage={'43:3:16':'heart'}; saveProg(); startW4WTest(43,3,16,()=>{}); }),
+      lesson:  probe(() => { show('learn'); LZ={sk:{kind:'book'},steps:[{type:'q_n2i',kind:'book',n:16}],i:0,total:1,ok:0}; renderStep(); }),
+      strip:   probe(() => { show('journey'); renderJourney(); }),
+      hub:     probe(() => { show('verse'); vView='hub'; renderVerse(); }),
+      path:    probe(() => { show('learn'); renderPath(); }),
+    };
+  });
+  is(notKicked.verse, 'verse>verse', 'a verse opened from the Bible survives an async load landing');
+  is(notKicked.chapter, 'chapter>chapter', '...so does a chapter screen');
+  is(notKicked.book, 'book>book', '...and a book screen');
+  is(notKicked.typing, 'typing>typing', '...and a verse being typed out');
+  is(notKicked.lesson, 'lesson>lesson', '...and a lesson half finished');
+  is(notKicked.strip, 'strip>strip', 'the Bible itself still refreshes, since that is the point of it');
+  is(notKicked.hub, 'hub>hub', '...as does the Library hub');
+  is(notKicked.path, 'path>path', '...and the learn path');
+
+  describe('moving between verses keeps your place', () => { });
+  const keptPlace = await $(async () => {
+    Prog.memorized = ['43:3:15','43:3:16','43:3:17'];
+    Prog.doneSkills = (Prog.doneSkills||[]).concat(Object.values(VIDEOS).map(x => x.skill));
+    saveProg();
+    show('verse'); renderLearnedVerse(43, 3, 16, () => { });
+    const sc = () => document.querySelector('.content');
+    const settle = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    sc().scrollTop = 60; const before = sc().scrollTop;   // small enough that a shorter verse can still hold it
+    document.querySelector('[data-nav="vnext"]').click(); await settle();
+    const afterBtn = { y: sc().scrollTop, ref: (document.querySelector('.lv-ref')||{}).textContent.trim() };
+    const host = document.getElementById('verse');
+    const target = document.querySelector('.lv-versetext') || host;
+    const mk = (x,y) => new Touch({ identifier:1, target, clientX:x, clientY:y });
+    host.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,touches:[mk(300,400)],changedTouches:[mk(300,400)]}));
+    host.dispatchEvent(new TouchEvent('touchend',{bubbles:true,touches:[],changedTouches:[mk(100,405)]}));
+    await settle();
+    return { before, afterBtn, afterSwipe: sc().scrollTop, room: sc().scrollHeight - sc().clientHeight };
+  });
+  ok(keptPlace.before > 0, 'the verse screen was scrolled down before moving');
+  is(keptPlace.afterBtn.y, keptPlace.before, 'the next-verse arrow leaves the eye where it was');
+  ok(/3:17/.test(keptPlace.afterBtn.ref), '...having actually moved on a verse');
+  is(keptPlace.afterSwipe, keptPlace.before, '...and so does a swipe');
+
+  describe('Scripture Quest: no cast, and a bar that works', () => { });
+  const quest = await $(() => {
+    // The quest theme uppercases button text, and Pro changes what later blocks see, so both are
+    // put back before this block hands over.
+    const phone = document.querySelector('.phone');
+    const wasTheme = phone.getAttribute('data-theme'), wasPro = Billing.isPro();
+    phone.setAttribute('data-theme','quest');
+    const r = {};
+    show('journey'); renderJourney(); paintTheme();
+    r.onBible = document.querySelectorAll('#journey .theme-decor').length;
+    show('learn'); renderPath(); paintTheme();
+    r.parts = [...document.querySelectorAll('#learn .theme-decor')].map(x => x.className.replace('theme-decor ',''));
+    const bar = document.querySelector('.decor-ctabar');
+    r.art = bar.querySelectorAll('svg').length;
+    r.wizard = /🧙/u.test(document.getElementById('learn').textContent);
+    LZ = null;
+    bar.querySelector('button').click();
+    const pay = document.getElementById('payModal');
+    // Either it opens the lesson or it offers the way to unlock it. What it must never do is nothing.
+    r.doesSomething = !!LZ || (!!pay && pay.style.display === 'flex');
+    if (pay) pay.style.display = 'none';
+    Billing.grant(); LZ = null;
+    show('learn'); renderPath(); paintTheme();
+    r.label = document.querySelector('.decor-ctabar button').textContent;
+    document.querySelector('.decor-ctabar button').click();
+    r.started = !!LZ; r.showing = !!document.querySelector('#learn .stage, #learn .prompt');
+    LZ = null;
+    if (!wasPro) Billing.revoke();
+    if (wasTheme) phone.setAttribute('data-theme', wasTheme); else phone.removeAttribute('data-theme');
+    show('learn'); renderPath(); paintTheme();
+    return r;
+  });
+  is(quest.onBible, 0, 'no character stands on the Bible screen');
+  is(quest.art, 0, '...nor in the bar at the foot of the path');
+  no(quest.wizard, '...nor on the tile you are up to');
+  ok(quest.parts.includes('decor-flag'), 'the flag marking where you are stays');
+  ok(quest.parts.includes('decor-ctabar'), '...and so does the bar');
+  has(quest.label, '⚔', 'the bar still speaks like a quest');
+  ok(quest.doesSomething, 'pressing it always does something: the lesson, or the way to unlock it');
+  ok(quest.started, '...and on an open one it starts the lesson');
+  ok(quest.showing, '...putting it on the screen');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
