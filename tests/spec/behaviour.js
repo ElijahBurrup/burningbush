@@ -3000,6 +3000,40 @@ const DAY = 86400000;
   is(stay.afterPeg, stay.before, 'choosing an image leaves you where you were, not back at the top');
   is(stay.afterWord, stay.before, '...and so does choosing a book picture');
 
+  describe('write it now, and the warm up buttons', () => { });
+  const wnow = await $(() => {
+    setFeat('w4w', true);
+    Prog.memorized = ['43:3:16','19:23:1','45:8:28','50:4:13'];
+    Prog.verseStage = {}; Prog.w4w = {}; Prog.w4wToday = null;
+    Prog.palaces = [{ place:'My house', stations:['Front door','Kitchen','Sofa','Porch'], learnedAt:1, step:1 }];
+    Prog.verseLoc = { '43:3:16':{p:0,room:'Front door'}, '19:23:1':{p:0,room:'Kitchen'},
+                      '45:8:28':{p:0,room:'Sofa'}, '50:4:13':{p:0,room:'Porch'} };
+    saveProg();
+    runW4WQueue(w4wOrder('palace', 0), 'palace');
+    const out = {};
+    out.fadeSkip = (document.getElementById('w4wSkip') || {}).textContent || '';
+    document.getElementById('tfWrite').click();
+    out.typing = !!document.getElementById('ttIn');
+    out.warmUp = !!document.getElementById('wpDisplay');
+    startWordPick(43, 3, 16, () => { });
+    const row = document.querySelector('#verse .btnrow');
+    out.inWalk = row ? [...row.children].map(x => x.textContent.trim()) : [];
+    out.sideBySide = row ? row.children.length : 0;
+    W4WQ = null; W4WQMODE = null;
+    startWordPick(43, 3, 16, () => { });
+    const row2 = document.querySelector('#verse .btnrow');
+    out.alone = row2 ? [...row2.children].map(x => x.textContent.trim()) : [];
+    return out;
+  });
+  ok(wnow.typing, '"Write it now" goes straight to typing');
+  no(wnow.warmUp, '...it does not hand you the warm up, which is still recognition');
+  is(wnow.sideBySide, 2, 'the warm up carries two buttons side by side, like the fade screen');
+  has(wnow.inWalk[0], 'Write it Now', 'the first says Write it Now');
+  has(wnow.inWalk[1], 'Skip this Verse', '...and inside a walk the second names the verse, not the station');
+  has(wnow.fadeSkip, 'Skip Location', '...while the fade screen, where the verse has not begun, still names the station');
+  is(wnow.alone.length, 1, 'with no walk running there is only the one button');
+  has(wnow.alone[0], 'Write it Now', '...and it is Write it Now');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};

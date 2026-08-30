@@ -2061,8 +2061,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.73.0";
+const APP_VERSION="1.73.1";
 const CHANGELOG=[
+ {v:"1.73.1", d:"August 30, 2026", t:"Write it now means now", items:[
+   ["fix","<b>Write it now goes straight to typing.</b> It used to hand you the warm up first, which is a different offer: tapping the word that comes next is still recognition, and that button says you are past it."],
+   ["chg","<b>The warm up screen now carries two buttons side by side</b>, the way the first screen does. <b>Write it Now</b> replaces the old sentence about skipping, and during a palace walk <b>Skip this Verse</b> sits beside it."]
+ ]},
  {v:"1.73.0", d:"August 29, 2026", t:"Three rows, and your place kept", items:[
    ["new","<b>The Major System image is a row like the other two.</b> It opens its own sheet listing every word that decodes to that number, so all three pictures are chosen the same way instead of two being chosen and one being read out at you."],
    ["chg","<b>Change it in either place and it changes in both.</b> The row and the picker above it are one setting seen twice: they write the same thing, so they can never disagree. Picking the code’s own word again clears the override rather than storing it."],
@@ -6980,11 +6984,15 @@ function w4wQueueSkip(){
   if(W4WQ.length && W4WQSTEP) W4WQSTEP();
   else { W4WQ=null; W4WQMODE=null; W4WQSTEP=null; show("verse"); renderVerse(); }
 }
-function w4wSkipHTML(){
+function w4wSkipHTML(opt){
   if(!W4WQ || W4WQ.length<=1) return "";
+  const o=opt||{};
   const left=W4WQ.length-1;
-  const label = W4WQMODE==="palace" ? "Skip Location" : "Skip this verse";
-  return `<button class="btn ghost sm" id="w4wSkip" style="width:100%;margin:0 0 8px">⏭ ${label} · ${left} more to go</button>`;
+  // On the fade you are standing at a station and have not begun; on the warm up you are already
+  // inside the verse, so that screen names it for the verse instead.
+  const label = o.label || (W4WQMODE==="palace" ? "Skip Location" : "Skip this verse");
+  const style = o.inRow ? "" : ' style="width:100%;margin:0 0 8px"';
+  return `<button class="btn ghost${o.inRow?"":" sm"}" id="w4wSkip"${style}>⏭ ${label}${o.inRow?"":" · "+left+" more to go"}</button>`;
 }
 function wireW4WSkip(){ const b=el("w4wSkip"); if(b) b.onclick=w4wQueueSkip; }
 function runW4WQueue(list, mode){
@@ -10226,7 +10234,7 @@ function renderTextFade(){
     </div>`;
   wireW4WSkip();
   el("tfClose").onclick=()=>backFromTF();
-  if(el("tfWrite")) el("tfWrite").onclick=()=>startWordPick(TF.b,TF.c,TF.v,TF.retFn);   // ready early: skip the fade
+  if(el("tfWrite")) el("tfWrite").onclick=()=>startTypeTest(TF.b,TF.c,TF.v,TF.retFn);   // ready early: past the fade AND the warm up
   if(el("tfHeart")) el("tfHeart").onclick=()=>{
     const b=TF.b, c=TF.c, v=TF.v, k=tfKey;
     // The practice count is never touched by the promotion, so a later missed test drops the verse
@@ -10316,8 +10324,9 @@ function renderWordPick(){
       <div class="ttdisplay" id="wpDisplay"><span class="ttdone">${said}</span>${said?"":`<span style="color:var(--muted)">the verse builds here as you go…</span>`}</div>
       <div class="wpgrid">${WP.opts.map(w=>`<button type="button" class="wpopt" data-w="${w.replace(/"/g,"&quot;")}">${wpLabel(w)}</button>`).join("")}</div>
       <div class="hint" id="wpFb" style="text-align:center;margin-top:10px">&nbsp;</div>
- <button class="btn ghost sm" id="wpSkip" style="width:100%;margin-top:8px">Skip the warm up. Type it from memory →</button>
-      ${w4wSkipHTML()}
+      ${(()=>{ const skip=w4wSkipHTML({label:"Skip this Verse", inRow:true});
+        return `<div class="btnrow" style="margin-top:8px">
+          <button class="btn ghost" id="wpSkip"${skip?"":' style="width:100%"'}>Write it Now →</button>${skip}</div>`; })()}
     </div>`;
   wireW4WSkip();
   const disp=el("wpDisplay"); disp.scrollTop=disp.scrollHeight;
