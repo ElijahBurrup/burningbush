@@ -623,6 +623,10 @@
   .ttcount{min-width:46px;text-align:center;font-weight:800;font-size:13px;border-radius:999px;padding:4px 10px;background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
   .ttcount.ttgood{color:var(--good);border-color:var(--good)}
   .ttcount.ttbad{color:var(--miss-ink);border-color:var(--miss)}
+  /* Sits at the top of the scroller whatever the keyboard does to the rest of the card. The negative
+     margins let it span the card's padding so nothing scrolls out from under its edges. */
+  .ttstick{position:sticky;top:-18px;z-index:3;background:var(--panel);
+           margin:-20px -20px 0;padding:20px 20px 4px;border-radius:var(--radius-card) var(--radius-card) 0 0}
   .ttdisplay{height:86px;overflow-y:auto;font-size:18px;line-height:1.6;text-align:center;margin:12px 0;color:var(--ink)}   /* FIXED height so committed words never push the input/buttons — the box scrolls internally */
   .ttdisplay .ttdone{color:var(--good);font-weight:700}
   .ttdisplay .ttcur{font-weight:800}
@@ -640,7 +644,16 @@
   .srcount-big{font-size:82px;font-weight:900;color:var(--gold-ink);line-height:1;animation:srcpop .5s cubic-bezier(.2,1.4,.5,1)}
   .srcount-lbl{font-size:16px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
   @keyframes srcpop{0%{transform:scale(.4);opacity:0}55%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
-  .tt-in{width:100%;box-sizing:border-box;text-align:center}
+  /* The browser scrolls a focused input into view on its own. Without this it parks it directly
+     under the pinned band, which is exactly where it cannot be seen. */
+  .tt-in{width:100%;box-sizing:border-box;text-align:center;scroll-margin-top:170px}
+  /* On a short screen, with a keyboard up, the whole thing should simply fit and never scroll. */
+  @media (max-height:700px){
+    .ttdisplay{height:62px;margin:8px 0}
+    .ttstick{padding-bottom:2px}
+    .tthelp{font-size:11px;line-height:1.35;margin-top:6px}
+    .typein{padding:12px;font-size:20px}
+  }
   .tt-in.wrong{border-color:var(--miss);color:var(--miss-ink)}
   .tt-in.good{border-color:var(--good)}
   .ttwin .ttburst{font-size:64px;animation:ttpop .7s ease}
@@ -2065,8 +2078,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.75.0";
+const APP_VERSION="1.75.1";
 const CHANGELOG=[
+ {v:"1.75.1", d:"August 30, 2026", t:"The words you have typed stay put", items:[
+   ["fix","<b>Typing a verse no longer pushes your own words off the top of the screen.</b> The reference, the counter and everything you have typed are pinned to the top now, so they stay in view however short the screen gets with a keyboard up."],
+   ["chg","<b>The box you type in sits directly under them</b>, with the hint and skip buttons moved below it, and on a short screen the whole thing is trimmed to fit without scrolling at all."]
+ ]},
  {v:"1.75.0", d:"August 30, 2026", t:"Whole verses, every time", items:[
    ["fix","<b>Forty two verses were being shown short.</b> John 10:10 opened at “I am come that they might have life” and lost its whole first half. The verse lists carry a one line teaser beside each reference, written for a picker, and the memorize screen was reading that instead of the Bible. It now reads the Bible, always."],
    ["fix","<b>The same text was being taught and tested.</b> Which verse is this, the suggested list and the opening lesson all quoted the teaser too. All of them now quote scripture."],
@@ -7032,7 +7049,7 @@ function w4wSkipHTML(opt){
   // On the fade you are standing at a station and have not begun; on the warm up you are already
   // inside the verse, so that screen names it for the verse instead.
   const label = o.label || (W4WQMODE==="palace" ? "Skip Location" : "Skip this verse");
-  const style = o.inRow ? "" : ' style="width:100%;margin:0 0 8px"';
+  const style = o.inRow ? "" : ' style="width:100%;margin:8px 0 0"';
   return `<button class="btn ghost${o.inRow?"":" sm"}" id="w4wSkip"${style}>⏭ ${label}${o.inRow?"":" · "+left+" more to go"}</button>`;
 }
 function wireW4WSkip(){ const b=el("w4wSkip"); if(b) b.onclick=w4wQueueSkip; }
@@ -10477,12 +10494,14 @@ function renderTypeTest(){
   // Build the shell ONCE. From here on we mutate only the top display + counter in place — the input element
   // is never recreated, so focus and the on-screen keyboard hold steady (no flashing, no jump).
   V.innerHTML=`<div class="card">
-      <div class="lv-topbar"><button class="lclose" id="ttClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(TT.b)} ${TT.c}:${TT.v}</div><div class="ttcount" id="ttCount">0/${total}</div></div>
-      <div class="ttdisplay" id="ttDisplay"></div>
-      <button class="btn ghost sm" id="ttHint" style="width:100%;margin:0 0 8px${TT.test?";display:none":""}">🔎 Reveal a letter</button>
-      ${w4wSkipHTML()}
+      <div class="ttstick">
+        <div class="lv-topbar"><button class="lclose" id="ttClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(TT.b)} ${TT.c}:${TT.v}</div><div class="ttcount" id="ttCount">0/${total}</div></div>
+        <div class="ttdisplay" id="ttDisplay"></div>
+      </div>
       <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type word 1…">
- <p class="hint" style="text-align:center;margin-top:8px">Each word jumps to the top the moment you finish it · <b>green</b> if right, <b>red</b> if wrong (then it clears to retry).</p>
+      <button class="btn ghost sm" id="ttHint" style="width:100%;margin:8px 0 0${TT.test?";display:none":""}">🔎 Reveal a letter</button>
+      ${w4wSkipHTML({inRow:false})}
+ <p class="hint tthelp" style="text-align:center;margin-top:8px">Each word jumps to the top the moment you finish it · <b>green</b> if right, <b>red</b> if wrong (then it clears to retry).</p>
     </div>`;
   wireW4WSkip();
   const inp=el("ttIn"), disp=el("ttDisplay"), cnt=el("ttCount"), hintBtn=el("ttHint");

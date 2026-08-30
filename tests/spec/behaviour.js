@@ -3157,6 +3157,43 @@ const DAY = 86400000;
   no(john.teaser === john.real, 'the list still holds a half-verse teaser for it');
   is(john.onScreen, john.real.replace(/s+/g, ' ').trim(), '...and the memorize screen puts the whole verse on screen');
 
+  describe('typing: the words you have written stay on screen', () => { });
+  const typedTop = await $(() => {
+    setFeat('w4w', true);
+    Prog.memorized = ['43:3:16']; Prog.verseStage = { '43:3:16': 'heart' }; Prog.w4wSR = {}; saveProg();
+    show('verse'); startW4WTest(43, 3, 16, () => { });
+    const inp = document.getElementById('ttIn');
+    const put = w => { inp.value = w; inp.dispatchEvent(new Event('input')); };
+    TT.words.slice(0, 18).forEach(put);
+    const sc = document.querySelector('.content');
+    sc.scrollTop = sc.scrollHeight;                       // pushed as far down as it will go
+    const d = document.getElementById('ttDisplay').getBoundingClientRect();
+    const i = document.getElementById('ttIn').getBoundingClientRect();
+    const s = sc.getBoundingClientRect();
+    const band = document.querySelector('.ttstick');
+    return {
+      order: [...document.querySelectorAll('#verse .card > *')].map(x => x.id || (x.className||'').split(' ')[0]),
+      pinned: band ? getComputedStyle(band).position : null,
+      holds: !!(band && band.contains(document.getElementById('ttDisplay')) && band.querySelector('.ttcount')),
+      wordsOnScreen: d.top >= s.top - 1 && d.bottom <= s.bottom + 1,
+      inputOnScreen: i.top >= s.top - 1 && i.bottom <= s.bottom + 1,
+      overlap: Math.max(0, Math.round(d.bottom - i.top)),
+      typed: TT.idx,
+      showing: (document.querySelector('.ttdone') || {}).textContent,
+      roomForInput: parseInt(getComputedStyle(inp).scrollMarginTop, 10) || 0,
+    };
+  });
+  is(typedTop.pinned, 'sticky', 'the reference and the typed words are pinned to the top');
+  ok(typedTop.holds, '...and the counter rides with them, so progress is never off screen either');
+  is(typedTop.order[0], 'ttstick', 'that band is the first thing in the card');
+  is(typedTop.order[1], 'ttIn', '...and the box you type in comes straight after it');
+  is(typedTop.typed, 18, 'eighteen words in');
+  ok(/whosoever believeth in him$/.test(typedTop.showing.trim()), '...and the newest words are the ones shown');
+  ok(typedTop.wordsOnScreen, 'scrolled to the bottom, the words are still on screen');
+  ok(typedTop.inputOnScreen, '...and so is the box you type in');
+  is(typedTop.overlap, 0, '...with the band not sitting on top of it');
+  ok(typedTop.roomForInput > 100, 'the input reserves room above itself, for when the browser scrolls it into view');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};
