@@ -2061,8 +2061,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.73.1";
+const APP_VERSION="1.74.0";
 const CHANGELOG=[
+ {v:"1.74.0", d:"August 30, 2026", t:"Swipe to the next verse", items:[
+   ["new","<b>Swipe left or right to move a verse at a time</b>, the way a page turns. A drag that is mostly up or down still belongs to the scroller, and one begun on a button or a text box does nothing, so a swipe can never also press something."],
+   ["chg","<b>The jump to the next memorized verse is gone.</b> Four arrows in one bar was three too many; the verse pair stays, and swiping does the same job with no bar at all."],
+   ["chg","<b>Your saved verses are one tap from the Bible.</b> The book-number view button gave up its place: the strip already shows numbers, so it was the one control there that changed nothing you could see. Tapping the view you are already in returns to numbers."]
+ ]},
  {v:"1.73.1", d:"August 30, 2026", t:"Write it now means now", items:[
    ["fix","<b>Write it now goes straight to typing.</b> It used to hand you the warm up first, which is a different offer: tapping the word that comes next is still recognition, and that button says you are past it."],
    ["chg","<b>The warm up screen now carries two buttons side by side</b>, the way the first screen does. <b>Write it Now</b> replaces the old sentence about skipping, and during a palace walk <b>Skip this Verse</b> sits beside it."]
@@ -4339,8 +4344,14 @@ function renderJourney(){
   };
   const stripFor=(a,z)=>{ let s=""; for(let b=a;b<=z;b++) s+=bookCell(b); return s; };
   el("journey").classList.toggle("jfill", jfill);
-  const VMODES=[["num","#","Book number"],["numimg","🔢","Number image"],["bookimg","📖","Book image"],["name","Aa","Book name"]];
-  const viewToggle=`<div class="bible-viewtoggle">${VMODES.map(m=>`<button class="bvt ${mode===m[0]?"on":""}" data-vmode="${m[0]}" title="${m[2]}">${m[1]}</button>`).join("")}</div>`;
+  // The number view is what the strip already shows, so its toggle was the one button here that did
+  // nothing you could see. Its place goes to the verses you have set aside, which is somewhere worth
+  // being able to reach from the Bible. Tapping the view you are already in returns to the numbers,
+  // so nothing is stranded.
+  const VMODES=[["numimg","🔢","Number image"],["bookimg","📖","Book image"],["name","Aa","Book name"]];
+  const viewToggle=`<div class="bible-viewtoggle">
+    <button class="bvt" id="bibleSaved" title="Your saved verses">🔖</button>
+    ${VMODES.map(m=>`<button class="bvt ${mode===m[0]?"on":""}" data-vmode="${m[0]}" title="${m[2]}${mode===m[0]?" · tap again for numbers":""}">${m[1]}</button>`).join("")}</div>`;
   let booksOpen=0; for(let b=1;b<=66;b++) if(knownNum(b)) booksOpen++;
   J.innerHTML=`
     ${pageHead(bibleIconSVG(),"Bible")}
@@ -4357,7 +4368,12 @@ function renderJourney(){
       </div>
     </div>`;
   J.querySelectorAll("[data-book]").forEach(c=>c.onclick=()=>renderBookScreen(+c.dataset.book));
-  J.querySelectorAll("[data-vmode]").forEach(btn=>btn.onclick=()=>{ bibleView=btn.dataset.vmode; try{Store.set("vv_bibleview",bibleView);}catch(e){} renderJourney(); });
+  J.querySelectorAll("[data-vmode]").forEach(btn=>btn.onclick=()=>{
+    bibleView = (bibleView===btn.dataset.vmode) ? "num" : btn.dataset.vmode;   // tap the one you are in to go back to numbers
+    try{Store.set("vv_bibleview",bibleView);}catch(e){}
+    renderJourney();
+  });
+  if(el("bibleSaved")) el("bibleSaved").onclick=()=>{ vView="saved"; show("verse"); renderVerse(); };
   if(el("bibleSearchBtn")) el("bibleSearchBtn").onclick=(e)=>{ e.stopPropagation(); const d=el("bibleSearchDrop"), open=d.style.display!=="none"; d.style.display=open?"none":"block"; if(!open){ const inp=el("bibleSearchIn"); if(inp){ inp.value=""; inp.dispatchEvent(new Event("input")); } } };  // no programmatic focus — the field is readonly until the user taps it (kills the iOS AutoFill bar)
   if(el("bibleSearchIn")){ const bsi=el("bibleSearchIn");
     // readonly-until-tap: iOS won't attach its AutoFill (key/card/pin) accessory bar to a field that was readonly; we drop readonly the instant the user taps so the keyboard still opens
@@ -8828,26 +8844,47 @@ function navVerseLabel(t,curB,curC,dir){ const ar=dir>0?"›":"‹"; if(!t) retu
   const core = (tb!==curB)?`${bookAbbr(tb)} ${tc}:${tv}` : (tc!==curC)?`${tc}:${tv}` : `v${tv}`;   // show book/chapter when they change so the label reveals a book/chapter move
   return dir>0?`${core} ${ar}`:`${ar} ${core}`; }
 function verseNavBar(b,c,v,closeId){
-  const memOrder=(Prog.memorized||[]).map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2])).sort((A,B)=>A[0]-B[0]||A[1]-B[1]||A[2]-B[2]);
-  let mPrev=null,mNext=null; for(const a of memOrder){ const d=a[0]-b||a[1]-c||a[2]-v; if(d<0) mPrev=a; else if(d>0){ mNext=a; break; } }
   const bPrev=adjVerse(b,c,v,-1), bNext=adjVerse(b,c,v,1);
   const html=`<div class="lv-topbar">
       <button class="lclose" id="${closeId}" style="margin:0">✕</button>
       <div class="lv-navcluster" style="flex:1">
-        <div class="lv-navpair mem">
-          <button class="lv-navbtn" data-nav="mprev" ${mPrev?"":"disabled"} title="${mPrev?"Previous memorized verse · "+refShort(mPrev):"No earlier memorized verse"}">★‹</button>
-          <button class="lv-navbtn" data-nav="mnext" ${mNext?"":"disabled"} title="${mNext?"Next memorized verse · "+refShort(mNext):"No later memorized verse"}">›★</button>
-        </div>
         <div class="lv-navpair verse">
           <button class="lv-navbtn wlbl" data-nav="vprev" ${bPrev?"":"disabled"} title="Previous verse">${navVerseLabel(bPrev,b,c,-1)}</button>
           <button class="lv-navbtn wlbl" data-nav="vnext" ${bNext?"":"disabled"} title="Next verse">${navVerseLabel(bNext,b,c,1)}</button>
         </div>
       </div>${reviewLessonBtn("verse")}</div>`;
-  return {html,mPrev,mNext,bPrev,bNext};
+  return {html,bPrev,bNext};
+}
+// Where a swipe should go, kept outside the render so the listener below never holds a stale verse.
+let SWIPE_NAV=null;
+// A horizontal drag moves a verse at a time, the way a page turns. Vertical drags belong to the
+// scroller, and a drag begun on a control is ignored so a swipe can never also press something.
+function attachVerseSwipe(host){
+  if(!host || host.dataset.swipewired) return;
+  host.dataset.swipewired="1";
+  let x0=0, y0=0, live=false;
+  host.addEventListener("touchstart", ev=>{
+    live=false;
+    if(ev.touches.length!==1) return;
+    const t=ev.target;
+    if(t.closest && t.closest("input,textarea,select,button,a,.pickscroll,.wpgrid")) return;
+    x0=ev.touches[0].clientX; y0=ev.touches[0].clientY; live=true;
+  }, {passive:true});
+  host.addEventListener("touchend", ev=>{
+    if(!live) return; live=false;
+    // Only the screens that carry the nav bar are swipeable; anything else rendered here is not.
+    if(!SWIPE_NAV || !host.querySelector("[data-nav]")) return;
+    const t=ev.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
+    if(Math.abs(dx)<60 || Math.abs(dx)<Math.abs(dy)*1.6) return;
+    const to = dx<0 ? SWIPE_NAV.next : SWIPE_NAV.prev;      // drag left to go on, right to go back
+    if(to) openVerseWizard(to[0],to[1],to[2],SWIPE_NAV.ret);
+  }, {passive:true});
 }
 function wireVerseNav(scopeEl, nav, ret){   // buttons route through openVerseWizard so memorized→learned page, others→wizard
-  const map={mprev:nav.mPrev,mnext:nav.mNext,vprev:nav.bPrev,vnext:nav.bNext};
+  const map={vprev:nav.bPrev,vnext:nav.bNext};
   scopeEl.querySelectorAll("[data-nav]").forEach(btn=>{ const t=map[btn.dataset.nav]; if(t) btn.onclick=()=>openVerseWizard(t[0],t[1],t[2],ret); });
+  SWIPE_NAV={prev:nav.bPrev, next:nav.bNext, ret};
+  attachVerseSwipe(scopeEl);
 }
 // A memorized verse's home: verse text, a "Learn Word for Word" rectangle (X/10, where 10 = Mastered),
 // and its spaced repetition trail at the bottom. No learning steps, save or skip.

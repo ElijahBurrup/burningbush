@@ -2124,8 +2124,8 @@ const DAY = 86400000;
   is(revBtn.sound, 'major', 'a Major System lesson offers the Major System film');
   is(revBtn.book, 'book', 'a book lesson offers Build the Book');
   is(revBtn.verse, 'verse', 'the verse screen offers Building the Scene');
-  is(revBtn.pairs, 2, 'the verse bar still carries both pairs of navigation buttons');
-  is(revBtn.navButtons, 4, '…all four of them');
+  is(revBtn.pairs, 1, 'the verse bar carries one pair of navigation buttons');
+  is(revBtn.navButtons, 2, '…previous verse and next verse, with swiping doing the same job');
   is(revBtn.stacked, 'column', '…stacked rather than strung across, which frees the corner');
 
   const firstTime = await $(() => {
@@ -3033,6 +3033,56 @@ const DAY = 86400000;
   has(wnow.fadeSkip, 'Skip Location', '...while the fade screen, where the verse has not begun, still names the station');
   is(wnow.alone.length, 1, 'with no walk running there is only the one button');
   has(wnow.alone[0], 'Write it Now', '...and it is Write it Now');
+
+  describe('swipe between verses, and a way to your saved ones', () => { });
+  const swipeNav = await $(() => {
+    Prog.memorized = ['43:3:16','43:3:17','43:3:15'];
+    Prog.doneSkills = (Prog.doneSkills||[]).concat(Object.values(VIDEOS).map(x => x.skill));
+    saveProg();
+    const ref = () => (document.querySelector('#verse .lv-ref') || {}).textContent.replace(/s+/g,' ').trim();
+    renderLearnedVerse(43, 3, 16, () => { });
+    const host = document.getElementById('verse');
+    const target = document.querySelector('.lv-versetext') || host;
+    const mk = (x,y) => new Touch({ identifier:1, target, clientX:x, clientY:y });
+    const swipe = (x1,y1,x2,y2) => {
+      host.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,touches:[mk(x1,y1)],changedTouches:[mk(x1,y1)]}));
+      host.dispatchEvent(new TouchEvent('touchend',{bubbles:true,touches:[],changedTouches:[mk(x2,y2)]}));
+    };
+    const r = { navs: [...document.querySelectorAll('#verse [data-nav]')].map(x => x.dataset.nav),
+                star: /★/.test(document.querySelector('#verse .lv-topbar').textContent),
+                start: ref() };
+    swipe(300,400,100,405); r.left = ref();
+    swipe(100,400,320,398); r.right = ref();
+    swipe(200,200,150,500); r.vertical = ref();
+    swipe(300,400,280,400); r.tiny = ref();
+    return r;
+  });
+  is(swipeNav.navs.join(','), 'vprev,vnext', 'the verse bar keeps only the verse pair');
+  no(swipeNav.star, '...the jump to the next memorized verse is gone');
+  is(swipeNav.start, 'John 3:16', 'starting at John 3:16');
+  is(swipeNav.left, 'John 3:17', 'dragging left goes on to the next verse');
+  is(swipeNav.right, 'John 3:16', '...and dragging right comes back');
+  is(swipeNav.vertical, 'John 3:16', 'a mostly vertical drag belongs to the scroller');
+  is(swipeNav.tiny, 'John 3:16', '...and a short drag is not a swipe at all');
+
+  const bibleTop = await $(() => {
+    show('journey'); renderJourney();
+    const r = { buttons: [...document.querySelectorAll('.bible-viewtoggle button')].map(x => x.id || x.dataset.vmode),
+                noHash: !document.querySelector('[data-vmode="num"]') };
+    document.getElementById('bibleSaved').click();
+    r.view = vView;
+    r.heading = (document.querySelector('#verse h2') || {}).textContent;
+    show('journey'); renderJourney();
+    document.querySelector('[data-vmode="name"]').click(); r.first = bibleView;
+    document.querySelector('[data-vmode="name"]').click(); r.second = bibleView;
+    return r;
+  });
+  is(bibleTop.buttons.join(','), 'bibleSaved,numimg,bookimg,name', 'the saved verses button takes the number toggle’s place');
+  ok(bibleTop.noHash, '...and the number toggle is gone, since the strip already shows numbers');
+  is(bibleTop.view, 'saved', 'it goes straight to your saved verses');
+  has(bibleTop.heading, 'Saved', '...landing on that screen, not somewhere near it');
+  is(bibleTop.first, 'name', 'choosing a view switches to it');
+  is(bibleTop.second, 'num', '...and choosing it again returns to numbers, so nothing is stranded');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {

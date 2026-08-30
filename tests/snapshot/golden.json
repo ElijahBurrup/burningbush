@@ -72,13 +72,13 @@
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 ▾ Which room / spot? 🏛️ Choose a room or spot… ▾ Matthew 6:33 Bo"
  },
  "classic/wizard/learned": {
-  "h": "abcd9d9110f54026",
-  "len": 4630,
-  "els": 93,
-  "buttons": 10,
+  "h": "ca4ce71942922107",
+  "len": 4396,
+  "els": 90,
+  "buttons": 8,
   "svgs": 1,
   "imgs": 3,
-  "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming "
+  "text": "✕ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed T"
  },
  "classic/practice/verse-test": {
   "h": "40dffddf6fb71015",
@@ -189,8 +189,8 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "classic/bible/whole": {
-  "h": "56653746381fa8c2",
-  "len": 10873,
+  "h": "3ca27177cc402795",
+  "len": 10878,
   "els": 225,
   "buttons": 71,
   "svgs": 1,
@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "c89b1d3a6adcd6a9",
+  "h": "253ec8aac94a0a62",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "055534e5da8f8303",
-  "len": 101930,
-  "els": 1882,
+  "h": "ffac65e3e155682f",
+  "len": 102989,
+  "els": 1899,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.73.1 August 30, 2026 Write it now means now FIX Write it now goes straight to typing. It used to ha"
+  "text": "✕ Version history v1.74.0 August 30, 2026 Swipe to the next verse NEW Swipe left or right to move a verse at a time , th"
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "d1b49270eb0eb61b",
+  "h": "822f04da0b30dfde",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -567,13 +567,13 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "illumined/wizard/visual": {
-  "h": "03f6b6e44d9b65d9",
-  "len": 3669,
-  "els": 68,
-  "buttons": 9,
+  "h": "b123c9b86be3f513",
+  "len": 3435,
+  "els": 65,
+  "buttons": 7,
   "svgs": 1,
   "imgs": 3,
-  "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
+  "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy "
  },
  "illumined/wizard/scene": {
   "h": "9b7ddf13c0353edb",
@@ -585,13 +585,13 @@
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 ▾ Which room / spot? 🏛️ Choose a room or spot… ▾ Matthew 6:33 Bo"
  },
  "illumined/wizard/learned": {
-  "h": "abcd9d9110f54026",
-  "len": 4630,
-  "els": 93,
-  "buttons": 10,
+  "h": "ca4ce71942922107",
+  "len": 4396,
+  "els": 90,
+  "buttons": 8,
   "svgs": 1,
   "imgs": 3,
-  "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming "
+  "text": "✕ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed T"
  },
  "illumined/practice/verse-test": {
   "h": "40dffddf6fb71015",
@@ -702,8 +702,8 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "illumined/bible/whole": {
-  "h": "56653746381fa8c2",
-  "len": 10873,
+  "h": "3ca27177cc402795",
+  "len": 10878,
   "els": 225,
   "buttons": 71,
   "svgs": 1,
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "bbefb1a0e54ab66b",
+  "h": "26d580af1c487236",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "055534e5da8f8303",
-  "len": 101930,
-  "els": 1882,
+  "h": "ffac65e3e155682f",
+  "len": 102989,
+  "els": 1899,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.73.1 August 30, 2026 Write it now means now FIX Write it now goes straight to typing. It used to ha"
+  "text": "✕ Version history v1.74.0 August 30, 2026 Swipe to the next verse NEW Swipe left or right to move a verse at a time , th"
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "bbefb1a0e54ab66b",
+  "h": "26d580af1c487236",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1080,13 +1080,13 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "glass/wizard/visual": {
-  "h": "03f6b6e44d9b65d9",
-  "len": 3669,
-  "els": 68,
-  "buttons": 9,
+  "h": "b123c9b86be3f513",
+  "len": 3435,
+  "els": 65,
+  "buttons": 7,
   "svgs": 1,
   "imgs": 3,
-  "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
+  "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy "
  },
  "glass/wizard/scene": {
   "h": "9b7ddf13c0353edb",
@@ -1098,13 +1098,13 @@
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 ▾ Which room / spot? 🏛️ Choose a room or spot… ▾ Matthew 6:33 Bo"
  },
  "glass/wizard/learned": {
-  "h": "abcd9d9110f54026",
-  "len": 4630,
-  "els": 93,
-  "buttons": 10,
+  "h": "ca4ce71942922107",
+  "len": 4396,
+  "els": 90,
+  "buttons": 8,
   "svgs": 1,
   "imgs": 3,
-  "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming "
+  "text": "✕ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed T"
  },
  "glass/practice/verse-test": {
   "h": "40dffddf6fb71015",
@@ -1215,8 +1215,8 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "glass/bible/whole": {
-  "h": "56653746381fa8c2",
-  "len": 10873,
+  "h": "3ca27177cc402795",
+  "len": 10878,
   "els": 225,
   "buttons": 71,
   "svgs": 1,
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "4df6802fc9595420",
+  "h": "e8d0b7509564514e",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "055534e5da8f8303",
-  "len": 101930,
-  "els": 1882,
+  "h": "ffac65e3e155682f",
+  "len": 102989,
+  "els": 1899,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.73.1 August 30, 2026 Write it now means now FIX Write it now goes straight to typing. It used to ha"
+  "text": "✕ Version history v1.74.0 August 30, 2026 Swipe to the next verse NEW Swipe left or right to move a verse at a time , th"
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "4df6802fc9595420",
+  "h": "e8d0b7509564514e",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1593,13 +1593,13 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "quest/wizard/visual": {
-  "h": "03f6b6e44d9b65d9",
-  "len": 3669,
-  "els": 68,
-  "buttons": 9,
+  "h": "b123c9b86be3f513",
+  "len": 3435,
+  "els": 65,
+  "buttons": 7,
   "svgs": 1,
   "imgs": 3,
-  "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
+  "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy "
  },
  "quest/wizard/scene": {
   "h": "9b7ddf13c0353edb",
@@ -1611,13 +1611,13 @@
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 ▾ Which room / spot? 🏛️ Choose a room or spot… ▾ Matthew 6:33 Bo"
  },
  "quest/wizard/learned": {
-  "h": "abcd9d9110f54026",
-  "len": 4630,
-  "els": 93,
-  "buttons": 10,
+  "h": "ca4ce71942922107",
+  "len": 4396,
+  "els": 90,
+  "buttons": 8,
   "svgs": 1,
   "imgs": 3,
-  "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming "
+  "text": "✕ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed T"
  },
  "quest/practice/verse-test": {
   "h": "40dffddf6fb71015",
@@ -1728,8 +1728,8 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "quest/bible/whole": {
-  "h": "56653746381fa8c2",
-  "len": 10873,
+  "h": "3ca27177cc402795",
+  "len": 10878,
   "els": 225,
   "buttons": 71,
   "svgs": 1,
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "87b2e998414bad4a",
+  "h": "60d1ebd9b0a38437",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "055534e5da8f8303",
-  "len": 101930,
-  "els": 1882,
+  "h": "ffac65e3e155682f",
+  "len": 102989,
+  "els": 1899,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.73.1 August 30, 2026 Write it now means now FIX Write it now goes straight to typing. It used to ha"
+  "text": "✕ Version history v1.74.0 August 30, 2026 Swipe to the next verse NEW Swipe left or right to move a verse at a time , th"
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "87b2e998414bad4a",
+  "h": "60d1ebd9b0a38437",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -2106,13 +2106,13 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "buddy/wizard/visual": {
-  "h": "03f6b6e44d9b65d9",
-  "len": 3669,
-  "els": 68,
-  "buttons": 9,
+  "h": "b123c9b86be3f513",
+  "len": 3435,
+  "els": 65,
+  "buttons": 7,
   "svgs": 1,
   "imgs": 3,
-  "text": "✕ ★‹ ›★ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming "
+  "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy "
  },
  "buddy/wizard/scene": {
   "h": "9b7ddf13c0353edb",
@@ -2124,13 +2124,13 @@
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 ▾ Which room / spot? 🏛️ Choose a room or spot… ▾ Matthew 6:33 Bo"
  },
  "buddy/wizard/learned": {
-  "h": "abcd9d9110f54026",
-  "len": 4630,
-  "els": 93,
-  "buttons": 10,
+  "h": "ca4ce71942922107",
+  "len": 4396,
+  "els": 90,
+  "buttons": 8,
   "svgs": 1,
   "imgs": 3,
-  "text": "✕ ★‹ ›★ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming "
+  "text": "✕ ‹ 22:31 v2 › Review Lesson Psalms 23:1 Book 19 image coming Tuba Ch 23 image coming Gnome Verse 01 image coming Seed T"
  },
  "buddy/practice/verse-test": {
   "h": "40dffddf6fb71015",
@@ -2241,8 +2241,8 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "buddy/bible/whole": {
-  "h": "56653746381fa8c2",
-  "len": 10873,
+  "h": "3ca27177cc402795",
+  "len": 10878,
   "els": 225,
   "buttons": 71,
   "svgs": 1,
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "6aa680a0a6416b22",
+  "h": "b83030c5f9a8439e",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "055534e5da8f8303",
-  "len": 101930,
-  "els": 1882,
+  "h": "ffac65e3e155682f",
+  "len": 102989,
+  "els": 1899,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.73.1 August 30, 2026 Write it now means now FIX Write it now goes straight to typing. It used to ha"
+  "text": "✕ Version history v1.74.0 August 30, 2026 Swipe to the next verse NEW Swipe left or right to move a verse at a time , th"
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "6aa680a0a6416b22",
+  "h": "b83030c5f9a8439e",
   "len": 17712,
   "els": 441,
   "buttons": 40,
