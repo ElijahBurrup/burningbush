@@ -3085,6 +3085,40 @@ const DAY = 86400000;
   is(bibleTop.view, 'saved', 'and it goes straight to your saved verses');
   has(bibleTop.heading, 'Saved', '...landing on that screen, not somewhere near it');
 
+  describe('back goes where you came from', () => { });
+  const backWhence = await $(() => {
+    const back = () => (document.getElementById('vBack') || {}).textContent.trim();
+    const where = () => (document.querySelector('.view.active') || {}).id;
+    const r = {};
+    show('journey'); renderJourney();
+    document.getElementById('bibleSaved').click();
+    r.bibleLabel = back(); r.bibleFrom = vFrom; r.bibleView = vView;
+    document.getElementById('vBack').click();
+    r.bibleLands = where(); r.bibleCard = !!document.querySelector('.biblecard');
+    r.spent = vFrom;
+    show('verse'); vView = 'saved'; vFrom = 'library'; renderVerse();
+    r.libLabel = back();
+    document.getElementById('vBack').click();
+    r.libLands = where(); r.libView = vView;
+    show('journey'); renderJourney();
+    document.getElementById('bibleSaved').click();
+    const tab = document.querySelector('.tabbar [data-tab="verse"]');
+    if (tab) tab.click();
+    r.afterTabFrom = vFrom; r.afterTabView = vView;
+    return r;
+  });
+  is(backWhence.bibleView, 'saved', 'the Bible opens the saved list');
+  is(backWhence.bibleFrom, 'bible', '...and remembers that is where you came from');
+  is(backWhence.bibleLabel, '← Bible', '...so the way back says Bible');
+  is(backWhence.bibleLands, 'journey', '...and lands on the Bible');
+  ok(backWhence.bibleCard, '...on the screen itself, not near it');
+  is(backWhence.spent, 'library', 'the memory is spent on the way out, so the next visit decides afresh');
+  is(backWhence.libLabel, '← Library', 'entered from the Library, the way back says Library');
+  is(backWhence.libLands, 'verse', '...and lands there');
+  is(backWhence.libView, 'hub', '...back at the hub');
+  is(backWhence.afterTabFrom, 'library', 'leaving by the tab bar forgets the Bible');
+  is(backWhence.afterTabView, 'hub', '...and drops you at the hub');
+
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
     const out = {};

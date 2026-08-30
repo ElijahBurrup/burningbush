@@ -2065,8 +2065,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.74.1";
+const APP_VERSION="1.74.2";
 const CHANGELOG=[
+ {v:"1.74.2", d:"August 30, 2026", t:"Back goes where you came from", items:[
+   ["fix","<b>The way out of your saved verses now says where it goes.</b> Come in from the Bible and it reads <b>Bible</b> and takes you back to the Bible; come in from the Library and it reads <b>Library</b>. It always said Library, which sent half the people who got there somewhere they had never been."]
+ ]},
  {v:"1.74.1", d:"August 30, 2026", t:"A ribbon that says Saved", items:[
    ["chg","<b>The way to your saved verses is a red bookmark in the top left of the Bible</b>, turned on its side so it can carry the word <b>SAVED</b>. It takes the place of the line counting how many books you have opened."],
    ["fix","<b>All four view buttons are back</b>, the book-number one included. It gave up its place for the saved shortcut in the last release, which was the wrong corner."]
@@ -4331,7 +4334,7 @@ document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
   if(b.classList.contains("pending")){ const p=pendingScratchRung(); if(p>=0){ Scratch.open(p); return; } }  // a flashing ticket → open the scratch card
   if(b.classList.contains("ticket")){ showScratchReqs(); return; }                                          // any golden ticket → show how to earn a scratch off
   // tapping Verse while already in a Verse sub-view backs out to the main hub (a second tap = home)
-  if(b.dataset.tab==="verse" && document.querySelector(".view.active")?.id==="verse" && typeof vView!=="undefined" && vView!=="hub"){ vView="hub"; }
+  if(b.dataset.tab==="verse" && document.querySelector(".view.active")?.id==="verse" && typeof vView!=="undefined" && vView!=="hub"){ vView="hub"; vFrom="library"; }
   show(b.dataset.tab);
 });
 
@@ -4371,7 +4374,7 @@ function renderJourney(){
     </div>`;
   J.querySelectorAll("[data-book]").forEach(c=>c.onclick=()=>renderBookScreen(+c.dataset.book));
   J.querySelectorAll("[data-vmode]").forEach(btn=>btn.onclick=()=>{ bibleView=btn.dataset.vmode; try{Store.set("vv_bibleview",bibleView);}catch(e){} renderJourney(); });
-  if(el("bibleSaved")) el("bibleSaved").onclick=()=>{ vView="saved"; show("verse"); renderVerse(); };
+  if(el("bibleSaved")) el("bibleSaved").onclick=()=>openVerseView("saved","bible");
   if(el("bibleSearchBtn")) el("bibleSearchBtn").onclick=(e)=>{ e.stopPropagation(); const d=el("bibleSearchDrop"), open=d.style.display!=="none"; d.style.display=open?"none":"block"; if(!open){ const inp=el("bibleSearchIn"); if(inp){ inp.value=""; inp.dispatchEvent(new Event("input")); } } };  // no programmatic focus — the field is readonly until the user taps it (kills the iOS AutoFill bar)
   if(el("bibleSearchIn")){ const bsi=el("bibleSearchIn");
     // readonly-until-tap: iOS won't attach its AutoFill (key/card/pin) accessory bar to a field that was readonly; we drop readonly the instant the user taps so the keyboard still opens
@@ -6021,6 +6024,8 @@ function openSuggBook(bn, back){
   m.style.display="flex"; raiseModal(m);
 }
 let vView="hub";   // "hub" (the 6 big buttons) or a sub-list: sugg|topics|mem|saved
+let vFrom="library";   // "library" or "bible" — which screen the sub-list was opened from
+function openVerseView(view, from){ vView=view; vFrom=from||"library"; show("verse"); renderVerse(); }
 // The most recently learned book — where a user finishing a lesson most wants to go next.
 function latestLearnedBook(){
   const r=recentKnownNumbers().filter(n=>n>=1&&n<=66);
@@ -6030,9 +6035,9 @@ function latestLearnedBook(){
 // accordion is gone, so it opens that book's suggestions directly — which is where the tap was
 // always trying to get to anyway.
 function openSuggestedForBook(bn){
-  show("verse"); vView="sugg"; renderVerse();
+  openVerseView("sugg","library");
   document.querySelector(".content").scrollTop=0;
-  if(bn) openSuggBook(bn, ()=>{ show("verse"); vView="sugg"; renderVerse(); });
+  if(bn) openSuggBook(bn, ()=>openVerseView("sugg","library"));
 }
 function renderVerse(){
   updateMetrics();
@@ -6087,8 +6092,14 @@ function renderVerse(){
              <h2 style="font-size:19px;margin:8px 0 2px">Nothing set aside yet</h2>
              <p class="lead" style="margin:6px 0 0">Tap <b>Save · come back later</b> on any verse and it will wait for you here.</p></div>`;
     }
-    V.innerHTML=`<div class="navrow"><button class="btn sm ghost" id="vBack">← Library</button></div><h2>${title}</h2>${body}`;
-    el("vBack").onclick=()=>{ vView="hub"; renderVerse(); document.querySelector(".content").scrollTop=0; };
+    const backTo = vFrom==="bible" ? "Bible" : "Library";
+    V.innerHTML=`<div class="navrow"><button class="btn sm ghost" id="vBack">← ${backTo}</button></div><h2>${title}</h2>${body}`;
+    el("vBack").onclick=()=>{
+      const home=vFrom; vFrom="library";           // spent on the way out, so the next visit decides afresh
+      if(home==="bible"){ show("journey"); renderJourney(); }
+      else { vView="hub"; renderVerse(); }
+      const sc=document.querySelector(".content"); if(sc) sc.scrollTop=0;
+    };
     V.querySelectorAll("[data-topicopen]").forEach(b=>b.onclick=()=>{
       const ti=+b.dataset.topicopen;
       verseScroll=document.querySelector(".content").scrollTop;
