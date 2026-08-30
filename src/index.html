@@ -2065,8 +2065,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.74.2";
+const APP_VERSION="1.75.0";
 const CHANGELOG=[
+ {v:"1.75.0", d:"August 30, 2026", t:"Whole verses, every time", items:[
+   ["fix","<b>Forty two verses were being shown short.</b> John 10:10 opened at “I am come that they might have life” and lost its whole first half. The verse lists carry a one line teaser beside each reference, written for a picker, and the memorize screen was reading that instead of the Bible. It now reads the Bible, always."],
+   ["fix","<b>The same text was being taught and tested.</b> Which verse is this, the suggested list and the opening lesson all quoted the teaser too. All of them now quote scripture."],
+   ["fix","<b>And it follows your translation.</b> Those teasers were typed out in King James, so a verse would have shown King James wording even while you were reading the ASV or the Berean."]
+ ]},
  {v:"1.74.2", d:"August 30, 2026", t:"Back goes where you came from", items:[
    ["fix","<b>The way out of your saved verses now says where it goes.</b> Come in from the Bible and it reads <b>Bible</b> and takes you back to the Bible; come in from the Library and it reads <b>Library</b>. It always said Library, which sent half the people who got there somewhere they had never been."]
  ]},
@@ -4076,7 +4081,7 @@ const Auth = {
 const ADMIN_EMAILS=["elijahdburrup@gmail.com","erinburrup@gmail.com"];   // who may review every user's bug reports and see the Admin tools
 // any verse (curated pool object if present, else built from the full KJV)
 function verseObj(b,c,v){ const p=verseAt(refKey(b,c,v));
-  if(p) return {b:p.b||bookName(b),c,v,text:p.text||kjvText(b,c,v),concept:p.concept||"",scene:p.scene,elements:p.elements};
+  if(p) return {b:p.b||bookName(b),c,v,text:kjvText(b,c,v)||p.text,concept:p.concept||"",scene:p.scene,elements:p.elements};
   return {b:bookName(b),c,v,text:kjvText(b,c,v),concept:""}; }
 function isSuggested(b,c,v){ return !!verseAt(refKey(b,c,v)); } // curated heart-verse
 const SUGSKIP_RE=/\bbegat\b|\bthe son of\b|\bcubits?\b|\bshekels?\b|\bwere numbered\b|\bnumbered of the\b|\bnumber of the\b|\bafter their families\b|\bhe goats\b|\bhe lambs\b|\blambs of the first year\b|\bmeat offering\b|\bwave offering\b|\bthe sons of \w+ were\b|\bhundred and \w+ thousand\b/i;
@@ -4877,6 +4882,17 @@ function flashNav(cta){
   let bn=el("navBanner"); if(!bn){ bn=document.createElement("div"); bn.id="navBanner"; document.querySelector(".phone").appendChild(bn); }
   bn.textContent=c.msg; bn.className="navbanner show"; clearTimeout(bn._t); bn._t=setTimeout(()=>{bn.className="navbanner";},5000);
 }
+// A teaser is allowed to be short, but it has to be the verse's own words and it has to show where
+// it was cut. Falls back to whatever was written if the reference will not parse.
+function refSnippet(ref, fallback){
+  const m=String(ref||"").match(/^(.+?)\s+(\d+):(\d+)$/);
+  if(!m) return fallback||"";
+  const t=kjvText(bookNum(m[1]), +m[2], +m[3]);
+  if(!t) return fallback||"";
+  if(t.length<=72) return t;
+  const cut=t.slice(0,72);
+  return cut.slice(0, cut.lastIndexOf(" "))+"…";
+}
 function goalpostCard(){
   const pics=Prog.doneSkills.filter(id=>/^(num|book):/.test(id)).length;
   const verses=Prog.memorized.length;
@@ -4885,7 +4901,7 @@ function goalpostCard(){
   return `<div class="goalpost">
     <div class="gp-row"><span class="gp-k">You hold</span><span class="gp-v">${pics} picture${pics===1?"":"s"} · ${verses} verse${verses===1?"":"s"}</span></div>
     ${nx?`<div class="gp-row"><span class="gp-k">Next</span><span class="gp-v gold">${nx}</span></div>`:""}
- ${(g&&g.ref)?`<div class="gp-row"><span class="gp-k">Ahead</span><span class="gp-v">${g.ref}, <i>"${g.text}"</i></span></div>`:""}
+ ${(g&&g.ref)?`<div class="gp-row"><span class="gp-k">Ahead</span><span class="gp-v">${g.ref}, <i>"${refSnippet(g.ref, g.text)}"</i></span></div>`:""}
   </div>`;
 }
 // The section you are working through and the one before it stand open; everything else is
@@ -8647,7 +8663,8 @@ function torahMenu(){
       const status = mem?`<span style="color:var(--good);font-weight:700;font-size:13px">✓ done</span>`
         : reachv?`<button class="btn sm" data-build="${k}">Build</button>`
         : `<span class="vlock">🔒 learn ${need(v)}</span>`;
-      h+=`<div class="vrow"><div class="vt"><b class="gold">${v.b} ${v.c}:${v.v}</b><div class="muted">${v.text.length>58?v.text.slice(0,58)+"…":v.text}</div></div><div>${status}</div></div>`;
+      const vfull=kjvText(bookNum(v.b),v.c,v.v)||v.text||"";
+      h+=`<div class="vrow"><div class="vt"><b class="gold">${v.b} ${v.c}:${v.v}</b><div class="muted">${vfull.length>58?vfull.slice(0,58)+"…":vfull}</div></div><div>${status}</div></div>`;
     });
   });
  return h+`<p class="hint" style="margin-top:10px">More open up as you climb. Only near-term verses are shown.</p></div>`;
@@ -8673,7 +8690,7 @@ function vpRender(){
   V.innerHTML=`<div class="card" style="position:relative">
       <button class="lclose" id="vpClose" style="position:absolute;left:10px;top:12px;margin:0;z-index:2">✕</button>${testHUD()}
  <p class="lead" style="margin-bottom:8px">Which verse is this? Choose the book, chapter and verse · only what you've learned is shown.</p>
-      <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${s.text}"</div>
+      <div style="font-style:italic;font-size:17px;line-height:1.6;margin:8px 0 6px">"${kjvText(bookNum(s.b),s.c,s.v)||s.text}"</div>
       <label class="vplabel">Book</label><select class="vpsel" id="vpB">${books}</select>
       <div style="display:flex;gap:8px;align-items:flex-end">
         <div style="flex:1;min-width:0"><label class="vplabel">Chapter</label><select class="vpsel" id="vpC">${numsC}</select></div>
@@ -10925,7 +10942,7 @@ const Onboard = (()=>{
      <span class="obpill">Watch it become vivid</span>
      ${seedRow([1,1,1])}
      <div class="obref">${G.b} ${G.c}:${G.v}</div>
-     <p class="obverse">"${G.text}"</p>
+     <p class="obverse">"${kjvText(bookNum(G.b),G.c,G.v)||G.text}"</p>
  <div class="obscene"><b class="gold">See it:</b> Out of the dark, God's Light bursts and spins the whole earth into being, and cradled in that Light float <b>three glowing seeds</b>, the very first seeds of everything.</div>
      <button class="btn" id="obA">I can see it →</button>`,
     wire:()=>{ el("obA").onclick=next; }},

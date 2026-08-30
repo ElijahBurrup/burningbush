@@ -63,9 +63,9 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "classic/wizard/scene": {
-  "h": "9b7ddf13c0353edb",
-  "len": 3801,
-  "els": 66,
+  "h": "14a124b623c73865",
+  "len": 3842,
+  "els": 67,
   "buttons": 7,
   "svgs": 0,
   "imgs": 3,
@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "e1a5d2905f0014c6",
+  "h": "3580225d87bd8c04",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "7fce4addfa77d5e5",
-  "len": 104240,
-  "els": 1924,
+  "h": "a3dc9599a78f9331",
+  "len": 105384,
+  "els": 1942,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.74.2 August 30, 2026 Back goes where you came from FIX The way out of your saved verses now says wh"
+  "text": "✕ Version history v1.75.0 August 30, 2026 Whole verses, every time FIX Forty two verses were being shown short. John 10:"
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "eed393d220edecb9",
+  "h": "87a2efce428ae4e8",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -567,18 +567,18 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "illumined/wizard/visual": {
-  "h": "b123c9b86be3f513",
-  "len": 3435,
-  "els": 65,
+  "h": "6fc26380412e6a47",
+  "len": 3476,
+  "els": 66,
   "buttons": 7,
   "svgs": 1,
   "imgs": 3,
   "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy "
  },
  "illumined/wizard/scene": {
-  "h": "9b7ddf13c0353edb",
-  "len": 3801,
-  "els": 66,
+  "h": "14a124b623c73865",
+  "len": 3842,
+  "els": 67,
   "buttons": 7,
   "svgs": 0,
   "imgs": 3,
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "9e4b980b09cb59d6",
+  "h": "80ae461d99162be2",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "7fce4addfa77d5e5",
-  "len": 104240,
-  "els": 1924,
+  "h": "a3dc9599a78f9331",
+  "len": 105384,
+  "els": 1942,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.74.2 August 30, 2026 Back goes where you came from FIX The way out of your saved verses now says wh"
+  "text": "✕ Version history v1.75.0 August 30, 2026 Whole verses, every time FIX Forty two verses were being shown short. John 10:"
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "9e4b980b09cb59d6",
+  "h": "80ae461d99162be2",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1080,18 +1080,18 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "glass/wizard/visual": {
-  "h": "b123c9b86be3f513",
-  "len": 3435,
-  "els": 65,
+  "h": "6fc26380412e6a47",
+  "len": 3476,
+  "els": 66,
   "buttons": 7,
   "svgs": 1,
   "imgs": 3,
   "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy "
  },
  "glass/wizard/scene": {
-  "h": "9b7ddf13c0353edb",
-  "len": 3801,
-  "els": 66,
+  "h": "14a124b623c73865",
+  "len": 3842,
+  "els": 67,
   "buttons": 7,
   "svgs": 0,
   "imgs": 3,
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "cdad3a4eee2799e4",
+  "h": "cfc8ebb380f8d1a3",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "7fce4addfa77d5e5",
-  "len": 104240,
-  "els": 1924,
+  "h": "a3dc9599a78f9331",
+  "len": 105384,
+  "els": 1942,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.74.2 August 30, 2026 Back goes where you came from FIX The way out of your saved verses now says wh"
+  "text": "✕ Version history v1.75.0 August 30, 2026 Whole verses, every time FIX Forty two verses were being shown short. John 10:"
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "cdad3a4eee2799e4",
+  "h": "cfc8ebb380f8d1a3",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1593,18 +1593,18 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "quest/wizard/visual": {
-  "h": "b123c9b86be3f513",
-  "len": 3435,
-  "els": 65,
+  "h": "6fc26380412e6a47",
+  "len": 3476,
+  "els": 66,
   "buttons": 7,
   "svgs": 1,
   "imgs": 3,
   "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy "
  },
  "quest/wizard/scene": {
-  "h": "9b7ddf13c0353edb",
-  "len": 3801,
-  "els": 66,
+  "h": "14a124b623c73865",
+  "len": 3842,
+  "els": 67,
   "buttons": 7,
   "svgs": 0,
   "imgs": 3,
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "e20ed3f2eb53e21b",
+  "h": "7c303af486078fbc",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "7fce4addfa77d5e5",
-  "len": 104240,
-  "els": 1924,
+  "h": "a3dc9599a78f9331",
+  "len": 105384,
+  "els": 1942,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.74.2 August 30, 2026 Back goes where you came from FIX The way out of your saved verses now says wh"
+  "text": "✕ Version history v1.75.0 August 30, 2026 Whole verses, every time FIX Forty two verses were being shown short. John 10:"
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "e20ed3f2eb53e21b",
+  "h": "7c303af486078fbc",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -2106,18 +2106,18 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "buddy/wizard/visual": {
-  "h": "b123c9b86be3f513",
-  "len": 3435,
-  "els": 65,
+  "h": "6fc26380412e6a47",
+  "len": 3476,
+  "els": 66,
   "buttons": 7,
   "svgs": 1,
   "imgs": 3,
   "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy "
  },
  "buddy/wizard/scene": {
-  "h": "9b7ddf13c0353edb",
-  "len": 3801,
-  "els": 66,
+  "h": "14a124b623c73865",
+  "len": 3842,
+  "els": 67,
   "buttons": 7,
   "svgs": 0,
   "imgs": 3,
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "598cbe5cd571f142",
+  "h": "40ef4bd662ab6b0e",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "7fce4addfa77d5e5",
-  "len": 104240,
-  "els": 1924,
+  "h": "a3dc9599a78f9331",
+  "len": 105384,
+  "els": 1942,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.74.2 August 30, 2026 Back goes where you came from FIX The way out of your saved verses now says wh"
+  "text": "✕ Version history v1.75.0 August 30, 2026 Whole verses, every time FIX Forty two verses were being shown short. John 10:"
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "598cbe5cd571f142",
+  "h": "40ef4bd662ab6b0e",
   "len": 17712,
   "els": 441,
   "buttons": 40,

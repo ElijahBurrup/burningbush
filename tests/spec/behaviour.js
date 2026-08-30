@@ -2529,7 +2529,7 @@ const DAY = 86400000;
       phase: wPhase,
       memorized: Prog.memorized.includes('40:6:33'),
       ref: /Matthew/.test(txt) && /6:33/.test(txt),
-      words: /Seek ye first the kingdom/.test(txt),
+      words: /But seek ye first the kingdom of God/.test(txt),
       pictures: document.querySelectorAll('#verse .lv-triple .lv-cell').length,
       place: /My Kitchen/.test(txt) && /Fridge/.test(txt),
       scene: /crashes onto a plate/.test(txt),
@@ -3118,6 +3118,44 @@ const DAY = 86400000;
   is(backWhence.libView, 'hub', '...back at the hub');
   is(backWhence.afterTabFrom, 'library', 'leaving by the tab bar forgets the Bible');
   is(backWhence.afterTabView, 'hub', '...and drops you at the hub');
+
+  describe('a verse is never shown short', () => { });
+  const whole = await $(() => {
+    const norm = s => String(s || '').replace(/s+/g, ' ').trim();
+    const lists = [GEMS, TORAH_VERSES, TORAH5_VERSES, NT_VERSES, SCENES];
+    const bad = []; let n = 0, carried = 0;
+    lists.forEach(arr => (arr || []).forEach(v => {
+      const bn = bookNum(v.b); if (!bn) return;
+      const real = norm(kjvText(bn, v.c, v.v)); if (!real) return;
+      n++;
+      if (v.text && norm(v.text) !== real) carried++;      // the hand-written teaser still differs
+      if (norm(verseObj(bn, v.c, v.v).text) !== real) bad.push(bookName(bn) + ' ' + v.c + ':' + v.v);
+    }));
+    return { n, carried, bad };
+  });
+  ok(whole.n > 500, 'every curated verse is checked, not a handful');
+  is(whole.bad.length, 0, 'not one of them is shown in anything but the Bible’s own words');
+  ok(whole.carried > 30, '...even though most still carry a shortened teaser of their own');
+
+  const john = await $(() => {
+    const k = refKey(43, 10, 10);
+    Prog.memorized = []; Prog.doneSkills = (Prog.doneSkills||[]).concat(Object.values(VIDEOS).map(x => x.skill));
+    saveProg();
+    const listed = verseAt(k);
+    openVerseWizard(43, 10, 10, () => { });
+    const onScreen = (document.querySelector('#verse .lv-versetext') || {}).textContent || '';
+    return {
+      real: kjvText(43, 10, 10),
+      teaser: listed ? listed.text : null,
+      shown: verseObj(43, 10, 10).text,
+      onScreen: onScreen.replace(/[“”‘’"]/g, '').replace(/s+/g, ' ').trim(),
+    };
+  });
+  ok(/^The thief cometh not/.test(john.shown), 'John 10:10 starts where the verse starts');
+  ok(/abundantly.$/.test(john.shown), '...and ends where it ends');
+  is(john.shown, john.real, '...matching the Bible exactly');
+  no(john.teaser === john.real, 'the list still holds a half-verse teaser for it');
+  is(john.onScreen, john.real.replace(/s+/g, ' ').trim(), '...and the memorize screen puts the whole verse on screen');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
