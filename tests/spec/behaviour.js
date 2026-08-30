@@ -918,7 +918,7 @@ const DAY = 86400000;
       mentionsUnlocking: /opening as you learn its numbers/.test(top),
       mentionsYourVerses: /your own verses in that book/.test(top),
       wholeBibleGone: !/whole Bible/i.test(top),
-      countShown: /of 66 books open/.test(top),
+      savedRibbon: /SAVED/.test(top),
     };
     renderBookScreen(43);
     const bk = el('journey').innerText;
@@ -935,7 +935,7 @@ const DAY = 86400000;
   ok(bib.mentionsUnlocking, '...that it opens as you learn the numbers');
   ok(bib.mentionsYourVerses, '...and that your own verses are in there');
   ok(bib.wholeBibleGone, '"The whole Bible" is gone — the screen already says Bible');
-  ok(bib.countShown, '...replaced by how many of the 66 books you have opened');
+  ok(bib.savedRibbon, '...and the corner now carries the way to your saved verses');
   ok(bib.inBook, 'a book shows your verses in it, under the chapters');
   ok(bib.inBookCount, '...counted');
   ok(bib.inBookHearts, '...saying how many you know by heart');
@@ -3067,22 +3067,23 @@ const DAY = 86400000;
 
   const bibleTop = await $(() => {
     show('journey'); renderJourney();
-    const r = { buttons: [...document.querySelectorAll('.bible-viewtoggle button')].map(x => x.id || x.dataset.vmode),
-                noHash: !document.querySelector('[data-vmode="num"]') };
+    const r = { buttons: [...document.querySelectorAll('.bible-viewtoggle button')].map(x => x.dataset.vmode),
+                hash: !!document.querySelector('[data-vmode="num"]'),
+                countGone: !/of 66 books open/.test(document.querySelector('.biblecard').textContent),
+                ribbon: (document.querySelector('.savedrib text') || {}).textContent,
+                tall: Math.round(document.querySelector('.savedrib svg').getBoundingClientRect().height) };
     document.getElementById('bibleSaved').click();
     r.view = vView;
     r.heading = (document.querySelector('#verse h2') || {}).textContent;
-    show('journey'); renderJourney();
-    document.querySelector('[data-vmode="name"]').click(); r.first = bibleView;
-    document.querySelector('[data-vmode="name"]').click(); r.second = bibleView;
     return r;
   });
-  is(bibleTop.buttons.join(','), 'bibleSaved,numimg,bookimg,name', 'the saved verses button takes the number toggle’s place');
-  ok(bibleTop.noHash, '...and the number toggle is gone, since the strip already shows numbers');
-  is(bibleTop.view, 'saved', 'it goes straight to your saved verses');
+  is(bibleTop.buttons.join(','), 'num,numimg,bookimg,name', 'all four view toggles are back where they were');
+  ok(bibleTop.hash, '...including the book-number one');
+  ok(bibleTop.countGone, 'the "of 66 books open" line has given up the corner');
+  is(bibleTop.ribbon, 'SAVED', '...to a bookmark turned on its side that says what it is');
+  ok(bibleTop.tall >= 28, '...drawn a little larger than the line it replaced');
+  is(bibleTop.view, 'saved', 'and it goes straight to your saved verses');
   has(bibleTop.heading, 'Saved', '...landing on that screen, not somewhere near it');
-  is(bibleTop.first, 'name', 'choosing a view switches to it');
-  is(bibleTop.second, 'num', '...and choosing it again returns to numbers, so nothing is stranded');
 
   describe('pull to refresh', () => { });
   const ptr = await $(() => {
