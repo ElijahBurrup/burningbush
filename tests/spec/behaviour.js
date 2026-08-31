@@ -4936,6 +4936,118 @@ const DAY = 86400000;
   });
   is(everyBook, '', 'all sixty-six books offer the same Change my book image control — Genesis included');
 
+  // ─────────────────────── swiping from lesson to lesson ───────────────────────
+  describe('lesson swipe', () => { });
+  // A horizontal drag on the lesson screen moves one lesson along the path, and arriving by swipe is
+  // arriving by tile: the same paywall, the same refusal when it is out of sequence. The gesture is
+  // built out of real Touch objects because the handler reads clientX off them.
+  const lswipe = await $(() => {
+    const snap = { done: Prog.doneSkills.slice(), pro: Billing.isPro() };
+    // This block asserts what a swipe reaches and what it does there, so it sets what has been
+    // learned rather than inheriting whatever the blocks above left behind.
+    Billing.revoke();
+    const host = el('learn');
+    const drag = dx => {
+      const r = host.getBoundingClientRect(), y = r.top + r.height * 0.6, x0 = r.left + r.width * 0.5;
+      const fire = (type, x) => {
+        const t = new Touch({ identifier: 1, target: host, clientX: x, clientY: y });
+        host.dispatchEvent(new TouchEvent(type, { bubbles: true, cancelable: true,
+          touches: type === 'touchend' ? [] : [t], changedTouches: [t], targetTouches: type === 'touchend' ? [] : [t] }));
+      };
+      fire('touchstart', x0); fire('touchend', x0 + dx);
+    };
+    const openById = id => { const f = flatSkills().find(x => x.id === id); startLesson(UNITS[f.ui].skills[f.si]); };
+    const at = () => (LZ && LZ.sk ? LZ.sk.id : null);
+    const payShut = () => { const m = el('payModal'); if (m) m.style.display = 'none'; };
+    const paidUp = () => { const m = el('payModal'); return !!m && m.style.display !== 'none'; };
+    const flat = flatSkills();
+
+    // Everything up to the first lesson that costs money is behind us, so that one is unlocked AND
+    // paywalled — the state where a swipe has to show the paywall rather than step over it.
+    const order = swipeableLessons().map(s => s.id);
+    const firstPaid = order.find(id => { const f = flat.find(x => x.id === id); return isPaidSkill(UNITS[f.ui].skills[f.si]); });
+    const paidAt = flat.findIndex(x => x.id === firstPaid);
+    Prog.doneSkills = flat.slice(0, paidAt).map(f => f.id);
+    bustCaches();
+
+    const strayKinds = [...new Set(swipeableLessons().map(s => s.kind))].filter(k => ['num', 'book', 'sound'].indexOf(k) < 0).join(',');
+    const onPathTotal = UNITS.reduce((n, U) => n + U.skills.filter(sk => ['num', 'book', 'sound'].indexOf(sk.kind) >= 0).length, 0);
+    const pathOrder = flat.map(f => f.id);
+    const inPathOrder = order.every((id, i) => i === 0 || pathOrder.indexOf(id) > pathOrder.indexOf(order[i - 1]));
+    const skipsNothing = order.length === onPathTotal;
+
+    // walking between lessons that are open
+    openById(order[1]);
+    const opened = at();
+    drag(-140); const fwd = at();          // drag left: the lesson ahead
+    drag(-140); const fwd2 = at();
+    drag(140); const back = at();          // drag right: the lesson behind
+
+    // a vertical drag belongs to the scroller
+    const beforeV = at();
+    (() => { const r = host.getBoundingClientRect();
+      const fire = (type, y) => { const t = new Touch({ identifier: 1, target: host, clientX: r.left + 180, clientY: y });
+        host.dispatchEvent(new TouchEvent(type, { bubbles: true, cancelable: true,
+          touches: type === 'touchend' ? [] : [t], changedTouches: [t], targetTouches: type === 'touchend' ? [] : [t] })); };
+      fire('touchstart', r.top + 420); fire('touchend', r.top + 120); })();
+    const afterV = at();
+
+    // swiping onto a lesson that costs money: the paywall, exactly as the tile would
+    payShut();
+    openById(order[order.indexOf(firstPaid) - 1]);
+    const beforePay = at();
+    drag(-140);
+    const payOpened = paidUp(), stayedPut = at() === beforePay;
+    payShut();
+
+    // swiping onto one that is out of sequence: the tile is disabled, so the swipe refuses too.
+    // Nothing learned yet, so the second lesson is locked on sequence alone, with no money in it.
+    Prog.doneSkills = []; bustCaches();
+    const lockedId = order[1];
+    const lockedIsFree = !skillPaywalled(UNITS[flat.find(x => x.id === lockedId).ui].skills[flat.find(x => x.id === lockedId).si]);
+    const lockedIsShut = !(() => { const f = flat.find(x => x.id === lockedId); return skillUnlocked(f.ui, f.si); })();
+    openById(order[0]);
+    const wasLocked = at(); drag(-140);
+    const lockedHeld = at() === wasLocked, lockedSaid = (el('vvToast') || {}).textContent || '';
+    Prog.doneSkills = flat.slice(0, paidAt).map(f => f.id); bustCaches();
+
+    // the ends of the path hold. Pro so the last one opens at all.
+    Billing.grant();
+    openById(order[0]); drag(140); const atFirst = at();
+    openById(order[order.length - 1]); drag(-140); const atLast = at();
+    const endSaid = (el('vvToast') || {}).textContent || '';
+    Billing.revoke();
+
+    // the path screen is drawn into this same view and must not swipe
+    renderPath(); drag(-140);
+    const onPath = !!document.querySelector('#learn .lesson');
+
+    Prog.doneSkills = snap.done; if (snap.pro) Billing.grant(); else Billing.revoke();
+    bustCaches(); payShut();
+    return { strayKinds, skipsNothing, orderLen: order.length, onPathTotal, inPathOrder,
+      opened, expectOpened: order[1], fwd, expectFwd: order[2], fwd2, expectFwd2: order[3], back,
+      moveOnVertical: beforeV !== afterV, payOpened, stayedPut, lockedId, lockedIsFree, lockedIsShut, lockedHeld, lockedSaid,
+      atFirst, first: order[0], atLast, last: order[order.length - 1], endSaid, onPath };
+  });
+  is(lswipe.strayKinds, '', 'a swipe walks the lessons that look like the one you are on — no stories, no palaces');
+  ok(lswipe.inPathOrder, 'and walks them in path order');
+  ok(lswipe.skipsNothing, 'it steps over nothing: every lesson on the path is on the run, open or not');
+  is(lswipe.orderLen, lswipe.onPathTotal, '...all of them');
+  is(lswipe.opened, lswipe.expectOpened, 'a lesson is open to start with');
+  is(lswipe.fwd, lswipe.expectFwd, 'dragging left opens the lesson ahead');
+  is(lswipe.fwd2, lswipe.expectFwd2, 'and again, one at a time');
+  is(lswipe.back, lswipe.expectFwd, 'dragging right goes back');
+  no(lswipe.moveOnVertical, 'a vertical drag is the scroller, not a page turn');
+  ok(lswipe.payOpened, 'swiping onto a lesson that costs money opens the paywall, exactly as pressing its tile does');
+  ok(lswipe.stayedPut, 'and leaves you on the lesson you were reading');
+  ok(lswipe.lockedIsFree && lswipe.lockedIsShut, 'with nothing learned, the second lesson is shut on sequence alone — no money in it');
+  ok(lswipe.lockedHeld, 'swiping onto a lesson that is out of sequence does not open it — its tile is disabled too');
+  has(lswipe.lockedSaid, 'Finish the lesson before this one', 'and says why, where a disabled tile just sits there');
+  is(lswipe.atFirst, lswipe.first, 'the first lesson stays put when you drag back from it');
+  is(lswipe.atLast, lswipe.last, 'and the last stays put when you drag on from it');
+  has(lswipe.endSaid, 'last lesson on the path', 'saying so rather than doing nothing');
+  no(lswipe.onPath, 'the path itself does not swipe, though it is drawn into the same view');
+
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
   if (consoleErrs.length) { console.error(`  ✗ ${consoleErrs.length} console error(s):`); consoleErrs.slice(0, 5).forEach(e => console.error('      ' + e)); }

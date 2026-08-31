@@ -2090,8 +2090,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.77.0";
+const APP_VERSION="1.78.0";
 const CHANGELOG=[
+ {v:"1.78.0", d:"August 30, 2026", t:"Swipe through the lessons", items:[
+   ["new","<b>Swipe left and right inside a lesson to move along the path.</b> Verses have turned like pages for a while; lessons did not, so going from one to the next meant closing out to the path and finding the next tile. Drag left for the one ahead, right for the one behind."],
+   ["chg","<b>Arriving by swipe is the same as arriving by tile.</b> It walks the whole path in order and skips nothing, so the next lesson along is the next lesson along — and if that one has still to be paid for or has still to be reached, you get exactly what pressing its tile would give you. At either end of the path it says so rather than doing nothing."]
+ ]},
  {v:"1.77.0", d:"August 30, 2026", t:"Books come back too", items:[
    ["new","<b>The books you have learned now come back for review, on the same clock as everything else.</b> A book lesson always kept a card and moved it along the same day 0, 1, 3, 7, 16, 30 trail, but nothing ever read those cards back, so a book was scheduled and then never asked for. They have their own phase in the daily review, after the numbers."],
    ["new","<b>A book is reviewed on everything its lesson taught.</b> Its number, its name, the coded image, and whichever of your own two pictures you have chosen. Leave one blank and it is never asked about."],
@@ -5388,6 +5392,62 @@ function renderPalaceBuild(){
   el("pbDone").onclick=donePalace;
   if(el("pbDoneTop")) el("pbDoneTop").onclick=donePalace;   // green ✓ = same as "Complete palace"
 }
+// The lessons a swipe walks: the path itself, in path order. Stories have their own tab and a palace
+// is a different kind of screen altogether, so a swipe stays among the lessons that look like the one
+// being shown — which also means it can always be swiped back. Nothing is stepped over: the next
+// lesson along is the next lesson along, whether or not it is open yet.
+const SWIPEABLE_KINDS=["num","book","sound"];
+function swipeableLessons(){
+  const out=[];
+  flatSkills().forEach(f=>{ const sk=UNITS[f.ui].skills[f.si];
+    if(SWIPEABLE_KINDS.indexOf(sk.kind)<0) return;
+    out.push(Object.assign({}, sk, {__ui:f.ui, __si:f.si})); });
+  return out;
+}
+// Arriving by swipe is arriving by tile: same paywall, same refusal when it is out of sequence.
+function openLessonLikeTile(sk){
+  if(!skillUnlocked(sk.__ui,sk.__si)){ toast("Finish the lesson before this one first."); return; }
+  const real=UNITS[sk.__ui].skills[sk.__si];
+  if(skillPaywalled(real)) return openPaywall(real);   // the tile does exactly this
+  goLessonKeepingPlace(real);
+}
+function lessonNeighbour(sk,dir){
+  if(!sk) return null;
+  const list=swipeableLessons(), i=list.findIndex(x=>x.id===sk.id);
+  return i<0 ? null : (list[i+dir]||null);
+}
+// Move a lesson along without the screen jumping under the reader. renderStep puts every step back
+// at the top, which is right when a lesson is opened and wrong when one is swiped past.
+function goLessonKeepingPlace(sk){
+  const c=document.querySelector(".content"), y=c?c.scrollTop:0;
+  startLesson(sk);
+  requestAnimationFrame(()=>{ const s=document.querySelector(".content"); if(s) s.scrollTop=y; });
+}
+// A horizontal drag moves one lesson along the path, the way a page turns. Vertical drags belong to
+// the scroller, and a drag begun on a control is ignored so a swipe can never also press something.
+function attachLessonSwipe(host){
+  if(!host || host.dataset.lswipe) return;
+  host.dataset.lswipe="1";
+  let x0=0, y0=0, live=false;
+  host.addEventListener("touchstart", ev=>{
+    live=false;
+    if(ev.touches.length!==1) return;
+    const t=ev.target;
+    if(t.closest && t.closest("input,textarea,select,button,a,.pickscroll,.wpgrid")) return;
+    x0=ev.touches[0].clientX; y0=ev.touches[0].clientY; live=true;
+  }, {passive:true});
+  host.addEventListener("touchend", ev=>{
+    if(!live) return; live=false;
+    // Only while a lesson is on screen. The path itself is drawn into this same view and is not swipeable.
+    if(!LZ || !LZ.sk || !host.querySelector(".lesson")) return;
+    const t=ev.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
+    if(Math.abs(dx)<60 || Math.abs(dx)<Math.abs(dy)*1.6) return;
+    const dir = dx<0 ? 1 : -1;                    // drag left to go on, right to go back
+    const to = lessonNeighbour(LZ.sk, dir);
+    if(to) openLessonLikeTile(to);
+    else toast(dir>0 ? "That is the last lesson on the path." : "This is the first lesson.");
+  }, {passive:true});
+}
 function startLesson(sk){
   if(skillPaywalled(sk)) return openPaywall(sk);   // Pro-only content — offer whole-app subscription or a single-lesson talent unlock
   if(sk.kind==="palace") return startPalaceLesson(sk);
@@ -5468,6 +5528,7 @@ function renderSoundStep(s,pct){
   }
   L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>${s.type==="teach"?reviewLessonBtn("major"):""}</div><div id="lBody">${body}</div></div>`;
   el("lClose").onclick=()=>renderPath();
+  attachLessonSwipe(L);
   if(s.type==="teach"){ el("lNext").onclick=advance; return; }
   document.querySelectorAll("[data-sok]").forEach(b=>b.onclick=()=>{
     if(b.disabled) return;
@@ -5559,6 +5620,7 @@ function renderStep(){
     <div id="lBody">${body}</div></div>`;
   const c=document.querySelector(".content"); if(c) c.scrollTop=0;   // every lesson step starts at the top
   el("lClose").onclick=()=>renderPath();
+  attachLessonSwipe(L);
   wireStep(s);
 }
 function encodingOptions(kind,n,word){
