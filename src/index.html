@@ -835,6 +835,10 @@
   .goalrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
   .goalrow-k{font-size:14px;font-weight:700;color:var(--ink-soft)}
   .goalfield{min-width:64px;padding:10px 14px;border-radius:11px;border:2px solid var(--gold2);background:var(--panel2);color:var(--gold-ink);font-size:18px;font-weight:800;cursor:pointer}
+  /* Number & Book Practice puts its start button on the same row as the count: button hard left,
+     then the # and the field pushed to the right. */
+  .goalrow .goalrow-go{width:auto;margin:0;padding:10px 18px;flex:0 0 auto}
+  .goalrow .goalrow-k.tight{margin-left:auto}
   /* reminders — only the alarms you actually use are drawn */
   .rem-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
   .rem-row .rem-time{flex:1;text-align:left}
@@ -2112,8 +2116,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.86.0";
+const APP_VERSION="1.87.0";
 const CHANGELOG=[
+ {v:"1.87.0", d:"August 31, 2026", t:"Ask Now", items:[
+   ["chg","<b>Number &amp; Book Practice starts from the row it is set up on.</b> The start button sits at the left of the question count and says <b>Ask Now</b>, and the count keeps just a <b>#</b> beside it, instead of a full width bar underneath repeating what the screen is already for."]
+ ]},
  {v:"1.86.0", d:"August 31, 2026", t:"Two things that wait until they mean something", items:[
    ["chg","<b>The Spaced Repetition film waited for the wrong moment.</b> It played on your very first memorised verse — before you had a palace to walk or anything due — and explained a rhythm you had no way to keep yet. It now plays when your first palace is finished, which is the first time any of it applies to you."],
    ["new","<b>Spaced Repetition on the Library sits under a golden foil until then.</b> You can see it waiting; it opens the moment the film has played."],
@@ -8479,12 +8486,13 @@ function openNumTestSetup(round){
     el("ntsWarn").textContent=draft.types.length?"":"Choose at least one kind of question.";
   };
   V.innerHTML=`<div class="card">
-      <div class="lv-topbar"><button class="lclose" id="ntsClose">✕</button><div style="flex:1;text-align:center;font-weight:800">Number &amp; book practice</div><span style="width:34px"></span></div>
+      <div class="lv-topbar"><button class="lclose" id="ntsClose">✕</button><div style="flex:1;text-align:center;font-weight:800">Number &amp; Book Practice</div><span style="width:34px"></span></div>
       <p class="hint" style="margin:6px 0 0">Which way would you like to be asked?</p>
       <div class="mtradiolist one" id="ntsForms" style="margin-top:10px"></div>
-      <div class="goalrow" style="margin-top:14px"><div class="goalrow-k">Questions to ask</div><button type="button" class="goalfield" id="ntsCount">15</button></div>
+      <div class="goalrow" style="margin-top:14px">
+        <button class="btn goalrow-go" id="ntsGo">Ask Now</button>
+        <div class="goalrow-k tight">#</div><button type="button" class="goalfield" id="ntsCount">15</button></div>
       <div class="hint" id="ntsWarn" style="min-height:18px;margin:6px 0 0"></div>
-      <button class="btn" id="ntsGo" style="width:100%;margin-top:8px">Begin practice</button>
     </div>`;
   el("ntsClose").onclick=renderVerse;
   el("ntsCount").onclick=()=>numberSheet({ title:"How many questions?", value:draft.count, choices:NT_COUNTS, onPick:n=>{ draft.count=n; paint(); } });
