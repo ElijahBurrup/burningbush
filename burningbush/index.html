@@ -646,13 +646,19 @@
   @keyframes srcpop{0%{transform:scale(.4);opacity:0}55%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
   /* The browser scrolls a focused input into view on its own. Without this it parks it directly
      under the pinned band, which is exactly where it cannot be seen. */
-  .tt-in{width:100%;box-sizing:border-box;text-align:center;scroll-margin-top:170px}
+  .tt-in{width:100%;box-sizing:border-box;text-align:center;scroll-margin-top:120px}
+  /* This screen has one job. The words so far, the box you type in and Reveal a letter belong
+     together in the top half of the phone, above the keyboard, without scrolling — at every size,
+     because the size we most need to serve is the one CSS cannot see. */
+  .ttcard .ttdisplay{height:64px;margin:8px 0;font-size:17px;line-height:1.5}
+  .ttcard .typein{padding:3px 12px;font-size:16px;border-radius:12px}
+  .ttcard #ttHint{margin:6px 0 0;padding:8px}
+  .ttcard .tthelp{font-size:11px;line-height:1.4;margin-top:6px}
   /* On a short screen, with a keyboard up, the whole thing should simply fit and never scroll. */
   @media (max-height:700px){
-    .ttdisplay{height:62px;margin:8px 0}
+    .ttcard .ttdisplay{height:48px;margin:6px 0}
     .ttstick{padding-bottom:2px}
-    .tthelp{font-size:11px;line-height:1.35;margin-top:6px}
-    .typein{padding:12px;font-size:20px}
+    .ttcard .typein{padding:3px 12px;font-size:16px}
   }
   /* An SE with the keyboard up leaves about 400px. Everything that matters while typing — the words
      so far, the box, and Reveal a letter — has to be inside that, so the sentence explaining the
@@ -661,10 +667,10 @@
     .ttcard{padding:12px}
     .ttcard .ttstick{margin:-12px -12px 0;padding:12px 12px 0}
     .ttcard .lv-topbar{margin-bottom:2px}
-    .ttcard .ttdisplay{height:46px;margin:4px 0;font-size:16px;line-height:1.45}
-    .ttcard .typein{padding:9px;font-size:18px}
+    .ttcard .ttdisplay{height:36px;margin:4px 0;font-size:16px;line-height:1.4}
+    .ttcard .typein{padding:2px 10px;font-size:16px}
     .ttcard .tthelp{display:none}
-    .ttcard #ttHint{margin-top:6px;padding:8px}
+    .ttcard #ttHint{margin-top:5px;padding:7px}
   }
   .tt-in.wrong{border-color:var(--miss);color:var(--miss-ink)}
   .tt-in.good{border-color:var(--good)}
@@ -2090,8 +2096,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.78.0";
+const APP_VERSION="1.79.0";
 const CHANGELOG=[
+ {v:"1.79.0", d:"August 31, 2026", t:"The typing screen, and a verse you already know", items:[
+   ["fix","<b>The typing screen was being sized for a phone that does not exist.</b> It was tuned behind rules that only take effect when the window gets shorter — and on an iPhone the window does not get shorter when the keyboard opens, it just gets covered. So none of that tuning ever ran where it was needed. The compact layout is simply how this screen is built now, at every size."],
+   ["chg","<b>The box you type in is half the height and the words above it a quarter shorter.</b> Reveal a letter comes up with them, so the words so far, the box and the reveal all sit in the top half of the phone with nothing to scroll."],
+   ["new","<b>“I know this by heart” now sits at the top of a verse's own page</b>, between the reference and the pictures. Say yes and the verse goes straight into the strict test — no scene, no palace, no room. If you knew it before you ever opened this app, you should not have to build one to say so."],
+   ["chg","<b>It asks before it does it.</b> Claiming a verse skips the whole of learning, which is exactly what it is for and exactly why it should never happen by accident."]
+ ]},
  {v:"1.78.0", d:"August 30, 2026", t:"Swipe through the lessons", items:[
    ["new","<b>Swipe left and right inside a lesson to move along the path.</b> Verses have turned like pages for a while; lessons did not, so going from one to the next meant closing out to the path and finding the next tile. Drag left for the one ahead, right for the one behind."],
    ["chg","<b>Arriving by swipe is the same as arriving by tile.</b> It walks the whole path in order and skips nothing, so the next lesson along is the next lesson along — and if that one has still to be paid for or has still to be reached, you get exactly what pressing its tile would give you. At either end of the path it says so rather than doing nothing."]
@@ -9003,6 +9015,20 @@ function wireRefTaps(){
     requestAnimationFrame(()=>{ queued=false; linkifyRefs(host); });
   }).observe(host, {childList:true, subtree:true});
 }
+// Claim a verse from its own page, before it has ever been located. This does everything saving a
+// verse does except the palace: it counts as memorized, it joins the review trail at D1, and it goes
+// straight to the strict test — no scene, no room, no station.
+function claimByHeartHere(b,c,v,back){
+  const k=refKey(b,c,v);
+  openStagePromote(b,c,v,k,"heart", ()=>{
+    if(!isHeart(k)) return back();                  // "Not yet" — carry on where they were
+    const cheer=addMemorized({b:bookName(b),c,v}, true);
+    saveProg(); updateMetrics();
+    // Into the test itself, which is what claiming a verse means from here on.
+    startW4WTest(b,c,v, ()=>renderLearnedVerse(b,c,v,walkReturn));
+    if(cheer) setTimeout(cheer, 420);               // let the applause land on the test, not under it
+  });
+}
 function openVerseWizard(b,c,v,ret){
   walkReturn=ret||renderVerse; sceneNote="";   // a fresh verse never inherits a story's note
   // an already-learned verse opens a focused review page: no learning/save/skip — just word for word + its SR trail
@@ -9209,6 +9235,7 @@ function renderWalk(){
     V.innerHTML=`<div class="card">
         ${verseNavNow.html}
         <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
+        ${feat("w4w")?`<button class="btn ghost sm" id="wHeart" style="width:100%;margin:8px 0 12px">💛 I know this by heart →</button>`:""}
         <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
         <div class="lv-versetext">“${verseWordsHTML(b,c,v,curScene.text)}”</div>
         <div class="hint" style="text-align:center;margin:-8px 0 10px">Press and hold any word for its Hebrew or Greek.</div>
@@ -9219,6 +9246,7 @@ function renderWalk(){
     if(el("wClose")) el("wClose").onclick=()=>walkReturn();
     wireVerseNav(V, verseNavNow, walkReturn);
     V.querySelectorAll("[data-learn]").forEach(x=>x.onclick=()=>{ const n=+x.dataset.learn, isBook=x.dataset.book==="1"; startAdhocLearn(n,isBook,()=>openVerseWizard(b,c,v,walkReturn)); });
+    if(el("wHeart")) el("wHeart").onclick=()=>claimByHeartHere(b,c,v, ()=>renderWalk());
     if(el("wToScene")) el("wToScene").onclick=()=>{ wPhase="scene"; renderWalk(); };
     if(el("wSave")) el("wSave").onclick=()=>{ if(Prog.saved.includes(vkey)){ Prog.saved=Prog.saved.filter(x=>x!==vkey); saveProg(); toast("Removed from Saved"); renderWalk(); } else { markSaved(); walkReturn(); } };
     if(el("wSkip")) el("wSkip").onclick=()=>{ if(Prog.skipped.includes(vkey)){ Prog.skipped=Prog.skipped.filter(x=>x!==vkey); saveProg(); toast("No longer skipped"); renderWalk(); } else { markSkipped(); walkReturn(); } };

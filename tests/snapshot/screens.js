@@ -22,7 +22,7 @@ module.exports = [
   // ---- the verse wizard ----
   // 40:6:33 is deliberately NOT in the seeded account: openVerseWizard sends an already
   // memorized verse to the learned-verse page instead, which has no "Save Visual" button.
-  { name: 'wizard/visual', sel: '#verse', go: () => { openVerseWizard(40, 6, 33, () => { }); } },
+  { name: 'wizard/visual', sel: '#verse', go: () => { markVideoSeen('verse'); openVerseWizard(40, 6, 33, () => { }); } },   // the film plays on first use, so the first theme in the loop was recording that, not the wizard
   // Building the Scene plays before the first verse anyone ever builds, so this capture is of the
   // wizard itself, not of the film that precedes it once.
   { name: 'wizard/scene', sel: '#verse', go: () => { markVideoSeen('verse'); openVerseWizard(40, 6, 33, () => { }); el('wToScene').click(); } },

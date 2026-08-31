@@ -54,13 +54,13 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "classic/wizard/visual": {
-  "h": "6ea77b06363669a9",
-  "len": 654,
-  "els": 15,
-  "buttons": 2,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
+  "h": "5c41d23267e77b62",
+  "len": 3587,
+  "els": 67,
+  "buttons": 8,
+  "svgs": 1,
+  "imgs": 3,
+  "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 💛 I know this by heart → Book 40 image coming Rose Ch 06 image coming Sushi Ve"
  },
  "classic/wizard/scene": {
   "h": "14a124b623c73865",
@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "7dbe76a8cca97a6d",
+  "h": "51e480c1c82d0df8",
   "len": 18509,
   "els": 449,
   "buttons": 42,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "f74904f023621153",
-  "len": 109922,
-  "els": 2010,
+  "h": "a069df26047d43ff",
+  "len": 111480,
+  "els": 2031,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.78.0 August 30, 2026 Swipe through the lessons NEW Swipe left and right inside a lesson to move alo"
+  "text": "✕ Version history v1.79.0 August 31, 2026 The typing screen, and a verse you already know FIX The typing screen was bein"
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "84d1aa848fb24cdd",
+  "h": "c612cd5f6376625b",
   "len": 17708,
   "els": 441,
   "buttons": 40,
@@ -567,13 +567,13 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "illumined/wizard/visual": {
-  "h": "6fc26380412e6a47",
-  "len": 3476,
-  "els": 66,
-  "buttons": 7,
+  "h": "5c41d23267e77b62",
+  "len": 3587,
+  "els": 67,
+  "buttons": 8,
   "svgs": 1,
   "imgs": 3,
-  "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy "
+  "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 💛 I know this by heart → Book 40 image coming Rose Ch 06 image coming Sushi Ve"
  },
  "illumined/wizard/scene": {
   "h": "14a124b623c73865",
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "983f477458f811f3",
+  "h": "2618fd476cae5041",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "f74904f023621153",
-  "len": 109922,
-  "els": 2010,
+  "h": "a069df26047d43ff",
+  "len": 111480,
+  "els": 2031,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.78.0 August 30, 2026 Swipe through the lessons NEW Swipe left and right inside a lesson to move alo"
+  "text": "✕ Version history v1.79.0 August 31, 2026 The typing screen, and a verse you already know FIX The typing screen was bein"
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "983f477458f811f3",
+  "h": "2618fd476cae5041",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1080,13 +1080,13 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "glass/wizard/visual": {
-  "h": "6fc26380412e6a47",
-  "len": 3476,
-  "els": 66,
-  "buttons": 7,
+  "h": "5c41d23267e77b62",
+  "len": 3587,
+  "els": 67,
+  "buttons": 8,
   "svgs": 1,
   "imgs": 3,
-  "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy "
+  "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 💛 I know this by heart → Book 40 image coming Rose Ch 06 image coming Sushi Ve"
  },
  "glass/wizard/scene": {
   "h": "14a124b623c73865",
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "345a3ab3cd28d4fc",
+  "h": "66b98a86c00d233f",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "f74904f023621153",
-  "len": 109922,
-  "els": 2010,
+  "h": "a069df26047d43ff",
+  "len": 111480,
+  "els": 2031,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.78.0 August 30, 2026 Swipe through the lessons NEW Swipe left and right inside a lesson to move alo"
+  "text": "✕ Version history v1.79.0 August 31, 2026 The typing screen, and a verse you already know FIX The typing screen was bein"
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "345a3ab3cd28d4fc",
+  "h": "66b98a86c00d233f",
   "len": 17714,
   "els": 441,
   "buttons": 40,
@@ -1593,13 +1593,13 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "quest/wizard/visual": {
-  "h": "6fc26380412e6a47",
-  "len": 3476,
-  "els": 66,
-  "buttons": 7,
+  "h": "5c41d23267e77b62",
+  "len": 3587,
+  "els": 67,
+  "buttons": 8,
   "svgs": 1,
   "imgs": 3,
-  "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy "
+  "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 💛 I know this by heart → Book 40 image coming Rose Ch 06 image coming Sushi Ve"
  },
  "quest/wizard/scene": {
   "h": "14a124b623c73865",
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "0492c0831c15f907",
+  "h": "e04c231d9a9ff5e9",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "f74904f023621153",
-  "len": 109922,
-  "els": 2010,
+  "h": "a069df26047d43ff",
+  "len": 111480,
+  "els": 2031,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.78.0 August 30, 2026 Swipe through the lessons NEW Swipe left and right inside a lesson to move alo"
+  "text": "✕ Version history v1.79.0 August 31, 2026 The typing screen, and a verse you already know FIX The typing screen was bein"
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "0492c0831c15f907",
+  "h": "e04c231d9a9ff5e9",
   "len": 17716,
   "els": 441,
   "buttons": 40,
@@ -2106,13 +2106,13 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "buddy/wizard/visual": {
-  "h": "6fc26380412e6a47",
-  "len": 3476,
-  "els": 66,
-  "buttons": 7,
+  "h": "5c41d23267e77b62",
+  "len": 3587,
+  "els": 67,
+  "buttons": 8,
   "svgs": 1,
   "imgs": 3,
-  "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 image coming Mummy "
+  "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 💛 I know this by heart → Book 40 image coming Rose Ch 06 image coming Sushi Ve"
  },
  "buddy/wizard/scene": {
   "h": "14a124b623c73865",
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "146b35d1446be488",
+  "h": "b4a921d96780910b",
   "len": 17712,
   "els": 441,
   "buttons": 40,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "f74904f023621153",
-  "len": 109922,
-  "els": 2010,
+  "h": "a069df26047d43ff",
+  "len": 111480,
+  "els": 2031,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.78.0 August 30, 2026 Swipe through the lessons NEW Swipe left and right inside a lesson to move alo"
+  "text": "✕ Version history v1.79.0 August 31, 2026 The typing screen, and a verse you already know FIX The typing screen was bein"
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "146b35d1446be488",
+  "h": "b4a921d96780910b",
   "len": 17712,
   "els": 441,
   "buttons": 40,

@@ -5048,6 +5048,66 @@ const DAY = 86400000;
   has(lswipe.endSaid, 'last lesson on the path', 'saying so rather than doing nothing');
   no(lswipe.onPath, 'the path itself does not swipe, though it is drawn into the same view');
 
+  // ─────────────────── claiming a verse from its own page ───────────────────
+  describe('I know this by heart', () => { });
+  // A verse somebody already knew before they opened this app should not have to be given a scene
+  // and a room in a palace first. The heartClaim sits on the verse's own page, above the pictures, and a
+  // confirmation is what keeps it off the path of a stray thumb.
+  const heartClaim = await $(() => {
+    const snapM = Prog.memorized.slice(), snapS = JSON.stringify(Prog.verseStage || {});
+    markVideoSeen('verse');
+    const k = '43:10:10';
+    const reset = () => { Prog.memorized = Prog.memorized.filter(x => x !== k);
+      if (Prog.verseStage) delete Prog.verseStage[k];
+      if (Prog.verseLoc) delete Prog.verseLoc[k];
+      if (Prog.verseSR) delete Prog.verseSR[k];
+      openVerseWizard(43, 10, 10, () => { }); };
+
+    reset();
+    const card = document.querySelector('#verse .card');
+    const kids = [...card.children].map(n => n.id || String(n.className).split(' ')[0]);
+    const btn = kids.indexOf('wHeart'), ref = kids.indexOf('lv-ref'), pics = kids.indexOf('lv-triple');
+
+    // pressing it asks first, and does nothing on its own
+    el('wHeart').click();
+    const modal = el('promoteModal');
+    const asked = !!modal && modal.style.display === 'flex';
+    const askedNothingDone = !isHeart(k) && !Prog.memorized.includes(k);
+    const askTitle = (modal.querySelector('div[style*="font-weight:800"]') || {}).textContent || '';
+
+    // "Not yet" leaves the verse exactly as it was
+    el('prNo').click();
+    const notYet = { heart: isHeart(k), memorized: Prog.memorized.includes(k), back: !!el('wHeart') };
+
+    // "Yes" claims it, with no palace asked for, and goes straight into the strict test
+    el('wHeart').click(); el('prYes').click();
+    const after = { heart: isHeart(k), memorized: Prog.memorized.includes(k),
+      loc: (Prog.verseLoc || {})[k] || null, step: (Prog.verseSR[k] || {}).step,
+      inTest: !!el('ttIn'), strict: !!(TT && TT.test),
+      revealHidden: (el('ttHint') || {}).style.display === 'none' };
+
+    if (TT) TT = null;
+    Prog.memorized = snapM; Prog.verseStage = JSON.parse(snapS);
+    if (Prog.verseLoc) delete Prog.verseLoc[k];
+    if (Prog.verseSR) delete Prog.verseSR[k];
+    saveProg(); updateMetrics();
+    return { btn, ref, pics, asked, askedNothingDone, askTitle, notYet, after };
+  });
+  ok(heartClaim.btn > heartClaim.ref && heartClaim.btn < heartClaim.pics, 'the heartClaim sits between the reference and the pictures, at the top of the verse');
+  ok(heartClaim.asked, 'pressing it asks first');
+  has(heartClaim.askTitle, 'by heart', '...in its own words');
+  ok(heartClaim.askedNothingDone, 'and changes nothing until it is answered');
+  no(heartClaim.notYet.heart, '"Not yet" leaves the verse where it was');
+  no(heartClaim.notYet.memorized, '...unmemorized');
+  ok(heartClaim.notYet.back, '...and puts you back on the verse');
+  ok(heartClaim.after.heart, '"Yes" claims it by heart');
+  ok(heartClaim.after.memorized, '...and counts it among the verses you hold');
+  is(heartClaim.after.loc, null, '...without a palace or a location, which is the whole point');
+  is(heartClaim.after.step, 1, '...on the review trail from tomorrow');
+  ok(heartClaim.after.inTest, '...and drops you straight into the test');
+  ok(heartClaim.after.strict, '...the strict one');
+  ok(heartClaim.after.revealHidden, '...with no reveals');
+
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
   if (consoleErrs.length) { console.error(`  ✗ ${consoleErrs.length} console error(s):`); consoleErrs.slice(0, 5).forEach(e => console.error('      ' + e)); }

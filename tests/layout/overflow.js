@@ -89,6 +89,32 @@ const TABS = ['learn', 'verse', 'palace', 'journey', 'stories'];
     await page.close();
   }
 
+  // iOS does not shrink dvh when the keyboard opens: the page keeps its full height and the keyboard
+  // covers the bottom of it. So a height media query cannot be trusted to compact this screen, and
+  // the honest test is the FULL-height layout measured against where the keyboard actually starts.
+  // Everything needed while typing — the words so far, the box, and Reveal a letter — must be above
+  // that line, and in the top half of the phone.
+  describe('typing screen, keyboard up', () => { });
+  const PHONES = [['iPhone SE', 375, 667, 260], ['iPhone 13', 390, 844, 336],
+                  ['iPhone 15 Pro', 393, 852, 336], ['15 Pro Max', 430, 932, 346]];
+  for (const [name, w, h, kbd] of PHONES) {
+    const page = await open(browser, { width: w, height: h, prog: SEEDED });
+    const m = await page.evaluate(() => {
+      show('verse'); startTypeTest(43, 11, 35, () => { });
+      const p = document.querySelector('.phone').getBoundingClientRect();
+      const box = id => { const n = document.getElementById(id); if (!n) return null;
+        const r = n.getBoundingClientRect(); return { bot: Math.round(r.bottom - p.top), h: Math.round(r.height) }; };
+      const c = document.querySelector('.content');
+      return { d: box('ttDisplay'), i: box('ttIn'), r: box('ttHint'), overflow: c.scrollHeight - c.clientHeight };
+    });
+    const kbdTop = h - kbd, half = Math.round(h / 2);
+    ok(m.d && m.i && m.r, name + ': the words, the box and Reveal a letter are all on the screen');
+    ok(m.r.bot <= kbdTop, name + ': all three sit above the keyboard (' + (kbdTop - m.r.bot) + 'px clear)');
+    ok(m.r.bot <= half, name + ': and inside the top half of the phone (' + m.r.bot + ' of ' + half + ')');
+    is(m.overflow, 0, name + ': nothing to scroll');
+    await page.close();
+  }
+
   await browser.close(); stopServer();
   process.exit(T.report('layout') ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });
