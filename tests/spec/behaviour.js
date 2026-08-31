@@ -1949,7 +1949,7 @@ const DAY = 86400000;
       player: !!m.querySelector('video'),
     };
   });
-  is(popup.recorded, 'intro,major,major2,verse,palace', 'five films are recorded: the intro, both Major System parts, Building Scenes and Memory Palaces');
+  is(popup.recorded, 'intro,major,major2,verse,palace,book', 'six films are recorded; only Spaced Repetition and the recall film are still waiting');
   is(popup.src, 'videos/scenes.mp4', 'Building Scenes points at its own file');
   ok(popup.player, '...so its screen draws a player, not the placeholder card');
   ok(popup.closeIsFirst, 'the close button is the first thing in the bar, so it sits top left');
@@ -2004,7 +2004,47 @@ const DAY = 86400000;
   ok(film.stillListed, '…and it stays in Video Review afterwards');
 
   const placeholders = await $(() => Object.keys(VIDEOS).filter(k => !VIDEOS[k].src));
-  is(placeholders.join(','), 'book,sr,recall', 'the other three films are still waiting on recordings');
+  is(placeholders.join(','), 'sr,recall', 'the other two films are still waiting on recordings');
+
+  describe('the Building the Books film plays before the first book lesson', () => { });
+  const bookFilm = await $(() => {
+    const foundations = UNITS.find(u => u.name === 'Foundations');
+    const first = foundations.skills.filter(s => s.kind === 'book')[0];
+    const second = foundations.skills.filter(s => s.kind === 'book')[1];
+    Prog.doneSkills = (Prog.doneSkills || []).filter(s => s !== 'video:book');
+    Prog.videoOrder = []; saveProg();
+
+    const out = { first: first.label, seenBefore: videoSeen('book') };
+    startLesson(first);
+    const m = document.getElementById('videoModal');
+    out.raised = !!m && m.style.display === 'flex';
+    out.title = m ? m.querySelector('.lv-topbar div').textContent : null;
+    out.placeholder = !!(m && m.textContent.includes('Add your video here'));
+    out.lessonHeldBack = !(LZ && LZ.sk && LZ.sk.id === first.id);
+
+    // finishing it must hand control to the lesson, and must not re-enter the film
+    document.getElementById('vsDone').click();
+    out.seenAfter = videoSeen('book');
+    out.lessonRuns = !!(LZ && LZ.sk && LZ.sk.id === first.id);
+
+    // the next book lesson gets on with it — the callback that re-enters startLesson once
+    // recursed forever here, because maybeVideo fires its callback even on an already-seen film
+    m.style.display = 'none';
+    startLesson(second);
+    out.raisedAgain = document.getElementById('videoModal').style.display === 'flex';
+    out.secondRuns = !!(LZ && LZ.sk && LZ.sk.id === second.id);
+    return out;
+  });
+  is(bookFilm.first, 'Genesis', 'the first book lesson is Genesis');
+  no(bookFilm.seenBefore, '...and a new learner has not seen the film');
+  ok(bookFilm.raised, 'opening that lesson raises the film first');
+  is(bookFilm.title, 'Building the Books', '...the right one');
+  no(bookFilm.placeholder, '...with a real recording behind it, not the "add your video here" card');
+  ok(bookFilm.lessonHeldBack, '...and the lesson waits until the film is done');
+  ok(bookFilm.seenAfter, 'finishing it marks it watched');
+  ok(bookFilm.lessonRuns, '...and hands straight over to the lesson');
+  no(bookFilm.raisedAgain, 'the next book lesson does not raise it again');
+  ok(bookFilm.secondRuns, '...it simply starts, without recursing through the film');
 
   describe('translations: located is shared, word for word is not', () => { });
   const trList = await $(() => ({
@@ -2291,6 +2331,9 @@ const DAY = 86400000;
   ok(pulse.calm, '…unless the reader has asked for less motion');
 
   const filmDuringTest = await $(() => {
+    // this block is about the Review Lesson corner, not the first-run film, so it starts from a
+    // learner who has already watched it — otherwise startLesson raises the film instead
+    markVideoSeen('book');
     const book = UNITS.flatMap(U => U.skills).find(s => s.kind === 'book');
     startLesson(book);
     const onTeach = !!document.querySelector('#learn [data-revlesson]');
@@ -2749,16 +2792,29 @@ const DAY = 86400000;
     };
     const types = ['q_n2i','q_i2n','q_n2b','q_b2n','q_i2b','q_b2i','q_n2w','q_w2n','q_n2r','q_r2n'];
     const shots = {}; types.forEach(t => shots[t] = shot(t));
-    const pegWords = [];
-    for (let i = 1; i <= 176; i++) pegWords.push(pegFor(i).word);
+    // every picture each pool can legitimately offer, so an option can be traced to its source
+    const first = o => (Array.isArray(o) ? o[0] : o);
+    const pool = (own, opts) => {
+      const s = new Set();
+      for (let x = 1; x <= 66; x++) {
+        const mine = own(x); if (mine) s.add(String(mine).toLowerCase());
+        (opts(x) || []).map(first).forEach(o => { if (o) s.add(String(o).toLowerCase()); });
+      }
+      return s;
+    };
+    const namePool = pool(bookWordOf, bookWordOptions);
+    const numPool  = pool(numRefOf, numRefOptions);
+    const strays = (opts, p) => opts.filter(o => !p.has(String(o).trim().toLowerCase())).join(' | ');
     return {
       none, nameOnly, both, shots,
       // no book question anywhere may draw a picture
       anyImage: types.reduce((a, t) => a + shots[t].imgs, 0),
       // the Major System question must not offer the number picture, and the reverse
       majorHasNumRef: shots.q_n2i.opts.includes("a driver's licence") || shots.q_b2i.opts.includes("a driver's licence"),
-      numRefHasPeg: shots.q_n2r.opts.some(o => pegWords.includes(o)),
-      nameHasPeg: shots.q_n2w.opts.some(o => pegWords.includes(o)),
+      // a wrong answer must be another book's picture OF THE SAME KIND — not a Major System peg,
+      // which is what leaks in when the question is built from pegFor() by mistake
+      numRefStrays: strays(shots.q_n2r.opts, numPool),
+      nameStrays: strays(shots.q_n2w.opts, namePool),
       numRefHasMine: shots.q_n2r.opts.includes("a driver's licence"),
       nameHasMine: shots.q_n2w.opts.includes('knee-high socks'),
       // a fallback distractor is a plain label, not a [label, why] pair
@@ -2773,8 +2829,8 @@ const DAY = 86400000;
 
   is(bq.anyImage, 0, 'no book question draws a picture: books are examined in words');
   no(bq.majorHasNumRef, 'the Major System question never offers the number picture as an answer');
-  no(bq.numRefHasPeg, '…and the number picture question never offers a Major System peg');
-  no(bq.nameHasPeg, '…nor does the name picture question');
+  is(bq.numRefStrays, '', '…and every wrong answer in the number picture question is another number picture');
+  is(bq.nameStrays, '', '…and every wrong answer in the name picture question is another name picture');
   ok(bq.numRefHasMine && bq.nameHasMine, 'each question does offer the reader\u2019s own answer');
   no(bq.commas, 'a stand-in answer is a plain label, not a label and its explanation');
 
@@ -4989,6 +5045,7 @@ const DAY = 86400000;
     const firstPaid = order.find(id => { const f = flat.find(x => x.id === id); return isPaidSkill(UNITS[f.ui].skills[f.si]); });
     const paidAt = flat.findIndex(x => x.id === firstPaid);
     Prog.doneSkills = flat.slice(0, paidAt).map(f => f.id);
+    markVideoSeen('book');   // swiping onto a book lesson must not be interrupted by its first-run film
     bustCaches();
 
     const strayKinds = [...new Set(swipeableLessons().map(s => s.kind))].filter(k => ['num', 'book', 'sound'].indexOf(k) < 0).join(',');
@@ -5030,7 +5087,7 @@ const DAY = 86400000;
     openById(order[0]);
     const wasLocked = at(); drag(-140);
     const lockedHeld = at() === wasLocked, lockedSaid = (el('vvToast') || {}).textContent || '';
-    Prog.doneSkills = flat.slice(0, paidAt).map(f => f.id); bustCaches();
+    Prog.doneSkills = flat.slice(0, paidAt).map(f => f.id); markVideoSeen('book'); bustCaches();
 
     // the ends of the path hold. Pro so the last one opens at all.
     Billing.grant();

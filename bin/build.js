@@ -32,7 +32,7 @@ const RULES = [
   ['`images/pegs/', '`/burningbush/images/pegs/', 3],
   // VIDEOS[].src is handed to a <video> element at runtime, so a relative path would resolve
   // against /burningbush with no trailing slash and 404. One site per film that has a recording.
-  ['src:"videos/', 'src:"/burningbush/videos/', 5],
+  ['src:"videos/', 'src:"/burningbush/videos/', 6],
   // one per translation that is fetched on demand; the KJV is the only one loaded with the page
   ['file:"bibles/', 'file:"/burningbush/bibles/', 1],   // +2 the tile thumbnail (chosen word, then the default)
   // fetched by absolute path: a relative one would resolve to /sw.js against the trailing-slash-less URL

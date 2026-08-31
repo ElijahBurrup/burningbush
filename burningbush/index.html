@@ -2098,8 +2098,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.82.0";
+const APP_VERSION="1.83.0";
 const CHANGELOG=[
+ {v:"1.83.0", d:"August 31, 2026", t:"Building the Books", items:[
+   ["new","<b>The Building the Books film is here.</b> It plays once, right before your first book lesson, and explains the thing that lesson is about to ask of you: three pictures for every book — the name, the number, and the coded image — woven into one scene. The Review Lesson button on any book lesson has always pointed at it, and now there is something behind it."]
+ ]},
  {v:"1.82.0", d:"August 31, 2026", t:"The film you get is the film we shipped", items:[
    ["new","<b>The Major System film is here, in two parts.</b> Part one sits above the ten sounds and plays before you learn a single digit — what the whole system is for, so nobody starts the sounds wondering where this is going. Part two waits until after both sound lessons, because it turns those sounds into words and the words into pictures, and that only makes sense once you have them. Both appear in Video Review."],
    ["fix","<b>A re-recorded film was reaching nobody.</b> Films keep their filename when they are re-cut, so the network kept handing out the previous version from its cache — the new opening film went live this morning and still played as the old one. Each film now asks for the exact cut by date, so a new recording arrives the moment it ships."]
@@ -4683,7 +4686,7 @@ const VIDEOS = {
  major2:{src:"/burningbush/videos/major2.mp4", rev:"20260831", skill:"video:major2", tile:"Major System 2", title:"The Major System · Part 2", sub:"Now that you have the sounds: how they become words, and how the words become the pictures you will actually see."},
   verse: {src:"/burningbush/videos/scenes.mp4", rev:"20260828", skill:"video:verse", tile:"Building Scenes", title:"Building Scenes", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse"},
  palace:{src:"/burningbush/videos/palace.mp4", rev:"20260828", skill:"video:palace", tile:"Memory Palaces", title:"Memory Palaces", sub:"Walk a place you know and leave each item at a spot. Do it once and the order sticks.", cta:"palace"},
-  book:  {src:"", skill:"video:book", tile:"Building the Books", title:"Building the Books", sub:"Three pictures instead of one: the name, the number, and the coded image, woven into one scene."},
+  book:  {src:"/burningbush/videos/book.mp4", rev:"20260831", skill:"video:book", tile:"Building the Books", title:"Building the Books", sub:"Three pictures instead of one: the name, the number, and the coded image, woven into one scene."},
   sr:    {src:"", skill:"video:sr", title:"Spaced Repetition", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long term memory.", cta:"sr"},
  recall:{src:"", skill:"video:recall", title:"When a Verse Will Not Come", sub:"A blank is not a failure. It is the moment the scene gets stronger. Here is what to do with it."}
 };
@@ -5485,6 +5488,11 @@ function attachLessonSwipe(host){
 }
 function startLesson(sk){
   if(skillPaywalled(sk)) return openPaywall(sk);   // Pro-only content — offer whole-app subscription or a single-lesson talent unlock
+  // The film that explains what a book lesson even is, once, immediately before the first one.
+  // NOT maybeVideo: it runs the callback even when the film has already been seen, and a callback
+  // that re-enters startLesson would then recurse forever. Watching marks it seen, so the re-entry
+  // finds this guard false and falls through to the lesson.
+  if(sk.kind==="book" && !videoSeen("book")){ openVideoScreen("book", ()=>startLesson(sk)); return; }
   if(sk.kind==="palace") return startPalaceLesson(sk);
   if(sk.kind==="story") return startStoryLesson(sk);
   if(sk.kind==="sound"){
