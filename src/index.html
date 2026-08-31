@@ -2098,8 +2098,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.83.0";
+const APP_VERSION="1.84.0";
 const CHANGELOG=[
+ {v:"1.84.0", d:"August 31, 2026", t:"The way back out of a verse", items:[
+   ["fix","<b>Opening a verse from inside a palace left you stuck on it.</b> Tap a location holding a verse and the scene opens, but the red ✕ did nothing at all — it rebuilt the palace behind the verse without ever taking you to it. Both ways out now land you back on that same palace, at the location you came from, rather than on the list of all your palaces."]
+ ]},
  {v:"1.83.0", d:"August 31, 2026", t:"Building the Books", items:[
    ["new","<b>The Building the Books film is here.</b> It plays once, right before your first book lesson, and explains the thing that lesson is about to ask of you: three pictures for every book — the name, the number, and the coded image — woven into one scene. The Review Lesson button on any book lesson has always pointed at it, and now there is something behind it."]
  ]},
@@ -11081,7 +11084,10 @@ function renderMyPalace(i){
   el("palBack").onclick=renderPalace;
   el("palPractice").onclick=()=>startPalacePractice(i,"palace",()=>renderMyPalace(i));
   el("palEdit").onclick=()=>startPalaceEdit(i);
-  P.querySelectorAll("[data-govr]").forEach(x=>x.onclick=()=>{ const [b,c,v]=x.dataset.govr.split(":").map(Number); const back=()=>renderMyPalace(i); editVerseScene(b,c,v, back, back); });
+  // Both ways out of the verse land back on THIS palace, not the palace list. show() matters:
+  // editVerseScene switches to the verse view, so re-rendering the palace markup without switching
+  // back left the reader stranded on the verse with an X that did nothing.
+  P.querySelectorAll("[data-govr]").forEach(x=>x.onclick=()=>{ const [b,c,v]=x.dataset.govr.split(":").map(Number); const back=()=>{ show("palace"); renderMyPalace(i); }; editVerseScene(b,c,v, back, back); });
 }
 /* ---- edit an existing palace: rename, edit/reorder/add/remove locations ---- */
 let PE=null;

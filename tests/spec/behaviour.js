@@ -2006,6 +2006,38 @@ const DAY = 86400000;
   const placeholders = await $(() => Object.keys(VIDEOS).filter(k => !VIDEOS[k].src));
   is(placeholders.join(','), 'sr,recall', 'the other two films are still waiting on recordings');
 
+  describe('a verse opened from a palace comes back to that palace', () => { });
+  const palBack = await $(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    Prog.palaces = [{ place: 'Grandmother\u2019s House', stations: ['Front door', 'Hallway', 'Kitchen'], sr: {} },
+                    { place: 'The Office', stations: ['Desk', 'Window'], sr: {} }];
+    Prog.memorized = ['1:1:1'];
+    Prog.verseLoc = { '1:1:1': { p: 0, room: 'Hallway' } };
+    markVideoSeen('palace'); markVideoSeen('verse');
+    saveProg();
+
+    show('palace'); renderMyPalace(0);
+    const out = { openedOn: (document.querySelector('#palace h2') || {}).textContent };
+
+    document.querySelector('[data-govr]').click();
+    await wait(50);
+    out.wentToVerse = (document.querySelector('.view.active') || {}).id;
+    out.sceneOpen = !!document.getElementById('wClose');
+
+    document.getElementById('wClose').click();
+    await wait(50);
+    out.backView = (document.querySelector('.view.active') || {}).id;
+    out.backIsList = !!document.getElementById('palAdd');
+    out.backHeading = (document.querySelector('#palace h2') || {}).textContent;
+    return out;
+  });
+  is(palBack.openedOn, '\u{1F3DB}\uFE0F Grandmother\u2019s House', 'the reader is on one particular palace');
+  is(palBack.wentToVerse, 'verse', 'tapping a location that holds a verse opens that verse');
+  ok(palBack.sceneOpen, '...on its scene screen');
+  is(palBack.backView, 'palace', 'the red X actually leaves the verse');
+  no(palBack.backIsList, '...and does not dump the reader on the list of every palace');
+  is(palBack.backHeading, '\u{1F3DB}\uFE0F Grandmother\u2019s House', '...it returns to the palace that brought them in');
+
   describe('the Building the Books film plays before the first book lesson', () => { });
   const bookFilm = await $(() => {
     const foundations = UNITS.find(u => u.name === 'Foundations');
