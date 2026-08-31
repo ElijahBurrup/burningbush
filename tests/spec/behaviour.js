@@ -1949,7 +1949,7 @@ const DAY = 86400000;
       player: !!m.querySelector('video'),
     };
   });
-  is(popup.recorded, 'intro,verse,palace', 'three films are recorded: the intro, Building Scenes and Memory Palaces');
+  is(popup.recorded, 'intro,major,major2,verse,palace', 'five films are recorded: the intro, both Major System parts, Building Scenes and Memory Palaces');
   is(popup.src, 'videos/scenes.mp4', 'Building Scenes points at its own file');
   ok(popup.player, '...so its screen draws a player, not the placeholder card');
   ok(popup.closeIsFirst, 'the close button is the first thing in the bar, so it sits top left');
@@ -1973,6 +1973,10 @@ const DAY = 86400000;
       unit0First: unit0[0], introButton, majorTile,
       before,
       declared: VIDEOS.intro.src,
+      rev: VIDEOS.intro.rev,
+      // a film that is recorded but carries no rev keeps its old URL, so the CDN goes on serving the
+      // previous cut after a re-export — the exact failure this guards
+      revless: Object.entries(VIDEOS).filter(([, v]) => v.src && !v.rev).map(([k]) => k).join(', '),
       element: !!vd,
       // the runtime copies data-vsrc onto src, which is the only place the path is ever real
       wired: vd ? vd.getAttribute('src') : null,
@@ -1987,11 +1991,12 @@ const DAY = 86400000;
   });
   is(film.unit0First, 'major', 'the film inside the first unit is the Major System one, not the intro');
   ok(film.introButton, '…because the intro stands on its own above the first unit');
-  is(film.majorTile, 'Major System', '…and the tile says what it plays rather than always saying Intro');
+  is(film.majorTile, 'Major System 1', '…and the tile says what it plays rather than always saying Intro');
   no(film.before, 'a new profile has not watched it');
   is(film.declared, 'videos/intro.mp4', 'the film has a real source, not an empty placeholder');
   ok(film.element, '…so the screen draws a player rather than the "add your video here" card');
-  is(film.wired, 'videos/intro.mp4', '…and the source reaches the element');
+  is(film.wired, 'videos/intro.mp4?v=' + film.rev, '…and the source reaches the element, stamped with the cut it wants');
+  is(film.revless, '', 'every recorded film names its revision, so a re-cut is never masked by a stale cache');
   ok(film.controls, '…with controls, because a training film has to be scrubbable');
   is(film.inReview, 'intro', 'showing it puts it at the head of Video Review');
   no(film.seenYet, '…before it has been watched');
@@ -1999,7 +2004,7 @@ const DAY = 86400000;
   ok(film.stillListed, '…and it stays in Video Review afterwards');
 
   const placeholders = await $(() => Object.keys(VIDEOS).filter(k => !VIDEOS[k].src));
-  is(placeholders.join(','), 'major,book,sr,recall', 'the other four films are still waiting on recordings');
+  is(placeholders.join(','), 'book,sr,recall', 'the other three films are still waiting on recordings');
 
   describe('translations: located is shared, word for word is not', () => { });
   const trList = await $(() => ({
@@ -4022,7 +4027,7 @@ const DAY = 86400000;
       srcSlot: keys.every(k => VIDEOS[k].src !== undefined),
     };
   });
-  is(vids.n, 7, 'seven films');
+  is(vids.n, 8, 'eight films, the Major System counting as two');
   has(vids.keys, 'recall', '...including one for when a verse will not come');
   ok(vids.titled, 'every film has a name');
   ok(vids.described, '...and a line saying what it is for');
@@ -4280,8 +4285,8 @@ const DAY = 86400000;
   no(lpath.lastPhaseHasPalace, '...least of all on the last phase');
   is(lpath.dividers, lpath.phaseCount, 'a named rule marks every phase');
   is(lpath.tilesShown, lpath.tilesTotal, '...and with everything revealed, every tile is drawn');
-  is(lpath.videoTiles, 1, 'one film keeps a tile inside a unit: the Major System');
-  is(lpath.videoSkills, 1, '...kept there because Video Review is out of reach this early');
+  is(lpath.videoTiles, 2, 'two films keep a tile inside a unit: both Major System parts');
+  is(lpath.videoSkills, 2, '...kept there because Video Review is out of reach this early');
   is(lpath.videoWhere, 'The Code: Major System Sounds', '...and it sits in the Code section');
   is(lpath.pathMilestones, 0, 'the learn-path milestones are gone');
   is(lpath.storyMilestones, 15, '...while the Bible-story capstones stay');

@@ -2098,8 +2098,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.81.0";
+const APP_VERSION="1.82.0";
 const CHANGELOG=[
+ {v:"1.82.0", d:"August 31, 2026", t:"The film you get is the film we shipped", items:[
+   ["new","<b>The Major System film is here, in two parts.</b> Part one sits above the ten sounds and plays before you learn a single digit — what the whole system is for, so nobody starts the sounds wondering where this is going. Part two waits until after both sound lessons, because it turns those sounds into words and the words into pictures, and that only makes sense once you have them. Both appear in Video Review."],
+   ["fix","<b>A re-recorded film was reaching nobody.</b> Films keep their filename when they are re-cut, so the network kept handing out the previous version from its cache — the new opening film went live this morning and still played as the old one. Each film now asks for the exact cut by date, so a new recording arrives the moment it ships."]
+ ]},
  {v:"1.81.0", d:"August 31, 2026", t:"The new cut of the opening film", items:[
    ["chg","<b>The opening film is the newer, tighter cut.</b> Fifteen seconds shorter, same four minutes on why chapter and verse numbers slide straight off the mind. If you have already watched it, Video Review has the new one."]
  ]},
@@ -4671,10 +4675,14 @@ function storyReachKey(sk){ const s=sk.story; return Math.max(bookNum(s.b)||0, s
 const VIDEOS = {
   // Three are recorded. The rest are waiting, and an empty src draws the placeholder card rather than
   // a broken player, so a film can be added by dropping a file in and setting one string.
-  intro: {src:"/burningbush/videos/intro.mp4", skill:"video:intro", tile:"Intro", title:"Start Here: How Burning Bush Works", sub:"Four minutes on why chapter and verse numbers slide straight off the mind, and the two old ideas that fix it."},
- major: {src:"", skill:"video:major", tile:"Major System", title:"The Major System", sub:"Ten simple sounds turn any number into a picture. The key to everything."},
-  verse: {src:"/burningbush/videos/scenes.mp4", skill:"video:verse", tile:"Building Scenes", title:"Building Scenes", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse"},
- palace:{src:"/burningbush/videos/palace.mp4", skill:"video:palace", tile:"Memory Palaces", title:"Memory Palaces", sub:"Walk a place you know and leave each item at a spot. Do it once and the order sticks.", cta:"palace"},
+  // rev = the date that cut was exported, and it goes on the end of the URL. RE-EXPORTING A FILM
+  // MEANS BUMPING ITS rev: the filename does not change, so without it the CDN keeps serving the
+  // old cut from cache and the new one never reaches anybody.
+  intro: {src:"/burningbush/videos/intro.mp4", rev:"20260831", skill:"video:intro", tile:"Intro", title:"Start Here: How Burning Bush Works", sub:"Four minutes on why chapter and verse numbers slide straight off the mind, and the two old ideas that fix it."},
+ major: {src:"/burningbush/videos/major1.mp4", rev:"20260831", skill:"video:major", tile:"Major System 1", title:"The Major System · Part 1", sub:"What the whole system is for, before you learn a single digit. Ten sounds, then every book of the Bible as a picture."},
+ major2:{src:"/burningbush/videos/major2.mp4", rev:"20260831", skill:"video:major2", tile:"Major System 2", title:"The Major System · Part 2", sub:"Now that you have the sounds: how they become words, and how the words become the pictures you will actually see."},
+  verse: {src:"/burningbush/videos/scenes.mp4", rev:"20260828", skill:"video:verse", tile:"Building Scenes", title:"Building Scenes", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse"},
+ palace:{src:"/burningbush/videos/palace.mp4", rev:"20260828", skill:"video:palace", tile:"Memory Palaces", title:"Memory Palaces", sub:"Walk a place you know and leave each item at a spot. Do it once and the order sticks.", cta:"palace"},
   book:  {src:"", skill:"video:book", tile:"Building the Books", title:"Building the Books", sub:"Three pictures instead of one: the name, the number, and the coded image, woven into one scene."},
   sr:    {src:"", skill:"video:sr", title:"Spaced Repetition", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long term memory.", cta:"sr"},
  recall:{src:"", skill:"video:recall", title:"When a Verse Will Not Come", sub:"A blank is not a failure. It is the moment the scene gets stronger. Here is what to do with it."}
@@ -4691,7 +4699,9 @@ function buildUnits(){
     // Video Review is not reachable this early, so the opening film keeps a tile of its own here
     {id:VIDEOS.major.skill, label:VIDEOS.major.title, kind:"video", vkey:"major", optional:true, items:[]},
     {id:"snd:0-4",label:"Sounds 0–4",kind:"sound",items:[0,1,2,3,4]},
-    {id:"snd:5-9",label:"Sounds 5–9",kind:"sound",items:[5,6,7,8,9]}
+    {id:"snd:5-9",label:"Sounds 5–9",kind:"sound",items:[5,6,7,8,9]},
+    // part two comes AFTER the sounds — it turns them into words and pictures, which needs the sounds first
+    {id:VIDEOS.major2.skill, label:VIDEOS.major2.title, kind:"video", vkey:"major2", optional:true, items:[]}
   ]});
   // 1) The Foundation — the Torah (books 1-5) + Matthew (40). Completing this earns the first
   //    scratch off (Verses). The memory palace is NOT here — it's earned later, after 5 verses.
@@ -4892,9 +4902,10 @@ function videoPlaceholder(title, sub){ return `<div class="vidph"><div class="pl
 function videoSeen(k){ const V=VIDEOS[k]; return !!V && (Prog.doneSkills||[]).includes(V.skill); }
 function markVideoSeen(k){ const V=VIDEOS[k]; if(!V) return;
   if(!Prog.doneSkills.includes(V.skill)){ Prog.doneSkills.push(V.skill); saveProg(); bustCaches(); } }
+function filmURL(V){ return V && V.src ? V.src + (V.rev ? "?v=" + V.rev : "") : ""; }
 function videoPlayerHTML(V){
   return V.src
-    ? `<video class="vidplayer" controls playsinline preload="metadata" data-vsrc="${V.src}"></video>`   // set in JS: a literal src= here cannot be checked by the build path rules
+    ? `<video class="vidplayer" controls playsinline preload="metadata" data-vsrc="${filmURL(V)}"></video>`   // set in JS: a literal src= here cannot be checked by the build path rules
     : videoPlaceholder("▶ "+V.title, "Add your video here.");
 }
 // A film joins the review list the first time its screen is SHOWN - not when it is watched, so
@@ -4906,7 +4917,7 @@ function noteVideoShown(k){
 }
 // Arrival order made the list read differently for every person, and the films build on each other.
 // This is the order they teach in. Anything not named here trails at the end rather than vanishing.
-const VIDEO_ORDER=["intro","major","book","verse","sr","palace","recall"];
+const VIDEO_ORDER=["intro","major","major2","book","verse","sr","palace","recall"];
 function videoReviewList(){
   const seen=new Set(Prog.videoOrder||[]);
   const known=VIDEO_ORDER.filter(k=>VIDEOS[k] && seen.has(k));
@@ -4918,6 +4929,7 @@ function videoReviewList(){
 const VIDEO_ICON={
   intro: ()=>`<img src="/burningbush/images/icon-512.png" alt="">`,
   major: ()=>generalPinIconSVG(),
+  major2:()=>generalPinIconSVG(),   // the two parts are one lesson, so they carry one mark
   book:  ()=>bibleIconSVG(),
   verse: ()=>chairIconSVG(),
   sr:    ()=>srIconSVG(),
