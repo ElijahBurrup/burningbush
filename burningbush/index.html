@@ -1054,6 +1054,8 @@
   .pickbtn.pal-full{background:var(--ok-bg);border-color:var(--green)}
   .pickbtn.pal-partial{background:var(--no-bg);border-color:var(--miss-ink)}
   .pickbtn.pal-empty{background:var(--sel-bg);border-color:var(--accent)}
+  .pickbtn.pal-heart{background:var(--gold-bg,var(--sel-bg));border-color:var(--gold2)}
+  .pickbtn.pal-heart .pkt{color:var(--gold-ink)}
   .pickbtn.spot-used{background:var(--ok-bg);border-color:var(--green)}
   .pickbtn.spot-free{background:var(--no-bg);border-color:var(--miss-ink)}
   .pickbtn:active{transform:translateY(1px)}
@@ -2096,8 +2098,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.79.0";
+const APP_VERSION="1.80.0";
 const CHANGELOG=[
+ {v:"1.80.0", d:"August 31, 2026", t:"An address you already know", items:[
+   ["new","<b>A verse can now live at <i>Known by heart</i>.</b> It sits at the top of the palace list, above every building. Choose it and the verse needs no palace and no room, is never asked by address again, and has nothing left to review but the words. The location box fills in with it too, because there <i>is</i> a location — it simply is not in a building."],
+   ["chg","<b>“I Know By Heart” now asks which half you know.</b> Where it lives, how it reads, or both. They are not learned together and not lost together, and the answer decides what happens: the location retires the address and hands back any room it held, the words start the strict test, and both does both. Nothing is registered until one is chosen."],
+   ["new","<b>Five clean runs now leaves a verse standing somewhere.</b> Sealing a verse has always handed its room back for another verse to use. It used to leave the verse with no location at all, which read as unfinished — it now reads <b class=\"gold\">Known by heart</b>, which is the truth of it."],
+   ["chg","<b>A room the app took back is returned if the verse is ever demoted.</b> One you chose yourself stays yours."]
+ ]},
  {v:"1.79.0", d:"August 31, 2026", t:"The typing screen, and a verse you already know", items:[
    ["fix","<b>The typing screen was being sized for a phone that does not exist.</b> It was tuned behind rules that only take effect when the window gets shorter — and on an iPhone the window does not get shorter when the keyboard opens, it just gets covered. So none of that tuning ever ran where it was needed. The compact layout is simply how this screen is built now, at every size."],
    ["chg","<b>The box you type in is half the height and the words above it a quarter shorter.</b> Reveal a letter comes up with them, so the words so far, the box and the reveal all sit in the top half of the phone with nothing to scroll."],
@@ -3975,7 +3983,7 @@ function mergeProg(a,b){
     applyBuckets(m, out, a.trActive||b.trActive||"KJV"); }
   // A verse that came out of the merge at rest must not still be holding a station: one device may
   // have promoted it while the other still had the location recorded.
-  Object.keys(m.verseStage).forEach(k=>{ if(m.verseStage[k]==="heart" && m.verseLoc && m.verseLoc[k]){
+  Object.keys(m.verseStage).forEach(k=>{ if(m.verseStage[k]==="heart" && m.verseLoc && m.verseLoc[k] && !m.verseLoc[k].heart){
     m.locPast=m.locPast||{}; m.locPast[k]=m.verseLoc[k]; delete m.verseLoc[k]; } });
   return migrateProg(m);
 }
@@ -6214,7 +6222,7 @@ function renderVerse(){
         +topicGrid();
     } else if(vView==="mem"){ title="💛 My Verses";
       // anything still missing its scene text, its palace, OR its room shows up here
-      memBare=mem.filter(a=>{ const k=a.join(":"); if(isHeart(k)) return false;   // known by heart -> never nagged for a scene or a station
+      memBare=mem.filter(a=>{ const k=a.join(":"); if(isHeart(k)||locIsHeart(k)) return false;   // known by heart -> never nagged for a scene or a station
         const loc=(Prog.verseLoc&&Prog.verseLoc[k])||null; const sc=((Prog.customScene&&Prog.customScene[k])||"").trim();
         return !sc || !loc || loc.p==null || !((loc.room||"").trim()); });
  const nudge = memBare.length ? `<div class="mem-backfill"><div class="mem-backfill-t"><b>🏛️ ${memBare.length} verse${memBare.length>1?"s":""}</b> ${memBare.length>1?"are":"is"} missing a scene, a palace or a room, fill ${memBare.length>1?"them":"it"} in so ${memBare.length>1?"they":"it"} stick${memBare.length>1?"":"s"}.</div><button class="btn sm" id="memBackfill">Finish ${memBare.length>1?"them":"it"} →</button></div>` : "";
@@ -6422,6 +6430,16 @@ function revPrefs(){ return { loc:true, w4w:true }; }   // no longer a choice: s
 // whether this verse is in the pool at all - a verse still being located is always asked by address.
 function askVerseIn(k){
   const p=revPrefs();
+  // Its address is already known by heart, so there is nothing to ask but the words — the strict
+  // test if it is being tested, the practice if it is still learning them, and nothing at all if it
+  // is resting between clean runs.
+  if(feat("w4w") && locIsHeart(k)){
+    const [b,c,v]=k.split(":").map(Number);
+    if(verseStage(k)==="loc") startWordForWord(b,c,v, nextMemVerse);
+    else if(!w4wTestLocked(k)) startW4WTest(b,c,v, nextMemVerse);
+    else nextMemVerse();
+    return;
+  }
   if(feat("w4w") && p.w4w && verseStage(k)!=="loc" && !w4wTestLocked(k) && (!p.loc || Math.random()<0.5)){
     const [b,c,v]=k.split(":").map(Number); startW4WTest(b,c,v, nextMemVerse); return;
   }
@@ -6778,7 +6796,11 @@ function setVerseStage(k,s){
   // verse has come back clean five times running - so nothing is lost by claiming a verse early.
   if(s!=="heart"){
     const past=(Prog.locPast||{})[k];
-    if(past){ if(!((Prog.verseLoc||{})[k])){ Prog.verseLoc=Prog.verseLoc||{}; Prog.verseLoc[k]=past; } delete Prog.locPast[k]; }
+    // Give the station back if the verse has none, or if the app freed it. A reader who chose
+    // "Known by heart" for the address themselves keeps that choice through a demotion.
+    if(past){ const cur=(Prog.verseLoc||{})[k];
+      if(!cur || cur.auto){ Prog.verseLoc=Prog.verseLoc||{}; Prog.verseLoc[k]=past; }
+      delete Prog.locPast[k]; }
   }
   saveProg();
   return {was, now:s, freed};
@@ -6787,9 +6809,10 @@ function setVerseStage(k,s){
 // remembered in locPast so a later miss puts the verse back exactly where it used to live.
 function heartMaybeFreeStation(k){
   if(!isHeart(k) || w4wTestStreak(k) < W4W_TEST_CR) return null;
-  const loc=(Prog.verseLoc||{})[k]; if(!loc) return null;
-  Prog.locPast=Prog.locPast||{}; Prog.locPast[k]=loc; delete Prog.verseLoc[k]; saveProg();
-  return loc;
+  const loc=(Prog.verseLoc||{})[k]; if(!loc || loc.heart) return null;
+  // The slot is handed back, and the verse is left holding the only location it still needs: it
+  // knows where it lives. It used to be left with no location at all, which read as unfinished.
+  return setLocHeart(k, true) && loc;
 }
 // Missing a word means the verse is not known by heart yet. What happens to the practice count
 // depends on how it got there: a verse that EARNED its place (seven practices) starts the run
@@ -6805,7 +6828,21 @@ function demoteFromHeart(k){
   return earned;
 }
 function stageCounts(){ const c={loc:0,heart:0}; (Prog.memorized||[]).forEach(k=>{ c[verseStage(k)]++; }); return c; }
+// Is this verse's ADDRESS known by heart? Distinct from the stage, which is about the WORDS: a verse
+// can know where it lives without knowing how it reads, and the other way round.
+function locIsHeart(k){ const l=(Prog.verseLoc||{})[k]; return !!(l && l.heart); }
+// auto:true marks a location the app freed after five clean runs, as opposed to one the reader
+// chose. Only the freed kind is handed back if the verse is ever demoted — a deliberate choice sticks.
+function setLocHeart(k, auto){
+  Prog.verseLoc=Prog.verseLoc||{};
+  const old=Prog.verseLoc[k];
+  if(old && old.p!=null){ Prog.locPast=Prog.locPast||{}; Prog.locPast[k]=old; }   // the station, kept so a demotion can give it back
+  Prog.verseLoc[k]=auto?{heart:true,auto:true}:{heart:true};
+  saveProg();
+  return old && old.p!=null ? old : null;
+}
 function stationName(loc){
+  if(loc && loc.heart) return "Known by heart";
   if(!loc||loc.p==null) return "";
   const p=(Prog.palaces||[])[loc.p]; const room=(loc.room||"").trim();
   return [p&&p.place, room].filter(Boolean).join(" \u00b7 ");
@@ -7099,6 +7136,50 @@ function shouldOfferHeart(k){ if(!feat("w4w")) return false;
   // waits, and it waits a full round rather than never asking again.
   const floor = declinedAt>=W4W_PRACTICE_FOR_POOL ? declinedAt+W4W_PRACTICE_FOR_POOL : W4W_PRACTICE_FOR_POOL;
   return verseStage(k)==="loc" && done>=floor; }
+// What a reader can already hold, and what each answer commits them to. Location retires the
+// address: no palace, no room, never asked by address again. Word for word retires the practice:
+// the strict test from here on. Both does both.
+const HEART_PARTS={
+  loc:  {n:"Location",     i:"\u{1F9ED}", d:"I know where it lives. No palace, no room \u2014 and it is never asked by address again."},
+  w4w:  {n:"Word for word",i:"\u{1F5E3}\uFE0F", d:"I know how it reads. The strict test from here: reference at the top, type the whole verse, no warm up and no reveals."},
+  both: {n:"Both",         i:"\u{1F49B}", d:"I know where it lives and how it reads."},
+};
+function openHeartClaim(b,c,v,k,after){
+  const m=el("heartModal")||(()=>{ const d=document.createElement("div"); d.id="heartModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const ref=`${bookName(b)} ${c}:${v}`, here=stationName((Prog.verseLoc||{})[k]);
+  let pick=null;
+  const row=x=>`<button type="button" class="mtradio" data-part="${x}" style="align-items:flex-start;text-align:left">
+      <span class="rdot" style="margin-top:3px"></span>
+      <span><b>${HEART_PARTS[x].i} ${HEART_PARTS[x].n}</b><br><small class="hint" style="font-weight:600">${HEART_PARTS[x].d}</small></span></button>`;
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar"><button class="lclose" id="hcClose">\u2715</button><div style="flex:1;text-align:center;font-weight:800">${ref}</div><span style="width:34px"></span></div>
+      <div style="font-size:19px;font-weight:800;text-align:center;margin:4px 0 0">What do you already know?</div>
+      <p class="hint" style="margin:6px 0 0;text-align:center">Pick what is true. It changes how this verse comes back to you.</p>
+      <div class="mtradiolist one" style="margin-top:12px">${["loc","w4w","both"].map(row).join("")}</div>
+      ${here && here!=="Known by heart" ? `<p class="hint" style="margin:10px 0 0">It sits at <b class="gold">${here}</b>. Claiming the location hands that place back for another verse.</p>` : ""}
+      <button class="btn" id="hcGo" style="width:100%;margin-top:14px" disabled>Choose one</button>
+      <button class="btn ghost" id="hcNo" style="width:100%;margin-top:8px">Not yet</button></div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; };
+  m.querySelectorAll("[data-part]").forEach(btn=>btn.onclick=()=>{
+    pick=btn.dataset.part;
+    m.querySelectorAll("[data-part]").forEach(x=>x.classList.toggle("sel", x===btn));
+    const go=el("hcGo"); go.disabled=false; go.textContent=`Yes \u00b7 I know ${pick==="both"?"both":HEART_PARTS[pick].n.toLowerCase()}`;
+  });
+  el("hcClose").onclick=()=>{ close(); if(after) after(null); };
+  el("hcNo").onclick=()=>{ close(); noteStageAsk(k,"heart",w4wCount(k)); if(after) after(null); };
+  el("hcGo").onclick=()=>{
+    if(!pick) return;
+    close();
+    let freed=null;
+    if(pick==="loc" || pick==="both") freed=setLocHeart(k);
+    if(pick==="w4w" || pick==="both") setVerseStage(k,"heart");
+    toast(pick==="loc" ? "\u{1F9ED} Address known by heart \u00b7 word for word from here"
+        : "\u{1F49B} Known by heart \u00b7 the strict test from here");
+    updateMetrics&&updateMetrics();
+    if(after) after(pick, freed);
+  };
+}
 function openStagePromote(b,c,v,k,to,after){
   const m=el("promoteModal")||(()=>{ const d=document.createElement("div"); d.id="promoteModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   const ref=`${bookName(b)} ${c}:${v}`, here=stationName((Prog.verseLoc||{})[k]);
@@ -8773,7 +8854,8 @@ function confirmForgetVerse(b,c,v,retKeep,retGone){
   const scene=(Prog.customScene&&Prog.customScene[vkey])||"";
   const loc=(Prog.verseLoc&&Prog.verseLoc[vkey])||{};
   const palaceName=(loc.p!=null && Prog.palaces[loc.p])?Prog.palaces[loc.p].place:"";
-  const locLine=(palaceName||loc.room)?`<div class="hint" style="margin:0 0 8px">📍 <b class="gold">${loc.room||"a spot"}</b>${palaceName?` in <b class="gold">${palaceName}</b>`:""}</div>`:"";
+  const locLine=loc.heart?`<div class="hint" style="margin:0 0 8px">📍 <b class="gold">Known by heart</b></div>`
+    :(palaceName||loc.room)?`<div class="hint" style="margin:0 0 8px">📍 <b class="gold">${loc.room||"a spot"}</b>${palaceName?` in <b class="gold">${palaceName}</b>`:""}</div>`:"";
   const reminder = scene
     ? `${locLine}<div class="relbox" style="border:1px solid var(--gold2);text-align:left"><div class="rl" style="color:var(--gold-ink)">★ Your scene</div>${scene}</div>`
  : `<p class="hint" style="margin:6px 0 0">You didn't write a scene for this one. Picturing your own would make it much easier to keep.</p>`;
@@ -9020,12 +9102,14 @@ function wireRefTaps(){
 // straight to the strict test — no scene, no room, no station.
 function claimByHeartHere(b,c,v,back){
   const k=refKey(b,c,v);
-  openStagePromote(b,c,v,k,"heart", ()=>{
-    if(!isHeart(k)) return back();                  // "Not yet" — carry on where they were
+  openHeartClaim(b,c,v,k, pick=>{
+    if(!pick) return back();                        // "Not yet" — carry on where they were
     const cheer=addMemorized({b:bookName(b),c,v}, true);
     saveProg(); updateMetrics();
-    // Into the test itself, which is what claiming a verse means from here on.
-    startW4WTest(b,c,v, ()=>renderLearnedVerse(b,c,v,walkReturn));
+    // Whichever half they claimed, what is left is the words. Somebody who knows how it reads gets
+    // the strict test; somebody who only knows where it lives still has the words to learn.
+    const back2=()=>renderLearnedVerse(b,c,v,walkReturn);
+    if(isHeart(k)) startW4WTest(b,c,v,back2); else startWordForWord(b,c,v,back2);
     if(cheer) setTimeout(cheer, 420);               // let the applause land on the test, not under it
   });
 }
@@ -9143,7 +9227,7 @@ function lvStageBlock(vkey){
       <div class="lv-sr-lbl">Where this verse stands</div>
       <div class="stagerow">${V_STAGES.map(x=>`<span class="stagepip ${x===s?"on":""}">${STAGE_INFO[x].i}<b>${STAGE_INFO[x].n}</b></span>`).join("")}</div>
       <p class="hint" style="text-align:center;margin:8px 0 0">${STAGE_WHAT[s]}</p>
-      <button class="btn ghost sm" id="lvStage" style="width:100%;margin-top:8px">${s==="heart"?"Put it back in practice":"\u{1F49B} I already know this by heart \u2192"}</button>
+      <button class="btn ghost sm" id="lvStage" style="width:100%;margin-top:8px">${s==="heart"?"Put it back in practice":"\u{1F49B} I Know By Heart"}</button>
     </div>`;
 }
 function openStagePicker(b,c,v,vkey,after){
@@ -9175,8 +9259,8 @@ function openStagePicker(b,c,v,vkey,after){
 function lvSceneBlock(vkey){
   const loc=(Prog.verseLoc&&Prog.verseLoc[vkey])||{};
   const scText=((Prog.customScene&&Prog.customScene[vkey])||"").trim();
-  const pHas = loc.p!=null && Prog.palaces && Prog.palaces[loc.p];
-  const locLine = pHas ? (Prog.palaces[loc.p].place + (loc.room?` · ${loc.room}`:"")) : "";
+  const pHas = !!loc.heart || (loc.p!=null && Prog.palaces && Prog.palaces[loc.p]);
+  const locLine = loc.heart ? "Known by heart" : (pHas ? (Prog.palaces[loc.p].place + (loc.room?` · ${loc.room}`:"")) : "");
   if(scText || pHas){
     return `<div class="lv-scene">
       <div class="lv-scene-h">🏛️ Your memory scene</div>
@@ -9200,7 +9284,7 @@ function renderWalk(){
 
   if(wPhase==="kept"){
     const loc=(Prog.verseLoc&&Prog.verseLoc[vkey])||{};
-    const place=(loc.p!=null && Prog.palaces[loc.p]) ? Prog.palaces[loc.p].place : "";
+    const place=loc.heart ? "Known by heart" : ((loc.p!=null && Prog.palaces[loc.p]) ? Prog.palaces[loc.p].place : "");
     const scene=(Prog.customScene[vkey]||"").trim();
     V.innerHTML=`<div class="card">
         <div class="keptcrown">👑</div>
@@ -9235,7 +9319,7 @@ function renderWalk(){
     V.innerHTML=`<div class="card">
         ${verseNavNow.html}
         <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
-        ${feat("w4w")?`<button class="btn ghost sm" id="wHeart" style="width:100%;margin:8px 0 12px">💛 I know this by heart →</button>`:""}
+        ${feat("w4w")?`<button class="btn ghost sm" id="wHeart" style="width:100%;margin:8px 0 12px">💛 I Know By Heart</button>`:""}
         <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
         <div class="lv-versetext">“${verseWordsHTML(b,c,v,curScene.text)}”</div>
         <div class="hint" style="text-align:center;margin:-8px 0 10px">Press and hold any word for its Hebrew or Greek.</div>
@@ -9256,8 +9340,10 @@ function renderWalk(){
   // ---- scene phase: place it in a palace room + write the scene ----
   const palaces=(Prog.palaces||[]).map((p,i)=>[p,i]).filter(x=>x[0]);
   const loc=(Prog.verseLoc&&Prog.verseLoc[vkey])||{};
-  const selP = (loc.p!=null && palaces.some(x=>x[1]===loc.p)) ? loc.p
+  const selP = loc.heart ? null
+             : (loc.p!=null && palaces.some(x=>x[1]===loc.p)) ? loc.p
              : (palaces.length===1 ? palaces[0][1] : null);   // the saved palace, or the only one there is
+  const HEART_ROOM="Known by heart";
   const roomsFor=(pi)=>{ const p=Prog.palaces[pi]; return (p&&Array.isArray(p.stations))?p.stations:[]; };
   // A spot already holding a verse is not forbidden, but it is not where you want to be sent either.
   const spotFree=(pi,room)=>versesAtLoc(pi,room).filter(k=>k!==vkey).length===0;
@@ -9269,7 +9355,11 @@ function renderWalk(){
   const palaceFill=(i)=>{ const st=roomsFor(i), used=st.filter(r=>!spotFree(i,r)).length;
     return { st, used, fill: st.length>0 && used===st.length ? "full" : (used>0 ? "partial" : "empty") }; };
   const PAL_ORDER={partial:0, empty:1, full:2};
-  const palaceTiles=()=>palaces.map(([p,i])=>Object.assign({p,i}, palaceFill(i)))
+  // First, because a verse the reader can already find does not need to go looking through palaces.
+  const heartTile=`<button type="button" class="pickbtn pal-heart${loc.heart?" on":""}" data-p="heart">
+      <span class="pkt">💛 Location Known By Heart</span>
+      <span class="pks">no palace · word for word only</span></button>`;
+  const palaceTiles=()=>heartTile+palaces.map(([p,i])=>Object.assign({p,i}, palaceFill(i)))
     .sort((a,b)=>PAL_ORDER[a.fill]-PAL_ORDER[b.fill] || a.i-b.i)
     .map(({p,i,st,used,fill})=>{
       const free=st.length-used;
@@ -9294,18 +9384,18 @@ function renderWalk(){
   };
   // A label over a box, and the choice itself in a sheet. Two grids inline pushed the verse, the
   // pictures and the scene box off the screen, and this screen is about writing the scene.
-  const chosenPalace = selP!=null ? (Prog.palaces[selP]||{}).place : "";
+  const chosenPalace = loc.heart ? HEART_ROOM : (selP!=null ? (Prog.palaces[selP]||{}).place : "");
   const freeIn = pi => roomsFor(pi).filter(r=>spotFree(pi,r)).length;
   // The ids are written out rather than passed in: the static check scans the source for every id
   // that gets looked up, and an id built from a variable is invisible to it.
   const boxIn=pkBoxIn, boxCls=pkBoxCls;
   const palaceSel = palaces.length
- ? `<input type="hidden" id="wPalace" value="${selP==null?"":selP}"><input type="hidden" id="wRoom" value="${bbEsc(loc.room||"")}">
+ ? `<input type="hidden" id="wPalace" value="${loc.heart?"heart":(selP==null?"":selP)}"><input type="hidden" id="wRoom" value="${bbEsc(loc.heart?HEART_ROOM:(loc.room||""))}">
        <label class="vplabel vplabel-lg" style="display:block;margin-bottom:5px">Which palace?</label>
-       <button type="button" class="${boxCls(chosenPalace,true)}" id="wPalaceBtn">${boxIn("Choose a palace…",chosenPalace,chosenPalace?`${freeIn(selP)} free of ${roomsFor(selP).length}`:"")}</button>
+       <button type="button" class="${boxCls(chosenPalace,true)}" id="wPalaceBtn">${boxIn("Choose a palace…",chosenPalace,loc.heart?"no palace needed":(chosenPalace?`${freeIn(selP)} free of ${roomsFor(selP).length}`:""))}</button>
        <label class="vplabel vplabel-lg" style="display:block;margin:14px 0 5px">Which room / spot?
          <button type="button" class="wroom-go" id="wRoomEye" title="Open this location in your palace">🏛️</button></label>
-       <button type="button" class="${boxCls(loc.room||"",selP!=null)}" id="wRoomBtn">${boxIn(selP==null?"Pick a palace first…":"Choose a room or spot…", loc.room||"", loc.room?(spotFree(selP,loc.room)?"free":"already holds a verse"):"")}</button>`
+       <button type="button" class="${boxCls(loc.heart?HEART_ROOM:(loc.room||""), loc.heart||selP!=null)}" id="wRoomBtn">${loc.heart?boxIn("",HEART_ROOM,"nothing to walk to"):boxIn(selP==null?"Pick a palace first…":"Choose a room or spot…", loc.room||"", loc.room?(spotFree(selP,loc.room)?"free":"already holds a verse"):"")}</button>`
  : `<div class="hint" style="margin:2px 0 10px">You don't have a memory palace yet. Build one in the <b>Palaces</b> tab. For now, just describe where your scene happens.</div>`;
   V.innerHTML=`<div class="card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="wClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">${palaces.length?"Which palace?":"Write your scene"}</div><button class="lsave" id="wDoneTop" title="Save & done">✓</button></div>
@@ -9335,30 +9425,35 @@ function renderWalk(){
   // half-written scene with it, and the scene is the reason this screen exists.
   function paintBoxes(){
     const pv=el("wPalace").value, room=el("wRoom").value;
-    const pi = pv==="" ? null : +pv;
+    const heart = pv==="heart";
+    const pi = (heart || pv==="") ? null : +pv;
     const pb=el("wPalaceBtn"), rb=el("wRoomBtn");
     if(pb){
-      const nm = pi==null ? "" : ((Prog.palaces[pi]||{}).place||"");
+      const nm = heart ? HEART_ROOM : (pi==null ? "" : ((Prog.palaces[pi]||{}).place||""));
       pb.className=boxCls(nm,true);
-      pb.innerHTML=boxIn("Choose a palace…", nm, nm?`${roomsFor(pi).filter(r=>spotFree(pi,r)).length} free of ${roomsFor(pi).length}`:"");
+      pb.innerHTML=boxIn("Choose a palace…", nm, heart?"no palace needed":(nm?`${roomsFor(pi).filter(r=>spotFree(pi,r)).length} free of ${roomsFor(pi).length}`:""));
     }
     if(rb){
-      rb.className=boxCls(room, pi!=null);
-      rb.innerHTML=boxIn(pi==null?"Pick a palace first…":"Choose a room or spot…", room,
-                         room?(spotFree(pi,room)?"free":"already holds a verse"):"");
+      rb.className=boxCls(room, heart || pi!=null);
+      rb.innerHTML=boxIn(pi==null&&!heart?"Pick a palace first…":"Choose a room or spot…", room,
+                         heart?"nothing to walk to":(room?(spotFree(pi,room)?"free":"already holds a verse"):""));
     }
   }
   if(el("wPalaceBtn")) el("wPalaceBtn").onclick=()=>{
     const m=sheet("Which palace?", "", palaceTiles());
     m.querySelectorAll("[data-p]").forEach(btn=>btn.onclick=()=>{
-      el("wPalace").value=btn.dataset.p;
-      el("wRoom").value="";                       // a new palace means the old room is gone
+      const pick=btn.dataset.p;
+      el("wPalace").value=pick;
+      // There is nothing to pick a room from, so the room is the answer itself and the box says so.
+      el("wRoom").value = pick==="heart" ? HEART_ROOM : "";   // a new palace means the old room is gone
       el("wPalaceBtn").classList.remove("needpick");
+      if(el("wRoomBtn")) el("wRoomBtn").classList.remove("needpick");
       closeSheet(); paintBoxes();
     });
   };
   if(el("wRoomBtn")) el("wRoomBtn").onclick=()=>{
     const pv=el("wPalace").value;
+    if(pv==="heart"){ toast("This verse's address is known by heart — there is no room to pick."); return; }
     if(pv===""){ toast("Pick a palace first."); return; }
     const pi=+pv;
     const m=sheet("Which room or spot?", `In <b>${bbEsc((Prog.palaces[pi]||{}).place||"")}</b>. The first free spot is marked.`, roomTiles(pi), mm=>{
@@ -9378,7 +9473,9 @@ function renderWalk(){
       closeSheet(); paintBoxes();
     });
   };
-  if(el("wRoomEye")) el("wRoomEye").onclick=()=>{ const pv=el("wPalace")?el("wPalace").value:""; if(pv===""){ toast("Pick a palace first."); return; }
+  if(el("wRoomEye")) el("wRoomEye").onclick=()=>{ const pv=el("wPalace")?el("wPalace").value:"";
+    if(pv==="heart"){ toast("Known by heart — there is no palace to open."); return; }
+    if(pv===""){ toast("Pick a palace first."); return; }
     const room=el("wRoom")?el("wRoom").value:""; sceneBackfill=false; show("palace"); startPalaceEdit(+pv, room||null); };   // 👁️ jump to this location in the palace editor
   const finish=()=>{
     // All three pictures get shouted and numbered, so the scene reads back as an address:
@@ -9394,7 +9491,9 @@ function renderWalk(){
     }
     if(text) Prog.customScene[vkey]=text; else delete Prog.customScene[vkey];
     if(el("wPalace")){ Prog.verseLoc=Prog.verseLoc||{}; const pv=el("wPalace").value;   // blank palace → don't record a bogus location
-      if(pv!=="") Prog.verseLoc[vkey]={p:+pv, room:(el("wRoom")?el("wRoom").value:"")}; else delete Prog.verseLoc[vkey]; }
+      if(pv==="heart") setLocHeart(vkey);
+      else if(pv!=="") Prog.verseLoc[vkey]={p:+pv, room:(el("wRoom")?el("wRoom").value:"")};
+      else delete Prog.verseLoc[vkey]; }
     saveProg();
     // Saving used to drop straight back to the list, which is the one moment somebody actually wants
     // to sit and look at what they just built. It stops here now and waits to be dismissed, and the
@@ -9409,6 +9508,7 @@ function renderWalk(){
   const doneAction=()=>{
     if(palaces.length){
       const pv=el("wPalace")?el("wPalace").value:"", rm=el("wRoom")?el("wRoom").value:"";
+      if(pv==="heart"){ finish(); return; }        // a complete answer on its own: no room to ask for
       if(pv==="" || !rm){
         const t=el(pv===""?"wPalaceBtn":"wRoomBtn");
         if(t){ t.classList.add("needpick"); t.scrollIntoView({block:"center"}); setTimeout(()=>t.classList.remove("needpick"),1400); }
@@ -10481,7 +10581,7 @@ function renderTextFade(){
   const canClaim = TF.stage===0 && feat("w4w") && verseStage(tfKey)==="loc";
   host.innerHTML=`<div class="card">
       <div class="lv-topbar"><button class="lclose" id="tfClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(TF.b)} ${TF.c}:${TF.v}</div><div class="ttcount ${tfDone?"ttgood":""}" title="Recitations toward Known by heart">${tfDone}/${W4W_PRACTICE_FOR_POOL}</div></div>
-      ${canClaim?`<button class="btn ghost sm" id="tfHeart" style="width:100%;margin:2px 0 12px">💛 I already know this by heart →</button>`:""}
+      ${canClaim?`<button class="btn ghost sm" id="tfHeart" style="width:100%;margin:2px 0 12px">💛 I Know By Heart</button>`:""}
       <div class="fadeverse">${html}</div>
  <p class="hint" style="text-align:center">${done?"Now recite the whole verse from memory. Then type it to lock it in.":"Read it aloud. Each step hides more words. <b>Tap any blank to peek</b> for 2 seconds."}</p>
       ${w4wSkipHTML()}
@@ -10496,9 +10596,9 @@ function renderTextFade(){
     const b=TF.b, c=TF.c, v=TF.v, k=tfKey;
     // The practice count is never touched by the promotion, so a later missed test drops the verse
     // back here with exactly the practices it already had (see demoteFromHeart).
-    openStagePromote(b,c,v,k,"heart", ()=>{
-      if(isHeart(k)) backFromTF();     // claimed — it is tested from here, not practised
- else if(TF) renderTextFade(); // "Not yet". Carry on with the practice they came for
+    openHeartClaim(b,c,v,k, pick=>{
+      if(pick==="w4w" || pick==="both") backFromTF();   // claimed — it is tested from here, not practised
+      else if(TF) renderTextFade();                     // "Not yet", or the address only: carry on
     });
   };
   el("tfNext").onclick=()=>{ if(done){ startWordPick(TF.b,TF.c,TF.v,TF.retFn); } else { TF.stage++; renderTextFade(); } };

@@ -1366,7 +1366,7 @@ const DAY = 86400000;
 
     // decline first — practice must carry on, and the offer at seven must survive
     el('tfHeart').click();
-    el('prNo').click();
+    el('hcNo').click();
     out.afterDecline = { stillPractising: !!el('tfNext'), stage: verseStage(k) };
     Prog.w4w[k].count = W4W_PRACTICE_FOR_POOL; saveProg();
     out.offerSurvives = shouldOfferHeart(k);
@@ -1375,9 +1375,13 @@ const DAY = 86400000;
     // now claim it
     renderTextFade();
     el('tfHeart').click();
-    const m = el('promoteModal');
+    const m = el('heartModal');
     out.modalText = m.innerText.replace(/\s+/g, ' ');
-    el('prYes').click();
+    out.choices = [...m.querySelectorAll('[data-part]')].map(x => x.dataset.part).join(',');
+    out.armedBeforePicking = !el('hcGo').disabled;
+    document.querySelector('[data-part="w4w"]').click();     // the words only: the station is not being claimed
+    out.armedAfterPicking = !el('hcGo').disabled;
+    el('hcGo').click();
     out.stage = verseStage(k);
     out.practicesKept = w4wCount(k);
     out.leftPractice = !window.TF;
@@ -1397,15 +1401,17 @@ const DAY = 86400000;
     out.stationBack = !!(Prog.verseLoc || {})[k];
     return out;
   });
-  ok(claim.onEntry, 'the practice screen offers "I already know this by heart" the moment you open it');
+  ok(claim.onEntry, 'the practice screen offers "I Know By Heart" the moment you open it');
   ok(claim.aboveTheVerse, '...above the verse, not under the button you tap over and over');
-  has(claim.label, 'already know this by heart', '...saying so plainly');
+  has(claim.label, 'I Know By Heart', '...saying so plainly');
   no(claim.midPractice, '...and stops offering once you are mid-practice, where it would only be noise');
   ok(claim.afterDecline.stillPractising, 'declining leaves you in the practice you came for');
   is(claim.afterDecline.stage, 'loc', '...with the verse where it was');
   ok(claim.offerSurvives, '...and the offer that seven practices earns still arrives later');
-  has(claim.modalText, 'without practising it here first', 'the claim screen is honest about the practices done');
-  has(claim.modalText, '3 practices intact', '...and says what happens if you were wrong');
+  is(claim.choices, 'loc,w4w,both', 'the claim asks which of the two things you already know');
+  has(claim.modalText, 'What do you already know', '...rather than only whether you are sure');
+  no(claim.armedBeforePicking, '...and will not register anything until one is chosen');
+  ok(claim.armedAfterPicking, '...which arms it');
   is(claim.stage, 'heart', 'claiming moves the verse to the strict test');
   is(claim.practicesKept, 3, '...keeping every practice already done');
   ok(claim.leftPractice, '...and leaves the practice screen, because it is tested from here');
@@ -2210,7 +2216,8 @@ const DAY = 86400000;
                        asks: el('wPalaceBtn').textContent.replace(/\s+/g, ' ').trim() };
     el('wPalaceBtn').click();
     const palaceTiles = document.querySelectorAll('#psGrid [data-p]').length;
-    const palaceSub = document.querySelector('#psGrid .pks').textContent;
+    // the sheet opens with "Known by heart", which is not a palace and has no spots to report
+    const palaceSub = document.querySelector('#psGrid [data-p]:not([data-p="heart"]) .pks').textContent;
     document.querySelector('#psGrid [data-p="0"]').click();
     el('wRoomBtn').click();
     const grid = el('psGrid'), box = el('psScroll');
@@ -2225,7 +2232,7 @@ const DAY = 86400000;
   ok(picker.onScreen.boxes, 'the palace and the spot are boxes on the screen');
   no(picker.onScreen.gridsInline, '…with no grid sitting open on the screen itself');
   ok(/My House/.test(picker.onScreen.asks), '…and a lone palace is already chosen, since there is no choice to make');
-  is(picker.palaceTiles, 1, 'the sheet holds a tile for every palace');
+  is(picker.palaceTiles, 2, 'the sheet holds a tile for every palace, after the one for a known address');
   is(picker.palaceSub, '🔴 8 free of 12', '…saying how much room is left in it, and colouring it red because it is half filled');
   is(picker.cols, 2, 'the spots are laid out two to a row');
   is(picker.spots, 12, '…all twelve of them');
@@ -2360,8 +2367,11 @@ const DAY = 86400000;
     openVerseWizard(40, 6, 33, () => { });
     el('wToScene').click();
     el('wPalaceBtn').click();
-    const tiles = [...document.querySelectorAll('#psGrid [data-p]')];
+    const all = [...document.querySelectorAll('#psGrid [data-p]')];
+    const tiles = all.filter(t => t.dataset.p !== 'heart');   // a known address is not a building
     const out = {
+      firstIsHeart: all[0] && all[0].dataset.p === 'heart',
+      heartSays: all[0] ? all[0].querySelector('.pkt').textContent : '',
       order: tiles.map(t => t.querySelector('.pkt').textContent),
       fills: tiles.map(t => t.dataset.fill),
       classes: tiles.map(t => /pal-(full|partial|empty)/.exec(t.className)[0]),
@@ -2374,8 +2384,10 @@ const DAY = 86400000;
       .map(c => /pal-(full|partial|empty)/.exec(c.className)[0]);
     return out;
   });
+  ok(palColours.firstIsHeart, 'the picker offers "Known by heart" first — a verse whose address you hold needs no building');
+  has(palColours.heartSays, 'Location Known By Heart', '…by that name');
   is(palColours.order.join(' → '), 'Half Done → Untouched → Full House',
-     'the picker sorts by where a verse can actually go');
+     'the picker sorts the palaces themselves by where a verse can actually go');
   is(palColours.fills.join(','), 'partial,empty,full', '…half filled, then untouched, then full');
   is(palColours.classes.join(','), 'pal-partial,pal-empty,pal-full',
      'red, blue and green, the Memory Palace colours');
@@ -3555,12 +3567,16 @@ const DAY = 86400000;
     const held = !heartMaybeFreeStation(k);
     Prog.w4wSR[k].cr = W4W_TEST_CR; saveProg();
     const freed = heartMaybeFreeStation(k);
-    return { held, freed: freed ? stationName(freed) : '', gone: !(Prog.verseLoc || {})[k],
+    return { held, freed: freed ? stationName(freed) : '',
+             // the slot is what is given back; the verse keeps a location, and it is this one
+             gone: versesAtLoc(0, 'Front door').length === 0,
+             nowShows: stationName((Prog.verseLoc || {})[k]),
              remembered: JSON.stringify((Prog.locPast || {})[k] || null) };
   });
   ok(heartStation.held, 'three clean runs is not enough to give up the heartStation');
   is(heartStation.freed, 'My Kitchen · Front door', 'five in a row frees it, and names it');
-  ok(heartStation.gone, '...the place in the palace is released');
+  ok(heartStation.gone, '...the place in the palace is released, free for another verse');
+  is(heartStation.nowShows, 'Known by heart', '...and the verse is left holding the only location it still needs');
   is(heartStation.remembered, '{"p":0,"room":"Front door"}', '...but remembered, in case the verse comes back');
 
   describe('ladder: giving the claim back', () => { });
@@ -3627,7 +3643,7 @@ const DAY = 86400000;
     return { practices: w4wCount(k), invite, rungs, stage: verseStage(k) };
   });
   is(earlyClaim.practices, 0, 'a verse with no practices behind it at all');
-  has(earlyClaim.invite, 'already know this by heart', '...still invites you to say you know it');
+  has(earlyClaim.invite, 'I Know By Heart', '...still invites you to say you know it');
   is(earlyClaim.rungs, 'loc,heart', '...the picker offers both rungs');
   is(earlyClaim.stage, 'heart', '...and claiming it works with nothing practised first');
 
@@ -3689,7 +3705,7 @@ const DAY = 86400000;
   });
   is(vPage.pips, 2, 'the verse page shows both rungs');
   has(vPage.onNow, 'Located', '...marking where this verse stands');
-  has(vPage.cta, 'already know this by heart', 'the way in is on the verse page, with no practice required');
+  has(vPage.cta, 'I Know By Heart', 'the way in is on the verse page, with no practice required');
   ok(vPage.picker, 'tapping it opens the picker');
   is(vPage.choices, 2, '...offering both');
   is(vPage.stage, 'heart', 'choosing Known by heart moves the verse');
@@ -5048,65 +5064,131 @@ const DAY = 86400000;
   has(lswipe.endSaid, 'last lesson on the path', 'saying so rather than doing nothing');
   no(lswipe.onPath, 'the path itself does not swipe, though it is drawn into the same view');
 
-  // ─────────────────── claiming a verse from its own page ───────────────────
-  describe('I know this by heart', () => { });
-  // A verse somebody already knew before they opened this app should not have to be given a scene
-  // and a room in a palace first. The heartClaim sits on the verse's own page, above the pictures, and a
-  // confirmation is what keeps it off the path of a stray thumb.
+  // ─────────────── I Know By Heart, and the address that needs no palace ───────────────
+  describe('I Know By Heart', () => { });
+  // Two different things can already be known about a verse — where it lives, and how it reads.
+  // They are not learned together and not lost together, so the claim asks which, and acts on the
+  // answer: a known address gives up its room and is never asked by address again.
   const heartClaim = await $(() => {
     const snapM = Prog.memorized.slice(), snapS = JSON.stringify(Prog.verseStage || {});
+    const snapL = JSON.stringify(Prog.verseLoc || {}), snapP = JSON.stringify(Prog.palaces || []);
     markVideoSeen('verse');
     const k = '43:10:10';
     const reset = () => { Prog.memorized = Prog.memorized.filter(x => x !== k);
-      if (Prog.verseStage) delete Prog.verseStage[k];
-      if (Prog.verseLoc) delete Prog.verseLoc[k];
-      if (Prog.verseSR) delete Prog.verseSR[k];
+      ['verseStage', 'verseLoc', 'verseSR', 'locPast', 'w4wSR'].forEach(f => { if (Prog[f]) delete Prog[f][k]; });
+      saveProg();
       openVerseWizard(43, 10, 10, () => { }); };
+    const pick = p => { el('wHeart').click(); document.querySelector('[data-part="' + p + '"]').click(); el('hcGo').click(); };
 
     reset();
     const card = document.querySelector('#verse .card');
     const kids = [...card.children].map(n => n.id || String(n.className).split(' ')[0]);
     const btn = kids.indexOf('wHeart'), ref = kids.indexOf('lv-ref'), pics = kids.indexOf('lv-triple');
+    const label = el('wHeart').textContent.trim();
 
-    // pressing it asks first, and does nothing on its own
+    // it asks which, and will not act until it is told
     el('wHeart').click();
-    const modal = el('promoteModal');
-    const asked = !!modal && modal.style.display === 'flex';
-    const askedNothingDone = !isHeart(k) && !Prog.memorized.includes(k);
-    const askTitle = (modal.querySelector('div[style*="font-weight:800"]') || {}).textContent || '';
+    const m = el('heartModal');
+    const asked = !!m && m.style.display === 'flex';
+    const choices = [...m.querySelectorAll('[data-part]')].map(x => x.dataset.part).join(',');
+    const armedBefore = !el('hcGo').disabled;
+    document.querySelector('[data-part="both"]').click();
+    const armedAfter = !el('hcGo').disabled;
+    const askedNothingDone = !isHeart(k) && !locIsHeart(k) && !Prog.memorized.includes(k);
 
-    // "Not yet" leaves the verse exactly as it was
-    el('prNo').click();
-    const notYet = { heart: isHeart(k), memorized: Prog.memorized.includes(k), back: !!el('wHeart') };
+    el('hcNo').click();
+    const notYet = { heart: isHeart(k), locHeart: locIsHeart(k), memorized: Prog.memorized.includes(k), back: !!el('wHeart') };
 
-    // "Yes" claims it, with no palace asked for, and goes straight into the strict test
-    el('wHeart').click(); el('prYes').click();
-    const after = { heart: isHeart(k), memorized: Prog.memorized.includes(k),
-      loc: (Prog.verseLoc || {})[k] || null, step: (Prog.verseSR[k] || {}).step,
-      inTest: !!el('ttIn'), strict: !!(TT && TT.test),
-      revealHidden: (el('ttHint') || {}).style.display === 'none' };
+    // each answer does its own half, and lands where the work now is
+    reset(); pick('loc');
+    const asLoc = { stage: verseStage(k), locHeart: locIsHeart(k), memorized: Prog.memorized.includes(k),
+      station: stationName((Prog.verseLoc || {})[k]), strict: !!(TT && TT.test), practising: !!el('tfClose') };
+    if (TF) { TF = null; }
 
+    reset(); pick('w4w');
+    const asW4W = { stage: verseStage(k), locHeart: locIsHeart(k), strict: !!(TT && TT.test) };
     if (TT) TT = null;
+
+    reset(); pick('both');
+    const asBoth = { stage: verseStage(k), locHeart: locIsHeart(k), station: stationName((Prog.verseLoc || {})[k]), strict: !!(TT && TT.test) };
+    if (TT) TT = null;
+
+    // a known address is never asked by address again
+    let where = null;
+    const realFade = window.startWordForWord, realTest = window.startW4WTest, realAsk = window.askVerse;
+    startWordForWord = () => { where = 'practice'; }; startW4WTest = () => { where = 'strict'; }; askVerse = () => { where = 'address'; };
+    reset(); setLocHeart(k); delete Prog.verseStage[k];
+    askVerseIn(k); const revLoc = where;
+    Prog.verseStage[k] = 'heart'; where = null; askVerseIn(k); const revHeart = where;
+    startWordForWord = realFade; startW4WTest = realTest; askVerse = realAsk;
+
+    // five clean runs hands the room back and leaves the verse holding the only location it needs
+    reset();
+    Prog.palaces = [{ place: 'My Kitchen', stations: ['Front door'], learnedAt: Date.now(), step: 1 }];
+    if (!Prog.memorized.includes(k)) Prog.memorized.push(k);   // versesAtLoc counts memorized verses
+    Prog.verseLoc[k] = { p: 0, room: 'Front door' }; Prog.verseStage[k] = 'heart';
+    Prog.w4wSR = Prog.w4wSR || {};
+    const heldBefore = versesAtLoc(0, 'Front door').length;
+    Prog.w4wSR[k] = { cr: W4W_TEST_CR - 1, n: 4, ok: 4, at: Date.now() };
+    const earlyFree = heartMaybeFreeStation(k);
+    Prog.w4wSR[k] = { cr: W4W_TEST_CR, n: 5, ok: 5, at: Date.now() };
+    const freed = heartMaybeFreeStation(k);
+    const seal = { heldBefore, earlyFree: !!earlyFree, freed: freed ? stationName(freed) : null,
+      nowShows: stationName((Prog.verseLoc || {})[k]), heldAfter: versesAtLoc(0, 'Front door').length,
+      remembered: !!(Prog.locPast || {})[k] };
+    // and a demotion takes back only what the app freed
+    setVerseStage(k, 'loc');
+    seal.stationReturned = stationName((Prog.verseLoc || {})[k]);
+    // a location the reader chose is theirs to keep
+    setLocHeart(k); Prog.locPast[k] = { p: 0, room: 'Front door' };
+    setVerseStage(k, 'heart'); setVerseStage(k, 'loc');
+    seal.chosenKept = stationName((Prog.verseLoc || {})[k]);
+
     Prog.memorized = snapM; Prog.verseStage = JSON.parse(snapS);
-    if (Prog.verseLoc) delete Prog.verseLoc[k];
-    if (Prog.verseSR) delete Prog.verseSR[k];
+    Prog.verseLoc = JSON.parse(snapL); Prog.palaces = JSON.parse(snapP);
+    if (Prog.locPast) delete Prog.locPast[k];
+    if (Prog.w4wSR) delete Prog.w4wSR[k];
     saveProg(); updateMetrics();
-    return { btn, ref, pics, asked, askedNothingDone, askTitle, notYet, after };
+    return { btn, ref, pics, label, asked, choices, armedBefore, armedAfter, askedNothingDone,
+      notYet, asLoc, asW4W, asBoth, revLoc, revHeart, seal };
   });
-  ok(heartClaim.btn > heartClaim.ref && heartClaim.btn < heartClaim.pics, 'the heartClaim sits between the reference and the pictures, at the top of the verse');
+  has(heartClaim.label, 'I Know By Heart', 'the verse page offers I Know By Heart');
+  ok(heartClaim.btn > heartClaim.ref && heartClaim.btn < heartClaim.pics, '…between the reference and the pictures, at the top of the verse');
   ok(heartClaim.asked, 'pressing it asks first');
-  has(heartClaim.askTitle, 'by heart', '...in its own words');
-  ok(heartClaim.askedNothingDone, 'and changes nothing until it is answered');
+  is(heartClaim.choices, 'loc,w4w,both', '…which of the two things you already know, or both');
+  no(heartClaim.armedBefore, '…and will not register anything until one is chosen');
+  ok(heartClaim.armedAfter, '…which arms it');
+  ok(heartClaim.askedNothingDone, '…nothing having changed in the meantime');
   no(heartClaim.notYet.heart, '"Not yet" leaves the verse where it was');
-  no(heartClaim.notYet.memorized, '...unmemorized');
-  ok(heartClaim.notYet.back, '...and puts you back on the verse');
-  ok(heartClaim.after.heart, '"Yes" claims it by heart');
-  ok(heartClaim.after.memorized, '...and counts it among the verses you hold');
-  is(heartClaim.after.loc, null, '...without a palace or a location, which is the whole point');
-  is(heartClaim.after.step, 1, '...on the review trail from tomorrow');
-  ok(heartClaim.after.inTest, '...and drops you straight into the test');
-  ok(heartClaim.after.strict, '...the strict one');
-  ok(heartClaim.after.revealHidden, '...with no reveals');
+  no(heartClaim.notYet.locHeart, '…in both halves');
+  ok(heartClaim.notYet.back, '…and puts you back on the verse');
+
+  is(heartClaim.asLoc.stage, 'loc', 'claiming the LOCATION leaves the words still to learn');
+  ok(heartClaim.asLoc.locHeart, '…and retires the address');
+  is(heartClaim.asLoc.station, 'Known by heart', '…which is what the verse now reads as living at');
+  ok(heartClaim.asLoc.memorized, '…the verse counting as memorized, with no palace ever asked for');
+  ok(heartClaim.asLoc.practising, '…and it goes into word for word, which is all that is left of it');
+
+  is(heartClaim.asW4W.stage, 'heart', 'claiming the WORDS moves the verse to the strict test');
+  no(heartClaim.asW4W.locHeart, '…and leaves the address alone, station and all');
+  ok(heartClaim.asW4W.strict, '…starting that test now');
+
+  is(heartClaim.asBoth.stage, 'heart', 'claiming BOTH does both');
+  ok(heartClaim.asBoth.locHeart, '…the address');
+  is(heartClaim.asBoth.station, 'Known by heart', '…reading as known by heart');
+  ok(heartClaim.asBoth.strict, '…and the strict test with it');
+
+  is(heartClaim.revLoc, 'practice', 'a verse whose address is known is never asked by address — only the words are left');
+  is(heartClaim.revHeart, 'strict', '…the strict test once those words are claimed too');
+
+  is(heartClaim.seal.heldBefore, 1, 'a verse being tested still holds its room');
+  no(heartClaim.seal.earlyFree, '…and keeps it at four clean runs');
+  is(heartClaim.seal.freed, 'My Kitchen · Front door', 'five clean runs hands the room back');
+  is(heartClaim.seal.heldAfter, 0, '…the slot standing free for another verse');
+  is(heartClaim.seal.nowShows, 'Known by heart', '…and the verse holding the only location it still needs');
+  ok(heartClaim.seal.remembered, '…the old room remembered');
+  is(heartClaim.seal.stationReturned, 'My Kitchen · Front door', '…and given back if the verse is ever demoted');
+  is(heartClaim.seal.chosenKept, 'Known by heart', 'but an address the reader claimed themselves survives a demotion');
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
