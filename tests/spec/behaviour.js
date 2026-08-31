@@ -2006,6 +2006,44 @@ const DAY = 86400000;
   const placeholders = await $(() => Object.keys(VIDEOS).filter(k => !VIDEOS[k].src));
   is(placeholders.join(','), 'sr,recall', 'the other two films are still waiting on recordings');
 
+  describe('tapping the verse reference in a palace also comes back to that palace', () => { });
+  const refBack = await $(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    Prog.palaces = [{ place: 'Grandmother\u2019s House', stations: ['Front door', 'Hallway', 'Kitchen'], sr: {} },
+                    { place: 'The Office', stations: ['Desk', 'Window'], sr: {} }];
+    Prog.memorized = ['1:1:1'];
+    Prog.verseLoc = { '1:1:1': { p: 0, room: 'Hallway' } };
+    markVideoSeen('palace'); markVideoSeen('verse');
+    saveProg();
+
+    show('palace'); renderMyPalace(0);
+    // the reference inside the station is linkified into its own tappable span, and the global
+    // handler for those stops the event before the station's own handler can see it
+    linkifyRefs(document.getElementById('palace'));
+    const ref = document.querySelector('[data-govr] [data-ref]');
+    const out = { refFound: !!ref, refText: ref ? ref.textContent : null };
+    if (!ref) return out;
+
+    ref.click();
+    await wait(60);
+    out.wentToVerse = (document.querySelector('.view.active') || {}).id;
+
+    const close = document.querySelector('.view.active .lclose');
+    out.closeId = close ? close.id : null;
+    if (close) close.click();
+    await wait(60);
+    out.backView = (document.querySelector('.view.active') || {}).id;
+    out.backIsList = !!document.getElementById('palAdd');
+    out.backHeading = (document.querySelector('#palace h2') || {}).textContent;
+    return out;
+  });
+  ok(refBack.refFound, 'the verse reference inside a station is its own link');
+  is(refBack.refText, 'Genesis 1:1', '...pointing at the verse stored there');
+  is(refBack.wentToVerse, 'verse', 'following it opens the verse');
+  is(refBack.backView, 'palace', '...and the way out returns to the palace tab');
+  no(refBack.backIsList, '...not to the list of every palace');
+  is(refBack.backHeading, '\u{1F3DB}\uFE0F Grandmother\u2019s House', '...but to the palace that brought them in');
+
   describe('a verse opened from a palace comes back to that palace', () => { });
   const palBack = await $(async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms));

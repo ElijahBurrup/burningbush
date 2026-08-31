@@ -2098,8 +2098,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.84.0";
+const APP_VERSION="1.85.0";
 const CHANGELOG=[
+ {v:"1.85.0", d:"August 31, 2026", t:"Back to the palace you were standing in", items:[
+   ["fix","<b>Tapping a verse reference inside a palace sent you to the wrong place on the way back.</b> The reference itself is a link, and following it took the way out that every verse link uses — which returns to the palace list, not to the palace you were standing in. The palace screen now remembers which one you had open, so the ✕ brings you back to it. A sync finishing while you read no longer moves you either."]
+ ]},
  {v:"1.84.0", d:"August 31, 2026", t:"The way back out of a verse", items:[
    ["fix","<b>Opening a verse from inside a palace left you stuck on it.</b> Tap a location holding a verse and the scene opens, but the red ✕ did nothing at all — it rebuilt the palace behind the verse without ever taking you to it. Both ways out now land you back on that same palace, at the location you came from, rather than on the list of all your palaces."]
  ]},
@@ -4140,7 +4143,7 @@ const Auth = {
           Store.setJSON(PROG_KEY,Prog); Store.setJSON(SRS_KEY,SRS); Store.setJSON(PROG_KEY+"_bak",Prog);
           bustCaches(); recomputeLevel(); updateMetrics();
           const active=document.querySelector(".view.active");
-          if(active){ if(active.id==="journey")renderJourney(); else if(active.id==="learn")renderPath(); else if(active.id==="verse")renderVerse(); else if(active.id==="palace")renderPalace(); else if(active.id==="stories")renderStories(); }
+          if(active){ if(active.id==="journey")renderJourney(); else if(active.id==="learn")renderPath(); else if(active.id==="verse")renderVerse(); else if(active.id==="palace")renderPalaceHere(); else if(active.id==="stories")renderStories(); }
         }
       }
       await Auth.push();   // seed cloud on first login, or upload the merged result
@@ -9086,13 +9089,17 @@ function linkifyRefs(root){
   _linking=false;
 }
 // Where to come back to when they are done with the verse they tapped.
-const VIEW_RENDER={learn:()=>renderPath(), verse:()=>renderVerse(), palace:()=>renderPalace(),
+const VIEW_RENDER={learn:()=>renderPath(), verse:()=>renderVerse(), palace:()=>renderPalaceHere(),
   journey:()=>renderJourney(), stories:()=>renderStories()};
 function hereAgain(){
   const view=(document.querySelector(".view.active")||{}).id||"verse";
+  // show("palace") renders the LIST, which clears palHere — so which palace screen was open has to
+  // be carried across by hand, or coming back always lands on the list
+  const here = view==="palace" ? palHere : null;
   const sc=document.querySelector(".content"); const y=sc?sc.scrollTop:0;
   return ()=>{
-    show(view); const r=VIEW_RENDER[view]; if(r) r();
+    show(view); if(view==="palace") palHere=here;
+    const r=VIEW_RENDER[view]; if(r) r();
     requestAnimationFrame(()=>{ const s=document.querySelector(".content"); if(s) s.scrollTop=y; });
   };
 }
@@ -11028,7 +11035,17 @@ const PALACES=[
  ["Hammock","Day 7, REST: you lie back, the work is very good"]
   ]}
 ];
+// Which of the palace view's three screens is showing: null = the list, {mine:i} = one of yours,
+// {ready:id} = a ready made one. Re-rendering the palace view has to mean re-rendering THIS, or a
+// reader standing on a palace gets moved to the list by a refresh they did not ask for.
+let palHere=null;
+function renderPalaceHere(){
+  if(palHere && palHere.mine!=null && Prog.palaces && Prog.palaces[palHere.mine]) return renderMyPalace(palHere.mine);
+  if(palHere && palHere.ready!=null && PALACES.some(p=>p.id===palHere.ready)) return renderPalaceWalk(palHere.ready);
+  return renderPalace();
+}
 function renderPalace(){
+  palHere=null;
   const P=el("palace");
   const mine=(Prog.palaces||[]).map((p,i)=>[p,i]).filter(x=>x[0]);
   const due=palacesDueCount();
@@ -11057,6 +11074,7 @@ function renderPalace(){
   P.querySelectorAll("[data-mine]").forEach(c=>c.onclick=()=>renderMyPalace(+c.dataset.mine));
 }
 function renderMyPalace(i){
+  palHere={mine:i};
   const _c=document.querySelector(".content"); if(_c) _c.scrollTop=0;   // open at the top, not mid-list
   const p=Prog.palaces[i], P=el("palace");
   const due=palaceDue(p), done=palaceTrailDone(p), nextMs=palaceNextReviewMs(p);
@@ -11159,6 +11177,7 @@ function renderPalaceEdit(){
   };
 }
 function renderPalaceWalk(id){
+  palHere={ready:id};
   const _c=document.querySelector(".content"); if(_c) _c.scrollTop=0;
   const p=PALACES.find(x=>x.id===id), P=el("palace");
   P.innerHTML=`<button class="btn ghost sm" id="palBack" style="width:auto;margin-bottom:12px">← Palaces</button>
