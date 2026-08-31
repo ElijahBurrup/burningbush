@@ -4193,8 +4193,32 @@ const DAY = 86400000;
     if (out.shown) el('vsDone').click();
     return out;
   });
-  ok(firstVerse.shown, 'the first verse memorised brings up the spaced-repetition film');
-  has(firstVerse.txt, 'Spaced Repetition', '...that one, before any palace film');
+  // The film used to play here. It now waits for the first finished palace, because until there is
+  // a palace to walk and something due, a rhythm of reviews is advice the reader cannot act on.
+  no(firstVerse.shown, 'the first verse memorised does NOT bring up the spaced-repetition film');
+
+  const srAfterPalace = await $(async () => {
+    if (el('videoModal')) el('videoModal').style.display = 'none';
+    Prog.doneSkills = (Prog.doneSkills || []).filter(x => x !== VIDEOS.sr.skill);
+    Prog.palaces = []; saveProg();
+    const before = { covered: (show('verse'), renderVerse(), !!document.querySelector('.versehub .slock')) };
+    // finishing the first palace is what plays it
+    Prog.palaces = [{ place: 'Home', stations: ['Door', 'Hall'], sr: {} }];
+    saveProg();
+    unlockAfterFirstPalace(() => {});
+    await new Promise(r => setTimeout(r, 2600));
+    const m = el('videoModal');
+    before.filmShown = !!m && m.style.display === 'flex';
+    before.filmTitle = m ? (m.querySelector('.lv-topbar div') || {}).textContent : null;
+    if (before.filmShown) el('vsDone').click();
+    await new Promise(r => setTimeout(r, 1800));
+    before.uncovered = !document.querySelector('.versehub .slock');
+    return before;
+  });
+  ok(srAfterPalace.covered, 'until then Spaced Repetition sits on the Library under a foil');
+  ok(srAfterPalace.filmShown, 'finishing the first palace plays the spaced-repetition film');
+  is(srAfterPalace.filmTitle, 'Spaced Repetition', '...that one');
+  ok(srAfterPalace.uncovered, '...and the foil comes off the Library button afterwards');
 
   const recall = await $(() => {
     if (el('videoModal')) el('videoModal').style.display = 'none';

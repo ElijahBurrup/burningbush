@@ -31,6 +31,7 @@
     --on-accent:#241a02; --on-blue:#fff; --on-green:#062a12; --on-gray:#e9ecf1;
     /* gold/red used as TEXT (go dark on light themes; = base color on dark themes) */
     --gold-ink:var(--gold); --miss-ink:var(--miss);
+    --foil-ink:rgba(0,0,0,.5);   /* lettering ON the gold foil — the foil is gold in every theme */
     --chapready-bg:linear-gradient(135deg,rgba(227,179,74,.20),rgba(201,150,47,.05));
     /* accent families */
     --blue:#6d9bff; --blue2:#4b76e6; --blue-shadow:#2f4f9e; --blue-ink:#8fb0ff;
@@ -455,6 +456,19 @@
   .tile.tickettile.pending{animation:tikflash 1.1s ease-in-out infinite}
   .tile.tickettile.locked{opacity:.6;filter:grayscale(.35)}
   /* ---- scratch off ceremony overlay ---- */
+  /* A control that exists but is not available yet sits under the same gold foil as a ticket. It is
+     not scratchable — it lifts on its own the moment the thing behind it is earned. */
+  .slockwrap{position:relative;display:block}
+  .slockwrap>.slock{position:absolute;inset:0;z-index:3;border-radius:14px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--gold),var(--gold2) 50%,var(--gold));border:1px solid var(--gold2);cursor:pointer}
+  .slock .slock-t{font-weight:800;font-size:13px;letter-spacing:.02em;color:var(--foil-ink);text-align:center;padding:0 10px}
+  .slock.peel{animation:slockPeel 1s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none}
+  @keyframes slockPeel{
+    0%{transform:none;opacity:1}
+    35%{transform:rotate(-3deg) translateY(-4px) scale(1.02)}
+    100%{transform:rotate(-14deg) translate(28%,-130%) scale(.86);opacity:0}
+  }
+  @media (prefers-reduced-motion:reduce){ .slock.peel{animation:none;opacity:0} }
   #scov{position:absolute;inset:0;z-index:140;display:none;background:var(--scrim)}
   #scov.on{display:flex;align-items:center;justify-content:center;padding:22px}
   #scov .scwrap{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px 20px;text-align:center;box-shadow:0 22px 60px var(--scrim)}
@@ -2098,8 +2112,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.85.0";
+const APP_VERSION="1.86.0";
 const CHANGELOG=[
+ {v:"1.86.0", d:"August 31, 2026", t:"Two things that wait until they mean something", items:[
+   ["chg","<b>The Spaced Repetition film waited for the wrong moment.</b> It played on your very first memorised verse — before you had a palace to walk or anything due — and explained a rhythm you had no way to keep yet. It now plays when your first palace is finished, which is the first time any of it applies to you."],
+   ["new","<b>Spaced Repetition on the Library sits under a golden foil until then.</b> You can see it waiting; it opens the moment the film has played."],
+   ["new","<b>So do the palace and room pickers on the verse screen.</b> They used to be replaced by a line of text telling you to go and build a palace. Now you can see exactly what you are working toward, covered, in the place you will use it."],
+   ["new","<b>Finishing your first palace uncovers both, in order.</b> The pickers lift, the film plays, then the Library button lifts."]
+ ]},
  {v:"1.85.0", d:"August 31, 2026", t:"Back to the palace you were standing in", items:[
    ["fix","<b>Tapping a verse reference inside a palace sent you to the wrong place on the way back.</b> The reference itself is a link, and following it took the way out that every verse link uses — which returns to the palace list, not to the palace you were standing in. The palace screen now remembers which one you had open, so the ✕ brings you back to it. A sync finishing while you read no longer moves you either."]
  ]},
@@ -5073,6 +5093,21 @@ function pkBoxIn(label,name,why){
   return `<span class="bbc-t"><span class="bbc-name">${name?bbEsc(name):label}</span>${why?`<span class="bbc-why">${bbEsc(why)}</span>`:""}</span><span class="bbc-caret">▾</span>`;
 }
 function pkBoxCls(name,ready){ return `bbchoose big${name?" set":""}${ready?"":" waiting"}`; }
+// Spaced Repetition is covered until its film has been watched, and that film plays when the first
+// palace is finished. So the button appears at the moment the reader has something to review it with.
+function srUnlocked(){ return videoSeen("sr"); }
+// The palace and room pickers are covered until there is at least one palace to put a verse in.
+function palacePickUnlocked(){ return palaceCount()>0; }
+function foilHTML(label){ return `<span class="slock"><span class="slock-t">${label}</span></span>`; }
+// Lift a foil and, once it has gone, redraw so the live control is wired up underneath. Found by the
+// control it covers rather than by an id of its own: an id built from a variable is invisible to the
+// static check that makes sure every el() lookup has something to find.
+function peelFoil(sel, after){
+  const f=document.querySelector(sel);
+  if(!f){ if(after) after(); return; }
+  f.classList.add("peel");
+  setTimeout(()=>{ if(f.parentNode) f.parentNode.removeChild(f); if(after) after(); }, 1000);
+}
 function pkSheet(title, hint, body, onOpen){
   const m=el("pickSheet")||(()=>{ const d=document.createElement("div"); d.id="pickSheet"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   m.innerHTML=`<div class="modal-card">
@@ -5377,6 +5412,22 @@ function buyPalaceSlot(){
   spendTalents(PALACE_COST); Prog.palaceSlots=(Prog.palaceSlots||0)+1; saveProg();
   toast("🏛️ Room for another palace ✓"); return true;
 }
+/* The moment the first palace is finished, in the order the reader should see it:
+   the verse screen's pickers are uncovered, the Spaced Repetition film plays, and the Library's
+   Spaced Repetition button is uncovered. Each step waits for the one before it. */
+function unlockAfterFirstPalace(ret){
+  const toLibrary=()=>{
+    show("verse"); renderVerse();
+    // the film marks itself watched on the way out, so the button is live before the foil lifts
+    requestAnimationFrame(()=>peelFoil(".versehub .slock", ()=>{ renderVerse(); if(ret) ret(); }));
+  };
+  const film=()=>openVideoScreen("sr", ()=>setTimeout(toLibrary, 260));
+  // show the pickers being uncovered on the screen where they are used
+  if(curScene){
+    show("verse"); wPhase="scene"; renderWalk();
+    requestAnimationFrame(()=>peelFoil("#wPalLock .slock", ()=>setTimeout(film, 320)));
+  } else film();
+}
 function startNewPalace(){ // build an extra palace from the Palace tab
   if(!canBuildPalace()){
     confirmSpend(`Build another memory palace for <b class="gold">${PALACE_COST} 🪙</b>?`,
@@ -5431,7 +5482,11 @@ function renderPalaceBuild(){
     el(PB.host).innerHTML=`<div class="card center"><div style="font-size:52px">🏛️</div><h2>Palace built!</h2>
  <p class="lead"><b class="gold">${PB.place}</b> now has ${PB.stations.length} memory stations. Revisit it anytime in the Palaces tab. ${PB.slot===0?"Your first palace is built. The New Testament is unlocked!":"Beautifully done."}</p>
       <button class="btn" id="pbFin">Done</button></div>`;
-    el("pbFin").onclick=ret; PB=null;
+    // The first palace is what makes Spaced Repetition mean something, so this is where its film
+    // plays and where both foils lift: the pickers on the verse screen, then the Library button.
+    const firstPalace = palaceCount()===1;
+    el("pbFin").onclick=()=>{ PB=null; if(firstPalace) return unlockAfterFirstPalace(ret); ret(); };
+    PB=null;
   };
   el("pbDone").onclick=donePalace;
   if(el("pbDoneTop")) el("pbDoneTop").onclick=donePalace;   // green ✓ = same as "Complete palace"
@@ -6311,7 +6366,9 @@ function renderVerse(){
     <p class="hint" style="margin:0 0 10px">Everything you have hidden away, and every way to practise it.</p>
     ${taxWarnHTML()}${feat("goal")?`<div class="goalbar" id="goalBtn">${libStatusHTML()}</div>`:""}
     <div class="versehub">
-      <button class="vhub sq ${dueAll?"hasdue":""}" id="vMemTest"><span class="vi ani ani-spin">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>
+      ${srUnlocked()
+        ? `<button class="vhub sq ${dueAll?"hasdue":""}" id="vMemTest"><span class="vi ani ani-spin">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>`
+        : `<span class="slockwrap"><button class="vhub sq" id="vMemTest"><span class="vi">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>${foilHTML("Build your first palace")}</span>`}
       <button class="vhub sq" data-view="mem"><span class="vi ani ani-beat">${heartIconSVG()}</span><span>My Verses</span><small>${mem.length}</small></button>
       <button class="vhub sq" id="vLearn"><span class="vi ani ani-twinkle">✨</span><span>Learn Verses</span><small>${suggReach} in reach</small></button>
       <button class="vhub sq" data-view="videos"><span class="vi ani ani-snap">🎬</span><span>Video Review</span><small>${videoReviewList().length||"none yet"}</small></button>
@@ -6331,7 +6388,9 @@ function renderVerse(){
     ? (feat("ntsetup")?openNumTestSetup():startNumberTest())
     : toast("Learn a few numbers first in the Learn tab!");
   if(el("vW4W")) el("vW4W").onclick=()=>openPracticeSetup();
- el("vMemTest").onclick=()=> mem.length ? maybeVideo("sr", startMemTest) : toast("Memorize a verse first, tap Suggested!");
+ el("vMemTest").onclick=()=> !srUnlocked() ? toast("Build your first memory palace, and this opens with the film that explains it")
+   : (mem.length ? startMemTest() : toast("Memorize a verse first, tap Suggested!"));
+  { const f=document.querySelector(".versehub .slock"); if(f) f.onclick=()=>toast("Build your first memory palace, and this opens with the film that explains it"); }
   if(srFlashPending && el("vMemTest")){ srFlashPending=false; const rb=el("vMemTest"); rb.classList.add("srbtn-flash"); setTimeout(()=>rb.classList.remove("srbtn-flash"),6000); }
   paintTheme();
 }
@@ -8839,7 +8898,9 @@ function addMemorized(s, defer){
   if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); saveProg(); updateMetrics(); earnTalents(15);
     const badge=checkBadges(defer), cheer=bumpGoal(defer);   // a new verse counts toward today's goal
     const first=Prog.memorized.length===1;
-    const after=()=>{ badge(); cheer(); if(first) setTimeout(()=>maybeVideo("sr"), 900); };
+    // The Spaced Repetition film used to play here, on the very first verse — before there was a
+    // palace to walk or anything due. It now waits for the first finished palace (see donePalace).
+    const after=()=>{ badge(); cheer(); };
     if(defer) return after;
     after(); return function(){};
   }
@@ -9429,7 +9490,13 @@ function renderWalk(){
        <label class="vplabel vplabel-lg" style="display:block;margin:14px 0 5px">Which room / spot?
          <button type="button" class="wroom-go" id="wRoomEye" title="Open this location in your palace">🏛️</button></label>
        <button type="button" class="${boxCls(loc.heart?HEART_ROOM:(loc.room||""), loc.heart||selP!=null)}" id="wRoomBtn">${loc.heart?boxIn("",HEART_ROOM,"nothing to walk to"):boxIn(selP==null?"Pick a palace first…":"Choose a room or spot…", loc.room||"", loc.room?(spotFree(selP,loc.room)?"free":"already holds a verse"):"")}</button>`
- : `<div class="hint" style="margin:2px 0 10px">You don't have a memory palace yet. Build one in the <b>Palaces</b> tab. For now, just describe where your scene happens.</div>`;
+ : (palacePickUnlocked() ? "" : `<span class="slockwrap" id="wPalLock">
+       <span aria-hidden="true">
+         <label class="vplabel vplabel-lg" style="display:block;margin-bottom:5px">Which palace?</label>
+         <span class="${boxCls("",false)}" style="display:flex">${boxIn("Choose a palace…","","")}</span>
+         <label class="vplabel vplabel-lg" style="display:block;margin:14px 0 5px">Which room / spot?</label>
+         <span class="${boxCls("",false)}" style="display:flex">${boxIn("Choose a room or spot…","","")}</span>
+       </span>${foilHTML("🎫 Memory Palaces · earn this to store your verses in a place you know")}</span>`);
   V.innerHTML=`<div class="card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="wClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;font-size:15px">${palaces.length?"Which palace?":"Write your scene"}</div><button class="lsave" id="wDoneTop" title="Save & done">✓</button></div>
       ${sceneNote?`<div class="teachbox" style="margin:0 0 10px">${sceneNote}</div>`:""}
