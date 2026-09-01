@@ -461,15 +461,6 @@
   /* ---- scratch off ceremony overlay ---- */
   /* A control that exists but is not available yet sits under the same gold foil as a ticket. It is
      not scratchable — it lifts on its own the moment the thing behind it is earned. */
-  /* the onboarding walkthrough's step card — sits above everything, including the ticket overlay */
-  #walkHud{position:absolute;left:10px;right:10px;bottom:78px;z-index:400;background:var(--panel);border:2px solid var(--gold2);
-    border-radius:16px;padding:11px 13px;box-shadow:0 14px 40px var(--scrim);display:none}
-  #walkHud.on{display:block}
-  #walkHud .wh-step{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-ink)}
-  #walkHud .wh-do{font-size:14px;font-weight:800;margin:2px 0 3px}
-  #walkHud .wh-say{font-size:12.5px;color:var(--ink-soft);line-height:1.45}
-  #walkHud .wh-row{display:flex;gap:8px;margin-top:9px}
-  #walkHud .wh-row .btn{width:auto;flex:1;margin:0;padding:8px 10px;font-size:13px}
   .slockwrap{position:relative;display:block}
   .slockwrap>.slock{position:absolute;inset:0;z-index:3;border-radius:14px;display:flex;align-items:center;justify-content:center;
     background:linear-gradient(135deg,var(--gold),var(--gold2) 50%,var(--gold));border:1px solid var(--gold2);cursor:pointer}
@@ -678,7 +669,12 @@
      because the size we most need to serve is the one CSS cannot see. */
   .ttcard .ttdisplay{height:64px;margin:8px 0;font-size:17px;line-height:1.5}
   .ttcard .typein{padding:3px 12px;font-size:16px;border-radius:12px}
-  .ttcard #ttHint{margin:6px 0 0;padding:8px}
+  /* The box gives up whatever the button needs and no more; with no Reveal to show — the strict
+     test has none — the button is display:none and the box simply takes the whole line back. */
+  .ttrow{display:flex;align-items:stretch;gap:8px;margin-top:6px}
+  .ttrow .tt-in{flex:1 1 auto;width:auto;min-width:0}
+  .ttcard #ttHint{flex:0 0 auto;width:auto;margin:0;padding:8px 14px;white-space:nowrap;align-self:stretch;max-width:38%}
+  .ttcard #ttHint.spent{opacity:.55}
   .ttcard .tthelp{font-size:11px;line-height:1.4;margin-top:6px}
   /* On a short screen, with a keyboard up, the whole thing should simply fit and never scroll. */
   @media (max-height:700px){
@@ -696,7 +692,8 @@
     .ttcard .ttdisplay{height:36px;margin:4px 0;font-size:16px;line-height:1.4}
     .ttcard .typein{padding:2px 10px;font-size:16px}
     .ttcard .tthelp{display:none}
-    .ttcard #ttHint{margin-top:5px;padding:7px}
+    .ttrow{gap:6px;margin-top:5px}
+    .ttcard #ttHint{padding:7px 11px}
   }
   .tt-in.wrong{border-color:var(--miss);color:var(--miss-ink)}
   .tt-in.good{border-color:var(--good)}
@@ -1958,13 +1955,6 @@
     </div>
   </div>
 
-  <!-- Simulation bridge: between/after scratch offs during the "Test scratch off" walkthrough. -->
-  <div id="walkHud" aria-live="polite">
-    <div class="wh-step" id="whStep"></div>
-    <div class="wh-do" id="whDo"></div>
-    <div class="wh-say" id="whSay"></div>
-    <div class="wh-row"><button class="btn ghost" id="whSkip">Skip this step</button><button class="btn ghost" id="whEnd">End walkthrough</button></div>
-  </div>
   <div id="simov" aria-hidden="true">
     <div class="scwrap">
  <div class="simbanner">🧪 Simulation. Your real progress is untouched</div>
@@ -1986,6 +1976,7 @@
         <div class="prof-sect">Admin</div>
         <button class="btn ghost" id="testScratchBtn" style="width:100%">🎫 Test scratch off</button>
         <button class="btn ghost" id="testWalkBtn" style="width:100%;margin-top:8px">🚶 Onboarding walkthrough</button>
+        <button class="btn ghost" id="testWalkExit" style="width:100%;margin-top:8px;display:none;border-color:var(--miss-ink);color:var(--miss-ink)">🚪 Exit onboarding simulation</button>
         <button class="btn ghost" id="testOnboardBtn" style="width:100%;margin-top:8px">🕯️ Test onboarding</button>
         <button class="btn ghost" id="testLearnDone" style="width:100%;margin-top:8px">🎓 Simulate Learn finished</button>
         <button class="btn ghost" id="testStoriesDone" style="width:100%;margin-top:8px">📜 Simulate Stories finished</button>
@@ -2045,6 +2036,10 @@
       </div>
       <input type="file" id="impFile" accept="application/json" style="display:none">
       <div id="backupMsg" class="hint" style="margin-top:8px"></div>
+
+      <div class="prof-sect" style="margin-top:16px">App version</div>
+      <p class="hint" style="margin:0 0 8px">You are on <b id="updNow"></b>. Burning Bush also looks for a newer version whenever you tap one of the buttons along the bottom — never while you are in the middle of something.</p>
+      <button class="btn ghost" id="updBtn" style="width:100%">↻ Check for an update</button>
 
       <button class="btn" id="themeClose" style="margin-top:14px">Done</button>
 
@@ -2153,8 +2148,20 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.94.0";
+const APP_VERSION="1.96.0";
 const CHANGELOG=[
+ {v:"1.96.0", d:"September 1, 2026", t:"Room to see what you are doing", items:[
+   ["fix","<b>Added to your home screen, the app sat wrong on the screen.</b> The top bar carried half again its height in empty space with the menu pushed down into the bottom of it, and the tab bar held room at the foot for a home indicator that was not there. It was paying twice for the same two strips of screen. The frame now measures the screen it was actually given, and leaves those strips their room only when it really is underneath them."],
+   ["fix","<b>The ticket for a new phase no longer takes away the screen it landed on.</b> Finishing the sixth lesson of a phase ends the lesson and wins the next phase at the same moment, and claiming the ticket used to drop you on the path — losing the screen naming the verses that lesson had just opened, with the way straight into building one. It puts that screen back."],
+   ["chg","<b>Everything you need while typing a verse is on one line.</b> Reveal has moved up beside the box rather than sitting under it, the box gives up just enough width to make room, and Skip this verse is gone from this screen — it is offered on the warm up immediately before, which is where a verse you mean to skip is skipped."],
+   ["chg","<b>The onboarding walkthrough no longer stands in front of the thing it is walking you through.</b> Its step card covered a quarter of the screen, over the very place the step was happening. Each step is said once and gets out of the way, the tab bar shows the track and the one ticket you can actually earn next, and the way out is in Admin."],
+   ["chg","<b>Unlock codes work again.</b> <i>I have a code</i> on the subscription screen accepts one, if you have been given one."]
+ ]},
+ {v:"1.95.0", d:"September 1, 2026", t:"Updating on your terms", items:[
+   ["chg","<b>Pulling the page down no longer reloads the app.</b> It fired on any hard fling, which meant it could reload you halfway through writing a scene. Updating is now something you choose."],
+   ["new","<b>Check for an update</b> at the foot of Profile, with the version you are on written beside it. It tells you either way — that it is updating, or that you are already current."],
+   ["new","<b>Otherwise it looks only when you tap a button along the bottom.</b> That is the one moment you have already left the screen you were on, so an update can never interrupt anything. At most one look every five minutes."]
+ ]},
  {v:"1.94.0", d:"September 1, 2026", t:"Everything comes with you, not just most of it", items:[
    ["fix","<b>Signing in on a new device left twelve things behind.</b> Your daily goal, your reminders, your theme, the translation you read, which verses you have marked known by heart, and your whole word-for-word record. The merge carried the fields it had been told about and quietly replaced the rest with their defaults — then saved that back over your account. Every one of them travels now."],
    ["new","<b>Your theme follows your account.</b> Choose it once and it is there on the next phone you sign in on, rather than starting over at the default."],
@@ -2963,21 +2970,25 @@ function transVocab(){
   _vocab=m; _vocabFor=id; return m;
 }
 // Edit distance, abandoned early once it cannot come in under the limit.
+// Damerau: a swapped pair of adjacent letters costs one, not two. It is the commonest typo of all,
+// and charging two for it puts the right word level with words that merely look similar.
 function editDist(a,b,max){
   const m=a.length,n=b.length;
   if(Math.abs(m-n)>max) return max+1;
-  let prev=new Array(n+1), cur=new Array(n+1);
-  for(let j=0;j<=n;j++) prev[j]=j;
+  const rows=[];
+  for(let i=0;i<=m;i++){ rows.push(new Array(n+1)); rows[i][0]=i; }
+  for(let j=0;j<=n;j++) rows[0][j]=j;
   for(let i=1;i<=m;i++){
-    cur[0]=i; let best=i;
+    let best=rows[i][0];
     for(let j=1;j<=n;j++){
-      cur[j]=Math.min(prev[j]+1, cur[j-1]+1, prev[j-1]+(a.charCodeAt(i-1)===b.charCodeAt(j-1)?0:1));
-      if(cur[j]<best) best=cur[j];
+      const cost=a.charCodeAt(i-1)===b.charCodeAt(j-1)?0:1;
+      let v=Math.min(rows[i-1][j]+1, rows[i][j-1]+1, rows[i-1][j-1]+cost);
+      if(i>1 && j>1 && a[i-1]===b[j-2] && a[i-2]===b[j-1]) v=Math.min(v, rows[i-2][j-2]+1);
+      rows[i][j]=v; if(v<best) best=v;
     }
     if(best>max) return max+1;
-    const tmp=prev; prev=cur; cur=tmp;
   }
-  return prev[n];
+  return rows[m][n];
 }
 function sharedPrefix(a,b){ let i=0; while(i<a.length && i<b.length && a[i]===b[i]) i++; return i; }
 // The word a misspelling was reaching for. Distance decides it; a shared opening decides ties, which
@@ -2999,6 +3010,38 @@ function nearestWord(q){
 const STOPWORDS=new Set(["the","and","of","to","a","in","that","he","shall","unto","for","i","his","they","be","is","with","not","it","him","them","from","but","by","all","thou","thy","thee","ye","my","me","we","you","are","was","were","this","which","their","have","had","on","as","so","when","then","there","up","out","into","upon","o"]);
 /* Rank verses by how many of the words are in them, rarer words counting for more. Only ever called
    when the plain search found nothing. */
+/* Look for the whole phrase, then for less of it, dropping a word off the end each time. Returns
+   null if even a two-word tail finds nothing, and the caller then falls back to loose word scoring. */
+function searchVersesPhrase(terms, D, cap){
+  const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g, m => "\\" + m);
+  const MIN=3;                                  // "trust the" matches plenty and means nothing
+  for(let n=terms.length; n>=MIN; n--){
+    const use=terms.slice(0,n);
+    if(!use.some(x=>!STOPWORDS.has(x.w))) continue;   // a tail of only little words is not an answer
+    // the least common word decides which verses are even worth testing
+    let rare=use[0]; use.forEach(x=>{ if(x.df<rare.df) rare=x; });
+    const re=new RegExp("\\b"+use.map(x=>esc(x.w)).join("[^a-z0-9]+")+"\\b","i");
+    const hits=[]; let total=0;
+    for(let bi=0; bi<D.length; bi++){
+      const bk=D[bi]; if(!bk) continue;
+      for(let ci=0; ci<bk.length; ci++){
+        const ch=bk[ci]; if(!ch) continue;
+        for(let vi=0; vi<ch.length; vi++){
+          const txt=ch[vi]; if(!txt) continue;
+          const low=txt.toLowerCase();
+          if(low.indexOf(rare.w)<0) continue;          // cheap gate before the pattern
+          const m=re.exec(low); if(!m) continue;
+          total++;
+          if(hits.length<(cap||VSEARCH_CAP))
+            hits.push({b:bi+1, c:ci+1, v:vi+1, at:m.index, len:m[0].length, txt,
+                       terms:use.filter(x=>!STOPWORDS.has(x.w)).map(x=>x.w)});
+        }
+      }
+    }
+    if(total) return {hits, total, words:n, dropped:terms.length-n};
+  }
+  return null;
+}
 function searchVersesLoose(q, cap){
   const out={hits:[], total:0, loose:true, fixed:[], usedKJV:false};
   const raw=String(q||"").toLowerCase().match(/[a-z]+/g)||[];
@@ -3008,16 +3051,35 @@ function searchVersesLoose(q, cap){
   if(t.api) out.usedKJV=true;
   if(!D) return out;
 
-  const V=transVocab(), terms=[];
+  const V=transVocab();
+
+  // EVERY word, in the order it was typed — the phrase depends on the little ones ("is", "my", "I")
+  // being there, and a list that drops them is contiguous in no verse.
+  const said=[];
   for(const w of raw){
-    if(w.length<3) continue;
-    const near=nearestWord(w);
-    if(!near) continue;
+    const near = w.length>=3 ? (nearestWord(w)||w) : w;
     if(near!==w) out.fixed.push([w,near]);
-    if(terms.some(x=>x.w===near)) continue;
-    const df=V.get(near)||1;
-    terms.push({w:near, weight: STOPWORDS.has(near) ? 0.15 : 1/Math.log(2+df)});
+    said.push({w:near, df:V.get(near)||1});
   }
+
+  // and a deduped list of the words worth scoring on, for the fallback
+  const terms=[];
+  for(const s of said){
+    if(s.w.length<3) continue;
+    if(terms.some(x=>x.w===s.w)) continue;
+    terms.push({w:s.w, df:s.df, weight: STOPWORDS.has(s.w) ? 0.15 : 1/Math.log(2+s.df)});
+  }
+  if(!said.length) return out;
+
+  // the phrase first, then less of it, before falling back to scoring loose words
+  const ladder=searchVersesPhrase(said, D, cap);
+  if(ladder){
+    out.hits=ladder.hits; out.total=ladder.total;
+    out.phrase=said.slice(0,ladder.words).map(x=>x.w).join(" ");
+    out.dropped=ladder.dropped;
+    return out;
+  }
+
   if(!terms.length) return out;
   const best=terms.reduce((s,x)=>s+x.weight,0);
 
@@ -4667,6 +4729,8 @@ function showScratchReqs(){
 // the next unwon ladder rung whose milestone is met (or -1). Robust to out-of-order back-compat grants.
 function pendingScratchRung(){ for(let i=0;i<SCRATCH_LADDER.length;i++){ const r=SCRATCH_LADDER[i]; if(!tabWon(r.tab) && r.gate()) return i; } return -1; }
 let scratchOffered=-1, scratchSimActive=false;
+// True only inside the onboarding walkthrough. Everywhere else the bar shows what it always has.
+function walkOneTicket(){ try{ return !!(OnboardWalk && OnboardWalk.active()); }catch(e){ return false; } }
 function updateTabLocks(){
   const pend=pendingScratchRung();
   document.querySelectorAll(".tabbar button").forEach(b=>{
@@ -4675,6 +4739,10 @@ function updateTabLocks(){
     b.classList.toggle("locked", !won);
     b.classList.toggle("ticket", !won);                                    // locked tabs render as scratch off tickets
     b.classList.toggle("pending", !won && (scratchSimActive || pend>=0));   // tickets flash while a scratch is available (or during a sim)
+    // Only one ticket can ever be scratched next. Through the walkthrough the bar shows the track
+    // and that one, so what is being earned is the only thing on offer.
+    const nextTab = pend>=0 && SCRATCH_LADDER[pend] ? SCRATCH_LADDER[pend].tab : null;
+    b.style.display = (walkOneTicket() && !won && b.dataset.tab!==nextTab) ? "none" : "";
   });
   syncTabOrder(false);   // Bible sits far left once earned; back in place when it isn't
   if(!scratchSimActive && pend>=0 && pend!==scratchOffered){ scratchOffered=pend; setTimeout(()=>toast("🎫 You earned a scratch off! Tap a flashing golden ticket below 👇"),450); }
@@ -4796,6 +4864,8 @@ document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
   // tapping Verse while already in a Verse sub-view backs out to the main hub (a second tap = home)
   if(b.dataset.tab==="verse" && document.querySelector(".view.active")?.id==="verse" && typeof vView!=="undefined" && vView!=="hub"){ vView="hub"; vFrom="library"; }
   show(b.dataset.tab);
+  // the only automatic check there is. Tapping a tab means this screen is already being left.
+  try{ Update.onTabTap(); }catch(e){}
 });
 
 /* =================== JOURNEY (onboarding + mastery grid) =================== */
@@ -4861,7 +4931,10 @@ function renderJourney(){
       const fixedNote = (r.fixed&&r.fixed.length)
         ? ` · reading ${r.fixed.slice(0,3).map(f=>bbEsc(f[0])+" as "+bbEsc(f[1])).join(", ")}`
         : "";
-      hits.innerHTML=`<div class="bible-hits-head">${r.loose?"Closest verses":`${r.total} verse${r.total===1?"":"s"}`}${more>0&&!r.loose?` · first ${shown}`:""}${r.usedKJV?" · KJV":""}${fixedNote}</div>`
+      const lead = !r.loose ? `${r.total} verse${r.total===1?"":"s"}`
+        : (r.phrase ? `${r.total} verse${r.total===1?"":"s"}` : "Closest verses");
+      const shortened = (r.loose && r.dropped) ? ` · matched the first ${r.phrase.split(" ").length} words` : "";
+      hits.innerHTML=`<div class="bible-hits-head">${lead}${more>0&&!r.loose?` · first ${shown}`:""}${shortened}${r.usedKJV?" · KJV":""}${fixedNote}</div>`
         + r.hits.map(verseHitHTML).join("");
       if(drop) drop.classList.add("hashits");
       hits.querySelectorAll("[data-hit]").forEach(x=>x.onclick=()=>{
@@ -10366,6 +10439,8 @@ function renderAcctBox(){
   // Empties this account everywhere, which is the only way to clear a row that ended up holding
   // somebody else's progress. Typing the email is the guard: it cannot be hit by accident, and it
   // cannot be aimed at the wrong account.
+  if(el("updNow")) el("updNow").textContent="v"+APP_VERSION;
+  if(el("updBtn")) el("updBtn").onclick=()=>Update.now();
   if(el("resetAcct")) el("resetAcct").onclick=()=>{
     const who=String((acct()&&acct().email)||"").toLowerCase();
     if(!who) return toast("Sign in first.");
@@ -10829,10 +10904,11 @@ const PROF_SUBS={
     return {classic:"Classic",illumined:"Illumined Night",glass:"Stained Glass",quest:"Scripture Quest",buddy:"Verse Buddy"}[t]||t; },
   "Get the app":()=>"Home screen",
   "Back up your progress":()=>"Export or restore",
+  "App version":()=>"v"+APP_VERSION,
 };
 // The order Profile reads in. Anything not named here follows, in the order it was authored.
 const PROF_ORDER=["Admin","Badges","Get the app","Feature store","Bible translation","Theme",
-  "Reference library","Back up your progress","What's new"];
+  "Reference library","Back up your progress","What's new","App version"];   // the version sits last
 // Installed already? Then there is nothing to install, and the button is noise.
 function isInstalledApp(){
   try{ return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone===true; }
@@ -10941,6 +11017,12 @@ function applyAdminVisibility(){
   const wrap=el("adminWrap"); if(wrap) wrap.style.display = admin ? "grid" : "none";
   const bugs=el("bugReportsWrap"); if(bugs) bugs.style.display = admin ? "" : "none";
   const btn=document.querySelector('#profGrid [data-prof="admin"]'); if(btn) btn.style.display = admin ? "" : "none";
+  // The way out of the walkthrough is here and nowhere else, so it has to be here whenever one is
+  // running — and the way in has to be gone, because a second run would stash the simulated state
+  // as if it were real progress.
+  const running = (()=>{ try{ return !!(OnboardWalk && OnboardWalk.active()); }catch(e){ return false; } })();
+  const out=el("testWalkExit"); if(out) out.style.display = running ? "" : "none";
+  const into=el("testWalkBtn");  if(into) into.style.display = running ? "none" : "";
 }
 // Platform-specific walkthrough for turning notifications on.
 function openNotifyHelp(denied){
@@ -10991,6 +11073,7 @@ el("impBtn").onclick=()=>el("impFile").click();
 // top bar, which is where people actually reach for it.
 if(el("pInstall")) el("pInstall").onclick=()=>{ closeProfile(); openInstallDialog(); };
 if(el("testScratchBtn")) el("testScratchBtn").onclick=()=>{ closeProfile(); ScratchSim.begin(); };
+if(el("testWalkExit")) el("testWalkExit").onclick=()=>{ closeProfile(); OnboardWalk.end(); };
 if(el("testWalkBtn")) el("testWalkBtn").onclick=()=>{ closeProfile(); OnboardWalk.begin(); };
 if(el("testOnboardBtn")) el("testOnboardBtn").onclick=()=>{ closeProfile(); Onboard.preview(); };
 if(el("bugReportsBtn")) el("bugReportsBtn").onclick=()=>openBugReports();
@@ -11333,12 +11416,12 @@ function renderTypeTest(){
         <div class="lv-topbar"><button class="lclose" id="ttClose" style="margin:0">✕</button><div style="flex:1;text-align:center;font-weight:800;color:var(--gold-ink)">${bookName(TT.b)} ${TT.c}:${TT.v}</div><div class="ttcount" id="ttCount">0/${total}</div></div>
         <div class="ttdisplay" id="ttDisplay"></div>
       </div>
-      <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type word 1…">
-      <button class="btn ghost sm" id="ttHint" style="width:100%;margin:8px 0 0${TT.test?";display:none":""}">🔎 Reveal a letter</button>
-      ${w4wSkipHTML({inRow:false})}
- <p class="hint tthelp" style="text-align:center;margin-top:8px">Each word jumps to the top the moment you finish it · <b>green</b> if right, <b>red</b> if wrong (then it clears to retry).</p>
+      <div class="ttrow">
+        <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type word 1…">
+        <button class="btn ghost sm" id="ttHint"${TT.test?' style="display:none"':""}>Reveal</button>
+      </div>
+ <p class="hint tthelp" style="text-align:center;margin-top:8px">Each word jumps to the top the moment you finish it · <b>green</b> if right, <b>red</b> if wrong (then it clears to retry). <b>Reveal</b> shows a letter; you retype that word clean.</p>
     </div>`;
-  wireW4WSkip();
   const inp=el("ttIn"), disp=el("ttDisplay"), cnt=el("ttCount"), hintBtn=el("ttHint");
   el("ttClose").onclick=()=>{ const r=TT.ret; TT=null; r?r():renderVerse(); };
   // repaint ONLY the committed-words area + counter + placeholder (leaves the input/keyboard untouched)
@@ -11351,7 +11434,8 @@ function renderTypeTest(){
     disp.scrollTop=disp.scrollHeight;                                  // keep the newest words visible inside the fixed box
     cnt.textContent=`${done}/${total}`; cnt.className="ttcount "+(TT.wrong?"ttbad":(done>0?"ttgood":""));
     inp.placeholder=`type word ${done+1}…`;
- hintBtn.innerHTML=`🔎 Reveal a letter${TT.hintUsed?" · used · you'll retype it clean":""}`;
+     hintBtn.textContent = TT.hintUsed ? "Used" : "Reveal";
+    hintBtn.classList.toggle("spent", !!TT.hintUsed);
   };
   paintTop();
   setTimeout(()=>{ try{inp.focus();}catch(e){} }, 60);                 // focus ONCE, at start; never re-focus per word
@@ -12137,13 +12221,10 @@ const OnboardWalk = (()=>{
       done(){ return palaceCount()>=1 && videoSeen("sr"); } }
   ];
 
-  function paint(){
-    el("whStep").textContent=`Walkthrough · step ${step+1} of ${STEPS.length}`;
-    el("whDo").textContent=STEPS[step].do;
-    el("whSay").textContent=STEPS[step].say;
-    el("whSkip").textContent = step<STEPS.length-1 ? "Skip to the next step" : "Skip to the end";
-  }
-  function enter(i){ step=i; STEPS[i].seed(); paint(); el("walkHud").classList.add("on"); }
+  // Said once, over the screen it is about, and then gone. Nothing of the walkthrough is left
+  // sitting on top of the thing it is asking you to look at.
+  function paint(){ toast(`🚶 Step ${step+1} of ${STEPS.length} · ${STEPS[step].do}`); }
+  function enter(i){ step=i; STEPS[i].seed(); paint(); }
   function advance(){
     if(!on || moving || !STEPS[step]) return;
     if(!STEPS[step].done()) return;
@@ -12155,7 +12236,6 @@ const OnboardWalk = (()=>{
   function end(){
     if(!on) return;
     on=false; moving=false; clearInterval(timer); timer=null;
-    el("walkHud").classList.remove("on");
     restore();
     toast("Walkthrough ended. Your real progress is back.");
   }
@@ -12169,9 +12249,13 @@ const OnboardWalk = (()=>{
     bustCaches(); recomputeLevel(); updateMetrics(); updateTabLocks(); syncTabOrder(false);
     show("learn"); renderPath();
   }
-  el("whEnd").onclick=end;
-  el("whSkip").onclick=()=>{ if(step>=STEPS.length-1) return end(); enter(step+1); };
   return {
+    end,
+    // Stepping forward without playing the step. Not on the screen anywhere: the walkthrough is
+    // done by hand, one step at a time. This is here so the suite can reach the later seeds.
+    skip(){ if(!on) return false; if(step>=STEPS.length-1){ end(); return false; } enter(step+1); return true; },
+    // what step you are on, for the Admin panel to name the way out
+    where(){ return on ? { step:step+1, of:STEPS.length, doing:STEPS[step].do } : null; },
     begin(){ if(on) return; on=true; stash(); enter(0);
       timer=setInterval(advance, 700);
       toast("🚶 Walkthrough started. Your progress is saved and comes back at the end."); },
@@ -12244,6 +12328,51 @@ applyFeatureVisibility();
    gesture is ours, and it works the same in a tab and in the installed app.
    The service worker deliberately caches no shell (see sw.js), so a plain reload IS a code
    refresh - there is no stale copy to clear first.                                           */
+/* ---- updates ------------------------------------------------------------------------------
+   The published page carries its own version, so asking "is there a newer one?" is one cache-busted
+   fetch. Nothing here reloads on its own except from a tab tap, which is a moment the reader has
+   already chosen to leave the screen they were on.                                             */
+const Update = (()=>{
+  let last=0, busy=false;
+  const GAP=5*60*1000;                       // no more than one look every five minutes
+  // Opened from a file rather than served, there is nothing to check against — and fetch cannot read
+  // a file:// URL, so asking would only log an error.
+  function servable(){ return /^https?:$/.test(location.protocol); }
+  async function latest(){
+    if(!servable()) return null;
+    const r=await fetch(location.pathname.replace(/[^/]*$/,"")+"index.html?v="+Date.now(), {cache:"no-store"});
+    const txt=await r.text();
+    const m=txt.match(/APP_VERSION\s*=\s*"([\d.]+)"/);
+    return m?m[1]:null;
+  }
+  function apply(){ try{ location.reload(); }catch(e){} }
+  return {
+    // the button in Profile: always looks, and says what it found either way
+    async now(){
+      if(busy) return; busy=true;
+      const btn=el("updBtn"), was=btn?btn.textContent:"";
+      if(btn){ btn.disabled=true; btn.textContent="Checking…"; }
+      try{
+        const v=await latest();
+        last=Date.now();
+        if(v && v!==APP_VERSION){ toast("Version "+v+" is ready. Updating…"); setTimeout(apply,900); return; }
+        toast(v ? "You are on the newest version ("+APP_VERSION+")." : "Could not reach the server just now.");
+      }catch(e){ toast("Could not reach the server just now."); }
+      finally{ if(btn){ btn.disabled=false; btn.textContent=was; } busy=false; }
+    },
+    // the quiet one, from a tab tap only
+    async onTabTap(){
+      if(busy || !servable() || Date.now()-last<GAP) return;
+      busy=true;
+      try{
+        const v=await latest();
+        last=Date.now();
+        if(v && v!==APP_VERSION){ toast("A newer version is ready. Updating…"); setTimeout(apply,900); }
+      }catch(e){ /* offline, or the server is asleep — try again at the next tab tap */ }
+      finally{ busy=false; }
+    }
+  };
+})();
 const PTR_TRIGGER=72;                                  // how far to pull before letting go does anything
 function initPullRefresh(){
   const sc=document.querySelector(".content"); if(!sc || sc.dataset.ptr) return;
@@ -12277,7 +12406,8 @@ function initPullRefresh(){
   },{passive:true});
   sc.addEventListener("touchcancel",reset,{passive:true});
 }
-initPullRefresh();
+// initPullRefresh() is deliberately NOT called: a fling on a long screen could reload somebody
+// mid-scene. Updating is the button in Profile, or a tab tap. See the Update module.
 wireRefTaps();
 
 bootPopups();   // Rome's letter → any levy that has fallen due → the "What's new" card

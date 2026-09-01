@@ -2283,17 +2283,17 @@ const DAY = 86400000;
                  tickets: (Prog.scratchWon || []).length, stashed: !!Store.getJSON('vv_walk_backup', null) };
 
     // skipping lands on the same seed the tester reaches by playing the step
-    el('whSkip').click();
+    OnboardWalk.skip();
     const s2 = { memorized: Prog.memorized.length, library: tabWon('verse'),
                  palace: tabWon('palace'), streak: Prog.bestStreak };
     editVerseScene(1, 1, 1, () => {}, () => {});
     s2.pickersCovered = !!document.querySelector('#wPalLock .slock');
 
-    el('whSkip').click();
+    OnboardWalk.skip();
     const s3 = { palace: tabWon('palace'), memorized: Prog.memorized.length,
                  srCovered: (show('verse'), renderVerse(), !!document.querySelector('.versehub .slock')) };
 
-    el('whEnd').click();
+    OnboardWalk.end();
     await wait(80);
     const back = { mem: Prog.memorized.length, tal: Prog.talents,
                    pal: (Prog.palaces[0] || {}).place, stash: !!Store.getJSON('vv_walk_backup', null),
@@ -3591,6 +3591,7 @@ const DAY = 86400000;
     const band = document.querySelector('.ttstick');
     return {
       order: [...document.querySelectorAll('#verse .card > *')].map(x => x.id || (x.className||'').split(' ')[0]),
+      rowOrder: (()=>{ const r=document.querySelector('.ttrow'); return r ? [...r.children].map(n=>n.id).join(',') : '(no row)'; })(),
       pinned: band ? getComputedStyle(band).position : null,
       holds: !!(band && band.contains(document.getElementById('ttDisplay')) && band.querySelector('.ttcount')),
       wordsOnScreen: d.top >= s.top - 1 && d.bottom <= s.bottom + 1,
@@ -3604,7 +3605,8 @@ const DAY = 86400000;
   is(typedTop.pinned, 'sticky', 'the reference and the typed words are pinned to the top');
   ok(typedTop.holds, '...and the counter rides with them, so progress is never off screen either');
   is(typedTop.order[0], 'ttstick', 'that band is the first thing in the card');
-  is(typedTop.order[1], 'ttIn', '...and the box you type in comes straight after it');
+  is(typedTop.order[1], 'ttrow', '...and the line you type on comes straight after it');
+  is(typedTop.rowOrder, 'ttIn,ttHint', '...the box first on that line, Reveal to its right');
   is(typedTop.typed, 18, 'eighteen words in');
   ok(/whosoever believeth in him$/.test(typedTop.showing.trim()), '...and the newest words are the ones shown');
   ok(typedTop.wordsOnScreen, 'scrolled to the bottom, the words are still on screen');
@@ -3797,6 +3799,7 @@ const DAY = 86400000;
     return {
       named: card.classList.contains('ttcard'),
       order: [...card.children].map(x => x.id || (x.className||'').split(' ')[0]),
+      rowOrder: (()=>{ const r=document.querySelector('.ttrow'); return r ? [...r.children].map(n=>n.id).join(',') : '(no row)'; })(),
       // the four things that have to share the screen while typing
       band: !!card.querySelector('.ttstick .ttcount'),
       words: !!card.querySelector('.ttstick #ttDisplay'),
@@ -3810,7 +3813,8 @@ const DAY = 86400000;
     };
   });
   ok(fits.named, 'the typing card is named, so the short-screen rules cannot reach any other screen');
-  is(fits.order.join(','), 'ttstick,ttIn,ttHint,hint', 'words, box, reveal, help: in that order down the card');
+  is(fits.order.join(','), 'ttstick,ttrow,hint', 'words, then the line you type on, then the help: in that order down the card');
+  is(fits.rowOrder, 'ttIn,ttHint', '...with the box and Reveal sharing that line, box first');
   ok(fits.band && fits.words, 'the reference, the counter and the words are one pinned band');
   ok(fits.box, '...with the box you type in right under it');
   ok(fits.reveal, '...and Reveal a letter under that');
@@ -3818,50 +3822,48 @@ const DAY = 86400000;
   ok(fits.tierOne && fits.tierTwo, 'two tiers of trimming: short, and shorter still');
   ok(fits.helpHides, 'on the shortest screens the sentence about colours is what gives way');
 
-  describe('pull to refresh', () => { });
-  const ptr = await $(() => {
+  describe('updating happens when you ask, or when you change tab', () => { });
+  // Pulling the page down used to reload the app. It went off on any hard fling, which could take
+  // somebody out of a half-written scene, so it is gone. What replaced it is a button, and a quiet
+  // look on a tab tap — the one moment the reader has already left the screen they were on.
+  const upd = await $(async () => {
     const out = {};
-    const sc = document.querySelector('.content');
-    const ind = document.getElementById('ptr');
-    out.exists = !!ind;
-    out.hiddenAtRest = !!ind && !ind.classList.contains('on');
-    const touch = (type, y) => sc.dispatchEvent(Object.assign(new Event(type, { bubbles: true }), {
-      touches: type === 'touchend' ? [] : [{ clientY: y }]
-    }));
-    sc.scrollTop = 0;
-    // a short pull is not enough
-    touch('touchstart', 100); touch('touchmove', 130);
-    out.shortShows = ind.classList.contains('on');
-    out.shortArmed = ind.classList.contains('armed');
-    touch('touchend', 130);
-    out.shortReset = !ind.classList.contains('on');
-    // a long pull arms it
-    touch('touchstart', 100); touch('touchmove', 100 + PTR_TRIGGER + 10);
-    out.longArmed = ind.classList.contains('armed');
-    out.says = ind.querySelector('.ptr-t').textContent;
-    // an upward drag is never a refresh
-    touch('touchstart', 200); touch('touchmove', 150);
-    out.upIgnored = !ind.classList.contains('armed') && !ind.classList.contains('on');
-    // ...and neither is a pull that begins part-way down the page. The scroller needs something
-    // to scroll before scrollTop will hold a value at all, hence the filler.
-    const filler = document.createElement('div'); filler.style.height = '2000px'; sc.appendChild(filler);
-    sc.scrollTop = 60;
-    out.reallyScrolled = sc.scrollTop > 0;
-    touch('touchstart', 100); touch('touchmove', 300);
-    out.scrollingIgnored = !ind.classList.contains('armed');
-    filler.remove(); sc.scrollTop = 0;
+    out.gestureGone = !document.getElementById('ptr');
+    out.notWired = !(document.querySelector('.content').dataset || {}).ptr;
+    out.hasModule = typeof Update === 'object' && typeof Update.now === 'function';
+
+    // the button, and the version beside it
+    el('themeBtn').click();
+    out.button = !!el('updBtn');
+    out.saysVersion = ((el('updNow') || {}).textContent || '') === 'v' + APP_VERSION;
+    const close = el('themeClose'); if (close) close.click();
+
+    // Counted at the module rather than at the network: the check refuses to run from a file:// page
+    // (there is nothing to update from a local file), and the harness serves one.
+    const seen = [];
+    const realTap = Update.onTabTap;
+    Update.onTabTap = () => { seen.push(1); };
+
+    // nothing looks on its own: scrolling, drawing, moving between views
+    document.querySelector('.content').dispatchEvent(new Event('scroll'));
+    show('verse'); show('learn'); renderPath();
+    await new Promise(r => setTimeout(r, 250));
+    out.quiet = seen.length;
+
+    // a tab tap does
+    document.querySelector('.tabbar button[data-tab="learn"]').click();
+    await new Promise(r => setTimeout(r, 300));
+    out.onTabTap = seen.length;
+    Update.onTabTap = realTap;
     return out;
   });
-  ok(ptr.exists, 'the app carries its own pull-to-refresh, because a contained scroller kills the browser one');
-  ok(ptr.hiddenAtRest, '...invisible until you actually pull');
-  ok(ptr.shortShows, 'a small pull shows the hint');
-  no(ptr.shortArmed, '...without arming it');
-  ok(ptr.shortReset, '...and letting go puts it away without reloading');
-  ok(ptr.longArmed, 'pulling past the trigger arms it');
-  is(ptr.says, 'Release to refresh', '...and says so');
-  ok(ptr.upIgnored, 'dragging upward never arms it');
-  ok(ptr.reallyScrolled, 'with the page genuinely scrolled down');
-  ok(ptr.scrollingIgnored, '...a downward drag from there is a scroll, not a refresh');
+  ok(upd.gestureGone, 'the pull-to-refresh indicator is gone');
+  ok(upd.notWired, '...and the scroller carries none of its handlers');
+  ok(upd.hasModule, 'updating is a thing the reader asks for');
+  ok(upd.button, 'Profile carries a Check for an update button');
+  ok(upd.saysVersion, '...with the version they are on beside it');
+  is(upd.quiet, 0, 'scrolling and moving between screens never looks for a new version');
+  ok(upd.onTabTap >= 1, '...tapping a tab along the bottom is the one thing that does');
 
   describe('ladder: two rungs', () => { });
   const st = await $(() => {
