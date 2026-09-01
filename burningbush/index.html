@@ -996,6 +996,15 @@
   .bible-drop-item{text-align:left;background:none;border:none;color:var(--ink);font-weight:700;font-size:14px;padding:9px 10px;border-radius:8px;cursor:pointer}
   .bible-drop-item b{color:var(--gold-ink)}
   .bible-drop-item:active{background:var(--panel2)}
+  /* verse hits need more room than a list of book names, so the box widens when there are any */
+  .bible-drop.hashits{width:340px}
+  .bible-hits{display:flex;flex-direction:column;gap:2px;margin-top:2px}
+  .bible-hits-head{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 10px 4px;border-top:1px solid var(--line);margin-top:6px}
+  .bible-hit{text-align:left;background:none;border:none;color:var(--ink);padding:8px 10px;border-radius:8px;cursor:pointer;display:block;width:100%}
+  .bible-hit:active{background:var(--panel2)}
+  .bible-hit b{display:block;color:var(--gold-ink);font-size:13px;font-weight:800}
+  .bible-hit span{display:block;font-size:12.5px;line-height:1.4;color:var(--ink-soft);font-weight:600}
+  .bible-hit mark{background:var(--gold2);color:var(--foil-ink);border-radius:3px;padding:0 1px}
   .biblestrip .bk{aspect-ratio:1.12;border-radius:6px;background:var(--cell-bg);font-size:12px;font-weight:700;display:grid;place-items:center;color:var(--cell-ink)}
   .biblestrip .bk.on{background:var(--accent);color:var(--on-blue);font-weight:800}
   /* NUMBER view (.jfill): Journey fills the screen (no scroll) and tiles grow to fill the height → numbers as big as possible */
@@ -2132,8 +2141,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.88.0";
+const APP_VERSION="1.89.0";
 const CHANGELOG=[
+ {v:"1.89.0", d:"August 31, 2026", t:"Search the words, not just the books", items:[
+   ["new","<b>The search box on the Bible page now searches verse text.</b> Type three letters or more and it lists every verse carrying them, with the words you typed highlighted in place, and tapping one opens it. Book names still match first, so a letter or two still jumps you to a book."],
+   ["chg","<b>It searches the translation you are reading.</b> The NLT is read a chapter at a time over the network and has no copy on your phone, so a search while it is selected reads the King James and labels the results KJV."]
+ ]},
  {v:"1.88.0", d:"August 31, 2026", t:"The onboarding walkthrough", items:[
    ["new","<b>An onboarding walkthrough, in Admin.</b> Three stages, each set up to the last action, so you only ever do the one thing that earns the next ticket: finish Matthew for the Library, learn a fifth verse for Memory Palaces, build a palace for the Spaced Repetition film and the two foils coming off. Nothing is faked — every ticket, film and foil fires through the app's own machinery."],
    ["new","<b>It cannot cost you your progress.</b> The whole of your progress is stashed before the first seed and restored when you finish, and if a run is interrupted it is restored the next time the app opens."]
@@ -2839,6 +2852,43 @@ function kjvText(b,c,v){
     return fallbackVerse(b,c,v);
   }
   try{ return (transData()[b-1][c-1][v-1])||fallbackVerse(b,c,v); }catch(e){ return fallbackVerse(b,c,v); }
+}
+/* Substring search across a whole translation. Walks the nested [book][chapter][verse] array — a
+   full pass over all 31,102 verses measures 10–15ms, so there is no index worth carrying. Stops
+   counting once the cap is reached, but keeps scanning so the total is honest. */
+const VSEARCH_CAP=200;
+function searchVerses(q, cap){
+  const out={hits:[], total:0, trans:curTrans(), usedKJV:false};
+  const ql=String(q||"").trim().toLowerCase();
+  if(ql.length<3) return out;
+  // a live text has no local copy to search, so the search reads the KJV and the caller says so
+  const t=transEntry(curTrans());
+  const D = t.api ? window.KJV : transData();
+  if(t.api) out.usedKJV=true;
+  if(!D) return out;
+  const lim=cap||VSEARCH_CAP;
+  for(let bi=0; bi<D.length; bi++){
+    const bk=D[bi]; if(!bk) continue;
+    for(let ci=0; ci<bk.length; ci++){
+      const ch=bk[ci]; if(!ch) continue;
+      for(let vi=0; vi<ch.length; vi++){
+        const txt=ch[vi]; if(!txt) continue;
+        const at=txt.toLowerCase().indexOf(ql);
+        if(at<0) continue;
+        out.total++;
+        if(out.hits.length<lim) out.hits.push({b:bi+1, c:ci+1, v:vi+1, at, len:ql.length, txt});
+      }
+    }
+  }
+  return out;
+}
+// One hit, with enough of the verse either side of the match to recognise it. Each piece is escaped
+// on its own so the highlight cannot be spelled by the verse text.
+function verseHitHTML(h){
+  const pad=42;
+  const from=Math.max(0, h.at-pad), to=Math.min(h.txt.length, h.at+h.len+pad);
+  const pre=(from?"…":"")+h.txt.slice(from,h.at), mid=h.txt.slice(h.at,h.at+h.len), post=h.txt.slice(h.at+h.len,to)+(to<h.txt.length?"…":"");
+  return `<button type="button" class="bible-hit" data-hit="${h.b}:${h.c}:${h.v}"><b>${bbEsc(bookName(h.b))} ${h.c}:${h.v}</b><span>${bbEsc(pre)}<mark>${bbEsc(mid)}</mark>${bbEsc(post)}</span></button>`;
 }
 function chapCount(b){ return (window.KJV&&window.KJV[b-1]||[]).length; }
 function verseCount(b,c){ try{ return window.KJV[b-1][c-1].length; }catch(e){ return 0; } }
@@ -4509,19 +4559,41 @@ function renderJourney(){
       <div class="otnt-label" style="margin-top:8px">New Testament <span>books 40–66</span></div>
       <div class="biblestrip nt ${stripClass}">${stripFor(40,66)}</div>
       <div class="bible-drop" id="bibleSearchDrop" style="display:none">
-        <input id="bibleSearchIn" class="typein" inputmode="text" placeholder="Tap to search a book…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-1p-ignore data-lpignore="true" readonly>
+        <input id="bibleSearchIn" class="typein" inputmode="text" placeholder="A book, or words in a verse…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-1p-ignore data-lpignore="true" readonly>
         <div class="bible-drop-list">${range(1,66).map(n=>`<button class="bible-drop-item" data-jump="${n}"><b>${pad2(n)}</b> · ${bookName(n)}</button>`).join("")}</div>
+        <div class="bible-hits" id="bibleHits"></div>
       </div>
     </div>`;
   J.querySelectorAll("[data-book]").forEach(c=>c.onclick=()=>renderBookScreen(+c.dataset.book));
   J.querySelectorAll("[data-vmode]").forEach(btn=>btn.onclick=()=>{ bibleView=btn.dataset.vmode; try{Store.set("vv_bibleview",bibleView);}catch(e){} renderJourney(); });
   if(el("bibleSaved")) el("bibleSaved").onclick=()=>openVerseView("saved","bible");
-  if(el("bibleSearchBtn")) el("bibleSearchBtn").onclick=(e)=>{ e.stopPropagation(); const d=el("bibleSearchDrop"), open=d.style.display!=="none"; d.style.display=open?"none":"block"; if(!open){ const inp=el("bibleSearchIn"); if(inp){ inp.value=""; inp.dispatchEvent(new Event("input")); } } };  // no programmatic focus — the field is readonly until the user taps it (kills the iOS AutoFill bar)
+  if(el("bibleSearchBtn")) el("bibleSearchBtn").onclick=(e)=>{ e.stopPropagation(); const d=el("bibleSearchDrop"), open=d.style.display!=="none"; d.style.display=open?"none":"block"; if(!open){ const inp=el("bibleSearchIn"); if(inp){ inp.value=""; inp.dispatchEvent(new Event("input")); } if(el("bibleHits")) el("bibleHits").innerHTML=""; d.classList.remove("hashits"); } };  // no programmatic focus — the field is readonly until the user taps it (kills the iOS AutoFill bar)
   if(el("bibleSearchIn")){ const bsi=el("bibleSearchIn");
     // readonly-until-tap: iOS won't attach its AutoFill (key/card/pin) accessory bar to a field that was readonly; we drop readonly the instant the user taps so the keyboard still opens
     const unlock=()=>{ if(bsi.hasAttribute("readonly")) bsi.removeAttribute("readonly"); };
     ["pointerdown","touchstart","mousedown"].forEach(ev=>bsi.addEventListener(ev,unlock,{passive:true}));
-    bsi.oninput=()=>{ const q=bsi.value.trim().toLowerCase(); J.querySelectorAll(".bible-drop-item").forEach(it=>{ it.style.display=(!q||it.textContent.toLowerCase().includes(q))?"":"none"; }); };
+    // book names filter as you type; the verse search waits for a pause and for three characters,
+    // because one letter matches most of the Bible and the answer would be useless anyway
+    let bsiTimer=null;
+    const runVerseSearch=(q)=>{
+      const hits=el("bibleHits"), drop=el("bibleSearchDrop"); if(!hits) return;
+      if(q.length<3){ hits.innerHTML=""; if(drop) drop.classList.remove("hashits"); return; }
+      const r=searchVerses(q);
+      if(!r.total){ hits.innerHTML=`<div class="bible-hits-head">No verse contains that</div>`; if(drop) drop.classList.add("hashits"); return; }
+      const shown=r.hits.length, more=r.total-shown;
+      hits.innerHTML=`<div class="bible-hits-head">${r.total} verse${r.total===1?"":"s"}${more>0?` · first ${shown}`:""}${r.usedKJV?" · KJV":""}</div>`
+        + r.hits.map(verseHitHTML).join("");
+      if(drop) drop.classList.add("hashits");
+      hits.querySelectorAll("[data-hit]").forEach(x=>x.onclick=()=>{
+        const [b,c,v]=x.dataset.hit.split(":").map(Number);
+        el("bibleSearchDrop").style.display="none";
+        openVerseWizard(b,c,v, ()=>{ show("journey"); renderJourney(); });
+      });
+    };
+    bsi.oninput=()=>{ const q=bsi.value.trim().toLowerCase();
+      J.querySelectorAll(".bible-drop-item").forEach(it=>{ it.style.display=(!q||it.textContent.toLowerCase().includes(q))?"":"none"; });
+      clearTimeout(bsiTimer); bsiTimer=setTimeout(()=>runVerseSearch(q), 180);
+    };
   }
   J.querySelectorAll("[data-jump]").forEach(it=>it.onclick=()=>renderBookScreen(+it.dataset.jump));
   paintTheme();

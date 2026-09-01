@@ -2044,6 +2044,52 @@ const DAY = 86400000;
   no(refBack.backIsList, '...not to the list of every palace');
   is(refBack.backHeading, '\u{1F3DB}\uFE0F Grandmother\u2019s House', '...but to the palace that brought them in');
 
+  describe('the Bible page searches verse text, not just book names', () => { });
+  const vsearch = await $(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    const keep = curTrans();
+    Prog.onboarded = true; saveProg();
+    show('journey'); renderJourney();
+    el('bibleSearchBtn').click();
+    const inp = el('bibleSearchIn');
+    const typed = async text => {
+      inp.removeAttribute('readonly'); inp.value = text;
+      inp.dispatchEvent(new Event('input'));
+      await wait(300);
+      const rows = [...document.querySelectorAll('[data-hit]')];
+      return { n: rows.length,
+               head: (document.querySelector('.bible-hits-head') || {}).textContent || '',
+               first: rows[0] ? rows[0].querySelector('b').textContent : null,
+               mark: rows[0] ? (rows[0].querySelector('mark') || {}).textContent : null,
+               books: [...document.querySelectorAll('.bible-drop-item')].filter(i => i.style.display !== 'none').length };
+    };
+
+    const rare = await typed('lovingkindness');
+    const short = await typed('lo');
+    const nothing = await typed('zzzqqq');
+    const capped = await typed('the lord');
+    // a query that looks like markup must not be able to spell any
+    await typed('god <b>');
+    const escaped = !document.getElementById('bibleHits').innerHTML.includes('<b><b>');
+
+    // the search reads whatever translation is being read; a live text has no local copy
+    setTranslation('NLT');
+    const live = searchVerses('lovingkindness');
+    setTranslation(keep);
+    return { rare, short, nothing, capped, escaped, live };
+  });
+  is(vsearch.rare.n, 29, 'a rare word finds every verse that carries it');
+  is(vsearch.rare.first, 'Psalms 17:7', '...in Bible order, starting at the first');
+  is(vsearch.rare.mark, 'lovingkindness', '...with the words typed marked in place');
+  is(vsearch.short.n, 0, 'two letters is not a verse search');
+  ok(vsearch.short.books > 0 && vsearch.short.books < 66, '...it is still a book search, though');
+  has(vsearch.nothing.head, 'No verse contains that', 'a word in no verse says so');
+  is(vsearch.capped.n, 200, 'a common phrase is capped at 200 results');
+  has(vsearch.capped.head, 'first 200', '...and says the list is only the first of them');
+  ok(vsearch.escaped, 'a query that looks like markup cannot spell any');
+  ok(vsearch.live.usedKJV, 'searching while a live text is selected falls back to the KJV');
+  is(vsearch.live.total, 29, '...and finds what the KJV holds');
+
   describe('the onboarding walkthrough seeds each stage and gives progress back', () => { });
   const walkTool = await $(async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms));
