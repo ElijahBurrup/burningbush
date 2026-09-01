@@ -987,6 +987,12 @@
   .vlegend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:4px 0 2px}
   .vlegend span b{display:inline-block;box-sizing:border-box;width:13px;height:13px;border-radius:3px;vertical-align:-2px;margin-right:4px;background:var(--cell2-bg);border:2px solid var(--line)}   /* outlined swatches — match the outlined cells */
   .biblestrip{display:grid;grid-template-columns:repeat(11,1fr);gap:3px;margin-top:6px}
+  /* the search sits on the title line, hard right, and takes whatever room the title leaves */
+  .pagehead .bible-search-box{margin-left:auto;flex:0 1 190px;min-width:120px;position:relative;display:flex;align-items:center}
+  .pagehead .bible-search-box input{width:100%;box-sizing:border-box;font-size:13px;font-weight:600;padding:8px 10px 8px 28px;
+    border-radius:10px;border:1px solid var(--line);background:var(--panel3);color:var(--ink)}
+  .pagehead .bible-search-box input:focus{outline:none;border-color:var(--gold2)}
+  .pagehead .bible-search-box .bsb-i{position:absolute;left:9px;font-size:12px;pointer-events:none;opacity:.75}
   .bible-search-btn{background:var(--panel3);border:1px solid var(--line);border-radius:10px;width:34px;height:34px;font-size:16px;cursor:pointer;color:var(--ink);flex:0 0 auto;display:grid;place-items:center}
   .bible-search-btn:active{transform:scale(.94)}
   /* When open, the search floats to the TOP-RIGHT of the screen so the book list gets the whole area above the keyboard */
@@ -2141,8 +2147,17 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.90.0";
+const APP_VERSION="1.92.0";
 const CHANGELOG=[
+ {v:"1.92.0", d:"August 31, 2026", t:"Progress is tied to the email, hard", items:[
+   ["fix","<b>Your progress now carries your email inside it, and will not be opened by anyone else.</b> Signing in somewhere that holds a saved copy belonging to a different account refuses it outright instead of handing it over. The device already refused to <i>send</i> one person's progress into another's account; this refuses to <i>receive</i> it as well."],
+   ["new","<b>Reset this account's progress.</b> In Profile, under your email. It empties that account everywhere, and asks you to type the email first, so it can clear a saved copy that ended up holding the wrong data."],
+   ["chg","<b>Restoring a backup tells you whose it is.</b> If the file came from a different account, it says so and names both before you decide — and what you restore becomes this account's from that moment, here and in the cloud."],
+   ["fix","<b>Finishing the welcome no longer drops you into a film.</b> It took you to the Learn track and immediately played the Major System, part one. Learn now simply opens, with the Intro film at the top of it where it belongs."]
+ ]},
+ {v:"1.91.0", d:"August 31, 2026", t:"The search box, where you look for it", items:[
+   ["chg","<b>The Bible search is now a box on the title line</b>, over on the right, instead of hiding behind a magnifier down in the card. Tap it and type: books match first, then every verse carrying your words. The magnifier inside the card is gone — one search, one place."]
+ ]},
  {v:"1.90.0", d:"August 31, 2026", t:"Your progress belongs to your account", items:[
    ["fix","<b>Signing out left everything behind on the device.</b> The next person to sign in on it inherited the previous person's verses, palaces and talents — and because signing in uploads what it finds, that progress was then written into <i>their</i> account and followed them to every device after. Signing out now clears the device completely and returns you to the welcome screen, because signed out means there is nothing to show."],
    ["chg","<b>The device remembers whose progress it is holding.</b> Signing in as someone else clears it first, so nothing of one person's can reach another's account. Work you did before you ever made an account still comes with you when you make one — that is your own trial run."],
@@ -4282,6 +4297,15 @@ const Auth = {
       const d=await Auth._req("/sync","GET");
       if(d && d.progJson){
         let cloud=null; try{ cloud=JSON.parse(d.progJson); }catch(e){}
+        // A blob that names a different account is somebody else's, put in this row by the bug that
+        // used to merge two people together. It is refused outright rather than merged, and the next
+        // push replaces it with this account's own. A blob with no name is from before stamping and
+        // is taken as this account's, which is the only way existing progress survives the change.
+        const me=String((Auth.user&&Auth.user.email)||"").toLowerCase();
+        if(cloud && cloud.owner && me && String(cloud.owner).toLowerCase()!==me){
+          console.warn("refused a cloud blob belonging to "+cloud.owner+" while signed in as "+me);
+          cloud=null;
+        }
         if(cloud){
           Prog=mergeProg(Prog,cloud);
           let cloudSRS={}; try{ cloudSRS=JSON.parse(d.srsJson||"{}")||{}; }catch(e){}
@@ -4297,6 +4321,10 @@ const Auth = {
     Auth._pulling=false;
   },
   async push(){ if(!Auth._token) return;
+    // The blob says whose it is. A row that ends up holding the wrong person's progress can then be
+    // recognised and refused on the way back in, instead of being handed over as if it were theirs.
+    Prog.owner = String((Auth.user&&Auth.user.email)||"").toLowerCase();
+    try{ Store.setJSON(PROG_KEY,Prog); }catch(e){}
     try{ await Auth._req("/sync","PUT",{ progJson:JSON.stringify(Prog), srsJson:JSON.stringify(SRS), updatedAt:Number(Store.get("vv_localts",0))||Date.now() }); }
     catch(e){ console.warn("cloud push failed:", e && e.message); } },
   syncUp(){ if(!Auth._token||Auth._pulling) return; clearTimeout(Auth._timer); Auth._timer=setTimeout(()=>Auth.push(),2000); },
@@ -4563,7 +4591,10 @@ function show(tab){
   document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   document.querySelector(".content").scrollTop=0;
   if(tab==="journey") renderJourney();
-  if(tab==="learn"){ renderPath(true); setTimeout(()=>maybeVideo("major"), 400); }   // the film that opens the track
+  // Learn just opens. The Major System film used to pop up here, which meant the first thing a new
+  // person saw after onboarding was part one of the Major System rather than the track itself. Both
+  // films are still on the page: Intro at the top, the Major System on its own tile in the first unit.
+  if(tab==="learn"){ renderPath(true); }
   if(tab==="verse") renderVerse();
   // the film the first time the room is walked into, the same way Learn opens with the Major System
   if(tab==="palace"){ renderPalace(); setTimeout(()=>maybeVideo("palace"), 400); }
@@ -4599,16 +4630,16 @@ function renderJourney(){
   const viewToggle=`<div class="bible-viewtoggle">${VMODES.map(m=>`<button class="bvt ${mode===m[0]?"on":""}" data-vmode="${m[0]}" title="${m[2]}">${m[1]}</button>`).join("")}</div>`;
   let booksOpen=0; for(let b=1;b<=66;b++) if(knownNum(b)) booksOpen++;
   J.innerHTML=`
-    ${pageHead(bibleIconSVG(),"Bible")}
+    ${pageHead(bibleIconSVG(),"Bible")
+        .replace("</div>", `<span class="bible-search-box"><span class="bsb-i">🔍</span><input id="bibleSearchIn" class="bible-search-field" inputmode="search" placeholder="Search the Bible" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-1p-ignore data-lpignore="true" readonly></span></div>`)}
  <p class="lead" style="margin:0 0 10px;font-size:13px">Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the verses suggested next, and your own verses in that book.</p>
     <div class="card biblecard" style="margin-top:0;position:relative;padding:12px 14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><button class="savedrib" id="bibleSaved" title="Your saved verses">${savedRibbonSVG()}</button><div style="display:flex;gap:6px;align-items:center">${viewToggle}<button class="bible-search-btn" id="bibleSearchBtn" title="Jump to a book">🔍</button></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><button class="savedrib" id="bibleSaved" title="Your saved verses">${savedRibbonSVG()}</button><div style="display:flex;gap:6px;align-items:center">${viewToggle}</div></div>
       <div class="otnt-label">Old Testament <span>books 1–39</span></div>
       <div class="biblestrip ot ${stripClass}">${stripFor(1,39)}</div>
       <div class="otnt-label" style="margin-top:8px">New Testament <span>books 40–66</span></div>
       <div class="biblestrip nt ${stripClass}">${stripFor(40,66)}</div>
       <div class="bible-drop" id="bibleSearchDrop" style="display:none">
-        <input id="bibleSearchIn" class="typein" inputmode="text" placeholder="A book, or words in a verse…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-1p-ignore data-lpignore="true" readonly>
         <div class="bible-drop-list">${range(1,66).map(n=>`<button class="bible-drop-item" data-jump="${n}"><b>${pad2(n)}</b> · ${bookName(n)}</button>`).join("")}</div>
         <div class="bible-hits" id="bibleHits"></div>
       </div>
@@ -4616,8 +4647,14 @@ function renderJourney(){
   J.querySelectorAll("[data-book]").forEach(c=>c.onclick=()=>renderBookScreen(+c.dataset.book));
   J.querySelectorAll("[data-vmode]").forEach(btn=>btn.onclick=()=>{ bibleView=btn.dataset.vmode; try{Store.set("vv_bibleview",bibleView);}catch(e){} renderJourney(); });
   if(el("bibleSaved")) el("bibleSaved").onclick=()=>openVerseView("saved","bible");
-  if(el("bibleSearchBtn")) el("bibleSearchBtn").onclick=(e)=>{ e.stopPropagation(); const d=el("bibleSearchDrop"), open=d.style.display!=="none"; d.style.display=open?"none":"block"; if(!open){ const inp=el("bibleSearchIn"); if(inp){ inp.value=""; inp.dispatchEvent(new Event("input")); } if(el("bibleHits")) el("bibleHits").innerHTML=""; d.classList.remove("hashits"); } };  // no programmatic focus — the field is readonly until the user taps it (kills the iOS AutoFill bar)
+  // tapping anywhere else closes the results
+  if(!document.body.dataset.bswired){ document.body.dataset.bswired="1";
+    document.addEventListener("click", ev=>{ const d=el("bibleSearchDrop"); if(!d || d.style.display==="none") return;
+      if(ev.target.closest && (ev.target.closest("#bibleSearchDrop") || ev.target.closest(".bible-search-box"))) return;
+      d.style.display="none"; }, true); }
   if(el("bibleSearchIn")){ const bsi=el("bibleSearchIn");
+    const openDrop=()=>{ const d=el("bibleSearchDrop"); if(d) d.style.display="block"; };
+    bsi.onfocus=openDrop; bsi.onclick=openDrop;
     // readonly-until-tap: iOS won't attach its AutoFill (key/card/pin) accessory bar to a field that was readonly; we drop readonly the instant the user taps so the keyboard still opens
     const unlock=()=>{ if(bsi.hasAttribute("readonly")) bsi.removeAttribute("readonly"); };
     ["pointerdown","touchstart","mousedown"].forEach(ev=>bsi.addEventListener(ev,unlock,{passive:true}));
@@ -10082,11 +10119,43 @@ function renderAcctBox(){
     ? `<div class="acct-row"><div class="acct-av">${(a.email||a.provider||"?")[0].toUpperCase()}</div>
         <div style="flex:1"><div style="font-weight:700;font-size:14px">${a.email||("Signed in with "+prov)}</div>
         <div class="muted" style="font-size:11px">via ${prov}${unverified?" · unverified":""} · ☁ synced</div></div>
-        <button class="btn sm ghost" id="signOut">Sign out</button></div>`
+        <button class="btn sm ghost" id="signOut">Sign out</button></div>
+       <button class="btn ghost" id="resetAcct" style="width:100%;margin-top:8px;font-size:13px">♻️ Reset this account's progress</button>`
     : `<button class="btn" id="signInBtn">Sign in / Create account</button>`) + verifyRow + proRow;
   if(el("signInBtn")) el("signInBtn").onclick=()=>{ closeProfile(); setLoginModal(true); };
   if(el("resendVerify")) el("resendVerify").onclick=()=>{ Auth.resendVerification().then(()=>toast("Verification email sent.")).catch(()=>toast("Couldn't send right now.")); };
   if(el("signOut")) el("signOut").onclick=()=>{ if(typeof Auth!=="undefined" && Auth.loggedIn()){ Auth.signOut(); toast("Signed out."); } else { Store.remove("vv_acct"); renderAcctBox(); } };
+  // Empties this account everywhere, which is the only way to clear a row that ended up holding
+  // somebody else's progress. Typing the email is the guard: it cannot be hit by accident, and it
+  // cannot be aimed at the wrong account.
+  if(el("resetAcct")) el("resetAcct").onclick=()=>{
+    const who=String((acct()&&acct().email)||"").toLowerCase();
+    if(!who) return toast("Sign in first.");
+    const m=el("resetAcctModal")||(()=>{ const d=document.createElement("div"); d.id="resetAcctModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+    m.innerHTML=`<div class="modal-card">
+        <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="raX" style="margin:0">✕</button>
+          <div style="flex:1;text-align:center;font-weight:800">Reset this account</div><span style="width:34px"></span></div>
+        <p class="lead" style="font-size:13px;margin:0 0 8px">This erases every verse, palace, lesson and talent for <b class="gold">${bbEsc(who)}</b> — on this device and every other one. It cannot be undone.</p>
+        <p class="hint" style="margin:0 0 8px">Type the email address to confirm.</p>
+        <input id="raIn" class="typein" style="width:100%;box-sizing:border-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${bbEsc(who)}">
+        <button class="btn" id="raGo" style="width:100%;margin-top:10px" disabled>Erase everything for this account</button>
+      </div>`;
+    m.style.display="flex"; raiseModal(m);
+    const go=el("raGo"), inp=el("raIn");
+    const paint=()=>{ const ok=inp.value.trim().toLowerCase()===who; go.disabled=!ok; go.style.opacity=ok?"":".5"; };
+    paint(); inp.oninput=paint;
+    el("raX").onclick=()=>{ m.style.display="none"; };
+    go.onclick=async ()=>{
+      if(inp.value.trim().toLowerCase()!==who) return;
+      go.disabled=true; go.textContent="Erasing…";
+      wipeLocalUserData(); setProgOwner(who); Prog.owner=who; Prog.onboarded=true; saveProg();
+      try{ await Auth.push(); toast("This account is empty now, everywhere."); }
+      catch(e){ toast("Cleared here, but the server could not be reached. It will upload next time."); }
+      m.style.display="none"; closeProfile();
+      bustCaches(); recomputeLevel(); updateMetrics(); updateTabLocks(); syncTabOrder(false);
+      show("learn"); renderPath();
+    };
+  };
   if(el("goProBtn")) el("goProBtn").onclick=()=>{ closeProfile(); openPaywall(); };
   // Until the Stripe customer portal is configured, never leave a subscriber with no way out:
   // tell them plainly how to cancel rather than showing a button that does nothing.
@@ -10360,8 +10429,18 @@ function importBackup(file){
   const r=new FileReader();
   r.onload=()=>{ try{ const d=JSON.parse(r.result);
     if(!d || !d.prog){ throw new Error("not a backup"); }
-    if(!confirm("Restore this backup? It will REPLACE the current progress in this browser.")) return;
-    if(d.prog) Store.setJSON(PROG_KEY, migrateProg(d.prog));   // migrate an older backup on restore
+    // A backup names the account it came from. Restoring one that belongs to somebody else is the
+    // last way progress could cross between accounts on a device, so it is spelled out and then the
+    // restored copy is re-stamped: whatever is put on this account IS this account's from now on.
+    const me=String((acct()&&acct().email)||"").toLowerCase();
+    const from=String((d.prog&&d.prog.owner)||"").toLowerCase();
+    const BR = String.fromCharCode(10,10);   // a blank line, without an escape anything can mangle
+    const warn = (from && me && from!==me)
+      ? "This backup belongs to "+from+" and you are signed in as "+me+"." + BR
+        + "Restoring it puts that progress onto "+me+", here and in the cloud." + BR
+      : "";
+    if(!confirm(warn+"Restore this backup? It will REPLACE the current progress in this browser.")) return;
+    if(d.prog){ const p=migrateProg(d.prog); p.owner=me; Store.setJSON(PROG_KEY, p); setProgOwner(me); }   // migrate an older backup on restore
     if(d.srs)  Store.setJSON(SRS_KEY, d.srs);
     if(d.themePick) Store.set("vv_theme", d.themePick);
     if(d.theme) Store.set("vv_trans", d.theme);

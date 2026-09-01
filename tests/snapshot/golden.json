@@ -189,13 +189,13 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "classic/bible/whole": {
-  "h": "e355b03e0b39821d",
-  "len": 11408,
-  "els": 230,
-  "buttons": 72,
+  "h": "ac459c04c10a77fc",
+  "len": 11389,
+  "els": 231,
+  "buttons": 71,
   "svgs": 2,
   "imgs": 0,
-  "text": "Bible Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the verses "
+  "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "classic/bible/book": {
   "h": "cfed6ddb35f457cc",
@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "76a037310cfe8602",
+  "h": "5646e14673547354",
   "len": 18619,
   "els": 450,
   "buttons": 43,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "792f99729f9fc35a",
-  "len": 121296,
-  "els": 2180,
+  "h": "ef9584ca24018452",
+  "len": 123315,
+  "els": 2212,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.90.0 August 31, 2026 Your progress belongs to your account FIX Signing out left everything behind o"
+  "text": "✕ Version history v1.92.0 August 31, 2026 Progress is tied to the email, hard FIX Your progress now carries your email i"
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "7affc70443613ec1",
+  "h": "8b95e3963b413fc6",
   "len": 17818,
   "els": 442,
   "buttons": 41,
@@ -702,13 +702,13 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "illumined/bible/whole": {
-  "h": "e355b03e0b39821d",
-  "len": 11408,
-  "els": 230,
-  "buttons": 72,
+  "h": "ac459c04c10a77fc",
+  "len": 11389,
+  "els": 231,
+  "buttons": 71,
   "svgs": 2,
   "imgs": 0,
-  "text": "Bible Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the verses "
+  "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "illumined/bible/book": {
   "h": "cfed6ddb35f457cc",
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "83eb6d1f29eeea63",
+  "h": "1ab499f9aa3d7f17",
   "len": 17826,
   "els": 442,
   "buttons": 41,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "792f99729f9fc35a",
-  "len": 121296,
-  "els": 2180,
+  "h": "ef9584ca24018452",
+  "len": 123315,
+  "els": 2212,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.90.0 August 31, 2026 Your progress belongs to your account FIX Signing out left everything behind o"
+  "text": "✕ Version history v1.92.0 August 31, 2026 Progress is tied to the email, hard FIX Your progress now carries your email i"
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "83eb6d1f29eeea63",
+  "h": "1ab499f9aa3d7f17",
   "len": 17826,
   "els": 442,
   "buttons": 41,
@@ -1215,13 +1215,13 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "glass/bible/whole": {
-  "h": "e355b03e0b39821d",
-  "len": 11408,
-  "els": 230,
-  "buttons": 72,
+  "h": "ac459c04c10a77fc",
+  "len": 11389,
+  "els": 231,
+  "buttons": 71,
   "svgs": 2,
   "imgs": 0,
-  "text": "Bible Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the verses "
+  "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "glass/bible/book": {
   "h": "cfed6ddb35f457cc",
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "0d8b1bc3bf45581c",
+  "h": "ee0c2886fdd6ac22",
   "len": 17824,
   "els": 442,
   "buttons": 41,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "792f99729f9fc35a",
-  "len": 121296,
-  "els": 2180,
+  "h": "ef9584ca24018452",
+  "len": 123315,
+  "els": 2212,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.90.0 August 31, 2026 Your progress belongs to your account FIX Signing out left everything behind o"
+  "text": "✕ Version history v1.92.0 August 31, 2026 Progress is tied to the email, hard FIX Your progress now carries your email i"
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "0d8b1bc3bf45581c",
+  "h": "ee0c2886fdd6ac22",
   "len": 17824,
   "els": 442,
   "buttons": 41,
@@ -1728,13 +1728,13 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "quest/bible/whole": {
-  "h": "e355b03e0b39821d",
-  "len": 11408,
-  "els": 230,
-  "buttons": 72,
+  "h": "ac459c04c10a77fc",
+  "len": 11389,
+  "els": 231,
+  "buttons": 71,
   "svgs": 2,
   "imgs": 0,
-  "text": "Bible Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the verses "
+  "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "quest/bible/book": {
   "h": "cfed6ddb35f457cc",
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "c244c9cc9af176ca",
+  "h": "6bd7a827d9c001e5",
   "len": 17826,
   "els": 442,
   "buttons": 41,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "792f99729f9fc35a",
-  "len": 121296,
-  "els": 2180,
+  "h": "ef9584ca24018452",
+  "len": 123315,
+  "els": 2212,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.90.0 August 31, 2026 Your progress belongs to your account FIX Signing out left everything behind o"
+  "text": "✕ Version history v1.92.0 August 31, 2026 Progress is tied to the email, hard FIX Your progress now carries your email i"
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "c244c9cc9af176ca",
+  "h": "6bd7a827d9c001e5",
   "len": 17826,
   "els": 442,
   "buttons": 41,
@@ -2241,13 +2241,13 @@
   "text": "← Palaces 📜 The Ten Commandments Exodus 20:3 –17 Walk through your KITCHEN 1 Front door · 1. No other gods before Me: a"
  },
  "buddy/bible/whole": {
-  "h": "e355b03e0b39821d",
-  "len": 11408,
-  "els": 230,
-  "buttons": 72,
+  "h": "ac459c04c10a77fc",
+  "len": 11389,
+  "els": 231,
+  "buttons": 71,
   "svgs": 2,
   "imgs": 0,
-  "text": "Bible Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the verses "
+  "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "buddy/bible/book": {
   "h": "cfed6ddb35f457cc",
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "a75486fb750c17ee",
+  "h": "9941ffca6b4c99d2",
   "len": 17822,
   "els": 442,
   "buttons": 41,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "792f99729f9fc35a",
-  "len": 121296,
-  "els": 2180,
+  "h": "ef9584ca24018452",
+  "len": 123315,
+  "els": 2212,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.90.0 August 31, 2026 Your progress belongs to your account FIX Signing out left everything behind o"
+  "text": "✕ Version history v1.92.0 August 31, 2026 Progress is tied to the email, hard FIX Your progress now carries your email i"
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "a75486fb750c17ee",
+  "h": "9941ffca6b4c99d2",
   "len": 17822,
   "els": 442,
   "buttons": 41,

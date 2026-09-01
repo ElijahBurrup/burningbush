@@ -2044,6 +2044,54 @@ const DAY = 86400000;
   no(refBack.backIsList, '...not to the list of every palace');
   is(refBack.backHeading, '\u{1F3DB}\uFE0F Grandmother\u2019s House', '...but to the palace that brought them in');
 
+  describe('a saved copy that names another account is refused', () => { });
+  const tied = await $(async () => {
+    const surrounding = JSON.parse(JSON.stringify(Prog));
+    const ownerBefore = progOwner();   // this block sets an owner; the blocks after it must not inherit it
+    const realReq = Auth._req, realPush = Auth.push;
+    const out = {};
+    let ROW = null;                       // what the server would hand back
+
+    // stand in for the server: GET returns ROW, PUT records what was sent
+    Auth._req = async (path, method) => {
+      if (path === '/sync' && method === 'GET') return { progJson: ROW ? JSON.stringify(ROW) : null, srsJson: '{}' };
+      return { ok: true };
+    };
+    Auth.push = async () => { out.pushedOwner = Prog.owner; };
+
+    // signed in as one person, with a row that belongs to somebody else
+    Auth._token = 'tok'; Auth.user = { email: 'world@example.com', provider: 'email', verified: true };
+    setProgOwner('world@example.com');
+    Prog = migrateProg(null); saveProg();
+    ROW = { memorized: ['1:1:1', '2:2:2', '43:3:16'], talents: 1500, doneSkills: ['book:1'],
+            palaces: [{ place: 'Not Yours', stations: ['Door'], sr: {} }], owner: 'elijah@example.com' };
+    await Auth.pull();
+    out.refused = { verses: (Prog.memorized || []).length, talents: Prog.talents || 0 };
+
+    // the same row, but it names THIS account: taken
+    Prog = migrateProg(null); saveProg();
+    ROW = Object.assign({}, ROW, { owner: 'world@example.com' });
+    await Auth.pull();
+    out.mine = { verses: (Prog.memorized || []).length, talents: Prog.talents || 0 };
+
+    // a row from before ownership was recorded: taken, so nobody loses what they already had
+    Prog = migrateProg(null); saveProg();
+    ROW = Object.assign({}, ROW); delete ROW.owner;
+    await Auth.pull();
+    out.legacy = { verses: (Prog.memorized || []).length };
+
+    Auth._req = realReq; Auth.push = realPush;
+    Auth._token = null; Auth.user = null;
+    setProgOwner(ownerBefore);
+    Prog = surrounding; saveProg(); bustCaches(); updateTabLocks();
+    return out;
+  });
+  is(tied.refused.verses, 0, 'a saved copy naming another account hands over no verses');
+  is(tied.refused.talents, 0, '...and no talents');
+  is(tied.mine.verses, 3, 'the same copy naming this account is taken');
+  is(tied.mine.talents, 1500, '...talents and all');
+  is(tied.legacy.verses, 3, 'a copy from before ownership was recorded is still taken');
+
   describe('progress belongs to the account that made it', () => { });
   const own = await $(async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -2108,7 +2156,7 @@ const DAY = 86400000;
     const keep = curTrans();
     Prog.onboarded = true; saveProg();
     show('journey'); renderJourney();
-    el('bibleSearchBtn').click();
+    el('bibleSearchIn').focus();   // the search box lives on the title line now; there is no magnifier to press
     const inp = el('bibleSearchIn');
     const typed = async text => {
       inp.removeAttribute('readonly'); inp.value = text;
@@ -4649,16 +4697,23 @@ const DAY = 86400000;
     return { seen: videoSeen('major') };
   });
   no(major.seen, 'the Major System film starts unwatched');
-  await $(() => { show('learn'); return true; });
-  await page.waitForFunction(() => { const m = el('videoModal'); return m && m.style.display === 'flex'; }, { timeout: 4000 }).catch(() => { });
-  const majorShown = await $(() => {
+  // Opening Learn used to play it. It does not any more: straight after the welcome that made part
+  // one of the Major System the first thing a new person saw, rather than the track itself.
+  const majorShown = await $(async () => {
+    const m0 = el('videoModal'); if (m0) m0.style.display = 'none';
+    show('learn');
+    await new Promise(r => setTimeout(r, 900));
     const m = el('videoModal');
     const out = { shown: !!m && m.style.display === 'flex', txt: m ? m.innerText : '' };
     if (out.shown) el('vsDone').click();
+    // both films are still on the page: Intro at the top, the Major System on its own tile
+    out.introButton = !!el('introFilm');
+    out.majorTile = [...document.querySelectorAll('.tile.video small')].map(s => s.textContent).join(',');
     return out;
   });
-  ok(majorShown.shown, 'opening Learn plays it — it is what the whole track rests on');
-  has(majorShown.txt, 'Major System', '...that one');
+  no(majorShown.shown, 'opening Learn does NOT play a film — Learn just opens');
+  ok(majorShown.introButton, '...the Intro film sits at the top of it');
+  has(majorShown.majorTile, 'Major System 1', '...and the Major System keeps its own tile in the first unit');
 
   describe('a palace for every six lessons', () => { });
   const six = await $(() => {
