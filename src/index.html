@@ -2153,8 +2153,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.93.0";
+const APP_VERSION="1.94.0";
 const CHANGELOG=[
+ {v:"1.94.0", d:"September 1, 2026", t:"Everything comes with you, not just most of it", items:[
+   ["fix","<b>Signing in on a new device left twelve things behind.</b> Your daily goal, your reminders, your theme, the translation you read, which verses you have marked known by heart, and your whole word-for-word record. The merge carried the fields it had been told about and quietly replaced the rest with their defaults — then saved that back over your account. Every one of them travels now."],
+   ["new","<b>Your theme follows your account.</b> Choose it once and it is there on the next phone you sign in on, rather than starting over at the default."],
+   ["chg","<b>And a field nobody thought to list can no longer go missing.</b> Anything your account holds that a device does not is taken from the account, rather than depending on someone having remembered to name it."]
+ ]},
  {v:"1.93.0", d:"September 1, 2026", t:"Close enough to find it", items:[
    ["new","<b>A search that finds nothing now shows the closest verses instead.</b> Type it from memory, a word off or a letter out, and it still lands: each word is matched against the words the translation actually uses, and the verses carrying most of them come back first. Rarer words count for more, so the one unusual word you remember does the work. It tells you what it read differently."],
    ["fix","<b>The installed app was drawing its top bar into the notch.</b> In the installed app the screen already stops below the status bar, but the bars were leaving room for it a second time — the top bar stood at nearly double height with its contents crushed into the bottom of it, and a band of dead space sat under the tabs. The bars now measure the window they are actually given, and hold their height while the keyboard is up so nothing jumps mid-sentence."],
@@ -4196,6 +4201,13 @@ function migrateProg(p){
 // Used by cloud sync so two devices never clobber each other. Favors "never lose progress" over honoring deletions.
 function mergeProg(a,b){
   a=migrateProg(a||{}); b=migrateProg(b||{});
+  /* Merging is for two devices that BOTH have something. A device with nothing to contribute — a
+     new phone, or one just signed out of — takes the account whole. Field-by-field merging into an
+     empty profile is how a translation choice, a verse ladder and a word-for-word record all got
+     replaced by their defaults and then saved back over the account that had them. */
+  const bare = p => !(p.memorized||[]).length && !(p.doneSkills||[]).length
+                 && !(p.palaces||[]).filter(Boolean).length && !(p.talents||0);
+  if(bare(a) && !bare(b)) return b;
   const uniq=(x,y)=>[...new Set([...(x||[]),...(y||[])])];
   const m=JSON.parse(JSON.stringify(a));
   m.memorized=uniq(a.memorized,b.memorized); m.doneSkills=uniq(a.doneSkills,b.doneSkills);
@@ -4225,6 +4237,44 @@ function mergeProg(a,b){
   m.locPast=Object.assign({},a.locPast||{},b.locPast||{});
   m.phaseMax=Math.max(a.phaseMax||0,b.phaseMax||0);
   m.videoOrder=[...(a.videoOrder||[])]; (b.videoOrder||[]).forEach(k=>{ if(!m.videoOrder.includes(k)) m.videoOrder.push(k); });
+
+  /* ---- the verse ladder and the word-for-word record are progress, and merge like the rest ---- */
+  m.verseStage=Object.assign({},b.verseStage||{},a.verseStage||{});   // a promotion on either device stands
+  m.w4w=Object.assign({},b.w4w||{},a.w4w||{});
+  m.w4wSR=Object.assign({},b.w4wSR||{},a.w4wSR||{});
+  m.stageAsk=Object.assign({},b.stageAsk||{},a.stageAsk||{});
+  // each translation keeps its own buckets; neither side's may be dropped
+  { const out={}; const keys=new Set([...Object.keys(b.trStash||{}),...Object.keys(a.trStash||{})]);
+    keys.forEach(k=>{ out[k]=Object.assign({},(b.trStash||{})[k]||{},(a.trStash||{})[k]||{}); });
+    m.trStash=out; }
+
+  /* ---- the week counter belongs to whichever device is further into the week ---- */
+  { const aw=String(a.weekKey||""), bw=String(b.weekKey||"");
+    const takeB = bw>aw || (bw===aw && (b.weekDays||0)>(a.weekDays||0));
+    m.weekKey=takeB?bw:aw;
+    m.weekDays=Math.max(a.weekDays||0,b.weekDays||0);
+    m.weekGoalHit=!!(a.weekGoalHit||b.weekGoalHit); }
+
+  /* ---- Settings the device holds: keep what this one has, otherwise take the account's. ---- */
+  ["dailyGoal","reminders","theme","trActive","persona","dailyMin","bibleFam","covenant"].forEach(k=>{
+    const av=a[k], bv=b[k];
+    const empty = av===undefined || av===null || av==="" || (Array.isArray(av)&&!av.length);
+    m[k] = empty ? bv : av;
+  });
+
+  /* ---- and the backstop. Anything at all that this device does not have, take from the account.
+     Without this, a field nobody remembered to name here is silently replaced by its default the
+     first time somebody signs in on a new phone — and then pushed back over their own row.      ---- */
+  Object.keys(b||{}).forEach(k=>{
+    const mv=m[k], bv=b[k];
+    if(bv===undefined || bv===null) return;
+    const gone = mv===undefined || mv===null;
+    const blankStr = typeof mv==="string" && mv==="" && typeof bv==="string" && bv!=="";
+    const blankArr = Array.isArray(mv) && !mv.length && Array.isArray(bv) && bv.length;
+    const blankObj = mv && typeof mv==="object" && !Array.isArray(mv) && !Object.keys(mv).length
+                     && bv && typeof bv==="object" && !Array.isArray(bv) && Object.keys(bv).length;
+    if(gone || blankStr || blankArr || blankObj) m[k]=bv;
+  });
   m.revPrefs=Object.assign({},a.revPrefs||{},b.revPrefs||{});   // a preference, not progress
   // a feature switched ON anywhere stays on: the device that turned it on is the one that meant it
   m.featuresInit=!!(a.featuresInit||b.featuresInit);
@@ -4450,6 +4500,7 @@ const Auth = {
           SRS=Object.assign({},cloudSRS,SRS);
           Store.setJSON(PROG_KEY,Prog); Store.setJSON(SRS_KEY,SRS); Store.setJSON(PROG_KEY+"_bak",Prog);
           bustCaches(); recomputeLevel(); updateMetrics();
+          if(Prog.theme && Prog.theme!==Store.get("vv_theme",null)) applyTheme(Prog.theme);   // the theme follows the account too
           const active=document.querySelector(".view.active");
           if(active){ if(active.id==="journey")renderJourney(); else if(active.id==="learn")renderPath(); else if(active.id==="verse")renderVerse(); else if(active.id==="palace")renderPalaceHere(); else if(active.id==="stories")renderStories(); }
         }
@@ -6151,7 +6202,9 @@ function openPhaseScratch(idx, after){
   Scratch.open(0, {
     title:"🎫 A new phase is open!",
  card:{ icon:U.ic||"🎫", name:U.name, desc:"The next stretch of your path. Scratch to open it." },
-    onClaim:()=>{ openPhase(idx); if(after) after(); },
+    // The phase is opened either way; where you are left is the caller's business, because the
+    // screen worth returning to is not the same one every time.
+    onClaim:()=>{ Prog.phaseMax=idx; saveProg(); show("learn"); if(after) after(); else renderPath(true); },
   });
 }
 function maybePhaseScratch(after){
@@ -6184,6 +6237,28 @@ function maybeSuggestPalace(){
   el("paNo").onclick=close;
   return true;
 }
+// What a lesson ended on, kept so it can be drawn again. The phase ticket lands on top of this and
+// has to be able to put it back; nothing else survives finishLesson, which nulls LZ as it goes.
+let LESSON_DONE=null;
+function renderLessonDone(){
+  const d=LESSON_DONE; if(!d) return false;
+  // show("learn") renders the path as part of opening the tab, so it goes FIRST or not at all —
+  // called afterwards it wipes the card this function exists to draw.
+  if(!el("learn").classList.contains("active")) show("learn");
+  el("learn").innerHTML=`<div class="card center">
+    <div style="font-size:56px">🏅</div>
+    <h2>Skill complete!</h2>
+    <p class="lead">${d.ok} correct. Now <b class="gold">gold</b>. It will fade over the coming days, so come back to keep it locked in.</p>
+    ${d.msg?`<div class="callout">${d.msg}</div>`:""}
+    ${d.unlocked}
+    <div class="btnrow">
+      ${d.hasNew?`<button class="btn" id="lBuild">Build a new verse →</button>`:`<button class="btn" id="lNextNum">Learn another →</button>`}
+      <button class="btn ghost" id="lPath2">Back to path</button></div></div>`;
+  if(el("lBuild")) el("lBuild").onclick=()=>openSuggestedForBook(d.buildBook);
+  if(el("lNextNum")) el("lNextNum").onclick=()=>renderPath(true);
+  el("lPath2").onclick=()=>renderPath(true);
+  return true;
+}
 function finishLesson(){
   const sk=LZ.sk;
   const rk=v=>refKey(bookNum(v.b),v.c,v.v);
@@ -6201,15 +6276,7 @@ function finishLesson(){
   const unlocked = newly.length
     ? `<div class="callout" style="border-left-color:var(--good)"><b style="color:var(--good)">🌿 ${newly.length} more of His Word within reach</b> Now buildable: <b class="gold">${newly.slice(0,4).map(v=>v.b+" "+v.c+":"+v.v).join(", ")}${newly.length>4?", …":""}</b>.</div>`
  : `<div class="callout">Keep going. Verses unlock once their <b>book, chapter and verse numbers</b> are all learned.</div>`;
-  el("learn").innerHTML=`<div class="card center">
-    <div style="font-size:56px">🏅</div>
-    <h2>Skill complete!</h2>
- <p class="lead">${LZ.ok} correct. Now <b class="gold">gold</b>. It will fade over the coming days, so come back to keep it locked in.</p>
-    ${msg?`<div class="callout">${msg}</div>`:""}
-    ${unlocked}
-    <div class="btnrow">
-      ${newly.length?`<button class="btn" id="lBuild">Build a new verse →</button>`:`<button class="btn" id="lNextNum">Learn another →</button>`}
-      <button class="btn ghost" id="lPath2">Back to path</button></div></div>`;
+  // built below, once the book to land in is known
   // Which book to land in. THE BOOK THIS LESSON WAS ABOUT wins: learning Psalms and being dropped
   // into Leviticus is disorienting, and that is exactly what happens if you follow the newly opened
   // verses instead — a number like 19 is a chapter in a dozen books, so the lowest-numbered one wins
@@ -6218,11 +6285,13 @@ function finishLesson(){
   const buildBook = ((sk.items||[]).find(n=>n>=1&&n<=66))
     || (newly.length && bookNum(newly[0].b))
     || latestLearnedBook();
-  if(el("lBuild")) el("lBuild").onclick=()=>openSuggestedForBook(buildBook);
-  if(el("lNextNum")) el("lNextNum").onclick=()=>renderPath(true);
-  el("lPath2").onclick=()=>renderPath(true);
+  LESSON_DONE={ ok:LZ.ok, msg, unlocked, hasNew:newly.length>0, buildBook };
+  renderLessonDone();
   LZ=null;
-  if(wasNew) setTimeout(()=>{ if(!maybePhaseScratch(()=>setTimeout(maybeSuggestPalace,500))) maybeSuggestPalace(); }, 700);
+  // The ticket goes up over this screen, so claiming it puts this screen back rather than the path.
+  if(wasNew) setTimeout(()=>{
+    if(!maybePhaseScratch(()=>{ renderLessonDone(); setTimeout(maybeSuggestPalace,500); })) maybeSuggestPalace();
+  }, 700);
 }
 
 /* =================== VERSE (daily + my verses) =================== */
@@ -10443,6 +10512,8 @@ function applyTheme(t){
   if(!["illumined","classic","buddy","glass","quest"].includes(t)) t="illumined";   // unknown/tampered value → main theme, never a bare render
   document.querySelector(".phone").setAttribute("data-theme",t);
   Store.set("vv_theme",t);
+  // the theme is a choice a person makes once, so it belongs to them and not to the phone
+  if(typeof Prog==="object" && Prog && Prog.theme!==t){ Prog.theme=t; try{ saveProg(); }catch(e){} }
   document.querySelectorAll(".theme-opt").forEach(b=>b.classList.toggle("sel",b.dataset.th===t));
   buildSky(t==="illumined");
   paintTheme();
@@ -10995,7 +11066,9 @@ if(el("testFinishPhase")) el("testFinishPhase").onclick=()=>{
   bustCaches(); saveProg(); updateMetrics(); recomputeLevel&&recomputeLevel();
   show("learn"); renderPath(true);
  toast(`🧪 ${UNITS[cur].name} finished. Profile → Restore to undo.`);
-  setTimeout(()=>{ if(!maybePhaseScratch(()=>setTimeout(maybeSuggestPalace,600))) maybeSuggestPalace(); }, 500);
+  setTimeout(()=>{
+    if(!maybePhaseScratch(()=>{ renderPath(true); setTimeout(maybeSuggestPalace,600); })) maybeSuggestPalace();
+  }, 500);
 };
 if(el("testRomeLetter")) el("testRomeLetter").onclick=()=>{ closeProfile(); Prog.romeLetterSeen=false; saveProg(); openRomeLetter(); };
 if(el("testUnpaid")) el("testUnpaid").onclick=()=>{

@@ -2044,6 +2044,43 @@ const DAY = 86400000;
   no(refBack.backIsList, '...not to the list of every palace');
   is(refBack.backHeading, '\u{1F3DB}\uFE0F Grandmother\u2019s House', '...but to the palace that brought them in');
 
+  describe('signing in on a new device brings everything, not most of it', () => { });
+  const carryAll = await $(() => {
+    // an account with a value in every field that is plainly not a default
+    const cloud = migrateProg(null);
+    Object.assign(cloud, {
+      memorized: ['1:1:1', '2:2:2'], doneSkills: ['book:1'], talents: 4242,
+      dailyGoal: 7, reminders: [{ h: 7, m: 30, on: true }], theme: 'quest', trActive: 'ASV',
+      verseStage: { '1:1:1': 'heart' }, w4w: { '1:1:1': { count: 3 } },
+      w4wSR: { '1:1:1': { streak: 2 } }, stageAsk: { '1:1:1': 123 },
+      weekKey: '2026-W35', weekDays: 4, weekGoalHit: true, hints: 9, phaseMax: 6,
+      revPrefs: { ask: 'both' }, ntPrefs: { count: 20 }, freezes: 3, palaceSlots: 2,
+    });
+
+    // a device with nothing on it, which is what a new phone and a signed-out one both are
+    const fresh = mergeProg(migrateProg(null), cloud);
+    const missing = Object.keys(cloud).filter(k =>
+      JSON.stringify(cloud[k]) !== JSON.stringify(fresh[k]));
+
+    // and a device that DOES have its own work: the union must still hold
+    const mine = migrateProg(null);
+    mine.memorized = ['40:6:33']; mine.talents = 10; mine.doneSkills = ['book:9'];
+    const both = mergeProg(mine, cloud);
+
+    return { missing, total: Object.keys(cloud).length,
+             goal: fresh.dailyGoal, stage: JSON.stringify(fresh.verseStage), trans: fresh.trActive,
+             union: (both.memorized || []).slice().sort().join(','),
+             unionSkills: (both.doneSkills || []).slice().sort().join(','),
+             unionTalents: both.talents };
+  });
+  is(carryAll.missing.join(', '), '', 'a new device loses nothing at all from the account');
+  is(carryAll.goal, 7, '...the daily goal comes with it');
+  is(carryAll.stage, '{"1:1:1":"heart"}', '...so does which verses are known by heart');
+  is(carryAll.trans, 'ASV', '...and the translation being read');
+  is(carryAll.union, '1:1:1,2:2:2,40:6:33', 'a device with its own work still merges rather than replaces');
+  is(carryAll.unionSkills, 'book:1,book:9', '...lessons from both sides');
+  is(carryAll.unionTalents, 4242, '...and the higher talent count');
+
   describe('a saved copy that names another account is refused', () => { });
   const tied = await $(async () => {
     const surrounding = JSON.parse(JSON.stringify(Prog));
@@ -3624,7 +3661,7 @@ const DAY = 86400000;
     const settle = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     sc().scrollTop = 60; const before = sc().scrollTop;   // small enough that a shorter verse can still hold it
     document.querySelector('[data-nav="vnext"]').click(); await settle();
-    const afterBtn = { y: sc().scrollTop, ref: (document.querySelector('.lv-ref')||{}).textContent.trim() };
+    const afterBtn = { y: sc().scrollTop, ref: ((document.querySelector('.lv-ref')||{}).textContent||'').trim() };
     const host = document.getElementById('verse');
     const target = document.querySelector('.lv-versetext') || host;
     const mk = (x,y) => new Touch({ identifier:1, target, clientX:x, clientY:y });
@@ -5638,6 +5675,98 @@ const DAY = 86400000;
     is(redeem.shutPro, 0, '...and a redeemed one has none');
     ok(redeem.loose, 'case and spacing do not matter, because nobody types a code carefully');
   }
+
+  // ───────────────── the phase ticket puts back what it covered ─────────────────
+  describe('the phase ticket', () => { });
+  // Finishing the sixth lesson of a phase ends the lesson AND wins the next phase. The ticket goes up
+  // over the screen the lesson ended on — the one naming the verses it opened, with the way straight
+  // into building one — so claiming it has to put that screen back, not the path.
+  //
+  // Driven directly rather than through finishLesson, which schedules the ticket on a 700ms timer:
+  // waiting on that from a shared page means a second ticket can open mid-assertion and rebind the
+  // claim button. What is being pinned is the contract — the claim runs the caller's callback and
+  // the lesson screen can be drawn again — not the timer.
+  const ticket = await $(() => {
+    const snapDone = Prog.doneSkills.slice(), snapMax = Prog.phaseMax, snapLD = LESSON_DONE;
+    const p = 4;
+    Prog.phaseMax = p; Prog.doneSkills = [];
+    phaseIdxs().filter(i => i <= p).forEach(i => UNITS[i].skills.forEach(sk => Prog.doneSkills.push(sk.id)));
+    bustCaches(); saveProg();
+    show('learn');
+
+    // the screen a lesson ends on
+    LESSON_DONE = { ok: 8, msg: '', unlocked: '<div class="callout">x</div>', hasNew: true, buildBook: 19 };
+    const drew = renderLessonDone();
+    const card = () => { const btn = el('lBuild') || el('lNextNum');
+      return { on: !!el('lPath2'), btn: btn ? btn.id : null, path: !!document.querySelector('#learn .path') }; };
+    const ended = card();
+
+    // it survives being drawn over and drawn again — which is what makes it restorable at all
+    renderPath(true);
+    const covered = card();
+    const redrew = renderLessonDone();
+    const restored = card();
+
+    // the claim runs the callback the caller gave it, and opens the phase either way
+    window.__tkRan = 0;
+    const won = maybePhaseScratch(() => { window.__tkRan++; renderLessonDone(); });
+    const phaseBefore = Prog.phaseMax;
+    const ticketUp = !!document.querySelector('#scov.on');
+    const underneath = card();
+
+    window.__tkSnap = { done: snapDone, max: snapMax, ld: snapLD };   // put back after the claim
+    return { drew, ended, covered, redrew, restored, won, ticketUp, underneath, phaseBefore };
+  });
+  ok(ticket.drew, 'the screen a lesson ends on can be drawn on demand');
+  ok(ticket.ended.on, '...showing its buttons');
+  is(ticket.ended.btn, 'lBuild', '...the way into one of the verses the lesson opened');
+  no(ticket.ended.path, '...and not the path');
+  ok(ticket.covered.path, 'something else can be drawn over it');
+  ok(ticket.redrew, '...and it can be drawn again afterwards');
+  ok(ticket.restored.on, '...restoring the screen');
+  is(ticket.restored.btn, ticket.ended.btn, '...with the same way forward it had');
+  no(ticket.restored.path, '...the path gone again');
+  ok(ticket.won, 'completing a phase wins the ticket for the next one');
+  ok(ticket.ticketUp, '...which comes up over that screen');
+  ok(ticket.underneath.on, '...leaving it underneath, where it was');
+
+  // The claim is the part that changed: it used to render the path itself, so the screen the lesson
+  // ended on was thrown away by the reward. Where it lands is the caller's to decide now.
+  //
+  // Driven through a stubbed ticket rather than a scratched one. The foil is a canvas that has to be
+  // painted before a stroke registers, which means waiting a frame, which means a second ticket can
+  // open on finishLesson's timer and rebind the claim in between. What matters here is the wiring.
+  const claimWiring = await $(() => {
+    const snapMax = Prog.phaseMax, snapLD = LESSON_DONE, realOpen = Scratch.open;
+    Prog.phaseMax = 4;
+    LESSON_DONE = { ok: 8, msg: '', unlocked: '<div class="callout">x</div>', hasNew: true, buildBook: 19 };
+    const out = {};
+    Scratch.open = (rung, opts) => opts.onClaim();          // as if it had been scratched and claimed
+
+    // given a callback, the caller decides where it lands
+    show('learn'); renderPath(true);
+    let ran = 0;
+    openPhaseScratch(5, () => { ran++; renderLessonDone(); });
+    out.ran = ran;
+    out.opened = Prog.phaseMax;
+    out.onLesson = el('learn').innerHTML.indexOf('Skill complete') >= 0;
+    out.notPath = !document.querySelector('#learn .path');
+
+    // given none, it falls back to the path, which is what the admin tool wants
+    Prog.phaseMax = 4; show('learn');
+    openPhaseScratch(5, null);
+    out.fallbackPath = !!document.querySelector('#learn .path');
+    out.fallbackOpened = Prog.phaseMax;
+
+    Scratch.open = realOpen; Prog.phaseMax = snapMax; LESSON_DONE = snapLD; saveProg();
+    return out;
+  });
+  is(claimWiring.ran, 1, 'claiming the ticket runs the callback the caller gave it, exactly once');
+  is(claimWiring.opened, 5, '...and opens the phase it was won for');
+  ok(claimWiring.onLesson, '...landing back on the screen the lesson ended on');
+  ok(claimWiring.notPath, '...rather than on the path, which is what it used to do');
+  ok(claimWiring.fallbackPath, 'a caller that names no destination still gets the path');
+  is(claimWiring.fallbackOpened, 5, '...and the phase opens either way');
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
