@@ -87,6 +87,9 @@
   button,select,input,textarea,a,label,
   .clkrow,.vrow,.vbox,.chapbox,.tile,.opt,.palace-card,.cellcard,.bookhead,.grouphead,.theme-opt,.storeitem{touch-action:manipulation}
   html,body{margin:0;height:100%}
+  /* What the top and bottom bars owe the hardware. The env() values are the right answer whenever
+     the page really does reach the edges of the screen; fitFrame() zeroes them when it does not. */
+  :root{ --sat:env(safe-area-inset-top, 0px); --sab:env(safe-area-inset-bottom, 0px); }
   body{
     font-family:var(--font-body);color:var(--ink);
     background:var(--page-bg);-webkit-font-smoothing:antialiased;
@@ -95,7 +98,7 @@
   /* ---- phone shell ---- */
   .phone{
     overscroll-behavior:none;
-    width:100%;max-width:412px;height:100dvh;max-height:892px;position:relative;
+    width:100%;max-width:412px;height:var(--app-h, 100dvh);max-height:892px;position:relative;
     background:radial-gradient(900px 500px at 50% -8%,var(--phone-top) 0%,var(--bg) 55%);
     display:flex;flex-direction:column;overflow:hidden;color:var(--ink);
     border:10px solid var(--phone-border);border-radius:44px;box-shadow:0 30px 80px var(--phone-shadow);
@@ -104,7 +107,7 @@
 
   .topbar{
     flex:0 0 auto;position:relative;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:8px;
-    padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;border-bottom:1px solid var(--line);
+    padding:calc(var(--sat) + 12px) 16px 12px;border-bottom:1px solid var(--line);
     background:var(--topbar-bg);
   }
   .brand{display:flex;align-items:center;gap:9px}
@@ -153,7 +156,7 @@
 
   .tabbar{
     flex:0 0 auto;position:relative;z-index:6;display:flex;border-top:1px solid var(--line);background:var(--tabbar-bg);
-    padding-bottom:env(safe-area-inset-bottom);
+    padding-bottom:var(--sab);
   }
   /* Icon over its name. The padding is tightened rather than the icon, so the names cost the bar
      about a pixel of height and the icons stay the size they were. */
@@ -996,7 +999,7 @@
   .bible-search-btn{background:var(--panel3);border:1px solid var(--line);border-radius:10px;width:34px;height:34px;font-size:16px;cursor:pointer;color:var(--ink);flex:0 0 auto;display:grid;place-items:center}
   .bible-search-btn:active{transform:scale(.94)}
   /* When open, the search floats to the TOP-RIGHT of the screen so the book list gets the whole area above the keyboard */
-  .bible-drop{position:fixed;top:calc(env(safe-area-inset-top) + 58px);right:10px;left:auto;width:280px;max-width:calc(100% - 20px);max-height:calc(100dvh - 74px);overflow:auto;background:var(--panel);border:1px solid var(--gold2);border-radius:14px;box-shadow:0 16px 44px var(--scrim);z-index:120;padding:8px}
+  .bible-drop{position:fixed;top:calc(var(--sat) + 58px);right:10px;left:auto;width:300px;max-width:calc(100% - 20px);max-height:calc(100dvh - 74px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-card);box-shadow:0 18px 50px var(--scrim);z-index:120;padding:10px}
   .bible-drop .typein{position:sticky;top:0;z-index:2;width:100%;box-sizing:border-box;font-size:15px;padding:11px;margin:0 0 6px;text-align:left;background:var(--panel2)}
   .bible-drop-list{display:flex;flex-direction:column;gap:2px}
   .bible-drop-item{text-align:left;background:none;border:none;color:var(--ink);font-weight:700;font-size:14px;padding:9px 10px;border-radius:8px;cursor:pointer}
@@ -1004,13 +1007,16 @@
   .bible-drop-item:active{background:var(--panel2)}
   /* verse hits need more room than a list of book names, so the box widens when there are any */
   .bible-drop.hashits{width:340px}
-  .bible-hits{display:flex;flex-direction:column;gap:2px;margin-top:2px}
-  .bible-hits-head{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 10px 4px;border-top:1px solid var(--line);margin-top:6px}
-  .bible-hit{text-align:left;background:none;border:none;color:var(--ink);padding:8px 10px;border-radius:8px;cursor:pointer;display:block;width:100%}
-  .bible-hit:active{background:var(--panel2)}
-  .bible-hit b{display:block;color:var(--gold-ink);font-size:13px;font-weight:800}
-  .bible-hit span{display:block;font-size:12.5px;line-height:1.4;color:var(--ink-soft);font-weight:600}
-  .bible-hit mark{background:var(--gold2);color:var(--foil-ink);border-radius:3px;padding:0 1px}
+  .bible-hits{display:flex;flex-direction:column;gap:6px;margin-top:2px}
+  /* the section label every other screen uses */
+  .bible-hits-head{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--gold-ink);padding:10px 2px 6px;border-top:1px solid var(--line);margin-top:8px}
+  /* a result reads as a list row, the same shape as every other list in the app */
+  .bible-hit{text-align:left;width:100%;background:var(--panel2);border:2px solid var(--line);color:var(--ink);
+    padding:11px 12px;border-radius:10px;cursor:pointer;display:block;line-height:1.15}
+  .bible-hit:active{transform:scale(.97)}
+  .bible-hit b{display:block;color:var(--gold-ink);font-size:13.5px;font-weight:800;letter-spacing:.2px;margin-bottom:4px}
+  .bible-hit span{display:block;font-size:12.5px;line-height:1.45;color:var(--ink-soft);font-weight:600}
+  .bible-hit mark{background:var(--gold-soft,var(--panel3));color:var(--gold-ink);border-radius:4px;padding:0 2px;font-weight:800}
   .biblestrip .bk{aspect-ratio:1.12;border-radius:6px;background:var(--cell-bg);font-size:12px;font-weight:700;display:grid;place-items:center;color:var(--cell-ink)}
   .biblestrip .bk.on{background:var(--accent);color:var(--on-blue);font-weight:800}
   /* NUMBER view (.jfill): Journey fills the screen (no scroll) and tiles grow to fill the height → numbers as big as possible */
@@ -2147,8 +2153,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.92.0";
+const APP_VERSION="1.93.0";
 const CHANGELOG=[
+ {v:"1.93.0", d:"September 1, 2026", t:"Close enough to find it", items:[
+   ["new","<b>A search that finds nothing now shows the closest verses instead.</b> Type it from memory, a word off or a letter out, and it still lands: each word is matched against the words the translation actually uses, and the verses carrying most of them come back first. Rarer words count for more, so the one unusual word you remember does the work. It tells you what it read differently."],
+   ["fix","<b>The installed app was drawing its top bar into the notch.</b> In the installed app the screen already stops below the status bar, but the bars were leaving room for it a second time — the top bar stood at nearly double height with its contents crushed into the bottom of it, and a band of dead space sat under the tabs. The bars now measure the window they are actually given, and hold their height while the keyboard is up so nothing jumps mid-sentence."],
+   ["chg","<b>The results look like the rest of the app.</b> The panel is a card with the same corners and lines as every other, the count sits in the gold section label used everywhere else, and each verse is a list row that presses in when you tap it."]
+ ]},
  {v:"1.92.0", d:"August 31, 2026", t:"Progress is tied to the email, hard", items:[
    ["fix","<b>Your progress now carries your email inside it, and will not be opened by anyone else.</b> Signing in somewhere that holds a saved copy belonging to a different account refuses it outright instead of handing it over. The device already refused to <i>send</i> one person's progress into another's account; this refuses to <i>receive</i> it as well."],
    ["new","<b>Reset this account's progress.</b> In Profile, under your email. It empties that account everywhere, and asks you to type the email first, so it can clear a saved copy that ended up holding the wrong data."],
@@ -2896,7 +2907,7 @@ function searchVerses(q, cap){
         const at=txt.toLowerCase().indexOf(ql);
         if(at<0) continue;
         out.total++;
-        if(out.hits.length<lim) out.hits.push({b:bi+1, c:ci+1, v:vi+1, at, len:ql.length, txt});
+        if(out.hits.length<lim) out.hits.push({b:bi+1, c:ci+1, v:vi+1, at, len:ql.length, txt, terms:[ql]});
       }
     }
   }
@@ -2905,10 +2916,136 @@ function searchVerses(q, cap){
 // One hit, with enough of the verse either side of the match to recognise it. Each piece is escaped
 // on its own so the highlight cannot be spelled by the verse text.
 function verseHitHTML(h){
-  const pad=42;
-  const from=Math.max(0, h.at-pad), to=Math.min(h.txt.length, h.at+h.len+pad);
-  const pre=(from?"…":"")+h.txt.slice(from,h.at), mid=h.txt.slice(h.at,h.at+h.len), post=h.txt.slice(h.at+h.len,to)+(to<h.txt.length?"…":"");
-  return `<button type="button" class="bible-hit" data-hit="${h.b}:${h.c}:${h.v}"><b>${bbEsc(bookName(h.b))} ${h.c}:${h.v}</b><span>${bbEsc(pre)}<mark>${bbEsc(mid)}</mark>${bbEsc(post)}</span></button>`;
+  const txt=h.txt, pad=46;
+  // open the window on the match, then back each end up to a word boundary so no word is cut in half
+  let from=Math.max(0, h.at-pad), to=Math.min(txt.length, h.at+h.len+pad);
+  if(from>0){ while(from>0 && /[^\s]/.test(txt[from-1])) from--; }
+  if(to<txt.length){ while(to<txt.length && /[^\s]/.test(txt[to])) to++; }
+  const win=txt.slice(from,to), low=win.toLowerCase();
+
+  // every word this verse was chosen for, marked wherever it appears in the window
+  const words=[...new Set((h.terms&&h.terms.length?h.terms:[String(h.txt).substr(h.at,h.len)]).map(w=>String(w||"").toLowerCase()).filter(Boolean))];
+  const spans=[];
+  for(const w of words){
+    let i=low.indexOf(w);
+    while(i>=0){
+      const before=i?low[i-1]:" ", after=low[i+w.length]||" ";
+      if(!/[a-z]/.test(before) && !/[a-z]/.test(after)) spans.push([i,i+w.length]);
+      i=low.indexOf(w, i+1);
+    }
+  }
+  spans.sort((a,b)=>a[0]-b[0]);
+  let html="", at=0;
+  for(const [s,e] of spans){
+    if(s<at) continue;                       // overlapping marks would nest
+    html+=bbEsc(win.slice(at,s))+"<mark>"+bbEsc(win.slice(s,e))+"</mark>";
+    at=e;
+  }
+  html+=bbEsc(win.slice(at));
+  const lead=from>0?"…":"", tail=to<txt.length?"…":"";
+  return `<button type="button" class="bible-hit" data-hit="${h.b}:${h.c}:${h.v}"><b>${bbEsc(bookName(h.b))} ${h.c}:${h.v}</b><span>${lead}${html}${tail}</span></button>`;
+}
+/* Every distinct word in the translation, with how often it occurs. Built once, and only the first
+   time a search comes back empty — a search that found something never pays for it. */
+let _vocab=null, _vocabFor="";
+function transVocab(){
+  const t=transEntry(curTrans()), id=t.api?"KJV":t.id;
+  if(_vocab && _vocabFor===id) return _vocab;
+  const D=t.api?window.KJV:transData(), m=new Map();
+  if(D) for(const bk of D){ if(!bk) continue; for(const ch of bk){ if(!ch) continue; for(const v of ch){
+    if(!v) continue; const ws=v.toLowerCase().match(/[a-z]+/g); if(!ws) continue;
+    for(const w of ws) m.set(w,(m.get(w)||0)+1); } } }
+  _vocab=m; _vocabFor=id; return m;
+}
+// Edit distance, abandoned early once it cannot come in under the limit.
+function editDist(a,b,max){
+  const m=a.length,n=b.length;
+  if(Math.abs(m-n)>max) return max+1;
+  let prev=new Array(n+1), cur=new Array(n+1);
+  for(let j=0;j<=n;j++) prev[j]=j;
+  for(let i=1;i<=m;i++){
+    cur[0]=i; let best=i;
+    for(let j=1;j<=n;j++){
+      cur[j]=Math.min(prev[j]+1, cur[j-1]+1, prev[j-1]+(a.charCodeAt(i-1)===b.charCodeAt(j-1)?0:1));
+      if(cur[j]<best) best=cur[j];
+    }
+    if(best>max) return max+1;
+    const tmp=prev; prev=cur; cur=tmp;
+  }
+  return prev[n];
+}
+function sharedPrefix(a,b){ let i=0; while(i<a.length && i<b.length && a[i]===b[i]) i++; return i; }
+// The word a misspelling was reaching for. Distance decides it; a shared opening decides ties, which
+// is what keeps "shepard" on "shepherd" rather than on "heard" at the same distance.
+function nearestWord(q){
+  const V=transVocab();
+  if(V.has(q)) return q;
+  const max = q.length<=4 ? 1 : 2;
+  let best=null, bd=max+1, bp=-1, bf=-1;
+  for(const [w,f] of V){
+    if(Math.abs(w.length-q.length)>max) continue;
+    const d=editDist(q,w,max);
+    if(d>max) continue;
+    const p=sharedPrefix(q,w);
+    if(d<bd || (d===bd && (p>bp || (p===bp && f>bf)))){ best=w; bd=d; bp=p; bf=f; }
+  }
+  return best;
+}
+const STOPWORDS=new Set(["the","and","of","to","a","in","that","he","shall","unto","for","i","his","they","be","is","with","not","it","him","them","from","but","by","all","thou","thy","thee","ye","my","me","we","you","are","was","were","this","which","their","have","had","on","as","so","when","then","there","up","out","into","upon","o"]);
+/* Rank verses by how many of the words are in them, rarer words counting for more. Only ever called
+   when the plain search found nothing. */
+function searchVersesLoose(q, cap){
+  const out={hits:[], total:0, loose:true, fixed:[], usedKJV:false};
+  const raw=String(q||"").toLowerCase().match(/[a-z]+/g)||[];
+  if(!raw.length) return out;
+  const t=transEntry(curTrans());
+  const D=t.api?window.KJV:transData();
+  if(t.api) out.usedKJV=true;
+  if(!D) return out;
+
+  const V=transVocab(), terms=[];
+  for(const w of raw){
+    if(w.length<3) continue;
+    const near=nearestWord(w);
+    if(!near) continue;
+    if(near!==w) out.fixed.push([w,near]);
+    if(terms.some(x=>x.w===near)) continue;
+    const df=V.get(near)||1;
+    terms.push({w:near, weight: STOPWORDS.has(near) ? 0.15 : 1/Math.log(2+df)});
+  }
+  if(!terms.length) return out;
+  const best=terms.reduce((s,x)=>s+x.weight,0);
+
+  const scored=[];
+  for(let bi=0; bi<D.length; bi++){
+    const bk=D[bi]; if(!bk) continue;
+    for(let ci=0; ci<bk.length; ci++){
+      const ch=bk[ci]; if(!ch) continue;
+      for(let vi=0; vi<ch.length; vi++){
+        const txt=ch[vi]; if(!txt) continue;
+        const low=txt.toLowerCase();
+        let score=0, hitAt=-1, hitW="", got=[];
+        for(const term of terms){
+          const at=low.indexOf(term.w);
+          if(at<0) continue;
+          // whole word only, so "art" does not match "earth"
+          const before=at?low[at-1]:" ", after=low[at+term.w.length]||" ";
+          if(/[a-z]/.test(before) || /[a-z]/.test(after)) continue;
+          score+=term.weight;
+          // only the telling words get marked; highlighting "the" and "shall" as well buries them
+          if(!STOPWORDS.has(term.w)) got.push(term.w);
+          // the window opens on the most telling word present, not merely the first
+          if(hitAt<0 || term.weight>0.15){ if(hitAt<0 || hitW.length<term.w.length){ hitAt=at; hitW=term.w; } }
+        }
+        if(score<=0 || score < best*0.34) continue;
+        scored.push({b:bi+1, c:ci+1, v:vi+1, at:Math.max(0,hitAt), len:hitW.length||1, txt, score, terms:got.length?got:(hitW?[hitW]:[])});
+      }
+    }
+  }
+  scored.sort((a,b)=>b.score-a.score || a.b-b.b || a.c-b.c || a.v-b.v);
+  out.total=scored.length;
+  out.hits=scored.slice(0, cap||VSEARCH_CAP);
+  return out;
 }
 function chapCount(b){ return (window.KJV&&window.KJV[b-1]||[]).length; }
 function verseCount(b,c){ try{ return window.KJV[b-1][c-1].length; }catch(e){ return 0; } }
@@ -4188,9 +4325,10 @@ const Billing = {
   grant(months=12){ Store.setJSON("vv_pro",{active:true, plan:"annual", since:Date.now(), until:Date.now()+Math.round(months*30.44*DAY)}); },
   revoke(){ Store.remove("vv_pro"); },
   // Comp / promo codes that unlock the full app permanently (no expiry).
-  // EMPTY ON PURPOSE: a shared code unlocks the paid app for anyone who learns it. Add one
-  // here only for a deliberate, time-boxed campaign, and remove it again afterwards.
-  codes: [],
+  // A shared code unlocks the paid app for anyone who learns it, and this one is in the shipped
+  // HTML where anybody can read it. It is here to test what a Pro account sees, and it must come
+  // out before the app takes its first payment — see A3 in the launch plan.
+  codes: ["elijahsentme"],
   redeem(code){ const c=(code||"").trim().toLowerCase().replace(/\s+/g,""); if(Billing.codes.includes(c)){ Store.setJSON("vv_pro",{active:true, plan:"code", since:Date.now(), until:null}); return true; } return false; },
   startCheckout(plan){
     const url = plan==="monthly" ? Billing.cfg.monthlyUrl : Billing.cfg.checkoutUrl;
@@ -4664,10 +4802,15 @@ function renderJourney(){
     const runVerseSearch=(q)=>{
       const hits=el("bibleHits"), drop=el("bibleSearchDrop"); if(!hits) return;
       if(q.length<3){ hits.innerHTML=""; if(drop) drop.classList.remove("hashits"); return; }
-      const r=searchVerses(q);
-      if(!r.total){ hits.innerHTML=`<div class="bible-hits-head">No verse contains that</div>`; if(drop) drop.classList.add("hashits"); return; }
+      let r=searchVerses(q);
+      // nothing said it exactly — look again for the verses that come closest
+      if(!r.total) r=searchVersesLoose(q);
+      if(!r.total){ hits.innerHTML=`<div class="bible-hits-head">Nothing close to that</div>`; if(drop) drop.classList.add("hashits"); return; }
       const shown=r.hits.length, more=r.total-shown;
-      hits.innerHTML=`<div class="bible-hits-head">${r.total} verse${r.total===1?"":"s"}${more>0?` · first ${shown}`:""}${r.usedKJV?" · KJV":""}</div>`
+      const fixedNote = (r.fixed&&r.fixed.length)
+        ? ` · reading ${r.fixed.slice(0,3).map(f=>bbEsc(f[0])+" as "+bbEsc(f[1])).join(", ")}`
+        : "";
+      hits.innerHTML=`<div class="bible-hits-head">${r.loose?"Closest verses":`${r.total} verse${r.total===1?"":"s"}`}${more>0&&!r.loose?` · first ${shown}`:""}${r.usedKJV?" · KJV":""}${fixedNote}</div>`
         + r.hits.map(verseHitHTML).join("");
       if(drop) drop.classList.add("hashits");
       hits.querySelectorAll("[data-hit]").forEach(x=>x.onclick=()=>{
@@ -9942,6 +10085,32 @@ async function shareProgress(ref,verseText){
  try{ await navigator.clipboard.writeText(text); toast("Copied. Paste it anywhere to share!"); }
   catch(e){ toast("Share: "+text); }
 }
+/* 100dvh is the right height almost everywhere and the wrong one in an installed app on iOS, where
+   the viewport handed to the page does not always agree with it. Rather than trust either, measure.
+
+   The same measurement answers the safe-area question: the insets are only owed if what we were
+   given reaches the edges of the screen. If it stops short, the system has already kept that space
+   for itself and padding by it again is what pushed the top bar's contents down out of sight. */
+function fitFrame(){
+  const vv = window.visualViewport;
+  const h = Math.round(vv ? vv.height : window.innerHeight);
+  const root = document.documentElement;
+  // The keyboard shrinks the visual viewport. The frame holds its height through that, so nothing
+  // jumps while somebody is typing — the typing screen has its own compact layout for a short window.
+  if(!(fitFrame.full && h < fitFrame.full - 120)){
+    fitFrame.full = Math.max(fitFrame.full || 0, h);
+    root.style.setProperty("--app-h", h + "px");
+    // Within a couple of pixels of the whole screen means we really are under the status bar and
+    // over the home indicator, and the insets are ours to pay.
+    const covers = !window.screen || !window.screen.height || (window.screen.height - h) <= 4;
+    root.style.setProperty("--sat", covers ? "env(safe-area-inset-top, 0px)" : "0px");
+    root.style.setProperty("--sab", covers ? "env(safe-area-inset-bottom, 0px)" : "0px");
+  }
+}
+fitFrame();
+window.addEventListener("resize", fitFrame);
+window.addEventListener("orientationchange", ()=>{ fitFrame.full=0; setTimeout(fitFrame, 260); });
+if(window.visualViewport) window.visualViewport.addEventListener("resize", fitFrame);
 function toast(msg){
   let t=document.getElementById("vvToast");
   if(!t){ t=document.createElement("div"); t.id="vvToast";

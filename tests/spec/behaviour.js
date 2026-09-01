@@ -2092,6 +2092,39 @@ const DAY = 86400000;
   is(tied.mine.talents, 1500, '...talents and all');
   is(tied.legacy.verses, 3, 'a copy from before ownership was recorded is still taken');
 
+  describe('a search that finds nothing shows the closest verses', () => { });
+  const nearMiss = await $(() => {
+    const ask = q => {
+      const exact = searchVerses(q);
+      const r = exact.total ? exact : searchVersesLoose(q);
+      return { exact: exact.total, loose: !!r.loose,
+               top: (r.hits || []).slice(0, 1).map(h => bookName(h.b) + ' ' + h.c + ':' + h.v)[0] || null,
+               fixed: (r.fixed || []).map(f => f[0] + '>' + f[1]).join(','),
+               marks: (r.hits || []).length ? verseHitHTML(r.hits[0]) : '' };
+    };
+    return {
+      // the modern wording of a verse the King James phrases differently
+      modern: ask('I can do all things through Christ who strengthens me'),
+      // a plain misspelling
+      typo:   ask('the Lord is my shepard I shall not want'),
+      // and one that is simply not in there
+      absent: ask('zzzqqq wibblefrap'),
+      // an exact hit must never be pushed aside by the loose search
+      exact:  ask('lovingkindness'),
+    };
+  });
+  is(nearMiss.modern.exact, 0, 'the modern wording of Philippians 4:13 is in no verse verbatim');
+  ok(nearMiss.modern.loose, '...so the closest verses are looked for instead');
+  is(nearMiss.modern.top, 'Philippians 4:13', '...and it is the first of them');
+  is(nearMiss.typo.top, 'Psalms 23:1', 'a misspelling still finds the verse');
+  has(nearMiss.typo.fixed, 'shepard>shepherd', '...and says which word it read differently');
+  is(nearMiss.absent.top, null, 'words in no verse and near no word find nothing');
+  is(nearMiss.exact.exact, 29, 'a search that works is never handed to the loose one');
+  no(nearMiss.exact.loose, '...it stays an exact search');
+  // the telling words are marked; the little ones would bury them
+  has(nearMiss.typo.marks, '<mark>shepherd</mark>', 'the word that mattered is marked in the result');
+  no(/<mark>(the|shall|not)<\/mark>/i.test(nearMiss.typo.marks), '...and the common words are not');
+
   describe('progress belongs to the account that made it', () => { });
   const own = await $(async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -2189,7 +2222,7 @@ const DAY = 86400000;
   is(vsearch.rare.mark, 'lovingkindness', '...with the words typed marked in place');
   is(vsearch.short.n, 0, 'two letters is not a verse search');
   ok(vsearch.short.books > 0 && vsearch.short.books < 66, '...it is still a book search, though');
-  has(vsearch.nothing.head, 'No verse contains that', 'a word in no verse says so');
+  has(vsearch.nothing.head, 'Nothing close to that', 'a word in no verse, and nothing near it, says so');
   is(vsearch.capped.n, 200, 'a common phrase is capped at 200 results');
   has(vsearch.capped.head, 'first 200', '...and says the list is only the first of them');
   ok(vsearch.escaped, 'a query that looks like markup cannot spell any');
@@ -5557,6 +5590,54 @@ const DAY = 86400000;
   ok(heartClaim.seal.remembered, '…the old room remembered');
   is(heartClaim.seal.stationReturned, 'My Kitchen · Front door', '…and given back if the verse is ever demoted');
   is(heartClaim.seal.chosenKept, 'Known by heart', 'but an address the reader claimed themselves survives a demotion');
+
+  // ─────────────────────────── unlock codes ───────────────────────────
+  describe('unlock codes', () => { });
+  // Written against Billing.codes rather than any particular code, so taking the code out before
+  // launch — which is the plan — leaves this passing rather than failing for the wrong reason.
+  const redeem = await $(() => {
+    const snap = Billing.isPro();
+    const code = (Billing.codes || [])[0] || null;
+    const out = { has: !!code, wrong: null, blank: null, right: null, pro: null, plan: null,
+                  loose: null, shutFree: null, shutPro: null, button: null };
+    Billing.revoke();
+    out.wrong = Billing.redeem('definitely-not-a-code');
+    out.blank = Billing.redeem('');
+    out.afterBad = Billing.isPro();
+    if (code) {
+      out.shutFree = flatSkills().filter(x => skillPaywalled(UNITS[x.ui].skills[x.si])).length;
+      Billing.revoke();
+      out.right = Billing.redeem(code);
+      out.pro = Billing.isPro();
+      out.plan = (Store.getJSON('vv_pro') || {}).plan;
+      bustCaches();
+      out.shutPro = flatSkills().filter(x => skillPaywalled(UNITS[x.ui].skills[x.si])).length;
+      // typed the way a person types: capitals, spaces either side
+      Billing.revoke();
+      out.loose = Billing.redeem('  ' + code.toUpperCase().split('').join(' ') + '  ');
+    }
+    // the way in is on the paywall itself
+    Billing.revoke();
+    const f = flatSkills().find(x => skillPaywalled(UNITS[x.ui].skills[x.si]));
+    if (f) { openPaywall(UNITS[f.ui].skills[f.si]);
+      out.button = (el('payCode') || {}).textContent || null;
+      const m = el('payModal'); if (m) m.style.display = 'none'; }
+    if (snap) Billing.grant(); else Billing.revoke();
+    bustCaches();
+    return out;
+  });
+  no(redeem.wrong, 'a code that is not on the list is refused');
+  no(redeem.blank, '...and so is an empty one');
+  no(redeem.afterBad, '...neither of which grants anything');
+  has(redeem.button || '', 'code', 'the paywall offers a way to enter one');
+  if (redeem.has) {
+    ok(redeem.right, 'a code that is on the list is accepted');
+    ok(redeem.pro, '...and grants the full app');
+    is(redeem.plan, 'code', '...recorded as a code rather than a purchase, so it is never mistaken for one');
+    ok(redeem.shutFree > 0, '...where a free account has lessons it cannot open');
+    is(redeem.shutPro, 0, '...and a redeemed one has none');
+    ok(redeem.loose, 'case and spacing do not matter, because nobody types a code carefully');
+  }
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
