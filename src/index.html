@@ -2141,8 +2141,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.89.0";
+const APP_VERSION="1.90.0";
 const CHANGELOG=[
+ {v:"1.90.0", d:"August 31, 2026", t:"Your progress belongs to your account", items:[
+   ["fix","<b>Signing out left everything behind on the device.</b> The next person to sign in on it inherited the previous person's verses, palaces and talents — and because signing in uploads what it finds, that progress was then written into <i>their</i> account and followed them to every device after. Signing out now clears the device completely and returns you to the welcome screen, because signed out means there is nothing to show."],
+   ["chg","<b>The device remembers whose progress it is holding.</b> Signing in as someone else clears it first, so nothing of one person's can reach another's account. Work you did before you ever made an account still comes with you when you make one — that is your own trial run."],
+   ["chg","<b>Signing out uploads anything outstanding first</b>, and says so plainly if it could not reach the server."]
+ ]},
  {v:"1.89.0", d:"August 31, 2026", t:"Search the words, not just the books", items:[
    ["new","<b>The search box on the Bible page now searches verse text.</b> Type three letters or more and it lists every verse carrying them, with the words you typed highlighted in place, and tapping one opens it. Book names still match first, so a letter or two still jumps you to a book."],
    ["chg","<b>It searches the translation you are reading.</b> The NLT is read a chapter at a time over the network and has no copy on your phone, so a search while it is selected reads the King James and labels the results KJV."]
@@ -4200,12 +4205,33 @@ const API_BASE = (/burningbush-qa|localhost|127\.0\.0\.1|^$/.test(location.hostn
   ? "https://burningbush-api-qa.onrender.com/api"
   : "https://burningbush-api.onrender.com/api";
 function firebaseReady(){ return true; }   // cloud accounts are live (kept the name so existing call sites just work)
+/* Whose progress is on this device. Empty = nobody has ever signed in here, so what is stored is
+   the person's own trial run and travels with them into the account they make. */
+const OWNER_KEY="vv_owner";
+function progOwner(){ try{ return String(Store.get(OWNER_KEY,"")||"").toLowerCase(); }catch(e){ return ""; } }
+function setProgOwner(email){ try{ Store.set(OWNER_KEY,String(email||"").toLowerCase()); }catch(e){} }
+// Everything that belongs to one person. Display choices the device makes — theme, the legend, which
+// way the book strip is drawn — are not progress and stay put.
+function userDataKeys(){ return [PROG_KEY, PROG_KEY+"_bak", SRS_KEY, "vv_pro", "vv_localts",
+  "vv_active", "vv_tab", "vv_trans", "vv_skiplogin", "vv_simbak",
+  "vv_walk_backup",   // WALK_BAK, written out because that const is declared far below this line
+  OWNER_KEY]; }
+// Put the device back to how it looks before anyone has used it.
+function wipeLocalUserData(){
+  userDataKeys().forEach(k=>{ try{ Store.remove(k); }catch(e){} });
+  Prog = migrateProg(null); SRS = {};
+  try{ Store.setJSON(PROG_KEY,Prog); Store.setJSON(SRS_KEY,SRS); }catch(e){}
+  bustCaches(); updateMetrics();
+}
 const Auth = {
   user:null, _token:null, _timer:null, _pulling:false, _resetToken:null,
   init(){
     Auth._token = Store.get("vv_token", null);
     Auth.user = Store.getJSON("vv_acct", null);
     const m = (location.search||"").match(/[?&]reset=([a-f0-9]+)/i); if(m) Auth._resetToken = m[1];   // arrived from a password-reset email
+    // an install from before progress was owned: adopt the signed-in account as the owner rather
+    // than treating its progress as anonymous
+    if(Auth._token && Auth.user && Auth.user.email && !progOwner()) setProgOwner(Auth.user.email);
     if(Auth._token) Auth.pull();          // already signed in → merge cloud on boot
     renderAcctBox();
   },
@@ -4216,8 +4242,15 @@ const Auth = {
     if(!r.ok){ if(r.status===401 && Auth._token){ Auth._token=null; Store.remove("vv_token"); } throw new Error(d.error || ("Something went wrong ("+r.status+").")); }
     return d;
   },
-  async _onAuth(d){ Auth._token=d.token; Auth.user={email:d.email, provider:"email", verified:true};
-    Store.set("vv_token",d.token); Store.setJSON("vv_acct",Auth.user); await Auth.pull(); renderAcctBox(); return d; },
+  async _onAuth(d){
+    const email=String(d.email||"").toLowerCase(), owner=progOwner();
+    // Signing in as someone else must not carry the last person's progress into this account. pull()
+    // merges local into cloud and pushes the result, so leaving it would write their verses into
+    // this account's row for good.
+    if(owner && owner!==email) wipeLocalUserData();
+    Auth._token=d.token; Auth.user={email:d.email, provider:"email", verified:true};
+    Store.set("vv_token",d.token); Store.setJSON("vv_acct",Auth.user); setProgOwner(email);
+    await Auth.pull(); renderAcctBox(); return d; },
   // interface used by wireLogin / renderAcctBox
   google(){ return Promise.reject(new Error("Please use email sign-in.")); },   // no Google OAuth on this backend (button hidden)
   signIn(email,pw){ return Auth._req("/login","POST",{email,password:pw}).then(d=>Auth._onAuth(d)); },
@@ -4225,7 +4258,23 @@ const Auth = {
   resetPassword(email){ return Auth._req("/forgot","POST",{email}); },
   submitReset(token,pw){ return Auth._req("/reset","POST",{token,password:pw}); },
   resendVerification(){ return Promise.resolve(); },   // no email-verification step in this backend
-  signOut(){ Auth._token=null; Auth.user=null; Store.remove("vv_token"); Store.remove("vv_acct"); renderAcctBox(); return Promise.resolve(); },
+  // Nothing of a person's is left behind, so anything not yet uploaded goes up first. A walkthrough
+  // in progress is unwound before that, or the seeded state would be what gets saved.
+  async signOut(){
+    try{ if(typeof OnboardWalk!=="undefined" && OnboardWalk.active()) OnboardWalk.recover(); }catch(e){}
+    let pushed=true;
+    if(Auth._token){ try{ await Auth.push(); }catch(e){ pushed=false; } }
+    Auth._token=null; Auth.user=null;
+    Store.remove("vv_token"); Store.remove("vv_acct");
+    wipeLocalUserData();
+    renderAcctBox(); updateTabLocks(); syncTabOrder(false);
+    // signed out means no history to show, so this is the screen a new arrival gets — and it
+    // has to come BEFORE show(), which stamps onboarded on any profile that reaches a tab
+    try{ Onboard.start(); }catch(e){}
+    if(!Onboard.active()) show("learn");
+    if(!pushed) toast("Signed out. Your last few changes may not have reached the server.");
+    return Promise.resolve();
+  },
   // pull cloud → union-merge with local → push the merged truth back (both devices converge, nothing lost)
   async pull(){
     if(!Auth._token) return; Auth._pulling=true;

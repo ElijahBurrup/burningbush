@@ -2044,6 +2044,64 @@ const DAY = 86400000;
   no(refBack.backIsList, '...not to the list of every palace');
   is(refBack.backHeading, '\u{1F3DB}\uFE0F Grandmother\u2019s House', '...but to the palace that brought them in');
 
+  describe('progress belongs to the account that made it', () => { });
+  const own = await $(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    const surrounding = JSON.parse(JSON.stringify(Prog));
+    const out = {};
+    // ownership is decided before pull() is reached, so the network is stubbed out entirely rather
+    // than left to 401 against the real API and dirty the console
+    const realPull = Auth.pull, realPush = Auth.push;
+    Auth.pull = async () => {}; Auth.push = async () => {};
+
+    // somebody is signed in, with progress
+    Prog.memorized = ['1:1:1', '2:2:2', '43:3:16']; Prog.talents = 900;
+    Prog.palaces = [{ place: 'Their House', stations: ['Door'], sr: {} }];
+    Prog.onboarded = true; saveProg();
+    await Auth._onAuth({ token: 'tok-a', email: 'alice@example.com' });
+    out.owner = progOwner();
+    out.aliceKept = Prog.memorized.length;
+
+    // signing out leaves nothing of theirs on the device
+    await Auth.signOut();
+    out.afterOut = { verses: (Prog.memorized || []).length, talents: Prog.talents || 0,
+                     palaces: (Prog.palaces || []).filter(Boolean).length,
+                     owner: progOwner(), token: !!Store.get('vv_token', null),
+                     acct: !!Store.getJSON('vv_acct', null), onboarded: !!Prog.onboarded,
+                     intro: Onboard.active() };
+
+    // and somebody else signing in on it inherits none of it
+    Prog.memorized = ['1:1:1', '2:2:2']; saveProg();
+    setProgOwner('alice@example.com');
+    await Auth._onAuth({ token: 'tok-b', email: 'bob@example.com' });
+    out.bob = { verses: (Prog.memorized || []).length, owner: progOwner() };
+
+    // work done before ever having an account is the person's own and travels with them
+    await Auth.signOut();
+    Prog.memorized = ['5:5:5']; Prog.talents = 42; saveProg();
+    await Auth._onAuth({ token: 'tok-c', email: 'carol@example.com' });
+    out.anon = { verses: (Prog.memorized || []).length, talents: Prog.talents || 0, owner: progOwner() };
+
+    await Auth.signOut();
+    Auth.pull = realPull; Auth.push = realPush;
+    Prog = surrounding; saveProg(); bustCaches(); updateTabLocks();
+    return out;
+  });
+  is(own.owner, 'alice@example.com', 'signing in records whose progress the device is holding');
+  is(own.aliceKept, 3, '...and does not disturb it');
+  is(own.afterOut.verses, 0, 'signing out takes the verses off the device');
+  is(own.afterOut.talents, 0, '...and the talents');
+  is(own.afterOut.palaces, 0, '...and the palaces');
+  is(own.afterOut.owner, '', '...and forgets whose it was');
+  no(own.afterOut.token, '...and the token');
+  no(own.afterOut.acct, '...and the account record');
+  no(own.afterOut.onboarded, '...leaving a profile that has not been onboarded');
+  ok(own.afterOut.intro, '...looking at the welcome screen a new arrival gets');
+  is(own.bob.verses, 0, 'somebody else signing in on that device inherits nothing');
+  is(own.bob.owner, 'bob@example.com', '...and the device now holds theirs');
+  is(own.anon.verses, 1, 'work done before having an account travels into the account');
+  is(own.anon.talents, 42, '...talents and all');
+
   describe('the Bible page searches verse text, not just book names', () => { });
   const vsearch = await $(async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms));
