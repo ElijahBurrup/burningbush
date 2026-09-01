@@ -458,6 +458,15 @@
   /* ---- scratch off ceremony overlay ---- */
   /* A control that exists but is not available yet sits under the same gold foil as a ticket. It is
      not scratchable — it lifts on its own the moment the thing behind it is earned. */
+  /* the onboarding walkthrough's step card — sits above everything, including the ticket overlay */
+  #walkHud{position:absolute;left:10px;right:10px;bottom:78px;z-index:400;background:var(--panel);border:2px solid var(--gold2);
+    border-radius:16px;padding:11px 13px;box-shadow:0 14px 40px var(--scrim);display:none}
+  #walkHud.on{display:block}
+  #walkHud .wh-step{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-ink)}
+  #walkHud .wh-do{font-size:14px;font-weight:800;margin:2px 0 3px}
+  #walkHud .wh-say{font-size:12.5px;color:var(--ink-soft);line-height:1.45}
+  #walkHud .wh-row{display:flex;gap:8px;margin-top:9px}
+  #walkHud .wh-row .btn{width:auto;flex:1;margin:0;padding:8px 10px;font-size:13px}
   .slockwrap{position:relative;display:block}
   .slockwrap>.slock{position:absolute;inset:0;z-index:3;border-radius:14px;display:flex;align-items:center;justify-content:center;
     background:linear-gradient(135deg,var(--gold),var(--gold2) 50%,var(--gold));border:1px solid var(--gold2);cursor:pointer}
@@ -1929,6 +1938,12 @@
   </div>
 
   <!-- Simulation bridge: between/after scratch offs during the "Test scratch off" walkthrough. -->
+  <div id="walkHud" aria-live="polite">
+    <div class="wh-step" id="whStep"></div>
+    <div class="wh-do" id="whDo"></div>
+    <div class="wh-say" id="whSay"></div>
+    <div class="wh-row"><button class="btn ghost" id="whSkip">Skip this step</button><button class="btn ghost" id="whEnd">End walkthrough</button></div>
+  </div>
   <div id="simov" aria-hidden="true">
     <div class="scwrap">
  <div class="simbanner">🧪 Simulation. Your real progress is untouched</div>
@@ -1949,6 +1964,7 @@
       <div id="adminWrap" style="display:none">
         <div class="prof-sect">Admin</div>
         <button class="btn ghost" id="testScratchBtn" style="width:100%">🎫 Test scratch off</button>
+        <button class="btn ghost" id="testWalkBtn" style="width:100%;margin-top:8px">🚶 Onboarding walkthrough</button>
         <button class="btn ghost" id="testOnboardBtn" style="width:100%;margin-top:8px">🕯️ Test onboarding</button>
         <button class="btn ghost" id="testLearnDone" style="width:100%;margin-top:8px">🎓 Simulate Learn finished</button>
         <button class="btn ghost" id="testStoriesDone" style="width:100%;margin-top:8px">📜 Simulate Stories finished</button>
@@ -2116,8 +2132,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.87.0";
+const APP_VERSION="1.88.0";
 const CHANGELOG=[
+ {v:"1.88.0", d:"August 31, 2026", t:"The onboarding walkthrough", items:[
+   ["new","<b>An onboarding walkthrough, in Admin.</b> Three stages, each set up to the last action, so you only ever do the one thing that earns the next ticket: finish Matthew for the Library, learn a fifth verse for Memory Palaces, build a palace for the Spaced Repetition film and the two foils coming off. Nothing is faked — every ticket, film and foil fires through the app's own machinery."],
+   ["new","<b>It cannot cost you your progress.</b> The whole of your progress is stashed before the first seed and restored when you finish, and if a run is interrupted it is restored the next time the app opens."]
+ ]},
  {v:"1.87.0", d:"August 31, 2026", t:"Ask Now", items:[
    ["chg","<b>Number &amp; Book Practice starts from the row it is set up on.</b> The start button sits at the left of the question count and says <b>Ask Now</b>, and the count keeps just a <b>#</b> beside it, instead of a full width bar underneath repeating what the screen is already for."]
  ]},
@@ -8490,7 +8510,7 @@ function openNumTestSetup(round){
       <p class="hint" style="margin:6px 0 0">Which way would you like to be asked?</p>
       <div class="mtradiolist one" id="ntsForms" style="margin-top:10px"></div>
       <div class="goalrow" style="margin-top:14px">
-        <button class="btn goalrow-go" id="ntsGo">Ask Now</button>
+        <button class="btn goalrow-go" id="ntsGo">Begin Practice</button>
         <div class="goalrow-k tight">#</div><button type="button" class="goalfield" id="ntsCount">15</button></div>
       <div class="hint" id="ntsWarn" style="min-height:18px;margin:6px 0 0"></div>
     </div>`;
@@ -10531,6 +10551,7 @@ el("impBtn").onclick=()=>el("impFile").click();
 // top bar, which is where people actually reach for it.
 if(el("pInstall")) el("pInstall").onclick=()=>{ closeProfile(); openInstallDialog(); };
 if(el("testScratchBtn")) el("testScratchBtn").onclick=()=>{ closeProfile(); ScratchSim.begin(); };
+if(el("testWalkBtn")) el("testWalkBtn").onclick=()=>{ closeProfile(); OnboardWalk.begin(); };
 if(el("testOnboardBtn")) el("testOnboardBtn").onclick=()=>{ closeProfile(); Onboard.preview(); };
 if(el("bugReportsBtn")) el("bugReportsBtn").onclick=()=>openBugReports();
 
@@ -11620,6 +11641,105 @@ function flyToNav(iconChar, targetBtn, done){
 /* =================== SCRATCH-OFF SIMULATION (Profile → Test scratch off) ===================
    Walks all four scratch offs in order — each: "you earned one" → scratch → "how to earn the real one" +
    [Simulate next] / [Exit]. Temporarily empties scratchWon so the whole nav is tickets; restores on exit. */
+/* ================= onboarding walkthrough (admin) ================= */
+const WALK_BAK="vv_walk_backup";
+const OnboardWalk = (()=>{
+  // 'moving' matters: the poller keeps firing during the pause between steps, and without it a
+  // second advance is queued while the first is still waiting, walking step past the end of STEPS.
+  let on=false, step=0, timer=null, moving=false;
+
+  // The four verses a tester arrives with: books 1–5 and 40, chapters and verses 1–5, and every one
+  // of them a real verse.
+  const SEEDED=[[1,1,1],[2,2,2],[3,3,3],[40,4,4]];
+  // Films the reader would already have seen by each point, so the run is not interrupted by one
+  // that is not what is being tested. The palace and Spaced Repetition films are deliberately left
+  // unseen — they are part of what this walks through.
+  const SEEN_BEFORE=["intro","major","major2","book","verse"];
+
+  const known=n=>"book:"+n;
+  function baseSeed(){
+    Prog.doneSkills=["snd:0-4","snd:5-9"].concat([1,2,3,4,5].map(known)).concat(SEEN_BEFORE.map(k=>VIDEOS[k].skill));
+    Prog.scratchWon=[]; Prog.memorized=[]; Prog.palaces=[]; Prog.verseLoc={}; Prog.verseSR={};
+    Prog.saved=[]; Prog.skipped=[]; Prog.videoOrder=SEEN_BEFORE.slice();
+    // extraKnown feeds knownNumbers() exactly as a lesson skill does, so a tester who had picked up
+    // Matthew ad hoc from the verse screen would start step one having already finished it
+    Prog.extraKnown=[];
+    Prog.bestStreak=0; Prog.onboarded=true;
+  }
+
+  const STEPS=[
+    { do:"Finish the Matthew lesson",
+      say:"You already know books 1 to 5. Open Learn and complete Matthew. That finishes the Foundation and earns the Library ticket.",
+      seed(){ baseSeed(); saveProg(); bustCaches(); updateTabLocks(); syncTabOrder(false); show("learn"); },
+      done(){ return tabWon("verse"); } },
+
+    { do:"Memorise your fifth verse",
+      say:"Four verses are already in. Learn one more. On the save screen the palace and room pickers are under a golden foil, because you have no palace yet. Finishing it earns the Memory Palaces ticket, and its film plays with it.",
+      seed(){ baseSeed();
+        Prog.doneSkills.push(known(40));
+        Prog.scratchWon=["verse"];
+        SEEDED.forEach(([b,c,v])=>{ const k=refKey(b,c,v); Prog.memorized.push(k); startVerseSR(k); });
+        Prog.bestStreak=5;   // the palace ticket also wants a 5 answer streak; the fifth verse is the only thing left
+        saveProg(); bustCaches(); updateTabLocks(); syncTabOrder(false); show("verse"); renderVerse(); },
+      done(){ return tabWon("palace"); } },
+
+    { do:"Build your first palace",
+      say:"Open the Palaces tab and build one. Finishing it uncovers the palace and room pickers on the verse screen, plays the Spaced Repetition film, then uncovers Spaced Repetition on the Library.",
+      seed(){ baseSeed();
+        Prog.doneSkills.push(known(40));
+        Prog.scratchWon=["verse","palace"];
+        [...SEEDED,[5,5,5]].forEach(([b,c,v])=>{ const k=refKey(b,c,v); Prog.memorized.push(k); startVerseSR(k); });
+        Prog.bestStreak=5;
+        markVideoSeen("palace");
+        saveProg(); bustCaches(); updateTabLocks(); syncTabOrder(false); show("palace"); renderPalace(); },
+      done(){ return palaceCount()>=1 && videoSeen("sr"); } }
+  ];
+
+  function paint(){
+    el("whStep").textContent=`Walkthrough · step ${step+1} of ${STEPS.length}`;
+    el("whDo").textContent=STEPS[step].do;
+    el("whSay").textContent=STEPS[step].say;
+    el("whSkip").textContent = step<STEPS.length-1 ? "Skip to the next step" : "Skip to the end";
+  }
+  function enter(i){ step=i; STEPS[i].seed(); paint(); el("walkHud").classList.add("on"); }
+  function advance(){
+    if(!on || moving || !STEPS[step]) return;
+    if(!STEPS[step].done()) return;
+    if(step>=STEPS.length-1){ toast("🚶 Walkthrough complete. Restoring your progress…"); return end(); }
+    moving=true;
+    toast("✓ Step "+(step+1)+" done");
+    setTimeout(()=>{ moving=false; if(on) enter(step+1); }, 1400);
+  }
+  function end(){
+    if(!on) return;
+    on=false; moving=false; clearInterval(timer); timer=null;
+    el("walkHud").classList.remove("on");
+    restore();
+    toast("Walkthrough ended. Your real progress is back.");
+  }
+  // The stash is what makes this safe to run on a real account: it is written before the first seed
+  // and cleared only once the real state is back, so a closed tab restores on the next boot.
+  function stash(){ try{ Store.setJSON(WALK_BAK,{prog:Prog,srs:SRS}); }catch(e){} }
+  function restore(){
+    let b=null; try{ b=Store.getJSON(WALK_BAK,null); }catch(e){}
+    if(b && b.prog){ Prog=b.prog; SRS=b.srs||{}; Store.setJSON(PROG_KEY,Prog); Store.setJSON(SRS_KEY,SRS); }
+    try{ Store.remove(WALK_BAK); }catch(e){}
+    bustCaches(); recomputeLevel(); updateMetrics(); updateTabLocks(); syncTabOrder(false);
+    show("learn"); renderPath();
+  }
+  el("whEnd").onclick=end;
+  el("whSkip").onclick=()=>{ if(step>=STEPS.length-1) return end(); enter(step+1); };
+  return {
+    begin(){ if(on) return; on=true; stash(); enter(0);
+      timer=setInterval(advance, 700);
+      toast("🚶 Walkthrough started. Your progress is saved and comes back at the end."); },
+    active(){ return on; },
+    // called on boot: a run that was interrupted leaves its stash behind
+    recover(){ let b=null; try{ b=Store.getJSON(WALK_BAK,null); }catch(e){}
+      if(!b || !b.prog) return false;
+      restore(); toast("A walkthrough was interrupted. Your real progress has been restored."); return true; }
+  };
+})();
 const ScratchSim = (()=>{
   let realWon=null, i=0;
   function openRung(){
@@ -11671,6 +11791,7 @@ if(!Prog.onboarded){
 if(!transReady(curTrans())) loadTranslation(curTrans()).then(ok=>{ if(ok) refreshCurrentView(); });
 else if(transEntry(curTrans()).api) prefetchScripture(curTrans());
 wireVerseWords();   // press-and-hold on any verse word → its Hebrew/Greek
+OnboardWalk.recover();   // a walkthrough that was closed mid-run put the real progress back
 grandfatherFeatures();   // an account that predates the Feature Store keeps everything it had
 resumeActiveTest();      // straight back into an unfinished verse test, if there was one
 applyFeatureVisibility();

@@ -2044,6 +2044,59 @@ const DAY = 86400000;
   no(refBack.backIsList, '...not to the list of every palace');
   is(refBack.backHeading, '\u{1F3DB}\uFE0F Grandmother\u2019s House', '...but to the palace that brought them in');
 
+  describe('the onboarding walkthrough seeds each stage and gives progress back', () => { });
+  const walkTool = await $(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    // this block hands a fake account to the walkthrough and gets that same fake account back, so
+    // the state the blocks after this one inherit has to be put back by hand
+    const surrounding = JSON.parse(JSON.stringify(Prog));
+    // a real account, so the restore has something to prove
+    Prog.memorized = ['43:3:16']; Prog.talents = 4242;
+    Prog.palaces = [{ place: 'My Real Palace', stations: ['A', 'B'], sr: {} }];
+    saveProg();
+    const real = { mem: Prog.memorized.length, tal: Prog.talents, pal: Prog.palaces[0].place };
+
+    OnboardWalk.begin();
+    const s1 = { knows15: [1, 2, 3, 4, 5].every(n => knownNum(n)), knows40: knownNum(40),
+                 tickets: (Prog.scratchWon || []).length, stashed: !!Store.getJSON('vv_walk_backup', null) };
+
+    // skipping lands on the same seed the tester reaches by playing the step
+    el('whSkip').click();
+    const s2 = { memorized: Prog.memorized.length, library: tabWon('verse'),
+                 palace: tabWon('palace'), streak: Prog.bestStreak };
+    editVerseScene(1, 1, 1, () => {}, () => {});
+    s2.pickersCovered = !!document.querySelector('#wPalLock .slock');
+
+    el('whSkip').click();
+    const s3 = { palace: tabWon('palace'), memorized: Prog.memorized.length,
+                 srCovered: (show('verse'), renderVerse(), !!document.querySelector('.versehub .slock')) };
+
+    el('whEnd').click();
+    await wait(80);
+    const back = { mem: Prog.memorized.length, tal: Prog.talents,
+                   pal: (Prog.palaces[0] || {}).place, stash: !!Store.getJSON('vv_walk_backup', null),
+                   active: OnboardWalk.active() };
+    Prog = surrounding; saveProg(); bustCaches(); updateTabLocks();
+    return { real, s1, s2, s3, back };
+  });
+  ok(walkTool.s1.knows15, 'stage one starts you knowing books 1 to 5');
+  no(walkTool.s1.knows40, '...and not Matthew, which is the one thing left to do');
+  is(walkTool.s1.tickets, 0, '...with no ticket won yet');
+  ok(walkTool.s1.stashed, '...and your real progress stashed before anything is seeded');
+  is(walkTool.s2.memorized, 4, 'stage two hands you four verses');
+  ok(walkTool.s2.library, '...with the Library ticket already won');
+  no(walkTool.s2.palace, '...and the palace ticket still to earn');
+  is(walkTool.s2.streak, 5, '...the answer streak seeded, so the fifth verse is the only thing left');
+  ok(walkTool.s2.pickersCovered, '...and the palace pickers covered on the save screen');
+  ok(walkTool.s3.palace, 'stage three has the palace ticket won');
+  is(walkTool.s3.memorized, 5, '...five verses in');
+  ok(walkTool.s3.srCovered, '...and Spaced Repetition still under its foil');
+  no(walkTool.back.active, 'ending it stops the walkthrough');
+  is(walkTool.back.mem, walkTool.real.mem, '...and hands back your real verses');
+  is(walkTool.back.tal, walkTool.real.tal, '...your real talents');
+  is(walkTool.back.pal, walkTool.real.pal, '...and your real palaces');
+  no(walkTool.back.stash, '...clearing the stash once it has');
+
   describe('a verse opened from a palace comes back to that palace', () => { });
   const palBack = await $(async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms));
