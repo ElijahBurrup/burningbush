@@ -846,8 +846,9 @@
   .goalfield{min-width:64px;padding:10px 14px;border-radius:11px;border:2px solid var(--gold2);background:var(--panel2);color:var(--gold-ink);font-size:18px;font-weight:800;cursor:pointer}
   /* Number & Book Practice puts its start button on the same row as the count: button hard left,
      then the # and the field pushed to the right. */
-  .goalrow .goalrow-go{width:auto;margin:0;padding:10px 18px;flex:0 0 auto}
-  .goalrow .goalrow-k.tight{margin-left:auto}
+  /* the count sits left where it is being set, the button hard right where it is pressed */
+  .goalrow .goalrow-go{width:auto;margin:0 0 0 auto;padding:10px 18px;flex:0 0 auto}
+  .goalrow .goalrow-k.tight{margin-left:0}
   /* reminders — only the alarms you actually use are drawn */
   .rem-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
   .rem-row .rem-time{flex:1;text-align:left}
@@ -2155,8 +2156,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.98.0";
+const APP_VERSION="1.99.0";
 const CHANGELOG=[
+ {v:"1.99.0", d:"September 1, 2026", t:"Known by heart is walked, not counted", items:[
+   ["chg","<b>Claiming a verse by heart now starts its review trail instead of a run of five tests.</b> Today, then a day, three days, a week, a fortnight, a month — walk that and the verse is sealed and its place in the palace goes back. Five clean runs in an afternoon never meant the same thing as remembering it a month later, and the trail is what actually proves it."],
+   ["new","<b>The screen counts the trail now</b> rather than a streak, so you can see how far along a verse is and what is left of it."],
+   ["chg","<b>Sealed is not the end.</b> The two month, six month and two year reviews still come round quietly afterwards, exactly as before."]
+ ]},
  {v:"1.98.0", d:"September 1, 2026", t:"The whole ladder, walked", items:[
    ["chg","<b>The onboarding walkthrough covers every ticket now</b>, not the first three. Five stages: the Library, the Bible, Memory Palaces, the two things that are uncovered rather than won, and Bible Stories. Each one seeds the account up to the last action and no further, so the only thing left to do is the one that fires what you came to look at."],
    ["new","<b>The stage that builds your first palace shows both foils lifting.</b> The palace and room pickers on the verse screen, then the Spaced Repetition film, then Spaced Repetition itself on the Library. It needed a verse open to uncover them on, and now has one."]
@@ -7386,15 +7392,18 @@ function setVerseStage(k,s){
   Prog.verseStage=Prog.verseStage||{};
   if(s==="loc") delete Prog.verseStage[k]; else Prog.verseStage[k]=s;
   let freed=null;
-  if(s==="heart"){
-    // A claimed verse joins the review trail immediately, at D1. It is being tested from now on,
-    // so it should come round tomorrow rather than wait on the four-hour first-look timer that a
-    // verse still being located uses. Anything already further along the trail is left where it is.
+  if(s==="heart" && was!=="heart"){
+    // Claiming a verse STARTS its spaced repetition practice. Day 0 is the claim itself; the trail
+    // then asks for it at day 1, 3, 7, 16 and 30, and walking that is what seals it. A verse
+    // already sealed keeps its place — there is nothing above sealed to send it back down to.
     Prog.verseSR=Prog.verseSR||{};
-    const o=Prog.verseSR[k]||(Prog.verseSR[k]=newSR());
-    if(!o.r0) o.r0=Date.now();
-    if(!(o.step>=1)) o.step=1;
-    if(o.dueAt==null) o.dueAt=Date.now()+(SR_ALL[1]-SR_ALL[0])*DAY;
+    const o=Prog.verseSR[k];
+    if(!o || (o.step||1) < SR_TRAIL.length){
+      const fresh=newSR(); fresh.r0=Date.now();
+      if(o && o.learnedAt) fresh.learnedAt=o.learnedAt;   // when the verse was first memorised is history, and stays
+      if(o && o.lt){ fresh.lt=o.lt; fresh.ltAt=o.ltAt; }  // as does any long-tail review already behind it
+      Prog.verseSR[k]=fresh;
+    }
   }
   // Claiming a verse does NOT give up its station any more: it is still being tested, and a single
   // missed word sends it back. The station is released later, by heartMaybeFreeStation, once the
@@ -7410,10 +7419,13 @@ function setVerseStage(k,s){
   saveProg();
   return {was, now:s, freed};
 }
-// Five clean runs is the proof. Only then is the palace station handed back, and the old station is
-// remembered in locPast so a later miss puts the verse back exactly where it used to live.
+// Walking the trail is the proof. Only when the visible six checkpoints are behind it is the palace
+// station handed back, and the old station is remembered in locPast so a later miss puts the verse
+// back exactly where it used to live.
+function heartTrailDone(k){ const o=(Prog.verseSR||{})[k]; return !!o && (o.step||1)>=SR_TRAIL.length; }
+function heartTrailStep(k){ const o=(Prog.verseSR||{})[k]; return Math.min(SR_TRAIL.length, Math.max(0,(o&&o.step||1)-1)); }
 function heartMaybeFreeStation(k){
-  if(!isHeart(k) || w4wTestStreak(k) < W4W_TEST_CR) return null;
+  if(!isHeart(k) || !heartTrailDone(k)) return null;
   const loc=(Prog.verseLoc||{})[k]; if(!loc || loc.heart) return null;
   // The slot is handed back, and the verse is left holding the only location it still needs: it
   // knows where it lives. It used to be left with no location at all, which read as unfinished.
@@ -7798,7 +7810,7 @@ function openStagePromote(b,c,v,k,to,after){
       lead: earned
         ? `You have recited <b class="gold">${ref}</b> word for word ${done} times.`
         : `You are claiming <b class="gold">${ref}</b> without practising it here first.`,
- note:`${earned?"Do you know it by heart? From":"From"} now on it is the strict test. The reference at the top, type the whole verse, no warm up and no reveals.${here?` It keeps its place at <b class="gold">${here}</b> until it has come back clean ${W4W_TEST_CR} times running.`:""}${earned?"":` Nothing is lost if you were wrong: miss a word and it comes back to practice${done?` with your ${done} practice${done===1?"":"s"} intact`:""}.`}`,
+ note:`${earned?"Do you know it by heart? From":"From"} now on it is the strict test, on the review trail: today, then a day, three days, a week, a fortnight and a month.${here?` It keeps its place at <b class="gold">${here}</b> until it has walked the whole trail.`:""}${earned?"":` Nothing is lost if you were wrong: miss a word and it comes back to practice${done?` with your ${done} practice${done===1?"":"s"} intact`:""}.`}`,
  yes:"Yes. I know it by heart", no:"Not yet" };
   m.innerHTML=`<div class="modal-card center">
       <div style="font-size:34px">${body.icon}</div>
@@ -9000,8 +9012,8 @@ function openNumTestSetup(round){
       <p class="hint" style="margin:6px 0 0">Which way would you like to be asked?</p>
       <div class="mtradiolist one" id="ntsForms" style="margin-top:10px"></div>
       <div class="goalrow" style="margin-top:14px">
-        <button class="btn goalrow-go" id="ntsGo">Begin Practice</button>
-        <div class="goalrow-k tight">#</div><button type="button" class="goalfield" id="ntsCount">15</button></div>
+        <div class="goalrow-k tight">#</div><button type="button" class="goalfield" id="ntsCount">15</button>
+        <button class="btn goalrow-go" id="ntsGo">Begin Practice</button></div>
       <div class="hint" id="ntsWarn" style="min-height:18px;margin:6px 0 0"></div>
     </div>`;
   el("ntsClose").onclick=renderVerse;
@@ -9811,7 +9823,7 @@ function renderLearnedVerse(b,c,v,ret){
       <div class="lv-versetext">${verseWordsHTML(b,c,v,text)}</div>
       ${feat("w4w")?`<button class="w4w-rect ${mastered?"done":""}" id="lvWord"${inPool&&w4wTestLocked(vkey)?" disabled":""}>
         <span class="w4w-rect-lbl">${inPool?(w4wTestLocked(vkey)?"😴 Resting until tomorrow":"🗣️ Test Word for Word"):"📖 Learn Word for Word"}</span>
-        <span class="w4w-rect-count">${inPool?(w4wTestLocked(vkey)?fmtWhen(w4wTestNextAt(vkey)):`${w4wTestStreak(vkey)}/${W4W_TEST_CR} clean`):`${cnt}/${W4W_PRACTICE_FOR_POOL}${mastered?" ✓":""}`}</span>
+        <span class="w4w-rect-count">${inPool?(w4wTestLocked(vkey)?fmtWhen(w4wTestNextAt(vkey)):`${heartTrailStep(vkey)}/${SR_TRAIL.length} trail`):`${cnt}/${W4W_PRACTICE_FOR_POOL}${mastered?" ✓":""}`}</span>
       </button>
  ${inPool?"":`<p class="hint" style="text-align:center;margin:8px 0 0">${mastered?`Ready when you are, move it to <b class="gold">Known by heart</b> below.`:`Recite it word for word ${W4W_PRACTICE_FOR_POOL}× and it is ready for <b class="gold">Known by heart</b>, or say so below any time.`}</p>`}`:""}
       <div class="lv-sr">
@@ -9851,7 +9863,7 @@ function openStagePicker(b,c,v,vkey,after){
       <div class="lv-topbar"><button class="lclose" id="stClose">\u2715</button><div style="flex:1;text-align:center;font-weight:800">${bookName(b)} ${c}:${v}</div><span style="width:34px"></span></div>
       <p class="hint" style="margin:6px 0 0">Every verse counts as memorized at any of these. What changes is how much work it asks of you.</p>
       <div class="mtradiolist one" style="margin-top:12px">${rungs.map(row).join("")}</div>
-      ${here?`<p class="hint" style="margin:10px 0 0">Right now it sits at <b class="gold">${here}</b>. It keeps that place while you are being tested on it, and gives it up once it has come back clean ${W4W_TEST_CR} times running.</p>`:""}
+      ${here?`<p class="hint" style="margin:10px 0 0">Right now it sits at <b class="gold">${here}</b>. It keeps that place while the trail is being walked, and gives it up once all ${SR_TRAIL.length} reviews are behind it.</p>`:""}
     </div>`;
   m.style.display="flex"; raiseModal(m);
   const close=()=>{ m.style.display="none"; };
@@ -11592,19 +11604,19 @@ function w4wTestResult(b,c,v,vkey,ret){
   const longName = passedDay!=null ? SR_LONG_NAME[passedDay] : null;
   const freed = clean ? heartMaybeFreeStation(vkey) : null;
   const showGoal = clean ? bumpGoalFromReview(true) : (()=>{});
-  const left=Math.max(0, W4W_TEST_CR-(r.cr||0));
+  const doneSteps=heartTrailStep(vkey), left=Math.max(0, SR_TRAIL.length-doneSteps);
   V.innerHTML=`<div class="card center">
       <div style="font-size:44px">${clean?"\u{1F54A}\uFE0F":"\u{1F331}"}</div>
  <h2 style="font-size:21px;margin:8px 0 2px">${clean?"Word for word":(typedOut?"Let's give this one more practice":"Not quite · but you finished")}</h2>
       <div style="font-weight:800;color:var(--gold-ink);margin:2px 0">${bookName(b)} ${c}:${v}</div>
       <p class="lead" style="margin:8px 0 0">${clean
- ? `Every word, unaided.${freed?` That is ${W4W_TEST_CR} in a row · <b class="gold">${stationName(freed)}</b> is free for another verse.`:(left?` <b class="gold">${left} more</b> like that and its place in the palace is freed.`:" That is five in a row.")}`
+ ? `Every word, unaided.${freed?` The whole trail is behind it · <b class="gold">${stationName(freed)}</b> is free for another verse.`:(left?` <b class="gold">${left} more</b> ${left===1?"review":"reviews"} along the trail and its place in the palace is freed.`:" The trail is complete.")}`
         : (typedOut
  ? `Three slips on the same word. That usually means it is close but not quite settled, so we will stop here and let you practise it a little more rather than push on.`
  : `${slips} word${slips===1?"":"s"} came back slowly, so the run starts again. You still got to the end of it. That is the part that counts.`)}</p>
  ${longName?`<p class="hint" style="margin:10px 0 0">That was the <b class="gold">${longName} review</b>. This verse has been with you a long while now.</p>`:""}
       ${clean?`<p class="hint" style="margin:8px 0 0">Rested a day, then asked again.</p>`:""}
-      <div style="font-weight:800;color:var(--gold-ink);margin:10px 0 0">Clean runs in a row: ${r.cr||0} of ${W4W_TEST_CR}${clean?" \u00b7 +15 \u{1FA99}":""}</div>
+      <div style="font-weight:800;color:var(--gold-ink);margin:10px 0 0">Review trail: ${doneSteps} of ${SR_TRAIL.length}${clean?" \u00b7 +15 \u{1FA99}":""}</div>
  <button class="btn" id="wtDone" style="margin-top:16px">Amen · done</button></div>`;
   el("wtDone").onclick=()=>{
     const go=()=>{ ret?ret():renderVerse(); showGoal(); };

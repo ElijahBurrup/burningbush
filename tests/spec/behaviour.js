@@ -3917,7 +3917,7 @@ const DAY = 86400000;
   is(clean.n, 1, 'finishing it records a test');
   is(clean.ok, 1, '...a passed one');
   is(clean.cr, 1, '...and starts the streak');
-  has(clean.result, 'Clean runs in a row: 1 of 5', 'the result says how far along the streak is');
+  has(clean.result, 'Review trail:', 'the result says how far along the trail the verse is');
 
   const dirty = await $(() => {
     const k = '43:11:35';
@@ -3952,9 +3952,13 @@ const DAY = 86400000;
     Prog.memorized = [k]; Prog.verseStage = { [k]: 'heart' };
     Prog.palaces = [{ place: 'My Kitchen', stations: ['Front door'], learnedAt: Date.now(), step: 1 }];
     Prog.verseLoc = { [k]: { p: 0, room: 'Front door' } };
-    Prog.locPast = {}; Prog.w4wSR = { [k]: { cr: 3, n: 3, ok: 3, at: 0 } }; saveProg();
+    Prog.locPast = {}; Prog.w4wSR = {};
+    // part-way along the trail: three checkpoints behind it, three still to come
+    Prog.verseSR = { [k]: { learnedAt: Date.now(), step: 3, dueAt: Date.now() + 864e5, r0: 1 } };
+    saveProg();
     const held = !heartMaybeFreeStation(k);
-    Prog.w4wSR[k].cr = W4W_TEST_CR; saveProg();
+    // and now the whole visible trail is walked
+    Prog.verseSR[k].step = SR_TRAIL.length; saveProg();
     const freed = heartMaybeFreeStation(k);
     return { held, freed: freed ? stationName(freed) : '',
              // the slot is what is given back; the verse keeps a location, and it is this one
@@ -3962,8 +3966,44 @@ const DAY = 86400000;
              nowShows: stationName((Prog.verseLoc || {})[k]),
              remembered: JSON.stringify((Prog.locPast || {})[k] || null) };
   });
-  ok(heartStation.held, 'three clean runs is not enough to give up the heartStation');
-  is(heartStation.freed, 'My Kitchen · Front door', 'five in a row frees it, and names it');
+  ok(heartStation.held, 'half the trail is not enough to give up the heartStation');
+
+  describe('claiming a verse by heart starts its review trail', () => { });
+  const heartTrail = await $(() => {
+    const k = '45:8:28';
+    if (!Prog.memorized.includes(k)) Prog.memorized.push(k);
+    Prog.verseStage = {};
+    // a verse already part-way down its trail, learned long ago
+    Prog.verseSR = Prog.verseSR || {};
+    Prog.verseSR[k] = { learnedAt: Date.now() - 40 * 864e5, step: 4, dueAt: Date.now() + 864e5, r0: 1 };
+    saveProg();
+    setVerseStage(k, 'heart');
+    const o = Prog.verseSR[k];
+    const out = { step: o.step, keptLearnedAt: o.learnedAt < Date.now() - 30 * 864e5, sealed: heartTrailDone(k) };
+    // walking the six visible checkpoints seals it, and the long tail is still to come
+    const days = [];
+    for (let i = 0; i < SR_TRAIL.length && !heartTrailDone(k); i++) days.push(srAdvanceClean(Prog.verseSR[k]));
+    saveProg();
+    out.walked = days.filter(d => d != null);
+    out.sealedAfter = heartTrailDone(k);
+    out.longTailLeft = SR_ALL.length - Prog.verseSR[k].step;
+    out.longTailDays = SR_ALL.slice(Prog.verseSR[k].step).join(',');
+    // claiming a SEALED verse again must not send it back to the start
+    setVerseStage(k, 'loc'); setVerseStage(k, 'heart');
+    out.stillSealed = heartTrailDone(k);
+    return out;
+  });
+  is(heartTrail.step, 1, 'claiming a verse puts it back at the top of the trail');
+  ok(heartTrail.keptLearnedAt, '...without forgetting when it was first memorised');
+  no(heartTrail.sealed, '...and it is not sealed on the strength of the claim');
+  is(heartTrail.walked.join(','), '1,3,7,16,30', 'the trail asks for it at a day, three, a week, a fortnight and a month');
+  ok(heartTrail.sealedAfter, '...and walking it is what seals the verse');
+  is(heartTrail.longTailLeft, 3, 'three reviews still wait beyond sealing');
+  is(heartTrail.longTailDays, '60,180,730', '...two months, six months and two years');
+  ok(heartTrail.stillSealed, 'a verse already sealed is not sent back to the start by claiming it again');
+
+
+  is(heartStation.freed, 'My Kitchen · Front door', 'walking the whole trail frees it, and names it');
   ok(heartStation.gone, '...the place in the palace is released, free for another verse');
   is(heartStation.nowShows, 'Known by heart', '...and the verse is left holding the only location it still needs');
   is(heartStation.remembered, '{"p":0,"room":"Front door"}', '...but remembered, in case the verse comes back');
@@ -5548,16 +5588,17 @@ const DAY = 86400000;
     Prog.verseStage[k] = 'heart'; where = null; askVerseIn(k); const revHeart = where;
     startWordForWord = realFade; startW4WTest = realTest; askVerse = realAsk;
 
-    // five clean runs hands the room back and leaves the verse holding the only location it needs
+    // walking the review trail hands the room back and leaves the verse holding the only location it needs
     reset();
     Prog.palaces = [{ place: 'My Kitchen', stations: ['Front door'], learnedAt: Date.now(), step: 1 }];
     if (!Prog.memorized.includes(k)) Prog.memorized.push(k);   // versesAtLoc counts memorized verses
     Prog.verseLoc[k] = { p: 0, room: 'Front door' }; Prog.verseStage[k] = 'heart';
-    Prog.w4wSR = Prog.w4wSR || {};
+    Prog.verseSR = Prog.verseSR || {};
     const heldBefore = versesAtLoc(0, 'Front door').length;
-    Prog.w4wSR[k] = { cr: W4W_TEST_CR - 1, n: 4, ok: 4, at: Date.now() };
+    // one checkpoint short of the end: the station is still the verse's
+    Prog.verseSR[k] = { learnedAt: Date.now(), step: SR_TRAIL.length - 1, dueAt: Date.now() + 864e5, r0: 1 };
     const earlyFree = heartMaybeFreeStation(k);
-    Prog.w4wSR[k] = { cr: W4W_TEST_CR, n: 5, ok: 5, at: Date.now() };
+    Prog.verseSR[k].step = SR_TRAIL.length;
     const freed = heartMaybeFreeStation(k);
     const seal = { heldBefore, earlyFree: !!earlyFree, freed: freed ? stationName(freed) : null,
       nowShows: stationName((Prog.verseLoc || {})[k]), heldAfter: versesAtLoc(0, 'Front door').length,
