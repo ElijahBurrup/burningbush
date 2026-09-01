@@ -1,9 +1,9 @@
 {
  "classic/learn/path": {
-  "h": "e7179ee554032a04",
-  "len": 6183,
-  "els": 135,
-  "buttons": 41,
+  "h": "c5ccbafec070465e",
+  "len": 5946,
+  "els": 129,
+  "buttons": 39,
   "svgs": 0,
   "imgs": 0,
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
@@ -54,8 +54,8 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "classic/wizard/visual": {
-  "h": "c281e93e9f6b21e7",
-  "len": 3580,
+  "h": "ed7440b16f2a6308",
+  "len": 3592,
   "els": 67,
   "buttons": 8,
   "svgs": 1,
@@ -279,7 +279,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "d2f30ac5bfad7cd5",
+  "h": "43c104636e71e179",
   "len": 19406,
   "els": 460,
   "buttons": 46,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "e67b6db149e161e5",
-  "len": 129098,
-  "els": 2289,
+  "h": "198713ace1fbd82d",
+  "len": 131139,
+  "els": 2319,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.96.0 September 1, 2026 Room to see what you are doing FIX Added to your home screen, the app sat wr"
+  "text": "✕ Version history v1.97.0 September 1, 2026 The films find you, and so do the tickets FIX The Major System films are no "
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,7 +378,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "36ab2f81f11453f3",
+  "h": "8a187f51828a7aa5",
   "len": 18605,
   "els": 452,
   "buttons": 44,
@@ -513,10 +513,10 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "illumined/learn/path": {
-  "h": "138d4b1db40d2746",
-  "len": 4697,
-  "els": 105,
-  "buttons": 41,
+  "h": "34c145cafb9a0536",
+  "len": 4460,
+  "els": 99,
+  "buttons": 39,
   "svgs": 0,
   "imgs": 0,
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
@@ -567,8 +567,8 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "illumined/wizard/visual": {
-  "h": "c281e93e9f6b21e7",
-  "len": 3580,
+  "h": "ed7440b16f2a6308",
+  "len": 3592,
   "els": 67,
   "buttons": 8,
   "svgs": 1,
@@ -792,7 +792,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "6438a27d79002992",
+  "h": "18a2e29104e22834",
   "len": 18613,
   "els": 452,
   "buttons": 44,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "e67b6db149e161e5",
-  "len": 129098,
-  "els": 2289,
+  "h": "198713ace1fbd82d",
+  "len": 131139,
+  "els": 2319,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.96.0 September 1, 2026 Room to see what you are doing FIX Added to your home screen, the app sat wr"
+  "text": "✕ Version history v1.97.0 September 1, 2026 The films find you, and so do the tickets FIX The Major System films are no "
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,7 +891,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "6438a27d79002992",
+  "h": "18a2e29104e22834",
   "len": 18613,
   "els": 452,
   "buttons": 44,
@@ -1026,10 +1026,10 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "glass/learn/path": {
-  "h": "138d4b1db40d2746",
-  "len": 4697,
-  "els": 105,
-  "buttons": 41,
+  "h": "34c145cafb9a0536",
+  "len": 4460,
+  "els": 99,
+  "buttons": 39,
   "svgs": 0,
   "imgs": 0,
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
@@ -1080,8 +1080,8 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "glass/wizard/visual": {
-  "h": "c281e93e9f6b21e7",
-  "len": 3580,
+  "h": "ed7440b16f2a6308",
+  "len": 3592,
   "els": 67,
   "buttons": 8,
   "svgs": 1,
@@ -1305,7 +1305,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "4ce494b0e26c52f6",
+  "h": "cd260d73daf97bd1",
   "len": 18611,
   "els": 452,
   "buttons": 44,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "e67b6db149e161e5",
-  "len": 129098,
-  "els": 2289,
+  "h": "198713ace1fbd82d",
+  "len": 131139,
+  "els": 2319,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.96.0 September 1, 2026 Room to see what you are doing FIX Added to your home screen, the app sat wr"
+  "text": "✕ Version history v1.97.0 September 1, 2026 The films find you, and so do the tickets FIX The Major System films are no "
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,7 +1404,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "4ce494b0e26c52f6",
+  "h": "cd260d73daf97bd1",
   "len": 18611,
   "els": 452,
   "buttons": 44,
@@ -1539,10 +1539,10 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "quest/learn/path": {
-  "h": "a03b0859c3d673b7",
-  "len": 4832,
-  "els": 108,
-  "buttons": 42,
+  "h": "f7d7d98d1343a1c4",
+  "len": 4595,
+  "els": 102,
+  "buttons": 40,
   "svgs": 0,
   "imgs": 0,
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
@@ -1593,8 +1593,8 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "quest/wizard/visual": {
-  "h": "c281e93e9f6b21e7",
-  "len": 3580,
+  "h": "ed7440b16f2a6308",
+  "len": 3592,
   "els": 67,
   "buttons": 8,
   "svgs": 1,
@@ -1818,7 +1818,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "9f493394c92dbabf",
+  "h": "86acb29a9ce2ddfd",
   "len": 18613,
   "els": 452,
   "buttons": 44,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "e67b6db149e161e5",
-  "len": 129098,
-  "els": 2289,
+  "h": "198713ace1fbd82d",
+  "len": 131139,
+  "els": 2319,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.96.0 September 1, 2026 Room to see what you are doing FIX Added to your home screen, the app sat wr"
+  "text": "✕ Version history v1.97.0 September 1, 2026 The films find you, and so do the tickets FIX The Major System films are no "
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,7 +1917,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "9f493394c92dbabf",
+  "h": "86acb29a9ce2ddfd",
   "len": 18613,
   "els": 452,
   "buttons": 44,
@@ -2052,10 +2052,10 @@
   "text": "🙏 Well done, good and faithful servant “Thou hast been faithful over a few things, I will make thee ruler over many thi"
  },
  "buddy/learn/path": {
-  "h": "ec0821f60c465c9e",
-  "len": 5358,
-  "els": 114,
-  "buttons": 42,
+  "h": "e17249cc2c667fb7",
+  "len": 5121,
+  "els": 108,
+  "buttons": 40,
   "svgs": 1,
   "imgs": 0,
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
@@ -2106,8 +2106,8 @@
   "text": "← Library 🔖 Saved for later 🔖 SAVED FOR LATER Verses you set aside. Nothing here expires. Build them whenever you are "
  },
  "buddy/wizard/visual": {
-  "h": "c281e93e9f6b21e7",
-  "len": 3580,
+  "h": "ed7440b16f2a6308",
+  "len": 3592,
   "els": 67,
   "buttons": 8,
   "svgs": 1,
@@ -2331,7 +2331,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "2833cb57743da232",
+  "h": "0b8d01f92a36577b",
   "len": 18609,
   "els": 452,
   "buttons": 44,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "e67b6db149e161e5",
-  "len": 129098,
-  "els": 2289,
+  "h": "198713ace1fbd82d",
+  "len": 131139,
+  "els": 2319,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.96.0 September 1, 2026 Room to see what you are doing FIX Added to your home screen, the app sat wr"
+  "text": "✕ Version history v1.97.0 September 1, 2026 The films find you, and so do the tickets FIX The Major System films are no "
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,7 +2430,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "2833cb57743da232",
+  "h": "0b8d01f92a36577b",
   "len": 18609,
   "els": 452,
   "buttons": 44,

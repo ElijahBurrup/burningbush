@@ -1762,6 +1762,13 @@
   .phone[data-theme="buddy"] .milestone.reached{background:linear-gradient(135deg,#ffd84d,#ffb300);border:0;box-shadow:0 6px 0 #e6a600}
   .phone[data-theme="buddy"] .milestone.reached .mtitle{color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.12)}
   .phone[data-theme="buddy"] .milestone.reached .msub{color:#fff8e6}
+
+  /* ---- meaning, not decoration: after the themes, because it outlives them ----
+     On the verse screen these two sit side by side and do opposite things. One keeps the verse for
+     later, one passes over it. Every theme restyles .btn.ghost, so these are written to outrank
+     that: the pair has to read the same whichever theme is on. */
+  .phone .btn.ghost.wkeep{border-color:var(--good);color:var(--good)}
+  .phone .btn.ghost.wpass{border-color:var(--miss-ink);color:var(--miss-ink)}
   .bb{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;text-align:left;font-size:14px;line-height:1.6}
   .bbhead{font-weight:800;color:var(--gold-ink);font-size:16px;margin-bottom:8px}
   .bb p{margin:0 0 10px} .bb b{color:var(--ink)}
@@ -2148,8 +2155,16 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.96.0";
+const APP_VERSION="1.97.0";
 const CHANGELOG=[
+ {v:"1.97.0", d:"September 1, 2026", t:"The films find you, and so do the tickets", items:[
+   ["chg","<b>The Major System films are no longer tiles on the path.</b> A film is not a lesson: it is what explains the lesson you are about to do. Part one opens with your first sound lesson, part two plays once the sounds are actually in, and each lesson keeps its own film behind Review Lesson. Both are still in Video Review whenever you want them."],
+   ["chg","<b>Building the Books opens with your first book lesson</b>, and stays behind Review Lesson for every book after it. <b>Building Scenes</b> opens the first time you sit down to build a verse."],
+   ["new","<b>The Bible is the second thing you earn now, not the third.</b> Memorize a single verse and it is yours \u2014 and claiming it opens the book that verse came from, with the verse waiting under the chapters. It used to sit behind fifteen verses and three palaces, which kept people away from the thing the whole app is for."],
+   ["chg","<b>Bible Stories is easier to reach:</b> fifteen verses and two palaces, rather than twenty five verses, five palaces and the four Gospels on top."],
+   ["chg","<b>A ticket you have earned comes to you.</b> The bar still flashes, so you learn where tickets live, but the card opens in the middle of the screen rather than waiting behind an icon you had to know to tap. It holds off while you are mid lesson or mid test."],
+   ["chg","<b>Save for later and Skip are outlined apart</b> on the verse screen, green and red, because they sit side by side and do opposite things."]
+ ]},
  {v:"1.96.0", d:"September 1, 2026", t:"Room to see what you are doing", items:[
    ["fix","<b>Added to your home screen, the app sat wrong on the screen.</b> The top bar carried half again its height in empty space with the menu pushed down into the bottom of it, and the tab bar held room at the foot for a home indicator that was not there. It was paying twice for the same two strips of screen. The frame now measures the screen it was actually given, and leaves those strips their room only when it really is underneath them."],
    ["fix","<b>The ticket for a new phase no longer takes away the screen it landed on.</b> Finishing the sixth lesson of a phase ends the lesson and wins the next phase at the same moment, and claiming the ticket used to drop you on the path — losing the screen naming the verses that lesson had just opened, with the way straight into building one. It puts that screen back."],
@@ -4687,21 +4702,19 @@ function updateAppBadge(){
 function foundationsDone(){ return [1,2,3,4,5,40].every(n=>knownNum(n)); }   // Torah + Matthew (palace is earned later)
 function palaceCount(){ return (Prog.palaces||[]).filter(Boolean).length; }
 const GTIK='<span class="gtik" role="img" aria-label="golden ticket"></span>';   // inline golden-ticket badge for criteria text
-const GOSPELS=[40,41,42,43];   // Matthew, Mark, Luke, John — the four accounts the stories come out of
-function gospelsDone(){ return GOSPELS.every(n=>knownNum(n)); }
 const SCRATCH_LADDER=[
  {tab:"verse", icon:"📚", name:"Library", desc:"Your shelf. The films, the verses to learn, your review and everything you have memorized.", gate:()=>foundationsDone(),
  reqs:[{label:"Finish the Foundation. Books 1–5 &amp; Matthew", done:()=>foundationsDone()}]},
+ {tab:"journey", icon:"📕", iconHtml:()=>bibleIconSVG(), name:"Bible", desc:"See the whole Bible open before you. Every book, chapter and verse you can reach.", gate:()=>Prog.memorized.length>=1,
+     // The first verse earns it. The Bible is what the app is for, and holding it back behind fifteen
+     // verses and three palaces kept people away from it for weeks.
+     reqs:[{label:"Memorize your first verse", done:()=>Prog.memorized.length>=1, prog:()=>`${Math.min(1,Prog.memorized.length)}/1`}]},
  {tab:"palace", icon:"🏛️", name:"Memory Palaces", desc:"Build your own palaces. Walk a familiar place and leave a verse at each spot.", gate:()=>Prog.memorized.length>=5 && (Prog.bestStreak||0)>=5,
      reqs:[{label:"Memorize 5 verses", done:()=>Prog.memorized.length>=5, prog:()=>`${Math.min(5,Prog.memorized.length)}/5`},
            {label:"Hit a 5 answer streak in the verse test", done:()=>(Prog.bestStreak||0)>=5, prog:()=>`best ${Prog.bestStreak||0}/5`}]},
- {tab:"journey", icon:"📕", iconHtml:()=>bibleIconSVG(), name:"Bible", desc:"See the whole Bible open before you. Every book, chapter and verse you can reach.", gate:()=>Prog.memorized.length>=15 && palaceCount()>=3,
+ {tab:"stories", icon:"📖", name:"Bible Stories", desc:"100+ of the Bible's great stories. Located, learned, and ready to tell.", gate:()=>Prog.memorized.length>=15 && palaceCount()>=2,
      reqs:[{label:"Memorize 15 verses", done:()=>Prog.memorized.length>=15, prog:()=>`${Math.min(15,Prog.memorized.length)}/15`},
-           {label:"Build 3 memory palaces", done:()=>palaceCount()>=3, prog:()=>`${Math.min(3,palaceCount())}/3`}]},
- {tab:"stories", icon:"📖", name:"Bible Stories", desc:"100+ of the Bible's great stories. Located, learned, and ready to tell.", gate:()=>Prog.memorized.length>=25 && palaceCount()>=5 && gospelsDone(),
-     reqs:[{label:"Memorize 25 verses", done:()=>Prog.memorized.length>=25, prog:()=>`${Math.min(25,Prog.memorized.length)}/25`},
-           {label:"Build 5 memory palaces", done:()=>palaceCount()>=5, prog:()=>`${Math.min(5,palaceCount())}/5`},
-           {label:"Learn the four Gospels: Matthew, Mark, Luke &amp; John", done:()=>gospelsDone(), prog:()=>`${GOSPELS.filter(n=>knownNum(n)).length}/4`}]}
+           {label:"Build 2 memory palaces", done:()=>palaceCount()>=2, prog:()=>`${Math.min(2,palaceCount())}/2`}]},
 ];
 function tabWon(t){ return t==="learn" || (Prog.scratchWon||[]).includes(t); }
 function tabUnlocked(tab){ return tabWon(tab); }
@@ -4727,6 +4740,12 @@ function showScratchReqs(){
   if(el("reqScratch")) el("reqScratch").onclick=()=>{ m.style.display="none"; Scratch.open(i); };
 }
 // the next unwon ladder rung whose milestone is met (or -1). Robust to out-of-order back-compat grants.
+// Anything already covering the screen. A scratch card that opens on top of a film, a ticket or a
+// modal is a card nobody asked for over something they did.
+function anyOverlayUp(){
+  if(["taxov","buildov","scov","simov","obov"].some(id=>{ const n=el(id); return n && n.classList.contains("on"); })) return true;
+  return [...document.querySelectorAll(".modal")].some(m=>m.style.display==="flex");
+}
 function pendingScratchRung(){ for(let i=0;i<SCRATCH_LADDER.length;i++){ const r=SCRATCH_LADDER[i]; if(!tabWon(r.tab) && r.gate()) return i; } return -1; }
 let scratchOffered=-1, scratchSimActive=false;
 // True only inside the onboarding walkthrough. Everywhere else the bar shows what it always has.
@@ -4745,7 +4764,19 @@ function updateTabLocks(){
     b.style.display = (walkOneTicket() && !won && b.dataset.tab!==nextTab) ? "none" : "";
   });
   syncTabOrder(false);   // Bible sits far left once earned; back in place when it isn't
-  if(!scratchSimActive && pend>=0 && pend!==scratchOffered){ scratchOffered=pend; setTimeout(()=>toast("🎫 You earned a scratch off! Tap a flashing golden ticket below 👇"),450); }
+  if(!scratchSimActive && pend>=0 && pend!==scratchOffered){
+    scratchOffered=pend;
+    // The bar flashes so the place tickets live is learned, and the card opens itself so this one
+    // does not depend on knowing that yet. Never on top of something already open, and never while
+    // a lesson or a test is mid-flight — it waits for the next quiet moment instead.
+    setTimeout(()=>{
+      if(scratchOffered!==pend || tabWon(SCRATCH_LADDER[pend].tab)) return;
+      if(anyOverlayUp() || (typeof LZ!=="undefined" && LZ) || (typeof TT!=="undefined" && TT)){
+        toast("🎫 You earned a scratch off! Tap a flashing golden ticket below 👇"); return;
+      }
+      Scratch.open(pend);
+    }, 700);
+  }
   if(pend<0) scratchOffered=-1;
   // once the user has 5 verses, remind them a 5 answer streak in the verse test unlocks the next ticket
   if(!scratchSimActive && Prog.memorized.length>=5 && (Prog.bestStreak||0)<5 && !tabWon("palace") && !Prog.fiveVerseHintShown){
@@ -5177,12 +5208,10 @@ function buildUnits(){
   const STORY_ICONS=["🍎","⭐","🧥","🌊","📜","🎺","🌾","👑","🔥","🌪️","🦁","👶","🕊️","🍞","🌱","🐑","💰","🕯️","🌿","🚪","🏗️","🧂","🍷","✝️","🌄","⛪","🕊️","🌅","⛵","👁️"]; // one per story section, in list order
   // 0) The Code — the Major System video first, then the sound↔digit map drilled both ways.
   units.push({name:"The Code: Major System Sounds", ic:"🔢", skills:[
-    // Video Review is not reachable this early, so the opening film keeps a tile of its own here
-    {id:VIDEOS.major.skill, label:VIDEOS.major.title, kind:"video", vkey:"major", optional:true, items:[]},
+    // Neither film is a tile any more. Part one opens with the first sound lesson and part two plays
+    // once the second is finished, which is where each of them is actually about to be useful.
     {id:"snd:0-4",label:"Sounds 0–4",kind:"sound",items:[0,1,2,3,4]},
-    {id:"snd:5-9",label:"Sounds 5–9",kind:"sound",items:[5,6,7,8,9]},
-    // part two comes AFTER the sounds — it turns them into words and pictures, which needs the sounds first
-    {id:VIDEOS.major2.skill, label:VIDEOS.major2.title, kind:"video", vkey:"major2", optional:true, items:[]}
+    {id:"snd:5-9",label:"Sounds 5–9",kind:"sound",items:[5,6,7,8,9]}
   ]});
   // 1) The Foundation — the Torah (books 1-5) + Matthew (40). Completing this earns the first
   //    scratch off (Verses). The memory palace is NOT here — it's earned later, after 5 verses.
@@ -6006,6 +6035,9 @@ function startLesson(sk){
   // that re-enters startLesson would then recurse forever. Watching marks it seen, so the re-entry
   // finds this guard false and falls through to the lesson.
   if(sk.kind==="book" && !videoSeen("book")){ openVideoScreen("book", ()=>startLesson(sk)); return; }
+  // The same trick for the first sound lesson: what the whole system is for, said once, immediately
+  // before the first thing that uses it.
+  if(sk.id==="snd:0-4" && !videoSeen("major")){ openVideoScreen("major", ()=>startLesson(sk)); return; }
   if(sk.kind==="palace") return startPalaceLesson(sk);
   if(sk.kind==="story") return startStoryLesson(sk);
   if(sk.kind==="sound"){
@@ -6082,7 +6114,7 @@ function renderSoundStep(s,pct){
     body=`<div class="prompt">Which number makes the sound…</div><div class="bigword">${SND[s.n]}</div>
       <div class="opts">${opts.map(d=>`<button class="opt" data-sok="${d===s.n?1:0}">${d}</button>`).join("")}</div>`;
   }
-  L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>${s.type==="teach"?reviewLessonBtn("major"):""}</div><div id="lBody">${body}</div></div>`;
+  L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>${s.type==="teach"?lessonFilm():""}</div><div id="lBody">${body}</div></div>`;
   el("lClose").onclick=()=>renderPath();
   attachLessonSwipe(L);
   if(s.type==="teach"){ el("lNext").onclick=advance; return; }
@@ -6107,7 +6139,9 @@ function lessonFilm(){
   if(!s || s.type!=="teach") return "";
   const k=LZ.sk && LZ.sk.kind;
   if(k==="book") return reviewLessonBtn("book");
-  if(k==="num" || k==="sound") return reviewLessonBtn("major");
+  // Each of the two sound lessons offers the film that belongs to it, not one film for both.
+  if(k==="sound") return reviewLessonBtn(LZ.sk.id==="snd:5-9" ? "major2" : "major");
+  if(k==="num") return reviewLessonBtn("major");
   return "";
 }
 function renderStep(){
@@ -6362,8 +6396,17 @@ function finishLesson(){
   renderLessonDone();
   LZ=null;
   // The ticket goes up over this screen, so claiming it puts this screen back rather than the path.
-  if(wasNew) setTimeout(()=>{
+  const thenTicket = ()=>{
     if(!maybePhaseScratch(()=>{ renderLessonDone(); setTimeout(maybeSuggestPalace,500); })) maybeSuggestPalace();
+  };
+  if(wasNew) setTimeout(()=>{
+    // Part two turns the sounds into words and pictures, so it waits until the sounds are actually
+    // learned. That is this moment, and nowhere earlier. The lesson screen comes back behind it.
+    if(sk.id==="snd:5-9" && !videoSeen("major2")){
+      openVideoScreen("major2", ()=>{ renderLessonDone(); thenTicket(); });
+      return;
+    }
+    thenTicket();
   }, 700);
 }
 
@@ -9890,7 +9933,7 @@ function renderWalk(){
         <div class="hint" style="text-align:center;margin:-8px 0 10px">Press and hold any word for its Hebrew or Greek.</div>
  <div class="teachbox"><b class="gold">Now picture it.</b> Weave <b>${bp.word}</b>, <b>${cp.word}</b> and <b>${vp.word}</b>, and what this verse means, into one <b>action-packed scene</b>, set in a room of one of your memory palaces.</div>
         ${canLearn?`<button class="btn" id="wToScene" style="margin-top:12px">Save Visual →</button>`:missHtml}
-        <div class="btnrow" style="margin-top:8px"><button class="btn ghost" id="wSave" style="flex:1">${Prog.saved.includes(vkey)?"↩ Unsave":"Save for later"}</button><button class="btn ghost" id="wSkip" style="flex:1">${Prog.skipped.includes(vkey)?"↩ Unskip":"Skip"}</button></div>
+        <div class="btnrow" style="margin-top:8px"><button class="btn ghost wkeep" id="wSave" style="flex:1">${Prog.saved.includes(vkey)?"↩ Unsave":"Save for later"}</button><button class="btn ghost wpass" id="wSkip" style="flex:1">${Prog.skipped.includes(vkey)?"↩ Unskip":"Skip"}</button></div>
       </div>`;
     if(el("wClose")) el("wClose").onclick=()=>walkReturn();
     wireVerseNav(V, verseNavNow, walkReturn);
@@ -12095,6 +12138,14 @@ const Scratch = (()=>{
         // the film that explains what was just unlocked, right after it is unlocked
         const vk = L.tab==="palace" ? "palace" : (L.tab==="verse" ? "verse" : null);
         if(vk) setTimeout(()=>maybeVideo(vk), 650);
+        // The Bible is earned by memorising a verse, so it opens at that verse's book: the chapters,
+        // and the verse itself listed under them. Being told about it is not the same as seeing it.
+        else if(L.tab==="journey") setTimeout(()=>{
+          const last=(Prog.memorized||[])[Prog.memorized.length-1];
+          const bn=last ? +String(last).split(":")[0] : 0;
+          show("journey"); renderJourney();
+          if(bn>=1 && bn<=66) setTimeout(()=>openBookVerses(bn, ()=>{ show("journey"); renderJourney(); }, "mem"), 420);
+        }, 500);
         else setTimeout(()=>toast(reqsSummary(rung+1)), 500);
       }
     });

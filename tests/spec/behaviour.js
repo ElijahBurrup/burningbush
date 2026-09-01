@@ -1989,9 +1989,9 @@ const DAY = 86400000;
     out.stillListed = videoReviewList().includes('intro');
     return out;
   });
-  is(film.unit0First, 'major', 'the film inside the first unit is the Major System one, not the intro');
+  no(film.unit0First, 'no film sits inside the first unit any more — part one opens with the lesson');
   ok(film.introButton, '…because the intro stands on its own above the first unit');
-  is(film.majorTile, 'Major System 1', '…and the tile says what it plays rather than always saying Intro');
+  no(film.majorTile, '…and no film waits on the path as a tile at all');
   no(film.before, 'a new profile has not watched it');
   is(film.declared, 'videos/intro.mp4', 'the film has a real source, not an empty placeholder');
   ok(film.element, '…so the screen draws a player rather than the "add your video here" card');
@@ -2495,6 +2495,9 @@ const DAY = 86400000;
     out.palace = btnIn('palace');
 
     // a sound lesson and a book lesson, straight through startLesson
+    // Part one opens the first sound lesson and Building the Books opens the first book lesson.
+    // Neither is what this block is testing, and an unseen one would take the screen first.
+    ['major', 'major2', 'book'].forEach(markVideoSeen);
     const sound = UNITS[0].skills.find(s => s.kind === 'sound');
     startLesson(sound);
     out.sound = btnIn('learn');
@@ -2559,15 +2562,15 @@ const DAY = 86400000;
     Prog.doneSkills = (Prog.doneSkills || []).filter(x => !/^video:/.test(x)); saveProg();
     show('learn'); renderPath();
     const intro = () => document.getElementById('introFilm');
-    const tile = () => document.querySelector('#learn .tile.video');
-    const before = { intro: intro().className, tile: tile().className };
+    const tiles = () => document.querySelectorAll('#learn .tile.video').length;
+    const before = { intro: intro().className, tiles: tiles() };
     markVideoSeen('intro'); markVideoSeen('major'); renderPath();
-    return { before, after: { intro: intro().className, tile: tile().className } };
+    return { before, after: { intro: intro().className, tiles: tiles() } };
   });
   has(gold.before.intro, 'blue', 'Start here is blue until it has been watched');
-  has(gold.before.tile, 'new', '…and the Major System tile is blue like an unstarted lesson');
   no(/\bblue\b/.test(gold.after.intro), 'watching it drops the blue, which leaves it gold');
-  has(gold.after.tile, 'gold', '…and the Major System tile turns gold too');
+  is(gold.before.tiles, 0, 'no film sits on the path waiting to be chosen');
+  is(gold.after.tiles, 0, '…and watching one does not put a tile there either');
 
   describe('the New Living Translation is read live', () => { });
   const live = await $(() => {
@@ -2789,29 +2792,6 @@ const DAY = 86400000;
   is([...palColours.pageClasses].sort().join(','), 'pal-empty,pal-full,pal-partial',
      'the Memory Palace page paints the same three states, empty included');
 
-  describe('winning the Bible', () => { });
-  const gospels = await $(() => {
-    const rung = SCRATCH_LADDER.findIndex(r => r.tab === 'stories');
-    const req = SCRATCH_LADDER[rung].reqs[2];
-    // knownNumbers caches on doneSkills.length + extraKnown.length, so swapping one entry for
-    // another of the same count returns the old set. It only ever grows in real use; here it does not.
-    Prog.extraKnown = []; Prog.doneSkills = []; saveProg(); bustCaches();
-    const none = req.prog();
-    // the four Gospels, and nothing else
-    GOSPELS.forEach(n => Prog.extraKnown.push(n));
-    saveProg(); bustCaches();
-    const all = { prog: req.prog(), done: req.done() };
-    // Acts must not be needed, and must not count
-    Prog.extraKnown = GOSPELS.slice(0, 3).concat([44]); saveProg(); bustCaches();
-    const withActs = req.done();
-    return { none, all, withActs, label: req.label, books: GOSPELS.slice() };
-  });
-  is(gospels.books.join(','), '40,41,42,43', 'the four Gospels are Matthew, Mark, Luke and John');
-  is(gospels.none, '0/4', 'none of them learned reads zero of four');
-  is(gospels.all.prog, '4/4', '…and all four reads four of four');
-  ok(gospels.all.done, '…which earns the ticket');
-  no(gospels.withActs, 'three Gospels and Acts does not, because Acts is not one of them');
-  ok(/Matthew/.test(gospels.label) && /John/.test(gospels.label), 'the requirement names them');
 
   const phase2 = await $(() => {
     const u = UNITS.find(x => /^Phase 2:/.test(x.name));
@@ -4712,9 +4692,9 @@ const DAY = 86400000;
   no(lpath.lastPhaseHasPalace, '...least of all on the last phase');
   is(lpath.dividers, lpath.phaseCount, 'a named rule marks every phase');
   is(lpath.tilesShown, lpath.tilesTotal, '...and with everything revealed, every tile is drawn');
-  is(lpath.videoTiles, 2, 'two films keep a tile inside a unit: both Major System parts');
-  is(lpath.videoSkills, 2, '...kept there because Video Review is out of reach this early');
-  is(lpath.videoWhere, 'The Code: Major System Sounds', '...and it sits in the Code section');
+  is(lpath.videoTiles, 0, 'no film keeps a tile on the path: each arrives when it explains something');
+  is(lpath.videoSkills, 0, '...so no unit carries one as a skill either');
+  is(lpath.videoWhere, '', '...not even the Code section, where both Major System films used to sit');
   is(lpath.pathMilestones, 0, 'the learn-path milestones are gone');
   is(lpath.storyMilestones, 15, '...while the Bible-story capstones stay');
   is(lpath.focused, 1, 'the next lesson is marked');
@@ -4785,7 +4765,7 @@ const DAY = 86400000;
   });
   no(majorShown.shown, 'opening Learn does NOT play a film — Learn just opens');
   ok(majorShown.introButton, '...the Intro film sits at the top of it');
-  has(majorShown.majorTile, 'Major System 1', '...and the Major System keeps its own tile in the first unit');
+  is(majorShown.majorTile, '', '...and the Major System no longer waits as a tile — it opens with the first sound lesson');
 
   describe('a palace for every six lessons', () => { });
   const six = await $(() => {
@@ -5400,6 +5380,8 @@ const DAY = 86400000;
     const snap = { done: Prog.doneSkills.slice(), pro: Billing.isPro() };
     // This block asserts what a swipe reaches and what it does there, so it sets what has been
     // learned rather than inheriting whatever the blocks above left behind.
+    // Including the films, which would otherwise open in front of the first sound lesson.
+    ['major', 'major2', 'book', 'verse'].forEach(markVideoSeen);
     Billing.revoke();
     const host = el('learn');
     const drag = dx => {
@@ -5411,7 +5393,10 @@ const DAY = 86400000;
       };
       fire('touchstart', x0); fire('touchend', x0 + dx);
     };
-    const openById = id => { const f = flatSkills().find(x => x.id === id); startLesson(UNITS[f.ui].skills[f.si]); };
+    // doneSkills is reset more than once below, and a reset un-sees the films; they are put
+    // back here so opening a lesson never lands on one instead.
+    const openById = id => { ['major', 'major2', 'book', 'verse'].forEach(markVideoSeen);
+      const f = flatSkills().find(x => x.id === id); startLesson(UNITS[f.ui].skills[f.si]); };
     const at = () => (LZ && LZ.sk ? LZ.sk.id : null);
     const payShut = () => { const m = el('payModal'); if (m) m.style.display = 'none'; };
     const paidUp = () => { const m = el('payModal'); return !!m && m.style.display !== 'none'; };
@@ -5769,6 +5754,99 @@ const DAY = 86400000;
   ok(claimWiring.notPath, '...rather than on the path, which is what it used to do');
   ok(claimWiring.fallbackPath, 'a caller that names no destination still gets the path');
   is(claimWiring.fallbackOpened, 5, '...and the phase opens either way');
+
+  // ─────────────── the films come to you, at the moment they explain something ───────────────
+  describe('films on the track', () => { });
+  // A film is not a lesson. It is what explains the lesson you are about to do, so it belongs at the
+  // moment you do it rather than as a tile on the path you have to notice and choose.
+  const films = await $(() => {
+    const snapDone = Prog.doneSkills.slice(), snapOrder = (Prog.videoOrder || []).slice();
+    const snapMem = Prog.memorized.slice(), snapMax = Prog.phaseMax;
+    const shut = () => { const m = el('videoModal'); if (m) m.style.display = 'none'; };
+    const reset = () => { Prog.doneSkills = []; Prog.videoOrder = []; Prog.memorized = [];
+      Prog.extraKnown = []; Prog.phaseMax = 99; bustCaches(); saveProg(); shut(); };
+    // which film is up, asked of the app: opening one records it
+    const showing = () => { const m = el('videoModal');
+      if (!m || m.style.display !== 'flex') return null;
+      const o = Prog.videoOrder || []; return o[o.length - 1] || null; };
+    const enter = id => { const f = flatSkills().find(x => x.id === id); startLesson(UNITS[f.ui].skills[f.si]); };
+    const review = host => (document.querySelector(host + ' [data-revlesson]') || {}).dataset?.revlesson || null;
+    const out = {};
+
+    out.tiles = UNITS.reduce((n, U) => n + U.skills.filter(s => s.kind === 'video').length, 0);
+    out.unit0 = UNITS[0].skills.map(s => s.id).join(',');
+
+    reset(); enter('snd:0-4');
+    out.firstSound = showing();
+    shut(); markVideoSeen('major'); enter('snd:0-4');
+    out.againSound = showing();
+    out.reviewFirst = review('#learn');
+
+    reset(); markVideoSeen('major'); markVideoSeen('major2'); enter('snd:5-9');
+    out.reviewSecond = review('#learn');
+
+    reset(); enter('book:1');
+    out.firstBook = showing();
+    shut(); markVideoSeen('book'); enter('book:2');
+    out.reviewBook = review('#learn');
+
+    reset(); openVerseWizard(43, 3, 16, () => { });
+    out.firstVerse = showing();
+    shut(); markVideoSeen('verse'); openVerseWizard(43, 3, 16, () => { });
+    out.reviewVerse = review('#verse');
+    out.keep = (el('wSave') || {}).className || '';
+    out.pass = (el('wSkip') || {}).className || '';
+
+    out.library = VIDEO_ORDER.filter(k => VIDEOS[k] && VIDEOS[k].src);
+
+    shut();
+    Prog.doneSkills = snapDone; Prog.videoOrder = snapOrder;
+    Prog.memorized = snapMem; Prog.phaseMax = snapMax;
+    bustCaches(); saveProg();
+    return out;
+  });
+  is(films.tiles, 0, 'no film is a tile on the learn track any more');
+  is(films.unit0, 'snd:0-4,snd:5-9', '...the Code is the two sound lessons and nothing else');
+  is(films.firstSound, 'major', 'part one plays as the first sound lesson opens');
+  is(films.againSound, null, '...once, and never again on the way in');
+  is(films.reviewFirst, 'major', '...and Review Lesson in that lesson is part one');
+  is(films.reviewSecond, 'major2', 'the second sound lesson reviews part two, not part one');
+  is(films.firstBook, 'book', 'Building the Books plays as the first book lesson opens');
+  is(films.reviewBook, 'book', '...and stays behind Review Lesson for every book lesson after it');
+  is(films.firstVerse, 'verse', 'Building Scenes plays the first time a verse is opened to build');
+  is(films.reviewVerse, 'verse', '...and Review Lesson on that screen plays it again');
+  has(films.keep, 'wkeep', 'Save for later is marked as the one that keeps the verse');
+  has(films.pass, 'wpass', '...and Skip as the one that passes over it');
+  ok(films.library.indexOf('major') >= 0 && films.library.indexOf('major2') >= 0,
+     'both Major System films are still in Video Review, off the track but not gone');
+
+  // Part two waits for the sounds to actually be learned, which is the end of the second lesson.
+  const partTwo = await $(() => {
+    const snapDone = Prog.doneSkills.slice(), snapMax = Prog.phaseMax;
+    const m0 = el('videoModal'); if (m0) m0.style.display = 'none';
+    Prog.doneSkills = []; Prog.videoOrder = []; Prog.phaseMax = 99;
+    markVideoSeen('major'); Prog.doneSkills.push('snd:0-4'); bustCaches(); saveProg();
+    const f = flatSkills().find(x => x.id === 'snd:5-9');
+    LZ = { sk: UNITS[f.ui].skills[f.si], steps: [], i: 0, total: 1, ok: 10 };
+    finishLesson();
+    window.__ptDone = snapDone; window.__ptMax = snapMax;
+    return { onLessonScreen: !!el('lPath2'), notYet: !videoSeen('major2') };
+  });
+  await page.waitForTimeout(1100);            // the film is on the same timer as the phase ticket
+  const partTwoAfter = await $(() => {
+    const m = el('videoModal');
+    const o = Prog.videoOrder || [];
+    const out = { playing: (m && m.style.display === 'flex') ? o[o.length - 1] : null,
+                  behindIt: !!el('lPath2') };
+    if (m) m.style.display = 'none';
+    LZ = null; LESSON_DONE = null;
+    Prog.doneSkills = window.__ptDone; Prog.phaseMax = window.__ptMax; bustCaches(); saveProg();
+    return out;
+  });
+  ok(partTwo.onLessonScreen, 'finishing the second sound lesson ends on the lesson screen');
+  ok(partTwo.notYet, '...with part two not yet played');
+  is(partTwoAfter.playing, 'major2', '...and then part two plays, once the sounds are actually in');
+  ok(partTwoAfter.behindIt, '...with the lesson screen still behind it to come back to');
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));
