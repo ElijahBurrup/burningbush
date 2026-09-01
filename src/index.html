@@ -2155,8 +2155,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.97.0";
+const APP_VERSION="1.98.0";
 const CHANGELOG=[
+ {v:"1.98.0", d:"September 1, 2026", t:"The whole ladder, walked", items:[
+   ["chg","<b>The onboarding walkthrough covers every ticket now</b>, not the first three. Five stages: the Library, the Bible, Memory Palaces, the two things that are uncovered rather than won, and Bible Stories. Each one seeds the account up to the last action and no further, so the only thing left to do is the one that fires what you came to look at."],
+   ["new","<b>The stage that builds your first palace shows both foils lifting.</b> The palace and room pickers on the verse screen, then the Spaced Repetition film, then Spaced Repetition itself on the Library. It needed a verse open to uncover them on, and now has one."]
+ ]},
  {v:"1.97.0", d:"September 1, 2026", t:"The films find you, and so do the tickets", items:[
    ["chg","<b>The Major System films are no longer tiles on the path.</b> A film is not a lesson: it is what explains the lesson you are about to do. Part one opens with your first sound lesson, part two plays once the sounds are actually in, and each lesson keeps its own film behind Review Lesson. Both are still in Video Review whenever you want them."],
    ["chg","<b>Building the Books opens with your first book lesson</b>, and stays behind Review Lesson for every book after it. <b>Building Scenes</b> opens the first time you sit down to build a verse."],
@@ -12225,9 +12229,6 @@ const OnboardWalk = (()=>{
   // second advance is queued while the first is still waiting, walking step past the end of STEPS.
   let on=false, step=0, timer=null, moving=false;
 
-  // The four verses a tester arrives with: books 1–5 and 40, chapters and verses 1–5, and every one
-  // of them a real verse.
-  const SEEDED=[[1,1,1],[2,2,2],[3,3,3],[40,4,4]];
   // Films the reader would already have seen by each point, so the run is not interrupted by one
   // that is not what is being tested. The palace and Spaced Repetition films are deliberately left
   // unseen — they are part of what this walks through.
@@ -12244,32 +12245,52 @@ const OnboardWalk = (()=>{
     Prog.bestStreak=0; Prog.onboarded=true;
   }
 
+  // Every ticket on the ladder, and the two things that are uncovered rather than won. Each step
+  // seeds the account up to the last action and no further, so the only thing left to do is the one
+  // that fires the thing being looked at.
+  const PS = (place, spots) => ({ place, stations:spots, learnedAt:Date.now(), step:spots.length, sr:{} });
+  const versesTo = n => { for(let i=1; Prog.memorized.length<n && i<=176; i++){
+      const k=refKey(19,119,i); if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); } } };
+  const upTo = (tickets, opts)=>{ const o=opts||{};
+    baseSeed();
+    Prog.doneSkills.push(known(40));                       // Matthew, so the Foundation is behind them
+    Prog.scratchWon=tickets.slice();
+    if(o.verses) versesTo(o.verses);
+    if(o.palaces) Prog.palaces=o.palaces;
+    if(o.streak) Prog.bestStreak=o.streak;
+    if(o.films) o.films.forEach(markVideoSeen);
+    saveProg(); bustCaches(); updateTabLocks(); syncTabOrder(false); };
+
   const STEPS=[
     { do:"Finish the Matthew lesson",
-      say:"You already know books 1 to 5. Open Learn and complete Matthew. That finishes the Foundation and earns the Library ticket.",
+      say:"You already know books 1 to 5. Open Learn and finish Matthew. That completes the Foundation and wins the Library ticket.",
       seed(){ baseSeed(); saveProg(); bustCaches(); updateTabLocks(); syncTabOrder(false); show("learn"); },
       done(){ return tabWon("verse"); } },
 
+    { do:"Memorise your first verse",
+      say:"The Library is open. Memorise any one verse: the first one wins the Bible, and claiming it opens the book that verse came from with the verse under the chapters.",
+      seed(){ upTo(["verse"]); show("verse"); renderVerse(); },
+      done(){ return tabWon("journey"); } },
+
     { do:"Memorise your fifth verse",
-      say:"Four verses are already in. Learn one more. On the save screen the palace and room pickers are under a golden foil, because you have no palace yet. Finishing it earns the Memory Palaces ticket, and its film plays with it.",
-      seed(){ baseSeed();
-        Prog.doneSkills.push(known(40));
-        Prog.scratchWon=["verse"];
-        SEEDED.forEach(([b,c,v])=>{ const k=refKey(b,c,v); Prog.memorized.push(k); startVerseSR(k); });
-        Prog.bestStreak=5;   // the palace ticket also wants a 5 answer streak; the fifth verse is the only thing left
-        saveProg(); bustCaches(); updateTabLocks(); syncTabOrder(false); show("verse"); renderVerse(); },
+      say:"Four verses are in and the answer streak is already there. One more wins the Memory Palaces ticket. On the save screen the palace and room pickers are under a golden foil, because there is no palace yet.",
+      seed(){ upTo(["verse","journey"], {verses:4, streak:5}); show("verse"); renderVerse(); },
       done(){ return tabWon("palace"); } },
 
     { do:"Build your first palace",
-      say:"Open the Palaces tab and build one. Finishing it uncovers the palace and room pickers on the verse screen, plays the Spaced Repetition film, then uncovers Spaced Repetition on the Library.",
-      seed(){ baseSeed();
-        Prog.doneSkills.push(known(40));
-        Prog.scratchWon=["verse","palace"];
-        [...SEEDED,[5,5,5]].forEach(([b,c,v])=>{ const k=refKey(b,c,v); Prog.memorized.push(k); startVerseSR(k); });
-        Prog.bestStreak=5;
-        markVideoSeen("palace");
-        saveProg(); bustCaches(); updateTabLocks(); syncTabOrder(false); show("palace"); renderPalace(); },
-      done(){ return palaceCount()>=1 && videoSeen("sr"); } }
+      say:"Open Palaces and build one. Finishing it uncovers the palace and room pickers on the verse screen, plays the Spaced Repetition film, then uncovers Spaced Repetition on the Library.",
+      seed(){ upTo(["verse","journey","palace"], {verses:5, streak:5});
+        // The pickers are only shown being uncovered if there is a verse open to uncover them on.
+        curScene = verseObj(43,3,16);
+        show("palace"); renderPalace(); },
+      done(){ return palaceCount()>=1 && videoSeen("sr"); } },
+
+    { do:"Memorise your fifteenth verse",
+      say:"Fourteen verses and two palaces are in. One more verse wins Bible Stories, the last ticket on the ladder.",
+      seed(){ upTo(["verse","journey","palace"], {verses:14, streak:5, films:["sr","palace"],
+        palaces:[PS("My Kitchen",["Front door","Sink","Table"]), PS("The Long Walk",["Gate","Bridge","Bench"])]});
+        show("verse"); renderVerse(); },
+      done(){ return tabWon("stories"); } }
   ];
 
   // Said once, over the screen it is about, and then gone. Nothing of the walkthrough is left

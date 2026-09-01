@@ -2284,6 +2284,7 @@ const DAY = 86400000;
 
     // skipping lands on the same seed the tester reaches by playing the step
     OnboardWalk.skip();
+    OnboardWalk.skip();          // the Bible stage: one verse wins it, so step past to the fifth-verse stage
     const s2 = { memorized: Prog.memorized.length, library: tabWon('verse'),
                  palace: tabWon('palace'), streak: Prog.bestStreak };
     editVerseScene(1, 1, 1, () => {}, () => {});
@@ -2305,13 +2306,13 @@ const DAY = 86400000;
   no(walkTool.s1.knows40, '...and not Matthew, which is the one thing left to do');
   is(walkTool.s1.tickets, 0, '...with no ticket won yet');
   ok(walkTool.s1.stashed, '...and your real progress stashed before anything is seeded');
-  is(walkTool.s2.memorized, 4, 'stage two hands you four verses');
+  is(walkTool.s2.memorized, 4, 'the fifth-verse stage hands you four verses');
   ok(walkTool.s2.library, '...with the Library ticket already won');
   no(walkTool.s2.palace, '...and the palace ticket still to earn');
-  is(walkTool.s2.streak, 5, '...the answer streak seeded, so the fifth verse is the only thing left');
+  is(walkTool.s2.streak, 5, '...and the answer streak, so the fifth verse is the only thing left');
   ok(walkTool.s2.pickersCovered, '...and the palace pickers covered on the save screen');
-  ok(walkTool.s3.palace, 'stage three has the palace ticket won');
-  is(walkTool.s3.memorized, 5, '...five verses in');
+  ok(walkTool.s3.palace, 'the palace stage has the palace ticket won');
+  is(walkTool.s3.memorized, 5, '...five verses in, the palace the only thing left');
   ok(walkTool.s3.srCovered, '...and Spaced Repetition still under its foil');
   no(walkTool.back.active, 'ending it stops the walkthrough');
   is(walkTool.back.mem, walkTool.real.mem, '...and hands back your real verses');
