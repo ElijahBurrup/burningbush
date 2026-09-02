@@ -9,8 +9,17 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "classic/verse/hub": {
-  "h": "1da3b9974fc1655e",
-  "len": 3115,
+  "h": "c8e92b24c816dfd8",
+  "len": 1819,
+  "els": 42,
+  "buttons": 4,
+  "svgs": 1,
+  "imgs": 0,
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 Remaining 🔥 4 day streak 🎁 Memorize you"
+ },
+ "classic/verse/hub-full": {
+  "h": "9cd3be7f99a74c33",
+  "len": 3144,
   "els": 62,
   "buttons": 7,
   "svgs": 3,
@@ -36,7 +45,7 @@
   "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
  },
  "classic/verse/memorized": {
-  "h": "705e9d361bf796b5",
+  "h": "39159b942b7c1498",
   "len": 2315,
   "els": 56,
   "buttons": 8,
@@ -90,7 +99,7 @@
   "text": "✕ 🔥 Streak 0 🏆 Best 0 \"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him"
  },
  "classic/practice/word-pick": {
-  "h": "8fb3b5e1c9ff1bdd",
+  "h": "78057779f84705a9",
   "len": 1318,
   "els": 22,
   "buttons": 10,
@@ -108,8 +117,8 @@
   "text": "✕ John 11:35 0/2 your words appear here as you go… Reveal Each word jumps to the top the moment you finish it · green if"
  },
  "classic/practice/w4w-win": {
-  "h": "2ecd6f44e14183fe",
-  "len": 961,
+  "h": "a08d4625e71ea284",
+  "len": 954,
   "els": 15,
   "buttons": 1,
   "svgs": 0,
@@ -144,7 +153,7 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "classic/practice/text-fade": {
-  "h": "579bb003600e5a81",
+  "h": "23af52e5eb88851b",
   "len": 824,
   "els": 15,
   "buttons": 4,
@@ -171,7 +180,7 @@
   "text": "✕ 🏛️ My Kitchen 3 memory stations · walk them in order D0 D1 D3 D7 D16 D30 Next review in 1 day 🎯 Practice this palace"
  },
  "classic/palace/edit": {
-  "h": "0cffa01440dd63b4",
+  "h": "f55825086f48a1e6",
   "len": 3127,
   "els": 32,
   "buttons": 4,
@@ -279,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "31c5da73751ed93c",
+  "h": "e0b15f65c833220b",
   "len": 19410,
   "els": 460,
   "buttons": 46,
@@ -342,17 +351,17 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "884837050b6ee6e0",
-  "len": 135522,
-  "els": 2384,
+  "h": "a516925e281386c7",
+  "len": 139052,
+  "els": 2439,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.100.0 September 1, 2026 A hard look at everything NEW The Spaced Repetition film is in. Five minute"
+  "text": "✕ Version history v1.101.0 September 2, 2026 Your Library, one present at a time NEW The Library now arrives a piece at "
  },
  "classic/modal/church": {
-  "h": "20b67dd2aa77d2ea",
-  "len": 9471,
+  "h": "dc775bc73669666e",
+  "len": 9473,
   "els": 114,
   "buttons": 2,
   "svgs": 2,
@@ -378,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "60657a69dae24c4b",
+  "h": "287eb14a9b20bf4c",
   "len": 18609,
   "els": 452,
   "buttons": 44,
@@ -450,7 +459,7 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "classic/practice/setup": {
-  "h": "49ae1e0f1511aa87",
+  "h": "0497470d57d877d9",
   "len": 2273,
   "els": 39,
   "buttons": 7,
@@ -495,8 +504,8 @@
   "text": "✕ Turning on reminders Notifications are currently blocked on this device. 1 Click the padlock 🔒 in your browser's addr"
  },
  "classic/modal/pace": {
-  "h": "08777cfae8ba011d",
-  "len": 937,
+  "h": "c63ba86dd31bc622",
+  "len": 939,
   "els": 11,
   "buttons": 1,
   "svgs": 0,
@@ -522,8 +531,17 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "illumined/verse/hub": {
-  "h": "4a711d0be15b3f19",
-  "len": 3457,
+  "h": "95b2d42ce600904f",
+  "len": 2161,
+  "els": 45,
+  "buttons": 4,
+  "svgs": 2,
+  "imgs": 0,
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak 🎁 Memorize yo"
+ },
+ "illumined/verse/hub-full": {
+  "h": "ff256605285e0f09",
+  "len": 3486,
   "els": 65,
   "buttons": 7,
   "svgs": 4,
@@ -549,7 +567,7 @@
   "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
  },
  "illumined/verse/memorized": {
-  "h": "705e9d361bf796b5",
+  "h": "39159b942b7c1498",
   "len": 2315,
   "els": 56,
   "buttons": 8,
@@ -603,7 +621,7 @@
   "text": "✕ 🔥 Streak 0 🏆 Best 0 \"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him"
  },
  "illumined/practice/word-pick": {
-  "h": "8fb3b5e1c9ff1bdd",
+  "h": "78057779f84705a9",
   "len": 1318,
   "els": 22,
   "buttons": 10,
@@ -621,8 +639,8 @@
   "text": "✕ John 11:35 0/2 your words appear here as you go… Reveal Each word jumps to the top the moment you finish it · green if"
  },
  "illumined/practice/w4w-win": {
-  "h": "2ecd6f44e14183fe",
-  "len": 961,
+  "h": "a08d4625e71ea284",
+  "len": 954,
   "els": 15,
   "buttons": 1,
   "svgs": 0,
@@ -657,7 +675,7 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "illumined/practice/text-fade": {
-  "h": "579bb003600e5a81",
+  "h": "23af52e5eb88851b",
   "len": 824,
   "els": 15,
   "buttons": 4,
@@ -684,7 +702,7 @@
   "text": "✕ 🏛️ My Kitchen 3 memory stations · walk them in order D0 D1 D3 D7 D16 D30 Next review in 1 day 🎯 Practice this palace"
  },
  "illumined/palace/edit": {
-  "h": "0cffa01440dd63b4",
+  "h": "f55825086f48a1e6",
   "len": 3127,
   "els": 32,
   "buttons": 4,
@@ -792,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "822acc8f20ef7698",
+  "h": "44d2f9aa8bab5c15",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -855,17 +873,17 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "884837050b6ee6e0",
-  "len": 135522,
-  "els": 2384,
+  "h": "a516925e281386c7",
+  "len": 139052,
+  "els": 2439,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.100.0 September 1, 2026 A hard look at everything NEW The Spaced Repetition film is in. Five minute"
+  "text": "✕ Version history v1.101.0 September 2, 2026 Your Library, one present at a time NEW The Library now arrives a piece at "
  },
  "illumined/modal/church": {
-  "h": "936bc7fbbb4347a7",
-  "len": 9471,
+  "h": "4d777de6a04fe980",
+  "len": 9473,
   "els": 114,
   "buttons": 2,
   "svgs": 2,
@@ -891,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "822acc8f20ef7698",
+  "h": "44d2f9aa8bab5c15",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -963,7 +981,7 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "illumined/practice/setup": {
-  "h": "49ae1e0f1511aa87",
+  "h": "0497470d57d877d9",
   "len": 2273,
   "els": 39,
   "buttons": 7,
@@ -1008,8 +1026,8 @@
   "text": "✕ Turning on reminders Notifications are currently blocked on this device. 1 Click the padlock 🔒 in your browser's addr"
  },
  "illumined/modal/pace": {
-  "h": "08777cfae8ba011d",
-  "len": 937,
+  "h": "c63ba86dd31bc622",
+  "len": 939,
   "els": 11,
   "buttons": 1,
   "svgs": 0,
@@ -1035,8 +1053,17 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "glass/verse/hub": {
-  "h": "4a711d0be15b3f19",
-  "len": 3457,
+  "h": "95b2d42ce600904f",
+  "len": 2161,
+  "els": 45,
+  "buttons": 4,
+  "svgs": 2,
+  "imgs": 0,
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak 🎁 Memorize yo"
+ },
+ "glass/verse/hub-full": {
+  "h": "ff256605285e0f09",
+  "len": 3486,
   "els": 65,
   "buttons": 7,
   "svgs": 4,
@@ -1062,7 +1089,7 @@
   "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
  },
  "glass/verse/memorized": {
-  "h": "705e9d361bf796b5",
+  "h": "39159b942b7c1498",
   "len": 2315,
   "els": 56,
   "buttons": 8,
@@ -1116,7 +1143,7 @@
   "text": "✕ 🔥 Streak 0 🏆 Best 0 \"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him"
  },
  "glass/practice/word-pick": {
-  "h": "8fb3b5e1c9ff1bdd",
+  "h": "78057779f84705a9",
   "len": 1318,
   "els": 22,
   "buttons": 10,
@@ -1134,8 +1161,8 @@
   "text": "✕ John 11:35 0/2 your words appear here as you go… Reveal Each word jumps to the top the moment you finish it · green if"
  },
  "glass/practice/w4w-win": {
-  "h": "2ecd6f44e14183fe",
-  "len": 961,
+  "h": "a08d4625e71ea284",
+  "len": 954,
   "els": 15,
   "buttons": 1,
   "svgs": 0,
@@ -1170,7 +1197,7 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "glass/practice/text-fade": {
-  "h": "579bb003600e5a81",
+  "h": "23af52e5eb88851b",
   "len": 824,
   "els": 15,
   "buttons": 4,
@@ -1197,7 +1224,7 @@
   "text": "✕ 🏛️ My Kitchen 3 memory stations · walk them in order D0 D1 D3 D7 D16 D30 Next review in 1 day 🎯 Practice this palace"
  },
  "glass/palace/edit": {
-  "h": "0cffa01440dd63b4",
+  "h": "f55825086f48a1e6",
   "len": 3127,
   "els": 32,
   "buttons": 4,
@@ -1305,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "876e2aac66167676",
+  "h": "ed388ec9bd130747",
   "len": 18615,
   "els": 452,
   "buttons": 44,
@@ -1368,17 +1395,17 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "884837050b6ee6e0",
-  "len": 135522,
-  "els": 2384,
+  "h": "a516925e281386c7",
+  "len": 139052,
+  "els": 2439,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.100.0 September 1, 2026 A hard look at everything NEW The Spaced Repetition film is in. Five minute"
+  "text": "✕ Version history v1.101.0 September 2, 2026 Your Library, one present at a time NEW The Library now arrives a piece at "
  },
  "glass/modal/church": {
-  "h": "ef770aae1ab44f16",
-  "len": 9471,
+  "h": "5130c37e9262840c",
+  "len": 9473,
   "els": 114,
   "buttons": 2,
   "svgs": 2,
@@ -1404,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "876e2aac66167676",
+  "h": "ed388ec9bd130747",
   "len": 18615,
   "els": 452,
   "buttons": 44,
@@ -1476,7 +1503,7 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "glass/practice/setup": {
-  "h": "49ae1e0f1511aa87",
+  "h": "0497470d57d877d9",
   "len": 2273,
   "els": 39,
   "buttons": 7,
@@ -1521,8 +1548,8 @@
   "text": "✕ Turning on reminders Notifications are currently blocked on this device. 1 Click the padlock 🔒 in your browser's addr"
  },
  "glass/modal/pace": {
-  "h": "08777cfae8ba011d",
-  "len": 937,
+  "h": "c63ba86dd31bc622",
+  "len": 939,
   "els": 11,
   "buttons": 1,
   "svgs": 0,
@@ -1548,8 +1575,17 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "quest/verse/hub": {
-  "h": "4a711d0be15b3f19",
-  "len": 3457,
+  "h": "95b2d42ce600904f",
+  "len": 2161,
+  "els": 45,
+  "buttons": 4,
+  "svgs": 2,
+  "imgs": 0,
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak 🎁 Memorize yo"
+ },
+ "quest/verse/hub-full": {
+  "h": "ff256605285e0f09",
+  "len": 3486,
   "els": 65,
   "buttons": 7,
   "svgs": 4,
@@ -1575,7 +1611,7 @@
   "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
  },
  "quest/verse/memorized": {
-  "h": "705e9d361bf796b5",
+  "h": "39159b942b7c1498",
   "len": 2315,
   "els": 56,
   "buttons": 8,
@@ -1629,7 +1665,7 @@
   "text": "✕ 🔥 Streak 0 🏆 Best 0 \"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him"
  },
  "quest/practice/word-pick": {
-  "h": "8fb3b5e1c9ff1bdd",
+  "h": "78057779f84705a9",
   "len": 1318,
   "els": 22,
   "buttons": 10,
@@ -1647,8 +1683,8 @@
   "text": "✕ John 11:35 0/2 your words appear here as you go… Reveal Each word jumps to the top the moment you finish it · green if"
  },
  "quest/practice/w4w-win": {
-  "h": "2ecd6f44e14183fe",
-  "len": 961,
+  "h": "a08d4625e71ea284",
+  "len": 954,
   "els": 15,
   "buttons": 1,
   "svgs": 0,
@@ -1683,7 +1719,7 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "quest/practice/text-fade": {
-  "h": "579bb003600e5a81",
+  "h": "23af52e5eb88851b",
   "len": 824,
   "els": 15,
   "buttons": 4,
@@ -1710,7 +1746,7 @@
   "text": "✕ 🏛️ My Kitchen 3 memory stations · walk them in order D0 D1 D3 D7 D16 D30 Next review in 1 day 🎯 Practice this palace"
  },
  "quest/palace/edit": {
-  "h": "0cffa01440dd63b4",
+  "h": "f55825086f48a1e6",
   "len": 3127,
   "els": 32,
   "buttons": 4,
@@ -1818,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "3ae3909d9c3f0422",
+  "h": "6130e7cb3811fb89",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -1881,17 +1917,17 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "884837050b6ee6e0",
-  "len": 135522,
-  "els": 2384,
+  "h": "a516925e281386c7",
+  "len": 139052,
+  "els": 2439,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.100.0 September 1, 2026 A hard look at everything NEW The Spaced Repetition film is in. Five minute"
+  "text": "✕ Version history v1.101.0 September 2, 2026 Your Library, one present at a time NEW The Library now arrives a piece at "
  },
  "quest/modal/church": {
-  "h": "78e0c5688274e42c",
-  "len": 9471,
+  "h": "4cc9f4ebc2f37f93",
+  "len": 9473,
   "els": 114,
   "buttons": 2,
   "svgs": 2,
@@ -1917,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "3ae3909d9c3f0422",
+  "h": "6130e7cb3811fb89",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -1989,7 +2025,7 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "quest/practice/setup": {
-  "h": "49ae1e0f1511aa87",
+  "h": "0497470d57d877d9",
   "len": 2273,
   "els": 39,
   "buttons": 7,
@@ -2034,8 +2070,8 @@
   "text": "✕ Turning on reminders Notifications are currently blocked on this device. 1 Click the padlock 🔒 in your browser's addr"
  },
  "quest/modal/pace": {
-  "h": "08777cfae8ba011d",
-  "len": 937,
+  "h": "c63ba86dd31bc622",
+  "len": 939,
   "els": 11,
   "buttons": 1,
   "svgs": 0,
@@ -2061,8 +2097,17 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "buddy/verse/hub": {
-  "h": "4a711d0be15b3f19",
-  "len": 3457,
+  "h": "95b2d42ce600904f",
+  "len": 2161,
+  "els": 45,
+  "buttons": 4,
+  "svgs": 2,
+  "imgs": 0,
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak 🎁 Memorize yo"
+ },
+ "buddy/verse/hub-full": {
+  "h": "ff256605285e0f09",
+  "len": 3486,
   "els": 65,
   "buttons": 7,
   "svgs": 4,
@@ -2088,7 +2133,7 @@
   "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
  },
  "buddy/verse/memorized": {
-  "h": "705e9d361bf796b5",
+  "h": "39159b942b7c1498",
   "len": 2315,
   "els": 56,
   "buttons": 8,
@@ -2142,7 +2187,7 @@
   "text": "✕ 🔥 Streak 0 🏆 Best 0 \"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him"
  },
  "buddy/practice/word-pick": {
-  "h": "8fb3b5e1c9ff1bdd",
+  "h": "78057779f84705a9",
   "len": 1318,
   "els": 22,
   "buttons": 10,
@@ -2160,8 +2205,8 @@
   "text": "✕ John 11:35 0/2 your words appear here as you go… Reveal Each word jumps to the top the moment you finish it · green if"
  },
  "buddy/practice/w4w-win": {
-  "h": "2ecd6f44e14183fe",
-  "len": 961,
+  "h": "a08d4625e71ea284",
+  "len": 954,
   "els": 15,
   "buttons": 1,
   "svgs": 0,
@@ -2196,7 +2241,7 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "buddy/practice/text-fade": {
-  "h": "579bb003600e5a81",
+  "h": "23af52e5eb88851b",
   "len": 824,
   "els": 15,
   "buttons": 4,
@@ -2223,7 +2268,7 @@
   "text": "✕ 🏛️ My Kitchen 3 memory stations · walk them in order D0 D1 D3 D7 D16 D30 Next review in 1 day 🎯 Practice this palace"
  },
  "buddy/palace/edit": {
-  "h": "0cffa01440dd63b4",
+  "h": "f55825086f48a1e6",
   "len": 3127,
   "els": 32,
   "buttons": 4,
@@ -2331,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "a196f6dd8f1e76c9",
+  "h": "897b80f051c65ee9",
   "len": 18613,
   "els": 452,
   "buttons": 44,
@@ -2394,17 +2439,17 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "884837050b6ee6e0",
-  "len": 135522,
-  "els": 2384,
+  "h": "a516925e281386c7",
+  "len": 139052,
+  "els": 2439,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.100.0 September 1, 2026 A hard look at everything NEW The Spaced Repetition film is in. Five minute"
+  "text": "✕ Version history v1.101.0 September 2, 2026 Your Library, one present at a time NEW The Library now arrives a piece at "
  },
  "buddy/modal/church": {
-  "h": "365b173a96d2fee3",
-  "len": 9488,
+  "h": "3aefac3f5e8cba44",
+  "len": 9490,
   "els": 114,
   "buttons": 2,
   "svgs": 2,
@@ -2430,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "a196f6dd8f1e76c9",
+  "h": "897b80f051c65ee9",
   "len": 18613,
   "els": 452,
   "buttons": 44,
@@ -2502,7 +2547,7 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "buddy/practice/setup": {
-  "h": "49ae1e0f1511aa87",
+  "h": "0497470d57d877d9",
   "len": 2273,
   "els": 39,
   "buttons": 7,
@@ -2547,8 +2592,8 @@
   "text": "✕ Turning on reminders Notifications are currently blocked on this device. 1 Click the padlock 🔒 in your browser's addr"
  },
  "buddy/modal/pace": {
-  "h": "08777cfae8ba011d",
-  "len": 937,
+  "h": "c63ba86dd31bc622",
+  "len": 939,
   "els": 11,
   "buttons": 1,
   "svgs": 0,

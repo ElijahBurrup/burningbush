@@ -2156,8 +2156,21 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.100.0";
+const APP_VERSION="1.101.0";
 const CHANGELOG=[
+ {v:"1.101.0", d:"September 2, 2026", t:"Your Library, one present at a time", items:[
+   ["new","<b>The Library now arrives a piece at a time, and you never know what is coming next.</b> It used to open with seven buttons at once, which is seven things to work out before you have memorized anything. It opens with three now — Learn Verses, Practice Numbers &amp; Books, and Video Review — and the rest arrive as scratch-off tickets you earn by <i>using</i> what you already have."],
+   ["new","<b>Your first verse brings My Verses and Practice Verses, together.</b> They come as one present, because a shelf holding a single verse has little to do on its own. Finish a round of Practice Verses and Word for Word arrives next."],
+   ["chg","<b>Word for Word is on for everybody now</b>, rather than something to go and switch on in the feature store."],
+   ["chg","<b>The Bible waits a few minutes longer, and arrives on its own.</b> It used to be handed over on your first verse — the same moment as the pair above, and two presents at once is exactly what this is meant to avoid. It now comes once you have used every tool in your Library once, which is minutes later, not the weeks it used to take."],
+   ["chg","<b>The Library tells you what to do next, never what you will get for it.</b> A line at the top names the next thing to do; what it unlocks stays under the foil until you scratch it."],
+   ["fix","<b>A present waits for a clear screen, then arrives on its own.</b> Finishing a verse can put a badge and the daily-goal flash up one after the other; the ticket now waits behind them and lets itself in as soon as they are gone, rather than being skipped."],
+   ["fix","<b>A film no longer opens on top of something else.</b> Films are queued a moment after a screen opens, and in that moment you can have tapped on to a ticket, a result or a sheet — which the film then buried. It waits for a clear screen now."],
+   ["fix","<b>A ticket can no longer open on top of a verse you are reading.</b> It waits until the Library itself is on screen, so nothing arrives in the middle of something else."],
+   ["chg","<b>Buttons that do the same job are written the same way.</b> <i>Begin practice</i> on one screen and <i>Begin Practice</i> on another were the same button; so were a handful of others. They all follow the one rule now."],
+   ["chg","<b>Plainer wording on the buttons that finish something.</b> <i>Amen</i> was doing a job that <i>Done</i> and <i>Got it</i> do better, and it did not belong on a button you press to close a box."],
+   ["chg","<b>If you already use these tools, nothing changes for you.</b> Anything you have used is counted as already yours, so nobody is walked through a tour of a Library they have had for weeks."]
+ ]},
  {v:"1.100.0", d:"September 1, 2026", t:"A hard look at everything", items:[
    ["new","<b>The Spaced Repetition film is in.</b> Five minutes on why a verse comes back on day 0, 1, 3, 7, 16 and 30, and what each of those visits is for. It plays the moment you finish your first memory palace, right before Spaced Repetition is uncovered on the Library, and it is in Video Review from then on."],
    ["fix","<b>Four screens could open on nothing and stop the app dead.</b> A palace you no longer have — removed on another device, or gone from a restored backup — and the screens that open one had nothing to draw. They now take you to your list of palaces instead of a blank page, and a lesson that is not there sends you back to the path."],
@@ -2816,7 +2829,7 @@ const CHANGELOG=[
    ["new","The Journey tab is now <b>Bible</b>, with a Bible icon, and slides to the far left spot once you earn it."],
    ["new","Your daily streak now takes both halves of the day: today's goal <b>and</b> every review that came due."],
  ["fix","The Verses screen ran off the right edge. Topics, Saved and the three practice buttons were unreachable."],
-   ["fix","The goal-completion track no longer covers your word for word result; it waits for “Amen”."],
+   ["fix","The goal-completion track no longer covers your word for word result; it waits until you close it."],
  ["fix","Verses you can't reach yet keep their colored outline. Only the number greys out."],
    ["fix","Saved or skipped a verse? Those buttons now read <b>Unsave</b> and <b>Unskip</b>."],
    ["fix","Verse testing offers 12 books instead of 8, always pairs Psalms with Proverbs, and never splits up John &amp; 1–3 John, Samuel, Kings, Chronicles, Corinthians, Thessalonians, Timothy or Peter."],
@@ -2843,7 +2856,7 @@ function openWhatsNew(all){
  ${all?"":`<p class="hint" style="margin:10px 0 0">You're now on <b class="gold">v${APP_VERSION}</b> · here's what changed.</p>`}
     <div class="cl-wrap">${list.map(releaseHTML).join("")}</div>
     ${all?"":`<button class="btn ghost sm" id="wnAll" style="width:100%;margin-top:10px">See every version</button>`}
- <button class="btn" id="wnOk" style="width:100%;margin-top:10px">${all?"Done":"Amen · got it"}</button></div>`;
+ <button class="btn" id="wnOk" style="width:100%;margin-top:10px">${all?"Done":"Got it"}</button></div>`;
   m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("wnClose").onclick=()=>m.style.display="none";
   el("wnOk").onclick=()=>m.style.display="none";
@@ -4211,6 +4224,29 @@ function migrateProg(p){
   if(typeof p.fiveVerseHintShown!=="boolean") p.fiveVerseHintShown=false; // one time "a 5-streak unlocks your palace" nudge
   p.msSeen=obj(p.msSeen); // milestones the user has already seen expanded (collapsed thereafter)
   p.verseLoc=obj(p.verseLoc); // where each verse's scene lives: {refKey:{p:palaceIndex, room}}
+  // Which Library tools have been USED, not merely opened. One timestamp each; it decides what has
+  // been handed over and what is still to come.
+  p.libUsed=obj(p.libUsed);
+  // Anyone already using the app has these behind them. Backfilled once from what they plainly have,
+  // so a reader of three weeks is not walked through a tour of tools they use daily.
+  if(!p.libBackfilled){
+    const mark=k=>{ if(!p.libUsed[k]) p.libUsed[k]=1; };
+    if((p.memorized||[]).length) { mark("learn"); mark("mem"); }
+    if((p.memorized||[]).length>1) mark("verses");
+    if(Object.keys(p.w4w||{}).length) mark("w4w");
+    if((p.videoOrder||[]).length>1) mark("videos");
+    if((p.palaces||[]).filter(Boolean).length) mark("sr");
+    if((p.doneSkills||[]).some(s=>/^num:|^snd:/.test(s))) mark("numbers");
+    // and anything already used is already given: no tour of tools this reader has used for weeks
+    p.libWon=Array.isArray(p.libWon)?p.libWon:[];
+    // Anyone with a verse behind them has had these two buttons all along: taking them away to hand
+    // back as a present would be a loss, not a gift. Word for Word is different — it shipped switched
+    // off, so for most readers it genuinely is new, and only somebody who turned it on keeps it.
+    if(p.libUsed.mem && !p.libWon.includes("pair")) p.libWon.push("pair");
+    if(p.libUsed.w4w && !p.libWon.includes("w4w")) p.libWon.push("w4w");
+    p.libBackfilled=1;
+  }
+  p.libWon=Array.isArray(p.libWon)?p.libWon:[];
   // A slot can outlive its palace. Left alone the verse claims a room in a building that is not
   // there, which reads as a station on one screen and nothing at all on the next. The claim is
   // dropped and the verse simply has no location, which is the truth of it.
@@ -4336,6 +4372,9 @@ function mergeProg(a,b){
   { const ca=(a.church||{}), cb=(b.church||{});   // never lose a finished church to a sync
     m.church={ built:Math.max(ca.built||0,cb.built||0), total:Math.max(ca.total||0,cb.total||0),
                given:Math.max(ca.given||0,cb.given||0) }; }
+  m.libUsed=Object.assign({},b.libUsed||{},a.libUsed||{});   // using a tool on either device counts
+  m.libWon=[...new Set([...(a.libWon||[]),...(b.libWon||[])])];   // a present given on one device is given
+  m.libBackfilled=a.libBackfilled||b.libBackfilled;
   m.locPast=Object.assign({},a.locPast||{},b.locPast||{});
   m.phaseMax=Math.max(a.phaseMax||0,b.phaseMax||0);
   m.videoOrder=[...(a.videoOrder||[])]; (b.videoOrder||[]).forEach(k=>{ if(!m.videoOrder.includes(k)) m.videoOrder.push(k); });
@@ -4736,7 +4775,11 @@ const SCRATCH_LADDER=[
  {tab:"journey", icon:"📕", iconHtml:()=>bibleIconSVG(), name:"Bible", desc:"See the whole Bible open before you. Every book, chapter and verse you can reach.", gate:()=>Prog.memorized.length>=1,
      // The first verse earns it. The Bible is what the app is for, and holding it back behind fifteen
      // verses and three palaces kept people away from it for weeks.
-     reqs:[{label:"Memorize your first verse", done:()=>Prog.memorized.length>=1, prog:()=>`${Math.min(1,Prog.memorized.length)}/1`}]},
+     // It used to arrive on the first verse. That is also when the Library hands over My Verses and
+     // Practice Verses, and two presents at once is the thing this design exists to avoid — so it
+     // waits until the tools have been used. Minutes later, not the weeks it once took.
+     reqs:[{label:"Use every tool in your Library once", done:()=>libAllUsed(),
+            prog:()=>`${["learn","numbers","videos","mem","verses","w4w"].filter(libUsed).length}/6`}]},
  {tab:"palace", icon:"🏛️", name:"Memory Palaces", desc:"Build your own palaces. Walk a familiar place and leave a verse at each spot.", gate:()=>Prog.memorized.length>=5 && (Prog.bestStreak||0)>=5,
      reqs:[{label:"Memorize 5 verses", done:()=>Prog.memorized.length>=5, prog:()=>`${Math.min(5,Prog.memorized.length)}/5`},
            {label:"Hit a 5 answer streak in the verse test", done:()=>(Prog.bestStreak||0)>=5, prog:()=>`best ${Prog.bestStreak||0}/5`}]},
@@ -4744,6 +4787,82 @@ const SCRATCH_LADDER=[
      reqs:[{label:"Memorize 15 verses", done:()=>Prog.memorized.length>=15, prog:()=>`${Math.min(15,Prog.memorized.length)}/15`},
            {label:"Build 2 memory palaces", done:()=>palaceCount()>=2, prog:()=>`${Math.min(2,palaceCount())}/2`}]},
 ];
+/* The Library's own ladder. Each rung is a present, and a present is earned by USING what the last
+   one gave — opening a screen and backing out of it is not using it. The ticket says nothing about
+   what is inside until it is scratched; the reader is only ever told what to do next. */
+const LIB_LADDER=[
+  { id:"pair", icon:"\u{1F49B}", name:"My Verses & Practice Verses",
+    desc:"Two at once, because a shelf with one verse on it has little to do alone.<br><br><b>My Verses</b> is everything you have hidden away, in one place \u2014 tap any of them to see its scene, where it lives and how well it has settled.<br><br><b>Practice Verses</b> asks you where a verse lives, or which verse lives somewhere. A minute of it turns three pictures into an address you can reach for without thinking.",
+    btns:["vhubMem","vPracVerse"],
+    gate:()=>libUsed("learn"),
+    next:"Memorize your first verse" },
+  { id:"w4w", icon:"\u{1F5E3}\uFE0F", name:"Word for Word",
+    desc:"Knowing where a verse lives and knowing how it reads are two different things. This is the second one.<br><br>Type the verse out, word by word, until every word is yours. The warm up first, then the strict test \u2014 and a verse that comes back clean the whole way along its trail is one you know by heart.",
+    btns:["vW4W"],
+    gate:()=>libUsed("verses"),
+    next:"Finish a round of Practice Verses" }
+];
+function libUsed(id){ return !!(Prog.libUsed||{})[id]; }
+function libWon(id){ return (Prog.libWon||[]).includes(id); }
+// Record that a tool has been used, and see whether that opens the next present.
+function libUse(id){
+  Prog.libUsed=Prog.libUsed||{};
+  if(Prog.libUsed[id]) return;
+  Prog.libUsed[id]=Date.now(); saveProg();
+  setTimeout(()=>{ try{ libMaybeOffer(); }catch(e){} }, 700);
+}
+function libPending(){ return LIB_LADDER.find(r=>!libWon(r.id) && r.gate()) || null; }
+let libOffered=null;
+/* Offer the next present, if one is due and the reader is somewhere it makes sense to receive it.
+   Nothing is offered mid-lesson or over a film — it waits until the Library itself is on screen. */
+let libRetry=0, libTries=0;
+function libMaybeOffer(){
+  const r=libPending(); if(!r) return false;
+  if(libOffered===r.id) return false;
+  // The Library hub and every verse screen share this view id, so the view alone is not enough:
+  // without the second test a ticket can open over somebody in the middle of reading a verse.
+  // vView cannot answer it either — it is the hub's sub-view and stays set while a verse is drawn
+  // over the top of it — so ask the DOM. The hub's tiles exist on the hub and nowhere else.
+  if((document.querySelector(".view.active")||{}).id!=="verse") return false;
+  if(!document.querySelector("#verse button.vhub")) return false;
+  // On the Library, with a present due, but something is still up over it — a badge, the goal
+  // flash, a film. Closing one of those does not redraw the Library, so a present skipped here
+  // would wait for a render that may never come: finishing a verse almost always leaves a badge
+  // or the goal flash on screen. Look again shortly instead. Only ever one retry outstanding.
+  const busy = [el("obov"), el("scov")].some(o=>o && o.classList.contains("on"))
+            || [...document.querySelectorAll(".modal")].some(m=>getComputedStyle(m).display!=="none");
+  // Bounded: about twenty seconds of looking, not a timer that runs for the life of the session.
+  // If they leave something open longer than that, the next time the Library draws picks it up.
+  if(busy){ clearTimeout(libRetry);
+    if(libTries++ < 22) libRetry=setTimeout(()=>{ try{ libMaybeOffer(); }catch(e){} }, 900);
+    return false; }
+  clearTimeout(libRetry); libTries=0;
+  libOffered=r.id;
+  Scratch.open(0, {
+    card:{icon:r.icon, name:r.name, desc:r.desc},
+    title:"\u{1F381} Something new for your Library",
+    claimText:"Got It!",
+    onClaim:()=>{
+      Prog.libWon=Prog.libWon||[];
+      if(!Prog.libWon.includes(r.id)) Prog.libWon.push(r.id);
+      saveProg(); libOffered=null;
+      renderVerse();
+      // the icon lands on the square it just unlocked, so the room is watched growing
+      requestAnimationFrame(()=>{
+        const btn=el(r.btns[0]);
+        if(!btn){ updateTabLocks(); return; }
+        flyToNav(r.icon, btn, ()=>{
+          r.btns.forEach(id=>{ const b=el(id); if(b){ b.classList.add("justwon"); setTimeout(()=>b.classList.remove("justwon"),800); } });
+          updateTabLocks();
+        });
+      });
+    }
+  });
+  return true;
+}
+// Everything the Library hands over before palaces exist. Spaced Repetition is deliberately not in
+// here: it waits on the first palace, which is itself won later, so requiring it would be a circle.
+function libAllUsed(){ return ["learn","numbers","videos","mem","verses","w4w"].every(libUsed); }
 function tabWon(t){ return t==="learn" || (Prog.scratchWon||[]).includes(t); }
 function tabUnlocked(tab){ return tabWon(tab); }
 // short one-line summary of a rung's requirements (for the post-claim toast)
@@ -5499,6 +5618,11 @@ function maybeVideo(key, after){
   // sign out, and the palace film that show("palace") lined up lands on top of the welcome screen.
   // Nothing is offered while the intro is up — that reader has no history for a film to belong to.
   { const ov=el("obov"); if(ov && ov.classList.contains("on")){ if(after) after(); return false; } }
+  // Nor on top of anything else that is up. The same timer that outruns a sign-out can outrun a tap:
+  // open a scratch ticket, a result or a sheet in that half second and the film buries it, and
+  // whatever was underneath is gone before it has been read. It is a film — it can wait.
+  { const sc=el("scov"); if(sc && sc.classList.contains("on")){ if(after) after(); return false; } }
+  if([...document.querySelectorAll(".modal")].some(m=>getComputedStyle(m).display!=="none")){ if(after) after(); return false; }
   if(videoSeen(key)){ if(after) after(); return false; }
   openVideoScreen(key, after); return true;
 }
@@ -5845,7 +5969,8 @@ function newVersesDueCount(){ return newVersesDueList().length; }
 function markFirstReview(k){ const o=vsr(k); if(o && !o.r0){ o.r0=Date.now(); saveProg(); } }
 function newSR(){ return {learnedAt:Date.now(), step:1, dueAt:Date.now()+(SR_TRAIL[1]-SR_TRAIL[0])*DAY, r0:0}; } // D0 done at learn, first REVIEW in 4h, D1 test in a day
 function startVerseSR(k){ Prog.verseSR=Prog.verseSR||{}; if(!Prog.verseSR[k]) Prog.verseSR[k]=newSR(); }
-function reviewVerseSR(k){ if(!Prog.memorized.includes(k)) return; Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k];
+function reviewVerseSR(k){
+  try{ libUse("sr"); }catch(e){} if(!Prog.memorized.includes(k)) return; Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k];
   if(!o){ Prog.verseSR[k]=newSR(); return; }
   // A verse learned yesterday comes due at its D1 checkpoint. Reviewing it is real work and
   // counts toward today's goal, the same as a new verse or a word for word practice.
@@ -6855,7 +6980,7 @@ function renderVerse(){
       memBare=mem.filter(a=>{ const k=a.join(":"); if(isHeart(k)||locIsHeart(k)) return false;   // known by heart -> never nagged for a scene or a station
         const loc=(Prog.verseLoc&&Prog.verseLoc[k])||null; const sc=((Prog.customScene&&Prog.customScene[k])||"").trim();
         return !sc || !loc || loc.p==null || !((loc.room||"").trim()); });
- const nudge = memBare.length ? `<div class="mem-backfill"><div class="mem-backfill-t"><b>🏛️ ${memBare.length} verse${memBare.length>1?"s":""}</b> ${memBare.length>1?"are":"is"} missing a scene, a palace or a room, fill ${memBare.length>1?"them":"it"} in so ${memBare.length>1?"they":"it"} stick${memBare.length>1?"":"s"}.</div><button class="btn sm" id="memBackfill">Finish ${memBare.length>1?"them":"it"} →</button></div>` : "";
+ const nudge = memBare.length ? `<div class="mem-backfill"><div class="mem-backfill-t"><b>🏛️ ${memBare.length} verse${memBare.length>1?"s":""}</b> ${memBare.length>1?"are":"is"} missing a scene, a palace or a room, fill ${memBare.length>1?"them":"it"} in so ${memBare.length>1?"they":"it"} stick${memBare.length>1?"":"s"}.</div><button class="btn sm" id="memBackfill">Finish ${memBare.length>1?"Them":"It"} →</button></div>` : "";
       body=mem.length
         ? scoreboardHTML()+nudge+`<div class="sbhead">YOUR BOOKS</div><p class="hint" style="margin:2px 0 8px">Tap one to see your verses in it.</p>`+bookGrid(mem,"mem")
         : `<div class="card center" style="padding:26px 18px"><div style="font-size:44px">\u{1F49B}</div>
@@ -6890,7 +7015,7 @@ function renderVerse(){
       verseScroll=document.querySelector(".content").scrollTop;
       openTopic(ti, ()=>{ show("verse"); renderVerse(); });
     });
-    V.querySelectorAll("[data-vid]").forEach(b=>b.onclick=()=>{ const k=b.dataset.vid; openVideoScreen(k, ()=>{ vView="videos"; renderVerse(); }); });
+    V.querySelectorAll("[data-vid]").forEach(b=>b.onclick=()=>{ const k=b.dataset.vid; try{ libUse("videos"); }catch(e){} openVideoScreen(k, ()=>{ vView="videos"; renderVerse(); }); });
     V.querySelectorAll("[data-vb]").forEach(b=>b.onclick=()=>{ const [x,y,z]=b.dataset.vb.split(":").map(Number); verseScroll=document.querySelector(".content").scrollTop; openVerseWizard(x,y,z,backToVerse); });
     V.querySelectorAll("[data-suggbook]").forEach(b=>b.onclick=()=>{
       const bn=+b.dataset.suggbook;
@@ -6911,19 +7036,23 @@ function renderVerse(){
   V.innerHTML=`${pageHead("\u{1F4DA}","Library")}
     <p class="hint" style="margin:0 0 10px">Everything you have hidden away, and every way to practise it.</p>
     ${taxWarnHTML()}${feat("goal")?`<div class="goalbar" id="goalBtn">${libStatusHTML()}</div>`:""}
+    ${(()=>{ const r=LIB_LADDER.find(x=>!libWon(x.id));
+       return r ? `<p class="hint" style="margin:8px 0 2px">\u{1F381} ${r.next} and something new arrives here.</p>` : ""; })()}
     <div class="versehub">
       ${srUnlocked()
         ? `<button class="vhub sq ${dueAll?"hasdue":""}" id="vMemTest"><span class="vi ani ani-spin">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>`
         : `<span class="slockwrap"><button class="vhub sq" id="vMemTest"><span class="vi">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>${foilHTML("Build your first palace")}</span>`}
-      <button class="vhub sq" data-view="mem"><span class="vi ani ani-beat">${heartIconSVG()}</span><span>My Verses</span><small>${mem.length}</small></button>
+      ${libWon("pair")?`<button class="vhub sq" id="vhubMem" data-view="mem"><span class="vi ani ani-beat">${heartIconSVG()}</span><span>My Verses</span><small>${mem.length}</small></button>`:""}
       <button class="vhub sq" id="vLearn"><span class="vi ani ani-twinkle">✨</span><span>Learn Verses</span><small>${suggReach} in reach</small></button>
-      <button class="vhub sq" data-view="videos"><span class="vi ani ani-snap">🎬</span><span>Video Review</span><small>${videoReviewList().length||"none yet"}</small></button>
-      <button class="vhub sq" id="vPracVerse"><span class="vi ani ani-flip">📖</span><span>Practice Verses</span><small>${mem.length} to draw on</small></button>
+      <button class="vhub sq" id="vhubVideos" data-view="videos"><span class="vi ani ani-snap">🎬</span><span>Video Review</span><small>${videoReviewList().length||"none yet"}</small></button>
+      ${libWon("pair")?`<button class="vhub sq" id="vPracVerse"><span class="vi ani ani-flip">📖</span><span>Practice Verses</span><small>${mem.length} to draw on</small></button>`:""}
       <button class="vhub sq" id="vPracNum"><span class="vi ani ani-roll">🎲</span><span>Practice Numbers</span><small>${knownNumbers().size} known</small></button>
-      ${feat("w4w")?`<button class="vhub wide" id="vW4W"><span class="vi ani ani-speak">${speakIconSVG()}</span><span>Practice Word for Word</span></button>`:""}
+      ${(feat("w4w")&&libWon("w4w"))?`<button class="vhub wide" id="vW4W"><span class="vi ani ani-speak">${speakIconSVG()}</span><span>Practice Word for Word</span></button>`:""}
     </div>`;
   if(el("goalBtn")) el("goalBtn").onclick=openGoalSettings; wireTaxWarn();
-  V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0; });
+  V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0;
+    // looking IS the feature for My Verses; Video Review needs a film actually opened (below)
+    if(b.dataset.view==="mem") try{ libUse("mem"); }catch(e){} });
   if(el("vLearn")) el("vLearn").onclick=openLearnVerses;
   if(el("vPracVerse")) el("vPracVerse").onclick=()=>{
  if(!mem.length){ toast("Memorize a verse first, tap Learn Verses."); return; }
@@ -6938,6 +7067,13 @@ function renderVerse(){
    : (mem.length ? startMemTest() : toast("Memorize a verse first, tap Suggested!"));
   { const f=document.querySelector(".versehub .slock"); if(f) f.onclick=()=>toast("Build your first memory palace, and this opens with the film that explains it"); }
   if(srFlashPending && el("vMemTest")){ srFlashPending=false; const rb=el("vMemTest"); rb.classList.add("srbtn-flash"); setTimeout(()=>rb.classList.remove("srbtn-flash"),6000); }
+  // A present due is offered here, on arrival, and not only on the timer that follows using a tool:
+  // that timer refuses while anything else is open, and a verse is usually finished with the goal
+  // flash or a badge still up. Without this the present is skipped and nothing looks again, so it
+  // would appear only after the reader happened to use something else. Offering it from the Library
+  // means it is waiting for them the next time they walk in, which is where it belongs anyway.
+  libTries=0;
+  setTimeout(()=>{ try{ libMaybeOffer(); }catch(e){} }, 350);
   paintTheme();
 }
 /* ---- Talents (verse-practice points) + streaks ---- */
@@ -7132,7 +7268,7 @@ function openPracticeSetup(){
     el("pcCount").textContent = n
       ? (n+" verse"+(n===1?"":"s")+(w4wPick.mode==="heart"?" ready to test, one at a time":" ready"))
       : "Nothing due this way today.";
-    el("pcGo").textContent = w4wPick.mode==="heart" ? "Begin the test" : "Begin practice";
+    el("pcGo").textContent = w4wPick.mode==="heart" ? "Begin the Test" : "Begin Practice";
     el("pcGo").disabled=!n; el("pcGo").style.opacity=n?"":".5";
   };
   V.innerHTML=`<div class="card">
@@ -7144,7 +7280,7 @@ function openPracticeSetup(){
         <button type="button" class="bbchoose big waiting" id="pcPalBtn">${pkBoxIn("Choose a palace…","","")}</button>
       </div>
       <div class="hint" id="pcCount" style="min-height:18px;margin:8px 0 0"></div>
-      <button class="btn" id="pcGo" style="width:100%;margin-top:8px">Begin practice</button>
+      <button class="btn" id="pcGo" style="width:100%;margin-top:8px">Begin Practice</button>
     </div>`;
   el("pcClose").onclick=renderVerse;
   el("pcGo").onclick=()=>{ const list=w4wOrder(w4wPick.mode, w4wPick.slot); if(list.length) runW4WQueue(list, w4wPick.mode); };
@@ -7285,7 +7421,7 @@ const FEATURES=[
  what:"Before you type a verse from memory, tap the next word from eight choices. Recognition before recall. It shows you where the gaps are. Turn it off to go straight to typing."},
  {id:"reference", on:true, icon:"\u{1F4DA}", name:"Reference Library",
   what:"The whole number grid and the book table in one place, to look up any peg or any book without leaving what you are doing."},
- {id:"w4w", on:false, icon:"\u{1F5E3}\uFE0F", name:"Word for Word",
+ {id:"w4w", on:true, icon:"\u{1F5E3}\uFE0F", name:"Word for Word",
  what:"Learn to recite verses by typing them out, then take them through testing, no warm up, no hints, until they are known by heart. Adds a stage to every verse and a choice of how you are reviewed."},
  {id:"dict", on:false, icon:"\u{1F4DC}", name:"Word Meanings",
   what:"Press and hold any word in a verse to see what it meant in the original Hebrew or Greek, its Strong's number, and where else it is used."},
@@ -7690,7 +7826,7 @@ function bumpGoalFromReview(defer){
 function goalCount(){ return goalState().count; }
 function goalMet(){ return goalCount()>=goalToday(); }
 // Returns a function that plays the goal celebration. Pass defer=true to hold it back and
-// play it yourself later (the word for word screen waits for "Amen" so nothing covers the result).
+// play it yourself later (the word for word screen waits for "Done" so nothing covers the result).
 function bumpGoal(defer){ const noop=function(){};
   const st=goalState(), before=st.count, target=goalToday();
   if(before>=target){ st.count++; saveProg(); maybePaceNudge(); return noop; }   // already met → still count, no flash
@@ -8206,7 +8342,7 @@ function openPaceNudge(){
     <div class="teachbox" style="text-align:left;font-style:italic">“${txt}”
       <div class="gold" style="font-style:normal;font-weight:800;font-size:12px;margin-top:6px">${bookName(ref[0])} ${ref[1]}:${ref[2]}</div></div>
     <p class="hint" style="margin-top:10px">${why}</p>
-    <button class="btn" id="pnOk" style="width:100%;margin-top:14px">Amen</button></div>`;
+    <button class="btn" id="pnOk" style="width:100%;margin-top:14px">Got it</button></div>`;
   m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("pnOk").onclick=()=>m.style.display="none";
 }
@@ -8395,7 +8531,7 @@ function openChurch(){
         <div style="text-align:left"><div class="gold" style="font-size:48px;font-weight:900;line-height:1">${c.built}</div>
         <div style="font-size:14.5px;color:var(--ink-soft);margin-top:2px">church${c.built>1?"es":""} finished<br>and standing</div></div></div>`
  :`<p class="hint" style="margin-top:10px">No church finished yet. The first stones are being laid.</p>`}
-    <button class="btn" id="chOk" style="width:100%;margin-top:14px">Amen</button></div>`;
+    <button class="btn" id="chOk" style="width:100%;margin-top:14px">Got it</button></div>`;
   m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("chClose").onclick=()=>m.style.display="none";
   el("chOk").onclick=()=>m.style.display="none";
@@ -8599,7 +8735,7 @@ function finishChurchBuild(complete){
         <div class="bldtitle" style="margin-top:8px">${complete?(piece?piece.n.charAt(0).toUpperCase()+piece.n.slice(1)+" is finished":"The stone is laid"):"Left for another day"}</div>
         <div class="bldsub">${gained?`<b class="gold">${gained}</b> talents of Caesar's levy became stone.`:""}
  ${c.built?`<br><b class="gold">${c.built}</b> church${c.built>1?"es":""} finished and standing.`:`<br>${Math.floor(churchPct()*100)}% · ${churchStage()}`}</div>
-        <button class="taxbtn" id="bldDone" style="margin-top:14px">Amen</button>
+        <button class="taxbtn" id="bldDone" style="margin-top:14px">Done</button>
       </div>`;
     el("bldDone").onclick=()=>{ ov.classList.remove("on"); BLD=null; if(after) after(); };
   } else { BLD=null; if(after) after(); }
@@ -9058,6 +9194,7 @@ function openNumTestSetup(round){
   el("ntsClose").onclick=renderVerse;
   el("ntsCount").onclick=()=>numberSheet({ title:"How many questions?", value:draft.count, choices:NT_COUNTS, onPick:n=>{ draft.count=n; paint(); } });
   el("ntsGo").onclick=()=>{
+    try{ libUse("numbers"); }catch(e){}
     if(!draft.types.length) return;
     Prog.ntPrefs={types:draft.types, count:draft.count}; saveProg();
     startNumberTest(round);
@@ -9299,6 +9436,7 @@ function memTestRender(){
   const paintAll=()=>{ paintFields(); };
   paintFields();
   el("mtCheck").onclick=()=>{
+    try{ libUse("verses"); }catch(e){}
     if(mtLock) return;
     if(!mtSel.b || !mtSel.c || !mtSel.v){ el("mtWarn").textContent="Pick a book, chapter and verse."; return; }
     const ok=(mtSel.b===b && mtSel.c===c && mtSel.v===v);
@@ -9461,6 +9599,7 @@ function showBadgeModal(b){
 }
 // Returns whatever applause was held back, so the caller can let it off when the screen is done with.
 function addMemorized(s, defer){
+  try{ libUse("learn"); }catch(e){}
   const k=refKey(bookNum(s.b),s.c,s.v);
   Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k); // once learned, drop from saved/skip
   if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); saveProg(); updateMetrics(); earnTalents(15);
@@ -9986,7 +10125,7 @@ function renderWalk(){
         <div class="hint" style="text-align:center;margin:-8px 0 10px">Press and hold any word for its Hebrew or Greek.</div>
  <div class="teachbox"><b class="gold">Now picture it.</b> Weave <b>${bp.word}</b>, <b>${cp.word}</b> and <b>${vp.word}</b>, and what this verse means, into one <b>action-packed scene</b>, set in a room of one of your memory palaces.</div>
         ${canLearn?`<button class="btn" id="wToScene" style="margin-top:12px">Save Visual →</button>`:missHtml}
-        <div class="btnrow" style="margin-top:8px"><button class="btn ghost wkeep" id="wSave" style="flex:1">${Prog.saved.includes(vkey)?"↩ Unsave":"Save for later"}</button><button class="btn ghost wpass" id="wSkip" style="flex:1">${Prog.skipped.includes(vkey)?"↩ Unskip":"Skip"}</button></div>
+        <div class="btnrow" style="margin-top:8px"><button class="btn ghost wkeep" id="wSave" style="flex:1">${Prog.saved.includes(vkey)?"↩ Unsave":"Save for Later"}</button><button class="btn ghost wpass" id="wSkip" style="flex:1">${Prog.skipped.includes(vkey)?"↩ Unskip":"Skip"}</button></div>
       </div>`;
     if(el("wClose")) el("wClose").onclick=()=>walkReturn();
     wireVerseNav(V, verseNavNow, walkReturn);
@@ -11342,7 +11481,7 @@ function renderTextFade(){
  <p class="hint" style="text-align:center">${done?"Now recite the whole verse from memory. Then type it to lock it in.":"Read it aloud. Each step hides more words. <b>Tap any blank to peek</b> for 2 seconds."}</p>
       ${w4wSkipHTML()}
       <div class="btnrow">
-        ${done?"":`<button class="btn ghost" id="tfWrite">Write it Now →</button>`}
+        ${done?"":`<button class="btn ghost" id="tfWrite">Write It Now →</button>`}
         <button class="btn" id="tfNext"${done?' style="width:100%"':""}>${done?"Type It From Memory →":"Hide More →"}</button></div>
     </div>`;
   wireW4WSkip();
@@ -11439,7 +11578,7 @@ function renderWordPick(){
       <div class="hint" id="wpFb" style="text-align:center;margin-top:10px">&nbsp;</div>
       ${(()=>{ const skip=w4wSkipHTML({label:"Skip this Verse", inRow:true});
         return `<div class="btnrow" style="margin-top:8px">
-          <button class="btn ghost" id="wpSkip"${skip?"":' style="width:100%"'}>Write it Now →</button>${skip}</div>`; })()}
+          <button class="btn ghost" id="wpSkip"${skip?"":' style="width:100%"'}>Write It Now →</button>${skip}</div>`; })()}
     </div>`;
   wireW4WSkip();
   const disp=el("wpDisplay"); disp.scrollTop=disp.scrollHeight;
@@ -11594,6 +11733,7 @@ function renderTypeTest(){
   };
 }
 function typeTestComplete(){
+  try{ libUse("w4w"); }catch(e){}
   const b=TT.b,c=TT.c,v=TT.v,ret=TT.ret, vkey=refKey(b,c,v);
   const V=el("verse");
   if(TT.hintUsed){   // a hint was used → this attempt doesn't count; blank out and retype it clean
@@ -11613,7 +11753,7 @@ function typeTestComplete(){
   const justMastered=r.count===10, mastered=r.count>=10;
   const w4wReward = 10 + (justMastered?40:0);   // +10 per recitation, +40 bonus the run they master it
   earnTalents(w4wReward); refreshHUD&&refreshHUD(); markW4WToday(vkey);
-  const showGoal = bumpGoal(true);   // counts toward today's goal, but the track waits for "Amen"
+  const showGoal = bumpGoal(true);   // counts toward today's goal, but the track waits for "Done"
   const BL = pickBlessing(mastered, b, c, v);   // a different blessing every time
   V.innerHTML=`<div class="card center ttwin">
       <div class="ttburst">${justMastered?"👑":"🙏"}</div>
@@ -11624,7 +11764,7 @@ function typeTestComplete(){
       <p class="lead" style="margin:4px 0">Word for Word Practice<br><b class="gold" style="font-size:20px">${Math.min(r.count,10)} of 10 complete</b>${mastered?`<br><span class="gold">★ Mastered${r.count>10?` · ${r.count}×`:""}</span>`:""}</p>
       <div style="font-weight:800;color:var(--gold-ink);margin:2px 0 2px">+${w4wReward} 🪙${justMastered?" · mastery gift":""}</div>
       <div class="ttlock">🔒 Next practice locked until <b>${fmtWhen(w4wNextAllowed(vkey))}</b></div>
- <button class="btn" id="ttDone" style="margin-top:16px">Amen · done</button></div>`;
+ <button class="btn" id="ttDone" style="margin-top:16px">Done</button></div>`;
   el("ttDone").onclick=()=>{
     const go=()=>{ ret?ret():renderVerse(); showGoal(); creditToday(); };
     if(shouldOfferHeart(vkey)) openStagePromote(b,c,v,vkey,"heart",go); else go();
@@ -11663,7 +11803,7 @@ function w4wTestResult(b,c,v,vkey,ret){
  ${longName?`<p class="hint" style="margin:10px 0 0">That was the <b class="gold">${longName} review</b>. This verse has been with you a long while now.</p>`:""}
       ${clean?`<p class="hint" style="margin:8px 0 0">Rested a day, then asked again.</p>`:""}
       <div style="font-weight:800;color:var(--gold-ink);margin:10px 0 0">Review trail: ${doneSteps} of ${SR_TRAIL.length}${clean?" \u00b7 +15 \u{1FA99}":""}</div>
- <button class="btn" id="wtDone" style="margin-top:16px">Amen · done</button></div>`;
+ <button class="btn" id="wtDone" style="margin-top:16px">Done</button></div>`;
   el("wtDone").onclick=()=>{
     const go=()=>{ ret?ret():renderVerse(); showGoal(); };
     // A miss on a verse the user has claimed is the moment to ask whether they still claim it.
@@ -11876,7 +12016,7 @@ function renderPalaceEdit(){
  </div>`; }).join("")||`<p class="hint">No locations, add one below.</p>`}
       </div>
       <div class="btnrow" style="margin-top:8px"><input class="typein" id="peIn" placeholder="Add a location…" style="text-align:left;font-size:15px;padding:12px"><button class="btn sm" id="peAdd" style="width:auto">Add</button></div>
-      <button class="btn" id="peSave" style="margin-top:12px">Save changes</button>
+      <button class="btn" id="peSave" style="margin-top:12px">Save Changes</button>
       <p class="hint" style="margin-top:8px">Tip: keep at least 3 locations for good practice.</p>
     </div>`;
   el("peName").value=PE.place||"";
@@ -12230,6 +12370,7 @@ const Scratch = (()=>{
       el("scTitle").innerHTML=(opts.title||"🎫 You earned a scratch off!");
       if(L.iconHtml) el("scIcon").innerHTML=L.iconHtml(); else el("scIcon").textContent=L.icon;
       el("scName").textContent=L.name; el("scDesc").innerHTML=L.desc;
+      el("scClaim").textContent = opts.claimText || "Claim & unlock \u2192";
       el("scClaim").style.display="none"; foil.classList.remove("gone");
       ov.classList.add("on"); ov.setAttribute("aria-hidden","false");
       requestAnimationFrame(fitCanvas);

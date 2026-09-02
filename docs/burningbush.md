@@ -42,7 +42,20 @@ A book is tied to its number by **three** pictures, not one: the **name** (`BOOK
 Scene text is tidied on save: `capAfterPunct` (live, and length-preserving so the caret holds), `markKeyWords` (spells the three key images right and sets them in capitals; a key under five letters must match exactly, so "sea" is never rewritten to "PEA"), and `tagNumberWord` (the number picture carries its number: `NASA ship` → `NASA (58) ship`).
 
 ### 2c. Films
-`VIDEOS` maps a key → `{src, skill, tile, title, sub}`. Each film shows **once, at the moment it becomes useful** (`maybeVideo`), then lives in Video Review. **Review Lesson** (`reviewLessonBtn`) sits top-right on every teaching screen and beats like a heart; it appears while a card is being *taught* and never during the questions. `bin/build.js` rewrites `src:"videos/` to an absolute path — a relative one resolves against `/burningbush` with no trailing slash and 404s.
+`VIDEOS` maps a key → `{src, rev, skill, tile, title, sub}`. **No film is a tile on the learn track.** A film is not a lesson — it is what explains the lesson you are about to do — so each one opens at that moment and then lives in Video Review:
+
+| film | opens | `Review Lesson` on |
+| --- | --- | --- |
+| `major` | entering the **first** sound lesson (`snd:0-4`) | that lesson |
+| `major2` | **finishing** the second sound lesson (`snd:5-9`) | that lesson |
+| `book` | entering the first **book** lesson | every book lesson |
+| `verse` | first time a verse is opened to build | the verse screen |
+| `sr` | after the **first palace** (`unlockAfterFirstPalace`) | the Library |
+| `palace` | winning the Memory Palaces ticket | the Palaces screen |
+
+`lessonFilm()` picks which film a lesson offers. **`renderSoundStep` builds its own header** — it used to hardcode `reviewLessonBtn("major")`, so both sound lessons offered part one; it asks `lessonFilm()` now. Anything that opens a lesson directly (specs included) must mark the films seen first, or the film takes the screen and the lesson never renders.
+
+`recall` is the only film still unrecorded. **Re-exporting a film means bumping its `rev`.**
 
 ### 2d. Pickers
 Every choice in the app is the same control: **a box that opens a sheet of tiles, two to a row** (`.bbchoose` → `.pickscroll` > `.pickgrid` > `.pickbtn`). Palace, spot, book image, image word, and both Build the Book relationships all use it. The spot sheet scrolls itself to the first free spot. Palace tiles use the Memory Palace colours (red part-filled, blue untouched, green full) and sort by where a verse can actually go: part-filled, untouched, full. Spot tiles are green when occupied and red when open.
@@ -55,12 +68,13 @@ Every choice in the app is the same control: **a box that opens a sheet of tiles
 - **Saving a new verse stops on it.** The `kept` phase shows the address, the three pictures, the words, where it lives, the scene and the trail, with a button to leave by. The goal flash and any badge **wait**: `bumpGoal(defer)` and `checkBadges(defer)` both return their applause and `addMemorized` hands it to the caller to let off on the way out.
 - **Spaced repetition:** `SR_TRAIL=[0,1,3,7,16,30]` visible, `SR_LONG=[60,180,730]` silent. `srRemaining()` must be read *before* an item is taken off the queue, or the count is one short.
 - **Badges:** Verses by Heart leads (11 rungs to 250), then Verses Located, Major System, Memory Palaces (to 50), Bible Stories (to 150), Verse Practice, Daily Devotion (to a 365-day streak). "Every Parable" checks the parable sections **by name** — those sections have moved twice, and a number would quietly start meaning something else.
-- **Scratch offs:** `SCRATCH_LADDER`. Bible Stories is earned by the **four Gospels**. Winning the Bible runs `bibleTakesItsPlace()`: the fourth slot empties, palace steps right, then verse, then learn, each into the slot the one before it left, and only then does the Bible drop in at the front.
+- **Scratch offs:** `SCRATCH_LADDER`, in the order they are offered: **Library** (finish the Foundation) → **Bible** (use every tool in the Library once — see the Library ladder below) → **Memory Palaces** (5 verses + a 5-answer streak) → **Bible Stories** (15 verses + 2 palaces). `pendingScratchRung()` returns the *lowest unwon rung whose gate passes*, so **array order is offer order** — moving a rung in the array moves it in the ladder. Claiming the Bible opens the book the earning verse came from. Winning it also runs `bibleTakesItsPlace()`:  the fourth slot empties, palace steps right, then verse, then learn, each into the slot the one before it left, and only then does the Bible drop in at the front.
+- **The Library ladder (`LIB_LADDER`)** is a second, smaller ladder *inside* the Library, and it works on use rather than on tapping. The hub opens with three tiles — Learn Verses, Practice Numbers & Books, Video Review — and hands over the rest as tickets: memorize a verse → **My Verses + Practice Verses** as one present; finish a round of Practice Verses → **Word for Word**. `Prog.libUsed` records which tools have actually been used (`libUse(id)` at each of the seven use points), `Prog.libWon` which presents have been given. `libAllUsed()` gates the Bible rung above. Existing accounts are backfilled once from what they plainly have (`libBackfilled`) and their matching rungs marked won, so nobody is toured through a Library they have used for weeks. **`libMaybeOffer()` refuses unless the Library hub is actually drawn** — see the `vView` gotcha in §9.
 - **My Verses** is the scoreboard. The three counts (By heart, Sealed, Due today) are **buttons** that open the verses behind them. Books, streak and clean runs sit with the records below — a number with no list behind it is not a way in.
 - **The Library hub** icons animate one at a time in a zigzag (spaced rep → my verses → video → learn → practice verses → practice numbers → video → learn → spaced rep), nine steps over eight seconds, each icon's motion written into its own slice of the cycle. The goal button's flame flickers, its tick draws itself, and its dots run a wave. All of it stops under `prefers-reduced-motion`.
 - **Daily goal:** up to **20** (`GOAL_MAX`, which drives both the clamp and the picker), ten dots to a line.
 - **Caesar's Tax** builds a stone chapel (`churchSVG`) that fills course by course as talents come in.
-- **Paywall:** `Billing`, Pro = $25/yr. **The unlock code is slated for removal before go-live — do not harden it.**
+- **Paywall:** `Billing`, Pro = $25/yr. Entitlement is `vv_pro` in **localStorage only** — it can be granted from a console, is lost when a browser is cleared, and does not follow the account to a second device. **The comp code `Billing.codes` is live again so Pro can be tested, and it sits in the shipped HTML where anyone can read it: it must come out before the first payment.** Neither it nor the entitlement is worth hardening; the real work is a subscriptions table, a Stripe webhook and a server `/api/entitlement` (see the launch plan, A1–A3).
 
 ---
 
@@ -156,7 +170,7 @@ Author number↔image↔book **relationship content** (scenes, picture lists, nu
 
 ## 8a. The QA probes
 
-Four probes sit beside the regression suite in `tests/qa/`. They are NOT part of `tests/run.js`:
+Six probes sit beside the regression suite in `tests/qa/`. They are NOT part of `tests/run.js`:
 the suite pins what the app does today, which makes it blind to anything that has been wrong all
 along. These ask different questions, and a finding is a candidate bug rather than a diff.
 
@@ -165,9 +179,22 @@ along. These ask different questions, and a finding is a candidate bug rather th
     node tests/qa/hostile.js        abandon a flow, delete a palace holding verses, malformed state
     node tests/qa/entry-points.js   every front door handed an index or key that no longer exists
     node tests/qa/house-style.js    one idea one name, one action one label, book title case
+    node tests/qa/library-ladder.js the Library ladder walked end to end, as a reader meets it
 
 Run them after anything structural. Between them they found eight real bugs in one pass, including
 four crashes and a film that opened over the welcome screen for somebody who had just signed out.
+
+**A unit-level pass is not a working path.** Every spec for the Library ladder passed while the
+real thing was broken: finishing a verse leaves a badge and then the goal flash on screen, the
+present was refused behind them, and nothing ever looked again — so it appeared only if the reader
+happened to use another tool later. `library-ladder.js` walks the whole path the way a reader meets
+it and found that in one run. When a feature has a *sequence*, walk the sequence.
+
+**A probe is only as good as the account it walks.** `house-style.js` opened an unseeded, brand-new
+account and never reset between screens, so several screens could not be drawn at all and the labels
+it collected were not the ones a reader sees. It now opens with `SEEDED` and clears overlays and the
+random seed before each screen, exactly as `tests/snapshot/run.js` does — and immediately found five
+mismatched button labels that had been invisible to it. Any new probe should borrow the same setup.
 
 **Two rules learned the hard way while writing them.** A probe must reset the screen between
 scenarios or residue from one becomes a "finding" in the next. And a spec that signs out has to put
@@ -175,6 +202,14 @@ the welcome overlay away afterwards — signing out raises it by design, and eve
 runs behind a nominally-open intro.
 
 ## 9. Gotchas worth remembering
+
+- **`100dvh` lies in an installed app, and height media queries never fire there.** iOS in standalone hands the page a viewport that has *already* excluded the status bar and home indicator, so padding by `env(safe-area-inset-*)` on top of that double-counts: the top bar carried 76px of nothing above its contents and the tab bar stranded 34px below. The insets go through `--sat`/`--sab`, and **`fitFrame()`** decides at runtime whether they are owed by measuring whether the viewport actually reaches the screen edges. It also sets `--app-h` from `visualViewport` and holds that height while the keyboard is up. Two releases of tuning behind `@media (max-height:…)` did nothing on a phone, because those tiers only fire when the *layout* viewport shrinks — which the keyboard does not do on iOS.
+- **`show(tab)` renders that tab's view as part of opening it.** Calling it *after* writing a card into the view wipes the card you just wrote. It goes first, or not at all.
+- **A theme rule outranks a plain component rule.** `.phone[data-theme="illumined"] .btn.ghost` beats `.btn.ghost.wkeep` at any distance down the file. Semantic colour — green for keep, red for pass — has to live **past the theme blocks**, scoped `.phone .btn.ghost.…`, or it silently reads as gold in four of the five themes.
+- **A control whose label is rewritten on every repaint ignores the markup.** `#ttHint` is re-labelled inside `paintTop()`, so shortening the text in the HTML changed nothing. Change it where it is written.
+- **`text-overflow: ellipsis` makes a measurement lie.** A too-wide button clipped to the right width *measures* correct while showing half a word. Never put it on a control.
+- **`(document.querySelector(x)||{}).textContent.trim()` is not a guard.** It guards the element and then dereferences `textContent` anyway, so a moved element throws — and one throw in a `page.evaluate` kills the **whole** behaviour suite before a single test reports. Guard the property too.
+- **A version bump that anchors on the previous version can silently no-op.** `h.replace('APP_VERSION="1.98.0"', …)` matched nothing when another session had already moved past it, and the changelog entry went in anyway — leaving a heading above a higher one and `APP_VERSION` agreeing with neither. Assert the anchor was found. The static check catches the result, not the cause.
 
 - **`knownNumbers()` caches on `doneSkills.length + "_" + extraKnown.length`.** Swapping one entry for another of the same count returns the stale set. Those lists only ever grow in the app, so it is latent — but any code that *replaces* rather than appends must call `bustCaches()`.
 - **The test harness disables all animation** for deterministic snapshots. An animation cannot be asserted with `getComputedStyle`; read the rule out of the stylesheet instead.
@@ -185,22 +220,58 @@ runs behind a nominally-open intro.
 - **A HEAD request is not proof the right file is being served.** A re-exported film keeps its filename, so a CDN goes on answering with the previous cut; one edge node returned the new `Content-Length` while the browser still decoded the old video. Download the file and compare checksums. Each film now carries `rev` (the export date) and the player asks for that revision — **re-exporting a film means bumping its `rev`**, or the new cut reaches nobody.
 - **A function defined twice in the shared scope is a silent trap.** JavaScript keeps the last and discards the first, so hardening the copy you happen to open can achieve nothing. `palaceCount` and `chapCount` were both duplicated; a spec now fails if any top-level function is defined twice.
 - **A detached element keeps its classes.** `Onboard.active()` held a reference captured at startup, so once anything removed that node it reported "open" forever — which would have suppressed every film in the app. Read visibility from the live DOM, never from a captured reference.
-- **Films are queued on a timer when a tab opens.** `show("palace")` lines its film up 400ms later, so anything that changes the ground in between — a sign-out especially — has to be survivable. `maybeVideo` now refuses while the welcome screen is up.
+- **Films are queued on a timer when a tab opens.** `show("palace")` lines its film up 400ms later, so anything that changes the ground in between — a sign-out especially — has to be survivable. `maybeVideo` refuses while the welcome screen is up, while a scratch ticket is open, and while any modal is showing: in that half second the reader can have tapped on to a result or a sheet, which the film would then bury.
+- **`vView` is the Library hub's sub-view, not a record of what is on screen.** `renderLearnedVerse` and the verse wizard draw into the same `#verse` element without touching it, so it stays reading `"hub"` while a verse is being read. Anything that must know the Library itself is showing has to ask the DOM — `#verse button.vhub` exists on the hub and nowhere else. Guarding on `vView` let a Library present open on top of somebody mid-verse, and it surfaced only as an intermittent lost scroll position in one unrelated spec.
+- **An overlay left open by one spec block changes the layout the next one measures.** The whole behaviour suite runs in one page, and a leaked `badgeModal` or `videoModal` made a scroll assertion pass or fail depending on run order. A block that renders a screen and measures it should call `closeEveryOverlay()` first.
 - **`tests/spec/behaviour.js` is checked out with CRLF.** A patch script with plain-newline anchors matches nothing in it. `src/index.html` is the same. Convert anchors before matching, or anchor on a single line.
+- **A scroll assertion needs the room it assumes.** "Keeps your place when you swipe" scrolled to a fixed 60px and compared afterwards. Swiping on lands on a verse still to be *learned*, whose page is shorter than a learned one's, so the browser clamped the restore and the clamp read as a lost place. It now takes the offset from the room the screen actually has, and asserts separately that the screen was drawn at all — which turns a confusing number into a sentence. Chasing that one cost most of an afternoon.
 - **A spec block that rewrites `Prog` leaks into the blocks after it.** They run in one page, in order, and inherit whatever the last one left. Snapshot `Prog` and put it back, or the failure surfaces somewhere unrelated.
 - **Shell heredocs mangle `${}`, backticks and backslashes.** Write patch scripts with the Write tool and run them with `node`.
 
 ---
 
-## 10. What's next
+## 9a. Two sessions share this repo
+
+More than one Claude session works this project at once, and both edit `src/index.html`, `burningbush/index.html` and `tests/spec/behaviour.js`. Before committing:
+
+1. `ListAgents` — a peer shown as **busy** or **shell** is mid-release. Do not commit into its tree; your changes would ship its half-finished work.
+2. `git status` and read the changelog head — if `APP_VERSION` is ahead of live, a release is in flight and it is not yours.
+3. If you have finished work and the tree is not yours to ship, **fold your changelog line into the pending entry** rather than taking a version of your own, and `SendMessage` the peer an inventory of what you left in the tree.
+
+A peer's in-flight spec can also break the suite for you: a `const near` shadowing the destructured `near` helper took the whole behaviour file down with a temporal-dead-zone error before any test ran. Message them; do not edit their file underneath them.
+
+## 9b. The onboarding walkthrough (Admin)
+
+`OnboardWalk`, five stages, one per rung of the ladder plus the pair of foils. **Each stage seeds the account up to the last action and no further**, so the only thing left to do is the one that fires what the stage is there to show:
+
+| stage | seeded | left to do |
+| --- | --- | --- |
+| 1 | books 1–5 | finish Matthew → Library |
+| 2 | Library won, 0 verses | memorize one → Bible |
+| 3 | 4 verses, streak 5 | the fifth → Palaces |
+| 4 | 5 verses, no palace, a verse open | build one → both foils lift |
+| 5 | 14 verses, 2 palaces | the fifteenth → Stories |
+
+- **Nothing sits on the screen.** The step is a toast; the way out is **Profile → Admin → Exit onboarding simulation**, and the start button hides while one runs (a second run would stash simulated state as real progress). A 182px step card used to cover a quarter of the screen — over the very thing being walked through.
+- **The bar shows the track and one ticket.** Only one rung can be next, so `walkOneTicket()` hides the rest while a walkthrough runs.
+- **Stage 4 needs `curScene` set.** `unlockAfterFirstPalace()` only shows the palace/room pickers being uncovered if there is a verse open to uncover them on.
+- `OnboardWalk.skip()` exists for the suite only — there is no skip control on screen.
+
+## 9c. The films and their backgrounds
+
+- Finished films live in `src/videos/` and are copied to `burningbush/videos/` by the build. **`bin/build.js` asserts the number of `src:"videos/` rewrites** — adding a film means bumping that count, and that assertion is what stops a film silently not shipping.
+- Backgrounds and their generators are in **`C:/Projects/Burning Bush Videos/backgrounds`** (`bg.js` for Intro/Building Scenes/Memory Palace, `bg2.js` for the rest). All seven share six fixed picture slots arched down both edges; each has its own hue, spread round the wheel so a playlist of thumbnails does not read as one lesson repeated.
+- **A `.m4a` in `Assets/` is narration, not a film.** Check with `ffprobe` before wiring one in — the Spaced Repetition file was a single AAC stream with no video. It was rendered against its background with `ffmpeg` (1920×1080 h264 30fps, audio copied) to match the others.
+
 
 - Set `BIBLE_API_KEY` on `burningbush-api` so the NLT works, then run `tests/qa/nlt-live.js`.
 - Upgrade `burningbush-api` off Render's free plan — it sleeps after ~15 minutes idle and now serves scripture, not just login.
 - Wire real Stripe; remove the unlock code before go-live.
-- Record the remaining films (`major`, `book`, `sr`, `recall`).
+- Record the `recall` film — the last one still unmade. Spaced Repetition is in, rendered from narration over its background rather than produced; **replace it if a produced cut arrives.**
 - Prune `burningbush/` of files no longer in `src/` (`bbe.js` is 4.1MB of dead weight) and make the build do it.
 - Videos are ~20MB each: do **not** bundle them into a Play Store build. Stream them, or use Play Asset Delivery.
 - Capacitor mobile wrap + Play in-app purchase.
 
+## 10. What's next
 ## 11. Related memory (`…/memory/`)
 `project_burningbush_deploy.md`, `project_burningbush_theming.md`, `project_burningbush_changelog.md`, `project_kb_data_platform.md`, `project_verse_vault.md`, `feedback_verse_vault_fable5.md`.

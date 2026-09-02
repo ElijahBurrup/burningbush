@@ -13,7 +13,10 @@ module.exports = [
   { name: 'learn/path', sel: '#learn', go: () => { show('learn'); expandedUnits = new Set([0, 1]); renderPath(); } },
 
   // ---- Verses ----
-  { name: 'verse/hub', sel: '#verse', go: () => { show('verse'); vView = 'hub'; renderVerse(); } },
+  // The Library arrives in stages, so both ends of it are worth a picture: what a new reader opens
+  // to, and what it looks like once every present has been handed over.
+  { name: 'verse/hub', sel: '#verse', go: () => { Prog.libWon = []; show('verse'); vView = 'hub'; renderVerse(); } },
+  { name: 'verse/hub-full', sel: '#verse', go: () => { Prog.libWon = ['pair', 'w4w']; show('verse'); vView = 'hub'; renderVerse(); } },
   { name: 'verse/suggested', sel: '#verse', go: () => { show('verse'); vView = 'sugg'; renderVerse(); } },
   { name: 'verse/topics', sel: '#verse', go: () => { show('verse'); vView = 'topics'; renderVerse(); } },
   { name: 'verse/memorized', sel: '#verse', go: () => { Prog.verseStage = {}; show('verse'); vView = 'mem'; renderVerse(); } },

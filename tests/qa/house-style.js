@@ -6,7 +6,7 @@
  * snapshot suite knows about and collects what is actually written, then looks for the places the
  * app contradicts itself.
  */
-const { chromium, open, stopServer } = require('C:/Projects/BurningBush/tests/lib/harness');
+const { chromium, open, stopServer, SEEDED } = require('C:/Projects/BurningBush/tests/lib/harness');
 const SCREENS = require('C:/Projects/BurningBush/tests/snapshot/screens');
 
 const findings = [];
@@ -21,13 +21,21 @@ const SYNONYMS = [
 
 (async () => {
   const browser = await chromium().launch();
-  const page = await open(browser, { which: 'built' });   // open() returns the page itself
+  // The same account and the same clean slate the snapshot suite uses. Without the seed this walked
+  // a brand new account, on which several screens cannot be drawn at all; without the reset between
+  // screens, state from one leaked into the next and the labels collected were not what a reader sees.
+  const page = await open(browser, { which: 'built', prog: SEEDED });
   const errs = [];
   page.on('pageerror', e => errs.push(e.message));
 
   const texts = {};
   for (const s of SCREENS) {
     try {
+      await page.evaluate(() => {
+        document.querySelectorAll('.modal').forEach(m => (m.style.display = 'none'));
+        ['taxov', 'buildov', 'scov', 'simov'].forEach(id => { const e = document.getElementById(id); if (e) e.classList.remove('on', 'march'); });
+        window.__reseed && window.__reseed(12345);
+      });
       await page.evaluate(go => { eval('(' + go + ')()'); }, String(s.go));
       await page.waitForTimeout(40);
       const t = await page.evaluate(sel => {
@@ -49,7 +57,9 @@ const SYNONYMS = [
   /* ---- 2. numbers written one way ---- */
   Object.entries(texts).forEach(([name, t]) => {
     // a bare decimal that is really a count, e.g. "3.0 verses"
-    const dec = t.match(/\b\d+\.0\b/);
+    // Version numbers are not counts and are written exactly as released, so v1.101.0 is stripped
+    // before the check rather than reported afresh every release.
+    const dec = t.replace(/v?\d+\.\d+\.\d+/g, '').match(/\b\d+\.0\b/);
     if (dec) flag('format', `${name}: writes a whole number as "${dec[0]}"`);
     // two spaces mid-sentence, usually a template seam
     if (/[a-z]{2}  [A-Za-z]/.test(t)) flag('format', `${name}: a double space mid-sentence`);
@@ -62,6 +72,11 @@ const SYNONYMS = [
   const buttons = {};
   for (const s of SCREENS) {
     try {
+      await page.evaluate(() => {
+        document.querySelectorAll('.modal').forEach(m => (m.style.display = 'none'));
+        ['taxov', 'buildov', 'scov', 'simov'].forEach(id => { const e = document.getElementById(id); if (e) e.classList.remove('on', 'march'); });
+        window.__reseed && window.__reseed(12345);
+      });
       await page.evaluate(go => { eval('(' + go + ')()'); }, String(s.go));
       await page.waitForTimeout(30);
       const list = await page.evaluate(() => {
@@ -74,7 +89,7 @@ const SYNONYMS = [
   }
   // the same action written two ways
   const PAIRS = [
-    [/^Done$/i, /^Amen · done$/i, 'Done'],
+    [/^Done$/i, /^Done!$/i, 'Done'],
     [/^Save$/i, /^Save & done$/i, 'Save'],
     [/^Begin Practice$/i, /^Begin practice$/i, 'Begin Practice'],
     [/^Got it!?$/i, /^Got It!?$/i, 'Got it'],
@@ -91,6 +106,8 @@ const SYNONYMS = [
   labels.forEach(l => {
     if (!/^[A-Za-z][a-z]+ [a-z]/.test(l)) return;              // only plain multi-word labels
     if (/[.!?:·]/.test(l)) return;                              // sentences and compound labels are their own thing
+    if (/(…|\.\.\.)\s*[▾▼⌄]?$/.test(l)) return;                 // a trailing ellipsis marks a prompt to choose
+                                                                // from, not a command — "Choose a room or spot…\"
     const words = l.split(/\s+/);
     if (words.length < 2 || words.length > 5) return;
     const lower = words.slice(1).filter(w => /^[a-z]/.test(w) && !SMALL.has(w.toLowerCase()));
