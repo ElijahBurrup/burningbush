@@ -7668,6 +7668,9 @@ function runNewVerseReview(){
     ()=>{ sceneNote=""; on(); });
 }
 function startVersePhase(){
+  // Reached from a deferred callback, so the session it belongs to can be gone by the time it runs:
+  // leaving the review in that window used to throw here rather than simply stopping.
+  if(!MS) return;
   if(MS.srQueue && MS.srQueue.length){ MS.phase="sr"; nextMemVerse(); }   // pulls the next due verse
   else afterSR();                                                          // no verses due → palaces / finish
 }
@@ -8070,6 +8073,9 @@ function srFlash(cb){
 }
 function srBanner(kind){
   const V=el("verse");
+  // The banner describes a session, so there has to be one. It is raised from a timer, and leaving
+  // the review inside that moment used to throw here instead of simply not drawing.
+  if(!MS) return;
   if(kind==="start"){
     // The new verses — saved four hours ago and waiting for their first look — are reviewed FIRST
     // (see beginDueReview), so leaving them out of this total made it one short of the "Due (N)" on
