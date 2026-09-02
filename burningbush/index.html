@@ -202,6 +202,7 @@
   .versehub{gap:10px}
   .versehub .vhub{gap:6px;padding:14px 10px;font-size:15.5px;line-height:1.15;text-align:center}
   .versehub .vhub.wide{padding:14px 16px}
+  .slockwrap.wide{grid-column:1/-1}
   .vhub.wide{grid-column:1/-1;flex-direction:row;gap:14px;aspect-ratio:auto;padding:11px}
   .vhub.wide .vi{font-size:28px}
   /* One icon moves at a time and the rest sit still, so the eye is led down the screen and back up
@@ -2156,8 +2157,20 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.102.0";
+const APP_VERSION="1.103.0";
 const CHANGELOG=[
+ {v:"1.103.0", d:"September 2, 2026", t:"A verse is the way in", items:[
+   ["new","<b>Finishing a book lesson offers you a verse from that book, and that verse opens the Library.</b> The offer used to appear only when the lesson happened to put new verses in reach \u2014 so a book that opened nothing new ended with nowhere to go. It is the door into the Library now, so it is always there when that book has a verse to build."],
+   ["chg","<b>The Library arrives whole.</b> Every tile is on it from the first day: My Verses, Learn Verses, Video Review, Practice Verses, Practice Books and Practice Word for Word, with Spaced Repetition at the top. Two of them wear golden stickers that say exactly what opens them \u2014 <b>Build a Memory Palace</b> and <b>Practice Verses to Unlock</b> \u2014 rather than being absent and unexplained."],
+   ["chg","<b>The same sticker sits on the verse screen</b>, over the Word for Word rectangle, so what opens it reads the same in both places."],
+   ["fix","<b>Practice Verses works from the first day.</b> A verse was held out of the practice deck until its first review four hours after learning it \u2014 so two fresh verses meant an empty deck and a \u201cDeck cleared!\u201d screen whose New Round button rebuilt the same empty deck for ever. Every verse is in the mix the moment it is learned."],
+   ["new","<b>A verse practised in its first hours comes back at the four hour mark.</b> That early practice was meeting it, not reviewing it, so it returns to the mix then rather than waiting for the whole deck to clear."],
+   ["chg","<b>Practice Numbers is now Practice Books</b>, which is what it has always actually been."],
+   ["fix","<b>A comp code now follows your account.</b> It was kept in the browser, so switching accounts asked for it again and it never reached a second device. It is stored with your progress now. <i>Paid</i> subscriptions still are not \u2014 that needs the server work before launch."],
+   ["chg","<b>Resetting an account signs you out.</b> An emptied account is a fresh start, so it now ends where a fresh start begins — on the email screen, with the Profile sheet closed behind it, rather than leaving you looking at your own empty Learn path."],
+   ["chg","<b>The badge screen is quieter.</b> The Share button is gone, the badge has room to breathe above its title, and one gold <b>Got It!</b> closes it."],
+   ["fix","<b>The Admin walkthrough follows the new path</b>, in six stages, each leaving exactly one thing to do."]
+ ]},
  {v:"1.102.0", d:"September 2, 2026", t:"The Bible, and a walkthrough that walks the new path", items:[
    ["chg","<b>The Bible is won by your first round of Practice Verses.</b> Yesterday it waited for every tool in the Library to have been used, which was a longer wait than it needed to be. It now comes off the same round of practice that wins the last Library present \u2014 the present opens first, and the Bible's golden ticket is waiting behind it."],
    ["fix","<b>The onboarding walkthrough walks the new path.</b> Its second stage still waited for the Bible to be won by one verse, which cannot happen any more, so a run stalled there. It now has seven stages and stops at every rung of the Library ladder \u2014 your first verse, the practice round, the ticket that round wins, then the fifth verse, the first palace and the fifteenth."],
@@ -4229,11 +4242,12 @@ function migrateProg(p){
   if(typeof p.fiveVerseHintShown!=="boolean") p.fiveVerseHintShown=false; // one time "a 5-streak unlocks your palace" nudge
   p.msSeen=obj(p.msSeen); // milestones the user has already seen expanded (collapsed thereafter)
   p.verseLoc=obj(p.verseLoc); // where each verse's scene lives: {refKey:{p:palaceIndex, room}}
-  // Which Library tools have been USED, not merely opened. One timestamp each; it decides what has
-  // been handed over and what is still to come.
+  // Which Library tools have been USED, not merely opened. One timestamp each. It lifts the Word
+  // for Word sticker and it is what the Bible ticket asks for.
   p.libUsed=obj(p.libUsed);
-  // Anyone already using the app has these behind them. Backfilled once from what they plainly have,
-  // so a reader of three weeks is not walked through a tour of tools they use daily.
+  if(typeof p.compPro!=="number") p.compPro=0;   // when a comp code was redeemed on this account, 0 if never
+  // Read once from what a reader plainly has, so nobody who has been practising for weeks arrives to
+  // find a sticker over a button they have been using.
   if(!p.libBackfilled){
     const mark=k=>{ if(!p.libUsed[k]) p.libUsed[k]=1; };
     if((p.memorized||[]).length) { mark("learn"); mark("mem"); }
@@ -4242,16 +4256,8 @@ function migrateProg(p){
     if((p.videoOrder||[]).length>1) mark("videos");
     if((p.palaces||[]).filter(Boolean).length) mark("sr");
     if((p.doneSkills||[]).some(s=>/^num:|^snd:/.test(s))) mark("numbers");
-    // and anything already used is already given: no tour of tools this reader has used for weeks
-    p.libWon=Array.isArray(p.libWon)?p.libWon:[];
-    // Anyone with a verse behind them has had these two buttons all along: taking them away to hand
-    // back as a present would be a loss, not a gift. Word for Word is different — it shipped switched
-    // off, so for most readers it genuinely is new, and only somebody who turned it on keeps it.
-    if(p.libUsed.mem && !p.libWon.includes("pair")) p.libWon.push("pair");
-    if(p.libUsed.w4w && !p.libWon.includes("w4w")) p.libWon.push("w4w");
     p.libBackfilled=1;
   }
-  p.libWon=Array.isArray(p.libWon)?p.libWon:[];
   // A slot can outlive its palace. Left alone the verse claims a room in a building that is not
   // there, which reads as a station on one screen and nothing at all on the next. The claim is
   // dropped and the verse simply has no location, which is the truth of it.
@@ -4378,7 +4384,7 @@ function mergeProg(a,b){
     m.church={ built:Math.max(ca.built||0,cb.built||0), total:Math.max(ca.total||0,cb.total||0),
                given:Math.max(ca.given||0,cb.given||0) }; }
   m.libUsed=Object.assign({},b.libUsed||{},a.libUsed||{});   // using a tool on either device counts
-  m.libWon=[...new Set([...(a.libWon||[]),...(b.libWon||[])])];   // a present given on one device is given
+  m.compPro=a.compPro||b.compPro||0;                         // a comp code redeemed anywhere holds everywhere
   m.libBackfilled=a.libBackfilled||b.libBackfilled;
   m.locPast=Object.assign({},a.locPast||{},b.locPast||{});
   m.phaseMax=Math.max(a.phaseMax||0,b.phaseMax||0);
@@ -4516,16 +4522,23 @@ const Billing = {
     manageUrl: ""
   },
   data(){ return Store.getJSON("vv_pro", null); },
-  isPro(){ const d=Billing.data(); if(!d||!d.active) return false; if(d.until && Date.now()>d.until) return false; return true; },
+  isPro(){ if(Prog && Prog.compPro) return true;   // a comp code follows the account, not the browser
+    const d=Billing.data(); if(!d||!d.active) return false; if(d.until && Date.now()>d.until) return false; return true; },
   // Grant Pro for a period (default one year). Called after a confirmed purchase.
   grant(months=12){ Store.setJSON("vv_pro",{active:true, plan:"annual", since:Date.now(), until:Date.now()+Math.round(months*30.44*DAY)}); },
-  revoke(){ Store.remove("vv_pro"); },
+  revoke(){ Store.remove("vv_pro"); if(Prog){ Prog.compPro=0; saveProg(); } },
   // Comp / promo codes that unlock the full app permanently (no expiry).
   // A shared code unlocks the paid app for anyone who learns it, and this one is in the shipped
   // HTML where anybody can read it. It is here to test what a Pro account sees, and it must come
   // out before the app takes its first payment — see A3 in the launch plan.
   codes: ["elijahsentme"],
-  redeem(code){ const c=(code||"").trim().toLowerCase().replace(/\s+/g,""); if(Billing.codes.includes(c)){ Store.setJSON("vv_pro",{active:true, plan:"code", since:Date.now(), until:null}); return true; } return false; },
+  // Redeeming writes to Prog as well as localStorage. localStorage is per browser and is cleared
+  // when accounts change, which meant a comp code had to be typed again after every switch and did
+  // not follow the reader to another device at all. Prog syncs, so now it does both.
+  redeem(code){ const c=(code||"").trim().toLowerCase().replace(/\s+/g,""); if(Billing.codes.includes(c)){
+    Store.setJSON("vv_pro",{active:true, plan:"code", since:Date.now(), until:null});
+    Prog.compPro=Date.now(); saveProg(); try{ Auth.push(); }catch(e){}
+    return true; } return false; },
   startCheckout(plan){
     const url = plan==="monthly" ? Billing.cfg.monthlyUrl : Billing.cfg.checkoutUrl;
  if(!url){ toast("Checkout isn't set up yet. Add your Stripe link in Billing.cfg."); return; }
@@ -4775,8 +4788,11 @@ function foundationsDone(){ return [1,2,3,4,5,40].every(n=>knownNum(n)); }   // 
 function palaceCount(){ return (Prog.palaces||[]).filter(Boolean).length; }
 const GTIK='<span class="gtik" role="img" aria-label="golden ticket"></span>';   // inline golden-ticket badge for criteria text
 const SCRATCH_LADDER=[
- {tab:"verse", icon:"📚", name:"Library", desc:"Your shelf. The films, the verses to learn, your review and everything you have memorized.", gate:()=>foundationsDone(),
- reqs:[{label:"Finish the Foundation. Books 1–5 &amp; Matthew", done:()=>foundationsDone()}]},
+ {tab:"verse", icon:"📚", name:"Library", desc:"Your shelf. The films, the verses to learn, your review and everything you have memorized.", gate:()=>Prog.memorized.length>=1,
+     // Learning a verse is the way in. A book lesson offers one, the wizard runs from the Learn tab,
+     // and finishing it wins the room the verse goes in — which is a better first sight of the
+     // Library than a shelf handed over before there is anything to put on it.
+ reqs:[{label:"Memorize your first verse", done:()=>Prog.memorized.length>=1, prog:()=>`${Math.min(1,Prog.memorized.length)}/1`}]},
  {tab:"journey", icon:"📕", iconHtml:()=>bibleIconSVG(), name:"Bible", desc:"See the whole Bible open before you. Every book, chapter and verse you can reach.", gate:()=>libUsed("verses"),
      // Earned by a round of Practice Verses. That same round is what the Library gives Word for Word
      // for, so the two come off one action — but not on top of each other: the Library present opens
@@ -4791,81 +4807,19 @@ const SCRATCH_LADDER=[
      reqs:[{label:"Memorize 15 verses", done:()=>Prog.memorized.length>=15, prog:()=>`${Math.min(15,Prog.memorized.length)}/15`},
            {label:"Build 2 memory palaces", done:()=>palaceCount()>=2, prog:()=>`${Math.min(2,palaceCount())}/2`}]},
 ];
-/* The Library's own ladder. Each rung is a present, and a present is earned by USING what the last
-   one gave — opening a screen and backing out of it is not using it. The ticket says nothing about
-   what is inside until it is scratched; the reader is only ever told what to do next. */
-const LIB_LADDER=[
-  { id:"pair", icon:"\u{1F49B}", name:"My Verses & Practice Verses",
-    desc:"Two at once, because a shelf with one verse on it has little to do alone.<br><br><b>My Verses</b> is everything you have hidden away, in one place \u2014 tap any of them to see its scene, where it lives and how well it has settled.<br><br><b>Practice Verses</b> asks you where a verse lives, or which verse lives somewhere. A minute of it turns three pictures into an address you can reach for without thinking.",
-    btns:["vhubMem","vPracVerse"],
-    gate:()=>libUsed("learn"),
-    next:"Memorize your first verse" },
-  { id:"w4w", icon:"\u{1F5E3}\uFE0F", name:"Word for Word",
-    desc:"Knowing where a verse lives and knowing how it reads are two different things. This is the second one.<br><br>Type the verse out, word by word, until every word is yours. The warm up first, then the strict test \u2014 and a verse that comes back clean the whole way along its trail is one you know by heart.",
-    btns:["vW4W"],
-    gate:()=>libUsed("verses"),
-    next:"Finish a round of Practice Verses" }
-];
+/* Which Library tools have been used. There is no ladder of presents any more — the Library
+   arrives whole when the first verse wins it — but the record is still what lifts the Word for Word
+   sticker and what the Bible ticket asks for. */
 function libUsed(id){ return !!(Prog.libUsed||{})[id]; }
-function libWon(id){ return (Prog.libWon||[]).includes(id); }
-// Record that a tool has been used, and see whether that opens the next present.
+// Record that a tool has been used, the first time it is used.
 function libUse(id){
   Prog.libUsed=Prog.libUsed||{};
   if(Prog.libUsed[id]) return;
   Prog.libUsed[id]=Date.now(); saveProg();
-  // Using the last tool is what wins the Bible, so the tab ladder has to look again here — nothing
-  // else would ask until the next screen happened to redraw.
+  // A round of Practice Verses is what wins the Bible and what lifts the Word for Word sticker, so
+  // both have to be looked at again here — nothing else would ask until a screen happened to redraw.
   try{ updateTabLocks(); }catch(e){}
-  setTimeout(()=>{ try{ libMaybeOffer(); }catch(e){} }, 700);
-}
-function libPending(){ return LIB_LADDER.find(r=>!libWon(r.id) && r.gate()) || null; }
-let libOffered=null;
-/* Offer the next present, if one is due and the reader is somewhere it makes sense to receive it.
-   Nothing is offered mid-lesson or over a film — it waits until the Library itself is on screen. */
-let libRetry=0, libTries=0;
-function libMaybeOffer(){
-  const r=libPending(); if(!r) return false;
-  if(libOffered===r.id) return false;
-  // The Library hub and every verse screen share this view id, so the view alone is not enough:
-  // without the second test a ticket can open over somebody in the middle of reading a verse.
-  // vView cannot answer it either — it is the hub's sub-view and stays set while a verse is drawn
-  // over the top of it — so ask the DOM. The hub's tiles exist on the hub and nowhere else.
-  if((document.querySelector(".view.active")||{}).id!=="verse") return false;
-  if(!document.querySelector("#verse button.vhub")) return false;
-  // On the Library, with a present due, but something is still up over it — a badge, the goal
-  // flash, a film. Closing one of those does not redraw the Library, so a present skipped here
-  // would wait for a render that may never come: finishing a verse almost always leaves a badge
-  // or the goal flash on screen. Look again shortly instead. Only ever one retry outstanding.
-  const busy = [el("obov"), el("scov")].some(o=>o && o.classList.contains("on"))
-            || [...document.querySelectorAll(".modal")].some(m=>getComputedStyle(m).display!=="none");
-  // Bounded: about twenty seconds of looking, not a timer that runs for the life of the session.
-  // If they leave something open longer than that, the next time the Library draws picks it up.
-  if(busy){ clearTimeout(libRetry);
-    if(libTries++ < 22) libRetry=setTimeout(()=>{ try{ libMaybeOffer(); }catch(e){} }, 900);
-    return false; }
-  clearTimeout(libRetry); libTries=0;
-  libOffered=r.id;
-  Scratch.open(0, {
-    card:{icon:r.icon, name:r.name, desc:r.desc},
-    title:"\u{1F381} Something new for your Library",
-    claimText:"Got It!",
-    onClaim:()=>{
-      Prog.libWon=Prog.libWon||[];
-      if(!Prog.libWon.includes(r.id)) Prog.libWon.push(r.id);
-      saveProg(); libOffered=null;
-      renderVerse();
-      // the icon lands on the square it just unlocked, so the room is watched growing
-      requestAnimationFrame(()=>{
-        const btn=el(r.btns[0]);
-        if(!btn){ updateTabLocks(); return; }
-        flyToNav(r.icon, btn, ()=>{
-          r.btns.forEach(id=>{ const b=el(id); if(b){ b.classList.add("justwon"); setTimeout(()=>b.classList.remove("justwon"),800); } });
-          updateTabLocks();
-        });
-      });
-    }
-  });
-  return true;
+  if(id==="verses") setTimeout(()=>{ try{ peelFoil(".sl-w4w", renderVerse); }catch(e){} }, 300);
 }
 function tabWon(t){ return t==="learn" || (Prog.scratchWon||[]).includes(t); }
 function tabUnlocked(tab){ return tabWon(tab); }
@@ -5739,7 +5693,7 @@ function pkBoxCls(name,ready){ return `bbchoose big${name?" set":""}${ready?"":"
 function srUnlocked(){ return videoSeen("sr"); }
 // The palace and room pickers are covered until there is at least one palace to put a verse in.
 function palacePickUnlocked(){ return palaceCount()>0; }
-function foilHTML(label){ return `<span class="slock"><span class="slock-t">${label}</span></span>`; }
+function foilHTML(label, cls){ return `<span class="slock${cls?" "+cls:""}"><span class="slock-t">${label}</span></span>`; }
 // Lift a foil and, once it has gone, redraw so the live control is wired up underneath. Found by the
 // control it covers rather than by an id of its own: an id built from a variable is invisible to the
 // static check that makes sure every el() lookup has something to find.
@@ -6062,7 +6016,7 @@ function unlockAfterFirstPalace(ret){
   const toLibrary=()=>{
     show("verse"); renderVerse();
     // the film marks itself watched on the way out, so the button is live before the foil lifts
-    requestAnimationFrame(()=>peelFoil(".versehub .slock", ()=>{ renderVerse(); if(ret) ret(); }));
+    requestAnimationFrame(()=>peelFoil(".sl-sr", ()=>{ renderVerse(); if(ret) ret(); }));
   };
   const film=()=>openVideoScreen("sr", ()=>setTimeout(toLibrary, 260));
   // show the pickers being uncovered on the screen where they are used
@@ -6522,7 +6476,7 @@ function renderLessonDone(){
     ${d.msg?`<div class="callout">${d.msg}</div>`:""}
     ${d.unlocked}
     <div class="btnrow">
-      ${d.hasNew?`<button class="btn" id="lBuild">Build a new verse →</button>`:`<button class="btn" id="lNextNum">Learn another →</button>`}
+      ${d.canBuild?`<button class="btn" id="lBuild">Build a new verse →</button>`:`<button class="btn" id="lNextNum">Learn another →</button>`}
       <button class="btn ghost" id="lPath2">Back to path</button></div></div>`;
   if(el("lBuild")) el("lBuild").onclick=()=>openSuggestedForBook(d.buildBook);
   if(el("lNextNum")) el("lNextNum").onclick=()=>renderPath(true);
@@ -6555,7 +6509,11 @@ function finishLesson(){
   const buildBook = ((sk.items||[]).find(n=>n>=1&&n<=66))
     || (newly.length && bookNum(newly[0].b))
     || latestLearnedBook();
-  LESSON_DONE={ ok:LZ.ok, msg, unlocked, hasNew:newly.length>0, buildBook };
+  // The offer used to appear only when the lesson itself put new verses in reach, so finishing a
+  // book that opened nothing new ended with "Learn another" and no way through to a verse at all.
+  // It is the way into the Library now, so it appears whenever that book has a verse to build.
+  const canBuild = newly.length>0 || (buildBook && ((suggestedByBook()[buildBook]||[]).length>0));
+  LESSON_DONE={ ok:LZ.ok, msg, unlocked, hasNew:newly.length>0, canBuild, buildBook };
   renderLessonDone();
   LZ=null;
   // The ticket goes up over this screen, so claiming it puts this screen back rather than the path.
@@ -6950,6 +6908,12 @@ function latestLearnedBook(){
 // accordion is gone, so it opens that book's suggestions directly — which is where the tap was
 // always trying to get to anyway.
 function openSuggestedForBook(bn){
+  // Before the Library is won this is the door into it, and opening the door should not show the
+  // room first: the suggestions come up over the Learn screen, and backing out returns to the path.
+  if(!tabWon("verse")){
+    if(bn) openSuggBook(bn, ()=>{ show("learn"); renderPath(true); });
+    return;
+  }
   openVerseView("sugg","library");
   document.querySelector(".content").scrollTop=0;
   if(bn) openSuggBook(bn, ()=>openVerseView("sugg","library"));
@@ -7041,18 +7005,19 @@ function renderVerse(){
   V.innerHTML=`${pageHead("\u{1F4DA}","Library")}
     <p class="hint" style="margin:0 0 10px">Everything you have hidden away, and every way to practise it.</p>
     ${taxWarnHTML()}${feat("goal")?`<div class="goalbar" id="goalBtn">${libStatusHTML()}</div>`:""}
-    ${(()=>{ const r=LIB_LADDER.find(x=>!libWon(x.id));
-       return r ? `<p class="hint" style="margin:8px 0 2px">\u{1F381} ${r.next} and something new arrives here.</p>` : ""; })()}
     <div class="versehub">
       ${srUnlocked()
         ? `<button class="vhub sq ${dueAll?"hasdue":""}" id="vMemTest"><span class="vi ani ani-spin">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>`
-        : `<span class="slockwrap"><button class="vhub sq" id="vMemTest"><span class="vi">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>${foilHTML("Build your first palace")}</span>`}
-      ${libWon("pair")?`<button class="vhub sq" id="vhubMem" data-view="mem"><span class="vi ani ani-beat">${heartIconSVG()}</span><span>My Verses</span><small>${mem.length}</small></button>`:""}
+        : `<span class="slockwrap"><button class="vhub sq" id="vMemTest"><span class="vi">${srIconSVG()}</span><span>Spaced Repetition</span><small>Due (${dueAll})</small></button>${foilHTML("Build a Memory Palace","sl-sr")}</span>`}
+      <button class="vhub sq" id="vhubMem" data-view="mem"><span class="vi ani ani-beat">${heartIconSVG()}</span><span>My Verses</span><small>${mem.length}</small></button>
       <button class="vhub sq" id="vLearn"><span class="vi ani ani-twinkle">✨</span><span>Learn Verses</span><small>${suggReach} in reach</small></button>
       <button class="vhub sq" id="vhubVideos" data-view="videos"><span class="vi ani ani-snap">🎬</span><span>Video Review</span><small>${videoReviewList().length||"none yet"}</small></button>
-      ${libWon("pair")?`<button class="vhub sq" id="vPracVerse"><span class="vi ani ani-flip">📖</span><span>Practice Verses</span><small>${mem.length} to draw on</small></button>`:""}
-      <button class="vhub sq" id="vPracNum"><span class="vi ani ani-roll">🎲</span><span>Practice Numbers</span><small>${knownNumbers().size} known</small></button>
-      ${(feat("w4w")&&libWon("w4w"))?`<button class="vhub wide" id="vW4W"><span class="vi ani ani-speak">${speakIconSVG()}</span><span>Practice Word for Word</span></button>`:""}
+      <button class="vhub sq" id="vPracVerse"><span class="vi ani ani-flip">📖</span><span>Practice Verses</span><small>${mem.length} to draw on</small></button>
+      <button class="vhub sq" id="vPracNum"><span class="vi ani ani-roll">🎲</span><span>Practice Books</span><small>${knownNumbers().size} known</small></button>
+      ${feat("w4w") ? (libUsed("verses")
+        ? `<button class="vhub wide" id="vW4W"><span class="vi ani ani-speak">${speakIconSVG()}</span><span>Practice Word for Word</span></button>`
+        // the same rectangle, under a sticker that says what lifts it — nothing is hidden, only closed
+        : `<span class="slockwrap wide"><button class="vhub wide" id="vW4W"><span class="vi ani ani-speak">${speakIconSVG()}</span><span>Practice Word for Word</span></button>${foilHTML("Practice Verses to Unlock","sl-w4w")}</span>`) : ""}
     </div>`;
   if(el("goalBtn")) el("goalBtn").onclick=openGoalSettings; wireTaxWarn();
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0;
@@ -7070,15 +7035,14 @@ function renderVerse(){
   if(el("vW4W")) el("vW4W").onclick=()=>openPracticeSetup();
  el("vMemTest").onclick=()=> !srUnlocked() ? toast("Build your first memory palace, and this opens with the film that explains it")
    : (mem.length ? startMemTest() : toast("Memorize a verse first, tap Suggested!"));
-  { const f=document.querySelector(".versehub .slock"); if(f) f.onclick=()=>toast("Build your first memory palace, and this opens with the film that explains it"); }
+  { const f=document.querySelector(".sl-sr"); if(f) f.onclick=()=>toast("Build your first memory palace, and this opens with the film that explains it"); }
+  { const f=document.querySelector(".sl-w4w"); if(f) f.onclick=()=>toast("Finish a round of Practice Verses and this opens"); }
   if(srFlashPending && el("vMemTest")){ srFlashPending=false; const rb=el("vMemTest"); rb.classList.add("srbtn-flash"); setTimeout(()=>rb.classList.remove("srbtn-flash"),6000); }
   // A present due is offered here, on arrival, and not only on the timer that follows using a tool:
   // that timer refuses while anything else is open, and a verse is usually finished with the goal
   // flash or a badge still up. Without this the present is skipped and nothing looks again, so it
   // would appear only after the reader happened to use something else. Offering it from the Library
   // means it is waiting for them the next time they walk in, which is where it belongs anyway.
-  libTries=0;
-  setTimeout(()=>{ try{ libMaybeOffer(); }catch(e){} }, 350);
   paintTheme();
 }
 /* ---- Talents (verse-practice points) + streaks ---- */
@@ -7648,7 +7612,22 @@ function vsr(k){ return (Prog.verseSR||{})[k]||null; }
 function deckKeys(){ const now=Date.now();
   // A verse known by heart is not resting any more - it is the one being tested hardest, so it
   // stays in the deck. There is no longer anything to opt in or out of.
-  return memArr().map(a=>a.join(":")).filter(k=>{ if(!firstReviewDone(k)) return false; const o=vsr(k); return !o || ((!(o.sz>now)) && !o.rd); }); } // askable = not snoozed & not already correct this round
+  //
+  // A verse used to be held out of this deck until its first spaced-repetition review, four hours
+  // after learning it. That is right for the REVIEW queue and wrong here: this deck is the address
+  // drill, and the hour after learning a verse is exactly when its address is worth drilling. It
+  // also made Practice Verses unusable on the first day — two verses learned, an empty deck, and a
+  // "Deck cleared!" screen whose New Round button rebuilt the same empty deck for ever.
+  return memArr().map(a=>a.join(":")).filter(k=>{ const o=vsr(k);
+    if(!o) return true;
+    if(o.sz>now) return false;          // resting
+    if(!o.rd) return true;              // not yet answered this round
+    // Answered already — but a verse practised in the first hours after learning it was met, not
+    // reviewed. At its four hour mark it comes back into the mix rather than waiting for the whole
+    // deck to clear, so the first real look back happens sooner. Cleared AFTER the mark, it stays
+    // out for the round like anything else.
+    return !o.r0 && now>=firstReviewAt(o) && (o.lc||0)<firstReviewAt(o);
+  }); } // askable = not snoozed, and not already correct this round unless its first look back has come due
 function deckRoundReset(){ const now=Date.now(); (Prog.memorized||[]).forEach(k=>{ const o=vsr(k); if(o && !(o.sz>now)) o.rd=false; }); saveProg(); }
 function markAnswer(k, correct, firstTry){ Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k]||(Prog.verseSR[k]=newSR());
   if(correct){ o.rd=true; o.lc=Date.now(); o.cr=firstTry?(o.cr||0)+1:0; } else { o.cr=0; } return o.cr||0; }   // any miss breaks the streak
@@ -9592,15 +9571,14 @@ function showBadgeModal(b){
   let m=document.getElementById("badgeModal");
   if(!m){ m=document.createElement("div"); m.id="badgeModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
   m.innerHTML=`<div class="modal-card center" style="max-width:320px">
-    <div class="badge-pop">${b.icon}</div>
+    <div class="badge-pop" style="margin-bottom:14px">${b.icon}</div>
     <div class="prof-sect" style="color:var(--gold-ink)">Badge earned · ${b.cat}</div>
     <h2 style="font-size:22px;margin:2px 0 2px">${b.name}</h2>
     <p class="lead" style="font-size:13px;margin:0"><i>${b.sub}</i></p>
-    <div class="btnrow"><button class="btn" id="badgeShare">📣 Share</button><button class="btn ghost" id="badgeClose">Continue</button></div>
+    <div class="btnrow"><button class="btn" id="badgeClose" style="width:100%">Got It!</button></div>
   </div>`;
   m.style.display="flex";
   document.getElementById("badgeClose").onclick=()=>{ m.style.display="none"; };
-  document.getElementById("badgeShare").onclick=()=>{ m.style.display="none"; shareProgress(`the "${b.name}" badge`); };
 }
 // Returns whatever applause was held back, so the caller can let it off when the screen is done with.
 function addMemorized(s, defer){
@@ -10002,10 +9980,10 @@ function renderLearnedVerse(b,c,v,ret){
       <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
       <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
       <div class="lv-versetext">${verseWordsHTML(b,c,v,text)}</div>
-      ${feat("w4w")?`<button class="w4w-rect ${mastered?"done":""}" id="lvWord"${inPool&&w4wTestLocked(vkey)?" disabled":""}>
+      ${feat("w4w")?`${libUsed("verses")?"":`<span class="slockwrap" style="display:block">`}<button class="w4w-rect ${mastered?"done":""}" id="lvWord"${inPool&&w4wTestLocked(vkey)?" disabled":""}>
         <span class="w4w-rect-lbl">${inPool?(w4wTestLocked(vkey)?"😴 Resting until tomorrow":"🗣️ Test Word for Word"):"📖 Learn Word for Word"}</span>
         <span class="w4w-rect-count">${inPool?(w4wTestLocked(vkey)?fmtWhen(w4wTestNextAt(vkey)):`${heartTrailStep(vkey)}/${SR_TRAIL.length} trail`):`${cnt}/${W4W_PRACTICE_FOR_POOL}${mastered?" ✓":""}`}</span>
-      </button>
+      </button>${libUsed("verses")?"":`${foilHTML("Practice Verses to Unlock","sl-lvw4w")}</span>`}
  ${inPool?"":`<p class="hint" style="text-align:center;margin:8px 0 0">${mastered?`Ready when you are, move it to <b class="gold">Known by heart</b> below.`:`Recite it word for word ${W4W_PRACTICE_FOR_POOL}× and it is ready for <b class="gold">Known by heart</b>, or say so below any time.`}</p>`}`:""}
       <div class="lv-sr">
         <div class="lv-sr-lbl">Spaced repetition</div>
@@ -10017,7 +9995,9 @@ function renderLearnedVerse(b,c,v,ret){
     </div>`;
   el("lvClose").onclick=()=>ret?ret():renderVerse();
   wireVerseNav(V, nav, ret);
-  if(el("lvWord")) el("lvWord").onclick=()=>{ const back=()=>renderLearnedVerse(b,c,v,ret);
+  { const f=document.querySelector(".sl-lvw4w"); if(f) f.onclick=()=>toast("Finish a round of Practice Verses and this opens"); }
+  if(el("lvWord")) el("lvWord").onclick=()=>{ if(!libUsed("verses")){ toast("Finish a round of Practice Verses and this opens"); return; }
+    const back=()=>renderLearnedVerse(b,c,v,ret);
     inPool ? startW4WTest(b,c,v,back) : startWordForWord(b,c,v,back); };
   el("lvStage").onclick=()=>openStagePicker(b,c,v,vkey, ()=>renderLearnedVerse(b,c,v,ret));
   el("lvForgot").onclick=()=>confirmForgetVerse(b,c,v, ()=>renderLearnedVerse(b,c,v,ret), ret);
@@ -10705,8 +10685,11 @@ function renderAcctBox(){
       try{ await Auth.push(); toast("This account is empty now, everywhere."); }
       catch(e){ toast("Cleared here, but the server could not be reached. It will upload next time."); }
       m.style.display="none"; closeProfile();
-      bustCaches(); recomputeLevel(); updateMetrics(); updateTabLocks(); syncTabOrder(false);
-      show("learn"); renderPath();
+      bustCaches(); recomputeLevel(); updateMetrics();
+      // An emptied account is a fresh start, so it ends where a fresh start begins: signed out, on
+      // the email screen, with this sheet and everything else raised on the way closed behind it.
+      try{ await Auth.signOut(); }
+      catch(e){ updateTabLocks(); syncTabOrder(false); show("learn"); renderPath(); }
     };
   };
   if(el("goProBtn")) el("goProBtn").onclick=()=>{ closeProfile(); openPaywall(); };
@@ -12456,7 +12439,7 @@ const OnboardWalk = (()=>{
     Prog.extraKnown=[];
     // The Library ladder starts empty too, and is marked backfilled so the upgrade path — which is
     // for real accounts, not this one — does not quietly hand the first present over before we begin.
-    Prog.libUsed={}; Prog.libWon=[]; Prog.libBackfilled=1;
+    Prog.libUsed={}; Prog.libBackfilled=1;
     Prog.bestStreak=0; Prog.onboarded=true;
   }
 
@@ -12468,51 +12451,46 @@ const OnboardWalk = (()=>{
       const k=refKey(19,119,i); if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); } } };
   const upTo = (tickets, opts)=>{ const o=opts||{};
     baseSeed();
-    Prog.doneSkills.push(known(40));                       // Matthew, so the Foundation is behind them
     Prog.scratchWon=tickets.slice();
     if(o.verses) versesTo(o.verses);
     if(o.palaces) Prog.palaces=o.palaces;
     if(o.streak) Prog.bestStreak=o.streak;
     if(o.films) o.films.forEach(markVideoSeen);
-    // Which Library presents have been handed over, and which tools count as used. Everything the
-    // step needs is here; the one thing being looked at is deliberately left out.
-    if(o.won) Prog.libWon=o.won.slice();
+    // Which Library tools count as already used. Everything the step needs is here; the one thing
+    // being looked at is deliberately left out.
     if(o.used) o.used.forEach(k=>{ Prog.libUsed[k]=1; });
+    if(o.book) Prog.doneSkills.push("book:"+o.book);
     saveProg(); bustCaches(); updateTabLocks(); syncTabOrder(false); };
   const ALL_TOOLS=["learn","numbers","videos","mem","verses","w4w"];
 
   const STEPS=[
     { do:"Finish the Matthew lesson",
-      say:"You already know books 1 to 5. Open Learn and finish Matthew. That completes the Foundation and wins the Library ticket.",
+      say:"You already know books 1 to 5. Open Learn and finish Matthew. A book lesson ends by offering you a verse from that book \u2014 that offer is the way into the Library.",
       seed(){ baseSeed(); saveProg(); bustCaches(); updateTabLocks(); syncTabOrder(false); show("learn"); },
+      done(){ return knownNum(40); } },
+
+    { do:"Build the verse Matthew offered you",
+      say:"Here are the verses that book puts in reach. Pick one and memorise it \u2014 the first verse is what wins the Library, and the room opens with everything in it.",
+      seed(){ baseSeed(); Prog.doneSkills.push(known(40)); saveProg(); bustCaches();
+        updateTabLocks(); syncTabOrder(false);
+        show("learn"); renderPath(true); openSuggestedForBook(40); },
       done(){ return tabWon("verse"); } },
 
-    { do:"Memorise your first verse",
-      say:"The Library opens with three tiles on it. Memorise any one verse: that earns your first Library present. Close the badge and the goal flash and the ticket lets itself in on the Library.",
-      seed(){ upTo(["verse"]); show("verse"); renderVerse(); },
-      done(){ return libWon("pair"); } },
-
     { do:"Finish a round of Practice Verses",
-      say:"My Verses and Practice Verses arrived together. Open Practice Verses and answer one \u2014 that earns the last present the Library has to give, and the Bible behind it.",
-      seed(){ upTo(["verse"], {verses:3, won:["pair"], used:["learn","mem"]});
-        show("verse"); renderVerse(); },
-      done(){ return libWon("w4w"); } },
-
-    { do:"Scratch the ticket that same round won",
-      say:"The round of practice wins two things: the Library present you just took, and the Bible. Its golden ticket is in the bar below, waiting behind the one you closed. Scratch it \u2014 claiming it opens the book your verse came from.",
-      seed(){ upTo(["verse"], {verses:3, won:["pair","w4w"], used:ALL_TOOLS});
+      say:"The Library is open. Five tiles work; two are under golden stickers that say what opens them. Finish one round of Practice Verses \u2014 that lifts the Word for Word sticker and wins the Bible.",
+      seed(){ upTo(["verse"], {verses:3, used:["learn","mem","videos","numbers"], book:40});
         show("verse"); renderVerse(); },
       done(){ return tabWon("journey"); } },
 
     { do:"Memorise your fifth verse",
       say:"Four verses are in and the answer streak is already there. One more wins the Memory Palaces ticket. On the save screen the palace and room pickers are under a golden foil, because there is no palace yet.",
-      seed(){ upTo(["verse","journey"], {verses:4, streak:5, won:["pair","w4w"], used:ALL_TOOLS});
+      seed(){ upTo(["verse","journey"], {verses:4, streak:5, used:ALL_TOOLS, book:40});
         show("verse"); renderVerse(); },
       done(){ return tabWon("palace"); } },
 
     { do:"Build your first palace",
-      say:"Open Palaces and build one. Finishing it uncovers the palace and room pickers on the verse screen, plays the Spaced Repetition film, then uncovers Spaced Repetition on the Library.",
-      seed(){ upTo(["verse","journey","palace"], {verses:5, streak:5, won:["pair","w4w"], used:ALL_TOOLS});
+      say:"Open Palaces and build one. Finishing it uncovers the palace and room pickers on the verse screen, plays the Spaced Repetition film, then lifts the last sticker in the Library.",
+      seed(){ upTo(["verse","journey","palace"], {verses:5, streak:5, used:ALL_TOOLS, book:40});
         // The pickers are only shown being uncovered if there is a verse open to uncover them on.
         curScene = verseObj(43,3,16);
         show("palace"); renderPalace(); },
@@ -12521,7 +12499,7 @@ const OnboardWalk = (()=>{
     { do:"Memorise your fifteenth verse",
       say:"Fourteen verses and two palaces are in. One more verse wins Bible Stories, the last ticket on the ladder.",
       seed(){ upTo(["verse","journey","palace"], {verses:14, streak:5, films:["sr","palace"],
-        won:["pair","w4w"], used:ALL_TOOLS.concat(["sr"]),
+        used:ALL_TOOLS.concat(["sr"]), book:40,
         palaces:[PS("My Kitchen",["Front door","Sink","Table"]), PS("The Long Walk",["Gate","Bridge","Bench"])]});
         show("verse"); renderVerse(); },
       done(){ return tabWon("stories"); } }

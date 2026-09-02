@@ -24,7 +24,7 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
     closeEveryOverlay();
     Prog.memorized = ['43:3:16', '19:119:11']; Prog.talents = 4242;
     Prog.palaces = [{ place: 'My Real Palace', stations: ['A', 'B'], sr: {} }];
-    Prog.libWon = ['pair', 'w4w']; saveProg();
+    Prog.libUsed = { verses: 1 }; saveProg();
   });
 
   const stages = await page.evaluate(() => {
@@ -38,14 +38,13 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
         n: w.step, of: w.of, doing: w.doing,
         alreadyDone: w.done,      // must be false on arrival, or the stage is skipped past unseen
         tickets: (Prog.scratchWon || []).join(','),
-        presents: (Prog.libWon || []).join(','),
+        foils: [...document.querySelectorAll('#verse .slock .slock-t')].map(x => x.textContent).join(' + '),
         toolsUsed: Object.keys(Prog.libUsed || {}).sort().join(','),
         verses: (Prog.memorized || []).length,
         palaces: (Prog.palaces || []).filter(Boolean).length,
         streak: Prog.bestStreak || 0,
         tiles: document.querySelectorAll('#verse button.vhub').length,
-        nextTicket: (() => { const p = pendingScratchRung(); return p >= 0 ? SCRATCH_LADDER[p].tab : ''; })(),
-        nextPresent: (libPending() || {}).id || ''
+        nextTicket: (() => { const p = pendingScratchRung(); return p >= 0 ? SCRATCH_LADDER[p].tab : ''; })()
       });
       if (!OnboardWalk.skip()) break;
     }
@@ -54,37 +53,39 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
 
   if (stages.err) { console.log('  FAIL could not walk the stages — ' + stages.err); }
   else {
-    say(stages.length === 7, 'the walkthrough has seven stages');
+    say(stages.length === 6, 'the walkthrough has six stages');
     const premature = stages.filter(s => s.alreadyDone).map(s => s.doing);
     say(!premature.length, 'every stage arrives with its one thing still to do'
         + (premature.length ? ' — already finished at: ' + premature.join('; ') : ''));
     stages.forEach(s => {
       console.log('  ·    ' + s.n + '/' + s.of + '  ' + s.doing);
-      console.log('         tickets[' + s.tickets + '] presents[' + s.presents + '] tools[' + s.toolsUsed + ']'
+      console.log('         tickets[' + s.tickets + '] tools[' + s.toolsUsed + '] stickers[' + (s.foils || '—') + ']'
         + ' verses=' + s.verses + ' palaces=' + s.palaces + ' streak=' + s.streak + ' tiles=' + s.tiles
-        + ' nextTicket=' + (s.nextTicket || '—') + ' nextPresent=' + (s.nextPresent || '—'));
+        + ' nextTicket=' + (s.nextTicket || '—'));
     });
 
     const byName = n => stages.find(s => s.doing === n) || {};
-    const first = byName('Memorise your first verse');
-    say(first.tiles === 4, 'at the first verse the Library shows its opening four tiles');
-    say(first.presents === '', '...with no present yet given');
+
+    const lesson = byName('Finish the Matthew lesson');
+    say(lesson.tickets === '', 'the first stage starts with no ticket won');
+    say(lesson.verses === 0, '...and no verses, so the book lesson is the whole of it');
+
+    const build = byName('Build the verse Matthew offered you');
+    say(build.tickets === '', 'the verse stage still has the Library to win');
+    say(build.verses === 0, '...and hands you no verses — building one is the thing to do');
 
     const round = byName('Finish a round of Practice Verses');
-    say(round.presents === 'pair', 'at the practice round My Verses and Practice Verses are already in');
-    say(round.tiles === 6, '...so the Library shows six tiles');
-    say(round.toolsUsed === 'learn,mem', '...and the round itself is the one thing not yet done');
-
-    const ticket = byName('Scratch the ticket that same round won');
-    say(ticket.presents === 'pair,w4w', 'at the Bible stage both presents have been given');
-    say(ticket.tiles === 7, '...the Library is complete at seven tiles');
-    say(ticket.nextTicket === 'journey', '...and the Bible is the ticket waiting to be scratched');
+    say(/verse/.test(round.tickets), 'by the practice round the Library is open');
+    say(round.tiles === 7, '...with every tile drawn');
+    say(round.foils === 'Build a Memory Palace + Practice Verses to Unlock',
+        '...and both stickers still on it');
+    say(!/verses/.test(round.toolsUsed), '...the round itself being the one thing not yet done');
 
     const fifth = byName('Memorise your fifth verse');
     say(fifth.verses === 4, 'at the fifth verse four are in');
     say(fifth.streak === 5, '...and the answer streak is already there');
     say(/journey/.test(fifth.tickets), '...with the Bible already won');
-    say(fifth.nextTicket === '', '...and nothing to scratch until the fifth verse lands');
+    say(fifth.foils === 'Build a Memory Palace', '...and only the palace sticker left');
 
     const palace = byName('Build your first palace');
     say(/palace/.test(palace.tickets), 'at the palace stage the Memory Palaces ticket is won');
@@ -105,7 +106,6 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
   });
   say(back.mem === 2 && back.tal === 4242 && back.pal === 'My Real Palace',
       'ending it hands back your real verses, talents and palaces');
-  say(back.presents === 'pair,w4w', '...and the presents you had already been given');
   say(!back.stash && !back.active, '...with nothing of the walkthrough left behind');
 
   console.log(out.join('\n'));

@@ -9,18 +9,18 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "classic/verse/hub": {
-  "h": "c8e92b24c816dfd8",
-  "len": 1819,
-  "els": 42,
-  "buttons": 4,
-  "svgs": 1,
+  "h": "ef11b81919c8ca4a",
+  "len": 3270,
+  "els": 65,
+  "buttons": 7,
+  "svgs": 3,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 Remaining 🔥 4 day streak 🎁 Memorize you"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 Remaining 🔥 4 day streak Spaced Repetiti"
  },
  "classic/verse/hub-full": {
-  "h": "9cd3be7f99a74c33",
-  "len": 3144,
-  "els": 62,
+  "h": "641b3efde32ce3bd",
+  "len": 3046,
+  "els": 59,
   "buttons": 7,
   "svgs": 3,
   "imgs": 0,
@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "693691d16a4d6fbe",
+  "h": "6ae1f25543468c41",
   "len": 19410,
   "els": 460,
   "buttons": 46,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "d39acb7a277815eb",
-  "len": 140364,
-  "els": 2456,
+  "h": "2f7e23618762ecab",
+  "len": 143539,
+  "els": 2505,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.102.0 September 2, 2026 The Bible, and a walkthrough that walks the new path FIX The Bible is won b"
+  "text": "✕ Version history v1.103.0 September 2, 2026 A verse is the way in NEW Finishing a book lesson offers you a verse from t"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "b0acbec8d534b827",
+  "h": "a270c6de563ef14a",
   "len": 18609,
   "els": 452,
   "buttons": 44,
@@ -531,18 +531,18 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "illumined/verse/hub": {
-  "h": "95b2d42ce600904f",
-  "len": 2161,
-  "els": 45,
-  "buttons": 4,
-  "svgs": 2,
+  "h": "fd6451e542d4350e",
+  "len": 3612,
+  "els": 68,
+  "buttons": 7,
+  "svgs": 4,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak 🎁 Memorize yo"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "illumined/verse/hub-full": {
-  "h": "ff256605285e0f09",
-  "len": 3486,
-  "els": 65,
+  "h": "780d48b5084bdb4f",
+  "len": 3388,
+  "els": 62,
   "buttons": 7,
   "svgs": 4,
   "imgs": 0,
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "9362562871267669",
+  "h": "2e3964a7f779f0e8",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "d39acb7a277815eb",
-  "len": 140364,
-  "els": 2456,
+  "h": "2f7e23618762ecab",
+  "len": 143539,
+  "els": 2505,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.102.0 September 2, 2026 The Bible, and a walkthrough that walks the new path FIX The Bible is won b"
+  "text": "✕ Version history v1.103.0 September 2, 2026 A verse is the way in NEW Finishing a book lesson offers you a verse from t"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "9362562871267669",
+  "h": "2e3964a7f779f0e8",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -1053,18 +1053,18 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "glass/verse/hub": {
-  "h": "95b2d42ce600904f",
-  "len": 2161,
-  "els": 45,
-  "buttons": 4,
-  "svgs": 2,
+  "h": "fd6451e542d4350e",
+  "len": 3612,
+  "els": 68,
+  "buttons": 7,
+  "svgs": 4,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak 🎁 Memorize yo"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "glass/verse/hub-full": {
-  "h": "ff256605285e0f09",
-  "len": 3486,
-  "els": 65,
+  "h": "780d48b5084bdb4f",
+  "len": 3388,
+  "els": 62,
   "buttons": 7,
   "svgs": 4,
   "imgs": 0,
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "f0f720d818ba9c9d",
+  "h": "8418e40ae9f10315",
   "len": 18615,
   "els": 452,
   "buttons": 44,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "d39acb7a277815eb",
-  "len": 140364,
-  "els": 2456,
+  "h": "2f7e23618762ecab",
+  "len": 143539,
+  "els": 2505,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.102.0 September 2, 2026 The Bible, and a walkthrough that walks the new path FIX The Bible is won b"
+  "text": "✕ Version history v1.103.0 September 2, 2026 A verse is the way in NEW Finishing a book lesson offers you a verse from t"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "f0f720d818ba9c9d",
+  "h": "8418e40ae9f10315",
   "len": 18615,
   "els": 452,
   "buttons": 44,
@@ -1575,18 +1575,18 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "quest/verse/hub": {
-  "h": "95b2d42ce600904f",
-  "len": 2161,
-  "els": 45,
-  "buttons": 4,
-  "svgs": 2,
+  "h": "fd6451e542d4350e",
+  "len": 3612,
+  "els": 68,
+  "buttons": 7,
+  "svgs": 4,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak 🎁 Memorize yo"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "quest/verse/hub-full": {
-  "h": "ff256605285e0f09",
-  "len": 3486,
-  "els": 65,
+  "h": "780d48b5084bdb4f",
+  "len": 3388,
+  "els": 62,
   "buttons": 7,
   "svgs": 4,
   "imgs": 0,
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "ce3767b1c76f880c",
+  "h": "e77de88bba1896bb",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "d39acb7a277815eb",
-  "len": 140364,
-  "els": 2456,
+  "h": "2f7e23618762ecab",
+  "len": 143539,
+  "els": 2505,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.102.0 September 2, 2026 The Bible, and a walkthrough that walks the new path FIX The Bible is won b"
+  "text": "✕ Version history v1.103.0 September 2, 2026 A verse is the way in NEW Finishing a book lesson offers you a verse from t"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "ce3767b1c76f880c",
+  "h": "e77de88bba1896bb",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -2097,18 +2097,18 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "buddy/verse/hub": {
-  "h": "95b2d42ce600904f",
-  "len": 2161,
-  "els": 45,
-  "buttons": 4,
-  "svgs": 2,
+  "h": "fd6451e542d4350e",
+  "len": 3612,
+  "els": 68,
+  "buttons": 7,
+  "svgs": 4,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak 🎁 Memorize yo"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "buddy/verse/hub-full": {
-  "h": "ff256605285e0f09",
-  "len": 3486,
-  "els": 65,
+  "h": "780d48b5084bdb4f",
+  "len": 3388,
+  "els": 62,
   "buttons": 7,
   "svgs": 4,
   "imgs": 0,
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "e428b2c5e5f448ab",
+  "h": "08337e5863e81961",
   "len": 18613,
   "els": 452,
   "buttons": 44,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "d39acb7a277815eb",
-  "len": 140364,
-  "els": 2456,
+  "h": "2f7e23618762ecab",
+  "len": 143539,
+  "els": 2505,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.102.0 September 2, 2026 The Bible, and a walkthrough that walks the new path FIX The Bible is won b"
+  "text": "✕ Version history v1.103.0 September 2, 2026 A verse is the way in NEW Finishing a book lesson offers you a verse from t"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "e428b2c5e5f448ab",
+  "h": "08337e5863e81961",
   "len": 18613,
   "els": 452,
   "buttons": 44,

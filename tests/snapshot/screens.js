@@ -13,10 +13,14 @@ module.exports = [
   { name: 'learn/path', sel: '#learn', go: () => { show('learn'); expandedUnits = new Set([0, 1]); renderPath(); } },
 
   // ---- Verses ----
-  // The Library arrives in stages, so both ends of it are worth a picture: what a new reader opens
-  // to, and what it looks like once every present has been handed over.
-  { name: 'verse/hub', sel: '#verse', go: () => { Prog.libWon = []; show('verse'); vView = 'hub'; renderVerse(); } },
-  { name: 'verse/hub-full', sel: '#verse', go: () => { Prog.libWon = ['pair', 'w4w']; show('verse'); vView = 'hub'; renderVerse(); } },
+  // Both ends of the Library are worth a picture: the day it is won, with both stickers on it, and
+  // the same room once a round of practice and a palace have lifted them.
+  { name: 'verse/hub', sel: '#verse', go: () => {
+      Prog.libUsed = {}; Prog.doneSkills = (Prog.doneSkills||[]).filter(s => s !== VIDEOS.sr.skill);
+      show('verse'); vView = 'hub'; renderVerse(); } },
+  { name: 'verse/hub-full', sel: '#verse', go: () => {
+      Prog.libUsed = { verses: 1 }; markVideoSeen('sr');
+      show('verse'); vView = 'hub'; renderVerse(); } },
   { name: 'verse/suggested', sel: '#verse', go: () => { show('verse'); vView = 'sugg'; renderVerse(); } },
   { name: 'verse/topics', sel: '#verse', go: () => { show('verse'); vView = 'topics'; renderVerse(); } },
   { name: 'verse/memorized', sel: '#verse', go: () => { Prog.verseStage = {}; show('verse'); vView = 'mem'; renderVerse(); } },

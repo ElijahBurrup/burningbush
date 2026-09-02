@@ -2397,9 +2397,9 @@ const DAY = 86400000;
                  tickets: (Prog.scratchWon || []).length, stashed: !!Store.getJSON('vv_walk_backup', null) };
 
     // skipping lands on the same seed the tester reaches by playing the step
-    // 1 first verse, 2 the practice round, 3 the ticket that round won, 4 the fifth verse
+    // 1 the verse that book offered, 2 the practice round, 3 the fifth verse
     const stops = [];
-    for (let i = 0; i < 4; i++) { stops.push(OnboardWalk.where().doing); OnboardWalk.skip(); }
+    for (let i = 0; i < 3; i++) { stops.push(OnboardWalk.where().doing); OnboardWalk.skip(); }
     const s2 = { stops, memorized: Prog.memorized.length, library: tabWon('verse'),
                  palace: tabWon('palace'), streak: Prog.bestStreak };
     editVerseScene(1, 1, 1, () => {}, () => {});
@@ -2422,8 +2422,8 @@ const DAY = 86400000;
   is(walkTool.s1.tickets, 0, '...with no ticket won yet');
   ok(walkTool.s1.stashed, '...and your real progress stashed before anything is seeded');
   is(walkTool.s2.stops.join(' | '),
-     'Finish the Matthew lesson | Memorise your first verse | Finish a round of Practice Verses | Scratch the ticket that same round won',
-     'the walkthrough stops at every rung of the Library ladder on the way');
+     'Finish the Matthew lesson | Build the verse Matthew offered you | Finish a round of Practice Verses',
+     'the walkthrough stops at the book lesson, the verse it offers and the practice round');
   is(walkTool.s2.memorized, 4, 'the fifth-verse stage hands you four verses');
   ok(walkTool.s2.library, '...with the Library ticket already won');
   no(walkTool.s2.palace, '...and the palace ticket still to earn');
@@ -2652,8 +2652,6 @@ const DAY = 86400000;
     const shut = () => { const m = document.getElementById('videoModal'); if (m) m.style.display = 'none'; };
     const out = {};
 
-    clear(); show('palace');
-
     clear(); Prog.memorized = []; saveProg();
     openVerseWizard(40, 6, 33, () => { });
     out.verseFirst = /Building Scenes/i.test(open()); shut();
@@ -2662,6 +2660,11 @@ const DAY = 86400000;
     markVideoSeen('verse');
     openVerseWizard(40, 6, 33, () => { });
     out.verseSecond = open() === '';
+
+    // The palace film is queued on a timer when that tab paints, and a film now stands aside for
+    // anything already on screen — so it is queued last, with nothing else up, which is the only
+    // state it would ever reach a reader in anyway.
+    shut(); closeEveryOverlay(); clear(); show('palace');
     return out;
   });
   // The palace film is scheduled on a timer when the tab paints. Waited for rather than slept
@@ -4341,7 +4344,7 @@ const DAY = 86400000;
   // the gates
   const gates = await $(() => {
     const out = {};
-    Prog.libWon = ['pair', 'w4w'];   // this block is about the flag, not the Library's ladder
+    Prog.libUsed = { verses: 1 };   // this block is about the feature flag, not the sticker
     setFeat('w4w', false); saveProg();
     show('verse'); vView = 'hub'; renderVerse();
     out.hubOff = !el('vW4W');
@@ -4514,7 +4517,11 @@ const DAY = 86400000;
   is(look.hours, 4, 'the first look back comes four hours after a verse is saved');
   no(look.hour1.asked, 'an hour after saving, nothing is asked');
   no(look.hour1.tested, '...and the verse is certainly not tested');
-  no(look.hour1.deck, '...nor handed out in free practice');
+  // Free practice is the one thing that does not wait. What the app ASKS for is held back until the
+  // first look back four hours on; what a reader ASKS FOR is theirs straight away — and holding the
+  // deck back left somebody with two fresh verses tapping Practice Verses and getting a "Deck
+  // cleared!" screen whose New Round button rebuilt the same empty deck for ever.
+  ok(look.hour1.deck, '...though free practice will still hand it to you if you ask');
   ok(look.hour5.asked, 'four hours on, it is asked for');
   no(look.hour5.tested, '...but STILL not tested — day one is a review, not a test');
   ok(look.hour5.counted > 0, '...and it counts as work waiting');
@@ -4715,9 +4722,8 @@ const DAY = 86400000;
 
   describe('library', () => { });
   const lib = await $(() => {
-    // The Library arrives in stages now. This block is about the SHAPE of a finished one, so it is
-    // handed over up front; the block below pins the staging itself.
-    Prog.libWon = ['pair', 'w4w'];
+    // Every tile is drawn from the start; a round of practice is seeded so the Word for Word
+    // sticker is off and the shape below is the open Library.
     Prog.libUsed = { learn:1, numbers:1, videos:1, mem:1, verses:1, w4w:1 };
     // This block asserts what is due, so it sets what is due. Earlier blocks leave palaces dated to
     // the epoch, which are due forever, and inheriting those made the assertion depend on run order.
@@ -4743,79 +4749,74 @@ const DAY = 86400000;
   });
   is(lib.count, 7, 'six squares and a wide one');
 
-  describe('the library is handed over one present at a time', () => { });
-  const staged = await $(() => {
-    closeEveryOverlay();                      // an overlay left open by an earlier block hides the hub
+  describe('the library arrives whole, with two stickers on it', () => { });
+  const room = await $(() => {
+    closeEveryOverlay();
     const keep = JSON.parse(JSON.stringify(Prog));
     const labels = () => { show('verse'); vView = 'hub'; renderVerse();
-      return [...document.querySelectorAll('button.vhub')]
-        .map(b => (b.querySelector('span:nth-child(2)') || {}).textContent).filter(Boolean); };
+      return [...document.querySelectorAll('#verse button.vhub')]
+        .map(b => (b.querySelector('span:nth-child(2)') || {}).textContent).filter(Boolean).join(' | '); };
+    const foils = () => { show('verse'); vView = 'hub'; renderVerse();   // read the screen as drawn now
+      return [...document.querySelectorAll('#verse .slock .slock-t')].map(x => x.textContent).join(' | '); };
 
-    // a reader who has only just been given the Library
-    Prog.libWon = []; Prog.libUsed = {}; saveProg(); bustCaches();
-    const opening = labels();
+    // a reader who has just won the Library with their first verse
+    // srUnlocked() reads the film, not the palace count, so the film has to be unseen for the
+    // sticker to be on the button.
+    Prog.libUsed = {}; Prog.palaces = []; Prog.memorized = ['43:3:16'];
+    Prog.doneSkills = (Prog.doneSkills||[]).filter(s => s !== VIDEOS.sr.skill);
+    Prog.videoOrder = (Prog.videoOrder||[]).filter(k => k !== 'sr');
+    saveProg(); bustCaches();
+    const fresh = { labels: labels(), foils: foils() };
 
-    // the first verse earns the next present
-    Prog.libUsed = { learn: 1 }; saveProg();
-    const pendingAfterVerse = (libPending() || {}).id;
-    Prog.libWon = ['pair']; saveProg();
-    const withPair = labels();
+    // the sticker over Word for Word lifts when a round of practice is finished
+    Prog.libUsed = { verses: 1 }; saveProg();
+    const practised = { labels: labels(), foils: foils() };
 
-    // and a round of practice earns the one after
-    Prog.libUsed.verses = 1; saveProg();
-    const pendingAfterPractice = (libPending() || {}).id;
-    Prog.libWon = ['pair', 'w4w']; saveProg();
-    const withAll = labels();
+    // and the one over Spaced Repetition lifts with the first palace
+    Prog.palaces = [{ place: 'P', stations: ['a'], sr: {} }]; markVideoSeen('sr'); saveProg(); bustCaches();
+    const withPalace = { foils: foils() };
 
-    // nothing is ever handed over twice
-    const nothingLeft = libPending();
-
-    // the Bible waits for a round of Practice Verses — the same round that wins the last present
-    const bibleReq = () => SCRATCH_LADDER.find(x => x.tab === 'journey').reqs[0];
-    Prog.libUsed = { learn:1, numbers:1, videos:1, mem:1 };
-    const bibleShort = bibleReq().done();
-    Prog.libUsed.verses = 1;
-    const bibleReady = bibleReq().done();
-    // and it is offered after the Library's own present, not above it: array order is offer order
-    const ladderOrder = SCRATCH_LADDER.map(x => x.tab).join(',');
+    // the Library ticket itself is won by that first verse, and nothing sooner
+    const rung = SCRATCH_LADDER.find(x => x.tab === 'verse');
+    Prog.memorized = []; saveProg();
+    const beforeVerse = rung.gate();
+    Prog.memorized = ['43:3:16']; saveProg();
+    const afterVerse = rung.gate();
 
     Object.assign(Prog, keep); saveProg(); bustCaches();
-    return { opening, pendingAfterVerse, withPair, pendingAfterPractice, withAll,
-             nothingLeft, bibleShort, bibleReady, ladderOrder };
+    return { fresh, practised, withPalace, beforeVerse, afterVerse, reqs: rung.reqs[0].label };
   });
-  is(staged.opening.join(' | '), 'Spaced Repetition | Learn Verses | Video Review | Practice Numbers',
-     'the library opens with the three you can use, and spaced repetition waiting under its foil');
-  is(staged.pendingAfterVerse, 'pair', 'your first verse earns the next present');
-  has(staged.withPair.join(' | '), 'My Verses', '...which is my verses');
-  has(staged.withPair.join(' | '), 'Practice Verses', '...and practice verses, together');
-  is(staged.pendingAfterPractice, 'w4w', 'a round of practice earns the one after');
-  has(staged.withAll.join(' | '), 'Practice Word for Word', '...which is word for word');
-  is(staged.withAll.length, 7, 'and the finished library carries all seven');
-  no(staged.nothingLeft, 'nothing is ever handed over twice');
-  no(staged.bibleShort, 'the bible waits until a round of practice is finished');
-  ok(staged.bibleReady, '...and is earned by that round, the same one that wins the last present');
-  is(staged.ladderOrder, 'verse,journey,palace,stories',
-     '...and sits second on the ladder, since a ticket below one still to be earned is never offered');
+  is(room.fresh.labels,
+     'Spaced Repetition | My Verses | Learn Verses | Video Review | Practice Verses | Practice Books | Practice Word for Word',
+     'the library arrives with every tile on it');
+  is(room.fresh.foils, 'Build a Memory Palace | Practice Verses to Unlock',
+     '...two of them under stickers that say what opens them');
+  is(room.practised.foils, 'Build a Memory Palace',
+     'a round of practice lifts the Word for Word sticker');
+  is(room.practised.labels, room.fresh.labels, '...and the tiles themselves do not move');
+  is(room.withPalace.foils, '', 'the first palace lifts the other one');
+  no(room.beforeVerse, 'the library ticket waits for a verse');
+  ok(room.afterVerse, '...and the first one wins it');
+  is(room.reqs, 'Memorize your first verse', '...which is what the ticket asks for');
 
-  // A present is a nice moment on the Library and an interruption anywhere else. This one bit once:
-  // the guard read vView, which is the hub's SUB-view and stays set to "hub" while a verse is drawn
-  // over the top, so a ticket could open on somebody mid-verse and throw away their place on the page.
-  const notOverAVerse = await $(async () => {
-    closeEveryOverlay();                      // a present is refused while anything else is open
-    const keep = JSON.parse(JSON.stringify(Prog));
-    Prog.libWon = []; Prog.libUsed = { learn: 1 }; Prog.memorized = ['43:3:16','43:3:17'];
-    saveProg();
-    show('verse'); vView = 'hub';                 // deliberately stale, as it is in real use
-    renderLearnedVerse(43, 3, 16, () => { });
-    const overVerse = libMaybeOffer();
-    const opened = !!document.querySelector('#scov.on');
-    vView = 'hub'; renderVerse();                 // and on the Library itself it is welcome
-    const onHub = libMaybeOffer();
+  // The same sticker sits on the verse screen, where Word for Word is reached from.
+  const onVerse = await $(() => {
     closeEveryOverlay();
+    const keep = JSON.parse(JSON.stringify(Prog));
+    Prog.memorized = ['43:3:16']; Prog.libUsed = {}; saveProg(); bustCaches();
+    show('verse'); renderLearnedVerse(43, 3, 16, () => {});
+    const covered = ((document.querySelector('#verse .slock .slock-t') || {}).textContent || '');
+    const blocked = (() => { el('lvWord').click(); return !!el('lvWord'); })();   // still on the verse screen
+    Prog.libUsed = { verses: 1 }; saveProg();
+    renderLearnedVerse(43, 3, 16, () => {});
+    const after = ((document.querySelector('#verse .slock .slock-t') || {}).textContent || '');
     Object.assign(Prog, keep); saveProg(); bustCaches();
-    show('verse'); vView = 'hub'; renderVerse();
-    return { overVerse, opened, onHub };
+    return { covered, blocked, after };
   });
+  is(onVerse.covered, 'Practice Verses to Unlock', 'the verse screen carries the same sticker');
+  ok(onVerse.blocked, '...and the button under it does not go anywhere while it is there');
+  is(onVerse.after, '', '...and it is gone once a round has been practised');
+
   // Same rule for films, which are queued on a timer and so can come due after the reader has moved.
   const filmWaits = await $(() => {
     closeEveryOverlay();
@@ -4841,43 +4842,86 @@ const DAY = 86400000;
   ok(filmWaits.ticketStill, '...and the ticket is left where it was');
   ok(filmWaits.onClear, '...while on a clear screen it plays as before');
 
-  // Finishing a verse leaves a badge and then the goal flash on screen. A present refused behind
-  // those has to come back on its own — closing a modal does not redraw the Library.
-  const comesBack = await $(async () => {
-    closeEveryOverlay();
-    const keep = JSON.parse(JSON.stringify(Prog));
-    Prog.libWon = []; Prog.libUsed = { learn: 1 }; saveProg();
-    libOffered = null;
-    show('verse'); vView = 'hub'; renderVerse();
-    const m = el('badgeModal'); m.style.display = 'flex';         // something is up over the Library
-    const behind = libMaybeOffer();
-    m.style.display = 'none';                                     // the reader closes it
-    await new Promise(r => setTimeout(r, 1400));                  // and nothing redraws the Library
-    const arrived = !!document.querySelector('#scov.on');
-    closeEveryOverlay(); libOffered = null;
-    Object.assign(Prog, keep); saveProg(); bustCaches();
-    return { behind, arrived };
-  });
-  // Upgrading must never take a button away to hand it back as a present.
+  // Upgrading must never put a sticker over a button somebody has been using.
   const upgrade = await $(() => {
     const keep = JSON.parse(JSON.stringify(Prog));
+    const few = migrateProg({ memorized: ['43:3:16', '19:119:11'] });
     const one = migrateProg({ memorized: ['43:3:16'] });
-    const none = migrateProg({ memorized: [] });
-    const typed = migrateProg({ memorized: ['43:3:16'], w4w: { '43:3:16': { count: 3 } } });
     Object.assign(Prog, keep); saveProg(); bustCaches();
-    return { one: (one.libWon||[]).join(','), none: (none.libWon||[]).join(','), typed: (typed.libWon||[]).join(',') };
+    return { few: !!(few.libUsed || {}).verses, one: !!(one.libUsed || {}).verses };
   });
-  is(upgrade.one, 'pair', 'a reader with one verse keeps My Verses and Practice Verses');
-  is(upgrade.none, '', '...while a new account is given the whole ladder to earn');
-  is(upgrade.typed, 'pair,w4w', '...and one who already types verses out keeps Word for Word too');
+  // Emptying an account ends where a new one begins: signed out, on the email screen, with nothing
+  // of the Profile sheet left standing over it.
+  const afterReset = await $(async () => {
+    const keep = JSON.parse(JSON.stringify(Prog));
+    const realOut = Auth.signOut; let calledSignOut = 0;
+    Auth.signOut = async () => { calledSignOut++; };
+    Store.setJSON('vv_acct', { email: 'someone@example.com' });
+    el('themeBtn').click();          // the Profile sheet
+    renderAcctBox();                 // which draws the account block and wires what is in it
+    el('resetAcct').click();
+    const asks = !!el('raIn') && el('raGo').disabled;
+    el('raIn').value = 'someone@example.com'; el('raIn').oninput();
+    const armed = !el('raGo').disabled;
+    await el('raGo').onclick();
+    const gone = getComputedStyle(el('resetAcctModal')).display === 'none';
+    Auth.signOut = realOut;
+    Object.assign(Prog, keep); saveProg(); bustCaches(); closeEveryOverlay();
+    return { asks, armed, gone, calledSignOut };
+  });
+  ok(afterReset.asks, 'resetting an account asks for the email before it will do anything');
+  ok(afterReset.armed, '...and arms only once the address matches');
+  ok(afterReset.gone, '...then closes its own sheet');
+  is(afterReset.calledSignOut, 1, '...and signs out, which is what puts the email screen up');
 
-  no(comesBack.behind, 'a present waits behind a badge or the goal flash');
-  ok(comesBack.arrived, '...and arrives on its own once the screen is clear, without a redraw');
+  ok(upgrade.few, 'a reader with verses behind them keeps Word for Word open');
+  no(upgrade.one, '...while a brand new one still has it to unlock');
 
-  no(notOverAVerse.overVerse, 'a present never opens over a verse being read');
-  no(notOverAVerse.opened, '...and nothing is drawn over it');
-  ok(notOverAVerse.onHub, '...but it is waiting on the Library when they get there');
-  is(lib.labels, 'Spaced Repetition | My Verses | Learn Verses | Video Review | Practice Verses | Practice Numbers | Practice Word for Word', '...in that order');
+  // The practice deck is what Practice Verses draws on, and a verse belongs in it from the moment it
+  // is learned. It used to wait for the first spaced-repetition review four hours later, which left
+  // a new reader with an empty deck and a "Deck cleared!" screen they could not get past.
+  const deckNow = await $(() => {
+    const keep = JSON.parse(JSON.stringify(Prog));
+    Prog.memorized = []; Prog.verseSR = {}; saveProg();
+    ['43:3:16', '19:119:11'].forEach(k => { Prog.memorized.push(k); startVerseSR(k); });
+    saveProg(); bustCaches();
+    const n = deckKeys().length;
+    const reviewed = (Prog.memorized || []).filter(firstReviewDone).length;
+    Object.assign(Prog, keep); saveProg(); bustCaches();
+    return { n, reviewed };
+  });
+  is(deckNow.n, 2, 'a verse is in the practice deck the moment it is learned');
+  is(deckNow.reviewed, 0, '...without waiting on its first spaced repetition review');
+
+  // ...but practising it in that first hour was meeting it, not reviewing it. At the four hour mark
+  // it comes back into the mix rather than waiting for the rest of the deck to clear.
+  const early = await $(() => {
+    const keep = JSON.parse(JSON.stringify(Prog));
+    const k = '43:3:16', HOUR = 3600000;
+    Prog.memorized = [k, '19:119:11'];
+    // learned two hours ago, answered right away: its four hour mark is still an hour off
+    Prog.verseSR = { [k]: { learnedAt: Date.now() - 2*HOUR, step:1, r0:0, rd:true, lc: Date.now() - 2*HOUR },
+                     '19:119:11': { learnedAt: Date.now(), step:1, r0:0 } };
+    saveProg(); bustCaches();
+    const beforeMark = deckKeys().includes(k);
+    // five hours on, the mark has passed and it was cleared before it
+    Prog.verseSR[k].learnedAt = Date.now() - 5*HOUR; Prog.verseSR[k].lc = Date.now() - 5*HOUR; saveProg();
+    const atMark = deckKeys().includes(k);
+    // cleared AFTER the mark, it stays out for the round like anything else
+    Prog.verseSR[k].lc = Date.now(); saveProg();
+    const clearedLate = deckKeys().includes(k);
+    // and once the real first review has happened it plays by the ordinary rules
+    Prog.verseSR[k].lc = Date.now() - 5*HOUR; Prog.verseSR[k].r0 = Date.now(); saveProg();
+    const afterReview = deckKeys().includes(k);
+    Object.assign(Prog, keep); saveProg(); bustCaches();
+    return { beforeMark, atMark, clearedLate, afterReview };
+  });
+  no(early.beforeMark, 'a verse answered in its first hours drops out of the round for now');
+  ok(early.atMark, '...and comes back into the mix at its four hour mark');
+  no(early.clearedLate, '...while one answered after the mark stays out until the deck clears');
+  no(early.afterReview, '...and once its first look back is done it plays by the ordinary rules');
+
+  is(lib.labels, 'Spaced Repetition | My Verses | Learn Verses | Video Review | Practice Verses | Practice Books | Practice Word for Word', '...in that order');
   is(lib.squares, 6, 'six of them are squares');
   is(lib.sameSize, 1, '...and every one measures exactly the same, so none is the odd one out');
   is(lib.wide, 'Practice Word for Word', 'and word for word runs the width underneath');
@@ -6006,7 +6050,7 @@ const DAY = 86400000;
     show('learn');
 
     // the screen a lesson ends on
-    LESSON_DONE = { ok: 8, msg: '', unlocked: '<div class="callout">x</div>', hasNew: true, buildBook: 19 };
+    LESSON_DONE = { ok: 8, msg: '', unlocked: '<div class="callout">x</div>', hasNew: true, canBuild: true, buildBook: 19 };
     const drew = renderLessonDone();
     const card = () => { const btn = el('lBuild') || el('lNextNum');
       return { on: !!el('lPath2'), btn: btn ? btn.id : null, path: !!document.querySelector('#learn .path') }; };
@@ -6050,7 +6094,7 @@ const DAY = 86400000;
   const claimWiring = await $(() => {
     const snapMax = Prog.phaseMax, snapLD = LESSON_DONE, realOpen = Scratch.open;
     Prog.phaseMax = 4;
-    LESSON_DONE = { ok: 8, msg: '', unlocked: '<div class="callout">x</div>', hasNew: true, buildBook: 19 };
+    LESSON_DONE = { ok: 8, msg: '', unlocked: '<div class="callout">x</div>', hasNew: true, canBuild: true, buildBook: 19 };
     const out = {};
     Scratch.open = (rung, opts) => opts.onClaim();          // as if it had been scratched and claimed
 
