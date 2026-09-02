@@ -144,7 +144,7 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "classic/practice/text-fade": {
-  "h": "92a0e93bf304251b",
+  "h": "579bb003600e5a81",
   "len": 824,
   "els": 15,
   "buttons": 4,
@@ -279,8 +279,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "dd91e43c59f76ae0",
-  "len": 19406,
+  "h": "31c5da73751ed93c",
+  "len": 19410,
   "els": 460,
   "buttons": 46,
   "svgs": 0,
@@ -342,13 +342,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "1c46e9163bed1439",
-  "len": 133103,
-  "els": 2349,
+  "h": "884837050b6ee6e0",
+  "len": 135522,
+  "els": 2384,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.99.0 September 1, 2026 Known by heart is walked, not counted FIX Claiming a verse by heart now star"
+  "text": "✕ Version history v1.100.0 September 1, 2026 A hard look at everything NEW The Spaced Repetition film is in. Five minute"
  },
  "classic/modal/church": {
   "h": "20b67dd2aa77d2ea",
@@ -378,8 +378,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "7a621f21de51cf7f",
-  "len": 18605,
+  "h": "60657a69dae24c4b",
+  "len": 18609,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -450,9 +450,9 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "classic/practice/setup": {
-  "h": "8621f3c12e9091c9",
-  "len": 2168,
-  "els": 36,
+  "h": "49ae1e0f1511aa87",
+  "len": 2273,
+  "els": 39,
   "buttons": 7,
   "svgs": 0,
   "imgs": 0,
@@ -657,7 +657,7 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "illumined/practice/text-fade": {
-  "h": "92a0e93bf304251b",
+  "h": "579bb003600e5a81",
   "len": 824,
   "els": 15,
   "buttons": 4,
@@ -792,8 +792,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "578c7a5a84da4d41",
-  "len": 18613,
+  "h": "822acc8f20ef7698",
+  "len": 18617,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -855,13 +855,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "1c46e9163bed1439",
-  "len": 133103,
-  "els": 2349,
+  "h": "884837050b6ee6e0",
+  "len": 135522,
+  "els": 2384,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.99.0 September 1, 2026 Known by heart is walked, not counted FIX Claiming a verse by heart now star"
+  "text": "✕ Version history v1.100.0 September 1, 2026 A hard look at everything NEW The Spaced Repetition film is in. Five minute"
  },
  "illumined/modal/church": {
   "h": "936bc7fbbb4347a7",
@@ -891,8 +891,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "578c7a5a84da4d41",
-  "len": 18613,
+  "h": "822acc8f20ef7698",
+  "len": 18617,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -963,9 +963,9 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "illumined/practice/setup": {
-  "h": "8621f3c12e9091c9",
-  "len": 2168,
-  "els": 36,
+  "h": "49ae1e0f1511aa87",
+  "len": 2273,
+  "els": 39,
   "buttons": 7,
   "svgs": 0,
   "imgs": 0,
@@ -1170,7 +1170,7 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "glass/practice/text-fade": {
-  "h": "92a0e93bf304251b",
+  "h": "579bb003600e5a81",
   "len": 824,
   "els": 15,
   "buttons": 4,
@@ -1305,8 +1305,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "8b313dff843a3467",
-  "len": 18611,
+  "h": "876e2aac66167676",
+  "len": 18615,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -1368,13 +1368,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "1c46e9163bed1439",
-  "len": 133103,
-  "els": 2349,
+  "h": "884837050b6ee6e0",
+  "len": 135522,
+  "els": 2384,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.99.0 September 1, 2026 Known by heart is walked, not counted FIX Claiming a verse by heart now star"
+  "text": "✕ Version history v1.100.0 September 1, 2026 A hard look at everything NEW The Spaced Repetition film is in. Five minute"
  },
  "glass/modal/church": {
   "h": "ef770aae1ab44f16",
@@ -1404,8 +1404,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "8b313dff843a3467",
-  "len": 18611,
+  "h": "876e2aac66167676",
+  "len": 18615,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -1476,9 +1476,9 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "glass/practice/setup": {
-  "h": "8621f3c12e9091c9",
-  "len": 2168,
-  "els": 36,
+  "h": "49ae1e0f1511aa87",
+  "len": 2273,
+  "els": 39,
   "buttons": 7,
   "svgs": 0,
   "imgs": 0,
@@ -1683,7 +1683,7 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "quest/practice/text-fade": {
-  "h": "92a0e93bf304251b",
+  "h": "579bb003600e5a81",
   "len": 824,
   "els": 15,
   "buttons": 4,
@@ -1818,8 +1818,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "4586df245172bb86",
-  "len": 18613,
+  "h": "3ae3909d9c3f0422",
+  "len": 18617,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -1881,13 +1881,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "1c46e9163bed1439",
-  "len": 133103,
-  "els": 2349,
+  "h": "884837050b6ee6e0",
+  "len": 135522,
+  "els": 2384,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.99.0 September 1, 2026 Known by heart is walked, not counted FIX Claiming a verse by heart now star"
+  "text": "✕ Version history v1.100.0 September 1, 2026 A hard look at everything NEW The Spaced Repetition film is in. Five minute"
  },
  "quest/modal/church": {
   "h": "78e0c5688274e42c",
@@ -1917,8 +1917,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "4586df245172bb86",
-  "len": 18613,
+  "h": "3ae3909d9c3f0422",
+  "len": 18617,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -1989,9 +1989,9 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "quest/practice/setup": {
-  "h": "8621f3c12e9091c9",
-  "len": 2168,
-  "els": 36,
+  "h": "49ae1e0f1511aa87",
+  "len": 2273,
+  "els": 39,
   "buttons": 7,
   "svgs": 0,
   "imgs": 0,
@@ -2196,7 +2196,7 @@
   "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
  },
  "buddy/practice/text-fade": {
-  "h": "92a0e93bf304251b",
+  "h": "579bb003600e5a81",
   "len": 824,
   "els": 15,
   "buttons": 4,
@@ -2331,8 +2331,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "0814c291d2d21c95",
-  "len": 18609,
+  "h": "a196f6dd8f1e76c9",
+  "len": 18613,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -2394,13 +2394,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "1c46e9163bed1439",
-  "len": 133103,
-  "els": 2349,
+  "h": "884837050b6ee6e0",
+  "len": 135522,
+  "els": 2384,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.99.0 September 1, 2026 Known by heart is walked, not counted FIX Claiming a verse by heart now star"
+  "text": "✕ Version history v1.100.0 September 1, 2026 A hard look at everything NEW The Spaced Repetition film is in. Five minute"
  },
  "buddy/modal/church": {
   "h": "365b173a96d2fee3",
@@ -2430,8 +2430,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "0814c291d2d21c95",
-  "len": 18609,
+  "h": "a196f6dd8f1e76c9",
+  "len": 18613,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -2502,9 +2502,9 @@
   "text": "💛 Do you know it by heart? You are claiming Psalms 23:1 without practising it here first. From now on it is the strict "
  },
  "buddy/practice/setup": {
-  "h": "8621f3c12e9091c9",
-  "len": 2168,
-  "els": 36,
+  "h": "49ae1e0f1511aa87",
+  "len": 2273,
+  "els": 39,
   "buttons": 7,
   "svgs": 0,
   "imgs": 0,

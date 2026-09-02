@@ -2156,8 +2156,17 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.99.0";
+const APP_VERSION="1.100.0";
 const CHANGELOG=[
+ {v:"1.100.0", d:"September 1, 2026", t:"A hard look at everything", items:[
+   ["new","<b>The Spaced Repetition film is in.</b> Five minutes on why a verse comes back on day 0, 1, 3, 7, 16 and 30, and what each of those visits is for. It plays the moment you finish your first memory palace, right before Spaced Repetition is uncovered on the Library, and it is in Video Review from then on."],
+   ["fix","<b>Four screens could open on nothing and stop the app dead.</b> A palace you no longer have — removed on another device, or gone from a restored backup — and the screens that open one had nothing to draw. They now take you to your list of palaces instead of a blank page, and a lesson that is not there sends you back to the path."],
+   ["fix","<b>A verse could be left living in a building that no longer exists.</b> It showed a room on one screen and nothing on the next. A verse whose palace has gone simply has no place now, and says so plainly — and a verse you know by heart keeps its own location, which was never a building."],
+   ["fix","<b>A film could open on top of the welcome screen.</b> Opening the palace queues its film a moment later; sign out inside that moment and the film arrived for somebody who no longer had an account. Nothing is offered while the welcome screen is up."],
+   ["fix","<b>Signing out now leaves nothing standing.</b> Whatever was open when you signed out — a film, a sheet, a ticket — is closed behind you."],
+   ["fix","<b>Tapping a word and closing straight after could stop the app.</b> The word picker waits a moment after a right answer so you can see it land. Pressing the &#10005; or Skip inside that moment left it reaching for a screen that had already gone."],
+   ["chg","<b>One button, one name.</b> The same button read <i>Write it now</i> on one screen and <i>Write it Now</i> on the next. It and its neighbours follow the same rule now."]
+ ]},
  {v:"1.99.0", d:"September 1, 2026", t:"Known by heart is walked, not counted", items:[
    ["chg","<b>Claiming a verse by heart now starts its review trail instead of a run of five tests.</b> Today, then a day, three days, a week, a fortnight, a month — walk that and the verse is sealed and its place in the palace goes back. Five clean runs in an afternoon never meant the same thing as remembering it a month later, and the trail is what actually proves it."],
    ["new","<b>The screen counts the trail now</b> rather than a streak, so you can see how far along a verse is and what is left of it."],
@@ -4202,6 +4211,12 @@ function migrateProg(p){
   if(typeof p.fiveVerseHintShown!=="boolean") p.fiveVerseHintShown=false; // one time "a 5-streak unlocks your palace" nudge
   p.msSeen=obj(p.msSeen); // milestones the user has already seen expanded (collapsed thereafter)
   p.verseLoc=obj(p.verseLoc); // where each verse's scene lives: {refKey:{p:palaceIndex, room}}
+  // A slot can outlive its palace. Left alone the verse claims a room in a building that is not
+  // there, which reads as a station on one screen and nothing at all on the next. The claim is
+  // dropped and the verse simply has no location, which is the truth of it.
+  { const pal=Array.isArray(p.palaces)?p.palaces:[];
+    Object.keys(p.verseLoc).forEach(k=>{ const l=p.verseLoc[k];
+      if(l && !l.heart && l.p!=null && !(pal[l.p] && typeof pal[l.p]==="object")) delete p.verseLoc[k]; }); }
   p.w4w=obj(p.w4w); // per-verse word for word practice: {refKey:{count, times:[ts...]}}
   p.tickets=arr(p.tickets); // support/feedback submissions {type,text,ts,...} — synced to the DB with progress
   p.palaces=p.palaces.map(pl=>{ if(pl&&typeof pl==="object"){ if(!pl.learnedAt) pl.learnedAt=Date.now(); if(!pl.step) pl.step=1; } return pl; }); // spaced repetition trail: D0 done at build
@@ -4562,6 +4577,9 @@ const Auth = {
     // has to come BEFORE show(), which stamps onboarded on any profile that reaches a tab
     try{ Onboard.start(); }catch(e){}
     if(!Onboard.active()) show("learn");
+    // LAST, so nothing raised on the way here is left standing over the welcome screen — a film,
+    // a sheet, a ticket, whatever was open when they signed out.
+    closeEveryOverlay();
     if(!pushed) toast("Signed out. Your last few changes may not have reached the server.");
     return Promise.resolve();
   },
@@ -5206,7 +5224,7 @@ const VIDEOS = {
   verse: {src:"/burningbush/videos/scenes.mp4", rev:"20260828", skill:"video:verse", tile:"Building Scenes", title:"Building Scenes", sub:"Turn a verse's book · chapter · verse into three pictures woven into one unforgettable scene.", cta:"verse"},
  palace:{src:"/burningbush/videos/palace.mp4", rev:"20260828", skill:"video:palace", tile:"Memory Palaces", title:"Memory Palaces", sub:"Walk a place you know and leave each item at a spot. Do it once and the order sticks.", cta:"palace"},
   book:  {src:"/burningbush/videos/book.mp4", rev:"20260831", skill:"video:book", tile:"Building the Books", title:"Building the Books", sub:"Three pictures instead of one: the name, the number, and the coded image, woven into one scene."},
-  sr:    {src:"", skill:"video:sr", title:"Spaced Repetition", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long term memory.", cta:"sr"},
+  sr:    {src:"/burningbush/videos/sr.mp4", rev:"20260901", skill:"video:sr", title:"Spaced Repetition", sub:"Review at day 0, 1, 3, 7, 16 & 30 to move a verse into long term memory.", cta:"sr"},
  recall:{src:"", skill:"video:recall", title:"When a Verse Will Not Come", sub:"A blank is not a failure. It is the moment the scene gets stronger. Here is what to do with it."}
 };
 // Each entry carries an empty src until the films are recorded; the screen falls back to the
@@ -5477,6 +5495,10 @@ function openVideoScreen(key, after){
 }
 // Show it only if it has never been shown; otherwise carry straight on.
 function maybeVideo(key, after){
+  // Films are queued on a timer when a tab opens, so one can come due AFTER the ground has moved:
+  // sign out, and the palace film that show("palace") lined up lands on top of the welcome screen.
+  // Nothing is offered while the intro is up — that reader has no history for a film to belong to.
+  { const ov=el("obov"); if(ov && ov.classList.contains("on")){ if(after) after(); return false; } }
   if(videoSeen(key)){ if(after) after(); return false; }
   openVideoScreen(key, after); return true;
 }
@@ -6039,6 +6061,7 @@ function attachLessonSwipe(host){
   }, {passive:true});
 }
 function startLesson(sk){
+  if(!sk || !sk.id) return renderPath();           // nothing to open — go back to the path rather than throw
   if(skillPaywalled(sk)) return openPaywall(sk);   // Pro-only content — offer whole-app subscription or a single-lesson talent unlock
   // The film that explains what a book lesson even is, once, immediately before the first one.
   // NOT maybeVideo: it runs the callback even when the film has already been seen, and a callback
@@ -7118,7 +7141,7 @@ function openPracticeSetup(){
       <div class="mtradiolist one" id="pcRows" style="margin-top:10px"></div>
       <div id="pcPal" style="display:none;margin-top:12px">
         <label class="vplabel vplabel-lg" style="display:block;margin-bottom:5px">Which palace?</label>
-        <button type="button" class="bbchoose big waiting" id="pcPalBtn"></button>
+        <button type="button" class="bbchoose big waiting" id="pcPalBtn">${pkBoxIn("Choose a palace…","","")}</button>
       </div>
       <div class="hint" id="pcCount" style="min-height:18px;margin:8px 0 0"></div>
       <button class="btn" id="pcGo" style="width:100%;margin-top:8px">Begin practice</button>
@@ -7458,11 +7481,27 @@ function setLocHeart(k, auto){
   saveProg();
   return old && old.p!=null ? old : null;
 }
+// A verse cannot live in a building that is gone. Called where palaces change, so the screen is
+// right straight away rather than only after the next load (migrateProg cleans these on load too).
+function pruneStaleLocations(){
+  const vl=Prog.verseLoc||{}; let changed=false;
+  Object.keys(vl).forEach(k=>{ const l=vl[k];
+    if(l && !l.heart && l.p!=null && !palaceAt(l.p)){ delete vl[k]; changed=true; } });
+  if(changed) saveProg();
+  return changed;
+}
+// The palace at a slot, or null. A slot can outlive its palace — a sync that removed one, a stale
+// palHere, a backup restored from a device that had fewer — so every reader goes through here
+// rather than trusting the index.
+function palaceAt(i){ const p=(Prog.palaces||[])[i]; return (p && typeof p==="object") ? p : null; }
+// Does this location still point at somewhere real? A room in a building that is gone is not.
+function locLive(loc){ return !!(loc && (loc.heart || (loc.p!=null && palaceAt(loc.p)))); }
 function stationName(loc){
   if(loc && loc.heart) return "Known by heart";
   if(!loc||loc.p==null) return "";
-  const p=(Prog.palaces||[])[loc.p]; const room=(loc.room||"").trim();
-  return [p&&p.place, room].filter(Boolean).join(" \u00b7 ");
+  const p=palaceAt(loc.p); const room=(loc.room||"").trim();
+  if(!p) return "";                       // the building is gone; there is no station to name
+  return [p.place, room].filter(Boolean).join(" \u00b7 ");
 }
 function vsr(k){ return (Prog.verseSR||{})[k]||null; }
 function deckKeys(){ const now=Date.now();
@@ -9321,7 +9360,6 @@ function myVersesList(){
   }).join("")+`</div>`;
 }
 /* =================== BADGES — biblical milestones across every discipline =================== */
-function palaceCount(){ return (Prog.palaces||[]).filter(Boolean).length; }
 function soundsDone(){ return Prog.doneSkills.includes("snd:0-4") && Prog.doneSkills.includes("snd:5-9"); }
 // Two different achievements, and they were being counted as one. LOCATED is every verse you have
 // built — the old "Verses Memorized", renamed to say what it actually counts. BY HEART is the ones
@@ -9746,7 +9784,6 @@ function openVerseWizard(b,c,v,ret){
   const vo=verseObj(b,c,v); show("verse"); curScene=vo; startSceneWalk(vo);
 }
 // ---- shared verse-navigation top bar (used by both the learned-verse page and the learn wizard) ----
-function chapCount(b){ try{ return window.KJV[b-1].length; }catch(e){ return 0; } }
 function adjVerse(b,c,v,dir){   // previous/next verse in whole-Bible order (crosses chapter & book), or null at the ends
   if(dir>0){ if(v<verseCount(b,c)) return [b,c,v+1]; if(c<chapCount(b)) return [b,c+1,1]; if(b<66) return [b+1,1,1]; return null; }
   if(v>1) return [b,c,v-1]; if(c>1) return [b,c-1,verseCount(b,c-1)]; if(b>1){ const pb=b-1,pc=chapCount(pb); return [pb,pc,verseCount(pb,pc)]; } return null;
@@ -11065,6 +11102,12 @@ function openProfSection(slug){
   el("psClose").onclick=close; el("psDone").onclick=close;
   m.onclick=ev=>{ if(ev.target===m) close(); };
 }
+// Everything that can sit on top of a screen, shut. One place that knows the whole list, so a new
+// kind of overlay is added here and every caller gets it.
+function closeEveryOverlay(){
+  document.querySelectorAll(".modal").forEach(m=>{ m.style.display="none"; });
+  ["scov","simov"].forEach(id=>{ const o=el(id); if(o) o.classList.remove("on"); });
+}
 function closeProfile(){
   // an option chosen inside a section popup navigates somewhere — take BOTH layers with it,
   // or the new screen appears behind the popup that opened it
@@ -11299,8 +11342,8 @@ function renderTextFade(){
  <p class="hint" style="text-align:center">${done?"Now recite the whole verse from memory. Then type it to lock it in.":"Read it aloud. Each step hides more words. <b>Tap any blank to peek</b> for 2 seconds."}</p>
       ${w4wSkipHTML()}
       <div class="btnrow">
-        ${done?"":`<button class="btn ghost" id="tfWrite">Write it now →</button>`}
-        <button class="btn" id="tfNext"${done?' style="width:100%"':""}>${done?"Type it from memory →":"Hide more →"}</button></div>
+        ${done?"":`<button class="btn ghost" id="tfWrite">Write it Now →</button>`}
+        <button class="btn" id="tfNext"${done?' style="width:100%"':""}>${done?"Type It From Memory →":"Hide More →"}</button></div>
     </div>`;
   wireW4WSkip();
   el("tfClose").onclick=()=>backFromTF();
@@ -11408,7 +11451,10 @@ function renderWordPick(){
     if(normWord(btn.dataset.w)===normWord(correct)){
       btn.classList.add("good");
       V.querySelectorAll("[data-w]").forEach(x=>x.disabled=true);
-      setTimeout(()=>{ WP.idx++; WP.opts=null; renderWordPick(); }, 320);
+      // The pause lets the green land before the next word. Closing or skipping inside it sets WP
+      // to null, and this used to wake up and read it anyway — a right answer followed quickly by
+      // the X was a crash.
+      setTimeout(()=>{ if(!WP) return; WP.idx++; WP.opts=null; renderWordPick(); }, 320);
     } else {
       btn.classList.add("bad"); btn.disabled=true; WP.missed++;
       el("wpFb").innerHTML=`<b style="color:var(--miss-ink)">↻ Try again</b>`;
@@ -11727,6 +11773,7 @@ function renderPalaceHere(){
 }
 function renderPalace(){
   palHere=null;
+  pruneStaleLocations();          // a palace removed since last time takes its rooms' claims with it
   const P=el("palace");
   const mine=(Prog.palaces||[]).map((p,i)=>[p,i]).filter(x=>x[0]);
   const due=palacesDueCount();
@@ -11755,9 +11802,12 @@ function renderPalace(){
   P.querySelectorAll("[data-mine]").forEach(c=>c.onclick=()=>renderMyPalace(+c.dataset.mine));
 }
 function renderMyPalace(i){
+  const p=palaceAt(i);
+  // Asked for a palace that is not there: show the list rather than throwing a blank screen.
+  if(!p){ renderPalace(); return; }
   palHere={mine:i};
   const _c=document.querySelector(".content"); if(_c) _c.scrollTop=0;   // open at the top, not mid-list
-  const p=Prog.palaces[i], P=el("palace");
+  const P=el("palace");
   const due=palaceDue(p), done=palaceTrailDone(p), nextMs=palaceNextReviewMs(p);
   const status = due?`<span style="color:#ff8a8a;font-weight:800">● Spaced-repetition review due now</span>`
  : (done?`<span class="gold">✓ Full trail complete. Locked in long term memory</span>`
@@ -11794,7 +11844,7 @@ let PE=null;
 function versesAtLoc(slot, room){ const out=[], vl=Prog.verseLoc||{};
   Object.keys(vl).forEach(k=>{ const l=vl[k]; if(l && l.p===slot && (l.room||"")===room && (Prog.memorized||[]).includes(k)) out.push(k); }); return out; }
 function startPalaceEdit(i, scrollRoom, keepDraft){
-  const p=Prog.palaces[i]; if(!p) return;
+  const p=palaceAt(i); if(!p){ renderPalace(); return; }
   // Coming BACK from a verse's scene screen keeps the draft for this same palace. Stepping in to
   // look at a verse was never meant to throw away the station names you were part-way through
   // typing - whether you leave the verse by the red X or the green tick.
@@ -11858,9 +11908,11 @@ function renderPalaceEdit(){
   };
 }
 function renderPalaceWalk(id){
+  const p=PALACES.find(x=>x.id===id);
+  if(!p){ renderPalace(); return; }        // an id nobody has any more
   palHere={ready:id};
   const _c=document.querySelector(".content"); if(_c) _c.scrollTop=0;
-  const p=PALACES.find(x=>x.id===id), P=el("palace");
+  const P=el("palace");
   P.innerHTML=`<button class="btn ghost sm" id="palBack" style="width:auto;margin-bottom:12px">← Palaces</button>
     <div class="card">
       <h2 style="font-size:19px;margin:0">${p.icon} ${p.name}</h2>
@@ -12092,7 +12144,9 @@ const Onboard = (()=>{
       i=0; ov.classList.add("on"); ov.setAttribute("aria-hidden","false"); paint(); },
     preview(){ previewSnap={onboarded:Prog.onboarded,persona:Prog.persona,dailyMin:Prog.dailyMin,bibleFam:Prog.bibleFam,covenant:Prog.covenant,firstWin:Prog.firstWin};
       i=0; ov.classList.add("on"); ov.setAttribute("aria-hidden","false"); paint(); },   // replay the intro without touching real progress
-    active(){ return ov.classList.contains("on"); }
+    // Looked up live rather than through the reference captured at startup: a detached node keeps
+    // its classes, so a captured one goes on reporting "open" forever once anything removes it.
+    active(){ const o=el("obov"); return !!(o && o.classList.contains("on")); }
   };
 })();
 

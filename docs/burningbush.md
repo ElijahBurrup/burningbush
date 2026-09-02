@@ -154,6 +154,26 @@ Author number↔image↔book **relationship content** (scenes, picture lists, nu
 
 ---
 
+## 8a. The QA probes
+
+Four probes sit beside the regression suite in `tests/qa/`. They are NOT part of `tests/run.js`:
+the suite pins what the app does today, which makes it blind to anything that has been wrong all
+along. These ask different questions, and a finding is a candidate bug rather than a diff.
+
+    node tests/qa/sweep.js          controls with no handler, text no reader should see, dead ids
+    node tests/qa/transitions.js    leave every screen every way; where do you land, what changed
+    node tests/qa/hostile.js        abandon a flow, delete a palace holding verses, malformed state
+    node tests/qa/entry-points.js   every front door handed an index or key that no longer exists
+    node tests/qa/house-style.js    one idea one name, one action one label, book title case
+
+Run them after anything structural. Between them they found eight real bugs in one pass, including
+four crashes and a film that opened over the welcome screen for somebody who had just signed out.
+
+**Two rules learned the hard way while writing them.** A probe must reset the screen between
+scenarios or residue from one becomes a "finding" in the next. And a spec that signs out has to put
+the welcome overlay away afterwards — signing out raises it by design, and everything after it then
+runs behind a nominally-open intro.
+
 ## 9. Gotchas worth remembering
 
 - **`knownNumbers()` caches on `doneSkills.length + "_" + extraKnown.length`.** Swapping one entry for another of the same count returns the stale set. Those lists only ever grow in the app, so it is latent — but any code that *replaces* rather than appends must call `bustCaches()`.
@@ -163,6 +183,9 @@ Author number↔image↔book **relationship content** (scenes, picture lists, nu
 - **The static check scans the source for looked-up ids**, so an id built from a variable is invisible to it — write it out literally. It scans comments too: a comment containing the lookup pattern flags itself.
 - **`file://` is not a fair test of this app.** `kjv.js` never loads, so `window.KJV` is undefined and `renderVerse()` throws; `linkifyRefs` silently leaves every reference as plain text, because it only links a reference `kjvText()` can find; and the built copy's absolute `/burningbush/...` paths 404, so every film reports a format error. Serve the repo root over HTTP and open `/burningbush/index.html` — that is the shape the live site has. A palace navigation bug and a video-cache bug both hid from local testing this way.
 - **A HEAD request is not proof the right file is being served.** A re-exported film keeps its filename, so a CDN goes on answering with the previous cut; one edge node returned the new `Content-Length` while the browser still decoded the old video. Download the file and compare checksums. Each film now carries `rev` (the export date) and the player asks for that revision — **re-exporting a film means bumping its `rev`**, or the new cut reaches nobody.
+- **A function defined twice in the shared scope is a silent trap.** JavaScript keeps the last and discards the first, so hardening the copy you happen to open can achieve nothing. `palaceCount` and `chapCount` were both duplicated; a spec now fails if any top-level function is defined twice.
+- **A detached element keeps its classes.** `Onboard.active()` held a reference captured at startup, so once anything removed that node it reported "open" forever — which would have suppressed every film in the app. Read visibility from the live DOM, never from a captured reference.
+- **Films are queued on a timer when a tab opens.** `show("palace")` lines its film up 400ms later, so anything that changes the ground in between — a sign-out especially — has to be survivable. `maybeVideo` now refuses while the welcome screen is up.
 - **`tests/spec/behaviour.js` is checked out with CRLF.** A patch script with plain-newline anchors matches nothing in it. `src/index.html` is the same. Convert anchors before matching, or anchor on a single line.
 - **A spec block that rewrites `Prog` leaks into the blocks after it.** They run in one page, in order, and inherit whatever the last one left. Snapshot `Prog` and put it back, or the failure surfaces somewhere unrelated.
 - **Shell heredocs mangle `${}`, backticks and backslashes.** Write patch scripts with the Write tool and run them with `node`.

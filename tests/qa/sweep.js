@@ -63,7 +63,11 @@ const drive = (page, go) => page.evaluate(fn => {
             return { found: !!root, text: root ? root.innerText : '', dupes, deadButtons };
           }, s.sel);
           if (!r.found) { flag('screens', `${s.name}: ${s.sel} not found`); continue; }
-          BAD_TEXT.forEach(([label, re]) => { if (re.test(r.text)) flag('bad text', `${s.name}: shows "${label}"`); });
+          // The version history QUOTES these words on purpose — a release note describing a NaN bug
+          // is prose, not a template that leaked. Checking it flagged the same line every run, and a
+          // check that always cries wolf is one nobody reads.
+          if (s.name !== 'modal/whats-new')
+            BAD_TEXT.forEach(([label, re]) => { if (re.test(r.text)) flag('bad text', `${s.name}: shows "${label}"`); });
           r.dupes.forEach(id => flag('duplicate id', `${s.name}: #${id} appears more than once`));
           r.deadButtons.forEach(c => flag('unlabelled control', `${s.name}: button with no text, title or icon (${c})`));
         } catch (e) { flag('screens', `${s.name}: ${String(e.message).split('\n')[0]}`); }
@@ -413,12 +417,22 @@ const drive = (page, go) => page.evaluate(fn => {
       Prog.memorized = Prog.memorized.filter(x => x !== k);
       Prog.palaces = [{ place: 'K', stations: ['Door'], learnedAt: 1, step: 1 }];
       Prog.talents = 0; Prog.customScene = {}; Prog.verseLoc = {}; saveProg();
+      // The Building the Scene film plays the first time a verse is opened, and it opens INSTEAD of
+      // the wizard. Left unseen, this whole section quietly tested nothing at all.
+      markVideoSeen('verse');
       openVerseWizard(40, 6, 33, () => { });
       if (el('wToScene')) el('wToScene').click();
       if (el('wScene')) {
         el('wScene').value = 'a scene';
-        const pt = document.querySelector('#wPalaceGrid [data-p="0"]'); if (pt) pt.click();
-        const rt = document.querySelector('#wRoomGrid [data-room="Door"]'); if (rt) rt.click();
+        // The palace and room are chosen through popups now, not an inline grid. The old selectors
+        // matched nothing, so Done was pressed with no room picked, the app rightly refused, and
+        // this whole double-press check passed by never getting as far as saving anything.
+        el('wPalaceBtn').click();
+        const pt = [...document.querySelectorAll('#pickSheet button')].find(x => /K/.test(x.textContent));
+        if (pt) pt.click();
+        el('wRoomBtn').click();
+        const rt = [...document.querySelectorAll('#pickSheet button')].find(x => /Door/.test(x.textContent));
+        if (rt) rt.click();
         const t0 = Prog.talents;
         el('wDoneTop').click();
         const after1 = { n: Prog.memorized.filter(x => x === k).length, t: Prog.talents };

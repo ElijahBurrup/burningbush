@@ -1949,7 +1949,7 @@ const DAY = 86400000;
       player: !!m.querySelector('video'),
     };
   });
-  is(popup.recorded, 'intro,major,major2,verse,palace,book', 'six films are recorded; only Spaced Repetition and the recall film are still waiting');
+  is(popup.recorded, 'intro,major,major2,verse,palace,book,sr', 'seven films are recorded; only the recall film is still waiting');
   is(popup.src, 'videos/scenes.mp4', 'Building Scenes points at its own file');
   ok(popup.player, '...so its screen draws a player, not the placeholder card');
   ok(popup.closeIsFirst, 'the close button is the first thing in the bar, so it sits top left');
@@ -2004,7 +2004,7 @@ const DAY = 86400000;
   ok(film.stillListed, '…and it stays in Video Review afterwards');
 
   const placeholders = await $(() => Object.keys(VIDEOS).filter(k => !VIDEOS[k].src));
-  is(placeholders.join(','), 'sr,recall', 'the other two films are still waiting on recordings');
+  is(placeholders.join(','), 'recall', 'the recall film is the last one still waiting on a recording');
 
   describe('tapping the verse reference in a palace also comes back to that palace', () => { });
   const refBack = await $(async () => {
@@ -2162,6 +2162,115 @@ const DAY = 86400000;
   has(nearMiss.typo.marks, '<mark>shepherd</mark>', 'the word that mattered is marked in the result');
   no(/<mark>(the|shall|not)<\/mark>/i.test(nearMiss.typo.marks), '...and the common words are not');
 
+  describe('leaving a flow during its pause does not crash it', () => { });
+  const midPause = await $(async () => {
+    // The word picker waits 320ms after a right answer so the green can land. Closing or skipping
+    // inside that pause clears WP, and the timer used to wake up and read it anyway.
+    const out = {};
+    Prog.memorized = ['43:3:16']; saveProg();
+    const hit = () => { const c = WP.words[WP.idx];
+      return [...document.querySelectorAll('[data-w]')].find(x => normWord(x.dataset.w) === normWord(c)); };
+    let threw = null;
+    try {
+      startWordPick(43, 3, 16, () => {});
+      await new Promise(r => setTimeout(r, 60));
+      out.opened = !!WP;
+      if (WP) { const b = hit(); if (b) { b.click(); el('wpClose').click(); } }
+      await new Promise(r => setTimeout(r, 420));
+      out.closedClean = WP === null;
+
+      startWordPick(43, 3, 16, () => {});
+      await new Promise(r => setTimeout(r, 60));
+      if (WP) { const b = hit(); if (b) { b.click(); el('wpSkip').click(); } }
+      await new Promise(r => setTimeout(r, 420));
+      out.skippedClean = true;
+    } catch (e) { threw = String(e.message).slice(0, 90); }
+    out.threw = threw;
+    return out;
+  });
+  ok(midPause.opened, 'the word picker opens on a verse with words to pick');
+  is(midPause.threw, null, 'answering and then leaving inside the pause throws nothing');
+  ok(midPause.closedClean, '...the X closes it cleanly');
+  ok(midPause.skippedClean, '...and so does Skip');
+
+  describe('nothing a reader can reach throws a blank screen', () => { });
+  const hardened = await $(() => {
+    const keep = JSON.parse(JSON.stringify(Prog));
+    const out = { threw: [] };
+    const attempt = (label, fn) => { try { fn(); } catch (e) { out.threw.push(label); } };
+
+    // a palace that is not there any more: a stale reference, a sync that removed one, a restored
+    // backup from a device that had fewer
+    Prog.palaces = []; Prog.verseLoc = { '1:1:1': { p: 0, room: 'Door' } }; saveProg(); bustCaches();
+    attempt('renderMyPalace(0)',       () => renderMyPalace(0));
+    attempt('renderMyPalace(99)',      () => renderMyPalace(99));
+    attempt('renderPalaceWalk(bad)',   () => renderPalaceWalk('no-such-palace'));
+    attempt('startPalaceEdit(0)',      () => startPalaceEdit(0));
+    attempt('startLesson(undefined)',  () => startLesson(undefined));
+    attempt('startLesson({})',         () => startLesson({}));
+    out.landedOnList = !!el('palAdd');           // the list, not a blank screen
+
+    // a location pointing at a building that is gone names no station, and is pruned
+    out.nameOfGone = stationName({ p: 0, room: 'Door' });
+    renderPalace();
+    out.pruned = !(Prog.verseLoc || {})['1:1:1'];
+    // one the reader chose themselves is not a building at all, and survives
+    Prog.verseLoc = { '2:2:2': { heart: true } }; saveProg();
+    renderPalace();
+    out.heartKept = !!(Prog.verseLoc || {})['2:2:2'];
+
+    Prog = keep; saveProg(); bustCaches();
+    return out;
+  });
+  is(hardened.threw.join(', '), '', 'a palace or lesson that is not there opens nothing rather than throwing');
+  ok(hardened.landedOnList, '...it falls back to the list of palaces');
+  is(hardened.nameOfGone, '', 'a room in a building that is gone names no station');
+  ok(hardened.pruned, '...and the claim on it is dropped');
+  ok(hardened.heartKept, '...while a verse known by heart keeps its location, which is not a building');
+
+  describe('a film never lands on the welcome screen', () => { });
+  const filmGuard = await $(async () => {
+    const ov = el('obov');
+    const out = {};
+    Prog.doneSkills = (Prog.doneSkills || []).filter(x => x !== 'video:palace'); saveProg();
+    const shut = () => { const m = el('videoModal'); if (m) m.style.display = 'none'; };
+    shut();
+
+    // the intro is up: a film queued before it must stand aside
+    ov.classList.add('on');
+    maybeVideo('palace');
+    out.whileIntro = !!(el('videoModal') && el('videoModal').style.display === 'flex');
+    out.stillUnseen = !videoSeen('palace');
+
+    // and once it is away, the film is offered as normal
+    ov.classList.remove('on');
+    maybeVideo('palace');
+    out.afterIntro = !!(el('videoModal') && el('videoModal').style.display === 'flex');
+    shut();
+
+    // Onboard.active() reads the DOM rather than a reference captured at startup
+    out.activeMatchesDom = Onboard.active() === ov.classList.contains('on');
+    return out;
+  });
+  no(filmGuard.whileIntro, 'a film queued before sign out does not open over the welcome screen');
+  ok(filmGuard.stillUnseen, '...and is not marked watched by being suppressed');
+  ok(filmGuard.afterIntro, '...it plays as normal once the welcome screen is away');
+  ok(filmGuard.activeMatchesDom, 'whether the intro is open is read from the screen, not remembered');
+
+  describe('one name, one definition', () => { });
+  const dupes = await $(() => {
+    // A function defined twice in one scope keeps the last and silently discards the first, so
+    // hardening the one somebody happens to find can achieve nothing at all.
+    const src = document.documentElement.innerHTML;
+    const names = {};
+    // TOP-LEVEL only: a helper nested inside one module's closure may share a name with another
+    // module's helper quite safely. What cannot stand is two definitions in the one shared scope.
+    const re = /(?:^|\n)function\s+([A-Za-z_$][\w$]*)\s*\(/g;
+    let m; while ((m = re.exec(src))) names[m[1]] = (names[m[1]] || 0) + 1;
+    return Object.keys(names).filter(n => names[n] > 1).sort();
+  });
+  is(dupes.join(', '), '', 'no function is defined twice in the one scope the whole app shares');
+
   describe('progress belongs to the account that made it', () => { });
   const own = await $(async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -2202,6 +2311,9 @@ const DAY = 86400000;
 
     await Auth.signOut();
     Auth.pull = realPull; Auth.push = realPush;
+    // signing out raises the welcome overlay by design; put it away so the blocks after this one
+    // are not running behind an intro that is nominally open
+    { const ov = el('obov'); if (ov) { ov.classList.remove('on'); ov.setAttribute('aria-hidden', 'true'); } }
     Prog = surrounding; saveProg(); bustCaches(); updateTabLocks();
     return out;
   });
@@ -2546,7 +2658,9 @@ const DAY = 86400000;
     out.verseSecond = open() === '';
     return out;
   });
-  await page.waitForTimeout(600);        // the palace film opens just after the tab paints
+  // The palace film is scheduled on a timer when the tab paints. Waited for rather than slept
+  // through: a fixed pause races the timer and fails on a slow machine for no reason.
+  await page.waitForFunction(() => { const m = document.getElementById("videoModal"); return m && m.style.display === "flex"; }, null, { timeout: 4000 }).catch(() => {});
   const palaceFilm = await $(() => {
     const m = document.getElementById('videoModal');
     const shown = m && m.style.display === 'flex' ? m.innerText : '';

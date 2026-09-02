@@ -122,7 +122,10 @@ async function open(browser, o = {}) {
     // so the seeded account behaves like the established user it is meant to represent
     Prog.featuresInit = false; grandfatherFeatures(); applyFeatureVisibility();
     bustCaches(); saveProg(); updateMetrics(); updateTabLocks();
-    const ob = document.getElementById('obov'); if (ob) ob.remove();
+    // Hidden, not removed. Deleting it made Onboard.active() report "open" forever — it holds a
+    // reference captured at startup, and a detached node keeps its classes — which quietly turned
+    // two account specs green for the wrong reason.
+    const ob = document.getElementById('obov'); if (ob) { ob.classList.remove('on'); ob.setAttribute('aria-hidden','true'); }
     document.querySelectorAll('.modal').forEach(m => (m.style.display = 'none'));
     ['taxov', 'buildov', 'scov', 'simov'].forEach(id => {
       const e = document.getElementById(id); if (e) e.classList.remove('on', 'march');
