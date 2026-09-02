@@ -213,6 +213,20 @@ a sound changes. Four calls: `Sfx.right()`, `Sfx.wrong()`, `Sfx.coins(n)`, `Sfx.
 - **Nothing plays before a gesture.** `Sfx.unlock()` is called from a one-shot `pointerdown` /
   `touchstart` / `keydown` listener that removes itself. Browsers require this; so do manners.
 - **One switch**, `feat("sound")` in the Feature Store. There is deliberately no second mute.
+- **Register carries meaning, waveform carries material.** Low (C2–B3) is structure and stone, mid is
+  work, high is reward; sine is reward, triangle is work, square is mechanism, and **sawtooth is Rome
+  and nothing else**. Everything is C major pentatonic, which is why thirty sounds still read as one
+  instrument. Scheme designed by Fable 5 against the whole app.
+- **Escalation, never repetition** — this is the whole anti-annoyance strategy. The typing tick climbs
+  the pentatonic ladder word by word (`tick(i)`, vol 0.05, a fifth of an answer); the goal ladder
+  climbs node by node; the day-streak top note rises a step per week; `wrong(run)` drops to 0.08 on
+  the second miss and is **silent** from the third; and `coins()` counts its own plays and softens to
+  0.6 with two clinks after four in a minute.
+- **What is deliberately silent**: navigation, back buttons, closes, sheets, keystrokes, scratching
+  strokes (only crossing the reveal line speaks), and every loss or retreat — forgetting a verse,
+  snoozing, demoting. Somebody admitting they have forgotten Scripture must never be scolded by the UI.
+- **Animation-synchronous sounds bypass `cue()`** — `fly`, `land`, `reveal`, `knock`. Everything else
+  queues, or the first big payday is mud.
 - **No randomness.** Coin pitches are spread by an index-derived value, not `Math.random()`, so the
   suite stays deterministic.
 - **Hooks**: `show()` for the screen motif (only on an actual change of view), `earnTalents()` for the
@@ -223,6 +237,25 @@ a sound changes. Four calls: `Sfx.right()`, `Sfx.wrong()`, `Sfx.coins(n)`, `Sfx.
   about a sound is observable. Pre-gesture silence cannot be asserted in `behaviour.js` — by then the
   suite has clicked thousands of times and one of those clicks was the wake gesture — so it lives in
   `tests/qa/sound.js`, which opens a page and touches nothing.
+
+## 8c. Learning out of order
+
+A reader saving a verse in a book they have not learned is offered it there and then. That used to
+run a **separate three-step mini lesson** (`startAdhocLearn` → `renderAdhoc`) which asked only
+image↔number questions, never consulted the paywall, and wrote `Prog.extraKnown` instead of
+`doneSkills` — so the Learn path went on offering a lesson the reader had already done, free, and
+less thoroughly than everyone else got it.
+
+`startAdhocLearn` now looks the item up with `lessonFor(n, isBook)` and calls `startLesson(sk, ret)`.
+Everything guarding the real lesson guards this too: the paywall, the film, the full question set,
+and the review items mixed in. `renderAdhoc` survives only for numbers above the last unit, which no
+lesson teaches. The optional second argument to `startLesson` is the way back to the half-saved
+verse — it is an argument rather than a global precisely so that every ordinary lesson start clears
+it, and a stale "Back to Your Verse" cannot appear on a lesson opened later from the path.
+
+**Distractors** (`distract`) come from `knownNumbers()` and from a band that grows by *distance*
+until it has enough — so the wrong answers for 46 are 44–48, not 12 and 58. Under four books
+learned, the pool is the Foundation (`PHASE1_BOOKS`). `otherPictures` follows the same rule.
 
 ## 9. Gotchas worth remembering
 

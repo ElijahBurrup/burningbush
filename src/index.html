@@ -2159,8 +2159,15 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.105.0";
+const APP_VERSION="1.106.0";
 const CHANGELOG=[
+ {v:"1.106.0", d:"September 2, 2026", t:"A voice for everything, and the real lesson every time", items:[
+   ["new","<b>Sound everywhere it means something.</b> Every question answered, every talent earned, every counter climbing, the goal ladder, the day streak, badges, tickets, palaces, the church going up. All of it made by the app as it plays \u2014 nothing to download, and it works with no signal."],
+   ["chg","<b>It gets out of the way rather than repeating itself.</b> Typing a verse ticks quietly up the scale instead of ringing the full answer chime on every word; the day-streak note rises with the weeks; and the coin jar gets <i>quieter</i> the more often it fills, so a long review session settles down instead of shouting. A wrong answer says less the second time and nothing the third \u2014 you already know."],
+   ["chg","<b>Learning a book out of order now opens the real lesson.</b> It used to run a small lesson of its own: two picture questions, no book-name questions, no paywall, and it was recorded somewhere else \u2014 so the path went on offering a lesson you had already done. It is the same lesson as everyone else\u2019s now, with the film, the full set of questions, and questions about books you already know mixed in."],
+   ["fix","<b>A book outside the Foundation asks to be bought first</b>, wherever you start it from. Coming at it through a verse used to hand it over free."],
+   ["chg","<b>Wrong answers now come from what you have actually learned, and from close by.</b> They used to be drawn from the whole Bible, so the right answer often stood out simply by being the only familiar thing on the screen. Asked for 1 Corinthians you will see 45, 47 and 48 \u2014 all books you know. Early on, while there is nothing else to draw from, they stay inside the Torah and Matthew."]
+ ]},
  {v:"1.105.0", d:"September 2, 2026", t:"Sound, and a book lesson that waits for both pictures", items:[
    ["new","<b>The app has a voice now.</b> A bright rising note when an answer is right, a soft step down when it is not \u2014 not a buzzer, because learning Scripture badly at first is the whole point and a harsh noise teaches people to stop trying."],
    ["new","<b>Talents clink into the jar.</b> A few coins at slightly different pitches, then the low settle of the jar taking them. The more talents, the more clinks, up to a handful."],
@@ -4857,8 +4864,10 @@ function updateMetrics(){
   if(el("mMem")) el("mMem").textContent=mem;
   // fly an icon up to the counter whenever books unlocked / verses memorized grows — in order (skip the first paint)
   let _seq=0;
-  if(_hudBk!==null && bk>_hudBk){ flyToMetric("bkMetric","📖", bk-_hudBk, 0); _seq=600; }
-  if(_hudMem!==null && mem>_hudMem) flyToMetric("memMetric","★", mem-_hudMem, _seq);
+  // In order, and far enough apart that each sound is finished before the next begins. 600ms was
+  // enough for the animations alone; the cues need a little more room than that.
+  if(_hudBk!==null && bk>_hudBk){ flyToMetric("bkMetric","📖", bk-_hudBk, 0, Sfx.book); _seq=750; }
+  if(_hudMem!==null && mem>_hudMem) flyToMetric("memMetric","★", mem-_hudMem, _seq, Sfx.verse);
   _hudBk=bk; _hudMem=mem;
   const palTab=document.querySelector('.tabbar button[data-tab="palace"]');
   if(palTab) palTab.classList.toggle("hasdue", palacesDueCount()>0);   // red dot when a palace is due
@@ -5838,9 +5847,14 @@ function pairTypesFor(n){
 function otherPictures(kind, n, howMany){
   const mine=(kind==="name"?bookWordOf(n):numRefOf(n)).toLowerCase();
   const seen=new Set([mine]), out=[];
+  // Same rule as the numbers: a picture from a book they have never opened is not a wrong answer.
+  const learnedBooks=new Set([...knownNumbers()].filter(x=>x>=1&&x<=66));
   const take=v=>{ const s=String(v||"").trim(); if(!s) return; const k=s.toLowerCase();
     if(seen.has(k)) return; seen.add(k); out.push(s); };
-  shuffle(range(1,66).filter(x=>x!==n)).forEach(x=>{
+  const near=(a,b)=>Math.abs(a-n)-Math.abs(b-n);
+  const fromLearned=shuffle([...learnedBooks].filter(x=>x!==n)).sort(near);
+  const fromAny=shuffle(range(1,66).filter(x=>x!==n && !learnedBooks.has(x))).sort(near);
+  fromLearned.concat(fromAny).forEach(x=>{
     if(out.length>=howMany) return;
     const first=o=>Array.isArray(o) ? o[0] : o;                       // the lists are [label, why] pairs
     take(kind==="name" ? (bookWordOf(x) || first((bookWordOptions(x)||[])[0]))
@@ -6241,14 +6255,17 @@ function attachLessonSwipe(host){
     else toast(dir>0 ? "That is the last lesson on the path." : "This is the first lesson.");
   }, {passive:true});
 }
-function startLesson(sk){
+function startLesson(sk, ret){
+  // Set only by the caller that came from a half-saved verse; every other start clears it, so the
+  // way back cannot linger on a lesson opened later from the path.
+  lessonReturn = ret || null;
   if(!sk || !sk.id) return renderPath();           // nothing to open — go back to the path rather than throw
   if(skillPaywalled(sk)) return openPaywall(sk);   // Pro-only content — offer whole-app subscription or a single-lesson talent unlock
   // The film that explains what a book lesson even is, once, immediately before the first one.
   // NOT maybeVideo: it runs the callback even when the film has already been seen, and a callback
   // that re-enters startLesson would then recurse forever. Watching marks it seen, so the re-entry
   // finds this guard false and falls through to the lesson.
-  if(sk.kind==="book" && !videoSeen("book")){ openVideoScreen("book", ()=>startLesson(sk)); return; }
+  if(sk.kind==="book" && !videoSeen("book")){ const r=lessonReturn; openVideoScreen("book", ()=>startLesson(sk, r)); return; }
   // The same trick for the first sound lesson: what the whole system is for, said once, immediately
   // before the first thing that uses it.
   if(sk.id==="snd:0-4" && !videoSeen("major")){ openVideoScreen("major", ()=>startLesson(sk)); return; }
@@ -6290,11 +6307,53 @@ function recentLearnedItems(skId, max){
 }
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+// The Foundation: the Torah and Matthew. Until a reader is past these, every wrong answer comes
+// from inside them, because those are the only books they have any way of ruling out.
+const PHASE1_BOOKS=[1,2,3,4,5,40];
+/* Wrong answers, drawn from what the reader has actually learned and from as near the right answer
+   as the pool allows.
+
+   Two rules, and they pull in the same direction:
+
+     LEARNED  A book nobody has met is not a wrong answer, it is a blank. Offering it makes the
+              right answer the only familiar thing on the screen, which is a much easier question
+              than the one being asked.
+     NEAR     45, 47 and 48 against 46 asks whether the number is known. 12, 31 and 58 against 46
+              asks whether the odd one out can be spotted. The first is the test we mean.
+
+   Early on there is nothing to draw from, so the Foundation stands in; and if a pool is still short
+   after both, it is topped up from the whole range rather than returning fewer choices than asked. */
 function distract(kind,n,count){
-  // draw distractors from a window AROUND n (not a fixed 0–99 / 100–150 block) so high pegs get plausible near-neighbours instead of being the obvious odd-one-out
-  const pool = kind==="book" ? range(1,66) : range(Math.max(0,n-30), Math.min(176,n+30));
-  const out=[]; let guard=0; while(out.length<count && guard++<500){ const r=pool[Math.floor(Math.random()*pool.length)];
-    if(r!==n && !out.includes(r)) out.push(r); } return out;
+  const known=[...knownNumbers()];
+  let pool;
+  if(kind==="book"){
+    const learned=known.filter(x=>x>=1&&x<=66&&x!==n);
+    // Fewer than four books in hand is the very beginning; the Foundation is the whole world then.
+    pool = learned.length<4 ? PHASE1_BOOKS.filter(x=>x!==n) : learned;
+  } else {
+    const learned=known.filter(x=>x!==n && x>=0 && x<=176);
+    pool = learned.length>=count ? learned : range(Math.max(0,n-30), Math.min(176,n+30)).filter(x=>x!==n);
+  }
+  // Nearest first, then a shuffle within a near band, so the same three are not offered every time
+  // but all of them stay close. The band grows by distance rather than by count: widening it until
+  // there are enough keeps the neighbours of a crowded number tight, instead of reaching out to a
+  // book forty away just because the count says so.
+  pool=pool.slice().sort((a,b)=>Math.abs(a-n)-Math.abs(b-n));
+  let band=[];
+  for(const radius of [4,8,15,30,999]){
+    band=pool.filter(x=>Math.abs(x-n)<=radius);
+    if(band.length>=Math.min(pool.length, count+2)) break;
+  }
+  band=shuffle(band).slice(0, Math.max(count, Math.min(band.length, count*3)));
+  const out=band.slice(0,count);
+  // Still short — a reader three books in, asked for three wrong answers. Better a far one than a
+  // question with two choices on it.
+  if(out.length<count){
+    const rest=shuffle((kind==="book"?range(1,66):range(Math.max(0,n-30),Math.min(176,n+30)))
+      .filter(x=>x!==n && !out.includes(x)));
+    while(out.length<count && rest.length) out.push(rest.shift());
+  }
+  return out;
 }
 function itemWord(kind,n){ return kind==="book" ? pegFor(n).word : pegFor(n).word; }
 function itemLabel(kind,n){ return kind==="book" ? "Book "+n : ""+n; }
@@ -6491,6 +6550,8 @@ function wireStep(s){
 }
 function answer(s,good){
   const word=itemWord(s.kind,s.n), p=pegFor(s.n);
+  // A run of misses on the same item quietens and then stops: they know they are stuck.
+  if(good){ LZ.miss=0; Sfx.right(); } else { LZ.miss=(LZ.miss||0)+1; Sfx.wrong(LZ.miss); }
   if(good){ LZ.ok++; gradeKey(`sk:${s.kind}:${s.n}`,"good"); }
   else { gradeKey(`sk:${s.kind}:${s.n}`,"miss"); LZ.steps.push(s); LZ.total++; } // requeue
   const fb=document.createElement("div");
@@ -6579,11 +6640,14 @@ function renderLessonDone(){
     ${d.msg?`<div class="callout">${d.msg}</div>`:""}
     ${d.unlocked}
     <div class="btnrow">
-      ${d.canBuild?`<button class="btn" id="lBuild">Build a new verse →</button>`:`<button class="btn" id="lNextNum">Learn another →</button>`}
+      ${lessonReturn?`<button class="btn" id="lBackVerse">Back to Your Verse →</button>`
+        :(d.canBuild?`<button class="btn" id="lBuild">Build a new verse →</button>`:`<button class="btn" id="lNextNum">Learn another →</button>`)}
       <button class="btn ghost" id="lPath2">Back to path</button></div></div>`;
+  // Somebody who came here from a half-saved verse wants that verse back, not the path.
+  if(el("lBackVerse")) el("lBackVerse").onclick=()=>{ const go=lessonReturn; lessonReturn=null; go(); };
   if(el("lBuild")) el("lBuild").onclick=()=>openSuggestedForBook(d.buildBook);
   if(el("lNextNum")) el("lNextNum").onclick=()=>renderPath(true);
-  el("lPath2").onclick=()=>renderPath(true);
+  el("lPath2").onclick=()=>{ lessonReturn=null; renderPath(true); };
   return true;
 }
 function finishLesson(){
@@ -6592,7 +6656,10 @@ function finishLesson(){
   const before=new Set(allVerses().filter(v=>reachable(bookNum(v.b),v.c,v.v)).map(rk));
   const wasNew=!Prog.doneSkills.includes(sk.id);
   if(wasNew) Prog.doneSkills.push(sk.id);
+  const lvlBefore=Prog.level;
   bustCaches(); recomputeLevel(); saveProg(); updateMetrics(); if(wasNew) earnTalents(5); checkBadges();
+  if(wasNew) Sfx.lessonDone();
+  if(Prog.level>lvlBefore) Sfx.levelUp();
   if(wasNew && (sk.kind==="num"||sk.kind==="book")) bumpGoal();   // learning a new number/book image counts toward today's goal
   const newly=allVerses().filter(v=>reachable(bookNum(v.b),v.c,v.v) && !before.has(rk(v)));
   let msg="";
@@ -7201,10 +7268,43 @@ const Sfx = (()=>{
   }
   const seq = (notes, o) => notes.forEach((n,i)=>note(n.f, Object.assign({}, o, n)));
 
+  // Two rewards can land in the same second — a verse moves the star, the book count and the
+  // talents — and three cues on top of each other is a noise, not three rewards. Anything that
+  // marks a reward goes through here, which holds each one back until the last has finished.
+  // performance.now(), not Date.now(): this is a stopwatch, not a date. It is monotonic, it is
+  // unaffected by the clock being changed underneath it, and it is not the value the test harness
+  // freezes to keep renders deterministic — a frozen clock here would stack every cue on the last.
+  const ms = () => (window.performance && performance.now) ? performance.now() : Date.now();
+  let clearAt=0;
+  function cue(len, fn){
+    const now=ms(), wait=Math.max(0, clearAt-now);
+    clearAt=Math.max(now, clearAt)+len;
+    if(wait<=0) fn(); else setTimeout(fn, wait);
+  }
+
+  // The same note twice inside a moment is a stutter, not two events. Anything that can be fired by
+  // one action reaching two places goes through here. The per-word and per-tap sounds are exempt:
+  // for those, close repetition is the point.
+  const lastAt={};
+  function once(name, gap){
+    const n=ms(); if(lastAt[name] && n-lastAt[name] < (gap||120)) return false;
+    lastAt[name]=n; return true;
+  }
+  // Ten talents ten times in a review session should get calmer, not louder. Four in a minute and
+  // the jar quietens down.
+  let coinTimes=[];
+  function coinFatigue(){
+    const n=ms(); coinTimes=coinTimes.filter(x=>n-x<60000); coinTimes.push(n);
+    return coinTimes.length>=4 ? 0.6 : 1;
+  }
   // Equal temperament from A4, so the motifs below can be written as scale degrees and stay in tune.
   const N = n => 440*Math.pow(2, n/12);
   const C5=N(3), D5=N(5), E5=N(7), G5=N(10), A5=N(12), B5=N(14), C6=N(15), E6=N(19), G6=N(22);
   const G4=N(-2), A4=440, D4=N(-7), E4=N(-5), C4=N(-9), F4=N(-4), B4=N(2);
+  const C3=N(-21), E3=N(-17), G3=N(-14), A3=N(-12), G2=N(-26), A2=N(-24), C7=N(27), D6=N(17), A6=N(24);
+  // The pentatonic ladder above C5, in semitones. Anything that climbs, climbs this.
+  const LADDER=[0,2,4,7,9,12,14,16,19,21];
+  const deg = i => C5*Math.pow(2, LADDER[Math.max(0,Math.min(LADDER.length-1,i))]/12);
 
   return {
     // Called from the first touch or click anywhere. Until then nothing makes a sound at all.
@@ -7217,19 +7317,106 @@ const Sfx = (()=>{
     // Not a buzzer. A soft step down — enough to know, never enough to sting. This app is for
     // somebody learning Scripture badly at first, and a harsh noise on a wrong answer teaches
     // them to stop trying.
-    wrong(){ seq([{f:A4,at:0},{f:F4,at:0.09,t:0.22}], {type:"sine", t:0.16, vol:0.12}); },
+    // Told once, more quietly the second time, and not at all the third. They know they are stuck;
+    // the app saying so again is not information, it is nagging. `run` is how many in a row.
+    wrong(run){
+      const v = !(run>0) ? 0.12 : (run===1 ? 0.12 : run===2 ? 0.08 : 0);
+      if(!v) return;
+      seq([{f:A4,at:0},{f:F4,at:0.09,t:0.22}], {type:"sine", t:0.16, vol:v});
+    },
+    // Inside a verse, word by word. A whole verse of the full answer sound is the one thing that
+    // would make this app unbearable, so the tick is a fifth of the volume and climbs the scale as
+    // the run grows: twenty-five words become a rising ladder rather than twenty-five dings.
+    tick(i){ note(deg(i||0), {t:0.05, type:"triangle", vol:0.05}); },
+    slip(){ note(G4, {to:E4, t:0.12, type:"sine", vol:0.07}); },
 
     // Coins into a jar: a few bright clinks at slightly different pitches, then the low settle of
     // the jar taking them. More talents, more clinks, up to a handful — beyond that it is a noise.
     coins(n){
-      const clinks=Math.max(2, Math.min(6, Math.round((n||0)/6)+2));
-      for(let i=0;i<clinks;i++){
-        const jitter=(i*0.37)%1;                     // spread without randomness, so tests stay still
-        note(C6*(1+jitter*0.14), {at:0.05*i, t:0.09, type:"triangle", vol:0.10});
-        note(G6*(1+jitter*0.10), {at:0.05*i+0.01, t:0.06, type:"sine", vol:0.05});
-      }
-      note(G4, {at:0.05*clinks+0.02, to:D4, t:0.30, type:"sine", vol:0.13});   // the jar
+      const soft=coinFatigue();
+      const clinks=soft<1 ? 2 : Math.max(2, Math.min(6, Math.round((n||0)/6)+2));
+      cue(clinks*50+380, ()=>{
+        for(let i=0;i<clinks;i++){
+          const jitter=(i*0.37)%1;                   // spread without randomness, so tests stay still
+          note(C6*(1+jitter*0.14), {at:0.05*i, t:0.09, type:"triangle", vol:0.10*soft});
+          note(G6*(1+jitter*0.10), {at:0.05*i+0.01, t:0.06, type:"sine", vol:0.05*soft});
+        }
+        note(G4, {at:0.05*clinks+0.02, to:D4, t:0.30, type:"sine", vol:0.13*soft});   // the jar
+      });
     },
+
+    // The book counter: a book closing. Two low notes a fourth apart, wooden rather than bright,
+    // so it is plainly not the coins and plainly not the star.
+    book(){ cue(420, ()=>seq([{f:E4,at:0,t:0.16},{f:A4,at:0.10,t:0.26}], {type:"triangle", vol:0.13})); },
+
+    // The verse counter: a star landing. The highest thing in the app, and the only one that ends
+    // on a note above where it started, because a verse hidden away is the whole point of it.
+    verse(){ cue(460, ()=>seq([{f:C6,at:0,t:0.14},{f:E6,at:0.08,t:0.14},{f:G6,at:0.16,t:0.30}], {type:"sine", vol:0.11})); },
+
+    // The daily goal literally climbs the scale, one node at a time.
+    goalStep(i){ cue(260, ()=>{ note(deg((i||1)-1), {t:0.20, type:"sine", vol:0.10});
+      note(deg((i||1)-1)/2, {t:0.20, type:"sine", vol:0.04}); }); },
+    goalDone(){ cue(900, ()=>{ seq([{f:C5,at:0},{f:E5,at:0.08},{f:G5,at:0.16},{f:C6,at:0.24,t:0.40,vol:0.13}],
+      {type:"sine", t:0.14, vol:0.12}); note(C4,{t:0.70, type:"sine", vol:0.05}); }); },
+
+    // The streak's top note rises with the weeks, so a long streak sounds like a long streak.
+    streakDay(n){ if(!once("streakDay",800)) return;
+      const top=[E5,G5,A5,C6,E6][Math.max(0,Math.min(4,Math.floor(((n||1)-1)/7)))];
+      cue(700, ()=>seq([{f:G4,at:0},{f:C5,at:0.09},{f:top,at:0.18,t:0.35}], {type:"sine", t:0.14, vol:0.12})); },
+
+    badge(){ cue(800, ()=>{ seq([{f:C5,at:0},{f:G5,at:0.08},{f:E6,at:0.16,t:0.35}], {type:"triangle", t:0.14, vol:0.13});
+      note(C4,{t:0.60, type:"sine", vol:0.05}); }); },
+
+    // The crown. A verse that has come back clean the whole way along its trail is the rarest thing
+    // in the app and the only sound allowed to take a second over itself.
+    sealed(){ cue(1200, ()=>{ seq([{f:C5,at:0},{f:E5,at:0.06},{f:G5,at:0.12},{f:C6,at:0.18},{f:E6,at:0.24},
+      {f:G6,at:0.32,t:0.55,vol:0.12}], {type:"sine", t:0.16, vol:0.11});
+      note(C4,{t:0.90,type:"sine",vol:0.05}); note(G4,{t:0.90,type:"sine",vol:0.05}); }); },
+
+    // Devotion, not loot: held and warm, with no arpeggio sparkle on it.
+    heart(){ cue(700, ()=>{ note(C5,{t:0.45,type:"sine",vol:0.07});
+      note(E5,{at:0.05,t:0.45,type:"sine",vol:0.09}); note(A5,{at:0.10,t:0.50,type:"sine",vol:0.09}); }); },
+
+    lessonDone(){ cue(600, ()=>seq([{f:G4,at:0},{f:C5,at:0.07},{f:E5,at:0.14,t:0.30}], {type:"triangle", t:0.13, vol:0.12})); },
+    levelUp(){ cue(700, ()=>seq([{f:C5,at:0},{f:G5,at:0.08},{f:C6,at:0.18,t:0.35,vol:0.14}], {type:"triangle", t:0.13, vol:0.13})); },
+    mastered(){ cue(750, ()=>seq([{f:E5,at:0},{f:G5,at:0.07},{f:C6,at:0.14},{f:E6,at:0.22,t:0.35}], {type:"triangle", t:0.13, vol:0.12})); },
+
+    // Structure register: a building is low and wide.
+    palaceDone(){ cue(1100, ()=>{ seq([{f:C3,at:0},{f:G3,at:0.10},{f:C4,at:0.20},{f:E4,at:0.30}], {type:"triangle", t:0.25, vol:0.12});
+      note(G4,{at:0.45,t:0.50,type:"sine",vol:0.09}); }); },
+
+    // The end of a day's work descends to rest rather than celebrating. Peace, not fanfare.
+    dayDone(){ cue(1400, ()=>{ seq([{f:E5,at:0},{f:C5,at:0.12},{f:G4,at:0.24}], {type:"sine", t:0.20, vol:0.10});
+      note(C4,{at:0.40,t:1.0,type:"sine",vol:0.07}); }); },
+
+    // A ticket arriving is deliberately unresolved — it must not outshine the claim.
+    ticket(){ cue(500, ()=>{ seq([{f:D5,at:0},{f:G5,at:0.10,t:0.30}], {type:"sine", t:0.16, vol:0.09});
+      note(G3,{t:0.50,type:"sine",vol:0.05}); }); },
+    // Scratching itself stays silent — twenty events a second cannot be scored. Crossing the line can.
+    reveal(){ if(!once("reveal",400)) return;
+      seq([{f:C6,at:0},{f:D6,at:0.04},{f:E6,at:0.08},{f:G6,at:0.12},{f:A6,at:0.16,t:0.30}], {type:"sine", t:0.12, vol:0.06});
+      note(G4,{t:0.50,type:"sine",vol:0.05}); },
+    // Animation-synchronous, so not queued: these have to land with the icon, not after it.
+    fly(){ note(C6,{to:C5,t:0.45,type:"sine",vol:0.07}); },
+    land(){ note(C4,{t:0.12,type:"triangle",vol:0.13});
+      note(C5,{at:0.02,t:0.25,type:"sine",vol:0.09}); note(E5,{at:0.02,t:0.25,type:"sine",vol:0.09}); },
+
+    // Honest work sounds like wood. The finger sets the rate, so this one is never queued.
+    knock(i){ note((i||0)%2 ? G3 : E3, {t:0.07, type:"triangle", vol:0.07});
+      if((i||0)%5===4) note(C4,{at:0.02,t:0.10,type:"sine",vol:0.05}); },
+    stone(built){ cue(built?1800:900, ()=>{
+      note(G2,{to:C3,t:0.45,type:"sine",vol:0.13}); note(C3,{at:0.05,t:0.25,type:"triangle",vol:0.10});
+      note(E6,{at:0.55,t:0.25,type:"sine",vol:0.04});                        // light falling on the stone
+      if(built) seq([{f:C4,at:0.85},{f:G4,at:0.95},{f:C5,at:1.05,t:0.50,vol:0.11}], {type:"sine", t:0.14, vol:0.10});
+    }); },
+
+    // Spending is decisive, and smaller than earning.
+    buy(){ cue(500, ()=>{ note(C6,{t:0.08,type:"triangle",vol:0.08}); note(G5,{at:0.07,t:0.08,type:"triangle",vol:0.07});
+      note(E4,{at:0.18,t:0.30,type:"sine",vol:0.09}); }); },
+    freeze(){ cue(500, ()=>{ note(A5,{t:0.35,type:"sine",vol:0.08}); note(C7,{at:0.05,to:A6,t:0.35,type:"sine",vol:0.045}); }); },
+    // One bell, struck once at the start of a review session.
+    srStart(){ if(!once("srStart",4000)) return;
+      note(E5,{t:0.50,type:"sine",vol:0.07}); note(A5,{at:0.02,t:0.50,type:"sine",vol:0.07}); },
 
     // One motif per screen, so where you have arrived is audible before you have read anything. Each
     // is two or three notes of the same chord, which is why moving about does not sound like an
@@ -7298,10 +7485,11 @@ function talentBurst(delta){
   setTimeout(()=>requestAnimationFrame(tick),TAL_HOLD-40);   // climb starts as the coins do
 }
 // a lighter version of the coin burst for the books/verses counters — a few glyphs stream up, then the square pulses
-function flyToMetric(targetId, glyph, count, startDelay){
+function flyToMetric(targetId, glyph, count, startDelay, sound){
   const target=el(targetId), phone=document.querySelector(".phone");
   if(!target||!phone) return;
   const run=()=>{
+    if(sound) try{ sound(); }catch(e){}
     const pr=phone.getBoundingClientRect(), tr=target.getBoundingClientRect();
     const cx=pr.width/2, cy=pr.height*0.42;
     const tx=(tr.left-pr.left)+tr.width/2, ty=(tr.top-pr.top)+tr.height/2;
@@ -7930,6 +8118,7 @@ function doneForToday(){
   const wd=weekDaysNow();
   const gotBonus = MS && MS.dueWork && !MS._bonusGiven;
   if(gotBonus){ MS._bonusGiven=true; earnTalents(20); }   // reward for completing today's spaced repetition review
+  Sfx.dayDone();                                         // descends to rest: peace, not fanfare
   V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🌿</div>
     <h2 class="gold">You're done for today</h2>
  <p class="lead">Everything due is locked back in.${gotBonus?` <b class="gold">+20 🪙 for finishing your review!</b>`:""}${Prog.dayStreak>0?` <b class="gold">🔥 ${Prog.dayStreak}-day streak</b>. Come back tomorrow to keep it alive.`:""}${Prog.freezes>0?` <span class="muted">🧊 ${Prog.freezes} Streak Freeze${Prog.freezes>1?"s":""} banked.</span>`:""}</p>
@@ -7949,7 +8138,7 @@ const ANS_FREEZE=[25,50,100,200,500];                   // correct-in-a-row mile
 function grantFreeze(key, reason){
   if(Prog.freezeAwards.includes(key)) return;           // one grant per milestone, ever
   if((Prog.freezes||0)>=freezeMax()) return;            // at the cap → don't burn the milestone; grant it later when there's room
- Prog.freezeAwards.push(key); Prog.freezes=(Prog.freezes||0)+1; toast(`🧊 Streak Freeze earned, ${reason}!`); saveProg();
+ Prog.freezeAwards.push(key); Prog.freezes=(Prog.freezes||0)+1; toast(`🧊 Streak Freeze earned, ${reason}!`); Sfx.freeze(); saveProg();
 }
 // The day streak is earned by finishing BOTH halves of the day: every spaced repetition
 // review that came due, AND the daily goal. Called from each place either half can complete.
@@ -7963,6 +8152,7 @@ function creditToday(){
   else if(Prog.lastReviewDay===twoAgo && (Prog.freezes||0)>0){ Prog.freezes--; Prog.dayStreak=(Prog.dayStreak||0)+1; setTimeout(()=>toast(`🧊 A Streak Freeze saved your ${Prog.dayStreak}-day streak!`),500); } // exactly ONE missed day → a freeze bridges it
   else Prog.dayStreak=1;                                        // missed 2+ days (or no freeze) → restart
   if(Prog.dayStreak>(Prog.bestDayStreak||0)) Prog.bestDayStreak=Prog.dayStreak;
+  Sfx.streakDay(Prog.dayStreak);     // its top note rises with the weeks
   Prog.lastReviewDay=today;
   DAY_FREEZE.forEach(m=>{ if(Prog.dayStreak>=m) grantFreeze("day"+m, `${m}-day streak`); });   // milestone rewards
   creditWeek();
@@ -8017,6 +8207,7 @@ function goalFlash(now, target){
   let nodes=""; for(let i=1;i<=target;i++) nodes+=`<span class="gf-node ${i<now?"done":(i===now?"just":"")}"">${i<=now?"✓":i}</span>`;
   wrap.innerHTML=`<div class="gf-card"><div class="gf-title">${now>=target?"🙏 Well done":"Daily goal"}</div><div class="gf-nodes">${nodes}</div><div class="gf-sub">${now}/${target} today</div></div>`;
   host.appendChild(wrap); requestAnimationFrame(()=>wrap.classList.add("show"));
+  if(now>=target) Sfx.goalDone(); else Sfx.goalStep(now);
   setTimeout(()=>{ wrap.classList.remove("show"); setTimeout(()=>wrap.remove(), 350); }, now>=target?1500:1050);
 }
 // what's still standing between today and a streak day
@@ -8867,6 +9058,7 @@ function openChurchBuild(gained, after){
   ov.onpointerdown=hit;
 }
 function tapBuild(x,y){
+  Sfx.knock(BLD?BLD.taps:0);         // wood, not treasure - the finger sets the rate
   BLD.taps++;
   const pct=BLD.taps/CHURCH_TAPS, piece=PIECES[BLD.pi];
   el("bldChurch").innerHTML=pieceSVG(BLD.pi,pct);
@@ -8899,6 +9091,7 @@ function tapBuild(x,y){
   if(BLD.taps>=CHURCH_TAPS) setTimeout(()=>finishChurchBuild(true), 420);
 }
 function finishChurchBuild(complete){
+  Sfx.stone((Prog.church&&Prog.church.built)||0);
   const ov=el("buildov"), after=BLD&&BLD.after, gained=(BLD&&BLD.gained)||0;
   const c=church();
   if(ov){
@@ -9434,14 +9627,14 @@ function renderNumTest(){
   if(el("ntScene")) el("ntScene").onclick=()=>showSceneReveal(n, false);   // number questions only
   V.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
     if(b.disabled) return;
-    if(b.dataset.ok==="1"){ Sfx.right();          // correct → green, strengthen, next
+    if(b.dataset.ok==="1"){ NT.run=0; Sfx.right();  // correct → green, strengthen, next
       b.classList.add("correct"); V.querySelectorAll("[data-ok]").forEach(x=>x.disabled=true);
       NT.ok++; strengthenNumber(n);
       setTimeout(()=>{ NT.i++;
         if(NT && NT.ret && NT.i<NT.qs.length) srFlash(renderNumTest);   // daily review → flash the count between number questions
         else renderNumTest();
       }, 550);
-    } else { Sfx.wrong();                          // wrong → red, stay to retry
+    } else { Sfx.wrong(NT.run=(NT.run||0)+1);      // wrong → red, stay to retry
       b.classList.add("wrong"); b.disabled=true; NT.wrong++;
       gradeKey(`sk:${(NT&&NT.kind)==="book"?"book":"num"}:${n}`,"miss");
     }
@@ -9614,7 +9807,7 @@ function memTestRender(){
     if(mtLock) return;
     if(!mtSel.b || !mtSel.c || !mtSel.v){ el("mtWarn").textContent="Pick a book, chapter and verse."; return; }
     const ok=(mtSel.b===b && mtSel.c===c && mtSel.v===v);
-    if(ok) Sfx.right(); else Sfx.wrong();
+    if(ok){ memTestWrong=0; Sfx.right(); } else Sfx.wrong(memTestWrong+1);
     if(ok){ // green, auto-advance to next verse
       const firstTry=memTestWrong===0, kk=refKey(b,c,v), peeked=memHintUses>0;
       if(peeked){ if(Prog.streak>(Prog.bestStreak||0)) Prog.bestStreak=Prog.streak; }   // peeked → streak is PRESERVED but not increased
@@ -9759,6 +9952,7 @@ function checkBadges(defer){
   show(); return function(){};
 }
 function showBadgeModal(b){
+  Sfx.badge();
   let m=document.getElementById("badgeModal");
   if(!m){ m=document.createElement("div"); m.id="badgeModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
   m.innerHTML=`<div class="modal-card center" style="max-width:320px">
@@ -9910,11 +10104,13 @@ function vpRender(){
   el("vpCheck").onclick=vpCheck;
   [el("vpB"),el("vpC"),el("vpV")].forEach(x=>x.addEventListener("change",()=>{ x.classList.remove("wrong"); el("vpFb").innerHTML=""; }));
 }
+let vpMiss=0;
 function vpCheck(){
   const s=vpCur, bn=bookNum(s.b);
   if(!el("vpB").value || !el("vpC").value || !el("vpV").value){ el("vpWarn").textContent="Pick a book, chapter and verse."; return; }
   const b=+el("vpB").value, c=+el("vpC").value, v=+el("vpV").value;
   const ok=(b===bn && c===s.c && v===s.v);
+  if(ok){ vpMiss=0; Sfx.right(); } else { vpMiss=(vpMiss||0)+1; Sfx.wrong(vpMiss); }
   gradeKey(`vp:${refKey(bn,s.c,s.v)}`, ok?"good":"miss");
   const bp=pegFor(bn),cp=pegFor(s.c),vp=pegFor(s.v);
   const sels=[el("vpB"),el("vpC"),el("vpV")];
@@ -10528,9 +10724,39 @@ function confirmBlankScene(onSkip){
   el("bsSkip").onclick=()=>{ m.style.display="none"; onSkip(); };
 }
 
-/* ---- ad-hoc learn a single number/book from the verse screen (unlocks it) ---- */
+/* ---- learning a number or book you need for a verse you are saving ---------------------------
+   Reached from the verse wizard, when the verse lives somewhere the reader has not learned yet.
+
+   This used to run a small lesson of its own. It no longer does, when there is a real one: a book
+   learned this way was learned less thoroughly than the same book learned in order, cost nothing
+   when the same book on the path costs a subscription or a thousand talents, and was recorded in a
+   different place, so the path went on offering a lesson the reader had already done.
+
+   The real lesson is opened instead. Everything that guards it guards this too.                */
 let AB=null;
+// Set when a lesson was opened from a verse the reader was in the middle of saving. The lesson end
+// screen offers the way back to it, and clears this, so it never fires for an ordinary lesson.
+let lessonReturn=null;
+// The lesson on the path that teaches this number or book, if there is one.
+function lessonFor(n, isBook){
+  const want = isBook ? "book:"+n : null;
+  let found=null;
+  UNITS.forEach(U=>U.skills.forEach(sk=>{
+    if(found) return;
+    if(want && sk.id===want) found=sk;
+    else if(!want && (sk.kind==="num"||sk.kind==="book") && (sk.items||[]).includes(n)) found=sk;
+  }));
+  return found;
+}
 function startAdhocLearn(n,isBook,ret){
+  const sk=lessonFor(n, isBook);
+  if(sk){
+    // Back to the verse when the lesson is done, so saving it carries on where it left off.
+    startLesson(sk, ret);       // paywall, film, full question set and review items all come with it
+    return;
+  }
+  // Nothing on the path teaches it — a chapter or verse number above the last unit. The small
+  // lesson stays for exactly that case.
   const kind=isBook?"book":"num";
   AB={n,isBook,ret,i:0,steps:[{t:"teach"},{t:pick(["q_n2i","q_i2n"])},{t:"q_i2n"}]};
   AB.kind=kind; renderAdhoc();
@@ -11777,14 +12003,14 @@ function renderWordPick(){
   const correct=WP.words[WP.idx];
   V.querySelectorAll("[data-w]").forEach(btn=>btn.onclick=()=>{
     if(btn.disabled) return;
-    if(normWord(btn.dataset.w)===normWord(correct)){ Sfx.right();
+    if(normWord(btn.dataset.w)===normWord(correct)){ Sfx.tick(WP.run=(WP.run||0)+1);
       btn.classList.add("good");
       V.querySelectorAll("[data-w]").forEach(x=>x.disabled=true);
       // The pause lets the green land before the next word. Closing or skipping inside it sets WP
       // to null, and this used to wake up and read it anyway — a right answer followed quickly by
       // the X was a crash.
       setTimeout(()=>{ if(!WP) return; WP.idx++; WP.opts=null; renderWordPick(); }, 320);
-    } else { Sfx.wrong();
+    } else { Sfx.slip(); WP.run=0;
       btn.classList.add("bad"); btn.disabled=true; WP.missed++;
       el("wpFb").innerHTML=`<b style="color:var(--miss-ink)">↻ Try again</b>`;
     }
@@ -11876,12 +12102,12 @@ function renderTypeTest(){
   const commitWord=()=>{
     const expected=TT.words[TT.idx]; if(expected===undefined) return;
     const typed=inp.value.trim(); if(!typed) return;
-    if(normWord(typed)===normWord(expected)){ Sfx.right();   // correct → commit to the top (green), advance
+    if(normWord(typed)===normWord(expected)){ Sfx.tick(TT.run=(TT.run||0)+1);   // correct → commit to the top (green), advance
       TT.idx++; TT.wrong=false; TT.wrongWord=null; TT.typos=0; TT.typoNote="";   // the crosses are per WORD
       inp.value=""; inp.classList.remove("good","wrong");
       if(TT.idx>=total){ typeTestComplete(); return; }
       paintTop();
-    } else { Sfx.wrong();                               // wrong → show it red at top, clear the box to retry
+    } else { Sfx.slip(); TT.run=0;                      // wrong → show it red at top, clear the box to retry
       TT.wrong=true; TT.wrongWord=typed;
       // Only the strict test forgives typos. Practice already has hints and counts no misses, so
       // there is nothing there to protect anyone from.
@@ -12502,7 +12728,7 @@ const Scratch = (()=>{
     ctx.font=`${Math.round(34*dpr)}px system-ui`; ctx.fillText("👆", foil.width/2, foil.height/2+20*dpr);
   }
   function ptr(e){ const r=foil.getBoundingClientRect(), t=e.touches&&e.touches[0]?e.touches[0]:e; return {x:(t.clientX-r.left)*dpr, y:(t.clientY-r.top)*dpr}; }
-  function reveal(){ if(revealed) return; revealed=true; foil.classList.add("gone"); el("scClaim").style.display=""; }
+  function reveal(){ if(revealed) return; revealed=true; Sfx.reveal(); foil.classList.add("gone"); el("scClaim").style.display=""; }
   function scratch(e){ if(!drawing||revealed) return; if(e.cancelable) e.preventDefault(); const p=ptr(e);
     ctx.globalCompositeOperation="destination-out"; ctx.beginPath(); ctx.arc(p.x,p.y,26*dpr,0,7); ctx.fill();
     const gx=Math.min(GRID-1,Math.max(0,Math.floor(p.x/(foil.width/GRID)))), gy=Math.min(GRID-1,Math.max(0,Math.floor(p.y/(foil.height/GRID))));
@@ -12563,6 +12789,7 @@ const Scratch = (()=>{
       el("scClaim").textContent = opts.claimText || "Claim & unlock \u2192";
       el("scClaim").style.display="none"; foil.classList.remove("gone");
       ov.classList.add("on"); ov.setAttribute("aria-hidden","false");
+      Sfx.ticket();                       // anticipation, and deliberately unresolved
       requestAnimationFrame(fitCanvas);
     }
   };

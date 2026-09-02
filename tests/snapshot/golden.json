@@ -144,13 +144,13 @@
   "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
  },
  "classic/practice/number-test": {
-  "h": "bf89caf1b83d86e6",
-  "len": 784,
+  "h": "1092bbfd6f503e3f",
+  "len": 782,
   "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 02 s/z · n Seed Sore Seal Sun 📝 Reveal my scene"
  },
  "classic/practice/text-fade": {
   "h": "23af52e5eb88851b",
@@ -261,22 +261,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "classic/learn/build-the-book": {
-  "h": "df5cbbe39b7c4187",
-  "len": 2804,
-  "els": 56,
-  "buttons": 11,
-  "svgs": 0,
+  "h": "c99f4fb622cbc67c",
+  "len": 3412,
+  "els": 61,
+  "buttons": 12,
+  "svgs": 1,
   "imgs": 6,
-  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
  },
  "classic/learn/build-the-book-done": {
-  "h": "ac8f9c6a2ee96e65",
-  "len": 3024,
-  "els": 61,
-  "buttons": 11,
-  "svgs": 0,
+  "h": "189d51433dd40378",
+  "len": 3632,
+  "els": 66,
+  "buttons": 12,
+  "svgs": 1,
   "imgs": 6,
-  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
  },
  "classic/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "5001d5ad41b563f3",
+  "h": "08724c522b8dc504",
   "len": 19410,
   "els": 460,
   "buttons": 46,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "53b028e6f1aa32b3",
-  "len": 146798,
-  "els": 2553,
+  "h": "5a103e0daddbc544",
+  "len": 148999,
+  "els": 2579,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.105.0 September 2, 2026 Sound, and a book lesson that waits for both pictures NEW The app has a voi"
+  "text": "✕ Version history v1.106.0 September 2, 2026 A voice for everything, and the real lesson every time NEW Sound everywhere"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "b0d7026b6b9eda4c",
+  "h": "f239e603421012ad",
   "len": 18609,
   "els": 452,
   "buttons": 44,
@@ -666,13 +666,13 @@
   "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
  },
  "illumined/practice/number-test": {
-  "h": "bf89caf1b83d86e6",
-  "len": 784,
+  "h": "1092bbfd6f503e3f",
+  "len": 782,
   "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 02 s/z · n Seed Sore Seal Sun 📝 Reveal my scene"
  },
  "illumined/practice/text-fade": {
   "h": "23af52e5eb88851b",
@@ -783,22 +783,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "illumined/learn/build-the-book": {
-  "h": "df5cbbe39b7c4187",
-  "len": 2804,
-  "els": 56,
-  "buttons": 11,
-  "svgs": 0,
+  "h": "c99f4fb622cbc67c",
+  "len": 3412,
+  "els": 61,
+  "buttons": 12,
+  "svgs": 1,
   "imgs": 6,
-  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
  },
  "illumined/learn/build-the-book-done": {
-  "h": "ac8f9c6a2ee96e65",
-  "len": 3024,
-  "els": 61,
-  "buttons": 11,
-  "svgs": 0,
+  "h": "189d51433dd40378",
+  "len": 3632,
+  "els": 66,
+  "buttons": 12,
+  "svgs": 1,
   "imgs": 6,
-  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
  },
  "illumined/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "b30eadc1ac74b425",
+  "h": "1411593a40b46352",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "53b028e6f1aa32b3",
-  "len": 146798,
-  "els": 2553,
+  "h": "5a103e0daddbc544",
+  "len": 148999,
+  "els": 2579,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.105.0 September 2, 2026 Sound, and a book lesson that waits for both pictures NEW The app has a voi"
+  "text": "✕ Version history v1.106.0 September 2, 2026 A voice for everything, and the real lesson every time NEW Sound everywhere"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "b30eadc1ac74b425",
+  "h": "1411593a40b46352",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -1188,13 +1188,13 @@
   "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
  },
  "glass/practice/number-test": {
-  "h": "bf89caf1b83d86e6",
-  "len": 784,
+  "h": "1092bbfd6f503e3f",
+  "len": 782,
   "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 02 s/z · n Seed Sore Seal Sun 📝 Reveal my scene"
  },
  "glass/practice/text-fade": {
   "h": "23af52e5eb88851b",
@@ -1305,22 +1305,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "glass/learn/build-the-book": {
-  "h": "df5cbbe39b7c4187",
-  "len": 2804,
-  "els": 56,
-  "buttons": 11,
-  "svgs": 0,
+  "h": "c99f4fb622cbc67c",
+  "len": 3412,
+  "els": 61,
+  "buttons": 12,
+  "svgs": 1,
   "imgs": 6,
-  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
  },
  "glass/learn/build-the-book-done": {
-  "h": "ac8f9c6a2ee96e65",
-  "len": 3024,
-  "els": 61,
-  "buttons": 11,
-  "svgs": 0,
+  "h": "189d51433dd40378",
+  "len": 3632,
+  "els": 66,
+  "buttons": 12,
+  "svgs": 1,
   "imgs": 6,
-  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
  },
  "glass/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "4e45862718feb47d",
+  "h": "29c068d002b93cd6",
   "len": 18615,
   "els": 452,
   "buttons": 44,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "53b028e6f1aa32b3",
-  "len": 146798,
-  "els": 2553,
+  "h": "5a103e0daddbc544",
+  "len": 148999,
+  "els": 2579,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.105.0 September 2, 2026 Sound, and a book lesson that waits for both pictures NEW The app has a voi"
+  "text": "✕ Version history v1.106.0 September 2, 2026 A voice for everything, and the real lesson every time NEW Sound everywhere"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "4e45862718feb47d",
+  "h": "29c068d002b93cd6",
   "len": 18615,
   "els": 452,
   "buttons": 44,
@@ -1710,13 +1710,13 @@
   "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
  },
  "quest/practice/number-test": {
-  "h": "bf89caf1b83d86e6",
-  "len": 784,
+  "h": "1092bbfd6f503e3f",
+  "len": 782,
   "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 02 s/z · n Seed Sore Seal Sun 📝 Reveal my scene"
  },
  "quest/practice/text-fade": {
   "h": "23af52e5eb88851b",
@@ -1827,22 +1827,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "quest/learn/build-the-book": {
-  "h": "df5cbbe39b7c4187",
-  "len": 2804,
-  "els": 56,
-  "buttons": 11,
-  "svgs": 0,
+  "h": "c99f4fb622cbc67c",
+  "len": 3412,
+  "els": 61,
+  "buttons": 12,
+  "svgs": 1,
   "imgs": 6,
-  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
  },
  "quest/learn/build-the-book-done": {
-  "h": "ac8f9c6a2ee96e65",
-  "len": 3024,
-  "els": 61,
-  "buttons": 11,
-  "svgs": 0,
+  "h": "189d51433dd40378",
+  "len": 3632,
+  "els": 66,
+  "buttons": 12,
+  "svgs": 1,
   "imgs": 6,
-  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
  },
  "quest/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "34619da411313fe3",
+  "h": "97b2b6774ec9dc50",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "53b028e6f1aa32b3",
-  "len": 146798,
-  "els": 2553,
+  "h": "5a103e0daddbc544",
+  "len": 148999,
+  "els": 2579,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.105.0 September 2, 2026 Sound, and a book lesson that waits for both pictures NEW The app has a voi"
+  "text": "✕ Version history v1.106.0 September 2, 2026 A voice for everything, and the real lesson every time NEW Sound everywhere"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "34619da411313fe3",
+  "h": "97b2b6774ec9dc50",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -2232,13 +2232,13 @@
   "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
  },
  "buddy/practice/number-test": {
-  "h": "bf89caf1b83d86e6",
-  "len": 784,
+  "h": "1092bbfd6f503e3f",
+  "len": 782,
   "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 02 s/z · n Mouse Knife Sun Tuna 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 02 s/z · n Seed Sore Seal Sun 📝 Reveal my scene"
  },
  "buddy/practice/text-fade": {
   "h": "23af52e5eb88851b",
@@ -2349,22 +2349,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "buddy/learn/build-the-book": {
-  "h": "df5cbbe39b7c4187",
-  "len": 2804,
-  "els": 56,
-  "buttons": 11,
-  "svgs": 0,
+  "h": "c99f4fb622cbc67c",
+  "len": 3412,
+  "els": 61,
+  "buttons": 12,
+  "svgs": 1,
   "imgs": 6,
-  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
  },
  "buddy/learn/build-the-book-done": {
-  "h": "ac8f9c6a2ee96e65",
-  "len": 3024,
-  "els": 61,
-  "buttons": 11,
-  "svgs": 0,
+  "h": "189d51433dd40378",
+  "len": 3632,
+  "els": 66,
+  "buttons": 12,
+  "svgs": 1,
   "imgs": 6,
-  "text": "✕ Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image word Prefer a d"
+  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
  },
  "buddy/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "0a4253f8e404c00b",
+  "h": "032d0b8e83c447c9",
   "len": 18613,
   "els": 452,
   "buttons": 44,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "53b028e6f1aa32b3",
-  "len": 146798,
-  "els": 2553,
+  "h": "5a103e0daddbc544",
+  "len": 148999,
+  "els": 2579,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.105.0 September 2, 2026 Sound, and a book lesson that waits for both pictures NEW The app has a voi"
+  "text": "✕ Version history v1.106.0 September 2, 2026 A voice for everything, and the real lesson every time NEW Sound everywhere"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "0a4253f8e404c00b",
+  "h": "032d0b8e83c447c9",
   "len": 18613,
   "els": 452,
   "buttons": 44,

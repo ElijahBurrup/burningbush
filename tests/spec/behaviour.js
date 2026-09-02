@@ -1829,17 +1829,25 @@ const DAY = 86400000;
   ok(bbData.fiftyThree && bbData.fiftySix, '…and the ones that belong to that number alone: 53 and 56');
 
   const bbCard = await $(() => {
+    // Learning a book you need for a verse now opens the REAL lesson, paywall and all, so this
+    // block grants Pro and marks the film seen to get to the card it is actually about. The card
+    // itself is shared: the Learn path and the verse route render the same teachCardBody.
+    const wasPro = Billing.isPro(); Billing.grant(); markVideoSeen('book');
     delete Prog.bookWord[16]; delete Prog.numRef[16]; saveProg();
+    // Learning a book you need for a verse opens the real lesson now, so a book outside the
+    // Foundation stops at the paywall. This block is about the card, not the paywall.
+    Billing.grant(); markVideoSeen('book');
     show('verse'); startAdhocLearn(16, true, () => { });
-    const rows = [...document.querySelectorAll('#verse [data-rel]')];
+    const host = document.querySelector('#learn') || document.querySelector('#verse');
+    const rows = [...host.querySelectorAll('[data-rel]')];
     const empty = { sent: el('bbSent').style.display, rows: rows.map(r => r.dataset.rel),
                     ask: rows[0].textContent.replace(/\s+/g, ' ').trim() };
     Prog.bookWord[16] = 'knee-high socks'; Prog.numRef[16] = "a driver's licence"; saveProg();
-    renderAdhoc();
-    const s = el('bbSent'), txt = el('verse').textContent;
+    if (LZ) renderStep(); else if (AB) renderAdhoc();
+    const s = el('bbSent') || { style: {}, textContent: '' }, txt = host.textContent;
     return {
       empty,
-      labels: [...document.querySelectorAll('#verse .bbrow label')].map(l => l.textContent.trim()),
+      labels: [...host.querySelectorAll('.bbrow label')].map(l => l.textContent.trim()),
       walkthroughGone: !el('bbScript') && !el('bbMore'),
       // the scene box sits under the sentence it was just asked for, above the way on
       sceneAfterSentence: (() => {
@@ -1852,8 +1860,9 @@ const DAY = 86400000;
       decodeGone: !/Use the Major System/i.test(txt),
       shown: s.style.display,
       text: s.textContent.replace(/\s+/g, ' ').trim(),
-      coded: !!document.querySelector('#verse [data-rel="peg"]') && !document.querySelector('.bbfixed'),
-      chosen: [...document.querySelectorAll('#verse [data-rel]')].map(r => r.classList.contains('set')),
+      coded: !!host.querySelector('[data-rel="peg"]') && !document.querySelector('.bbfixed'),
+      chosen: [...host.querySelectorAll('[data-rel]')].map(r => r.classList.contains('set')),
+      // The lesson stays open: the two blocks after this one are about the same card.
     };
   });
   is(bbCard.empty.sent, 'none', 'no sentence until both pictures are chosen');
@@ -1892,7 +1901,7 @@ const DAY = 86400000;
 
   const bbOwn = await $(() => {
     Prog.bookWord[16] = 'a kneecap the size of a house'; saveProg();
-    renderAdhoc();
+    if (LZ) renderStep(); else if (AB) renderAdhoc();
     openRelationPicker(16, 'word', () => { });
     const tile = el('relModal').querySelector('[data-pick="a kneecap the size of a house"]');
     const out = { kept: !!tile, on: !!tile && tile.classList.contains('on') };
@@ -1901,6 +1910,7 @@ const DAY = 86400000;
   });
   ok(bbOwn.kept, 'a word of your own keeps a tile of its own');
   ok(bbOwn.on, '…and shows as the one chosen');
+  await $(() => { LZ = null; LESSON_DONE = null; Billing.revoke(); closeEveryOverlay(); show('learn'); renderPath(); });
 
   const tidy = await $(() => ({
     cap: capAfterPunct('a sock stomps the wall. it shatters! then a licence floats down.'),
@@ -2981,6 +2991,9 @@ const DAY = 86400000;
   const ownWord = await $(() => {
     delete Prog.bookWord[16]; saveProg();
     markVideoSeen('verse');
+    // Learning a book you need for a verse opens the real lesson now, so a book outside the
+    // Foundation stops at the paywall. This block is about the card, not the paywall.
+    Billing.grant(); markVideoSeen('book');
     show('verse'); startAdhocLearn(16, true, () => { });
     openRelationPicker(16, 'word', () => { });
     el('relOwn').click();
@@ -3184,6 +3197,9 @@ const DAY = 86400000;
   const bookScene = await $(() => {
     Prog.bookWord[58] = 'Hairbrush'; Prog.numRef[58] = 'NASA'; delete Prog.customBook[58];
     markVideoSeen('verse'); saveProg();
+    // Learning a book you need for a verse opens the real lesson now, so a book outside the
+    // Foundation stops at the paywall. This block is about the card, not the paywall.
+    Billing.grant(); markVideoSeen('book');
     show('verse'); startAdhocLearn(58, true, () => { });
     el('tcEdit').click();
     el('edTa').value = 'a nasa ship lands on a hairbrush beside the lava.';
@@ -3470,6 +3486,9 @@ const DAY = 86400000;
   const coded = await $(() => {
     const n = 16;
     delete Prog.customPeg[n]; saveProg();
+    // Learning a book you need for a verse opens the real lesson now, so a book outside the
+    // Foundation stops at the paywall. This block is about the card, not the paywall.
+    Billing.grant(); markVideoSeen('book');
     show('verse'); startAdhocLearn(n, true, () => { });
     const row = () => document.querySelector('[data-rel="peg"]');
     const rows = [...document.querySelectorAll('[data-rel]')].map(x => x.dataset.rel);
@@ -3504,6 +3523,9 @@ const DAY = 86400000;
 
   const stay = await $(async () => {
     const n = 16;
+    // Learning a book you need for a verse opens the real lesson now, so a book outside the
+    // Foundation stops at the paywall. This block is about the card, not the paywall.
+    Billing.grant(); markVideoSeen('book');
     show('verse'); startAdhocLearn(n, true, () => { });
     const sc = document.querySelector('.content');
     sc.scrollTop = sc.scrollHeight;
@@ -3759,9 +3781,10 @@ const DAY = 86400000;
 
   describe('moving between verses keeps your place', () => { });
   const keptPlace = await $(async () => {
-    // One long-lived page runs the whole suite, and a modal left open by an earlier block changes
-    // the layout this one measures — which made these assertions depend on run order. Start bare.
-    closeEveryOverlay();
+    // One long-lived page runs the whole suite, and what an earlier block left running changes what
+    // this one measures. A practice test in particular re-renders itself into #verse on a timer,
+    // landing on top of the verse this block just drew — start bare, and with nothing in flight.
+    closeEveryOverlay(); clearActiveTest(); MS = null;
     Prog.memorized = ['43:3:15','43:3:16','43:3:17'];
     Prog.doneSkills = (Prog.doneSkills||[]).concat(Object.values(VIDEOS).map(x => x.skill));
     saveProg();
@@ -4750,7 +4773,7 @@ const DAY = 86400000;
   is(lib.count, 7, 'six squares and a wide one');
 
   describe('sound', () => { });
-  const sound = await $(() => {
+  const sound = await $(async () => {
     // Count the oscillators the engine builds. Nothing else about a sound is observable, and the
     // count is exactly what tells silence apart from a note.
     let made = 0;
@@ -4762,23 +4785,31 @@ const DAY = 86400000;
     Sfx.unlock();
     const right = count(() => Sfx.right());
     const wrong = count(() => Sfx.wrong());
-    const small = count(() => Sfx.coins(4));
-    const large = count(() => Sfx.coins(200));
+    // Rewards go through a queue so two landing together do not talk over each other, which means
+    // the notes appear a moment later rather than inside this call. Wait for them.
+    const drain = async fn => { made = 0; fn(); await new Promise(r => setTimeout(r, 1400)); return made; };
+    const small = await drain(() => Sfx.coins(4));
+    const large = await drain(() => Sfx.coins(200));
+    // Ten rewards in a review session should get calmer, not louder: after four in a minute the
+    // jar drops to its quietest, however large the sum. By this point in the suite the app has
+    // been paying out for thousands of lines, so this is the state that actually reaches a reader.
+    const fatigued = await drain(() => Sfx.coins(500));
     const screens = {};
     ['learn', 'verse', 'palace', 'journey', 'stories'].forEach(s => { screens[s] = count(() => Sfx.screen(s)); });
     const unknown = count(() => Sfx.screen('not-a-screen'));
     setFeat('sound', false);
-    const off = count(() => { Sfx.right(); Sfx.wrong(); Sfx.coins(50); Sfx.screen('learn'); });
+    const off = await drain(() => { Sfx.right(); Sfx.wrong(); Sfx.coins(50); Sfx.screen('learn'); });
     const saysMuted = Sfx.muted();
     setFeat('sound', true);
     const backOn = count(() => Sfx.right());
     proto.createOscillator = real;
-    return { right, wrong, small, large, screens, unknown, off, saysMuted, backOn };
+    return { right, wrong, small, large, fatigued, screens, unknown, off, saysMuted, backOn };
   });
   ok(sound.right > 0, 'a right answer makes one');
   ok(sound.wrong > 0, '...and a wrong one makes its own');
-  ok(sound.large > sound.small, 'more talents means more coins into the jar');
-  ok(sound.large <= 14, '...but a fortune is still a handful of clinks, not a hail of them');
+  ok(sound.large >= sound.small, 'more talents never means fewer coins into the jar');
+  ok(sound.large <= 14, '...and a fortune is still a handful of clinks, not a hail of them');
+  is(sound.fatigued, 5, 'a jar that has been filling all session settles to its quietest');
   is(new Set(Object.values(sound.screens)).size > 1, true, 'the screens do not all sound alike');
   is(sound.unknown, 0, 'somewhere with no motif of its own stays quiet');
   is(sound.off, 0, 'switching Sound off in the Feature Store means silence');

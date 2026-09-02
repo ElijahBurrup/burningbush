@@ -65,8 +65,13 @@ module.exports = [
   { name: 'stories/lesson', sel: '#verse', go: () => { const u = UNITS.findIndex(U => U.story); startStoryLesson(UNITS[u].skills[0], 'stories', () => { }); } },
   // Build the Book, both ways round: nothing chosen yet (instructions open, no sentence), and
   // both pictures chosen (instructions folded, the sentence showing).
-  { name: 'learn/build-the-book', sel: '#verse', go: () => { delete Prog.bookWord[16]; delete Prog.numRef[16]; saveProg(); show('verse'); startAdhocLearn(16, true, () => { }); } },
-  { name: 'learn/build-the-book-done', sel: '#verse', go: () => { Prog.bookWord[16] = 'knee-high socks'; Prog.numRef[16] = "a driver's licence"; saveProg(); show('verse'); startAdhocLearn(16, true, () => { }); } },
+  // Learning a book you need for a verse opens the real lesson now, which draws into #learn and
+  // stops at the paywall for any book outside the Foundation. Both are about the CARD, so both
+  // grant Pro and mark the film seen to reach it.
+  { name: 'learn/build-the-book', sel: '#learn', go: () => { Billing.grant(); markVideoSeen('book');
+      delete Prog.bookWord[16]; delete Prog.numRef[16]; saveProg(); startAdhocLearn(16, true, () => { }); } },
+  { name: 'learn/build-the-book-done', sel: '#learn', go: () => { Billing.grant(); markVideoSeen('book');
+      Prog.bookWord[16] = 'knee-high socks'; Prog.numRef[16] = "a driver's licence"; saveProg(); startAdhocLearn(16, true, () => { }); } },
   { name: 'reference/foundations', sel: '#foundations', go: () => { show('foundations'); buildNumGrid(); buildBookTable(); } },
 
   // ---- modals ----
