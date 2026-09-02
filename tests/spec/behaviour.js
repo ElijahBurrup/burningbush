@@ -4298,9 +4298,9 @@ const DAY = 86400000;
     uniqueNames: new Set(FEATURES.map(f => f.name)).size,
     defaultOff: FEATURES.filter(f => !f.on).map(f => f.id).join(','),
   }));
-  is(cat.n, 8, 'eight features can be switched');
-  is(cat.uniqueIds, 8, '...each with its own id');
-  is(cat.uniqueNames, 8, '...and its own name');
+  is(cat.n, 9, 'nine features can be switched');
+  is(cat.uniqueIds, 9, '...each with its own id');
+  is(cat.uniqueNames, 9, '...and its own name');
   ok(cat.named, 'every feature has a name');
   ok(cat.described, '...and a real description, not a label');
   ok(cat.iconed, '...and an icon');
@@ -4421,8 +4421,8 @@ const DAY = 86400000;
     el('featModal').style.display = 'none';
     return out;
   });
-  is(fstore.cards, 8, 'the store lists every feature');
-  is(fstore.switches, 8, '...each with its own switch');
+  is(fstore.cards, 9, 'the store lists every feature');
+  is(fstore.switches, 9, '...each with its own switch');
   ok(fstore.everyCardDescribed, '...and every one explains what it does before you turn it on');
   ok(fstore.free, '...and says plainly that they are free');
   has(fstore.names, 'Word Meanings', 'Word Meanings is on the shelf');
@@ -4748,6 +4748,90 @@ const DAY = 86400000;
     };
   });
   is(lib.count, 7, 'six squares and a wide one');
+
+  describe('sound', () => { });
+  const sound = await $(() => {
+    // Count the oscillators the engine builds. Nothing else about a sound is observable, and the
+    // count is exactly what tells silence apart from a note.
+    let made = 0;
+    const proto = (window.AudioContext || window.webkitAudioContext).prototype;
+    const real = proto.createOscillator;
+    proto.createOscillator = function () { made++; return real.apply(this, arguments); };
+    const count = fn => { made = 0; try { fn(); } catch (e) { return 'threw: ' + e.message; } return made; };
+
+    Sfx.unlock();
+    const right = count(() => Sfx.right());
+    const wrong = count(() => Sfx.wrong());
+    const small = count(() => Sfx.coins(4));
+    const large = count(() => Sfx.coins(200));
+    const screens = {};
+    ['learn', 'verse', 'palace', 'journey', 'stories'].forEach(s => { screens[s] = count(() => Sfx.screen(s)); });
+    const unknown = count(() => Sfx.screen('not-a-screen'));
+    setFeat('sound', false);
+    const off = count(() => { Sfx.right(); Sfx.wrong(); Sfx.coins(50); Sfx.screen('learn'); });
+    const saysMuted = Sfx.muted();
+    setFeat('sound', true);
+    const backOn = count(() => Sfx.right());
+    proto.createOscillator = real;
+    return { right, wrong, small, large, screens, unknown, off, saysMuted, backOn };
+  });
+  ok(sound.right > 0, 'a right answer makes one');
+  ok(sound.wrong > 0, '...and a wrong one makes its own');
+  ok(sound.large > sound.small, 'more talents means more coins into the jar');
+  ok(sound.large <= 14, '...but a fortune is still a handful of clinks, not a hail of them');
+  is(new Set(Object.values(sound.screens)).size > 1, true, 'the screens do not all sound alike');
+  is(sound.unknown, 0, 'somewhere with no motif of its own stays quiet');
+  is(sound.off, 0, 'switching Sound off in the Feature Store means silence');
+  ok(sound.saysMuted, '...and the engine says so');
+  ok(sound.backOn > 0, '...until it is switched back on');
+
+  describe('a book lesson will not move on half-answered', () => { });
+  const bookGuard = await $(() => {
+    closeEveryOverlay();
+    const keep = JSON.parse(JSON.stringify(Prog));
+    const wasPro = Billing.isPro();
+    Billing.grant();                       // so the lesson itself is not behind the paywall
+    let sk = null;
+    UNITS.forEach(U => U.skills.forEach(s => { if (!sk && s.kind === 'book' && (s.items || []).length) sk = s; }));
+    const n = sk.items[0];
+    Prog.bookWord = {}; Prog.numRef = {}; saveProg(); bustCaches();
+    markVideoSeen('book');                 // a book lesson opens with its film the first time
+    startLesson(sk);
+    const out = { onTeach: !!el('lNext') };
+
+    el('lNext').click();
+    out.blocked = !!el('lNext');
+    out.says = (document.querySelector('.bbneed') || {}).textContent || '';
+    out.marked = [...document.querySelectorAll('.bbchoose.needpick')].map(x => x.dataset.rel).sort().join(',');
+
+    // one chosen, one still missing
+    Prog.bookWord[n] = 'Marker'; saveProg();
+    document.querySelector('.bbchoose[data-rel="word"]').classList.remove('needpick');
+    const m = document.querySelector('.bbneed'); if (m) m.remove();
+    el('lNext').click();
+    out.stillBlocked = !!el('lNext');
+    out.thenMarked = [...document.querySelectorAll('.bbchoose.needpick')].map(x => x.dataset.rel).join(',');
+    out.thenSays = (document.querySelector('.bbneed') || {}).textContent || '';
+
+    // both chosen
+    Prog.numRef[n] = 'Rod'; saveProg();
+    el('lNext').click();
+    out.movedOn = !el('lNext') || !document.querySelector('.bb');
+
+    LZ = null; LESSON_DONE = null;
+    if (!wasPro) Billing.revoke();
+    Object.assign(Prog, keep); saveProg(); bustCaches();
+    show('learn'); renderPath();
+    return out;
+  });
+  ok(bookGuard.onTeach, 'a book lesson opens on the screen with the pictures on it');
+  ok(bookGuard.blocked, '...and will not move on with neither of them chosen');
+  has(bookGuard.says, 'Choose both pictures', '...saying so on the screen itself');
+  is(bookGuard.marked, 'num,word', '...with both boxes marked');
+  ok(bookGuard.stillBlocked, 'choosing one is not enough');
+  is(bookGuard.thenMarked, 'num', '...and only the one still missing is marked');
+  has(bookGuard.thenSays, 'number', '...and it is named');
+  ok(bookGuard.movedOn, 'with both chosen it moves on');
 
   describe('the library arrives whole, with two stickers on it', () => { });
   const room = await $(() => {
@@ -6215,6 +6299,70 @@ const DAY = 86400000;
   ok(partTwo.notYet, '...with part two not yet played');
   is(partTwoAfter.playing, 'major2', '...and then part two plays, once the sounds are actually in');
   ok(partTwoAfter.behindIt, '...with the lesson screen still behind it to come back to');
+
+  // ─────────────── Pro is the server's answer, not the browser's ───────────────
+  describe('who is Pro', () => { });
+  // The app used to decide this by itself: a value in localStorage, and a URL that granted a year to
+  // anybody who typed it. What money buys now comes from the server, and what is kept locally is a
+  // copy of that answer so the app still knows it on a plane.
+  const who = await $(() => {
+    const snapEnt = Store.getJSON('vv_ent', null), snapPro = Store.getJSON('vv_pro', null);
+    const snapComp = Prog.compPro;
+    const out = {};
+    const clear = () => { Store.remove('vv_ent'); Store.remove('vv_pro'); Prog.compPro = 0; };
+
+    clear(); out.freeByDefault = Billing.isPro();
+
+    // the address bar is not a receipt
+    clear();
+    history.replaceState(null, '', location.pathname + '?checkout=success');
+    Billing.handleReturn();
+    out.urlGrantsNothing = !Billing.isPro();
+    out.urlTidied = location.search === '';
+
+    // the server saying yes is what opens it
+    clear();
+    Store.setJSON('vv_ent', { pro: true, plan: 'yearly', until: Date.now() + 9e9, cancelAtPeriodEnd: false });
+    out.serverOpensIt = Billing.isPro();
+    bustCaches();
+    out.lockedWhenPaid = flatSkills().filter(x => skillPaywalled(UNITS[x.ui].skills[x.si])).length;
+
+    // a cancelled subscription keeps what it paid for
+    Store.setJSON('vv_ent', { pro: true, plan: 'yearly', until: Date.now() + 9e9, cancelAtPeriodEnd: true });
+    out.cancelledStillPaid = Billing.isPro();
+
+    // and stops when the server says it stopped
+    Store.setJSON('vv_ent', { pro: false, plan: 'yearly', until: Date.now() - 1000, cancelAtPeriodEnd: false });
+    out.endedIsFree = !Billing.isPro();
+
+    // a comp code is its own thing and follows the account
+    clear(); Prog.compPro = Date.now();
+    out.compCodeWorks = Billing.isPro();
+
+    // revoking forgets the server answer too, not just the local one
+    Store.setJSON('vv_ent', { pro: true, plan: 'yearly', until: Date.now() + 9e9 });
+    Billing.revoke();
+    out.revokeForgetsBoth = !Store.getJSON('vv_ent', null) && !Store.getJSON('vv_pro', null) && !Prog.compPro;
+
+    out.noLinksInConfig = !Billing.cfg.checkoutUrl && !Billing.cfg.monthlyUrl && !Billing.cfg.manageUrl;
+    out.priceLabel = Billing.cfg.priceLabel;
+
+    Store.setJSON('vv_ent', snapEnt); Store.setJSON('vv_pro', snapPro); Prog.compPro = snapComp;
+    if (!snapEnt) Store.remove('vv_ent'); if (!snapPro) Store.remove('vv_pro');
+    bustCaches(); saveProg();
+    return out;
+  });
+  ok(who.freeByDefault === false, 'a new reader is not Pro');
+  ok(who.urlGrantsNothing, '?checkout=success grants nothing — the address bar is not a receipt');
+  ok(who.urlTidied, '...and is cleaned off the URL either way');
+  ok(who.serverOpensIt, 'the server saying paid is what opens the app');
+  is(who.lockedWhenPaid, 0, '...with nothing left behind the paywall');
+  ok(who.cancelledStillPaid, 'a cancelled subscription keeps what it paid for until the period ends');
+  ok(who.endedIsFree, '...and closes when the server says it has ended');
+  ok(who.compCodeWorks, 'a comp code is its own way in, and follows the account');
+  ok(who.revokeForgetsBoth, 'revoking forgets the server answer as well as the local one');
+  ok(who.noLinksInConfig, 'no payment link is held in the client — the server opens checkout');
+  is(who.priceLabel, '$35/year', 'the paywall quotes the price actually charged');
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));

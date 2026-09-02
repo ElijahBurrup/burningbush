@@ -1791,6 +1791,8 @@
   .bbchoose.set{border-color:var(--gold2)}
   .bbchoose.waiting{opacity:.6}
   .bbchoose.needpick{border-color:var(--miss);box-shadow:0 0 0 2px var(--no-bg)}
+  .bbneed{background:var(--no-bg);border:1px solid var(--miss);border-radius:12px;
+    padding:10px 12px;margin:0 0 10px;font-size:13.5px;line-height:1.45;color:var(--ink)}
   .bbchoose:active{transform:translateY(1px)}
   .bbc-t{flex:1;min-width:0}
   .bbc-name{display:block;font-size:14.5px;font-weight:800;color:var(--ink)}
@@ -2157,8 +2159,21 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.103.0";
+const APP_VERSION="1.105.0";
 const CHANGELOG=[
+ {v:"1.105.0", d:"September 2, 2026", t:"Sound, and a book lesson that waits for both pictures", items:[
+   ["new","<b>The app has a voice now.</b> A bright rising note when an answer is right, a soft step down when it is not \u2014 not a buzzer, because learning Scripture badly at first is the whole point and a harsh noise teaches people to stop trying."],
+   ["new","<b>Talents clink into the jar.</b> A few coins at slightly different pitches, then the low settle of the jar taking them. The more talents, the more clinks, up to a handful."],
+   ["new","<b>Each screen has its own short motif</b>, so where you have arrived is audible before you have read anything: the path steps up, the Library opens out, a palace is low and wide, the Bible turns a page, the stories are told."],
+   ["chg","<b>Nothing makes a sound until you have touched the screen once</b>, and all of it can be switched off in one place \u2014 <b>Sound</b>, in the Feature Store. Nothing is downloaded: every sound is made by the app as it plays, so it costs nothing to load and works with no signal."],
+   ["fix","<b>A book lesson no longer lets you past half-answered.</b> Moving on without choosing a picture for the book\u2019s name and one for its number filed a lesson with nothing in it to remember \u2014 and you found out weeks later when the review asked for a picture that was never picked. It now says which are missing, marks them, and puts them at the top of the screen."]
+ ]},
+ {v:"1.104.0", d:"September 2, 2026", t:"Pro belongs to your account", items:[
+   ["fix","<b>Pro now comes from the server, tied to the email you signed in with.</b> It used to live only in this browser: clearing your data lost what you had paid for, and a second phone had never heard of it. Sign in anywhere and it is there."],
+   ["fix","<b>Adding ?checkout=success to the address no longer unlocks anything.</b> It granted a year to anybody who typed it. Coming back from Stripe now asks the server, and the server only says yes once Stripe has confirmed the payment."],
+   ["chg","<b>Checkout is opened by the server</b>, so your account is attached to the payment rather than the browser being asked to say who it is. <b>Manage</b> on the account row opens Stripe's own page for your subscription, where you can change a card or cancel."],
+   ["chg","<b>The account row says what you actually have</b> — yearly or monthly, when it renews, and if a cancellation is pending, when it ends. A cancelled subscription keeps everything it paid for until that date."]
+ ]},
  {v:"1.103.0", d:"September 2, 2026", t:"A verse is the way in", items:[
    ["new","<b>Finishing a book lesson offers you a verse from that book, and that verse opens the Library.</b> The offer used to appear only when the lesson happened to put new verses in reach \u2014 so a book that opened nothing new ended with nowhere to go. It is the door into the Library now, so it is always there when that book has a verse to build."],
    ["chg","<b>The Library arrives whole.</b> Every tile is on it from the first day: My Verses, Learn Verses, Video Review, Practice Verses, Practice Books and Practice Word for Word, with Spaced Repetition at the top. Two of them wear golden stickers that say exactly what opens them \u2014 <b>Build a Memory Palace</b> and <b>Practice Verses to Unlock</b> \u2014 rather than being absent and unexplained."],
@@ -4100,6 +4115,26 @@ function openRelationPicker(n, kind, after){
 }
 
 // One handler for both dropdowns: pick from the list, or choose to write your own and get a prompt.
+// Which of the two required pictures a book still has no answer for. The Major System image is not
+// in here: it always has a default, so there is nothing for a reader to be missing.
+function bbMissingPicks(n){
+  const need=[];
+  if(!bookWordOf(n)) need.push("word");
+  if(!numRefOf(n)) need.push("num");
+  return need;
+}
+// Refusing to move on is only half of it. The reader is told which pictures are wanted, the boxes
+// are marked, and the screen is moved so those boxes are the first thing under their thumb.
+function bbDemandPicks(need){
+  const box=document.querySelector(".bb"); if(!box) return;
+  let msg=box.querySelector(".bbneed");
+  if(!msg){ msg=document.createElement("div"); msg.className="bbneed"; box.insertBefore(msg, box.querySelector(".bbrow")); }
+  msg.innerHTML = need.length>1
+    ? "\u26A0\uFE0F <b>Choose both pictures before moving on.</b> This book needs one picture for its name and one for its number \u2014 they are what the review will ask you for."
+    : `\u26A0\uFE0F <b>Choose a picture for the ${need[0]==="word"?"book\u2019s name":"book\u2019s number"} before moving on.</b> It is what the review will ask you for.`;
+  need.forEach(k=>{ const b=box.querySelector(`.bbchoose[data-rel="${k}"]`); if(b) b.classList.add("needpick"); });
+  box.scrollIntoView({block:"start", behavior:"smooth"});
+}
 function wireBuildTheBook(n, rerender){
   // Re-rendering a card is not a reason to lose your place on it.
   const keepPlace=()=>{
@@ -4107,9 +4142,12 @@ function wireBuildTheBook(n, rerender){
     rerender();
     requestAnimationFrame(()=>{ const s=document.querySelector(".content"); if(s) s.scrollTop=y; });
   };
-  document.querySelectorAll("[data-rel]").forEach(btn=>btn.onclick=()=>
-    btn.dataset.rel==="peg" ? openPegPicker(n, keepPlace)
-                            : openRelationPicker(n, btn.dataset.rel, keepPlace));
+  document.querySelectorAll("[data-rel]").forEach(btn=>btn.onclick=()=>{
+    btn.classList.remove("needpick");
+    const m=document.querySelector(".bb .bbneed"); if(m) m.remove();
+    return btn.dataset.rel==="peg" ? openPegPicker(n, keepPlace)
+                                   : openRelationPicker(n, btn.dataset.rel, keepPlace);
+  });
 }
 
 /* ---- writing the scene down ---------------------------------------------------------------- */
@@ -4513,20 +4551,37 @@ function skillPaywalled(sk){ return isPaidSkill(sk) && !Billing.isPro() && !((Pr
 const Billing = {
   // ── configure these once your Stripe product exists ──
   cfg: {
-    priceLabel: "$25/year",
-    // Paste your Stripe Payment Links here. Each redirect should return to this app with
-    // ?checkout=success (monthly) or ?checkout=success&plan=year appended.
-    checkoutUrl: "",       // yearly ($25/year) — legacy field, still used as the yearly link
-    monthlyUrl: "",        // monthly ($5/month)
-    // Optional: Stripe customer-portal link so subscribers can manage/cancel.
-    manageUrl: ""
+    priceLabel: "$35/year",
+    monthlyLabel: "$5/month"
+    // No payment links here any more. Checkout is opened by the server, which attaches the account
+    // to the payment itself — a link in the client can only ask the browser to say who it is.
+  },
+  // What the server last told us. Kept so the app knows what somebody has paid for while offline,
+  // and refreshed on sign-in, on returning from checkout, and on boot.
+  ent(){ return Store.getJSON("vv_ent", null); },
+  async refresh(){
+    if(!(typeof Auth!=="undefined" && Auth.loggedIn())) return null;
+    try{
+      const d=await Auth._req("/entitlement","GET");
+      if(d && typeof d.pro==="boolean"){ Store.setJSON("vv_ent", Object.assign({at:Date.now()}, d)); applyFeatureVisibility&&applyFeatureVisibility(); return d; }
+    }catch(e){}
+    return null;                                  // a failed check never takes Pro away
   },
   data(){ return Store.getJSON("vv_pro", null); },
-  isPro(){ if(Prog && Prog.compPro) return true;   // a comp code follows the account, not the browser
-    const d=Billing.data(); if(!d||!d.active) return false; if(d.until && Date.now()>d.until) return false; return true; },
-  // Grant Pro for a period (default one year). Called after a confirmed purchase.
-  grant(months=12){ Store.setJSON("vv_pro",{active:true, plan:"annual", since:Date.now(), until:Date.now()+Math.round(months*30.44*DAY)}); },
-  revoke(){ Store.remove("vv_pro"); if(Prog){ Prog.compPro=0; saveProg(); } },
+  // Three ways to be Pro, and only one of them is a purchase.
+  //   • the server says so — the only one that money buys
+  //   • a comp code, which follows the account rather than the browser
+  //   • a local grant, which now exists ONLY for the admin "simulate Pro" tool
+  // What is gone is the fourth: a URL that says so. That used to be enough.
+  isPro(){
+    if(Prog && Prog.compPro) return true;
+    const s=Billing.ent(); if(s && s.pro) return true;
+    const d=Billing.data(); if(!d||!d.active) return false; if(d.until && Date.now()>d.until) return false; return true;
+  },
+  // Local only, and deliberately so: the admin tool that shows what a Pro account sees. A purchase
+  // never comes through here — it comes from the server, through refresh().
+  grant(months=12){ Store.setJSON("vv_pro",{active:true, plan:"local", since:Date.now(), until:Date.now()+Math.round(months*30.44*DAY)}); },
+  revoke(){ Store.remove("vv_pro"); Store.remove("vv_ent"); if(Prog){ Prog.compPro=0; saveProg(); } },
   // Comp / promo codes that unlock the full app permanently (no expiry).
   // A shared code unlocks the paid app for anyone who learns it, and this one is in the shipped
   // HTML where anybody can read it. It is here to test what a Pro account sees, and it must come
@@ -4539,22 +4594,58 @@ const Billing = {
     Store.setJSON("vv_pro",{active:true, plan:"code", since:Date.now(), until:null});
     Prog.compPro=Date.now(); saveProg(); try{ Auth.push(); }catch(e){}
     return true; } return false; },
-  startCheckout(plan){
-    const url = plan==="monthly" ? Billing.cfg.monthlyUrl : Billing.cfg.checkoutUrl;
- if(!url){ toast("Checkout isn't set up yet. Add your Stripe link in Billing.cfg."); return; }
-    try{ location.href = url; }catch(e){ toast("Couldn't open checkout."); }
+  // The server makes the checkout session, so the account is attached to the payment by us. A link
+  // held in the client can only ask the browser who it is, and a browser can be told what to say.
+  async startCheckout(plan){
+    if(!(typeof Auth!=="undefined" && Auth.loggedIn())){
+      toast("Create an account first, so your subscription has somewhere to live.");
+      try{ openAccountScreen&&openAccountScreen(); }catch(e){}
+      return;
+    }
+    toast("Opening checkout…");
+    try{
+      const d=await Auth._req("/checkout","POST",{plan: plan==="monthly"?"monthly":"yearly"});
+      if(d && d.url){ location.href=d.url; return; }
+      toast((d&&d.error)||"Checkout isn't set up yet.");
+    }catch(e){ toast("Couldn't reach the server to open checkout."); }
+  },
+  // Manage or cancel. Also a server-made session, so there is no shared link to guess.
+  async manage(){
+    if(!(typeof Auth!=="undefined" && Auth.loggedIn())) return toast("Sign in to manage your subscription.");
+    try{
+      const d=await Auth._req("/portal","POST",{});
+      if(d && d.url){ location.href=d.url; return; }
+      toast((d&&d.error)||"No subscription to manage yet.");
+    }catch(e){ toast("Couldn't reach the server."); }
   },
   // On app load: if we've returned from a successful Stripe checkout, unlock Pro and tidy the URL.
   // NOTE: this trusts the redirect. For tamper-proof entitlement, verify the session server-side
   // (a small endpoint that calls Stripe with the session_id) and grant based on that response.
+  // Coming back from Stripe is not proof of anything: the address bar is not a receipt, and this
+  // used to grant a year to anybody who typed it. It asks the server instead, and the server only
+  // says yes once Stripe's webhook has told it the money arrived.
   handleReturn(){
     let p; try{ p=new URLSearchParams(location.search); }catch(e){ return; }
-    if(p.get("checkout")==="success"){
-      Billing.grant(12);
-      try{ history.replaceState(null,"",location.pathname); }catch(e){}
- setTimeout(()=>toast("✨ Pro unlocked. The whole Bible is open to you!"),300);
-      setTimeout(()=>{ try{ maybeRomeLetter(); }catch(e){} },1200);
-    }
+    const state=p.get("checkout");
+    if(!state) return;
+    try{ history.replaceState(null,"",location.pathname); }catch(e){}
+    if(state==="cancelled"){ setTimeout(()=>toast("Checkout cancelled. Nothing was charged."),300); return; }
+    if(state!=="success") return;
+    setTimeout(()=>toast("Thank you. Confirming with Stripe…"),300);
+    // The webhook and this redirect race each other, so ask a few times before giving up.
+    let tries=0;
+    const ask=async ()=>{
+      const d=await Billing.refresh();
+      if(d && d.pro){
+        bustCaches&&bustCaches(); renderPath&&renderPath();
+        toast("✨ Pro unlocked. The whole Bible is open to you!");
+        setTimeout(()=>{ try{ maybeRomeLetter(); }catch(e){} },1200);
+        return;
+      }
+      if(++tries<6) return setTimeout(ask, 1500);
+      toast("Payment received. It can take a moment to appear — reopen the app shortly.");
+    };
+    setTimeout(ask, 900);
   }
 };
 
@@ -4628,6 +4719,7 @@ const Auth = {
     if(Auth._token){ try{ await Auth.push(); }catch(e){ pushed=false; } }
     Auth._token=null; Auth.user=null;
     Store.remove("vv_token"); Store.remove("vv_acct");
+    Store.remove("vv_ent");                       // whose subscription this was left with them
     wipeLocalUserData();
     renderAcctBox(); updateTabLocks(); syncTabOrder(false);
     // signed out means no history to show, so this is the screen a new arrival gets — and it
@@ -4643,6 +4735,8 @@ const Auth = {
   // pull cloud → union-merge with local → push the merged truth back (both devices converge, nothing lost)
   async pull(){
     if(!Auth._token) return; Auth._pulling=true;
+    // Who has paid is the server's to say, and this is the moment we have a token to ask with.
+    try{ Billing.refresh(); }catch(e){}
     try{
       const d=await Auth._req("/sync","GET");
       if(d && d.progJson){
@@ -4980,6 +5074,9 @@ function show(tab){
   if(!Prog.onboarded && tab!=="journey"){ Prog.onboarded=true; saveProg(); }
   try{ if(["learn","verse","palace","journey","stories"].includes(tab)) Store.set("vv_tab", tab); }catch(e){}  // remember the tab so a page refresh returns here
   if(tab!=="verse") clearActiveTest();   // walked away from the test - do not drag them back into it
+  // Arriving somewhere has its own short motif, so where you are is audible before it is read.
+  // Only on an actual change: re-rendering the screen you are already on is not an arrival.
+  { const was=(document.querySelector(".view.active")||{}).id; if(was!==tab) Sfx.screen(tab); }
   views.forEach(v=>v.classList.toggle("active",v.id===tab));
   document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   document.querySelector(".content").scrollTop=0;
@@ -6343,7 +6440,13 @@ function encodingOptions(kind,n,word){
 function wireStep(s){
   const word=itemWord(s.kind,s.n);
   if(s.type==="teach"){
-    el("lNext").onclick=advance;
+    el("lNext").onclick=()=>{
+      // Both pictures, or nowhere. Said here rather than at the end of the lesson, because this is
+      // the screen the pickers are on and the only one where it can be put right.
+      const missing = s.kind==="book" ? bbMissingPicks(s.n) : [];
+      if(missing.length){ bbDemandPicks(missing); return; }
+      advance();
+    };
     wireTeachCard(s.kind, s.n, renderStep);   // shared: book-image edit, scene edit, peg picker
     return;
   }
@@ -7059,10 +7162,95 @@ function awardTalents(k, firstTry, ignoreCap){
   return pts;
 }
 // The single place talents are gained — the true total keeps counting; the display flips to ∞ past 9999.
+/* ---- SOUND -----------------------------------------------------------------------------------
+   Every sound in the app is made here, from oscillators, rather than loaded. Three reasons: the app
+   ships as one file and audio files would be the first thing to break that; a synthesised tone is a
+   few hundred bytes of code against a few hundred kilobytes of samples, which matters on a phone on
+   a bad connection; and nothing has to be cache-busted when a sound is changed.
+
+   Nothing plays until the reader has touched the screen once. Browsers require that, and it is also
+   plain good manners: a page that makes a noise before you have touched it is a page you close.  */
+const Sfx = (()=>{
+  let ctx=null, unlocked=false;
+  const AC = window.AudioContext || window.webkitAudioContext;
+
+  function on(){ return feat("sound"); }   // one switch, in the Feature Store, and no second one to hunt for
+  function ac(){
+    if(!AC) return null;
+    if(!ctx){ try{ ctx=new AC(); }catch(e){ return null; } }
+    if(ctx.state==="suspended") ctx.resume().catch(()=>{});
+    return ctx;
+  }
+  // One note. `f` to `f2` if a slide is wanted; `t` is its whole length in seconds.
+  function note(f, o){
+    if(!unlocked || !on()) return;
+    const c=ac(); if(!c) return;
+    o=o||{};
+    const t0=c.currentTime+(o.at||0), t=o.t||0.14, vol=(o.vol==null?0.16:o.vol);
+    const osc=c.createOscillator(), g=c.createGain();
+    osc.type=o.type||"sine";
+    osc.frequency.setValueAtTime(f, t0);
+    if(o.to) osc.frequency.exponentialRampToValueAtTime(Math.max(20,o.to), t0+t);
+    // A tone that starts and stops squarely clicks. The ramps are the difference between a note and
+    // a tick, and they cost nothing.
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0+Math.min(0.02, t*0.2));
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+t);
+    osc.connect(g); g.connect(c.destination);
+    osc.start(t0); osc.stop(t0+t+0.02);
+  }
+  const seq = (notes, o) => notes.forEach((n,i)=>note(n.f, Object.assign({}, o, n)));
+
+  // Equal temperament from A4, so the motifs below can be written as scale degrees and stay in tune.
+  const N = n => 440*Math.pow(2, n/12);
+  const C5=N(3), D5=N(5), E5=N(7), G5=N(10), A5=N(12), B5=N(14), C6=N(15), E6=N(19), G6=N(22);
+  const G4=N(-2), A4=440, D4=N(-7), E4=N(-5), C4=N(-9), F4=N(-4), B4=N(2);
+
+  return {
+    // Called from the first touch or click anywhere. Until then nothing makes a sound at all.
+    unlock(){ if(unlocked) return; unlocked=true; ac(); },
+    muted(){ return !on(); },
+
+    // A rising third into a fifth: short, bright, and over before it is in the way.
+    right(){ seq([{f:E5,at:0},{f:G5,at:0.07},{f:C6,at:0.14,t:0.20}], {type:"triangle", t:0.12, vol:0.14}); },
+
+    // Not a buzzer. A soft step down — enough to know, never enough to sting. This app is for
+    // somebody learning Scripture badly at first, and a harsh noise on a wrong answer teaches
+    // them to stop trying.
+    wrong(){ seq([{f:A4,at:0},{f:F4,at:0.09,t:0.22}], {type:"sine", t:0.16, vol:0.12}); },
+
+    // Coins into a jar: a few bright clinks at slightly different pitches, then the low settle of
+    // the jar taking them. More talents, more clinks, up to a handful — beyond that it is a noise.
+    coins(n){
+      const clinks=Math.max(2, Math.min(6, Math.round((n||0)/6)+2));
+      for(let i=0;i<clinks;i++){
+        const jitter=(i*0.37)%1;                     // spread without randomness, so tests stay still
+        note(C6*(1+jitter*0.14), {at:0.05*i, t:0.09, type:"triangle", vol:0.10});
+        note(G6*(1+jitter*0.10), {at:0.05*i+0.01, t:0.06, type:"sine", vol:0.05});
+      }
+      note(G4, {at:0.05*clinks+0.02, to:D4, t:0.30, type:"sine", vol:0.13});   // the jar
+    },
+
+    // One motif per screen, so where you have arrived is audible before you have read anything. Each
+    // is two or three notes of the same chord, which is why moving about does not sound like an
+    // argument: they are the same instrument playing different parts of one idea.
+    screen(id){
+      const M={
+        learn:   [{f:C5,at:0},{f:E5,at:0.06}],                    // stepping up: the path
+        verse:   [{f:G5,at:0},{f:C6,at:0.06},{f:E6,at:0.12}],     // opening out: the Library
+        palace:  [{f:C4,at:0},{f:G4,at:0.07},{f:C5,at:0.14}],     // low and wide: a building
+        journey: [{f:E5,at:0},{f:D5,at:0.06},{f:G5,at:0.12}],     // a page turning: the Bible
+        stories: [{f:A4,at:0},{f:C5,at:0.06},{f:E5,at:0.12},{f:A5,at:0.18}]   // a told tale
+      };
+      const m=M[id]; if(!m) return;
+      seq(m, {type:"sine", t:0.13, vol:0.09});                    // quieter than an answer: it is punctuation
+    }
+  };
+})();
 function earnTalents(delta){
   if(!(delta>0)) return;
   Prog.talents=(Prog.talents||0)+delta; saveProg();
-  talentBurst(delta);
+  talentBurst(delta); Sfx.coins(delta);
 }
 // Talents are reduced when a hint is used (verse review, word for word). Never below 0.
 function spendTalents(n){
@@ -7382,6 +7570,8 @@ const SNOOZE_MS=14*DAY, ESTAB_CR=5;
    turned ON at migration, because taking a feature away from someone using it is not a default,
    it is a loss.                                                                              */
 const FEATURES=[
+ {id:"sound", on:true, icon:"\u{1F50A}", name:"Sound",
+ what:"Short sounds for a right answer, a wrong one, arriving on a screen, and talents landing in your jar. Turn it off for silence."},
  {id:"goal", on:true, icon:"\u{1F3AF}", name:"Daily Goal",
  what:"Set how much you want to do each day, new verses, book images or recitations, and watch the track fill as you go."},
  {id:"badges", on:true, icon:"\u{1F396}\uFE0F", name:"Milestones",
@@ -9244,14 +9434,14 @@ function renderNumTest(){
   if(el("ntScene")) el("ntScene").onclick=()=>showSceneReveal(n, false);   // number questions only
   V.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
     if(b.disabled) return;
-    if(b.dataset.ok==="1"){                       // correct → green, strengthen, next
+    if(b.dataset.ok==="1"){ Sfx.right();          // correct → green, strengthen, next
       b.classList.add("correct"); V.querySelectorAll("[data-ok]").forEach(x=>x.disabled=true);
       NT.ok++; strengthenNumber(n);
       setTimeout(()=>{ NT.i++;
         if(NT && NT.ret && NT.i<NT.qs.length) srFlash(renderNumTest);   // daily review → flash the count between number questions
         else renderNumTest();
       }, 550);
-    } else {                                       // wrong → red, stay to retry
+    } else { Sfx.wrong();                          // wrong → red, stay to retry
       b.classList.add("wrong"); b.disabled=true; NT.wrong++;
       gradeKey(`sk:${(NT&&NT.kind)==="book"?"book":"num"}:${n}`,"miss");
     }
@@ -9424,6 +9614,7 @@ function memTestRender(){
     if(mtLock) return;
     if(!mtSel.b || !mtSel.c || !mtSel.v){ el("mtWarn").textContent="Pick a book, chapter and verse."; return; }
     const ok=(mtSel.b===b && mtSel.c===c && mtSel.v===v);
+    if(ok) Sfx.right(); else Sfx.wrong();
     if(ok){ // green, auto-advance to next verse
       const firstTry=memTestWrong===0, kk=refKey(b,c,v), peeked=memHintUses>0;
       if(peeked){ if(Prog.streak>(Prog.bestStreak||0)) Prog.bestStreak=Prog.streak; }   // peeked → streak is PRESERVED but not increased
@@ -10630,15 +10821,22 @@ function acct(){ return Store.getJSON("vv_acct",null); }
 function setAcct(a){ Store.setJSON("vv_acct",a); renderAcctBox(); }
 function renderAcctBox(){
   const box=el("acctBox"); if(!box) return; const a=acct();
-  const pro=Billing.isPro(), d=Billing.data();
-  const until=(pro&&d&&d.until)?new Date(d.until).toLocaleDateString():null;
+  const pro=Billing.isPro(), s=Billing.ent(), d=Billing.data();
+  const untilMs=(s&&s.until) || (d&&d.until) || null;
+  const until=(pro&&untilMs)?new Date(untilMs).toLocaleDateString():null;
+  // A cancelled subscription is still a paid one until the period ends. Say which it is.
+  const ending=!!(s&&s.cancelAtPeriodEnd);
+  const how = (Prog&&Prog.compPro) ? "Comp code"
+            : (s&&s.pro) ? (s.plan==="monthly"?"Monthly":"Yearly")
+            : "Pro";
+  const line = ending ? (until?"Ends "+until:"Ends when this period does")
+             : until ? "Renews "+until : "Active";
   const proRow = pro
     ? `<div class="acct-row" style="margin-top:10px"><div class="acct-av" style="background:var(--gold);color:#241a02">★</div>
  <div style="flex:1"><div style="font-weight:700;font-size:14px" class="gold">Pro · whole Bible unlocked</div>
-        <div class="muted" style="font-size:11px">${until?"Renews "+until:"Active"}</div></div>
-        ${Billing.cfg.manageUrl
-          ? `<a class="btn sm ghost" href="${Billing.cfg.manageUrl}" target="_blank" rel="noopener">Manage</a>`
-          : `<button class="btn sm ghost" id="cancelSub">Cancel</button>`}</div>`
+        <div class="muted" style="font-size:11px">${how} · ${line}</div></div>
+        ${(s&&s.pro)?`<button class="btn sm ghost" id="manageSub">Manage</button>`
+                   :`<button class="btn sm ghost" id="cancelSub">Cancel</button>`}</div>`
     : `<div class="acct-row" style="margin-top:10px"><div class="acct-av" style="background:var(--panel2)">🔒</div>
         <div style="flex:1"><div style="font-weight:700;font-size:14px">Free path</div>
         <div class="muted" style="font-size:11px">Torah, first palace &amp; Matthew</div></div>
@@ -10695,6 +10893,10 @@ function renderAcctBox(){
   if(el("goProBtn")) el("goProBtn").onclick=()=>{ closeProfile(); openPaywall(); };
   // Until the Stripe customer portal is configured, never leave a subscriber with no way out:
   // tell them plainly how to cancel rather than showing a button that does nothing.
+  // Anyone with a real subscription manages it in Stripe's own portal, in a session made for
+  // them. The support form below stays for a comp code or a local grant, which Stripe has never
+  // heard of and so has nothing to cancel.
+  if(el("manageSub")) el("manageSub").onclick=()=>{ closeProfile(); Billing.manage(); };
   if(el("cancelSub")) el("cancelSub").onclick=()=>{
     closeProfile();
     openTicketForm({type:"cancel", title:"Cancel your subscription",
@@ -11575,14 +11777,14 @@ function renderWordPick(){
   const correct=WP.words[WP.idx];
   V.querySelectorAll("[data-w]").forEach(btn=>btn.onclick=()=>{
     if(btn.disabled) return;
-    if(normWord(btn.dataset.w)===normWord(correct)){
+    if(normWord(btn.dataset.w)===normWord(correct)){ Sfx.right();
       btn.classList.add("good");
       V.querySelectorAll("[data-w]").forEach(x=>x.disabled=true);
       // The pause lets the green land before the next word. Closing or skipping inside it sets WP
       // to null, and this used to wake up and read it anyway — a right answer followed quickly by
       // the X was a crash.
       setTimeout(()=>{ if(!WP) return; WP.idx++; WP.opts=null; renderWordPick(); }, 320);
-    } else {
+    } else { Sfx.wrong();
       btn.classList.add("bad"); btn.disabled=true; WP.missed++;
       el("wpFb").innerHTML=`<b style="color:var(--miss-ink)">↻ Try again</b>`;
     }
@@ -11674,12 +11876,12 @@ function renderTypeTest(){
   const commitWord=()=>{
     const expected=TT.words[TT.idx]; if(expected===undefined) return;
     const typed=inp.value.trim(); if(!typed) return;
-    if(normWord(typed)===normWord(expected)){          // correct → commit to the top (green), advance
+    if(normWord(typed)===normWord(expected)){ Sfx.right();   // correct → commit to the top (green), advance
       TT.idx++; TT.wrong=false; TT.wrongWord=null; TT.typos=0; TT.typoNote="";   // the crosses are per WORD
       inp.value=""; inp.classList.remove("good","wrong");
       if(TT.idx>=total){ typeTestComplete(); return; }
       paintTop();
-    } else {                                            // wrong → show it red at top, clear the box to retry
+    } else { Sfx.wrong();                               // wrong → show it red at top, clear the box to retry
       TT.wrong=true; TT.wrongWord=typed;
       // Only the strict test forgives typos. Practice already has hints and counts no misses, so
       // there is nothing there to protect anyone from.
@@ -12604,6 +12806,11 @@ if(!Prog.onboarded){
 if(!transReady(curTrans())) loadTranslation(curTrans()).then(ok=>{ if(ok) refreshCurrentView(); });
 else if(transEntry(curTrans()).api) prefetchScripture(curTrans());
 wireVerseWords();   // press-and-hold on any verse word → its Hebrew/Greek
+// Audio cannot start before a gesture — browsers forbid it, and it would be rude anyway. The first
+// touch anywhere wakes it; after that these listeners are done and take themselves off.
+["pointerdown","touchstart","keydown"].forEach(ev=>
+  window.addEventListener(ev, function wake(){ try{ Sfx.unlock(); }catch(e){}
+    ["pointerdown","touchstart","keydown"].forEach(e2=>window.removeEventListener(e2, wake, true)); }, true));
 OnboardWalk.recover();   // a walkthrough that was closed mid-run put the real progress back
 grandfatherFeatures();   // an account that predates the Feature Store keeps everything it had
 resumeActiveTest();      // straight back into an unfinished verse test, if there was one

@@ -170,7 +170,7 @@ Author number↔image↔book **relationship content** (scenes, picture lists, nu
 
 ## 8a. The QA probes
 
-Seven probes sit beside the regression suite in `tests/qa/`. They are NOT part of `tests/run.js`:
+Eight probes sit beside the regression suite in `tests/qa/`. They are NOT part of `tests/run.js`:
 the suite pins what the app does today, which makes it blind to anything that has been wrong all
 along. These ask different questions, and a finding is a candidate bug rather than a diff.
 
@@ -181,6 +181,7 @@ along. These ask different questions, and a finding is a candidate bug rather th
     node tests/qa/house-style.js    one idea one name, one action one label, book title case
     node tests/qa/library-door.js   a book lesson -> the verse it offers -> the Library it wins
     node tests/qa/walkthrough.js    every Admin walkthrough stage: one thing left to do at each
+    node tests/qa/sound.js          a page nobody has touched is silent; the first gesture wakes it
 
 Run them after anything structural. Between them they found eight real bugs in one pass, including
 four crashes and a film that opened over the welcome screen for somebody who had just signed out.
@@ -201,6 +202,27 @@ mismatched button labels that had been invisible to it. Any new probe should bor
 scenarios or residue from one becomes a "finding" in the next. And a spec that signs out has to put
 the welcome overlay away afterwards — signing out raises it by design, and everything after it then
 runs behind a nominally-open intro.
+
+## 8b. Sound
+
+Every sound is **synthesised** in `Sfx` (just above `earnTalents`) from oscillators — no audio files.
+The app ships as one HTML file and samples would be the first thing to break that; a tone is a few
+hundred bytes of code against a few hundred kilobytes of audio; and nothing needs cache-busting when
+a sound changes. Four calls: `Sfx.right()`, `Sfx.wrong()`, `Sfx.coins(n)`, `Sfx.screen(tabId)`.
+
+- **Nothing plays before a gesture.** `Sfx.unlock()` is called from a one-shot `pointerdown` /
+  `touchstart` / `keydown` listener that removes itself. Browsers require this; so do manners.
+- **One switch**, `feat("sound")` in the Feature Store. There is deliberately no second mute.
+- **No randomness.** Coin pitches are spread by an index-derived value, not `Math.random()`, so the
+  suite stays deterministic.
+- **Hooks**: `show()` for the screen motif (only on an actual change of view), `earnTalents()` for the
+  coins, and the four places an answer is judged — the `mtCheck` handler (verse location), the
+  `[data-ok]` handler (numbers and books), the `[data-w]` handler (word picker) and `commitWord()`
+  (word for word).
+- **Testing sound** means counting `createOscillator` calls with a patched prototype; nothing else
+  about a sound is observable. Pre-gesture silence cannot be asserted in `behaviour.js` — by then the
+  suite has clicked thousands of times and one of those clicks was the wake gesture — so it lives in
+  `tests/qa/sound.js`, which opens a page and touches nothing.
 
 ## 9. Gotchas worth remembering
 

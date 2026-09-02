@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "6ae1f25543468c41",
+  "h": "5001d5ad41b563f3",
   "len": 19410,
   "els": 460,
   "buttons": 46,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "2f7e23618762ecab",
-  "len": 143539,
-  "els": 2505,
+  "h": "53b028e6f1aa32b3",
+  "len": 146798,
+  "els": 2553,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.103.0 September 2, 2026 A verse is the way in NEW Finishing a book lesson offers you a verse from t"
+  "text": "✕ Version history v1.105.0 September 2, 2026 Sound, and a book lesson that waits for both pictures NEW The app has a voi"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -369,10 +369,10 @@
   "text": "✕ The Churches in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 5"
  },
  "classic/modal/feature-store": {
-  "h": "d146eb1d997435aa",
-  "len": 3886,
-  "els": 56,
-  "buttons": 9,
+  "h": "935165054262254b",
+  "len": 4268,
+  "els": 62,
+  "buttons": 10,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "a270c6de563ef14a",
+  "h": "b0d7026b6b9eda4c",
   "len": 18609,
   "els": 452,
   "buttons": 44,
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "2e3964a7f779f0e8",
+  "h": "b30eadc1ac74b425",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "2f7e23618762ecab",
-  "len": 143539,
-  "els": 2505,
+  "h": "53b028e6f1aa32b3",
+  "len": 146798,
+  "els": 2553,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.103.0 September 2, 2026 A verse is the way in NEW Finishing a book lesson offers you a verse from t"
+  "text": "✕ Version history v1.105.0 September 2, 2026 Sound, and a book lesson that waits for both pictures NEW The app has a voi"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -891,10 +891,10 @@
   "text": "✕ The Churches in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 5"
  },
  "illumined/modal/feature-store": {
-  "h": "d146eb1d997435aa",
-  "len": 3886,
-  "els": 56,
-  "buttons": 9,
+  "h": "935165054262254b",
+  "len": 4268,
+  "els": 62,
+  "buttons": 10,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "2e3964a7f779f0e8",
+  "h": "b30eadc1ac74b425",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "8418e40ae9f10315",
+  "h": "4e45862718feb47d",
   "len": 18615,
   "els": 452,
   "buttons": 44,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "2f7e23618762ecab",
-  "len": 143539,
-  "els": 2505,
+  "h": "53b028e6f1aa32b3",
+  "len": 146798,
+  "els": 2553,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.103.0 September 2, 2026 A verse is the way in NEW Finishing a book lesson offers you a verse from t"
+  "text": "✕ Version history v1.105.0 September 2, 2026 Sound, and a book lesson that waits for both pictures NEW The app has a voi"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1413,10 +1413,10 @@
   "text": "✕ The Churches in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 5"
  },
  "glass/modal/feature-store": {
-  "h": "d146eb1d997435aa",
-  "len": 3886,
-  "els": 56,
-  "buttons": 9,
+  "h": "935165054262254b",
+  "len": 4268,
+  "els": 62,
+  "buttons": 10,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "8418e40ae9f10315",
+  "h": "4e45862718feb47d",
   "len": 18615,
   "els": 452,
   "buttons": 44,
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "e77de88bba1896bb",
+  "h": "34619da411313fe3",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "2f7e23618762ecab",
-  "len": 143539,
-  "els": 2505,
+  "h": "53b028e6f1aa32b3",
+  "len": 146798,
+  "els": 2553,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.103.0 September 2, 2026 A verse is the way in NEW Finishing a book lesson offers you a verse from t"
+  "text": "✕ Version history v1.105.0 September 2, 2026 Sound, and a book lesson that waits for both pictures NEW The app has a voi"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1935,10 +1935,10 @@
   "text": "✕ The Churches in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 5"
  },
  "quest/modal/feature-store": {
-  "h": "d146eb1d997435aa",
-  "len": 3886,
-  "els": 56,
-  "buttons": 9,
+  "h": "935165054262254b",
+  "len": 4268,
+  "els": 62,
+  "buttons": 10,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "e77de88bba1896bb",
+  "h": "34619da411313fe3",
   "len": 18617,
   "els": 452,
   "buttons": 44,
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "08337e5863e81961",
+  "h": "0a4253f8e404c00b",
   "len": 18613,
   "els": 452,
   "buttons": 44,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "2f7e23618762ecab",
-  "len": 143539,
-  "els": 2505,
+  "h": "53b028e6f1aa32b3",
+  "len": 146798,
+  "els": 2553,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.103.0 September 2, 2026 A verse is the way in NEW Finishing a book lesson offers you a verse from t"
+  "text": "✕ Version history v1.105.0 September 2, 2026 Sound, and a book lesson that waits for both pictures NEW The app has a voi"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2457,10 +2457,10 @@
   "text": "✕ The Churches in Rome Half of everything Caesar takes is laid up as stone. What Rome takes from you, God builds with. 5"
  },
  "buddy/modal/feature-store": {
-  "h": "d146eb1d997435aa",
-  "len": 3886,
-  "els": 56,
-  "buttons": 9,
+  "h": "935165054262254b",
+  "len": 4268,
+  "els": 62,
+  "buttons": 10,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "08337e5863e81961",
+  "h": "0a4253f8e404c00b",
   "len": 18613,
   "els": 452,
   "buttons": 44,
