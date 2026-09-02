@@ -2397,9 +2397,10 @@ const DAY = 86400000;
                  tickets: (Prog.scratchWon || []).length, stashed: !!Store.getJSON('vv_walk_backup', null) };
 
     // skipping lands on the same seed the tester reaches by playing the step
-    OnboardWalk.skip();
-    OnboardWalk.skip();          // the Bible stage: one verse wins it, so step past to the fifth-verse stage
-    const s2 = { memorized: Prog.memorized.length, library: tabWon('verse'),
+    // 1 first verse, 2 the practice round, 3 the ticket that round won, 4 the fifth verse
+    const stops = [];
+    for (let i = 0; i < 4; i++) { stops.push(OnboardWalk.where().doing); OnboardWalk.skip(); }
+    const s2 = { stops, memorized: Prog.memorized.length, library: tabWon('verse'),
                  palace: tabWon('palace'), streak: Prog.bestStreak };
     editVerseScene(1, 1, 1, () => {}, () => {});
     s2.pickersCovered = !!document.querySelector('#wPalLock .slock');
@@ -2420,6 +2421,9 @@ const DAY = 86400000;
   no(walkTool.s1.knows40, '...and not Matthew, which is the one thing left to do');
   is(walkTool.s1.tickets, 0, '...with no ticket won yet');
   ok(walkTool.s1.stashed, '...and your real progress stashed before anything is seeded');
+  is(walkTool.s2.stops.join(' | '),
+     'Finish the Matthew lesson | Memorise your first verse | Finish a round of Practice Verses | Scratch the ticket that same round won',
+     'the walkthrough stops at every rung of the Library ladder on the way');
   is(walkTool.s2.memorized, 4, 'the fifth-verse stage hands you four verses');
   ok(walkTool.s2.library, '...with the Library ticket already won');
   no(walkTool.s2.palace, '...and the palace ticket still to earn');
@@ -4766,15 +4770,18 @@ const DAY = 86400000;
     // nothing is ever handed over twice
     const nothingLeft = libPending();
 
-    // the Bible waits for every tool to have been used at least once
-    Prog.libUsed = { learn:1, numbers:1, videos:1, mem:1, verses:1 };
-    const bibleShort = SCRATCH_LADDER.find(x => x.tab === 'journey').reqs[0].done();
-    Prog.libUsed.w4w = 1;
-    const bibleReady = SCRATCH_LADDER.find(x => x.tab === 'journey').reqs[0].done();
+    // the Bible waits for a round of Practice Verses — the same round that wins the last present
+    const bibleReq = () => SCRATCH_LADDER.find(x => x.tab === 'journey').reqs[0];
+    Prog.libUsed = { learn:1, numbers:1, videos:1, mem:1 };
+    const bibleShort = bibleReq().done();
+    Prog.libUsed.verses = 1;
+    const bibleReady = bibleReq().done();
+    // and it is offered after the Library's own present, not above it: array order is offer order
+    const ladderOrder = SCRATCH_LADDER.map(x => x.tab).join(',');
 
     Object.assign(Prog, keep); saveProg(); bustCaches();
     return { opening, pendingAfterVerse, withPair, pendingAfterPractice, withAll,
-             nothingLeft, bibleShort, bibleReady };
+             nothingLeft, bibleShort, bibleReady, ladderOrder };
   });
   is(staged.opening.join(' | '), 'Spaced Repetition | Learn Verses | Video Review | Practice Numbers',
      'the library opens with the three you can use, and spaced repetition waiting under its foil');
@@ -4785,8 +4792,10 @@ const DAY = 86400000;
   has(staged.withAll.join(' | '), 'Practice Word for Word', '...which is word for word');
   is(staged.withAll.length, 7, 'and the finished library carries all seven');
   no(staged.nothingLeft, 'nothing is ever handed over twice');
-  no(staged.bibleShort, 'the bible waits while a tool is still unused');
-  ok(staged.bibleReady, '...and arrives once every one of them has been used');
+  no(staged.bibleShort, 'the bible waits until a round of practice is finished');
+  ok(staged.bibleReady, '...and is earned by that round, the same one that wins the last present');
+  is(staged.ladderOrder, 'verse,journey,palace,stories',
+     '...and sits second on the ladder, since a ticket below one still to be earned is never offered');
 
   // A present is a nice moment on the Library and an interruption anywhere else. This one bit once:
   // the guard read vView, which is the hub's SUB-view and stays set to "hub" while a verse is drawn

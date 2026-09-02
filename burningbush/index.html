@@ -2156,8 +2156,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.101.0";
+const APP_VERSION="1.102.0";
 const CHANGELOG=[
+ {v:"1.102.0", d:"September 2, 2026", t:"The Bible, and a walkthrough that walks the new path", items:[
+   ["chg","<b>The Bible is won by your first round of Practice Verses.</b> Yesterday it waited for every tool in the Library to have been used, which was a longer wait than it needed to be. It now comes off the same round of practice that wins the last Library present \u2014 the present opens first, and the Bible's golden ticket is waiting behind it."],
+   ["fix","<b>The onboarding walkthrough walks the new path.</b> Its second stage still waited for the Bible to be won by one verse, which cannot happen any more, so a run stalled there. It now has seven stages and stops at every rung of the Library ladder \u2014 your first verse, the practice round, the ticket that round wins, then the fifth verse, the first palace and the fifteenth."],
+   ["chg","<b>Each stage still leaves you exactly one thing to do.</b> Everything up to the last action is filled in, so what you are looking at is the only thing that can happen next."]
+ ]},
  {v:"1.101.0", d:"September 2, 2026", t:"Your Library, one present at a time", items:[
    ["new","<b>The Library now arrives a piece at a time, and you never know what is coming next.</b> It used to open with seven buttons at once, which is seven things to work out before you have memorized anything. It opens with three now — Learn Verses, Practice Numbers &amp; Books, and Video Review — and the rest arrive as scratch-off tickets you earn by <i>using</i> what you already have."],
    ["new","<b>Your first verse brings My Verses and Practice Verses, together.</b> They come as one present, because a shelf holding a single verse has little to do on its own. Finish a round of Practice Verses and Word for Word arrives next."],
@@ -4772,14 +4777,13 @@ const GTIK='<span class="gtik" role="img" aria-label="golden ticket"></span>';  
 const SCRATCH_LADDER=[
  {tab:"verse", icon:"📚", name:"Library", desc:"Your shelf. The films, the verses to learn, your review and everything you have memorized.", gate:()=>foundationsDone(),
  reqs:[{label:"Finish the Foundation. Books 1–5 &amp; Matthew", done:()=>foundationsDone()}]},
- {tab:"journey", icon:"📕", iconHtml:()=>bibleIconSVG(), name:"Bible", desc:"See the whole Bible open before you. Every book, chapter and verse you can reach.", gate:()=>Prog.memorized.length>=1,
-     // The first verse earns it. The Bible is what the app is for, and holding it back behind fifteen
-     // verses and three palaces kept people away from it for weeks.
-     // It used to arrive on the first verse. That is also when the Library hands over My Verses and
-     // Practice Verses, and two presents at once is the thing this design exists to avoid — so it
-     // waits until the tools have been used. Minutes later, not the weeks it once took.
-     reqs:[{label:"Use every tool in your Library once", done:()=>libAllUsed(),
-            prog:()=>`${["learn","numbers","videos","mem","verses","w4w"].filter(libUsed).length}/6`}]},
+ {tab:"journey", icon:"📕", iconHtml:()=>bibleIconSVG(), name:"Bible", desc:"See the whole Bible open before you. Every book, chapter and verse you can reach.", gate:()=>libUsed("verses"),
+     // Earned by a round of Practice Verses. That same round is what the Library gives Word for Word
+     // for, so the two come off one action — but not on top of each other: the Library present opens
+     // first, and a tab ticket is never opened over an overlay, so the Bible waits its turn behind it.
+     // It used to arrive on the FIRST verse, which is when the Library hands over My Verses and
+     // Practice Verses; that really was two at once. This is minutes later, not the weeks it once took.
+     reqs:[{label:"Finish a round of Practice Verses", done:()=>libUsed("verses"), prog:()=>`${libUsed("verses")?1:0}/1`}]},
  {tab:"palace", icon:"🏛️", name:"Memory Palaces", desc:"Build your own palaces. Walk a familiar place and leave a verse at each spot.", gate:()=>Prog.memorized.length>=5 && (Prog.bestStreak||0)>=5,
      reqs:[{label:"Memorize 5 verses", done:()=>Prog.memorized.length>=5, prog:()=>`${Math.min(5,Prog.memorized.length)}/5`},
            {label:"Hit a 5 answer streak in the verse test", done:()=>(Prog.bestStreak||0)>=5, prog:()=>`best ${Prog.bestStreak||0}/5`}]},
@@ -4809,6 +4813,9 @@ function libUse(id){
   Prog.libUsed=Prog.libUsed||{};
   if(Prog.libUsed[id]) return;
   Prog.libUsed[id]=Date.now(); saveProg();
+  // Using the last tool is what wins the Bible, so the tab ladder has to look again here — nothing
+  // else would ask until the next screen happened to redraw.
+  try{ updateTabLocks(); }catch(e){}
   setTimeout(()=>{ try{ libMaybeOffer(); }catch(e){} }, 700);
 }
 function libPending(){ return LIB_LADDER.find(r=>!libWon(r.id) && r.gate()) || null; }
@@ -4860,9 +4867,6 @@ function libMaybeOffer(){
   });
   return true;
 }
-// Everything the Library hands over before palaces exist. Spaced Repetition is deliberately not in
-// here: it waits on the first palace, which is itself won later, so requiring it would be a circle.
-function libAllUsed(){ return ["learn","numbers","videos","mem","verses","w4w"].every(libUsed); }
 function tabWon(t){ return t==="learn" || (Prog.scratchWon||[]).includes(t); }
 function tabUnlocked(tab){ return tabWon(tab); }
 // short one-line summary of a rung's requirements (for the post-claim toast)
@@ -5970,8 +5974,9 @@ function markFirstReview(k){ const o=vsr(k); if(o && !o.r0){ o.r0=Date.now(); sa
 function newSR(){ return {learnedAt:Date.now(), step:1, dueAt:Date.now()+(SR_TRAIL[1]-SR_TRAIL[0])*DAY, r0:0}; } // D0 done at learn, first REVIEW in 4h, D1 test in a day
 function startVerseSR(k){ Prog.verseSR=Prog.verseSR||{}; if(!Prog.verseSR[k]) Prog.verseSR[k]=newSR(); }
 function reviewVerseSR(k){
-  try{ libUse("sr"); }catch(e){} if(!Prog.memorized.includes(k)) return; Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k];
-  if(!o){ Prog.verseSR[k]=newSR(); return; }
+  if(!Prog.memorized.includes(k)) return; Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k];
+  if(!o){ Prog.verseSR[k]=newSR(); return; }   // laying the trail down is not reviewing it
+  try{ libUse("sr"); }catch(e){}               // from here it is a review actually completed
   // A verse learned yesterday comes due at its D1 checkpoint. Reviewing it is real work and
   // counts toward today's goal, the same as a new verse or a word for word practice.
   const wasD1 = srDueIndex(o)===1;
@@ -12449,6 +12454,9 @@ const OnboardWalk = (()=>{
     // extraKnown feeds knownNumbers() exactly as a lesson skill does, so a tester who had picked up
     // Matthew ad hoc from the verse screen would start step one having already finished it
     Prog.extraKnown=[];
+    // The Library ladder starts empty too, and is marked backfilled so the upgrade path — which is
+    // for real accounts, not this one — does not quietly hand the first present over before we begin.
+    Prog.libUsed={}; Prog.libWon=[]; Prog.libBackfilled=1;
     Prog.bestStreak=0; Prog.onboarded=true;
   }
 
@@ -12466,7 +12474,12 @@ const OnboardWalk = (()=>{
     if(o.palaces) Prog.palaces=o.palaces;
     if(o.streak) Prog.bestStreak=o.streak;
     if(o.films) o.films.forEach(markVideoSeen);
+    // Which Library presents have been handed over, and which tools count as used. Everything the
+    // step needs is here; the one thing being looked at is deliberately left out.
+    if(o.won) Prog.libWon=o.won.slice();
+    if(o.used) o.used.forEach(k=>{ Prog.libUsed[k]=1; });
     saveProg(); bustCaches(); updateTabLocks(); syncTabOrder(false); };
+  const ALL_TOOLS=["learn","numbers","videos","mem","verses","w4w"];
 
   const STEPS=[
     { do:"Finish the Matthew lesson",
@@ -12475,18 +12488,31 @@ const OnboardWalk = (()=>{
       done(){ return tabWon("verse"); } },
 
     { do:"Memorise your first verse",
-      say:"The Library is open. Memorise any one verse: the first one wins the Bible, and claiming it opens the book that verse came from with the verse under the chapters.",
+      say:"The Library opens with three tiles on it. Memorise any one verse: that earns your first Library present. Close the badge and the goal flash and the ticket lets itself in on the Library.",
       seed(){ upTo(["verse"]); show("verse"); renderVerse(); },
+      done(){ return libWon("pair"); } },
+
+    { do:"Finish a round of Practice Verses",
+      say:"My Verses and Practice Verses arrived together. Open Practice Verses and answer one \u2014 that earns the last present the Library has to give, and the Bible behind it.",
+      seed(){ upTo(["verse"], {verses:3, won:["pair"], used:["learn","mem"]});
+        show("verse"); renderVerse(); },
+      done(){ return libWon("w4w"); } },
+
+    { do:"Scratch the ticket that same round won",
+      say:"The round of practice wins two things: the Library present you just took, and the Bible. Its golden ticket is in the bar below, waiting behind the one you closed. Scratch it \u2014 claiming it opens the book your verse came from.",
+      seed(){ upTo(["verse"], {verses:3, won:["pair","w4w"], used:ALL_TOOLS});
+        show("verse"); renderVerse(); },
       done(){ return tabWon("journey"); } },
 
     { do:"Memorise your fifth verse",
       say:"Four verses are in and the answer streak is already there. One more wins the Memory Palaces ticket. On the save screen the palace and room pickers are under a golden foil, because there is no palace yet.",
-      seed(){ upTo(["verse","journey"], {verses:4, streak:5}); show("verse"); renderVerse(); },
+      seed(){ upTo(["verse","journey"], {verses:4, streak:5, won:["pair","w4w"], used:ALL_TOOLS});
+        show("verse"); renderVerse(); },
       done(){ return tabWon("palace"); } },
 
     { do:"Build your first palace",
       say:"Open Palaces and build one. Finishing it uncovers the palace and room pickers on the verse screen, plays the Spaced Repetition film, then uncovers Spaced Repetition on the Library.",
-      seed(){ upTo(["verse","journey","palace"], {verses:5, streak:5});
+      seed(){ upTo(["verse","journey","palace"], {verses:5, streak:5, won:["pair","w4w"], used:ALL_TOOLS});
         // The pickers are only shown being uncovered if there is a verse open to uncover them on.
         curScene = verseObj(43,3,16);
         show("palace"); renderPalace(); },
@@ -12495,6 +12521,7 @@ const OnboardWalk = (()=>{
     { do:"Memorise your fifteenth verse",
       say:"Fourteen verses and two palaces are in. One more verse wins Bible Stories, the last ticket on the ladder.",
       seed(){ upTo(["verse","journey","palace"], {verses:14, streak:5, films:["sr","palace"],
+        won:["pair","w4w"], used:ALL_TOOLS.concat(["sr"]),
         palaces:[PS("My Kitchen",["Front door","Sink","Table"]), PS("The Long Walk",["Gate","Bridge","Bench"])]});
         show("verse"); renderVerse(); },
       done(){ return tabWon("stories"); } }
@@ -12533,8 +12560,11 @@ const OnboardWalk = (()=>{
     // Stepping forward without playing the step. Not on the screen anywhere: the walkthrough is
     // done by hand, one step at a time. This is here so the suite can reach the later seeds.
     skip(){ if(!on) return false; if(step>=STEPS.length-1){ end(); return false; } enter(step+1); return true; },
-    // what step you are on, for the Admin panel to name the way out
-    where(){ return on ? { step:step+1, of:STEPS.length, doing:STEPS[step].do } : null; },
+    // what step you are on, for the Admin panel to name the way out. `done` is whether the thing
+    // this step asks for has already happened — it should always be false on arrival, because a step
+    // that is finished the moment you reach it is a step nobody gets to see.
+    where(){ return on ? { step:step+1, of:STEPS.length, doing:STEPS[step].do,
+                           say:STEPS[step].say, done:(()=>{ try{ return !!STEPS[step].done(); }catch(e){ return null; } })() } : null; },
     begin(){ if(on) return; on=true; stash(); enter(0);
       timer=setInterval(advance, 700);
       toast("🚶 Walkthrough started. Your progress is saved and comes back at the end."); },

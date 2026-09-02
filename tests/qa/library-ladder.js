@@ -113,15 +113,17 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
 
   // the Bible arrives once every tool has been used
   const bible = await page.evaluate(() => {
-    Prog.libUsed = { learn:1, numbers:1, videos:1, mem:1, verses:1 }; saveProg();
-    const before = SCRATCH_LADDER.find(x => x.tab === 'journey').reqs[0];
-    const short = { done: before.done(), prog: before.prog() };
-    Prog.libUsed.w4w = 1; saveProg();
-    const after = SCRATCH_LADDER.find(x => x.tab === 'journey').reqs[0];
-    return { short, ready: after.done(), prog: after.prog(), label: after.label };
+    const req = () => SCRATCH_LADDER.find(x => x.tab === 'journey').reqs[0];
+    // everything used except the round of practice the Bible actually asks for
+    Prog.libUsed = { learn:1, numbers:1, videos:1, mem:1, w4w:1 }; saveProg();
+    const short = { done: req().done(), prog: req().prog() };
+    Prog.libUsed.verses = 1; saveProg();
+    return { short, ready: req().done(), prog: req().prog(), label: req().label,
+             order: SCRATCH_LADDER.map(x => x.tab).join(',') };
   });
-  say(!bible.short.done && bible.short.prog === '5/6', 'the Bible shows ' + bible.short.prog + ' while a tool is unused');
-  say(bible.ready && bible.prog === '6/6', '...and unlocks at ' + bible.prog + ' — "' + bible.label + '"');
+  say(!bible.short.done && bible.short.prog === '0/1', 'the Bible shows ' + bible.short.prog + ' until a round of practice is finished');
+  say(bible.ready && bible.prog === '1/1', '...and that round wins it — "' + bible.label + '"');
+  say(bible.order === 'verse,journey,palace,stories', '...and it is the second ticket on the ladder, not the last');
 
   console.log(out.join('\n'));
   console.log(errs.length ? '\npage errors:\n  ' + errs.join('\n  ') : '\npage errors: none');

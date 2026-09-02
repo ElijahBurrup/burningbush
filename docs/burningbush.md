@@ -68,8 +68,8 @@ Every choice in the app is the same control: **a box that opens a sheet of tiles
 - **Saving a new verse stops on it.** The `kept` phase shows the address, the three pictures, the words, where it lives, the scene and the trail, with a button to leave by. The goal flash and any badge **wait**: `bumpGoal(defer)` and `checkBadges(defer)` both return their applause and `addMemorized` hands it to the caller to let off on the way out.
 - **Spaced repetition:** `SR_TRAIL=[0,1,3,7,16,30]` visible, `SR_LONG=[60,180,730]` silent. `srRemaining()` must be read *before* an item is taken off the queue, or the count is one short.
 - **Badges:** Verses by Heart leads (11 rungs to 250), then Verses Located, Major System, Memory Palaces (to 50), Bible Stories (to 150), Verse Practice, Daily Devotion (to a 365-day streak). "Every Parable" checks the parable sections **by name** — those sections have moved twice, and a number would quietly start meaning something else.
-- **Scratch offs:** `SCRATCH_LADDER`, in the order they are offered: **Library** (finish the Foundation) → **Bible** (use every tool in the Library once — see the Library ladder below) → **Memory Palaces** (5 verses + a 5-answer streak) → **Bible Stories** (15 verses + 2 palaces). `pendingScratchRung()` returns the *lowest unwon rung whose gate passes*, so **array order is offer order** — moving a rung in the array moves it in the ladder. Claiming the Bible opens the book the earning verse came from. Winning it also runs `bibleTakesItsPlace()`:  the fourth slot empties, palace steps right, then verse, then learn, each into the slot the one before it left, and only then does the Bible drop in at the front.
-- **The Library ladder (`LIB_LADDER`)** is a second, smaller ladder *inside* the Library, and it works on use rather than on tapping. The hub opens with three tiles — Learn Verses, Practice Numbers & Books, Video Review — and hands over the rest as tickets: memorize a verse → **My Verses + Practice Verses** as one present; finish a round of Practice Verses → **Word for Word**. `Prog.libUsed` records which tools have actually been used (`libUse(id)` at each of the seven use points), `Prog.libWon` which presents have been given. `libAllUsed()` gates the Bible rung above. Existing accounts are backfilled once from what they plainly have (`libBackfilled`) and their matching rungs marked won, so nobody is toured through a Library they have used for weeks. **`libMaybeOffer()` refuses unless the Library hub is actually drawn** — see the `vView` gotcha in §9.
+- **Scratch offs:** `SCRATCH_LADDER`, in the order they are offered: **Library** (finish the Foundation) → **Bible** (finish one round of Practice Verses) → **Memory Palaces** (5 verses + a 5-answer streak) → **Bible Stories** (15 verses + 2 palaces). `pendingScratchRung()` returns the *lowest unwon rung whose gate passes*, so **array order is offer order** — moving a rung in the array moves it in the ladder. Claiming the Bible opens the book the earning verse came from. Winning it also runs `bibleTakesItsPlace()`:  the fourth slot empties, palace steps right, then verse, then learn, each into the slot the one before it left, and only then does the Bible drop in at the front.
+- **The Library ladder (`LIB_LADDER`)** is a second, smaller ladder *inside* the Library, and it works on use rather than on tapping. The hub opens with three tiles — Learn Verses, Practice Numbers & Books, Video Review — and hands over the rest as tickets: memorize a verse → **My Verses + Practice Verses** as one present; finish a round of Practice Verses → **Word for Word**. `Prog.libUsed` records which tools have actually been used (`libUse(id)` at each of the seven use points), `Prog.libWon` which presents have been given. The Bible rung above is gated on `libUsed("verses")` — the same round of practice that wins the Word for Word present, so the two come off one action; the Library present opens first and the tab ticket waits behind it, because a tab ticket is never opened over an overlay. Existing accounts are backfilled once from what they plainly have (`libBackfilled`) and their matching rungs marked won, so nobody is toured through a Library they have used for weeks. **`libMaybeOffer()` refuses unless the Library hub is actually drawn** — see the `vView` gotcha in §9.
 - **My Verses** is the scoreboard. The three counts (By heart, Sealed, Due today) are **buttons** that open the verses behind them. Books, streak and clean runs sit with the records below — a number with no list behind it is not a way in.
 - **The Library hub** icons animate one at a time in a zigzag (spaced rep → my verses → video → learn → practice verses → practice numbers → video → learn → spaced rep), nine steps over eight seconds, each icon's motion written into its own slice of the cycle. The goal button's flame flickers, its tick draws itself, and its dots run a wave. All of it stops under `prefers-reduced-motion`.
 - **Daily goal:** up to **20** (`GOAL_MAX`, which drives both the clamp and the picker), ten dots to a line.
@@ -170,7 +170,7 @@ Author number↔image↔book **relationship content** (scenes, picture lists, nu
 
 ## 8a. The QA probes
 
-Six probes sit beside the regression suite in `tests/qa/`. They are NOT part of `tests/run.js`:
+Seven probes sit beside the regression suite in `tests/qa/`. They are NOT part of `tests/run.js`:
 the suite pins what the app does today, which makes it blind to anything that has been wrong all
 along. These ask different questions, and a finding is a candidate bug rather than a diff.
 
@@ -180,6 +180,7 @@ along. These ask different questions, and a finding is a candidate bug rather th
     node tests/qa/entry-points.js   every front door handed an index or key that no longer exists
     node tests/qa/house-style.js    one idea one name, one action one label, book title case
     node tests/qa/library-ladder.js the Library ladder walked end to end, as a reader meets it
+    node tests/qa/walkthrough.js    every Admin walkthrough stage: one thing left to do at each
 
 Run them after anything structural. Between them they found eight real bugs in one pass, including
 four crashes and a film that opened over the welcome screen for somebody who had just signed out.
@@ -241,6 +242,13 @@ More than one Claude session works this project at once, and both edit `src/inde
 A peer's in-flight spec can also break the suite for you: a `const near` shadowing the destructured `near` helper took the whole behaviour file down with a temporal-dead-zone error before any test ran. Message them; do not edit their file underneath them.
 
 ## 9b. The onboarding walkthrough (Admin)
+
+**Its one rule: every stage seeds everything up to the last action.** Exactly one thing is left to do,
+so the tester sees that one thing happen. `OnboardWalk.where().done` is that rule made checkable — it
+must be `false` on arrival at every stage, or the stage completes itself and is skipped past unseen.
+`tests/qa/walkthrough.js` asserts it at all seven. **Any change to a gate anywhere on either ladder
+means a stage here needs revisiting**: when the Bible's gate moved, stage two waited forever on
+something that could no longer happen, and a run simply stopped.
 
 `OnboardWalk`, five stages, one per rung of the ladder plus the pair of foils. **Each stage seeds the account up to the last action and no further**, so the only thing left to do is the one that fires what the stage is there to show:
 
