@@ -2159,8 +2159,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.106.0";
+const APP_VERSION="1.107.0";
 const CHANGELOG=[
+ {v:"1.107.0", d:"September 2, 2026", t:"The rest of the voices", items:[
+   ["new","<b>The moments that were still silent now have a sound.</b> A verse sealed after walking its whole trail clean — the rarest thing in the app, and the one sound allowed to take a second over itself. Claiming a verse by heart, which is held and warm rather than sparkly, because it is devotion and not loot. Mastering a verse word for word, finishing a palace, buying something, the bell that opens a review, and the golden ticket flying to its place and landing."],
+   ["fix","<b>Leaving a review at the wrong moment could stop the app.</b> Two things that run a moment after you answer looked for a review session that you had already walked away from."]
+ ]},
  {v:"1.106.0", d:"September 2, 2026", t:"A voice for everything, and the real lesson every time", items:[
    ["new","<b>Sound everywhere it means something.</b> Every question answered, every talent earned, every counter climbing, the goal ladder, the day streak, badges, tickets, palaces, the church going up. All of it made by the app as it plays \u2014 nothing to download, and it works with no signal."],
    ["chg","<b>It gets out of the way rather than repeating itself.</b> Typing a verse ticks quietly up the scale instead of ringing the full answer chime on every word; the day-streak note rises with the weeks; and the coin jar gets <i>quieter</i> the more often it fills, so a long review session settles down instead of shouting. A wrong answer says less the second time and nothing the third \u2014 you already know."],
@@ -5889,6 +5893,7 @@ function finishStory(){
 // stories inside stay closed until that section is bought. Subscribers see them all.
 function storySectionOwned(ui){ return Billing.isPro() || (Prog.storySections||[]).includes((UNITS[ui]||{}).name); }
 function buyStorySection(ui, after){
+  Sfx.buy();
  if((Prog.talents||0) < STORY_SECTION_COST){ toast(`That section costs ${STORY_SECTION_COST} talents, you have ${talDisp(Prog.talents||0)}.`); return; }
   confirmSpend(`Open this section for <b class="gold">${STORY_SECTION_COST} 🪙</b>?`,
     `Five Bible stories, yours to keep. You'll have ${talDisp(Math.max(0,(Prog.talents||0)-STORY_SECTION_COST))} talents left.`,
@@ -6115,6 +6120,7 @@ function renderPalacePractice(){
 function palaceSlotsOwned(){ return PALACE_FREE + ((Prog.palaceSlots||0)); }
 function canBuildPalace(){ return Billing.isPro() || palaceCount() < palaceSlotsOwned(); }
 function buyPalaceSlot(){
+  Sfx.buy();
   if(Billing.isPro()) return true;
  if((Prog.talents||0) < PALACE_COST){ toast(`A new palace costs ${PALACE_COST} talents, you have ${talDisp(Prog.talents||0)}.`); return false; }
   spendTalents(PALACE_COST); Prog.palaceSlots=(Prog.palaceSlots||0)+1; saveProg();
@@ -6193,7 +6199,7 @@ function renderPalaceBuild(){
     // The first palace is what makes Spaced Repetition mean something, so this is where its film
     // plays and where both foils lift: the pickers on the verse screen, then the Library button.
     const firstPalace = palaceCount()===1;
-    el("pbFin").onclick=()=>{ PB=null; if(firstPalace) return unlockAfterFirstPalace(ret); ret(); };
+    el("pbFin").onclick=()=>{ Sfx.palaceDone(); PB=null; if(firstPalace) return unlockAfterFirstPalace(ret); ret(); };
     PB=null;
   };
   el("pbDone").onclick=donePalace;
@@ -8077,6 +8083,7 @@ function srBanner(kind){
   // the review inside that moment used to throw here instead of simply not drawing.
   if(!MS) return;
   if(kind==="start"){
+    Sfx.srStart();                     // one bell, struck once
     // The new verses — saved four hours ago and waiting for their first look — are reviewed FIRST
     // (see beginDueReview), so leaving them out of this total made it one short of the "Due (N)" on
     // the Library button, and the very item it forgot was the one that appeared next.
@@ -8332,6 +8339,7 @@ function openHeartClaim(b,c,v,k,after){
   el("hcClose").onclick=()=>{ close(); if(after) after(null); };
   el("hcNo").onclick=()=>{ close(); noteStageAsk(k,"heart",w4wCount(k)); if(after) after(null); };
   el("hcGo").onclick=()=>{
+    Sfx.heart();                       // devotion, not loot: held and warm
     if(!pick) return;
     close();
     let freed=null;
@@ -8367,7 +8375,7 @@ function openStagePromote(b,c,v,k,to,after){
       <button class="btn ghost" id="prNo" style="width:100%;margin-top:8px">${body.no}</button></div>`;
   m.style.display="flex"; raiseModal(m);
   const close=()=>{ m.style.display="none"; };
-  el("prYes").onclick=()=>{ close(); setVerseStage(k,to);
+  el("prYes").onclick=()=>{ Sfx.heart(); close(); setVerseStage(k,to);
     toast("\u{1F49B} Known by heart \u00b7 the strict test from here");
     updateMetrics&&updateMetrics(); if(after) after(); };
   el("prNo").onclick=()=>{ close(); noteStageAsk(k,to,w4wCount(k)); if(after) after(); };
@@ -12174,6 +12182,7 @@ function typeTestComplete(){
   const r=w4wRecord(vkey); reviewVerseSR(vkey);
   const justMastered=r.count===10, mastered=r.count>=10;
   const w4wReward = 10 + (justMastered?40:0);   // +10 per recitation, +40 bonus the run they master it
+  if(justMastered) Sfx.mastered();
   earnTalents(w4wReward); refreshHUD&&refreshHUD(); markW4WToday(vkey);
   const showGoal = bumpGoal(true);   // counts toward today's goal, but the track waits for "Done"
   const BL = pickBlessing(mastered, b, c, v);   // a different blessing every time
@@ -12211,6 +12220,9 @@ function w4wTestResult(b,c,v,vkey,ret){
   }
   const longName = passedDay!=null ? SR_LONG_NAME[passedDay] : null;
   const freed = clean ? heartMaybeFreeStation(vkey) : null;
+  // The rarest thing in the app: the whole trail walked clean. It gets the one sound allowed to
+  // take a second over itself. Anything short of that is an ordinary clean review.
+  if(freed) Sfx.sealed(); else if(clean) Sfx.verse();
   const showGoal = clean ? bumpGoalFromReview(true) : (()=>{});
   const doneSteps=heartTrailStep(vkey), left=Math.max(0, SR_TRAIL.length-doneSteps);
   V.innerHTML=`<div class="card center">
@@ -12834,6 +12846,7 @@ function bibleTakesItsPlace(iconChar, done){
   }, STEP*(movers.length-1) + RUN + 90);
 }
 function flyToNav(iconChar, targetBtn, done){
+  Sfx.fly();                           // animation-synchronous, so never queued
   const phone=document.querySelector(".phone");
   if(!targetBtn||!phone){ done&&done(); return; }
   const pr=phone.getBoundingClientRect(), start=el("scIcon").getBoundingClientRect(), dst=targetBtn.getBoundingClientRect();
@@ -12846,7 +12859,7 @@ function flyToNav(iconChar, targetBtn, done){
     fly.style.left=(dst.left-pr.left + dst.width/2 - 11)+"px";
     fly.style.top=(dst.top-pr.top + 7)+"px"; fly.style.fontSize="20px"; fly.style.opacity=".85";
   }));
-  setTimeout(()=>{ fly.remove(); done&&done(); }, 950);
+  setTimeout(()=>{ Sfx.land(); fly.remove(); done&&done(); }, 950);   // it lands with the icon, not after it
 }
 
 /* =================== SCRATCH-OFF SIMULATION (Profile → Test scratch off) ===================

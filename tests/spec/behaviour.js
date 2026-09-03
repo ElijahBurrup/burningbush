@@ -4816,6 +4816,21 @@ const DAY = 86400000;
   ok(sound.saysMuted, '...and the engine says so');
   ok(sound.backOn > 0, '...until it is switched back on');
 
+  // A sound nothing plays is a sound nobody hears. Every voice the engine has must be wired to a
+  // moment somewhere — this is what caught eight of them defined and never called.
+  const wired = await $(() => {
+    const names = Object.keys(Sfx).filter(k => typeof Sfx[k] === 'function'
+      && !['unlock','muted'].includes(k));
+    return { names };
+  });
+  const src = require('fs').readFileSync(require('path').join(__dirname, '..', '..', 'src', 'index.html'), 'utf8');
+  const unused = wired.names.filter(n => {
+    // book and verse are handed to flyToMetric by reference, so they are named without parentheses
+    const called = new RegExp('Sfx\.' + n + '\s*[(,)]').test(src.replace('Sfx.' + n + '(f', 'x'));
+    return !called;
+  });
+  is(unused.join(','), '', 'every sound the engine can make is wired to a moment');
+
   describe('a book lesson will not move on half-answered', () => { });
   const bookGuard = await $(() => {
     closeEveryOverlay();
