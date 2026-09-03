@@ -27,8 +27,8 @@ function chromium() {
  * Which build of the app to test.
  *
  * 'src' loads straight off disk — its asset paths are relative, so file:// is fine.
- * 'built' CANNOT be loaded that way: its paths are absolute (/burningbush/kjv.js) because it
- * is served at kingdombuilders.ai/burningbush with no trailing slash. Over file:// those
+ * 'built' CANNOT be loaded that way: its paths are absolute (/kjv.js) because the published
+ * folder IS the site root of burningbush.kingdombuilders.ai, with the app at /app. Over file://
  * resolve to the drive root and 404, so we serve the repo over HTTP exactly as Render does —
  * which also means the suite exercises the real trailing-slash-less URL where path bugs live.
  */
@@ -40,15 +40,15 @@ async function serveBuilt() {
     '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2', '.webmanifest': 'application/manifest+json', '.json': 'application/json' };
   const srv = http.createServer((req, res) => {
     let p = decodeURIComponent(req.url.split('?')[0]);
-    if (p === '/burningbush') p = '/burningbush/index.html';          // exactly how production resolves
+    if (p === '/app') p = '/app/index.html';                          // exactly how production resolves
     if (p.endsWith('/')) p += 'index.html';
-    const f = path.join(ROOT, p);
+    const f = path.join(ROOT, 'burningbush', p);   // the published folder is the site root
     if (!f.startsWith(ROOT) || !fsExists(f)) { res.writeHead(404); return res.end('not found'); }
     res.writeHead(200, { 'Content-Type': TYPES[path.extname(f)] || 'application/octet-stream' });
     require('fs').createReadStream(f).pipe(res);
   });
   await new Promise(r => srv.listen(0, '127.0.0.1', r));
-  _server = { srv, url: `http://127.0.0.1:${srv.address().port}/burningbush` };
+  _server = { srv, url: `http://127.0.0.1:${srv.address().port}/app` };
   return _server.url;
 }
 const fsExists = f => { try { return require('fs').statSync(f).isFile(); } catch (e) { return false; } };

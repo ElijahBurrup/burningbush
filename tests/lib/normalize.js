@@ -33,7 +33,10 @@ const CAPTURE = function (sel) {
     // src/ uses relative asset paths, burningbush/ uses absolute ones — that is the ONLY
     // thing the build changes, so fold it away and one golden set validates both. The suite
     // then proves the published artifact renders identically to the source.
-    .replace(/\/burningbush\//g, '')
+    // src/ uses relative asset paths; the published folder is a SITE ROOT and uses absolute ones.
+    // That is the ONLY thing the build changes, so fold it away and one golden set validates both.
+    .replace(/\/burningbush\//g, '')                                     // the old prefix, for older goldens
+    .replace(/(["'(`])\/(?=(?:images|fonts|videos|bibles)\/|(?:kjv|bbe|sw|strongs|kjvtag)\.js|manifest\.webmanifest)/g, '$1')
     .replace(/\b\d{1,2}:\d{2}\s?(AM|PM)\b/gi, '#TIME')          // "today at 5:23 PM"
     .replace(/\b(today|tomorrow) at #TIME/gi, '#WHEN')
     .replace(/\b\d{10,}\b/g, '#TS')                              // epoch millis

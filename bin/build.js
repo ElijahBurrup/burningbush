@@ -23,22 +23,22 @@ const CHECK = process.argv.includes('--check');
 
 // [find, replace, expected number of sites]
 const RULES = [
-  ['src="kjv.js"', 'src="/burningbush/kjv.js"', 1],
-  ['href="fonts/fonts.css"', 'href="/burningbush/fonts/fonts.css"', 1],
-  ['href="manifest.webmanifest"', 'href="/burningbush/manifest.webmanifest"', 1],
-  ['href="images/', 'href="/burningbush/images/', 2],
-  ['src="images/', 'src="/burningbush/images/', 5],   // +1 the bush mark on Start Here in Video Review   // +1 picker default, +1 the fallback when a chosen book image will not load
-  ['`images/books/', '`/burningbush/images/books/', 1],   // now only images/books/alt: the default icon moved to a plain src= above
-  ['`images/pegs/', '`/burningbush/images/pegs/', 3],
+  ['src="kjv.js"', 'src="/kjv.js"', 1],
+  ['href="fonts/fonts.css"', 'href="/fonts/fonts.css"', 1],
+  ['href="manifest.webmanifest"', 'href="/manifest.webmanifest"', 1],
+  ['href="images/', 'href="/images/', 2],
+  ['src="images/', 'src="/images/', 5],   // +1 the bush mark on Start Here in Video Review   // +1 picker default, +1 the fallback when a chosen book image will not load
+  ['`images/books/', '`/images/books/', 1],   // now only images/books/alt: the default icon moved to a plain src= above
+  ['`images/pegs/', '`/images/pegs/', 3],
   // VIDEOS[].src is handed to a <video> element at runtime, so a relative path would resolve
   // against /burningbush with no trailing slash and 404. One site per film that has a recording.
-  ['src:"videos/', 'src:"/burningbush/videos/', 7],
+  ['src:"videos/', 'src:"/videos/', 7],
   // one per translation that is fetched on demand; the KJV is the only one loaded with the page
-  ['file:"bibles/', 'file:"/burningbush/bibles/', 1],   // +2 the tile thumbnail (chosen word, then the default)
+  ['file:"bibles/', 'file:"/bibles/', 1],   // +2 the tile thumbnail (chosen word, then the default)
   // fetched by absolute path: a relative one would resolve to /sw.js against the trailing-slash-less URL
-  ['register("sw.js")', 'register("/burningbush/sw.js")', 1],
-  ['one("strongs.js")', 'one("/burningbush/strongs.js")', 1],
-  ['one("kjvtag.js")', 'one("/burningbush/kjvtag.js")', 1],
+  ['register("sw.js")', 'register("/sw.js")', 1],
+  ['one("strongs.js")', 'one("/strongs.js")', 1],
+  ['one("kjvtag.js")', 'one("/kjvtag.js")', 1],
 ];
 
 // copied through untouched
@@ -81,7 +81,8 @@ const same = (a, b) => fs.existsSync(a) && fs.existsSync(b) &&
   fs.readFileSync(a).equals(fs.readFileSync(b));
 
 const { html, counts } = buildHtml();
-const outHtml = path.join(OUT, 'index.html');
+const APPDIR = path.join(OUT, 'app');
+const outHtml = path.join(APPDIR, 'index.html');
 const ver = (html.match(/const APP_VERSION="([^"]+)"/) || [])[1] || '?';
 
 if (CHECK) {
@@ -94,8 +95,11 @@ if (CHECK) {
 }
 
 fs.mkdirSync(OUT, { recursive: true });
+fs.mkdirSync(APPDIR, { recursive: true });
 fs.writeFileSync(outHtml, html);
 for (const f of COPY_FILES) fs.copyFileSync(path.join(SRC, f), path.join(OUT, f));
+// the landing page takes the site root; the app sits at /app beside it
+fs.copyFileSync(path.join(SRC,'landing.html'), path.join(OUT,'index.html'));
 for (const d of COPY_DIRS) copyDir(path.join(SRC, d), path.join(OUT, d));
 
 console.log(`built v${ver} → burningbush/`);
