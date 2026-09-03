@@ -2159,8 +2159,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.107.0";
+const APP_VERSION="1.108.0";
 const CHANGELOG=[
+ {v:"1.108.0", d:"September 3, 2026", t:"Keeping count", items:[
+   ["new","<b>Your account now keeps a month-by-month record of what you did.</b> Verses memorized, questions answered and how many were right, reviews finished, verses recited word for word, books learned, palaces built, talents earned, and the days you actually did something. Nothing shows it yet — it is there so the charts we build later can start from real months rather than from the day we thought to ask."],
+   ["fix","<b>Leaving a review at the wrong moment could still stop the app.</b> A third place read the review session from inside a callback that fires most of a second later, by which time you may have walked away from it."],
+   ["fix","<b>Re-saving a verse you already knew counted as a new one.</b> It would have quietly inflated every total built on it."]
+ ]},
  {v:"1.107.0", d:"September 2, 2026", t:"The rest of the voices", items:[
    ["new","<b>The moments that were still silent now have a sound.</b> A verse sealed after walking its whole trail clean — the rarest thing in the app, and the one sound allowed to take a second over itself. Claiming a verse by heart, which is held and warm rather than sparkly, because it is devotion and not loot. Mastering a verse word for word, finishing a palace, buying something, the bell that opens a review, and the golden ticket flying to its place and landing."],
    ["fix","<b>Leaving a review at the wrong moment could stop the app.</b> Two things that run a moment after you answer looked for a review session that you had already walked away from."]
@@ -4294,6 +4299,8 @@ function migrateProg(p){
   // Which Library tools have been USED, not merely opened. One timestamp each. It lifts the Word
   // for Word sticker and it is what the Bible ticket asks for.
   p.libUsed=obj(p.libUsed);
+  // What this account did, month by month. Keyed "YYYY-MM"; see statBump for the fields.
+  p.stats=obj(p.stats);
   if(typeof p.compPro!=="number") p.compPro=0;   // when a comp code was redeemed on this account, 0 if never
   // Read once from what a reader plainly has, so nobody who has been practising for weeks arrives to
   // find a sticker over a button they have been using.
@@ -4433,6 +4440,16 @@ function mergeProg(a,b){
     m.church={ built:Math.max(ca.built||0,cb.built||0), total:Math.max(ca.total||0,cb.total||0),
                given:Math.max(ca.given||0,cb.given||0) }; }
   m.libUsed=Object.assign({},b.libUsed||{},a.libUsed||{});   // using a tool on either device counts
+  // Monthly counters merge field by field, taking the HIGHER of the two. Not the sum: a merge runs
+  // every time either device syncs, and adding would count the same verse again on every pass.
+  // Each device's number already includes everything it has seen, so the larger is the truer one.
+  m.stats=(()=>{ const out={}, A=a.stats||{}, B=b.stats||{};
+    Object.keys(A).concat(Object.keys(B)).forEach(k=>{
+      if(out[k]) return;
+      const x=A[k]||{}, y=B[k]||{}, row={};
+      Object.keys(x).concat(Object.keys(y)).forEach(f=>{ row[f]=Math.max(x[f]||0, y[f]||0); });
+      out[k]=row; });
+    return out; })();
   m.compPro=a.compPro||b.compPro||0;                         // a comp code redeemed anywhere holds everywhere
   m.libBackfilled=a.libBackfilled||b.libBackfilled;
   m.locPast=Object.assign({},a.locPast||{},b.locPast||{});
@@ -6046,7 +6063,7 @@ function startVerseSR(k){ Prog.verseSR=Prog.verseSR||{}; if(!Prog.verseSR[k]) Pr
 function reviewVerseSR(k){
   if(!Prog.memorized.includes(k)) return; Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k];
   if(!o){ Prog.verseSR[k]=newSR(); return; }   // laying the trail down is not reviewing it
-  try{ libUse("sr"); }catch(e){}               // from here it is a review actually completed
+  try{ libUse("sr"); statBump("r"); }catch(e){}   // from here it is a review actually completed
   // A verse learned yesterday comes due at its D1 checkpoint. Reviewing it is real work and
   // counts toward today's goal, the same as a new verse or a word for word practice.
   const wasD1 = srDueIndex(o)===1;
@@ -6199,7 +6216,7 @@ function renderPalaceBuild(){
     // The first palace is what makes Spaced Repetition mean something, so this is where its film
     // plays and where both foils lift: the pickers on the verse screen, then the Library button.
     const firstPalace = palaceCount()===1;
-    el("pbFin").onclick=()=>{ Sfx.palaceDone(); PB=null; if(firstPalace) return unlockAfterFirstPalace(ret); ret(); };
+    el("pbFin").onclick=()=>{ Sfx.palaceDone(); try{ statBump("p"); }catch(e){} PB=null; if(firstPalace) return unlockAfterFirstPalace(ret); ret(); };
     PB=null;
   };
   el("pbDone").onclick=donePalace;
@@ -6558,6 +6575,7 @@ function answer(s,good){
   const word=itemWord(s.kind,s.n), p=pegFor(s.n);
   // A run of misses on the same item quietens and then stops: they know they are stuck.
   if(good){ LZ.miss=0; Sfx.right(); } else { LZ.miss=(LZ.miss||0)+1; Sfx.wrong(LZ.miss); }
+  try{ statBump("q"); if(good) statBump("qc"); }catch(e){}
   if(good){ LZ.ok++; gradeKey(`sk:${s.kind}:${s.n}`,"good"); }
   else { gradeKey(`sk:${s.kind}:${s.n}`,"miss"); LZ.steps.push(s); LZ.total++; } // requeue
   const fb=document.createElement("div");
@@ -6665,6 +6683,7 @@ function finishLesson(){
   const lvlBefore=Prog.level;
   bustCaches(); recomputeLevel(); saveProg(); updateMetrics(); if(wasNew) earnTalents(5); checkBadges();
   if(wasNew) Sfx.lessonDone();
+  try{ if(wasNew && sk.kind==="book") statBump("b", (sk.items||[]).length||1); }catch(e){}
   if(Prog.level>lvlBefore) Sfx.levelUp();
   if(wasNew && (sk.kind==="num"||sk.kind==="book")) bumpGoal();   // learning a new number/book image counts toward today's goal
   const newly=allVerses().filter(v=>reachable(bookNum(v.b),v.c,v.v) && !before.has(rk(v)));
@@ -7440,9 +7459,35 @@ const Sfx = (()=>{
     }
   };
 })();
+/* ---- what this account did, month by month --------------------------------------------------
+   Fields, all counts:
+     v   verses memorized            q   questions answered        qc  answered correctly
+     r   spaced repetition reviews   w   word for word passes      b   books learned
+     p   palaces built               t   talents earned            d   days with real work on them
+   `d` is the one with a rule attached rather than a tally: a day counts once, and only when
+   something was finished. It is what any "are they actually using it" question will be asked of. */
+function statMonth(at){ const d=at?new Date(at):new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
+function statRow(key){ Prog.stats=Prog.stats||{}; return (Prog.stats[key]=Prog.stats[key]||{}); }
+function statBump(field, n){
+  try{
+    const row=statRow(statMonth());
+    row[field]=(row[field]||0)+(n==null?1:n);
+    // The current day, so `d` can be counted once however many times work is finished on it.
+    const today=dayKey(new Date());
+    if(row._d!==today){ row._d=today; row.d=(row.d||0)+1; }
+    saveProg();
+  }catch(e){}
+}
+// Everything since the account began, for a single number to show somebody.
+function statTotal(field){ let n=0; const s=Prog.stats||{};
+  Object.keys(s).forEach(k=>{ n+=(s[k]||{})[field]||0; }); return n; }
+function statYear(field, yr){ let n=0; const s=Prog.stats||{}, pre=String(yr||new Date().getFullYear())+"-";
+  Object.keys(s).forEach(k=>{ if(k.indexOf(pre)===0) n+=(s[k]||{})[field]||0; }); return n; }
 function earnTalents(delta){
   if(!(delta>0)) return;
   Prog.talents=(Prog.talents||0)+delta; saveProg();
+  try{ statBump("t", delta); }catch(e){}
   talentBurst(delta); Sfx.coins(delta);
 }
 // Talents are reduced when a hint is used (verse review, word for word). Never below 0.
@@ -7732,7 +7777,10 @@ function nextMemVerse(){                       // the "go to next" hook fired af
     while(MS.srQueue.length && !verseDue(MS.srQueue[0])) MS.srQueue.shift(); // drop any already cleared
     // The flash holds for 720ms before this runs, and anything can happen in 720ms: leaving the
     // review empties the queue, and shifting an empty one hands back undefined.
-    if(MS.srQueue.length){ srFlash(()=>{ const k=MS.srQueue.shift(); if(k) askVerseIn(k); }); return; }   // count what is still to come, INCLUDING this one, then ask it
+    // The guard belongs INSIDE the callback as well as outside it. `MS` was checked when this ran,
+    // but the flash holds for 720ms and the session can be gone by the time the callback fires —
+    // walking out of a review in that window read srQueue off nothing.
+    if(MS.srQueue.length){ srFlash(()=>{ if(!MS || !MS.srQueue) return; const k=MS.srQueue.shift(); if(k) askVerseIn(k); }); return; }   // count what is still to come, INCLUDING this one, then ask it
     srBanner("complete"); return;              // all due verses handled → complete banner → palaces → practice
   }
   practiceNext(false);
@@ -9641,6 +9689,7 @@ function renderNumTest(){
   if(el("ntScene")) el("ntScene").onclick=()=>showSceneReveal(n, false);   // number questions only
   V.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
     if(b.disabled) return;
+    try{ statBump("q"); if(b.dataset.ok==="1") statBump("qc"); }catch(e){}
     if(b.dataset.ok==="1"){ NT.run=0; Sfx.right();  // correct → green, strengthen, next
       b.classList.add("correct"); V.querySelectorAll("[data-ok]").forEach(x=>x.disabled=true);
       NT.ok++; strengthenNumber(n);
@@ -9822,6 +9871,7 @@ function memTestRender(){
     if(!mtSel.b || !mtSel.c || !mtSel.v){ el("mtWarn").textContent="Pick a book, chapter and verse."; return; }
     const ok=(mtSel.b===b && mtSel.c===c && mtSel.v===v);
     if(ok){ memTestWrong=0; Sfx.right(); } else Sfx.wrong(memTestWrong+1);
+    try{ statBump("q"); if(ok) statBump("qc"); }catch(e){}
     if(ok){ // green, auto-advance to next verse
       const firstTry=memTestWrong===0, kk=refKey(b,c,v), peeked=memHintUses>0;
       if(peeked){ if(Prog.streak>(Prog.bestStreak||0)) Prog.bestStreak=Prog.streak; }   // peeked → streak is PRESERVED but not increased
@@ -9985,6 +10035,7 @@ function addMemorized(s, defer){
   const k=refKey(bookNum(s.b),s.c,s.v);
   Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k); // once learned, drop from saved/skip
   if(!Prog.memorized.includes(k)){ Prog.memorized.push(k); startVerseSR(k); saveProg(); updateMetrics(); earnTalents(15);
+    try{ statBump("v"); }catch(e){}
     const badge=checkBadges(defer), cheer=bumpGoal(defer);   // a new verse counts toward today's goal
     const first=Prog.memorized.length===1;
     // The Spaced Repetition film used to play here, on the very first verse — before there was a
@@ -10125,6 +10176,7 @@ function vpCheck(){
   const b=+el("vpB").value, c=+el("vpC").value, v=+el("vpV").value;
   const ok=(b===bn && c===s.c && v===s.v);
   if(ok){ vpMiss=0; Sfx.right(); } else { vpMiss=(vpMiss||0)+1; Sfx.wrong(vpMiss); }
+  try{ statBump("q"); if(ok) statBump("qc"); }catch(e){}
   gradeKey(`vp:${refKey(bn,s.c,s.v)}`, ok?"good":"miss");
   const bp=pegFor(bn),cp=pegFor(s.c),vp=pegFor(s.v);
   const sels=[el("vpB"),el("vpC"),el("vpV")];
@@ -12182,6 +12234,7 @@ function typeTestComplete(){
   const r=w4wRecord(vkey); reviewVerseSR(vkey);
   const justMastered=r.count===10, mastered=r.count>=10;
   const w4wReward = 10 + (justMastered?40:0);   // +10 per recitation, +40 bonus the run they master it
+  try{ statBump("w"); }catch(e){}
   if(justMastered) Sfx.mastered();
   earnTalents(w4wReward); refreshHUD&&refreshHUD(); markW4WToday(vkey);
   const showGoal = bumpGoal(true);   // counts toward today's goal, but the track waits for "Done"

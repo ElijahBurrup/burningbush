@@ -170,7 +170,7 @@ Author number↔image↔book **relationship content** (scenes, picture lists, nu
 
 ## 8a. The QA probes
 
-Fourteen probes sit beside the regression suite in `tests/qa/`. They are NOT part of `tests/run.js`:
+Fifteen probes sit beside the regression suite in `tests/qa/`. They are NOT part of `tests/run.js`:
 the suite pins what the app does today, which makes it blind to anything that has been wrong all
 along. These ask different questions, and a finding is a candidate bug rather than a diff.
 
@@ -189,6 +189,7 @@ along. These ask different questions, and a finding is a candidate bug rather th
     node tests/qa/real-hands.js     clicks only — double taps, hammering, leaving mid-flow
     node tests/qa/account-fields.js nothing crosses between accounts; nothing is lost on a merge
     node tests/qa/bible-search.js   what people actually type, plus what breaks search boxes
+    node tests/qa/stats.js          the monthly record: it counts, and survives a merge
 
 Run them after anything structural. Between them they found eight real bugs in one pass, including
 four crashes and a film that opened over the welcome screen for somebody who had just signed out.
@@ -271,6 +272,24 @@ it, and a stale "Back to Your Verse" cannot appear on a lesson opened later from
 **Distractors** (`distract`) come from `knownNumbers()` and from a band that grows by *distance*
 until it has enough — so the wrong answers for 46 are 44–48, not 12 and 58. Under four books
 learned, the pool is the Foundation (`PHASE1_BOOKS`). `otherPictures` follows the same rule.
+
+## 8d. The monthly record
+
+`Prog.stats` keeps one row per month, keyed `YYYY-MM`, of what an account actually did: `v` verses,
+`q`/`qc` questions and correct answers, `r` reviews, `w` word-for-word passes, `b` books, `p` palaces,
+`t` talents, `d` days with real work on them. Written by `statBump(field, n)`; read with
+`statTotal(field)` and `statYear(field, yr)`.
+
+- **It exists to have been started early.** Nothing reads it yet. A chart can be built whenever, but
+  only out of months that were being counted while they happened.
+- **`d` counts a day once**, and only when something was finished — `statBump` stamps `row._d` with
+  the day key and only increments `d` when that changes. It is what any "are they actually using it"
+  question gets asked of, including sponsored-access renewal.
+- **The merge takes the HIGHER of the two, never the sum.** A merge runs on every sync from either
+  device, so adding would count the same verse again on each pass. Max is idempotent; sum is not.
+- **Count where the thing actually happens, not where the function is called.** `statBump("v")` sat
+  at the top of `addMemorized` and so counted a verse the reader already had. It now sits inside the
+  branch that actually adds one.
 
 ## 9. Gotchas worth remembering
 
