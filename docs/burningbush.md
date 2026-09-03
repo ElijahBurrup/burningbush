@@ -170,7 +170,7 @@ Author number↔image↔book **relationship content** (scenes, picture lists, nu
 
 ## 8a. The QA probes
 
-Eight probes sit beside the regression suite in `tests/qa/`. They are NOT part of `tests/run.js`:
+Fourteen probes sit beside the regression suite in `tests/qa/`. They are NOT part of `tests/run.js`:
 the suite pins what the app does today, which makes it blind to anything that has been wrong all
 along. These ask different questions, and a finding is a candidate bug rather than a diff.
 
@@ -182,9 +182,24 @@ along. These ask different questions, and a finding is a candidate bug rather th
     node tests/qa/library-door.js   a book lesson -> the verse it offers -> the Library it wins
     node tests/qa/walkthrough.js    every Admin walkthrough stage: one thing left to do at each
     node tests/qa/sound.js          a page nobody has touched is silent; the first gesture wakes it
+    node tests/qa/quiz-options.js   four distinct choices, one right, all from books learned
+    node tests/qa/practice-loop.js  a round of practice can always be finished
+    node tests/qa/paywall-doors.js  every door into a paid lesson asks to be paid
+    node tests/qa/hostile-new.js    garbage into the newest code: sound, stickers, distractors
+    node tests/qa/real-hands.js     clicks only — double taps, hammering, leaving mid-flow
+    node tests/qa/account-fields.js nothing crosses between accounts; nothing is lost on a merge
+    node tests/qa/bible-search.js   what people actually type, plus what breaks search boxes
 
 Run them after anything structural. Between them they found eight real bugs in one pass, including
 four crashes and a film that opened over the welcome screen for somebody who had just signed out.
+
+**Six probes written in one pass found nothing, and that is a result.** `quiz-options`,
+`practice-loop`, `paywall-doors`, `hostile-new`, `real-hands`, `account-fields` and `bible-search`
+were all written to break recently-changed code and all came back clean. What they *did* catch was
+three wrong assumptions in the probes themselves — twice about the frozen clock (the harness pins
+`Date.now()`, so "five hours later" has to be expressed by moving the verse back, never the clock
+forward) and once about the upgrade backfill adding tools of its own. Suspect a new probe before
+suspecting the app; write the probe so it says which.
 
 **A unit-level pass is not a working path.** Every spec for the Library ladder passed while the
 real thing was broken: finishing a verse leaves a badge and then the goal flash on screen, the
