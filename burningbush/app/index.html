@@ -2092,17 +2092,23 @@
         <div>✦ Unlimited bonus memory palaces</div>
       </div>
       <div class="hint" style="margin:0 0 8px;font-weight:700">💳 A subscription unlocks the <b class="gold">entire app, forever</b>:</div>
- <button class="btn blue" id="payYearly" style="width:100%">$25 / year · Go Pro <span style="font-size:11px;font-weight:700;opacity:.85"> · best value</span></button>
+ <button class="btn blue" id="payYearly" style="width:100%">$35 / year · Go Pro <span style="font-size:11px;font-weight:700;opacity:.85"> · best value</span></button>
       <button class="btn blue" id="payMonthly" style="width:100%;margin-top:8px">$5 / month · Go Pro</button>
+
+      <div id="payGroupWrap" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
+        <div class="hint" style="margin:0 0 8px">👥 Buying for a class, a youth group or a family?</div>
+        <button class="btn" id="payGroup" style="width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--on-accent)">5 seats · $99 / year</button>
+        <div class="hint" style="margin:6px 0 0;font-size:11.5px">One code, five people. Hand a seat to somebody else whenever one goes unused.</div>
+      </div>
       <div id="payLessonWrap" style="display:none;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
  <div class="hint" style="margin:0 0 8px">Not ready to subscribe? Spend talents to open <b class="gold">just this one lesson</b> (talents unlock a single lesson only · they don't unlock the app):</div>
         <button class="btn" id="payLesson" style="width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--on-accent)">🪙 Unlock this lesson · 1000 talents</button>
       </div>
+      <button class="btn ghost" id="payCode" style="width:100%;margin-top:8px">🎫 I have a group code</button>
       <button class="btn ghost" id="payRestore" style="width:100%;margin-top:8px">I already paid · Restore</button>
       <button class="btn ghost" id="payHelp" style="width:100%;margin-top:8px">🙏 Can't afford it? Request assistance</button>
       <button class="btn ghost" id="payClose" style="width:100%;margin-top:8px">Maybe later</button>
       <p class="hint" style="margin-top:12px">Secure checkout by Stripe. Cancel anytime. A <b>gifted</b> subscription is billed once and does <b>not</b> auto-renew.</p>
-      <button id="payCode" style="background:none;border:none;color:var(--muted);text-decoration:underline;font-size:12px;cursor:pointer;margin-top:6px">I have a code</button>
     </div>
   </div>
 </div>
@@ -11354,6 +11360,103 @@ function isIOSApp(){ return nativePlatform() === "ios"; }
 // Named here so it can be reworded without hunting through the paywall markup.
 const PAY_IOS_NOTE = "Pro is managed from your account on the web. Sign in here with an account that already has it and everything unlocks.";
 
+/* ---- buying seats for other people ----------------------------------------------------------
+   A licence is five seats for a year at $99. Somebody buying for a youth group wants one; somebody
+   sponsoring a camp wants ten. The quantity is LICENCES because each carries its own code, and each
+   code is a separate thing to hand out — but the sheet leads with the number of people, because
+   that is what the buyer is actually thinking about. */
+const GROUP_SEATS_PER = 5, GROUP_PRICE_EACH = 99;
+function openGroupBuy(){
+  if(!(typeof Auth!=="undefined" && Auth.loggedIn())){
+    toast("Create an account first, so the licence has an owner.");
+    try{ openAccountScreen&&openAccountScreen(); }catch(e){}
+    return;
+  }
+  const m=el("groupModal")||(()=>{ const d=document.createElement("div"); d.id="groupModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  let qty=1;
+  const draw=()=>{
+    const people=qty*GROUP_SEATS_PER, total=qty*GROUP_PRICE_EACH;
+    m.innerHTML=`<div class="modal-card">
+        <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="gbX" style="margin:0">✕</button>
+          <div style="flex:1;text-align:center;font-weight:800">Seats for a group</div><span style="width:34px"></span></div>
+        <p class="lead" style="font-size:13.5px;margin:0 0 4px">Each licence is <b class="gold">5 seats for a year</b> and comes with its own code to hand out. A seat can be moved to somebody else whenever one goes unused.</p>
+        <div class="center" style="margin:14px 0 6px">
+          <div style="font-size:42px;font-weight:900;line-height:1" class="gold">${people}</div>
+          <div class="hint" style="margin:2px 0 0">${people===1?"person":"people"} for a year</div>
+        </div>
+        <div class="btnrow" style="justify-content:center;align-items:center;gap:14px;margin:10px 0">
+          <button class="btn ghost" id="gbLess" style="width:52px;font-size:22px;padding:6px 0">−</button>
+          <div style="min-width:112px;text-align:center">
+            <div style="font-weight:800;font-size:15px">${qty} licence${qty>1?"s":""}</div>
+            <div class="hint" style="font-size:11.5px;margin-top:2px">${qty} code${qty>1?"s":""} to give out</div>
+          </div>
+          <button class="btn ghost" id="gbMore" style="width:52px;font-size:22px;padding:6px 0">+</button>
+        </div>
+        <div class="center" style="font-size:19px;font-weight:800;margin:8px 0 2px">$${total} / year</div>
+        <div class="hint center" style="margin:0 0 12px;font-size:11.5px">$${GROUP_PRICE_EACH} each · renews yearly · cancel any time</div>
+        <button class="btn blue" id="gbGo" style="width:100%">Buy ${qty} licence${qty>1?"s":""} · $${total}</button>
+        <button class="btn ghost" id="gbNo" style="width:100%;margin-top:8px">Not now</button>
+      </div>`;
+    el("gbX").onclick=el("gbNo").onclick=()=>{ m.style.display="none"; };
+    el("gbLess").onclick=()=>{ if(qty>1){ qty--; draw(); } };
+    el("gbMore").onclick=()=>{ if(qty<50){ qty++; draw(); } };
+    el("gbGo").onclick=async ()=>{
+      const b=el("gbGo"); b.disabled=true; b.textContent="Opening checkout…";
+      try{
+        const d=await Auth._req("/licence/checkout","POST",{ qty });
+        if(d && d.url){ location.href=d.url; return; }
+        toast((d&&d.error)||"Group licences are not set up yet.");
+      }catch(e){ toast(e.message||"Couldn't reach the server to open checkout."); }
+      b.disabled=false; b.textContent=`Buy ${qty} licence${qty>1?"s":""} · $${qty*GROUP_PRICE_EACH}`;
+    };
+  };
+  draw(); m.style.display="flex"; raiseModal(m);
+}
+
+/* ---- entering a code ------------------------------------------------------------------------
+   One box, two kinds of code. A group licence code takes a seat on somebody's licence and is
+   checked by the server; a comp code is checked here. The reader does not need to know which they
+   have, so the sheet tries the server first and falls back without comment. */
+function openCodeSheet(){
+  const m=el("codeModal")||(()=>{ const d=document.createElement("div"); d.id="codeModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="ccX" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800">Enter your code</div><span style="width:34px"></span></div>
+      <p class="lead" style="font-size:13.5px;margin:0 0 10px">If somebody bought a group licence and gave you a code, put it in here and this account takes one of its seats.</p>
+      <input id="ccIn" class="typein" style="width:100%;box-sizing:border-box;text-transform:uppercase;letter-spacing:.08em;font-weight:800;text-align:center;font-size:18px" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="BB-7K2M-QX4P">
+      <div id="ccMsg" class="hint" style="margin:9px 0 0;min-height:20px"></div>
+      <button class="btn" id="ccGo" style="width:100%;margin-top:8px" disabled>Use this code</button>
+      <button class="btn ghost" id="ccNo" style="width:100%;margin-top:8px">Cancel</button>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  const go=el("ccGo"), inp=el("ccIn"), msg=el("ccMsg");
+  const paint=()=>{ go.disabled = inp.value.trim().length < 4; go.style.opacity = go.disabled?".5":""; };
+  paint(); inp.oninput=paint;
+  const close=()=>{ m.style.display="none"; };
+  el("ccX").onclick=close; el("ccNo").onclick=close;
+  inp.onkeydown=e=>{ if(e.key==="Enter" && !go.disabled) go.click(); };
+  go.onclick=async ()=>{
+    const code=inp.value.trim().toUpperCase();
+    go.disabled=true; go.textContent="Checking…"; msg.textContent="";
+    const win=(note)=>{ close(); renderAcctBox(); renderPath(); updateTabLocks();
+      toast(note); setTimeout(()=>{ try{ maybeRomeLetter(); }catch(e){} },900); };
+    // A licence seat, if the server knows this code and has one free.
+    try{
+      const d=await Auth._req("/licence/redeem","POST",{ code });
+      if(d && d.ok){ await Auth.pull().catch(()=>{}); return win("🎫 Seat taken — you have Pro until " + fmtDay(d.expiresAt)); }
+    }catch(e){
+      // 404 means no such code, which might still be a comp code; anything else is worth saying.
+      const m2=String(e.message||"");
+      if(!/not found|no such|invalid/i.test(m2) && m2){ msg.innerHTML=`<b style="color:var(--miss)">${bbEsc(m2)}</b>`;
+        go.disabled=false; go.textContent="Use this code"; paint(); return; }
+    }
+    if(Billing.redeem(code)) return win("✨ Code accepted, full access unlocked!");
+    msg.innerHTML=`<b style="color:var(--miss)">That code isn't valid, or every seat on it is taken.</b>`;
+    go.disabled=false; go.textContent="Use this code"; paint();
+  };
+}
+function fmtDay(ms){ try{ return new Date(ms).toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"}); }catch(e){ return "the end of the term"; } }
+
 /* ---- paywall ---- */
 let payTargetSkill=null;
 function openPaywall(sk){ const m=el("payModal"); if(!m) return;
@@ -11403,12 +11506,8 @@ function wirePaywall(){
     if(Billing.isPro()){ toast("You're already Pro ✨"); closePaywall(); renderPath(); }
     else Billing.startCheckout();
   };
-  if(el("payCode")) el("payCode").onclick=()=>{
-    const code=prompt("Enter your unlock code:");
-    if(code===null) return;
- if(Billing.redeem(code)){ closePaywall(); renderAcctBox(); renderPath(); toast("✨ Code accepted, full access unlocked!"); setTimeout(()=>maybeRomeLetter(),900); }
-    else toast("That code isn't valid.");
-  };
+  if(el("payGroup")) el("payGroup").onclick=()=>{ closePaywall(); openGroupBuy(); };
+  if(el("payCode")) el("payCode").onclick=()=>{ closePaywall(); openCodeSheet(); };
 }
 function authErr(e){ const c=(e&&e.code)||"";
  if(c.includes("email-already-in-use")) return "That email already has an account. Try Sign in instead.";
