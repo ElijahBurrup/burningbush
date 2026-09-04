@@ -41,7 +41,8 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
     // the warning has to name what is really being deleted
     const txt = (el('delAcctModal').innerText || '').replace(/\s+/g, ' ');
     res.warns = { kingdom: /Kingdom Builders/i.test(txt), undone: /cannot be undone/i.test(txt),
-                  billing: /charged again|cancelled/i.test(txt) };
+                  billing: /charged again|cancelled/i.test(txt),
+                  optIn: !!el('daWide') && !el('daWide').checked };
 
     // wrong email, right password: still refused
     el('daEmail').value = 'someoneelse@example.com'; el('daEmail').oninput();
@@ -59,6 +60,16 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
 
     await el('daGo').onclick();
     res.called = calls.length === 1 ? calls[0] : null;
+
+    // and with the box ticked, the wider scope is asked for instead
+    Store.setJSON('vv_acct', { email: 'someone@example.com' });
+    Auth._token = 'stub'; calls.length = 0;
+    el('themeBtn').click(); renderAcctBox(); el('delAcct').click();
+    el('daWide').checked = true;
+    el('daEmail').value = 'someone@example.com'; el('daEmail').oninput();
+    el('daPw').value = 'hunter2'; el('daPw').oninput();
+    await el('daGo').onclick();
+    res.wide = calls.length === 1 ? calls[0].body.scope : null;
     res.after = { token: Auth._token, acct: Store.getJSON('vv_acct', null),
                   verses: (Prog.memorized || []).length, talents: Prog.talents || 0,
                   sheetGone: getComputedStyle(el('delAcctModal')).display === 'none' };
@@ -82,13 +93,16 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
   say(r.offered, 'the account section offers a way to delete the account');
   say(r.asks.email && r.asks.password, '...asking for the email and the password');
   say(!r.asks.armed, '...and refusing until both are given');
-  say(r.warns.kingdom, 'the warning says this is the Kingdom Builders account, not only this app');
+  say(r.warns.kingdom, 'the sheet says what happens to the Kingdom Builders sign-in');
+  say(r.warns.optIn, '...and removing that sign-in is an opt-in, unticked by default');
   say(r.warns.undone, '...that it cannot be undone');
   say(r.warns.billing, '...and that any subscription is cancelled with it');
   say(r.wrongEmail, 'a mistyped email will not arm it');
   say(r.noPassword, '...nor will a missing password');
   say(r.armed, '...and both together will');
   say(r.called && r.called.path === '/account/delete' && r.called.method === 'POST', 'it calls the delete endpoint');
+  say(r.called && r.called.body.scope === 'product', "...asking for this app's data only, by default");
+  say(r.wide === 'identity', '...and for the whole sign-in when that box is ticked');
   say(r.called && r.called.body && r.called.body.email === 'someone@example.com' && !!r.called.body.password,
       '...sending the typed email and the password');
   say(!r.after.token && !r.after.acct, 'afterwards the session and the stored account are gone');

@@ -11281,14 +11281,19 @@ function renderAcctBox(){
     m.innerHTML=`<div class="modal-card">
         <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="daX" style="margin:0">✕</button>
           <div style="flex:1;text-align:center;font-weight:800">Delete my account</div><span style="width:34px"></span></div>
-        <p class="lead" style="font-size:13.5px;margin:0 0 8px">This permanently deletes <b class="gold">${bbEsc(who)}</b> and everything in it — every verse, palace, scene and streak. It cannot be undone and there is no copy kept.</p>
-        <p class="hint" style="margin:0 0 8px">This is your <b>Kingdom Builders</b> account, so it also ends your access to the other Kingdom Builders apps that use the same sign-in.</p>
+        <p class="lead" style="font-size:13.5px;margin:0 0 8px">This permanently deletes everything Burning Bush holds for <b class="gold">${bbEsc(who)}</b> — every verse, palace, scene and streak. It cannot be undone and there is no copy kept.</p>
+        <p class="hint" style="margin:0 0 8px">Your <b>Kingdom Builders</b> sign-in keeps working for the other Kingdom Builders apps, unless you ask below.</p>
         <p class="hint" style="margin:0 0 8px">If you have a subscription it is cancelled at the same time, so you will not be charged again.</p>
+        <label class="mtradio chk" id="daWideWrap" style="display:flex;align-items:flex-start;gap:9px;margin:2px 0 10px;text-align:left;cursor:pointer">
+          <input type="checkbox" id="daWide" style="margin-top:3px">
+          <span style="font-size:12.5px;line-height:1.4">Also delete my Kingdom Builders sign-in.<br>
+            <span class="muted">This ends access to every Kingdom Builders app, not just this one.</span></span>
+        </label>
         <p class="hint" style="margin:0 0 6px">Type your email address, then your password.</p>
         <input id="daEmail" class="typein" style="width:100%;box-sizing:border-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${bbEsc(who)}">
         <input id="daPw" type="password" class="typein" style="width:100%;box-sizing:border-box;margin-top:8px" autocomplete="current-password" placeholder="Your password">
         <div id="daMsg" class="hint" style="margin:8px 0 0;min-height:18px"></div>
-        <button class="btn" id="daGo" style="width:100%;margin-top:10px" disabled>Delete my account for ever</button>
+        <button class="btn" id="daGo" style="width:100%;margin-top:10px" disabled>Delete for ever</button>
         <button class="btn ghost" id="daNo" style="width:100%;margin-top:8px">Keep my account</button>
       </div>`;
     m.style.display="flex"; raiseModal(m);
@@ -11301,8 +11306,10 @@ function renderAcctBox(){
     go.onclick=async ()=>{
       if(go.disabled) return;
       go.disabled=true; go.textContent="Deleting…"; msg.textContent="";
+      const wideDeleted = !!(el("daWide") && el("daWide").checked);
       try{
-        await Auth._req("/account/delete","POST",{ email:em.value.trim().toLowerCase(), password:pw.value });
+        await Auth._req("/account/delete","POST",{ email:em.value.trim().toLowerCase(), password:pw.value,
+                                                   scope: wideDeleted ? "identity" : "product" });
         // Everything local goes with it, and the app ends where a new arrival starts.
         Auth._token=null; Auth.user=null;
         Store.remove("vv_token"); Store.remove("vv_acct");
@@ -11312,10 +11319,10 @@ function renderAcctBox(){
         try{ Onboard.start(); }catch(e){}
         if(!Onboard.active()) show("learn");
         closeEveryOverlay();
-        toast("Your account has been deleted.");
+        toast(wideDeleted ? "Your account has been deleted." : "Your Burning Bush data has been deleted.");
       }catch(e){
         msg.innerHTML=`<b style="color:var(--miss)">${bbEsc(e.message||"Could not delete the account.")}</b>`;
-        go.disabled=false; go.textContent="Delete my account for ever"; paint();
+        go.disabled=false; go.textContent="Delete for ever"; paint();
       }
     };
   };
