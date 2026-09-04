@@ -288,8 +288,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "225e624ab21c14d3",
-  "len": 19410,
+  "h": "3a16113ca8360b36",
+  "len": 19402,
   "els": 460,
   "buttons": 46,
   "svgs": 0,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "96b732ca24234f00",
-  "len": 151090,
-  "els": 2609,
+  "h": "e6dd214fa84fbeb6",
+  "len": 152055,
+  "els": 2626,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.108.0 September 3, 2026 Keeping count NEW Your account now keeps a month-by-month record of what yo"
+  "text": "✕ Version history v2.0.0 September 3, 2026 Ready for the app stores NEW The films no longer live inside the app. It know"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,8 +387,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "8600303a0bc39613",
-  "len": 18609,
+  "h": "4b70654d6196f542",
+  "len": 18601,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -810,8 +810,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "a5adbf024653e451",
-  "len": 18617,
+  "h": "f1f380238406dc06",
+  "len": 18609,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "96b732ca24234f00",
-  "len": 151090,
-  "els": 2609,
+  "h": "e6dd214fa84fbeb6",
+  "len": 152055,
+  "els": 2626,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.108.0 September 3, 2026 Keeping count NEW Your account now keeps a month-by-month record of what yo"
+  "text": "✕ Version history v2.0.0 September 3, 2026 Ready for the app stores NEW The films no longer live inside the app. It know"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,8 +909,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "a5adbf024653e451",
-  "len": 18617,
+  "h": "f1f380238406dc06",
+  "len": 18609,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -1332,8 +1332,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "dc6545def71d67e4",
-  "len": 18615,
+  "h": "3c1f4d045725a442",
+  "len": 18607,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "96b732ca24234f00",
-  "len": 151090,
-  "els": 2609,
+  "h": "e6dd214fa84fbeb6",
+  "len": 152055,
+  "els": 2626,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.108.0 September 3, 2026 Keeping count NEW Your account now keeps a month-by-month record of what yo"
+  "text": "✕ Version history v2.0.0 September 3, 2026 Ready for the app stores NEW The films no longer live inside the app. It know"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,8 +1431,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "dc6545def71d67e4",
-  "len": 18615,
+  "h": "3c1f4d045725a442",
+  "len": 18607,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -1854,8 +1854,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "ec8e9631f5dff032",
-  "len": 18617,
+  "h": "3a4cd2111d628ec3",
+  "len": 18609,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "96b732ca24234f00",
-  "len": 151090,
-  "els": 2609,
+  "h": "e6dd214fa84fbeb6",
+  "len": 152055,
+  "els": 2626,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.108.0 September 3, 2026 Keeping count NEW Your account now keeps a month-by-month record of what yo"
+  "text": "✕ Version history v2.0.0 September 3, 2026 Ready for the app stores NEW The films no longer live inside the app. It know"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,8 +1953,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "ec8e9631f5dff032",
-  "len": 18617,
+  "h": "3a4cd2111d628ec3",
+  "len": 18609,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -2376,8 +2376,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "f3c11829335a0ca9",
-  "len": 18613,
+  "h": "7835baab60e0e5d3",
+  "len": 18605,
   "els": 452,
   "buttons": 44,
   "svgs": 0,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "96b732ca24234f00",
-  "len": 151090,
-  "els": 2609,
+  "h": "e6dd214fa84fbeb6",
+  "len": 152055,
+  "els": 2626,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v1.108.0 September 3, 2026 Keeping count NEW Your account now keeps a month-by-month record of what yo"
+  "text": "✕ Version history v2.0.0 September 3, 2026 Ready for the app stores NEW The films no longer live inside the app. It know"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,8 +2475,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "f3c11829335a0ca9",
-  "len": 18613,
+  "h": "7835baab60e0e5d3",
+  "len": 18605,
   "els": 452,
   "buttons": 44,
   "svgs": 0,

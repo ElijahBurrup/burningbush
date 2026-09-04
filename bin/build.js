@@ -32,8 +32,9 @@ const RULES = [
   ['`images/pegs/', '`/images/pegs/', 3],
   // VIDEOS[].src is handed to a <video> element at runtime, so a relative path would resolve
   // against /burningbush with no trailing slash and 404. One site per film that has a recording.
-  ['src:"videos/', 'src:"/videos/', 7],
   // one per translation that is fetched on demand; the KJV is the only one loaded with the page
+  ['const FILM_HOST = "videos/"', 'const FILM_HOST = "/videos/"', 1],
+  ['const FILM_MANIFEST = "films.json"', 'const FILM_MANIFEST = "/films.json"', 1],
   ['file:"bibles/', 'file:"/bibles/', 1],   // +2 the tile thumbnail (chosen word, then the default)
   // fetched by absolute path: a relative one would resolve to /sw.js against the trailing-slash-less URL
   ['register("sw.js")', 'register("/sw.js")', 1],
@@ -42,8 +43,12 @@ const RULES = [
 ];
 
 // copied through untouched
-const COPY_FILES = ['sw.js', 'manifest.webmanifest', 'kjv.js', 'strongs.js', 'kjvtag.js'];
-const COPY_DIRS = ['images', 'fonts', 'videos', 'bibles'];
+const COPY_FILES = ['sw.js', 'manifest.webmanifest', 'kjv.js', 'strongs.js', 'kjvtag.js', 'films.json'];
+// The films are copied for the WEB build, where they cost nothing to serve. The store builds pass
+// --no-films and take them from FILM_HOST instead, which is what keeps the download small.
+const COPY_DIRS = process.argv.includes('--no-films')
+  ? ['images', 'fonts', 'bibles']
+  : ['images', 'fonts', 'videos', 'bibles'];
 // dev-only helpers that live beside the art but must never ship
 const SKIP = new Set(['preview.html', 'books-preview.html', 'manifest.json']);
 

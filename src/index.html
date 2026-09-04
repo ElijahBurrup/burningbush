@@ -2159,8 +2159,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="1.108.0";
+const APP_VERSION="2.0.0";
 const CHANGELOG=[
+ {v:"2.0.0", d:"September 3, 2026", t:"Ready for the app stores", items:[
+   ["new","<b>The films no longer live inside the app.</b> It knows their names and asks, when it starts, where the files are and which cut is current. That takes 111MB out of what anybody downloads — and it means a film can be re-recorded and swapped the same day, without a new version and without waiting on a store review."],
+   ["chg","<b>It works with no signal, exactly as before.</b> If the app cannot reach the list it uses the one it shipped with, so nothing about a plane or a bad connection changes."],
+   ["chg","<b>Version 2.0</b> — the first build headed for Google Play and the App Store."]
+ ]},
  {v:"1.108.0", d:"September 3, 2026", t:"Keeping count", items:[
    ["new","<b>Your account now keeps a month-by-month record of what you did.</b> Verses memorized, questions answered and how many were right, reviews finished, verses recited word for word, books learned, palaces built, talents earned, and the days you actually did something. Nothing shows it yet — it is there so the charts we build later can start from real months rather than from the day we thought to ask."],
    ["fix","<b>Leaving a review at the wrong moment could still stop the app.</b> A third place read the review session from inside a callback that fires most of a second later, by which time you may have walked away from it."],
@@ -5644,9 +5649,87 @@ function videoPlaceholder(title, sub){ return `<div class="vidph"><div class="pl
 function videoSeen(k){ const V=VIDEOS[k]; return !!V && (Prog.doneSkills||[]).includes(V.skill); }
 function markVideoSeen(k){ const V=VIDEOS[k]; if(!V) return;
   if(!Prog.doneSkills.includes(V.skill)){ Prog.doneSkills.push(V.skill); saveProg(); bustCaches(); } }
-function filmURL(V){ return V && V.src ? V.src + (V.rev ? "?v=" + V.rev : "") : ""; }
+/* ---- where the films live -------------------------------------------------------------------
+   FILM_HOST is where the video files are served from, and FILM_MANIFEST is a small JSON beside them
+   saying which cut of each is current. Both can be pointed anywhere without touching the app.
+
+   The manifest looks like this, and only these two fields per film are ever read from it:
+
+       { "films": { "intro": { "src": "intro.mp4", "rev": "20260831" }, ... } }
+
+   A film with an empty src draws the placeholder card, exactly as before, so an unrecorded film and
+   an unreachable manifest look the same to the reader: nothing broken, just not there yet.        */
+// Defaults to where the films are served from today, so nothing changes for anybody until the
+// manifest says otherwise. Moving them to their own host is then a two-step with no release in it:
+// upload the files, publish a films.json whose src values are absolute URLs. The app follows.
+// Relative here, absolute in the published build (bin/build.js rewrites both). The source copy is
+// served from a subfolder and the published one from the site root, which is the same reason every
+// other asset path is rewritten on the way out.
+const FILM_HOST = "videos/";
+const FILM_MANIFEST = "films.json";
+const FILM_CACHE = "vv_films";                       // the last manifest that worked, for offline starts
+
+// The src the app should actually use for a film: whatever the manifest last said, else what shipped.
+function filmSrc(key){
+  const live = (FilmHost.map() || {})[key];
+  const V = VIDEOS[key] || {};
+  // Only a string is a source. refresh() already filters what it fetches, but the cache it writes
+  // to is ordinary storage and anything at all can end up in there — a number here used to throw
+  // on .replace and take the screen down with it.
+  const fromLive = (live && typeof live.src === "string") ? live.src : "";
+  const src = fromLive || (typeof V.src === "string" ? V.src : "") || "";
+  if(!src) return "";
+  return /^https?:\/\//.test(src) ? src : FILM_HOST + src.replace(/^\/*(videos\/)?/, "");
+}
+function filmRev(key){
+  const live = (FilmHost.map() || {})[key];
+  const r = (live && live.rev != null) ? String(live.rev) : "";
+  return r || (VIDEOS[key] || {}).rev || "";
+}
+// A film is playable if SOMETHING knows a source for it.
+function filmHas(key){ return !!filmSrc(key); }
+function filmURL(V){
+  // Called with the VIDEOS entry rather than the key, so find the key it belongs to.
+  if(!V) return "";
+  const key = Object.keys(VIDEOS).find(k=>VIDEOS[k]===V);
+  if(!key) return V.src || "";
+  const src = filmSrc(key); if(!src) return "";
+  const rev = filmRev(key);
+  return src + (rev ? "?v=" + rev : "");
+}
+const FilmHost = (()=>{
+  // Read from the store every time rather than remembering the first answer. It is eight small
+  // entries and a JSON parse, which costs nothing next to drawing a screen — and remembering it
+  // meant a manifest fetched mid-session did not take effect until the app was next opened.
+  function read(){
+    try{ const c = Store.getJSON(FILM_CACHE, null); return (c && c.films) || null; }catch(e){ return null; }
+  }
+  return {
+    map: read,
+    // Asked once, after the app is already usable. A failure is silent and simply leaves the
+    // built-in table in charge — which is the correct behaviour on a plane.
+    async refresh(){
+      if(!/^https?:$/.test(location.protocol)) return false;
+      try{
+        const r = await fetch(FILM_MANIFEST + "?t=" + Math.floor(Date.now()/3600000), {cache:"no-cache"});
+        if(!r.ok) return false;
+        const d = await r.json();
+        if(!d || typeof d.films !== "object") return false;
+        // Only src and rev are taken. Titles and everything else stay in the app, so a wrong
+        // manifest can misdirect a video file but can never rewrite what the app says.
+        const clean = {};
+        Object.keys(d.films).forEach(k=>{
+          const f = d.films[k] || {};
+          if(typeof f.src === "string") clean[k] = {src:f.src, rev:String(f.rev||"")};
+        });
+        Store.setJSON(FILM_CACHE, {films:clean, at:Date.now()});
+        return true;
+      }catch(e){ return false; }
+    }
+  };
+})();
 function videoPlayerHTML(V){
-  return V.src
+  return filmURL(V)
     ? `<video class="vidplayer" controls playsinline preload="metadata" data-vsrc="${filmURL(V)}"></video>`   // set in JS: a literal src= here cannot be checked by the build path rules
     : videoPlaceholder("▶ "+V.title, "Add your video here.");
 }
@@ -11141,7 +11224,8 @@ function renderAcctBox(){
         <div style="flex:1"><div style="font-weight:700;font-size:14px">${a.email||("Signed in with "+prov)}</div>
         <div class="muted" style="font-size:11px">via ${prov}${unverified?" · unverified":""} · ☁ synced</div></div>
         <button class="btn sm ghost" id="signOut">Sign out</button></div>
-       <button class="btn ghost" id="resetAcct" style="width:100%;margin-top:8px;font-size:13px">♻️ Reset this account's progress</button>`
+       <button class="btn ghost" id="resetAcct" style="width:100%;margin-top:8px;font-size:13px">♻️ Reset this account's progress</button>
+       <button class="btn ghost" id="delAcct" style="width:100%;margin-top:8px;font-size:13px;color:var(--miss)">🗑️ Delete my account</button>`
     : `<button class="btn" id="signInBtn">Sign in / Create account</button>`) + verifyRow + proRow;
   if(el("signInBtn")) el("signInBtn").onclick=()=>{ closeProfile(); setLoginModal(true); };
   if(el("resendVerify")) el("resendVerify").onclick=()=>{ Auth.resendVerification().then(()=>toast("Verification email sent.")).catch(()=>toast("Couldn't send right now.")); };
@@ -11182,6 +11266,59 @@ function renderAcctBox(){
       catch(e){ updateTabLocks(); syncTabOrder(false); show("learn"); renderPath(); }
     };
   };
+  /* Deleting an account, which both app stores require to be possible from inside the app and
+     require to be a real deletion rather than a flag on a row.
+
+     Two things are asked for: the email typed out, and the password again. The password is asked
+     even though they are already signed in, because this is the only thing in the app that cannot
+     be undone and a session left open on a shared machine should not be enough to end somebody's
+     work. And the sheet says plainly that this is the Kingdom Builders account, not only Burning
+     Bush — finding that out afterwards would be indefensible. */
+  if(el("delAcct")) el("delAcct").onclick=()=>{
+    const who=String((acct()&&acct().email)||"").toLowerCase();
+    if(!who) return toast("Sign in first.");
+    const m=el("delAcctModal")||(()=>{ const d=document.createElement("div"); d.id="delAcctModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+    m.innerHTML=`<div class="modal-card">
+        <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="daX" style="margin:0">✕</button>
+          <div style="flex:1;text-align:center;font-weight:800">Delete my account</div><span style="width:34px"></span></div>
+        <p class="lead" style="font-size:13.5px;margin:0 0 8px">This permanently deletes <b class="gold">${bbEsc(who)}</b> and everything in it — every verse, palace, scene and streak. It cannot be undone and there is no copy kept.</p>
+        <p class="hint" style="margin:0 0 8px">This is your <b>Kingdom Builders</b> account, so it also ends your access to the other Kingdom Builders apps that use the same sign-in.</p>
+        <p class="hint" style="margin:0 0 8px">If you have a subscription it is cancelled at the same time, so you will not be charged again.</p>
+        <p class="hint" style="margin:0 0 6px">Type your email address, then your password.</p>
+        <input id="daEmail" class="typein" style="width:100%;box-sizing:border-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${bbEsc(who)}">
+        <input id="daPw" type="password" class="typein" style="width:100%;box-sizing:border-box;margin-top:8px" autocomplete="current-password" placeholder="Your password">
+        <div id="daMsg" class="hint" style="margin:8px 0 0;min-height:18px"></div>
+        <button class="btn" id="daGo" style="width:100%;margin-top:10px" disabled>Delete my account for ever</button>
+        <button class="btn ghost" id="daNo" style="width:100%;margin-top:8px">Keep my account</button>
+      </div>`;
+    m.style.display="flex"; raiseModal(m);
+    const go=el("daGo"), em=el("daEmail"), pw=el("daPw"), msg=el("daMsg");
+    const paint=()=>{ const ok=em.value.trim().toLowerCase()===who && pw.value.length>0;
+      go.disabled=!ok; go.style.opacity=ok?"":".5"; };
+    paint(); em.oninput=paint; pw.oninput=paint;
+    const close=()=>{ m.style.display="none"; };
+    el("daX").onclick=close; el("daNo").onclick=close;
+    go.onclick=async ()=>{
+      if(go.disabled) return;
+      go.disabled=true; go.textContent="Deleting…"; msg.textContent="";
+      try{
+        await Auth._req("/account/delete","POST",{ email:em.value.trim().toLowerCase(), password:pw.value });
+        // Everything local goes with it, and the app ends where a new arrival starts.
+        Auth._token=null; Auth.user=null;
+        Store.remove("vv_token"); Store.remove("vv_acct");
+        wipeLocalUserData();
+        close(); closeProfile();
+        bustCaches(); recomputeLevel(); updateMetrics();
+        try{ Onboard.start(); }catch(e){}
+        if(!Onboard.active()) show("learn");
+        closeEveryOverlay();
+        toast("Your account has been deleted.");
+      }catch(e){
+        msg.innerHTML=`<b style="color:var(--miss)">${bbEsc(e.message||"Could not delete the account.")}</b>`;
+        go.disabled=false; go.textContent="Delete my account for ever"; paint();
+      }
+    };
+  };
   if(el("goProBtn")) el("goProBtn").onclick=()=>{ closeProfile(); openPaywall(); };
   // Until the Stripe customer portal is configured, never leave a subscriber with no way out:
   // tell them plainly how to cancel rather than showing a button that does nothing.
@@ -11196,9 +11333,36 @@ function renderAcctBox(){
       minWords:0, maxWords:200, placeholder:"Anything you'd like us to know…"});
   };
 }
+/* ---- which app this is running inside ------------------------------------------------------
+   Capacitor sets a global when the web code is running inside the native shell. Everywhere else
+   this is "web", including a phone browser and an installed PWA, both of which may sell normally. */
+function nativePlatform(){
+  try{
+    const C = window.Capacitor;
+    if(C && typeof C.getPlatform === "function") return C.getPlatform();   // "ios" | "android" | "web"
+  }catch(e){}
+  return "web";
+}
+function isIOSApp(){ return nativePlatform() === "ios"; }
+// Named here so it can be reworded without hunting through the paywall markup.
+const PAY_IOS_NOTE = "Pro is managed from your account on the web. Sign in here with an account that already has it and everything unlocks.";
+
 /* ---- paywall ---- */
 let payTargetSkill=null;
 function openPaywall(sk){ const m=el("payModal"); if(!m) return;
+  // On iOS the two price buttons come out and a line goes in their place. Restore, the talent
+  // unlock and the assistance request all stay: none of them is a purchase.
+  { const ios=isIOSApp();
+    ["payYearly","payMonthly"].forEach(id=>{ const b=el(id); if(b) b.style.display=ios?"none":""; });
+    let note=el("payIosNote");
+    if(ios && !note){
+      note=document.createElement("p"); note.id="payIosNote"; note.className="hint";
+      note.style.cssText="margin:0 0 8px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)";
+      const anchor=el("payYearly");
+      if(anchor && anchor.parentNode) anchor.parentNode.insertBefore(note, anchor);
+    }
+    if(note){ note.textContent=PAY_IOS_NOTE; note.style.display=ios?"":"none"; }
+  }
   payTargetSkill = (sk && sk.id && sk.kind!=="story") ? sk : null;   // stories can't be bought as a single lesson
   const wrap=el("payLessonWrap"), btn=el("payLesson");
   if(wrap && btn){
@@ -13111,6 +13275,9 @@ wireVerseWords();   // press-and-hold on any verse word → its Hebrew/Greek
   window.addEventListener(ev, function wake(){ try{ Sfx.unlock(); }catch(e){}
     ["pointerdown","touchstart","keydown"].forEach(e2=>window.removeEventListener(e2, wake, true)); }, true));
 OnboardWalk.recover();   // a walkthrough that was closed mid-run put the real progress back
+// Where the films live, asked once and only after the app is already usable. A failure here is
+// silent by design: the built-in table stays in charge, which is the right answer on a plane.
+setTimeout(()=>{ FilmHost.refresh().catch(()=>{}); }, 2500);
 grandfatherFeatures();   // an account that predates the Feature Store keeps everything it had
 resumeActiveTest();      // straight back into an unfinished verse test, if there was one
 applyFeatureVisibility();
