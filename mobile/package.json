@@ -6,7 +6,7 @@
   "scripts": {
     "web": "cd .. && node bin/build.js --native",
     "sync": "npm run web && node bin/stamp-version.js && cap sync android",
-    "apk": "npm run sync && cd android && gradlew.bat assembleDebug"
+    "apk": "npm run sync && node bin/apk.js"
   },
   "dependencies": {
     "@capacitor/android": "^7.0.0",

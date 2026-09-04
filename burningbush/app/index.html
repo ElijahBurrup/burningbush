@@ -12213,7 +12213,10 @@ function importBackup(file){
    Notification constructor at all). ---- */
 const REMINDER_MAX=3, REMINDER_IDS=[4200,4201,4202];
 let swReg=null;   // held from register() so we never depend on the SW controlling the page
-if("serviceWorker" in navigator){ try{ navigator.serviceWorker.register("/sw.js").then(r=>{ swReg=r; }).catch(()=>{}); }catch(e){} }
+// Not inside the shell, where there is no service worker in the package and one sitting in front
+// of the app's own assets could only ever serve yesterday's copy of them. The alarms it backs on an
+// installed iPhone are done by the platform there instead.
+if("serviceWorker" in navigator && nativePlatform()==="web"){ try{ navigator.serviceWorker.register("/sw.js").then(r=>{ swReg=r; }).catch(()=>{}); }catch(e){} }
 const Reminders = {
   cap(){ return (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.LocalNotifications) || null; },
   live(){ return (Prog.reminder.times||[]).filter(x=>x && x.on!==false).slice(0,REMINDER_MAX); },
