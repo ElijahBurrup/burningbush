@@ -2171,8 +2171,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.0.0";
+const APP_VERSION="2.1.0";
 const CHANGELOG=[
+ {v:"2.1.0", d:"September 4, 2026", t:"Say the scene instead of typing it", items:[
+   ["new","<b>A microphone in every scene box.</b> Tap it and talk — a NASA ship crashing into a hairbrush is two sentences of deliberate nonsense, and typing that on a phone is why people stopped writing scenes at all. The words appear as you speak and tidy themselves as each sentence lands."],
+   ["chg","<b>Nothing you have written is ever at risk.</b> Speaking writes in at the cursor and never replaces, so whatever was already typed survives a mishearing, a hang-up, or a microphone that was switched off."],
+   ["fix","<b>The instructions for turning the microphone on now match your phone.</b> They were generic before, and generic was wrong for the commonest case — the app installed to a home screen, where the switch lives in Android Settings rather than anywhere in the browser. Silence, no connection and a missing microphone each say what they are instead of one vague failure."]
+ ]},
  {v:"2.0.0", d:"September 3, 2026", t:"Ready for the app stores", items:[
    ["new","<b>The films no longer live inside the app.</b> It knows their names and asks, when it starts, where the files are and which cut is current. That takes 111MB out of what anybody downloads — and it means a film can be re-recorded and swapped the same day, without a new version and without waiting on a store review."],
    ["chg","<b>It works with no signal, exactly as before.</b> If the app cannot reach the list it uses the one it shipped with, so nothing about a plane or a bad connection changes."],
@@ -11069,6 +11074,98 @@ function toast(msg){
   clearTimeout(t._h); t._h=setTimeout(()=>t.style.opacity="0",2600);
 }
 // A pretty in-app text editor (replaces the browser's ugly prompt) with a trash-can "clear all".
+/* ---- dictation ------------------------------------------------------------------------------
+   Web Speech where it exists, which is Chrome and every Android browser built on it, and the
+   installed app. Nothing here assumes it is there. */
+const Dictation = (()=>{
+  // Looked up when it is wanted rather than when this file loads: some browsers define it late,
+  // and a value captured once cannot be stood in for when this is being tested.
+  const engine = ()=> window.SpeechRecognition || window.webkitSpeechRecognition;
+  let rec=null, live=false;
+  return {
+    supported(){ return !!engine(); },
+    listening(){ return live; },
+    stop(){ try{ if(rec) rec.stop(); }catch(e){} live=false; },
+    /* onText(finalChunk, interimChunk) is called as they speak; onEnd(reason) once, always. */
+    start(onText, onEnd){
+      const Rec = engine();
+      if(!Rec) return onEnd("unsupported");
+      try{ rec = new Rec(); }catch(e){ return onEnd("unsupported"); }
+      rec.lang = (navigator.language || "en-US");
+      rec.continuous = true;          // a scene is sentences, not one phrase
+      rec.interimResults = true;      // so words appear while they are still talking
+      let ended=false;
+      const finish=(why)=>{ if(ended) return; ended=true; live=false; rec=null; onEnd(why); };
+      rec.onresult = ev=>{
+        let fin="", mid="";
+        for(let i=ev.resultIndex; i<ev.results.length; i++){
+          const r=ev.results[i];
+          if(r.isFinal) fin += r[0].transcript; else mid += r[0].transcript;
+        }
+        onText(fin, mid);
+      };
+      rec.onerror = ev=>finish(ev && ev.error ? ev.error : "error");
+      rec.onend = ()=>finish("done");
+      try{ rec.start(); live=true; }catch(e){ finish("error"); }
+    }
+  };
+})();
+/* Where microphone permission actually lives, for the way THIS person is running the app. Getting
+   this wrong is worse than saying nothing: it sends somebody hunting through a settings screen that
+   does not contain the switch. */
+function micSettingsHelp(){
+  const ua = navigator.userAgent || "";
+  const android = /Android/i.test(ua), ios = /iPhone|iPad|iPod/i.test(ua);
+  const installed = (typeof isInstalledApp==="function") && isInstalledApp();
+  const native = (typeof nativePlatform==="function") && nativePlatform()!=="web";
+
+  if(native) return { native:true, title:"Microphone is switched off",
+    steps:["Open the app's settings","Turn Microphone on","Come back here"] };
+
+  if(android && installed) return { title:"Microphone is switched off for the app",
+    steps:["Open Android <b>Settings</b>","<b>Apps</b>, then <b>Burning Bush</b>",
+           "<b>Permissions</b> → <b>Microphone</b>","Choose <b>Allow</b>, then come back"] };
+
+  if(android) return { title:"Microphone is switched off for this site",
+    steps:["Tap the icon just left of the web address","<b>Permissions</b>, or <b>Site settings</b>",
+           "Turn <b>Microphone</b> on","Reload the page"] };
+
+  if(ios) return { title:"Speaking is not available on iPhone browsers",
+    steps:["Safari on iPhone cannot do dictation inside a web page",
+           "Use the microphone on your own keyboard instead — it is the key beside the space bar",
+           "It types into any box, including this one"] };
+
+  return { title:"Microphone is switched off for this site",
+    steps:["Click the padlock beside the web address","Turn <b>Microphone</b> on","Reload the page"] };
+}
+function openMicHelp(){
+  const h=micSettingsHelp();
+  const m=el("micHelpModal")||(()=>{ const d=document.createElement("div"); d.id="micHelpModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="mhX" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800">${bbEsc(h.title)}</div><span style="width:34px"></span></div>
+      <ol style="margin:0 0 4px;padding-left:20px;font-size:14px;line-height:1.6">
+        ${h.steps.map(s=>`<li style="margin:6px 0">${s}</li>`).join("")}
+      </ol>
+      ${h.native?`<button class="btn" id="mhOpen" style="width:100%;margin-top:12px">Open settings for me</button>`:""}
+      <button class="btn ghost" id="mhNo" style="width:100%;margin-top:8px">Close</button>
+      <p class="hint" style="margin:10px 0 0;font-size:11.5px">Nothing you have written is lost — it is still in the box behind this.</p>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; };
+  el("mhX").onclick=el("mhNo").onclick=close;
+  // In the Android app the settings screen can be opened directly, which is the whole point of
+  // being an app. Everywhere else the steps above are the best that can be done.
+  if(el("mhOpen")) el("mhOpen").onclick=async ()=>{
+    try{
+      const P=window.Capacitor && window.Capacitor.Plugins;
+      if(P && P.NativeSettings && P.NativeSettings.openAndroid){ await P.NativeSettings.openAndroid({option:"application_details"}); close(); return; }
+      if(P && P.App && P.App.openSettings){ await P.App.openSettings(); close(); return; }
+    }catch(e){}
+    toast("Open Settings → Apps → Burning Bush → Permissions.");
+  };
+}
+
 function editText({title, hint, value, onSave, autoCap, keyWords, tagWord}){
   let m=el("editModal"); if(!m){ m=document.createElement("div"); m.id="editModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
   const esc=s=>(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -11078,6 +11175,8 @@ function editText({title, hint, value, onSave, autoCap, keyWords, tagWord}){
       <div class="ed-head"><h2>${title}</h2><button class="ed-trash" id="edTrash" title="Clear all" aria-label="Clear all">🗑️</button></div>
       ${hint?`<p class="hint" style="margin:2px 0 10px">${hint}</p>`:""}
       <textarea class="ed-ta" id="edTa" placeholder="Write it here…">${esc(value)}</textarea>
+      <button class="btn ghost" id="edMic" style="width:100%;margin-top:8px">🎤 Speak it instead</button>
+      <div id="edMicNote" class="hint" style="margin:6px 0 0;min-height:17px;font-size:12px"></div>
       <div class="btnrow" style="margin-top:12px"><button class="btn ghost" id="edCancel">Cancel</button><button class="btn" id="edSave">Save</button></div></div>`;
     const ta=el("edTa"); setTimeout(()=>{ try{ta.focus();}catch(e){} },40);
     // Capitals are fixed on every keystroke. capAfterPunct never changes the length, so putting the
@@ -11086,6 +11185,61 @@ function editText({title, hint, value, onSave, autoCap, keyWords, tagWord}){
       const p=ta.selectionStart, v=capAfterPunct(ta.value);
       if(v!==ta.value){ ta.value=v; try{ ta.setSelectionRange(p,p); }catch(e){} }
     });
+    /* Speaking a scene. The caret is remembered when it starts, and the box is rebuilt around it
+       on every result, so what was already written is never at risk from a mishearing. */
+    (()=>{
+      const mic=el("edMic"), note=el("edMicNote");
+      if(!mic) return;
+      if(!Dictation.supported()){
+        // Rather than a dead button: on an iPhone the keyboard's own microphone does this job, and
+        // that is worth saying, because it is the answer for the reader rather than a refusal.
+        mic.textContent="🎤 Speaking isn't available here";
+        mic.style.opacity=".65";
+        mic.onclick=()=>openMicHelp();
+        return;
+      }
+      let at=0, before="", after="", heard="";
+      const idle=()=>{ mic.textContent="🎤 Speak it instead"; mic.classList.remove("blue"); };
+      const paint=(interim)=>{
+        const said=(heard+interim).replace(/\s+/g," ");
+        // A space where one is wanted, and none where the box already ends in one.
+        const join=(a,b)=>!a?b:(!b?a:(/\s$/.test(a)?a+b:a+" "+b));
+        ta.value = join(before, said) + (after ? (/^\s/.test(after)?after:" "+after) : "");
+        try{ const p=join(before,said).length; ta.setSelectionRange(p,p); }catch(e){}
+      };
+      const stop=()=>{ Dictation.stop(); };
+      mic.onclick=()=>{
+        if(Dictation.listening()) return stop();
+        at = (typeof ta.selectionStart==="number") ? ta.selectionStart : ta.value.length;
+        before = ta.value.slice(0, at); after = ta.value.slice(at); heard = "";
+        mic.textContent="● Listening — tap when you're done";
+        mic.classList.add("blue");
+        note.innerHTML='<span class="muted">Say it the way you would tell somebody. Punctuation is added when you save.</span>';
+        Dictation.start(
+          (fin, mid)=>{ heard += fin; paint(mid); },
+          (why)=>{
+            idle();
+            if(why==="not-allowed" || why==="service-not-allowed"){
+              note.innerHTML='<b style="color:var(--miss)">The microphone is switched off.</b> <u id="edMicFix" style="cursor:pointer">Show me where</u>';
+              const f=el("edMicFix"); if(f) f.onclick=()=>openMicHelp();
+              return;
+            }
+            if(why==="no-speech"){ note.innerHTML='<span class="muted">Nothing was heard. Tap again and speak a little closer.</span>'; return; }
+            if(why==="network"){ note.innerHTML='<span class="muted">Speaking needs a connection, and there is none just now.</span>'; return; }
+            if(why==="unsupported"){ note.innerHTML='<span class="muted">Speaking is not available on this device.</span>'; return; }
+            if(why==="audio-capture"){ note.innerHTML='<span class="muted">No microphone was found on this device.</span>'; return; }
+            // "done" and "aborted" are the ordinary ends: they stopped, or the phone stopped for them.
+            if(autoCap && ta.value){ const v=capAfterPunct(ta.value); if(v!==ta.value) ta.value=v; }
+            note.innerHTML = heard.trim() ? '<span class="muted">Tap the microphone again to add more.</span>' : "";
+          }
+        );
+      };
+      // Leaving the editor with the microphone still open would keep listening to the room.
+      const stopOnClose=()=>{ if(Dictation.listening()) stop(); };
+      const c=el("edCancel"), s=el("edSave");
+      if(c) c.addEventListener("click", stopOnClose);
+      if(s) s.addEventListener("click", stopOnClose);
+    })();
     el("edCancel").onclick=close;
     el("edSave").onclick=()=>{
       let v=ta.value.trim();
