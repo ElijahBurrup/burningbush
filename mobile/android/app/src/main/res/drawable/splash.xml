@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The first quarter-second of the app. Capacitor ships a white screen with its own logo on it, which
+  flashes white on the way into a dark app and shows somebody else's mark. This is the app's own
+  field with the app's own mark laid on top at its natural size — a layer-list rather than a bitmap
+  so it is right on every screen shape instead of stretched to fit one.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/ic_launcher_background" />
+    <item>
+        <bitmap
+            android:src="@mipmap/ic_launcher_foreground"
+            android:gravity="center" />
+    </item>
+</layer-list>

@@ -18,7 +18,12 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const SRC = path.join(ROOT, 'src');
-const OUT = path.join(ROOT, 'burningbush');
+// The store builds are the same app with three differences: it sits at the root of its own folder
+// rather than at /app, the films come from a host on the internet instead of from the download, and
+// there is no landing page and no service worker — the shell is already the app.
+const NATIVE = process.argv.includes('--native');
+const FILM_ORIGIN = process.env.FILM_ORIGIN || 'https://burningbush.kingdombuilders.ai';
+const OUT = path.join(ROOT, NATIVE ? path.join('mobile', 'www') : 'burningbush');
 const CHECK = process.argv.includes('--check');
 
 // [find, replace, expected number of sites]
@@ -42,11 +47,22 @@ const RULES = [
   ['one("kjvtag.js")', 'one("/kjvtag.js")', 1],
 ];
 
-// copied through untouched
-const COPY_FILES = ['sw.js', 'manifest.webmanifest', 'kjv.js', 'strongs.js', 'kjvtag.js', 'films.json'];
+// Applied AFTER the rules above, to paths they have already made root-absolute. A packaged app has
+// no site for "/videos/" to resolve against — the phone's own asset server answers, and it does not
+// contain 111MB of film. Both are still overridable at runtime by the manifest, so the films can
+// move host again without another store release.
+const NATIVE_RULES = [
+  ['const FILM_HOST = "/videos/"', `const FILM_HOST = "${FILM_ORIGIN}/videos/"`, 1],
+  ['const FILM_MANIFEST = "/films.json"', `const FILM_MANIFEST = "${FILM_ORIGIN}/films.json"`, 1],
+];
+
+// copied through untouched. The service worker is a web thing: inside the shell it would sit in
+// front of the app's own assets and serve yesterday's copy of them.
+const COPY_FILES = ['sw.js', 'manifest.webmanifest', 'kjv.js', 'strongs.js', 'kjvtag.js', 'films.json']
+  .filter(f => !(NATIVE && f === 'sw.js'));
 // The films are copied for the WEB build, where they cost nothing to serve. The store builds pass
 // --no-films and take them from FILM_HOST instead, which is what keeps the download small.
-const COPY_DIRS = process.argv.includes('--no-films')
+const COPY_DIRS = (NATIVE || process.argv.includes('--no-films'))
   ? ['images', 'fonts', 'bibles']
   : ['images', 'fonts', 'videos', 'bibles'];
 // dev-only helpers that live beside the art but must never ship
@@ -62,6 +78,11 @@ function buildHtml() {
     counts[from] = n;
     if (n !== expect) fail(`rule "${from}" matched ${n} site(s), expected ${expect}.\n` +
       `  An asset reference was added, removed or renamed. Update RULES in bin/build.js to match.`);
+    h = h.split(from).join(to);
+  }
+  for (const [from, to, expect] of (NATIVE ? NATIVE_RULES : [])) {
+    const n = h.split(from).length - 1;
+    if (n !== expect) fail(`native rule "${from}" matched ${n} site(s), expected ${expect}.`);
     h = h.split(from).join(to);
   }
   // nothing relative may survive. ${...} values are built elsewhere or are external URLs.
@@ -86,7 +107,7 @@ const same = (a, b) => fs.existsSync(a) && fs.existsSync(b) &&
   fs.readFileSync(a).equals(fs.readFileSync(b));
 
 const { html, counts } = buildHtml();
-const APPDIR = path.join(OUT, 'app');
+const APPDIR = NATIVE ? OUT : path.join(OUT, 'app');
 const outHtml = path.join(APPDIR, 'index.html');
 const ver = (html.match(/const APP_VERSION="([^"]+)"/) || [])[1] || '?';
 
@@ -103,10 +124,11 @@ fs.mkdirSync(OUT, { recursive: true });
 fs.mkdirSync(APPDIR, { recursive: true });
 fs.writeFileSync(outHtml, html);
 for (const f of COPY_FILES) fs.copyFileSync(path.join(SRC, f), path.join(OUT, f));
-// the landing page takes the site root; the app sits at /app beside it
-fs.copyFileSync(path.join(SRC,'landing.html'), path.join(OUT,'index.html'));
+// the landing page takes the site root; the app sits at /app beside it. In the shell the app IS
+// the root, and there is nobody to land.
+if (!NATIVE) fs.copyFileSync(path.join(SRC,'landing.html'), path.join(OUT,'index.html'));
 for (const d of COPY_DIRS) copyDir(path.join(SRC, d), path.join(OUT, d));
 
-console.log(`built v${ver} → burningbush/`);
+console.log(`built v${ver} → ${path.relative(ROOT, OUT).split(path.sep).join("/")}/` + (NATIVE ? `  films from ${FILM_ORIGIN}` : ""));
 console.log('  rewrites: ' + Object.entries(counts).map(([k, v]) => `${v}×${k.slice(0, 22)}`).join(', '));
 console.log(`  index.html ${(Buffer.byteLength(html) / 1024).toFixed(0)}KB, ${COPY_FILES.length} data files, ${COPY_DIRS.join(' + ')}`);

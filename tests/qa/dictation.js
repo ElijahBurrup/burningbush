@@ -108,7 +108,78 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
       iphone: helpFor('Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)', false)
     };
 
-    delete window.SpeechRecognition;
+    // 8. INSIDE THE PHONE APP, where there is no Web Speech engine at all and Android's own
+    //    recogniser does the work through a plugin. Its habits are different in ways that matter:
+    //    it reports the whole utterance again on every partial rather than the new words, and it
+    //    ends the utterance at a pause — which in a two-sentence scene is not the end.
+    delete window.SpeechRecognition; delete window.webkitSpeechRecognition;
+    const tick = () => new Promise(r2 => setTimeout(r2, 0));
+    const SR = {
+      perm: 'granted', avail: true, starts: 0, asked: [], listeners: {},
+      async checkPermissions(){ this.asked.push('check'); return { speechRecognition: this.perm }; },
+      async requestPermissions(){ this.asked.push('request'); return { speechRecognition: this.perm }; },
+      async available(){ return { available: this.avail }; },
+      async start(o){ this.starts++; this.opts = o; },
+      async stop(){ this.pause(); },
+      async addListener(n, fn){ (this.listeners[n] = this.listeners[n] || []).push(fn); return { remove(){} }; },
+      removeAllListeners(){ this.listeners = {}; },
+      emit(n, d){ (this.listeners[n] || []).slice().forEach(f => f(d)); },
+      partial(s){ this.emit('partialResults', { matches: [s] }); },
+      pause(){ this.emit('listeningState', { status: 'stopped' }); }
+    };
+    const realCap = window.Capacitor;
+    window.Capacitor = { getPlatform: () => 'android', Plugins: { SpeechRecognition: SR } };
+
+    res.nat = { offeredWithNoWebEngine: (openEditor(''), !!el('edMic') && /Speak it/.test(el('edMic').textContent)) };
+
+    // it asks for the microphone at the moment it is tapped, not before
+    res.nat.askedBeforeTap = SR.asked.length;
+    el('edMic').click(); await tick(); await tick();
+    res.nat.asksOnTap = SR.asked.includes('check');
+    res.nat.listening = /Listening/.test(el('edMic').textContent);
+
+    // Android repeats the whole utterance each time; it must not stack up
+    SR.partial('a nasa ship');
+    SR.partial('a nasa ship crashes into a hairbrush');
+    res.nat.noStacking = el('edTa').value === 'a nasa ship crashes into a hairbrush';
+
+    // a breath between sentences is not the end of a scene
+    const startsBefore = SR.starts;
+    SR.pause(); await tick(); await tick();
+    res.nat.keepsGoingAfterAPause = SR.starts === startsBefore + 1 && Dictation.listening();
+    res.nat.keptFirstSentence = el('edTa').value === 'a nasa ship crashes into a hairbrush';
+    SR.partial('the bristles catch fire');
+    res.nat.joinsSentences = el('edTa').value === 'a nasa ship crashes into a hairbrush the bristles catch fire';
+
+    // tapping the button commits everything heard
+    el('edMic').click(); await tick(); await tick();
+    res.nat.committed = el('edTa').value;
+    res.nat.stopEnds = !Dictation.listening() && /Speak it/.test(el('edMic').textContent);
+
+    // silence twice running is the end, and says so rather than pretending
+    openEditor(''); el('edMic').click(); await tick(); await tick();
+    SR.pause(); await tick(); await tick(); SR.pause(); await tick(); await tick();
+    res.nat.givesUpOnSilence = !Dictation.listening() && /Nothing was heard/i.test(el('edMicNote').innerText || '');
+
+    // a refused microphone loses nothing and offers the way out
+    SR.perm = 'denied';
+    openEditor('Already written.'); el('edMic').click(); await tick(); await tick(); await tick();
+    res.nat.denied = { kept: el('edTa').value === 'Already written.',
+                       offersHelp: !!el('edMicFix'),
+                       said: (el('edMicNote').innerText || '') };
+    SR.perm = 'granted';
+
+    // no recogniser on the phone at all is its own message, not a hang
+    SR.avail = false;
+    openEditor(''); el('edMic').click(); await tick(); await tick(); await tick();
+    res.nat.noEngine = { ended: !Dictation.listening(), said: (el('edMicNote').innerText || '') };
+    SR.avail = true;
+
+    // and in the app the help opens the settings screen rather than describing the walk to it
+    const h = micSettingsHelp();
+    res.nat.helpOpensSettings = !!h.native;
+
+    window.Capacitor = realCap;
     closeEveryOverlay();
     return res;
   });
@@ -132,6 +203,24 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
       'installed on Android, the path is Settings → Apps → Permissions');
   say(/address/.test(r.paths.androidTab), '...in a browser tab it is the icon by the address instead');
   say(/keyboard/i.test(r.paths.iphone), '...and on iPhone it points at the keyboard microphone, which does work');
+
+  const n = r.nat;
+  say(n.offeredWithNoWebEngine, 'in the phone app the microphone is offered though the WebView has no speech engine');
+  say(n.askedBeforeTap === 0 && n.asksOnTap, '...permission is asked when it is tapped, never at launch');
+  say(n.listening, '...and it starts listening');
+  say(n.noStacking, "Android repeating the whole utterance does not stack up in the box");
+  say(n.keepsGoingAfterAPause, 'a breath between sentences does not end the scene');
+  say(n.keptFirstSentence && n.joinsSentences, '...and the sentences either side of it join up');
+  say(n.committed.toLowerCase() === 'a nasa ship crashes into a hairbrush the bristles catch fire',
+      'tapping the button commits every sentence heard, in order');
+  say(n.stopEnds, '...and stops');
+  say(/^A nasa/.test(n.committed), '...and tidies the opening capital, as it does for typing');
+  say(n.givesUpOnSilence, 'silence twice running gives up, and says nothing was heard');
+  say(n.denied.kept && n.denied.offersHelp && /switched off/i.test(n.denied.said),
+      'a refused microphone loses nothing and offers the way out');
+  say(n.noEngine.ended && /not available/i.test(n.noEngine.said),
+      'a phone with no recogniser on it says so rather than hanging');
+  say(n.helpOpensSettings, 'and in the app the help offers to open the settings screen itself');
 
   console.log(out.join('\n'));
   console.log(errs.length ? '\npage errors:\n  ' + errs.join('\n  ') : '\npage errors: none');

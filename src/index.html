@@ -2171,8 +2171,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.1.0";
+const APP_VERSION="2.2.0";
 const CHANGELOG=[
+ {v:"2.2.0", d:"September 4, 2026", t:"The Android app", items:[
+   ["new","<b>Speaking a scene works in the Android app.</b> A web page inside an app has no speech engine of its own, so the app hands the job to the phone's — the same one behind the microphone on your keyboard. It asks for the microphone the moment you tap it, with the reason on the screen in front of you, rather than at the launch of the app where a request with no context attached just gets refused."],
+   ["chg","<b>A breath between sentences no longer ends it.</b> Android stops listening at a pause, and a scene is two or three sentences with pauses in them. It now keeps what you said and picks the thread back up, until you tap the button or say nothing twice running."],
+   ["chg","<b>When the microphone is switched off, the app can open the right settings screen for you</b> instead of describing the walk to it."],
+   ["chg","<b>The app carries no films and buys nothing.</b> The download is a tenth of what it would be because the films stream, and the price buttons are not in it — both stores require their own billing for anything bought inside an app, so Pro stays something you set up on the web and sign in to here."]
+ ]},
  {v:"2.1.0", d:"September 4, 2026", t:"Say the scene instead of typing it", items:[
    ["new","<b>A microphone in every scene box.</b> Tap it and talk — a NASA ship crashing into a hairbrush is two sentences of deliberate nonsense, and typing that on a phone is why people stopped writing scenes at all. The words appear as you speak and tidy themselves as each sentence lands."],
    ["chg","<b>Nothing you have written is ever at risk.</b> Speaking writes in at the cursor and never replaces, so whatever was already typed survives a mishearing, a hang-up, or a microphone that was switched off."],
@@ -11081,13 +11087,62 @@ const Dictation = (()=>{
   // Looked up when it is wanted rather than when this file loads: some browsers define it late,
   // and a value captured once cannot be stood in for when this is being tested.
   const engine = ()=> window.SpeechRecognition || window.webkitSpeechRecognition;
-  let rec=null, live=false;
+  // A WebView has no Web Speech engine at all, which is most of the reason the phone app exists:
+  // inside the shell the plugin hands the job to Android's own recogniser instead.
+  const nativeSR = ()=>{ try{ const P = window.Capacitor && window.Capacitor.Plugins;
+                              return (P && P.SpeechRecognition) || null; }catch(e){ return null; } };
+  let rec=null, live=false, stopNative=null;
+
+  /* Android's recogniser ends an utterance at a pause. A scene is two or three sentences WITH
+     pauses in them, so a natural stop is not the end of the thought: what has been heard is kept
+     and listening picks up again, until they tap the button or say nothing twice running.
+     It reports the whole utterance so far on every partial rather than the new words, so this
+     owns the accumulation and hands the editor one interim string carrying everything. */
+  async function nativeStart(SR, onText, onEnd){
+    let ended=false, wantStop=false, kept="", thisRun="", quiet=0;
+    const opts = { language: (navigator.language || "en-US"), partialResults: true, popup: false, maxResults: 1 };
+    const finish=(why)=>{
+      if(ended) return; ended=true; live=false; stopNative=null;
+      try{ if(SR.removeAllListeners) SR.removeAllListeners(); }catch(e){}
+      onEnd(why);
+    };
+    stopNative = ()=>{ wantStop=true; try{ SR.stop(); }catch(e){ finish("done"); } };
+    try{
+      // Asked for at the moment the microphone is tapped, with the reason for it on screen —
+      // never at launch, where a prompt with no context in front of it simply gets denied.
+      let p = await SR.checkPermissions();
+      if(!p || p.speechRecognition !== "granted") p = await SR.requestPermissions();
+      if(!p || p.speechRecognition !== "granted") return finish("not-allowed");
+      const av = await SR.available();
+      if(av && av.available === false) return finish("unsupported");
+    }catch(e){ return finish("not-allowed"); }
+    try{
+      await SR.addListener("partialResults", d=>{
+        const said = (((d && d.matches) || [])[0] || "").trim();
+        if(!said) return;
+        thisRun = said;
+        onText("", (kept ? kept + " " : "") + said);
+      });
+      await SR.addListener("listeningState", async d=>{
+        if(!d || d.status !== "stopped" || ended) return;
+        if(thisRun){ kept = (kept ? kept + " " : "") + thisRun; thisRun=""; quiet=0; }
+        else quiet++;
+        if(wantStop || quiet >= 2){ onText(kept, ""); return finish(kept ? "done" : "no-speech"); }
+        try{ await SR.start(opts); }catch(e){ onText(kept, ""); finish(kept ? "done" : "error"); }
+      });
+      await SR.start(opts);
+    }catch(e){ finish("error"); }
+  }
+
   return {
-    supported(){ return !!engine(); },
+    supported(){ return !!nativeSR() || !!engine(); },
     listening(){ return live; },
-    stop(){ try{ if(rec) rec.stop(); }catch(e){} live=false; },
+    stop(){ if(stopNative) return stopNative();
+            try{ if(rec) rec.stop(); }catch(e){} live=false; },
     /* onText(finalChunk, interimChunk) is called as they speak; onEnd(reason) once, always. */
     start(onText, onEnd){
+      const SR = nativeSR();
+      if(SR){ live=true; nativeStart(SR, onText, onEnd); return; }
       const Rec = engine();
       if(!Rec) return onEnd("unsupported");
       try{ rec = new Rec(); }catch(e){ return onEnd("unsupported"); }
@@ -11525,6 +11580,11 @@ function nativePlatform(){
   return "web";
 }
 function isIOSApp(){ return nativePlatform() === "ios"; }
+// Both stores take the same line on digital goods: sold inside the app, they go through the store's
+// own billing, and an app may not send somebody out to a web checkout instead. So the price buttons
+// come out of BOTH store builds, not just the iPhone one. Everything that is not a purchase — the
+// talent unlock, restore, asking for help — stays exactly where it was.
+function isStoreApp(){ return nativePlatform() !== "web"; }
 // Named here so it can be reworded without hunting through the paywall markup.
 const PAY_IOS_NOTE = "Pro is managed from your account on the web. Sign in here with an account that already has it and everything unlocks.";
 
@@ -11856,7 +11916,7 @@ let payTargetSkill=null;
 function openPaywall(sk){ const m=el("payModal"); if(!m) return;
   // On iOS the two price buttons come out and a line goes in their place. Restore, the talent
   // unlock and the assistance request all stay: none of them is a purchase.
-  { const ios=isIOSApp();
+  { const ios=isStoreApp();
     ["payYearly","payMonthly"].forEach(id=>{ const b=el(id); if(b) b.style.display=ios?"none":""; });
     let note=el("payIosNote");
     if(ios && !note){

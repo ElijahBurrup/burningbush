@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "d4da4eb4dd1d8346",
+  "h": "2450d432d2af2acd",
   "len": 20199,
   "els": 474,
   "buttons": 50,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "71a471770a46f0ef",
-  "len": 153318,
-  "els": 2643,
+  "h": "d8053117d04d326f",
+  "len": 154869,
+  "els": 2664,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.1.0 September 4, 2026 Say the scene instead of typing it NEW A microphone in every scene box. Tap i"
+  "text": "✕ Version history v2.2.0 September 4, 2026 The Android app NEW Speaking a scene works in the Android app. A web page ins"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "36443509e62e8039",
+  "h": "294472f15315d4a9",
   "len": 19398,
   "els": 466,
   "buttons": 48,
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "305fb26564bee181",
+  "h": "a3351dc93c606174",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "71a471770a46f0ef",
-  "len": 153318,
-  "els": 2643,
+  "h": "d8053117d04d326f",
+  "len": 154869,
+  "els": 2664,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.1.0 September 4, 2026 Say the scene instead of typing it NEW A microphone in every scene box. Tap i"
+  "text": "✕ Version history v2.2.0 September 4, 2026 The Android app NEW Speaking a scene works in the Android app. A web page ins"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "305fb26564bee181",
+  "h": "a3351dc93c606174",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "4e5e5fee5dd009d3",
+  "h": "504a704dab696744",
   "len": 19404,
   "els": 466,
   "buttons": 48,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "71a471770a46f0ef",
-  "len": 153318,
-  "els": 2643,
+  "h": "d8053117d04d326f",
+  "len": 154869,
+  "els": 2664,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.1.0 September 4, 2026 Say the scene instead of typing it NEW A microphone in every scene box. Tap i"
+  "text": "✕ Version history v2.2.0 September 4, 2026 The Android app NEW Speaking a scene works in the Android app. A web page ins"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "4e5e5fee5dd009d3",
+  "h": "504a704dab696744",
   "len": 19404,
   "els": 466,
   "buttons": 48,
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "c3db3d78054e9427",
+  "h": "4600b4e02e017247",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "71a471770a46f0ef",
-  "len": 153318,
-  "els": 2643,
+  "h": "d8053117d04d326f",
+  "len": 154869,
+  "els": 2664,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.1.0 September 4, 2026 Say the scene instead of typing it NEW A microphone in every scene box. Tap i"
+  "text": "✕ Version history v2.2.0 September 4, 2026 The Android app NEW Speaking a scene works in the Android app. A web page ins"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "c3db3d78054e9427",
+  "h": "4600b4e02e017247",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "a3ba3969b4261b66",
+  "h": "2f573912b3c3d7b9",
   "len": 19402,
   "els": 466,
   "buttons": 48,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "71a471770a46f0ef",
-  "len": 153318,
-  "els": 2643,
+  "h": "d8053117d04d326f",
+  "len": 154869,
+  "els": 2664,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.1.0 September 4, 2026 Say the scene instead of typing it NEW A microphone in every scene box. Tap i"
+  "text": "✕ Version history v2.2.0 September 4, 2026 The Android app NEW Speaking a scene works in the Android app. A web page ins"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "a3ba3969b4261b66",
+  "h": "2f573912b3c3d7b9",
   "len": 19402,
   "els": 466,
   "buttons": 48,

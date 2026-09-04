@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Burning Bush</string>
+    <string name="title_activity_main">Burning Bush</string>
+    <string name="package_name">ai.kingdombuilders.burningbush</string>
+    <string name="custom_url_scheme">ai.kingdombuilders.burningbush</string>
+</resources>

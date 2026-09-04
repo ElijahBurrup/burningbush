@@ -3,3 +3,13 @@ burningbush-qa/
 node_modules/
 tests/.snapshots-actual/
 *.log
+
+# The phone app. The native project is source; everything a build produces is not.
+mobile/www/
+mobile/android/build/
+mobile/android/app/build/
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/app/src/main/assets/public/
+mobile/android/app/src/main/assets/capacitor.config.json
+mobile/android/app/src/main/assets/capacitor.plugins.json
