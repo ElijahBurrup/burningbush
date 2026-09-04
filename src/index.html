@@ -2018,6 +2018,12 @@
       <div class="prof-sect" style="margin-top:18px">Account</div>
       <div id="acctBox"></div>
 
+      <div class="prof-sect" style="margin-top:16px">Group licences</div>
+      <button class="btn ghost" id="pLicences" style="width:100%">🎫 Seats you bought, and who is using them</button>
+
+      <div class="prof-sect" style="margin-top:16px">Give</div>
+      <button class="btn ghost" id="pGive" style="width:100%">🎁 Carry someone who cannot pay</button>
+
       <div class="prof-sect" style="margin-top:16px">Bible translation</div>
       <div id="transList"></div>
 
@@ -4312,6 +4318,7 @@ function migrateProg(p){
   p.libUsed=obj(p.libUsed);
   // What this account did, month by month. Keyed "YYYY-MM"; see statBump for the fields.
   p.stats=obj(p.stats);
+  p.nudge=obj(p.nudge);   // when we last asked about giving, and whether we were told to stop
   if(typeof p.compPro!=="number") p.compPro=0;   // when a comp code was redeemed on this account, 0 if never
   // Read once from what a reader plainly has, so nobody who has been practising for weeks arrives to
   // find a sticker over a button they have been using.
@@ -4462,6 +4469,10 @@ function mergeProg(a,b){
       out[k]=row; });
     return out; })();
   m.compPro=a.compPro||b.compPro||0;                         // a comp code redeemed anywhere holds everywhere
+  // Asked on one device is asked on all of them, and "never again" is honoured everywhere at once.
+  m.nudge={ at:Math.max((a.nudge||{}).at||0, (b.nudge||{}).at||0),
+            dismissed:Math.max((a.nudge||{}).dismissed||0, (b.nudge||{}).dismissed||0),
+            off:((a.nudge||{}).off||(b.nudge||{}).off)?1:0 };
   m.libBackfilled=a.libBackfilled||b.libBackfilled;
   m.locPast=Object.assign({},a.locPast||{},b.locPast||{});
   m.phaseMax=Math.max(a.phaseMax||0,b.phaseMax||0);
@@ -8269,6 +8280,9 @@ function doneForToday(){
   const gotBonus = MS && MS.dueWork && !MS._bonusGiven;
   if(gotBonus){ MS._bonusGiven=true; earnTalents(20); }   // reward for completing today's spaced repetition review
   Sfx.dayDone();                                         // descends to rest: peace, not fanfare
+  // The end of a day's work is the one moment worth asking at: nothing is half finished, and they
+  // have just been given something. Well behind the screen, so it lands after the calm.
+  setTimeout(()=>{ maybeGiveNudge().catch(()=>{}); }, 2600);
   V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🌿</div>
     <h2 class="gold">You're done for today</h2>
  <p class="lead">Everything due is locked back in.${gotBonus?` <b class="gold">+20 🪙 for finishing your review!</b>`:""}${Prog.dayStreak>0?` <b class="gold">🔥 ${Prog.dayStreak}-day streak</b>. Come back tomorrow to keep it alive.`:""}${Prog.freezes>0?` <span class="muted">🧊 ${Prog.freezes} Streak Freeze${Prog.freezes>1?"s":""} banked.</span>`:""}</p>
@@ -11360,6 +11374,232 @@ function isIOSApp(){ return nativePlatform() === "ios"; }
 // Named here so it can be reworded without hunting through the paywall markup.
 const PAY_IOS_NOTE = "Pro is managed from your account on the web. Sign in here with an account that already has it and everything unlocks.";
 
+
+/* ---- asking, rarely ------------------------------------------------------------------------- */
+const NUDGE_GAP_DAYS = 21, NUDGE_GIVE_UP = 2, NUDGE_MIN_VERSES = 5;
+function nudgeState(){ Prog.nudge = Prog.nudge || {}; return Prog.nudge; }
+// Every reason not to ask, in one place, so the answer is always visible rather than scattered.
+function nudgeAllowed(){
+  try{
+    const n = nudgeState();
+    if(n.off) return false;                                     // waved away for good
+    if((n.dismissed||0) >= NUDGE_GIVE_UP) return false;
+    if(!Prog.onboarded) return false;
+    if((Prog.memorized||[]).length < NUDGE_MIN_VERSES) return false;   // nothing gained yet
+    if(Date.now() - (n.at||0) < NUDGE_GAP_DAYS*86400000) return false;
+    if(anyOverlayUp()) return false;
+    if(typeof LZ!=="undefined" && LZ) return false;             // mid-lesson
+    if(typeof TT!=="undefined" && TT) return false;             // mid-test
+    if(typeof Onboard!=="undefined" && Onboard.active()) return false;
+    return true;
+  }catch(e){ return false; }
+}
+async function maybeGiveNudge(){
+  if(!nudgeAllowed()) return false;
+  let c = null;
+  try{
+    const r = await fetch(API_BASE + "/community");
+    if(r.ok) c = await r.json();
+  }catch(e){}
+  if(!nudgeAllowed()) return false;                             // the fetch took a moment; look again
+  const n = nudgeState(); n.at = Date.now(); saveProg();
+
+  const line = (c && (c.verses || c.questions))
+    ? `This month readers here have hidden away <b class="gold">${c.verses}</b> verse${c.verses===1?"":"s"} and answered <b class="gold">${c.questions.toLocaleString()}</b> questions between them.`
+    : `Some people here are only able to use this because somebody else paid for it.`;
+
+  const m = el("nudgeModal") || (()=>{ const d=document.createElement("div"); d.id="nudgeModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML = `<div class="modal-card center" style="max-width:330px">
+      <div style="font-size:38px;line-height:1">\u{1F381}</div>
+      <h2 style="font-size:19px;margin:8px 0 4px">Carry someone else</h2>
+      <p class="lead" style="font-size:13.5px;margin:0 0 10px">${line}</p>
+      <p class="hint" style="margin:0 0 12px">Not everyone can pay for it. $35 carries one person for a year, and it is only ever drawn while they are actually using it.</p>
+      <button class="btn" id="ndGive" style="width:100%">Carry someone</button>
+      <button class="btn ghost" id="ndLater" style="width:100%;margin-top:8px">Not now</button>
+      <button class="btn ghost" id="ndNever" style="width:100%;margin-top:8px;font-size:12px;color:var(--muted)">Don't ask me again</button>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; };
+  el("ndGive").onclick=()=>{ close(); openGive(); };
+  el("ndLater").onclick=()=>{ n.dismissed=(n.dismissed||0)+1; saveProg(); close(); };
+  el("ndNever").onclick=()=>{ n.off=1; saveProg(); close(); toast("We won't ask again."); };
+  return true;
+}
+
+/* ---- the licences somebody bought ------------------------------------------------------------
+   Seats are worth reassigning only if you can see which are going unused, so each one carries how
+   much it is actually being used. Counts, never content. */
+function openLicences(){
+  const m=el("licModal")||(()=>{ const d=document.createElement("div"); d.id="licModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const shell=(body)=>{ m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="lcX" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800">Group licences</div><span style="width:34px"></span></div>
+      ${body}</div>`;
+    el("lcX").onclick=()=>{ m.style.display="none"; }; };
+  shell(`<p class="hint center" style="margin:18px 0">Loading…</p>`);
+  m.style.display="flex"; raiseModal(m);
+
+  const used=(s)=>{
+    // A seat with nothing on it this month is the one to take back, so say so plainly.
+    if(!s.daysThisMonth) return `<span style="color:var(--miss)">not used this month</span>`;
+    return `${s.daysThisMonth} day${s.daysThisMonth===1?"":"s"} this month`;
+  };
+  const load=async ()=>{
+    if(!(typeof Auth!=="undefined" && Auth.loggedIn())){
+      return shell(`<p class="lead center" style="font-size:14px">Sign in to see licences you have bought.</p>
+        <button class="btn" id="lcBuy" style="width:100%;margin-top:10px">Buy seats for a group</button>`), wireBuy();
+    }
+    let d=null;
+    try{ d=await Auth._req("/licence/mine","GET"); }
+    catch(e){ return shell(`<p class="lead center" style="font-size:14px">${bbEsc(e.message||"Could not load your licences.")}</p>`); }
+    const ls=(d&&d.licences)||[];
+    if(!ls.length){
+      shell(`<p class="lead" style="font-size:14px;margin:0 0 4px">You have not bought any group licences yet.</p>
+        <p class="hint" style="margin:0 0 12px">One licence is five seats for a year, with a code to hand out. A seat can be moved to somebody else whenever one goes unused.</p>
+        <button class="btn" id="lcBuy" style="width:100%">Buy seats for a group</button>`);
+      return wireBuy();
+    }
+    shell(ls.map((l,i)=>{
+      const free=l.seats-l.held.length;
+      return `<div class="card" style="padding:12px 13px;margin:${i?"12px":"0"} 0 0">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <code style="font-size:19px;font-weight:900;letter-spacing:.08em" class="gold">${bbEsc(l.code)}</code>
+          <button class="btn ghost sm" data-newcode="${bbEsc(l.code)}" style="padding:3px 9px;font-size:11.5px">Change</button>
+        </div>
+        <div class="hint" style="margin:6px 0 10px">
+          ${l.held.length} of ${l.seats} seats in use${free?` · <b class="gold">${free} free</b>`:" · full"}
+          ${l.expiresAt?` · until ${fmtDay(l.expiresAt)}`:""}
+        </div>
+        ${l.held.length?l.held.map(s=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)">
+            <div style="min-width:0">
+              <div style="font-weight:700;font-size:13.5px;overflow:hidden;text-overflow:ellipsis">${bbEsc(s.email||"—")}</div>
+              <div class="hint" style="font-size:11.5px;margin-top:1px">${used(s)} · ${s.versesAll} verse${s.versesAll===1?"":"s"} · ${s.questionsAll} answers</div>
+            </div>
+            <button class="btn ghost sm" data-revoke="${s.seatId}" style="padding:4px 10px;font-size:11.5px;white-space:nowrap">Take back</button>
+          </div>`).join(""):`<p class="hint" style="margin:0">Nobody has used this code yet.</p>`}
+        ${l.past&&l.past.length?`<details style="margin-top:8px"><summary class="hint" style="font-size:11.5px;cursor:pointer">${l.past.length} past holder${l.past.length===1?"":"s"}</summary>
+          ${l.past.map(p=>`<div class="hint" style="font-size:11.5px;margin-top:4px">${bbEsc(p.email||"—")} · until ${fmtDay(new Date(p.until).getTime())}</div>`).join("")}</details>`:""}
+      </div>`;
+    }).join("") + `<button class="btn ghost" id="lcBuy" style="width:100%;margin-top:12px">Buy more seats</button>`);
+    wireBuy();
+    m.querySelectorAll("[data-revoke]").forEach(b=>b.onclick=async ()=>{
+      b.disabled=true; b.textContent="…";
+      try{ await Auth._req("/licence/revoke","POST",{ seatId:+b.dataset.revoke });
+        toast("Seat taken back — the code has a free place again."); load(); }
+      catch(e){ toast(e.message||"Could not take that seat back."); b.disabled=false; b.textContent="Take back"; }
+    });
+    m.querySelectorAll("[data-newcode]").forEach(b=>b.onclick=()=>askNewCode(b.dataset.newcode, load));
+  };
+  const wireBuy=()=>{ const b=el("lcBuy"); if(b) b.onclick=()=>{ m.style.display="none"; openGroupBuy(); }; };
+  load();
+}
+/* Owners want a code they can say out loud, and a minted one is awkward at the front of a room. */
+function askNewCode(from, after){
+  const m=el("codeSetModal")||(()=>{ const d=document.createElement("div"); d.id="codeSetModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="csX" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800">Choose your code</div><span style="width:34px"></span></div>
+      <p class="lead" style="font-size:13.5px;margin:0 0 4px">Pick something you can say out loud to a room. Anyone with it can take one of your five seats, so make it a little awkward to guess.</p>
+      <p class="hint" style="margin:0 0 8px">8 characters or more, with at least one letter and one number. Letters, numbers and dashes.</p>
+      <input id="csIn" class="typein" style="width:100%;box-sizing:border-box;text-transform:uppercase;letter-spacing:.06em;font-weight:800;text-align:center;font-size:17px" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="GRACE2026">
+      <div id="csMsg" class="hint" style="margin:8px 0 0;min-height:18px"></div>
+      <button class="btn" id="csGo" style="width:100%;margin-top:8px" disabled>Use this code</button>
+      <button class="btn ghost" id="csNo" style="width:100%;margin-top:8px">Keep the old one</button>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  const go=el("csGo"), inp=el("csIn"), msg=el("csMsg");
+  // The same rules the server enforces, said before they press rather than after.
+  const problem=c=>{ c=c.trim().toUpperCase();
+    if(c.length<8) return "At least 8 characters.";
+    if(c.length>24) return "24 characters or fewer.";
+    if(!/^[A-Z0-9-]+$/.test(c)) return "Letters, numbers and dashes only.";
+    if(!/[A-Z]/.test(c)) return "Needs at least one letter.";
+    if(!/[0-9]/.test(c)) return "Needs at least one number.";
+    return null; };
+  const paint=()=>{ const p=problem(inp.value);
+    msg.innerHTML = inp.value.trim() && p ? `<span class="muted">${bbEsc(p)}</span>` : "";
+    go.disabled=!!p; go.style.opacity=p?".5":""; };
+  paint(); inp.oninput=paint;
+  const close=()=>{ m.style.display="none"; };
+  el("csX").onclick=close; el("csNo").onclick=close;
+  go.onclick=async ()=>{
+    go.disabled=true; go.textContent="Saving…";
+    try{ const d=await Auth._req("/licence/code","POST",{ from, code:inp.value.trim().toUpperCase() });
+      close(); toast("Your code is now " + d.code); if(after) after(); }
+    catch(e){ msg.innerHTML=`<b style="color:var(--miss)">${bbEsc(e.message||"Could not change it.")}</b>`;
+      go.disabled=false; go.textContent="Use this code"; paint(); }
+  };
+}
+
+/* ---- giving ----------------------------------------------------------------------------------
+   One pool, drawn a month at a time by people who ask for help. Amounts are shown as people carried
+   rather than dollars paid, because that is the number a giver is actually deciding about. */
+const GIVE_YEAR_CENTS=3500, GIVE_FIVE_CENTS=9900;
+function openGive(){
+  const m=el("giveModal")||(()=>{ const d=document.createElement("div"); d.id="giveModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  let batches=1, custom="";
+  const draw=()=>{
+    const people=batches*5, total=batches*99;
+    m.innerHTML=`<div class="modal-card">
+        <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="gvX" style="margin:0">✕</button>
+          <div style="flex:1;text-align:center;font-weight:800">Carry someone else</div><span style="width:34px"></span></div>
+        <p class="lead" style="font-size:13.5px;margin:0 0 10px">Some people ask for help because they cannot pay. What you give goes into one fund and is drawn <b>a month at a time</b> by readers who are actually using it — so nothing sits against an account nobody opens.</p>
+
+        <div class="card" style="padding:12px 13px;margin:0 0 10px">
+          <div style="font-weight:800;font-size:14px">Five people for a year</div>
+          <div class="hint" style="margin:2px 0 8px">$99 · the same rate a group licence buys</div>
+          <div class="btnrow" style="justify-content:center;align-items:center;gap:14px;margin:4px 0 8px">
+            <button class="btn ghost" id="gvLess" style="width:46px;font-size:20px;padding:4px 0">−</button>
+            <div style="min-width:104px;text-align:center">
+              <div style="font-weight:900;font-size:20px" class="gold">${people}</div>
+              <div class="hint" style="font-size:11px">people · $${total}</div>
+            </div>
+            <button class="btn ghost" id="gvMore" style="width:46px;font-size:20px;padding:4px 0">+</button>
+          </div>
+          <button class="btn blue" id="gvFive" style="width:100%">Give $${total}</button>
+        </div>
+
+        <button class="btn" id="gvYear" style="width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--on-accent)">One person for a year · $35</button>
+
+        <div class="card" style="padding:12px 13px;margin:10px 0 0">
+          <div style="font-weight:800;font-size:14px">Any amount</div>
+          <div class="hint" style="margin:2px 0 8px">Every $35 carries somebody for a year.</div>
+          <input id="gvAmt" class="typein" style="width:100%;box-sizing:border-box;text-align:center;font-size:17px;font-weight:800" inputmode="decimal" placeholder="$50" value="${bbEsc(custom)}">
+          <button class="btn ghost" id="gvAny" style="width:100%;margin-top:8px">Give this amount</button>
+        </div>
+
+        <p class="hint" style="margin:12px 0 0;font-size:11.5px">A one-off payment by Stripe. Burning Bush is a business, not a charity, so this is not tax-deductible — it simply pays for somebody else's access.</p>
+        <button class="btn ghost" id="gvNo" style="width:100%;margin-top:10px">Not now</button>
+      </div>`;
+    el("gvX").onclick=el("gvNo").onclick=()=>{ m.style.display="none"; };
+    el("gvLess").onclick=()=>{ if(batches>1){ batches--; draw(); } };
+    el("gvMore").onclick=()=>{ if(batches<20){ batches++; draw(); } };
+    el("gvAmt").oninput=e=>{ custom=e.target.value; };
+    el("gvFive").onclick=()=>give(batches*GIVE_FIVE_CENTS, `${people} people for a year`);
+    el("gvYear").onclick=()=>give(GIVE_YEAR_CENTS, "One person for a year");
+    el("gvAny").onclick=()=>{
+      const n=Math.round(parseFloat(String(custom).replace(/[^0-9.]/g,""))*100);
+      if(!(n>=500)) return toast("Give at least $5.");
+      give(n, "A gift to the fund");
+    };
+  };
+  const give=async (cents, label)=>{
+    if(!(typeof Auth!=="undefined" && Auth.loggedIn())){
+      toast("Create an account first, so we can thank you properly.");
+      try{ openAccountScreen&&openAccountScreen(); }catch(e){}
+      return;
+    }
+    toast("Opening checkout…");
+    try{
+      const d=await Auth._req("/gift/checkout","POST",{ cents, label });
+      if(d && d.url){ location.href=d.url; return; }
+      toast((d&&d.error)||"Giving is not set up yet.");
+    }catch(e){ toast(e.message||"Couldn't reach the server."); }
+  };
+  draw(); m.style.display="flex"; raiseModal(m);
+}
+
 /* ---- buying seats for other people ----------------------------------------------------------
    A licence is five seats for a year at $99. Somebody buying for a youth group wants one; somebody
    sponsoring a camp wants ten. The quantity is LICENCES because each carries its own code, and each
@@ -11874,12 +12114,15 @@ function applyFeatureVisibility(){
    popup when their button is pressed. Every id and every handler already wired to them survives,
    which is the whole reason for doing it this way rather than re-authoring the markup.        */
 const PROF_ICONS={ "Admin":"🛠️", "Badges":"🎖️", "Feature store":"✨", "Account":"👤",
+  "Group licences":"🎫", "Give":"🎁",
   "Bible translation":"📗", "Reference library":"📚", "What's new":"📋", "Theme":"🎨",
   "Get the app":"📲", "Back up your progress":"💾" };
 const PROF_SUBS={
   "Admin":()=>"Test tools",
   "Badges":()=>{ const n=BADGES.filter(b=>b.have()).length; return n+" earned"; },
   "Feature store":()=>{ const n=featOffCount(); return n?n+" to try":"all on"; },
+  "Group licences":()=>"Seats you bought",
+  "Give":()=>"Carry someone else",
   "Account":()=>((typeof Auth!=="undefined"&&Auth.user&&Auth.user.email)?"Signed in":"Not signed in"),
   // bibleFam is the onboarding question about how well you know the Bible (new/some/deep). This
   // tile was showing THAT under the heading "Bible translation", so it read DEEP for anyone who
@@ -11894,7 +12137,7 @@ const PROF_SUBS={
   "App version":()=>"v"+APP_VERSION,
 };
 // The order Profile reads in. Anything not named here follows, in the order it was authored.
-const PROF_ORDER=["Admin","Badges","Get the app","Feature store","Bible translation","Theme",
+const PROF_ORDER=["Admin","Badges","Get the app","Feature store","Group licences","Give","Bible translation","Theme",
   "Reference library","Back up your progress","What's new","App version"];   // the version sits last
 // Installed already? Then there is nothing to install, and the button is noise.
 function isInstalledApp(){
@@ -11963,6 +12206,8 @@ function paintProfileGrid(){
 /* Four of the sections hold a single control, so the button IS the control. The three that open
    over Profile deliberately leave it standing, which is what their close returns to. */
 const PROF_DIRECT={
+  "group-licences":    ()=>openLicences(),
+  "give":              ()=>openGive(),
   "reference-library": ()=>{ closeProfile(); openFoundations(()=>el("themeBtn").click()); },
   "feature-store":     ()=>openFeatureStore(),
   "what-s-new":        ()=>openWhatsNew(true),
@@ -12195,6 +12440,8 @@ function openFoundations(ret){ foundReturn=ret||null; show("foundations"); }
 if(el("foundBack")) el("foundBack").onclick=()=>{ const r=foundReturn; foundReturn=null; if(r) r(); else show("journey"); };
 if(el("refBtn")) el("refBtn").onclick=()=>{ closeProfile(); openFoundations(); };
 if(el("pFeatures")) el("pFeatures").onclick=()=>openFeatureStore();
+if(el("pLicences")) el("pLicences").onclick=()=>openLicences();
+if(el("pGive")) el("pGive").onclick=()=>openGive();
 el("pChangelog").textContent=`📋 Version history · v${APP_VERSION}`;
 el("pChangelog").onclick=()=>{ closeProfile(); openWhatsNew(true); };
 el("themeModal").onclick=e=>{ if(e.target===el("themeModal")) closeProfile(); };

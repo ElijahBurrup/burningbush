@@ -5441,7 +5441,7 @@ const DAY = 86400000;
   ok(pgrid.allSubbed, '...and a line saying what is inside');
   is(pgrid.labels.split(' | ')[0], 'Admin', 'Admin comes first');
   is(pgrid.labels.split(' | ')[1], "Badges", '...then the badges');
-  is(pgrid.labels.split(' | ').slice(0,9).join(','), "Admin,Badges,Get the app,Feature store,Bible translation,Theme,Reference library,Back up your progress,What's new", '...then the rest, in the order asked for, with the release notes last');
+  is(pgrid.labels.split(' | ').slice(0,11).join(','), "Admin,Badges,Get the app,Feature store,Group licences,Give,Bible translation,Theme,Reference library,Back up your progress,What's new", '...then the rest, in the order asked for, with the release notes last');
   has(pgrid.labels, 'Theme', 'Theme is one of them');
   has(pgrid.labels, 'Account', '...and Account');
   has(pgrid.labels, 'Back up', '...and the backup');
