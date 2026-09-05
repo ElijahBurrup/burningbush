@@ -1,4 +1,24 @@
 <title>Burning Bush Bible Memory</title>
+<script>
+/* Somebody who already uses this does not need to be sold it again.
+
+   This runs before anything is drawn, so a reader never sees a flash of the page they are not
+   here for. It reads one key the app leaves behind on the same origin — no parsing, no waiting.
+
+   The landing page stays at the root deliberately: it is the address on the store listings, on
+   anything anybody shares, and in every search result, and all of those are read by people who
+   do not know what this is yet. This makes the root behave differently for the two audiences
+   rather than choosing one of them.
+
+   replace() rather than href, so Back leaves the site instead of bouncing between the two.
+   ?stay reaches the page on purpose — for sharing it, for screenshots, for reading the price. */
+(function(){
+  try{
+    if (/[?&]stay\b/.test(location.search)) return;
+    if (localStorage.getItem("vv_home")) location.replace("/app" + location.search + location.hash);
+  }catch(e){}   // private modes throw on localStorage; the page below is the right answer then
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&family=Spectral:ital,wght@1,400&display=swap">

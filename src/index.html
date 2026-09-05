@@ -4591,6 +4591,12 @@ function saveProg(){
   const ok=save(PROG_KEY,Prog);
   if(ok){ try{ Store.setJSON(PROG_KEY+"_bak",Prog); }catch(e){} }   // rolling last-known-good copy — a later corrupt/failed write can roll back to this
  else if(!_saveWarned){ _saveWarned=true; try{ toast("⚠️ Couldn't save. Device storage may be full. Export a backup in Settings and free up space."); }catch(e){} }
+  /* A crumb for the front door. The landing page is on the same origin and can read this without
+     loading or parsing anything, which matters because it has to decide before it paints.
+     Deliberately NOT the progress blob: that is written by merely opening the app, so it would
+     send somebody who glanced once and left straight past the page meant to explain it. Being
+     onboarded means there is something here worth coming back to. */
+  try{ if(Prog.onboarded) localStorage.setItem("vv_home","1"); }catch(e){}
   return ok;
 }
 
