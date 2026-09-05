@@ -234,7 +234,9 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
 
   const ph = r.phone;
   say(ph.android.route === 'keyboard', 'on an Android browser it chooses the keyboard, not the web engine');
-  say(/keyboard/i.test(ph.android.label), '...and the button says so: "' + ph.android.label.trim() + '"');
+  // The button is deliberately short and big — "Speak it" — with the how in the line beneath it,
+  // because a page cannot press the keyboard's key and a long label does not change that.
+  say(/speak it/i.test(ph.android.label), '...the button is plain and short: "' + ph.android.label.trim() + '"');
   say(ph.android.focused, '...tapping it puts the cursor in the box, ready for the keyboard');
   say(/space bar/i.test(ph.android.note || ''), '...and says where the key is');
   say(!/permission/i.test(ph.android.label), '...and never mentions a permission, because none is needed');

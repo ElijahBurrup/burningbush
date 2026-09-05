@@ -506,6 +506,18 @@
   .ed-trash{background:var(--panel2);border:1px solid var(--line);font-size:19px;cursor:pointer;padding:6px 9px;border-radius:10px;line-height:1;color:var(--miss-ink)}
   .ed-trash:active{transform:scale(.92)}
   .ed-ta{width:100%;box-sizing:border-box;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-size:15px;line-height:1.5;padding:12px;font-family:inherit;resize:none;overflow:hidden;min-height:96px}
+  /* The row above a writing box: what it is on the left, the tick on the right. It sits ABOVE
+     rather than below because below is where the keyboard is, and a save button behind the
+     keyboard means dismissing the keyboard to save. */
+  .boxbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 6px}
+  .boxbar-l{font-size:12.5px;font-weight:700;color:var(--muted);letter-spacing:.02em}
+  .tickbtn{flex:0 0 auto;width:42px;height:34px;border-radius:10px;cursor:pointer;
+    border:2px solid var(--green-line);background:var(--green-soft);color:var(--green-ink);
+    font-size:19px;font-weight:900;line-height:1;display:grid;place-items:center}
+  .tickbtn:active{transform:translateY(1px)}
+  /* A page cannot press the keyboard's microphone key, so this button can only put the cursor in
+     place and say which key. Given that, it should at least be easy to hit. */
+  .btn.bigmic{padding:15px;font-size:16px;font-weight:800;border-width:2px;border-color:var(--gold2);color:var(--gold-ink)}
   .mic-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;margin-top:8px;padding:11px;border-radius:12px;border:2px solid var(--gold2);background:var(--panel2);color:var(--gold-ink);font-weight:800;font-size:14px;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none}
   .mic-btn .mic-ic{font-size:19px;line-height:1}
   .mic-btn.rec{border-color:var(--miss-ink);color:var(--miss-ink);background:var(--no-bg);animation:micpulse 1s infinite}
@@ -2171,8 +2183,15 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.4.0";
+const APP_VERSION="2.5.0";
 const CHANGELOG=[
+ {v:"2.5.0", d:"September 5, 2026", t:"Why the streak broke, and going back for it", items:[
+   ["fix","<b>The app could not tell you why a streak ended, because it had thrown the evidence away.</b> A day counts only when <i>both</i> halves are done — the daily goal AND every review that had come due — but yesterday's record was overwritten the moment a new day began. Every day is now kept for a fortnight, with what was <i>asked</i> as well as what was done."],
+   ["new","<b>Streak review</b>, at the top of Daily Goal. Every day of your last run, the goal beside what you actually did, and which half was missing on the day it broke. Days you missed entirely are listed too, so you can count them."],
+   ["new","<b>Go back for a lost streak.</b> Within ten days you can spend Streak Freezes to bridge the days you missed — one freeze per day, the same price as freezing in advance. If you are short, it buys them with talents in the same action rather than sending you to the store and back, and tells you exactly what it spent."],
+   ["chg","<b>Chronological: a wrong answer no longer gives the answer away.</b> The box goes red, empties, and waits. Being told the moment you slip removes the part that does any good — going back for it. If you would rather not keep trying, the reveal is still there."],
+   ["new","<b>The verse scene box has a microphone and a tick of its own</b>, and both writing boxes are now built for a phone: sized to the space above the keyboard, they do not grow under your thumbs as you type, the newest line stays in view, and the tick sits <i>above</i> the box where the keyboard cannot cover it. Put the keyboard away and the box takes the room."]
+ ]},
  {v:"2.4.0", d:"September 5, 2026", t:"Walk the books, and a better microphone", items:[
    ["new","<b>Chronological.</b> A new option at the top of Number &amp; Book Practice: every book you know, in Bible order, asked one way only \u2014 here is a number, name the book. It is as long as the number of books you have learned, so there is no length to choose."],
    ["chg","<b>You type it or you say it. No choices, no hints.</b> Picking the right answer out of four is recognition, and letters turning green as you go is the app telling you the answer while it asks for it. A run whose whole point is proving you have the order does neither. Get one wrong and it simply tells you the book and moves on."],
@@ -4333,6 +4352,10 @@ function save(k,v){ const r=Store.setJSON(k,v);
   return r; }
 // Bring any saved progress up to the current schema: fill in fields added since it was written,
 // heal inconsistencies, then stamp the version. Runs on every load so old saves never break.
+// Declared HERE because migrateProg runs while the file is still loading — 4,000 lines before the
+// streak code it belongs to. A const used above its declaration is a ReferenceError, not a
+// hoisted undefined, and it takes the whole app down on boot.
+const GOAL_LOG_DAYS=14;
 function migrateProg(p){
   p=p||{};
   // coerce WRONG-typed fields (corrupt/tampered/older-shape saves), not just missing ones, so a parseable-but-malformed blob self-heals instead of throwing downstream
@@ -4386,6 +4409,8 @@ function migrateProg(p){
   p.talents=cnt(p.talents); p.streak=cnt(p.streak); p.bestStreak=cnt(p.bestStreak); p.talentLog=obj(p.talentLog); // Talents (verse-practice points), streaks, per-verse 24h earn log
   p.dayStreak=cnt(p.dayStreak); p.bestDayStreak=cnt(p.bestDayStreak); if(typeof p.lastReviewDay!=="string") p.lastReviewDay=""; // daily review streak (distinct from the per-answer streak)
   p.freezes=cnt(p.freezes); p.freezeAwards=arr(p.freezeAwards); // Streak-Freeze power-ups + which milestones already granted one
+  p.goalLog=arr(p.goalLog).filter(x=>x&&x.d).slice(-GOAL_LOG_DAYS);   // a fortnight of what was asked and what was done
+  if(!p.streakLost || !p.streakLost.at) p.streakLost=null;
   if(typeof p.hints!=="number") p.hints=0; // "Peek" tokens spendable in the verse test
   if(typeof p.weekKey!=="string") p.weekKey=""; if(typeof p.weekDays!=="number") p.weekDays=0; if(typeof p.weekGoalHit!=="boolean") p.weekGoalHit=false; // Perfect-Week tracking
   // Caesar's weekly levy + the church it builds
@@ -4480,6 +4505,17 @@ function mergeProg(a,b){
   ["talents","streak","bestStreak","dayStreak","bestDayStreak","freezes","hints","level"].forEach(f=>m[f]=Math.max(a[f]||0,b[f]||0)); // keep the higher
   m.onboarded=!!(a.onboarded||b.onboarded);
   m.lastReviewDay=(a.lastReviewDay>b.lastReviewDay)?a.lastReviewDay:b.lastReviewDay;
+  // One row per day, and where two devices both recorded one, the fuller day is the truer one.
+  { const by={};
+    [...(a.goalLog||[]), ...(b.goalLog||[])].forEach(x=>{ if(!x||!x.d) return;
+      const p=by[x.d];
+      if(!p || (x.got|0)>(p.got|0) || (x.ok&&!p.ok)) by[x.d]={...p,...x, ok:!!(x.ok||(p&&p.ok))};
+    });
+    m.goalLog=Object.values(by).sort((x,y)=>x.d<y.d?-1:1).slice(-GOAL_LOG_DAYS); }
+  // A loss that has already been bought back on one device must not come back from the other.
+  m.streakLost = (a.streakLost && b.streakLost)
+    ? (a.streakLost.at>b.streakLost.at ? a.streakLost : b.streakLost)
+    : (a.streakLost===null || b.streakLost===null ? null : (a.streakLost||b.streakLost||null));
   m.chosen=Object.assign({},b.chosen,a.chosen); m.customBook=Object.assign({},b.customBook,a.customBook);
   m.customScene=Object.assign({},b.customScene,a.customScene); m.customPeg=Object.assign({},b.customPeg,a.customPeg); m.customBookImg=Object.assign({},b.customBookImg,a.customBookImg); m.bookWord=Object.assign({},b.bookWord,a.bookWord); m.numRef=Object.assign({},b.numRef,a.numRef); m.talentLog=Object.assign({},b.talentLog,a.talentLog); m.verseLoc=Object.assign({},b.verseLoc,a.verseLoc); m.msSeen=Object.assign({},b.msSeen,a.msSeen);
   m.firstWin=!!(a.firstWin||b.firstWin); m.persona=a.persona||b.persona; m.dailyMin=a.dailyMin||b.dailyMin; m.bibleFam=a.bibleFam||b.bibleFam; m.covenant=a.covenant||b.covenant;
@@ -8441,6 +8477,46 @@ function grantFreeze(key, reason){
   if((Prog.freezes||0)>=freezeMax()) return;            // at the cap → don't burn the milestone; grant it later when there's room
  Prog.freezeAwards.push(key); Prog.freezes=(Prog.freezes||0)+1; toast(`🧊 Streak Freeze earned, ${reason}!`); Sfx.freeze(); saveProg();
 }
+// A day key back to a timestamp, so two day keys can be subtracted.
+function dayStart(key){ const p=String(key||"").split("-").map(Number);
+  return p.length===3 ? new Date(p[0],p[1]-1,p[2]).getTime() : 0; }
+/* Buying a streak back. A Streak Freeze bridges one missed day when it is spent in advance; this
+   is the same bargain settled late, which is the only sense in which it is new — two missed days
+   still cost two freezes. Deliberately restores had+1 rather than had+missed+1: a frozen day is a
+   day nobody practised, and it bridges the gap rather than counting as work. */
+const STREAK_LOOKBACK_DAYS=10;   // how far back a lost streak can still be reached
+function canRestoreStreak(){
+  const L=Prog.streakLost;
+  if(!L || !L.had) return null;
+  const ago=Math.round((dayStart(dayKey(new Date())) - dayStart(L.at))/DAY);
+  if(ago > STREAK_LOOKBACK_DAYS) return null;   // past that it is a different streak, and a gift rather than a repair
+  const have=Prog.freezes||0, need=L.missed;
+  const short=Math.max(0, need-have);
+  return { ...L, ago, cost:need, have, short,
+           talents:short*FREEZE_COST, canPay:(Prog.talents||0)>=short*FREEZE_COST };
+}
+/* Going back for it. A Streak Freeze bridges one missed day when it is spent in advance; this is
+   the same bargain settled late, at the same price, so two missed days still cost two.
+
+   Freezes short of the number needed are bought here in one go rather than sending somebody to
+   the store to buy four things and come back — and the purchase deliberately ignores the holding
+   cap, because the cap exists to stop hoarding and these are spent in the same breath.
+
+   Restores had+1, not had+missed+1: a frozen day is a day nobody practised. It bridges the gap
+   rather than being counted as work that was never done. */
+function restoreStreak(){
+  const R=canRestoreStreak(); if(!R) return null;
+  if(R.short>0 && !R.canPay) return null;
+  let bought=0;
+  if(R.short>0){ Prog.talents=Math.max(0,(Prog.talents||0)-R.talents); Prog.freezes=(Prog.freezes||0)+R.short; bought=R.short; }
+  Prog.freezes=Math.max(0,(Prog.freezes||0)-R.cost);
+  Prog.dayStreak=R.had+1;
+  if(Prog.dayStreak>(Prog.bestDayStreak||0)) Prog.bestDayStreak=Prog.dayStreak;
+  Prog.streakLost=null;
+  saveProg(); updateMetrics();
+  try{ Sfx.freeze(); }catch(e){}
+  return { bought, spent:bought*FREEZE_COST, used:R.cost, streak:Prog.dayStreak };
+}
 // The day streak is earned by finishing BOTH halves of the day: every spaced repetition
 // review that came due, AND the daily goal. Called from each place either half can complete.
 function creditToday(){
@@ -8451,10 +8527,19 @@ function creditToday(){
   if(!Prog.lastReviewDay) Prog.dayStreak=1;
   else if(Prog.lastReviewDay===yest) Prog.dayStreak=(Prog.dayStreak||0)+1;   // consecutive day → +1
   else if(Prog.lastReviewDay===twoAgo && (Prog.freezes||0)>0){ Prog.freezes--; Prog.dayStreak=(Prog.dayStreak||0)+1; setTimeout(()=>toast(`🧊 A Streak Freeze saved your ${Prog.dayStreak}-day streak!`),500); } // exactly ONE missed day → a freeze bridges it
-  else Prog.dayStreak=1;                                        // missed 2+ days (or no freeze) → restart
+  else {
+    /* The streak breaks here. Write down what was lost and how far back it goes, so it can be
+       explained afterwards and, if they have the freezes, bought back. Without this the only
+       record of a broken streak was the number going to 1. */
+    const missed=Math.max(1, Math.round((dayStart(today)-dayStart(Prog.lastReviewDay))/DAY)-1);
+    if((Prog.dayStreak||0)>0)
+      Prog.streakLost={ at:today, had:Prog.dayStreak||0, from:Prog.lastReviewDay, missed };
+    Prog.dayStreak=1;                                           // missed 2+ days (or no freeze) → restart
+  }
   if(Prog.dayStreak>(Prog.bestDayStreak||0)) Prog.bestDayStreak=Prog.dayStreak;
   Sfx.streakDay(Prog.dayStreak);     // its top note rises with the weeks
   Prog.lastReviewDay=today;
+  { const g=goalState(); g.credited=true; g.dueAtEnd=0; }   // it counted, and nothing was left due
   DAY_FREEZE.forEach(m=>{ if(Prog.dayStreak>=m) grantFreeze("day"+m, `${m}-day streak`); });   // milestone rewards
   creditWeek();
   saveProg(); updateMetrics(); checkBadges();
@@ -8465,15 +8550,42 @@ function creditToday(){
 const GOAL_MAX=20;
 const GOAL_MODES=[["same","Same<br>every day"],["week","Weekdays<br>vs weekends"],["days","Each day<br>on its own"]];
 function goalMode(){ const m=Prog.goalMode; return (m==="week"||m==="days")?m:"same"; }
-function goalToday(){
-  const dow=new Date().getDay(), m=goalMode(), base=(Prog.dailyGoal!=null?Prog.dailyGoal:1);
+/* The goal for a GIVEN day rather than only for today, so a review of the last fortnight can say
+   what each day actually asked for. A goal set by weekday means Tuesday and Sunday are different
+   questions, and "did 2" means nothing without the number it was 2 of. */
+function goalForDate(d){
+  const dow=d.getDay(), m=goalMode(), base=(Prog.dailyGoal!=null?Prog.dailyGoal:1);
   let g;
   if(m==="days"){ const byDay=Prog.goalByDay||{}; g=(byDay[dow]!=null)?byDay[dow]:base; }
   else if(m==="week"){ g=(dow===0||dow===6) ? (Prog.goalWeekend!=null?Prog.goalWeekend:base)
                                             : (Prog.goalWeekday!=null?Prog.goalWeekday:base); }
   else g=base;
   return Math.max(1, Math.min(GOAL_MAX, g|0)); }
-function goalState(){ const t=dayKey(new Date()); if(!Prog.goalDay || Prog.goalDay.date!==t) Prog.goalDay={date:t,count:0,celebrated:false}; return Prog.goalDay; }
+function goalToday(){ return goalForDate(new Date()); }
+/* ---- what happened yesterday ------------------------------------------------------------------
+   Prog.goalDay only ever held TODAY, and the moment a new day began the old one was overwritten.
+   So when somebody lost a streak the day after doing the work, there was no way to tell them what
+   the app had thought was missing — the evidence had already been destroyed by the rollover.
+
+   The outgoing day is now archived on its way out, with what was ASKED as well as what was done,
+   because the goal can differ by weekday and "3 of 5" only means something next to its own 5. */
+function archiveGoalDay(d){
+  if(!d || !d.date) return;
+  Prog.goalLog = (Prog.goalLog||[]).filter(x=>x && x.d!==d.date);
+  Prog.goalLog.push({ d:d.date, got:d.count|0, need:(d.target!=null?d.target|0:null),
+                      due:(d.dueAtEnd!=null?d.dueAtEnd|0:null), ok:!!d.credited });
+  Prog.goalLog.sort((a,b)=>a.d<b.d?-1:1);
+  if(Prog.goalLog.length>GOAL_LOG_DAYS) Prog.goalLog=Prog.goalLog.slice(-GOAL_LOG_DAYS);
+}
+function goalState(){ const t=dayKey(new Date());
+  if(!Prog.goalDay || Prog.goalDay.date!==t){
+    archiveGoalDay(Prog.goalDay);   // the day that is ending, before it is gone
+    // The target is stamped at the START of the day, so a goal changed later cannot rewrite what
+    // was actually being asked at the time.
+    Prog.goalDay={date:t,count:0,celebrated:false,target:goalToday()};
+  }
+  if(Prog.goalDay.target==null) Prog.goalDay.target=goalToday();   // days that began before this existed
+  return Prog.goalDay; }
 // Spaced repetition can carry the daily goal only so far. Come back to a fortnight's backlog and
 // clearing it would tick the goal off by itself, which turns the goal into a measure of how long
 // you were away rather than what you did today. Three, and the rest has to be new work.
@@ -8771,6 +8883,106 @@ function numberSheet(o){
   m.onclick=e=>{ if(e.target===m) close(); };
   m.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{ close(); o.onPick(+b.dataset.n); });
 }
+/* The streak as a row of days, so where it broke is something you SEE rather than read. Runs from
+   a few days before the end of the old streak up to today: gold for a day that counted, a gap for
+   the days that broke it, and a marker on the break itself. */
+/* Every day of the run, oldest first, each with what was asked and what was done beside it.
+   A day nobody opened the app has no record at all, so rather than leaving a hole it is shown as
+   what WOULD have been asked and nothing done — which is the honest reading, and the only way to
+   see how many days were missed by counting them. */
+function streakDayRows(){
+  const today=dayStart(dayKey(new Date()));
+  const L=Prog.streakLost;
+  // Far enough back to hold the whole of the last run, capped at a fortnight of records.
+  const first = L && dayStart(L.from) ? dayStart(L.from) : today-(GOAL_LOG_DAYS-1)*DAY;
+  const days=[];
+  for(let ms=Math.max(first, today-(GOAL_LOG_DAYS+6)*DAY); ms<=today; ms+=DAY) days.push(ms);
+  if(!days.length) return `<p class="hint" style="margin:10px 0">Nothing recorded yet.</p>`;
+  return days.map(ms=>{
+    const k=dayKey(new Date(ms));
+    const rec=(Prog.goalLog||[]).find(x=>x.d===k);
+    const isToday=ms===today;
+    const need = rec && rec.need!=null ? rec.need : (isToday ? goalToday() : goalForDate(new Date(ms)));
+    const got  = rec ? (rec.got|0) : (isToday ? goalCount() : 0);
+    const ok   = isToday ? (Prog.lastReviewDay===k) : !!(rec && rec.ok);
+    const missed = !ok && got===0;
+    const why = ok ? `<span class="gold">✓ counted</span>`
+      : missed ? `<span style="color:var(--miss)">missed</span>`
+      : (rec && rec.due>0) ? `<span style="color:var(--miss)">${rec.due} review${rec.due>1?"s":""} due</span>`
+      : `<span style="color:var(--miss)">${Math.max(0,need-got)} short</span>`;
+    return `<div style="display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px${isToday?";font-weight:800":""}">
+      <span style="flex:0 0 84px">${k}${isToday?" · today":""}</span>
+      <span style="flex:0 0 84px;text-align:center">goal ${need} · did ${got}</span>
+      <span style="flex:1;text-align:right">${why}</span></div>`;
+  }).join("");
+}
+function streakTimelineHTML(R){
+  const today=dayStart(dayKey(new Date())), from=dayStart(R.from);
+  if(!today || !from) return "";
+  const days=[]; const span=Math.min(16, Math.round((today-from)/DAY)+4);
+  for(let i=span-1;i>=0;i--){
+    const ms=today-i*DAY, k=dayKey(new Date(ms));
+    const logged=(Prog.goalLog||[]).find(x=>x.d===k);
+    const counted = (k===Prog.lastReviewDay) || (logged&&logged.ok) || (ms<=from);
+    const missed = ms>from && ms<dayStart(R.at);
+    days.push({k, counted, missed, isBreak: k===R.at, isToday: ms===today});
+  }
+  return `<div style="display:flex;gap:3px;align-items:flex-end;margin:10px 0 0;flex-wrap:nowrap;overflow-x:auto">` +
+    days.map(d=>`<span title="${d.k}" style="flex:1 0 10px;min-width:10px;height:${d.isToday?26:20}px;border-radius:3px;
+      background:${d.missed?"var(--no-bg)":d.counted?"linear-gradient(180deg,var(--gold),var(--gold2))":"var(--panel2)"};
+      border:1px solid ${d.isBreak?"var(--miss-ink)":d.counted?"var(--gold-ink)":"var(--line)"};
+      ${d.isBreak?"box-shadow:0 0 0 2px var(--no-bg)":""}"></span>`).join("") +
+    `</div><div style="display:flex;justify-content:space-between;font-size:10.5px;margin-top:3px" class="muted">
+      <span>${R.from}</span><span style="color:var(--miss)">broke ${R.at}</span><span>today</span></div>`;
+}
+/* Why a day did or did not count, said plainly. A streak day needs BOTH halves — the daily goal
+   AND every review that came due — and somebody who did one of them has genuinely worked and is
+   owed a straight answer about which half was missing, rather than a number quietly resetting. */
+function openStreakReview(){
+  const m=el("streakRevModal")||(()=>{ const d=document.createElement("div"); d.id="streakRevModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  let receipt=null;   // survives the redraw that clears the offer
+  const draw=()=>{
+    const log=[...(Prog.goalLog||[])].reverse().slice(0,14);
+    const R=canRestoreStreak();
+    const today=dayKey(new Date());
+    const g=goalToday()-goalCount(), due=reviewDueCount();
+    const rows = streakDayRows();
+    m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="srvX" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800">Streak review</div><span style="width:34px"></span></div>
+      <div class="teachbox" style="margin:0 0 10px;font-size:13px">A day counts only when <b>both</b> halves are done: the daily goal, <b>and</b> every review that has come due. Doing one of them is real work, but it is not a streak day.<br><span class="muted">Spaced repetition counts toward the goal too, up to <b class="gold">${SR_GOAL_MAX} a day</b> — so a big catch-up cannot finish the goal on its own.</span></div>
+      <div style="display:flex;justify-content:space-between;gap:8px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700"><span style="flex:0 0 84px">Day</span><span style="flex:0 0 84px;text-align:center">Goal · did</span><span style="flex:1;text-align:right">Why</span></div>
+      ${rows}
+      <div class="teachbox" style="margin:12px 0 0;font-size:13px"><b>Today:</b> ${Prog.lastReviewDay===today?`<span class="gold">already counted</span>`:`${g>0?`${g} more toward the goal`:`goal met`}${due>0?` · ${due} review${due>1?"s":""} still due`:` · nothing due`}`}</div>
+      ${R?`<div class="relbox" style="border:1px solid var(--gold2);margin-top:12px">
+           <div class="rl" style="color:var(--gold-ink)">🔥 ${R.had} days, ended ${R.ago===0?"today":R.ago===1?"yesterday":R.ago+" days ago"}</div>
+           ${streakTimelineHTML(R)}
+           <p style="margin:8px 0 0;font-size:13.5px">${R.missed} day${R.missed>1?"s":""} missed after ${R.from}. One Streak Freeze bridges one missed day, so going back costs <b>${R.cost}</b>.</p>
+           <p style="margin:4px 0 0;font-size:13px" class="muted">You have ${R.have} 🧊${R.short>0?` · ${R.short} more at ${FREEZE_COST} 🪙 each = <b class="gold">${R.talents} talents</b> (you have ${talDisp(Prog.talents||0)})`:""}</p>
+           <button class="btn" id="srvBuy" style="width:100%;margin-top:10px"${(R.short>0&&!R.canPay)?" disabled":""}>${
+             (R.short>0&&!R.canPay) ? `Need ${R.talents-(Prog.talents||0)} more talents`
+             : R.short>0 ? `⏳ Go back and restore ${R.had} days · ${R.talents} 🪙`
+                         : `⏳ Go back and restore ${R.had} days · ${R.cost} 🧊`}</button>
+         </div>`:""}
+      ${receipt?`<div class="relbox" id="srvDone" style="border:1px solid var(--gold2);margin-top:12px">
+           <div class="rl" style="color:var(--gold-ink)">🔥 Streak restored — ${receipt.streak} days</div>
+           <p style="margin:6px 0 0;font-size:13px">${receipt.line}</p></div>`:""}
+      <button class="btn ghost" id="srvClose2" style="width:100%;margin-top:12px">Close</button></div>`;
+    const close=()=>{ m.style.display="none"; };
+    el("srvX").onclick=close; el("srvClose2").onclick=close;
+    if(el("srvBuy")) el("srvBuy").onclick=()=>{
+      const done=restoreStreak(); if(!done) return;
+      // Said where they are looking and left there, because a toast that fades is not a receipt.
+      const bits=[];
+      if(done.bought) bits.push(`${done.bought} Streak Freeze${done.bought>1?"s":""} purchased for ${done.spent} 🪙`);
+      bits.push(`${done.used} spent bridging ${done.used===1?"the missed day":"the missed days"}`);
+      receipt={ streak:done.streak, line:bits.join(" · ")+"." };
+      draw();
+    };
+  };
+  draw();
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+}
 function openGoalSettings(){
   const m=el("goalSetModal")||(()=>{ const d=document.createElement("div"); d.id="goalSetModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   const DOW=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -8797,9 +9009,9 @@ function openGoalSettings(){
       }});
     });
   };
-  m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose lclose-red" id="gsClose">✕</button><div style="flex:1;text-align:center;font-weight:800">Daily goal</div><button class="lsave" id="gsTick" title="Save">✓</button><span style="display:none" style="width:34px"></span></div>
+  m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose lclose-red" id="gsClose">✕</button><div style="flex:1;text-align:center;font-weight:800">Daily Goal</div><button class="lsave" id="gsTick" title="Save">✓</button><span style="display:none" style="width:34px"></span></div>
  <p class="hint">How many things, new verses, book images or word for word practices, will you do each day?</p>
- <p class="hint" style="margin-top:6px">Spaced repetition counts toward it too, up to <b class="gold">${SR_GOAL_MAX} a day</b>. Reviews past that still move their verses along the trail. They just stop moving the goal, so a big catch-up day cannot finish it on its own.</p>
+    <button class="btn ghost" id="gsStreak" style="width:100%;margin-top:10px">🔥 Streak review</button>
     <div class="prof-sect" style="margin-top:12px">How do you want to set it?</div>
     <div class="goalseg">${GOAL_MODES.map(x=>`<button class="goalseg-b ${draft.mode===x[0]?"on":""}" data-mode="${x[0]}">${x[1]}</button>`).join("")}</div>
     <div id="gsBody" style="margin-top:14px"></div>
@@ -8814,6 +9026,7 @@ function openGoalSettings(){
     m.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("on",x===b));
     paint();
   });
+  if(el("gsStreak")) el("gsStreak").onclick=()=>openStreakReview();
   paint();
   reminderUI("goalReminderBox");
   el("gsSave").onclick=()=>{
@@ -10019,8 +10232,10 @@ function renderChronoQ(){
     <div class="card numtest"><div class="prompt">Which book is this number?</div>
       <div class="numtest-stim" style="text-align:center;margin:4px 0 10px"><div class="bignum">${dispNum("book",n)}</div></div>
       <input id="chIn" class="typein" style="width:100%;box-sizing:border-box;text-align:center;font-size:18px;font-weight:700" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Name the book">
+      <div id="chMask" style="text-align:center;margin:8px 0 0;font-family:ui-monospace,Consolas,monospace;font-size:19px;letter-spacing:.22em;font-weight:700;color:var(--gold);min-height:24px"></div>
       <div id="chMic"></div>
-      <button class="btn" id="chGo" style="width:100%;margin-top:10px">Check</button>
+      <button class="btn ghost" id="chHint" style="width:100%;margin-top:8px">🔤 Reveal a letter</button>
+      <button class="btn" id="chGo" style="width:100%;margin-top:8px">Check</button>
       <div id="ntFb" style="min-height:24px;margin-top:8px;text-align:center"></div></div>`;
   el("ntClose").onclick=renderVerse;
   const inp=el("chIn"), fb=el("ntFb"), go=el("chGo");
@@ -10042,28 +10257,89 @@ function renderChronoQ(){
     };
   }
 
-  let answered=false;
+  const name=bookName(n), mask=el("chMask"), hint=el("chHint");
+  let answered=false, shown=0, streak=0, helped=false;
+  const LETTERS=[...name].filter(ch=>ch!==" ").length;
+  const REVEALS_TO_GIVE_UP=3;
+
   const next=()=>{ NT.i++; renderNumTest(); };
+  /* Spaces are never hidden — a reader is being asked which book it is, not how many words are in
+     the name, and "1 Samuel" gives nothing away by showing where the gap is. */
+  const paintMask=()=>{
+    if(!shown){ mask.textContent=""; return; }
+    let outp="", seen=0;
+    for(const ch of name){ if(ch===" "){ outp+=" "; continue; } outp += (seen<shown?ch:"·"); seen++; }
+    mask.textContent=outp;
+  };
+  const settle=(cls)=>{   // the box says what the answer was, whichever way it got there
+    inp.value=name; inp.disabled=true;
+    inp.style.borderColor="var(--green)"; inp.style.color="var(--green)";
+    shown=LETTERS; paintMask();
+    hint.disabled=true; hint.style.opacity=".4";
+    go.textContent="Next"; go.onclick=next;
+  };
+
+  const accept=()=>{
+    if(answered) return; answered=true;
+    try{ statBump("q"); statBump("qc"); }catch(e){}
+    NT.run=0; NT.ok++; Sfx.right();
+    // Getting there with help is not the same as knowing it, so a helped answer is not
+    // strengthened — it comes round again rather than being marked as learned.
+    if(helped) gradeKey(`sk:book:${n}`,"miss"); else strengthenNumber(n);
+    settle();
+    fb.innerHTML=`<b class="gold">${name}</b>` + (helped?`<div class="hint" style="font-size:11.5px;margin-top:2px">You will see this one again.</div>`:"");
+    setTimeout(()=>{ if(NT && NT.qs[NT.i]===q) next(); }, helped?1400:700);
+  };
+
+  const giveIt=()=>{   // three reveals in a row: they are asking for it, so stop making them work
+    if(answered) return; answered=true;
+    try{ statBump("q"); }catch(e){}
+    NT.wrong++;   // shown is not recalled, whatever colour it is on screen
+    gradeKey(`sk:book:${n}`,"miss");
+    settle();
+    fb.innerHTML=`<div class="hint">${dispNum("book",n)} is</div><div style="margin-top:2px;font-size:18px"><b class="gold">${name}</b></div>`;
+    setTimeout(()=>{ if(NT && NT.qs[NT.i]===q) next(); }, 3000);
+  };
+
+  /* A wrong answer does NOT end the question and does NOT show the book. Telling somebody the
+     answer the moment they slip removes the only part that does any good — going back for it.
+     The box goes red, empties, and waits. The way out for anybody who does not want to keep
+     trying is the reveal button, which is a deliberate act rather than a consolation. */
+  let missedThis=false;
+  const wrongFlash=()=>{
+    Sfx.wrong(NT.run=(NT.run||0)+1);
+    try{ statBump("q"); }catch(e){}
+    if(!missedThis){ missedThis=true; NT.wrong++; gradeKey(`sk:book:${n}`,"miss"); }
+    inp.value=""; inp.__heard="";
+    inp.style.borderColor="var(--miss-ink)"; inp.style.color="var(--miss)";
+    fb.innerHTML=`<span style="color:var(--miss)">Not quite \u2014 try again.</span>`;
+    try{ inp.focus(); }catch(e){}
+    setTimeout(()=>{ if(!answered){ inp.style.borderColor=""; inp.style.color=""; } }, 900);
+  };
   const check=()=>{
     if(answered) return;
     const said=inp.value.trim(); if(!said) return;
-    answered=true; inp.disabled=true;
-    try{ statBump("q"); }catch(e){}
-    if(bookAnswerOk(said,n)){
-      try{ statBump("qc"); }catch(e){}
-      NT.run=0; NT.ok++; Sfx.right(); strengthenNumber(n);
-      fb.innerHTML=`<b class="gold">${bookName(n)}</b>`;
-      go.textContent="Next"; go.onclick=next;
-      setTimeout(()=>{ if(NT && NT.i===NT.qs.indexOf(q)) next(); }, 700);
-    } else {
-      NT.wrong++; Sfx.wrong(NT.run=(NT.run||0)+1);
-      gradeKey(`sk:book:${n}`,"miss");
-      fb.innerHTML=`<div style="color:var(--miss)">Not quite.</div><div style="margin-top:2px">${dispNum("book",n)} is <b class="gold">${bookName(n)}</b></div>`;
-      go.textContent="Next"; go.onclick=next;
-    }
+    if(bookAnswerOk(said,n)) return accept();
+    wrongFlash();
   };
+
+  hint.onclick=()=>{
+    if(answered) return;
+    helped=true; streak++; shown=Math.min(shown+1, LETTERS); paintMask();
+    if(streak>=REVEALS_TO_GIVE_UP || shown>=LETTERS) return giveIt();
+    try{ Sfx.tick(streak); }catch(e){}
+  };
+
+  inp.addEventListener("input", ()=>{
+    if(answered) return;
+    streak=0;                                    // "three in a row" means in a row
+    // Typed it exactly? Then there is nothing to press. Note this is the strict comparison and
+    // not the forgiving one: "Genes" must not be accepted as Genesis while somebody is still
+    // typing it. Check, pressed deliberately, is where the forgiving match lives.
+    if(normWord(inp.value)===normWord(name)) accept();
+  });
   go.onclick=check;
-  inp.addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); (answered?next:check)(); } });
+  inp.addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); if(answered) next(); else check(); } });
 }
 // Text-only pop-up: whatever the user has written (or the built-in scene) for this number/book.
 function showSceneReveal(n, isBook){
@@ -11010,8 +11286,10 @@ function renderWalk(){
       <div class="lv-ref" style="font-size:30px;margin:16px 0 8px">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>
       <div class="lv-triple">${cell("Book "+pad2(b),b)}${cell("Ch "+pad2(c),c)}${cell("Verse "+pad2(v),v)}</div>
       <div class="lv-versetext" style="margin:2px 0 14px">“${verseWordsHTML(b,c,v,curScene.text)}”</div>
-      <label class="vplabel">Your scene</label>
+      <div class="boxbar"><span class="boxbar-l">Your scene</span><button class="tickbtn" id="wTick" title="Save &amp; done" aria-label="Save and done">✓</button></div>
       <textarea class="ed-ta" id="wScene" placeholder="e.g. In the kitchen, a giant ${bp.word} smashes into a ${cp.word} while a ${vp.word} …">${(Prog.customScene[vkey]||"").replace(/</g,"&lt;")}</textarea>
+      <button class="btn ghost" id="wMic" style="width:100%;margin-top:8px">🎤 Speak it</button>
+      <div id="wMicNote" class="hint" style="margin:6px 0 0;min-height:17px;font-size:12px"></div>
       <div class="btnrow" style="margin-top:12px"><button class="btn ghost" id="wBack" style="flex:0 0 96px">← Back</button><button class="btn" id="wDone">Done ✓</button></div>
     </div>`;
   // capAfterPunct never changes the length, so putting the caret back where it was is all it takes
@@ -11020,7 +11298,12 @@ function renderWalk(){
     if(ta) ta.addEventListener("input",()=>{
       const p=ta.selectionStart, val=capAfterPunct(ta.value);
       if(val!==ta.value){ ta.value=val; try{ ta.setSelectionRange(p,p); }catch(err){} }
-    }); }
+    });
+    if(ta){
+      fitBoxTo(ta, 190);                        // the mic button, its note, and the two buttons
+      wireSpeakButton(el("wMic"), el("wMicNote"), ta, {autoCap:true});
+      if(el("wTick")) el("wTick").onclick=()=>{ if(el("wDone")) el("wDone").click(); };
+    } }
   if(el("wClose")) el("wClose").onclick=()=> sceneBackfill ? (sceneBackfill=false, sceneCancel()) : walkReturn();
   if(el("wBack")){ if(sceneBackfill){ el("wBack").textContent="✕ Cancel"; el("wBack").onclick=()=>{ sceneBackfill=false; sceneCancel(); }; }
     else el("wBack").onclick=()=>{ wPhase="visual"; renderWalk(); }; }
@@ -11520,6 +11803,112 @@ function openMicHelp(){
   };
 }
 
+/* ---- writing with the keyboard up -------------------------------------------------------------
+   On a phone the keyboard takes the bottom half of the screen, so a writing box has to be sized
+   to what is LEFT rather than to what is in it. Three rules, and each fixes something that is
+   only obvious with a thumb on a real handset:
+
+     • the box fills the space above the keyboard and does NOT grow as you type. A box that grows
+       under your thumbs pushes the sentence you are writing up off the screen.
+     • the newest line stays in view, which means scrolling the box rather than resizing it.
+     • put the tick ABOVE the box. Below it, it is behind the keyboard, and saving means dismissing
+       the keyboard first — which is a whole extra thought at the moment you have finished thinking.
+
+   Dismiss the keyboard and the box grows into the space, because now there is space.
+
+   ONE listener rather than one per render: these screens redraw constantly, and a viewport
+   listener added per render would still be firing for boxes that no longer exist. */
+let _fitTa=null, _fitReserve=110, _fitWired=false;
+function applyFit(){
+  const ta=_fitTa;
+  if(!ta || !document.body.contains(ta)){ _fitTa=null; return; }
+  const vv=window.visualViewport;
+  const vh=vv?vv.height:window.innerHeight;
+  const top=ta.getBoundingClientRect().top - (vv?vv.offsetTop:0);
+  const h=Math.max(90, Math.floor(vh - top - _fitReserve));
+  ta.style.height=h+"px";
+  ta.style.resize="none";
+  ta.style.overflowY="auto";   // .ed-ta hides overflow, which with a fixed height would clip
+}
+function fitBoxTo(ta, reserve){
+  if(!ta) return;
+  _fitTa=ta; _fitReserve=(reserve==null?110:reserve);
+  if(!_fitWired){
+    _fitWired=true;
+    const vv=window.visualViewport;
+    if(vv){ vv.addEventListener("resize", applyFit); vv.addEventListener("scroll", applyFit); }
+    else window.addEventListener("resize", applyFit);
+  }
+  // The newest words stay where they can be seen. Only on input, never on every keystroke’s
+  // caret move, so somebody scrolling back to fix a word is left where they put themselves.
+  ta.addEventListener("input", ()=>{ ta.scrollTop=ta.scrollHeight; });
+  ta.addEventListener("focus", ()=>setTimeout(applyFit, 60));
+  setTimeout(applyFit, 30);
+}
+
+/* One implementation of "how do I speak this", because there are two writing boxes and they must
+   not drift apart. Everything the phone-browser reader sees is in the keyboard branch. */
+function wireSpeakButton(btn, note, ta, opts){
+  if(!btn || !ta) return;
+  opts=opts||{};
+  const say=(html)=>{ if(note) note.innerHTML=html; };
+  const route=speechRoute();
+
+  if(route==="keyboard"){
+    // A page cannot press the keyboard’s microphone key — there is no API for it, and there is
+    // no getting round that. What it CAN do is put the cursor in the right place, bring the
+    // keyboard up, and say which key. That is the whole of it, so make the button big and plain.
+    btn.innerHTML="🎤 &nbsp;Speak it";
+    btn.classList.add("bigmic");
+    btn.onclick=()=>{
+      try{ ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }catch(e){}
+      say(`<span class="muted">${KEYBOARD_MIC_TIP}</span>`);
+    };
+    return;
+  }
+  if(route==="none"){
+    btn.textContent="🎤 Speaking isn't available here";
+    btn.style.opacity=".65";
+    btn.onclick=()=>openMicHelp();
+    return;
+  }
+
+  /* The web and native engines, which write AROUND the caret so nothing already typed is at risk
+     from a mishearing: what was before it, plus what has been heard, plus what was after it. */
+  let at=0, before="", after="", heard="";
+  const idle=()=>{ btn.textContent="🎤 Speak it instead"; btn.classList.remove("blue"); };
+  const paint=(interim)=>{
+    const said=(heard+interim).replace(/\s+/g," ");
+    const join=(a,b)=>!a?b:(!b?a:(/\s$/.test(a)?a+b:a+" "+b));
+    ta.value = join(before, said) + (after ? (/^\s/.test(after)?after:" "+after) : "");
+    try{ const p=join(before,said).length; ta.setSelectionRange(p,p); }catch(e){}
+    ta.scrollTop=ta.scrollHeight;
+  };
+  btn.onclick=()=>{
+    if(Dictation.listening()) return Dictation.stop();
+    at=(typeof ta.selectionStart==="number")?ta.selectionStart:ta.value.length;
+    before=ta.value.slice(0,at); after=ta.value.slice(at); heard="";
+    btn.textContent="● Listening — tap when you're done"; btn.classList.add("blue");
+    say('<span class="muted">Say it the way you would tell somebody. Punctuation is added when you save.</span>');
+    Dictation.start(
+      (fin,mid)=>{ heard+=fin; paint(mid); },
+      (why)=>{
+        idle();
+        if(why==="not-allowed" || why==="service-not-allowed"){
+          say('<b style="color:var(--miss)">The microphone is switched off.</b> <u id="edMicFix" style="cursor:pointer">Show me where</u>');
+          const f=el("edMicFix"); if(f) f.onclick=()=>openMicHelp(); return;
+        }
+        if(why==="no-speech"){ say('<span class="muted">Nothing was heard. Tap again and speak a little closer.</span>'); return; }
+        if(why==="network"){ say('<span class="muted">Speaking needs a connection, and there is none just now.</span>'); return; }
+        if(why==="unsupported"){ say('<span class="muted">Speaking is not available on this device.</span>'); return; }
+        if(why==="audio-capture"){ say('<span class="muted">No microphone was found on this device.</span>'); return; }
+        if(opts.autoCap && ta.value){ const v=capAfterPunct(ta.value); if(v!==ta.value) ta.value=v; }
+        say(heard.trim() ? '<span class="muted">Tap the microphone again to add more.</span>' : "");
+      }
+    );
+  };
+}
+
 function editText({title, hint, value, onSave, autoCap, keyWords, tagWord}){
   let m=el("editModal"); if(!m){ m=document.createElement("div"); m.id="editModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
   const esc=s=>(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -11528,6 +11917,7 @@ function editText({title, hint, value, onSave, autoCap, keyWords, tagWord}){
     m.innerHTML=`<div class="modal-card">
       <div class="ed-head"><h2>${title}</h2><button class="ed-trash" id="edTrash" title="Clear all" aria-label="Clear all">🗑️</button></div>
       ${hint?`<p class="hint" style="margin:2px 0 10px">${hint}</p>`:""}
+      <div class="boxbar"><span class="boxbar-l">${hint?"":title}</span><button class="tickbtn" id="edTick" title="Save" aria-label="Save">✓</button></div>
       <textarea class="ed-ta" id="edTa" placeholder="Write it here…">${esc(value)}</textarea>
       <button class="btn ghost" id="edMic" style="width:100%;margin-top:8px">🎤 Speak it instead</button>
       <div id="edMicNote" class="hint" style="margin:6px 0 0;min-height:17px;font-size:12px"></div>
@@ -11539,70 +11929,16 @@ function editText({title, hint, value, onSave, autoCap, keyWords, tagWord}){
       const p=ta.selectionStart, v=capAfterPunct(ta.value);
       if(v!==ta.value){ ta.value=v; try{ ta.setSelectionRange(p,p); }catch(e){} }
     });
-    /* Speaking a scene. The caret is remembered when it starts, and the box is rebuilt around it
-       on every result, so what was already written is never at risk from a mishearing. */
-    (()=>{
-      const mic=el("edMic"), note=el("edMicNote");
-      if(!mic) return;
-      const route=speechRoute();
-      if(route==="keyboard"){
-        // Not a refusal and not a fallback — on a phone this IS the better answer. One tap puts the
-        // cursor where it needs to be and says where the key is; the keyboard does the rest.
-        mic.textContent="🎤 Use your keyboard's mic";
-        mic.onclick=()=>{
-          try{ ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }catch(e){}
-          note.innerHTML=`<span class="muted">${KEYBOARD_MIC_TIP}</span>`;
-        };
-        return;
-      }
-      if(route==="none"){
-        mic.textContent="🎤 Speaking isn't available here";
-        mic.style.opacity=".65";
-        mic.onclick=()=>openMicHelp();
-        return;
-      }
-      let at=0, before="", after="", heard="";
-      const idle=()=>{ mic.textContent="🎤 Speak it instead"; mic.classList.remove("blue"); };
-      const paint=(interim)=>{
-        const said=(heard+interim).replace(/\s+/g," ");
-        // A space where one is wanted, and none where the box already ends in one.
-        const join=(a,b)=>!a?b:(!b?a:(/\s$/.test(a)?a+b:a+" "+b));
-        ta.value = join(before, said) + (after ? (/^\s/.test(after)?after:" "+after) : "");
-        try{ const p=join(before,said).length; ta.setSelectionRange(p,p); }catch(e){}
-      };
-      const stop=()=>{ Dictation.stop(); };
-      mic.onclick=()=>{
-        if(Dictation.listening()) return stop();
-        at = (typeof ta.selectionStart==="number") ? ta.selectionStart : ta.value.length;
-        before = ta.value.slice(0, at); after = ta.value.slice(at); heard = "";
-        mic.textContent="● Listening — tap when you're done";
-        mic.classList.add("blue");
-        note.innerHTML='<span class="muted">Say it the way you would tell somebody. Punctuation is added when you save.</span>';
-        Dictation.start(
-          (fin, mid)=>{ heard += fin; paint(mid); },
-          (why)=>{
-            idle();
-            if(why==="not-allowed" || why==="service-not-allowed"){
-              note.innerHTML='<b style="color:var(--miss)">The microphone is switched off.</b> <u id="edMicFix" style="cursor:pointer">Show me where</u>';
-              const f=el("edMicFix"); if(f) f.onclick=()=>openMicHelp();
-              return;
-            }
-            if(why==="no-speech"){ note.innerHTML='<span class="muted">Nothing was heard. Tap again and speak a little closer.</span>'; return; }
-            if(why==="network"){ note.innerHTML='<span class="muted">Speaking needs a connection, and there is none just now.</span>'; return; }
-            if(why==="unsupported"){ note.innerHTML='<span class="muted">Speaking is not available on this device.</span>'; return; }
-            if(why==="audio-capture"){ note.innerHTML='<span class="muted">No microphone was found on this device.</span>'; return; }
-            // "done" and "aborted" are the ordinary ends: they stopped, or the phone stopped for them.
-            if(autoCap && ta.value){ const v=capAfterPunct(ta.value); if(v!==ta.value) ta.value=v; }
-            note.innerHTML = heard.trim() ? '<span class="muted">Tap the microphone again to add more.</span>' : "";
-          }
-        );
-      };
-      // Leaving the editor with the microphone still open would keep listening to the room.
-      const stopOnClose=()=>{ if(Dictation.listening()) stop(); };
+    fitBoxTo(ta, 150);                          // room below for the mic button and the two buttons
+    if(el("edTick")) el("edTick").onclick=()=>{ if(el("edSave")) el("edSave").click(); };
+    wireSpeakButton(el("edMic"), el("edMicNote"), ta, {autoCap});
+    /* Leaving the editor with the microphone still open would go on listening to the room. Worth
+       keeping even though the button itself moved out to wireSpeakButton: the reason it exists is
+       this screen closing, which the button knows nothing about. */
+    { const stopOnClose=()=>{ try{ if(Dictation.listening()) Dictation.stop(); }catch(e){} };
       const c=el("edCancel"), s=el("edSave");
       if(c) c.addEventListener("click", stopOnClose);
-      if(s) s.addEventListener("click", stopOnClose);
-    })();
+      if(s) s.addEventListener("click", stopOnClose); }
     el("edCancel").onclick=close;
     el("edSave").onclick=()=>{
       let v=ta.value.trim();

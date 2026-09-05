@@ -72,10 +72,10 @@
   "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 💛 I Know By Heart Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 "
  },
  "classic/wizard/scene": {
-  "h": "14a124b623c73865",
-  "len": 3842,
-  "els": 67,
-  "buttons": 7,
+  "h": "d8ec3525ee2a6404",
+  "len": 4176,
+  "els": 71,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 ▾ Which room / spot? 🏛️ Choose a room or spot… ▾ Matthew 6:33 Bo"
@@ -252,10 +252,10 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "classic/stories/lesson": {
-  "h": "323175e3b5da1406",
-  "len": 3640,
-  "els": 61,
-  "buttons": 7,
+  "h": "2d958f415c061180",
+  "len": 3974,
+  "els": 65,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "0f7bd9307218f85b",
+  "h": "7faa7b03f577c9ac",
   "len": 20199,
   "els": 474,
   "buttons": 50,
@@ -306,31 +306,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "classic/modal/goal-same": {
-  "h": "5e5312063777cb87",
-  "len": 2348,
-  "els": 34,
-  "buttons": 10,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
- },
- "classic/modal/goal-week": {
-  "h": "e54ab31e39ba015a",
-  "len": 2504,
-  "els": 37,
+  "h": "8c9baccb91391b7f",
+  "len": 2186,
+  "els": 33,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
  },
- "classic/modal/goal-days": {
-  "h": "8686bdfa19a15d24",
-  "len": 3113,
-  "els": 52,
-  "buttons": 16,
+ "classic/modal/goal-week": {
+  "h": "ca47ff12bdb452be",
+  "len": 2342,
+  "els": 36,
+  "buttons": 12,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
+ },
+ "classic/modal/goal-days": {
+  "h": "c4e5ada9565c5813",
+  "len": 2951,
+  "els": 51,
+  "buttons": 17,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
  },
  "classic/modal/paywall": {
   "h": "7be3651b91e3d81d",
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "480691c6473040b0",
-  "len": 162327,
-  "els": 2769,
+  "h": "5a5b54d8dd3356ac",
+  "len": 164416,
+  "els": 2797,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.4.0 September 5, 2026 Walk the books, and a better microphone NEW Chronological. A new option at th"
+  "text": "✕ Version history v2.5.0 September 5, 2026 Why the streak broke, and going back for it FIX The app could not tell you wh"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "a2352baa0984b181",
+  "h": "4a29f8e386751226",
   "len": 19398,
   "els": 466,
   "buttons": 48,
@@ -594,10 +594,10 @@
   "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 💛 I Know By Heart Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 "
  },
  "illumined/wizard/scene": {
-  "h": "14a124b623c73865",
-  "len": 3842,
-  "els": 67,
-  "buttons": 7,
+  "h": "d8ec3525ee2a6404",
+  "len": 4176,
+  "els": 71,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 ▾ Which room / spot? 🏛️ Choose a room or spot… ▾ Matthew 6:33 Bo"
@@ -774,10 +774,10 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "illumined/stories/lesson": {
-  "h": "323175e3b5da1406",
-  "len": 3640,
-  "els": 61,
-  "buttons": 7,
+  "h": "2d958f415c061180",
+  "len": 3974,
+  "els": 65,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "d4c6e442c00c83c6",
+  "h": "f80ab80625474362",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -828,31 +828,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "illumined/modal/goal-same": {
-  "h": "5e5312063777cb87",
-  "len": 2348,
-  "els": 34,
-  "buttons": 10,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
- },
- "illumined/modal/goal-week": {
-  "h": "e54ab31e39ba015a",
-  "len": 2504,
-  "els": 37,
+  "h": "8c9baccb91391b7f",
+  "len": 2186,
+  "els": 33,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
  },
- "illumined/modal/goal-days": {
-  "h": "8686bdfa19a15d24",
-  "len": 3113,
-  "els": 52,
-  "buttons": 16,
+ "illumined/modal/goal-week": {
+  "h": "ca47ff12bdb452be",
+  "len": 2342,
+  "els": 36,
+  "buttons": 12,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
+ },
+ "illumined/modal/goal-days": {
+  "h": "c4e5ada9565c5813",
+  "len": 2951,
+  "els": 51,
+  "buttons": 17,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
  },
  "illumined/modal/paywall": {
   "h": "7be3651b91e3d81d",
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "480691c6473040b0",
-  "len": 162327,
-  "els": 2769,
+  "h": "5a5b54d8dd3356ac",
+  "len": 164416,
+  "els": 2797,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.4.0 September 5, 2026 Walk the books, and a better microphone NEW Chronological. A new option at th"
+  "text": "✕ Version history v2.5.0 September 5, 2026 Why the streak broke, and going back for it FIX The app could not tell you wh"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "d4c6e442c00c83c6",
+  "h": "f80ab80625474362",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -1116,10 +1116,10 @@
   "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 💛 I Know By Heart Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 "
  },
  "glass/wizard/scene": {
-  "h": "14a124b623c73865",
-  "len": 3842,
-  "els": 67,
-  "buttons": 7,
+  "h": "d8ec3525ee2a6404",
+  "len": 4176,
+  "els": 71,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 ▾ Which room / spot? 🏛️ Choose a room or spot… ▾ Matthew 6:33 Bo"
@@ -1296,10 +1296,10 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "glass/stories/lesson": {
-  "h": "323175e3b5da1406",
-  "len": 3640,
-  "els": 61,
-  "buttons": 7,
+  "h": "2d958f415c061180",
+  "len": 3974,
+  "els": 65,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "94f24117c7541d7b",
+  "h": "f7f5d68a49f0a35b",
   "len": 19404,
   "els": 466,
   "buttons": 48,
@@ -1350,31 +1350,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "glass/modal/goal-same": {
-  "h": "5e5312063777cb87",
-  "len": 2348,
-  "els": 34,
-  "buttons": 10,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
- },
- "glass/modal/goal-week": {
-  "h": "e54ab31e39ba015a",
-  "len": 2504,
-  "els": 37,
+  "h": "8c9baccb91391b7f",
+  "len": 2186,
+  "els": 33,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
  },
- "glass/modal/goal-days": {
-  "h": "8686bdfa19a15d24",
-  "len": 3113,
-  "els": 52,
-  "buttons": 16,
+ "glass/modal/goal-week": {
+  "h": "ca47ff12bdb452be",
+  "len": 2342,
+  "els": 36,
+  "buttons": 12,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
+ },
+ "glass/modal/goal-days": {
+  "h": "c4e5ada9565c5813",
+  "len": 2951,
+  "els": 51,
+  "buttons": 17,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
  },
  "glass/modal/paywall": {
   "h": "7be3651b91e3d81d",
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "480691c6473040b0",
-  "len": 162327,
-  "els": 2769,
+  "h": "5a5b54d8dd3356ac",
+  "len": 164416,
+  "els": 2797,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.4.0 September 5, 2026 Walk the books, and a better microphone NEW Chronological. A new option at th"
+  "text": "✕ Version history v2.5.0 September 5, 2026 Why the streak broke, and going back for it FIX The app could not tell you wh"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "94f24117c7541d7b",
+  "h": "f7f5d68a49f0a35b",
   "len": 19404,
   "els": 466,
   "buttons": 48,
@@ -1638,10 +1638,10 @@
   "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 💛 I Know By Heart Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 "
  },
  "quest/wizard/scene": {
-  "h": "14a124b623c73865",
-  "len": 3842,
-  "els": 67,
-  "buttons": 7,
+  "h": "d8ec3525ee2a6404",
+  "len": 4176,
+  "els": 71,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 ▾ Which room / spot? 🏛️ Choose a room or spot… ▾ Matthew 6:33 Bo"
@@ -1818,10 +1818,10 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "quest/stories/lesson": {
-  "h": "323175e3b5da1406",
-  "len": 3640,
-  "els": 61,
-  "buttons": 7,
+  "h": "2d958f415c061180",
+  "len": 3974,
+  "els": 65,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "e1827f50241a06e6",
+  "h": "677a9b19984620c3",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -1872,31 +1872,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "quest/modal/goal-same": {
-  "h": "5e5312063777cb87",
-  "len": 2348,
-  "els": 34,
-  "buttons": 10,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
- },
- "quest/modal/goal-week": {
-  "h": "e54ab31e39ba015a",
-  "len": 2504,
-  "els": 37,
+  "h": "8c9baccb91391b7f",
+  "len": 2186,
+  "els": 33,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
  },
- "quest/modal/goal-days": {
-  "h": "8686bdfa19a15d24",
-  "len": 3113,
-  "els": 52,
-  "buttons": 16,
+ "quest/modal/goal-week": {
+  "h": "ca47ff12bdb452be",
+  "len": 2342,
+  "els": 36,
+  "buttons": 12,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
+ },
+ "quest/modal/goal-days": {
+  "h": "c4e5ada9565c5813",
+  "len": 2951,
+  "els": 51,
+  "buttons": 17,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
  },
  "quest/modal/paywall": {
   "h": "7be3651b91e3d81d",
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "480691c6473040b0",
-  "len": 162327,
-  "els": 2769,
+  "h": "5a5b54d8dd3356ac",
+  "len": 164416,
+  "els": 2797,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.4.0 September 5, 2026 Walk the books, and a better microphone NEW Chronological. A new option at th"
+  "text": "✕ Version history v2.5.0 September 5, 2026 Why the streak broke, and going back for it FIX The app could not tell you wh"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "e1827f50241a06e6",
+  "h": "677a9b19984620c3",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -2160,10 +2160,10 @@
   "text": "✕ ‹ v32 v34 › Review Lesson Matthew 6:33 💛 I Know By Heart Book 40 image coming Rose Ch 06 image coming Sushi Verse 33 "
  },
  "buddy/wizard/scene": {
-  "h": "14a124b623c73865",
-  "len": 3842,
-  "els": 67,
-  "buttons": 7,
+  "h": "d8ec3525ee2a6404",
+  "len": 4176,
+  "els": 71,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ Which palace? My Kitchen 2 free of 3 ▾ Which room / spot? 🏛️ Choose a room or spot… ▾ Matthew 6:33 Bo"
@@ -2340,10 +2340,10 @@
   "text": "✕ 🍎 Creation &amp; the Fall Creation Genesis 1:1 Learn → The Fall Genesis 3:1 Learn → Cain &amp; Abel Genesis 4:1 Learn"
  },
  "buddy/stories/lesson": {
-  "h": "323175e3b5da1406",
-  "len": 3640,
-  "els": 61,
-  "buttons": 7,
+  "h": "2d958f415c061180",
+  "len": 3974,
+  "els": 65,
+  "buttons": 9,
   "svgs": 0,
   "imgs": 3,
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "f0c1a93b8afc664b",
+  "h": "638b31055fad4045",
   "len": 19402,
   "els": 466,
   "buttons": 48,
@@ -2394,31 +2394,31 @@
   "text": "✕ Back up your progress Back up your progress Signing in keeps your progress safe in the cloud. A backup file is a secon"
  },
  "buddy/modal/goal-same": {
-  "h": "5e5312063777cb87",
-  "len": 2348,
-  "els": 34,
-  "buttons": 10,
-  "svgs": 0,
-  "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
- },
- "buddy/modal/goal-week": {
-  "h": "e54ab31e39ba015a",
-  "len": 2504,
-  "els": 37,
+  "h": "8c9baccb91391b7f",
+  "len": 2186,
+  "els": 33,
   "buttons": 11,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
  },
- "buddy/modal/goal-days": {
-  "h": "8686bdfa19a15d24",
-  "len": 3113,
-  "els": 52,
-  "buttons": 16,
+ "buddy/modal/goal-week": {
+  "h": "ca47ff12bdb452be",
+  "len": 2342,
+  "els": 36,
+  "buttons": 12,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Daily goal ✓ How many things, new verses, book images or word for word practices, will you do each day? Spaced repetit"
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
+ },
+ "buddy/modal/goal-days": {
+  "h": "c4e5ada9565c5813",
+  "len": 2951,
+  "els": 51,
+  "buttons": 17,
+  "svgs": 0,
+  "imgs": 0,
+  "text": "✕ Daily Goal ✓ How many things, new verses, book images or word for word practices, will you do each day? 🔥 Streak revi"
  },
  "buddy/modal/paywall": {
   "h": "7be3651b91e3d81d",
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "480691c6473040b0",
-  "len": 162327,
-  "els": 2769,
+  "h": "5a5b54d8dd3356ac",
+  "len": 164416,
+  "els": 2797,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.4.0 September 5, 2026 Walk the books, and a better microphone NEW Chronological. A new option at th"
+  "text": "✕ Version history v2.5.0 September 5, 2026 Why the streak broke, and going back for it FIX The app could not tell you wh"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "f0c1a93b8afc664b",
+  "h": "638b31055fad4045",
   "len": 19402,
   "els": 466,
   "buttons": 48,

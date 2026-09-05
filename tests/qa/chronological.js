@@ -88,9 +88,75 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
     if (n1) {
       document.getElementById('chIn').value = 'Habakkuk-nonsense';
       document.getElementById('chGo').click();
+      const idx = NT.i;
       res.wrong = { wrongCount: NT.wrong, fb: (document.getElementById('ntFb') || {}).innerText || '',
-                    names: bookName(n1) };
+                    names: bookName(n1),
+                    cleared: (document.getElementById('chIn') || {}).value === '',
+                    stillAsking: NT.i === idx,
+                    stillEditable: !(document.getElementById('chIn') || {}).disabled,
+                    revealStillThere: !!document.getElementById('chHint') && !document.getElementById('chHint').disabled };
+      // a second wrong answer on the same question must not count it twice
+      document.getElementById('chIn').value = 'nonsense again';
+      document.getElementById('chGo').click();
+      res.wrong.twice = NT.wrong;
     }
+
+    // ── typing it perfectly needs no button ─────────────────────────────────────────────
+    const fresh = () => { startChronoTest(); return NT.qs[0].n; };
+    const type = (s) => { const i = document.getElementById('chIn');
+      i.value = s; i.dispatchEvent(new Event('input')); };
+
+    let bn = fresh();
+    type(bookName(bn).toLowerCase());               // exact, bar the capitals
+    res.auto = { advanced: NT.i === 1 || NT.ok === 1, ok: NT.ok,
+                 green: (document.getElementById('chIn') || {}).style?.color || '' };
+
+    // ...but a prefix must NOT be taken while they are still typing it
+    bn = fresh();
+    const partial = bookName(bn).slice(0, Math.max(5, bookName(bn).length - 2));
+    type(partial);
+    res.notEarly = { stillAsking: NT.ok === 0 && NT.i === 0, typed: partial, book: bookName(bn) };
+
+    // ── revealing letters ───────────────────────────────────────────────────────────────
+    bn = fresh();
+    const H2 = () => document.getElementById('chHint');
+    const maskNow = () => (document.getElementById('chMask') || {}).textContent || '';
+    res.mask = { atStart: maskNow() };
+    H2().click(); res.mask.one = maskNow();
+    H2().click(); res.mask.two = maskNow();
+    res.mask.book = bookName(bn);
+    res.mask.stillAsking = NT.i === 0;
+
+    // typing between reveals breaks the streak, so two more do not give it away
+    type('x'); 
+    H2().click();
+    res.streakReset = { stillAsking: NT.i === 0, mask: maskNow() };
+
+    // ── three in a row hands it over ────────────────────────────────────────────────────
+    bn = fresh();
+    const before = { ok: NT.ok, wrong: NT.wrong };
+    H2().click(); H2().click(); H2().click();
+    res.gaveUp = {
+      value: (document.getElementById('chIn') || {}).value || '',
+      book: bookName(bn),
+      disabled: !!(document.getElementById('chIn') || {}).disabled,
+      green: (document.getElementById('chIn') || {}).style?.color || '',
+      notCountedRight: NT.ok === before.ok,
+      counted: NT.wrong === before.wrong + 1,
+      stillOnScreen: NT.i === 0,
+      hintOff: !!H2().disabled
+    };
+    // it holds for three seconds rather than snatching the answer away
+    await new Promise(r2 => setTimeout(r2, 1200));
+    res.gaveUp.stillThereAfter1s = NT.i === 0;
+    await new Promise(r2 => setTimeout(r2, 2200));
+    res.gaveUp.movedOnAfter3s = NT.i === 1;
+
+    // ── a helped-but-correct answer must not be marked as learned ───────────────────────
+    bn = fresh();
+    H2().click();                                   // one letter of help
+    type(bookName(bn));
+    res.helped = { accepted: NT.ok >= 1, box: (document.getElementById('ntFb') || {}).innerText || '' };
 
     // the forgiving matcher, which is the difference between practice and an argument
     res.match = {
@@ -134,8 +200,33 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
 
   say(r.right.ok === 1 && r.right.wrong === 0, 'a right answer counts, whatever the capitals');
   say(r.wrong && r.wrong.wrongCount === 1, 'a wrong answer counts once');
-  say(r.wrong && r.wrong.fb.indexOf(r.wrong.names) >= 0,
-      '...and says the book plainly rather than colouring letters: "' + (r.wrong ? r.wrong.fb.replace(/\s+/g, ' ') : '') + '"');
+  say(r.wrong && r.wrong.fb.indexOf(r.wrong.names) < 0,
+      '...and does NOT give the answer away: "' + (r.wrong ? r.wrong.fb.replace(/\s+/g, ' ') : '') + '"');
+  say(r.wrong && r.wrong.cleared, '...the box is emptied for another go');
+  say(r.wrong && r.wrong.stillAsking && r.wrong.stillEditable, '...and it is still asking the same question');
+  say(r.wrong && r.wrong.revealStillThere, '...with the reveal still there for anybody who wants out');
+  say(r.wrong && r.wrong.twice === 1, '...and a second wrong answer does not count the question twice');
+
+  say(r.auto.advanced, 'typing the book exactly is accepted with no button pressed');
+  say(/green/.test(r.auto.green), '...and the box turns green');
+  say(r.notEarly.stillAsking, 'a partial answer is NOT taken early ("' + r.notEarly.typed + '" for ' + r.notEarly.book + ')');
+
+  say(r.mask.atStart === '', 'nothing is revealed until it is asked for');
+  say(r.mask.one.replace(/[^A-Za-z0-9]/g,'').length === 1, 'one tap reveals one letter: ' + r.mask.one);
+  say(r.mask.two.replace(/[^A-Za-z0-9]/g,'').length === 2, '...two taps, two letters: ' + r.mask.two);
+  say(r.mask.one[0] === r.mask.book[0], '...starting at the beginning of ' + r.mask.book);
+  say(r.mask.stillAsking, '...and it is still asking after two');
+  say(r.streakReset.stillAsking, 'typing between reveals breaks the streak, so the next one does not give it away');
+
+  say(r.gaveUp.value === r.gaveUp.book, 'three reveals in a row fills in the whole book (' + r.gaveUp.value + ')');
+  say(/green/.test(r.gaveUp.green) && r.gaveUp.disabled, '...green, and no longer asking');
+  say(r.gaveUp.hintOff, '...with nothing left to reveal');
+  say(r.gaveUp.stillThereAfter1s, '...it stays on screen a second later');
+  say(r.gaveUp.movedOnAfter3s, '...and moves on after three seconds');
+  say(r.gaveUp.notCountedRight && r.gaveUp.counted, '...and is not counted as one you knew');
+
+  say(r.helped.accepted, 'a right answer after one letter of help is still accepted');
+  say(/see this one again/i.test(r.helped.box), '...but says it will come round again: "' + r.helped.box.replace(/\s+/g,' ').trim() + '"');
 
   const m = r.match;
   say(m.exact && m.cased, 'the matcher takes it however it is capitalised');

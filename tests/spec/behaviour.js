@@ -1332,13 +1332,15 @@ const DAY = 86400000;
   is(cap.freshTomorrow, 3, 'and the allowance is whole again the next day');
 
   const capSaid = await $(() => {
-    openGoalSettings();
-    const m = el('goalSetModal');
+    // The Daily Goal screen lost its wall of text. This fact moved to the Streak review, which is
+    // where somebody is actually asking why a day did or did not count.
+    openStreakReview();
+    const m = el('streakRevModal');
     const t = m ? m.innerText : '';
     if (m) m.style.display = 'none';
-    return { says: /up to\s*3\s*a day/i.test(t.replace(/\s+/g, ' ')), mentions: /Spaced repetition counts toward it/i.test(t) };
+    return { says: /up to\s*3\s*a day/i.test(t.replace(/\s+/g, ' ')), mentions: /Spaced repetition counts toward the goal/i.test(t) };
   });
-  ok(capSaid.mentions, 'the Daily goal screen says review counts toward the goal');
+  ok(capSaid.mentions, 'the Streak review says spaced repetition counts toward the goal');
   ok(capSaid.says, '...and that it does so up to three a day');
 
   describe('claiming a verse from the practice screen', () => { });
