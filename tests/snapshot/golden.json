@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "2450d432d2af2acd",
+  "h": "cc251e2d36c3b5b8",
   "len": 20199,
   "els": 474,
   "buttons": 50,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "d8053117d04d326f",
-  "len": 154869,
-  "els": 2664,
+  "h": "1c0a3dcc79b73796",
+  "len": 155951,
+  "els": 2681,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.2.0 September 4, 2026 The Android app NEW Speaking a scene works in the Android app. A web page ins"
+  "text": "✕ Version history v2.2.1 September 4, 2026 Nothing to buy in the phone app FIX The phone app carries no way to spend mon"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -378,8 +378,8 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "classic/modal/video": {
-  "h": "a86e4150439cc715",
-  "len": 651,
+  "h": "57911bfc577b4805",
+  "len": 649,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "294472f15315d4a9",
+  "h": "67fffdca133c74b1",
   "len": 19398,
   "els": 466,
   "buttons": 48,
@@ -396,8 +396,8 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
  },
  "classic/modal/video-intro": {
-  "h": "62fc5e63d11dbdd0",
-  "len": 693,
+  "h": "b5833ffd341b6949",
+  "len": 691,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "a3351dc93c606174",
+  "h": "2cd593a23bb2c879",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "d8053117d04d326f",
-  "len": 154869,
-  "els": 2664,
+  "h": "1c0a3dcc79b73796",
+  "len": 155951,
+  "els": 2681,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.2.0 September 4, 2026 The Android app NEW Speaking a scene works in the Android app. A web page ins"
+  "text": "✕ Version history v2.2.1 September 4, 2026 Nothing to buy in the phone app FIX The phone app carries no way to spend mon"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -900,8 +900,8 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "illumined/modal/video": {
-  "h": "a86e4150439cc715",
-  "len": 651,
+  "h": "57911bfc577b4805",
+  "len": 649,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "a3351dc93c606174",
+  "h": "2cd593a23bb2c879",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -918,8 +918,8 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
  },
  "illumined/modal/video-intro": {
-  "h": "62fc5e63d11dbdd0",
-  "len": 693,
+  "h": "b5833ffd341b6949",
+  "len": 691,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "504a704dab696744",
+  "h": "0f2df0f2ee9d9068",
   "len": 19404,
   "els": 466,
   "buttons": 48,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "d8053117d04d326f",
-  "len": 154869,
-  "els": 2664,
+  "h": "1c0a3dcc79b73796",
+  "len": 155951,
+  "els": 2681,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.2.0 September 4, 2026 The Android app NEW Speaking a scene works in the Android app. A web page ins"
+  "text": "✕ Version history v2.2.1 September 4, 2026 Nothing to buy in the phone app FIX The phone app carries no way to spend mon"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1422,8 +1422,8 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "glass/modal/video": {
-  "h": "a86e4150439cc715",
-  "len": 651,
+  "h": "57911bfc577b4805",
+  "len": 649,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "504a704dab696744",
+  "h": "0f2df0f2ee9d9068",
   "len": 19404,
   "els": 466,
   "buttons": 48,
@@ -1440,8 +1440,8 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
  },
  "glass/modal/video-intro": {
-  "h": "62fc5e63d11dbdd0",
-  "len": 693,
+  "h": "b5833ffd341b6949",
+  "len": 691,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "4600b4e02e017247",
+  "h": "127c4babf137c83f",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "d8053117d04d326f",
-  "len": 154869,
-  "els": 2664,
+  "h": "1c0a3dcc79b73796",
+  "len": 155951,
+  "els": 2681,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.2.0 September 4, 2026 The Android app NEW Speaking a scene works in the Android app. A web page ins"
+  "text": "✕ Version history v2.2.1 September 4, 2026 Nothing to buy in the phone app FIX The phone app carries no way to spend mon"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1944,8 +1944,8 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "quest/modal/video": {
-  "h": "a86e4150439cc715",
-  "len": 651,
+  "h": "57911bfc577b4805",
+  "len": 649,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "4600b4e02e017247",
+  "h": "127c4babf137c83f",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -1962,8 +1962,8 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
  },
  "quest/modal/video-intro": {
-  "h": "62fc5e63d11dbdd0",
-  "len": 693,
+  "h": "b5833ffd341b6949",
+  "len": 691,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "2f573912b3c3d7b9",
+  "h": "3ef5a14f32da11f6",
   "len": 19402,
   "els": 466,
   "buttons": 48,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "d8053117d04d326f",
-  "len": 154869,
-  "els": 2664,
+  "h": "1c0a3dcc79b73796",
+  "len": 155951,
+  "els": 2681,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.2.0 September 4, 2026 The Android app NEW Speaking a scene works in the Android app. A web page ins"
+  "text": "✕ Version history v2.2.1 September 4, 2026 Nothing to buy in the phone app FIX The phone app carries no way to spend mon"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2466,8 +2466,8 @@
   "text": "✕ Feature Store Everything here is free and included. It is switched off so you are not handed the whole app at once. Tu"
  },
  "buddy/modal/video": {
-  "h": "a86e4150439cc715",
-  "len": 651,
+  "h": "57911bfc577b4805",
+  "len": 649,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "2f573912b3c3d7b9",
+  "h": "3ef5a14f32da11f6",
   "len": 19402,
   "els": 466,
   "buttons": 48,
@@ -2484,8 +2484,8 @@
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
  },
  "buddy/modal/video-intro": {
-  "h": "62fc5e63d11dbdd0",
-  "len": 693,
+  "h": "b5833ffd341b6949",
+  "len": 691,
   "els": 8,
   "buttons": 2,
   "svgs": 0,

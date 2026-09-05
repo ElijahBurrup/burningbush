@@ -37,6 +37,12 @@ const CAPTURE = function (sel) {
     // That is the ONLY thing the build changes, so fold it away and one golden set validates both.
     .replace(/\/burningbush\//g, '')                                     // the old prefix, for older goldens
     .replace(/(["'(`])\/(?=(?:images|fonts|videos|bibles)\/|(?:kjv|bbe|sw|strongs|kjvtag)\.js|manifest\.webmanifest)/g, '$1')
+    // WHERE the films are served from is configuration, not layout. It is deliberately different in
+    // the source, the published site and the phone app, and it can move host without an app release
+    // — so folding it to one token keeps a host move from reading as hundreds of broken screens.
+    // The FILENAME stays, because which film a screen shows is very much layout.
+    // Both attributes: the player carries data-vsrc, and the real src is put on it at play time.
+    .replace(/((?:data-vsrc|src)=")[^"]*?([^/"]+\.mp4)/g, '$1#FILM/$2')
     .replace(/\b\d{1,2}:\d{2}\s?(AM|PM)\b/gi, '#TIME')          // "today at 5:23 PM"
     .replace(/\b(today|tomorrow) at #TIME/gi, '#WHEN')
     .replace(/\b\d{10,}\b/g, '#TS')                              // epoch millis

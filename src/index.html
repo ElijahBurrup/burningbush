@@ -2171,8 +2171,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.2.0";
+const APP_VERSION="2.2.1";
 const CHANGELOG=[
+ {v:"2.2.1", d:"September 4, 2026", t:"Nothing to buy in the phone app", items:[
+   ["chg","<b>The phone app carries no way to spend money at all</b> — no prices, no giving, no buying seats, and no asking. Pro is set up on the web and simply arrives when you sign in. This changes nothing here on the web, where all of it stays exactly where it was."],
+   ["chg","<b>What is not a purchase is untouched.</b> A group code somebody else bought can still be redeemed, a single lesson can still be opened with talents you earned, and your account — including deleting it — stays where it always was."],
+   ["chg","<b>Seats you already bought stay yours to manage</b> in the app: the code, who is holding a seat, how much they are using it, and taking one back. Only buying more has moved to the web."]
+ ]},
  {v:"2.2.0", d:"September 4, 2026", t:"The Android app", items:[
    ["new","<b>Speaking a scene works in the Android app.</b> A web page inside an app has no speech engine of its own, so the app hands the job to the phone's — the same one behind the microphone on your keyboard. It asks for the microphone the moment you tap it, with the reason on the screen in front of you, rather than at the launch of the app where a request with no context attached just gets refused."],
    ["chg","<b>A breath between sentences no longer ends it.</b> Android stops listening at a pause, and a scene is two or three sentences with pauses in them. It now keeps what you said and picks the thread back up, until you tap the button or say nothing twice running."],
@@ -4658,6 +4663,7 @@ const Billing = {
   // The server makes the checkout session, so the account is attached to the payment by us. A link
   // held in the client can only ask the browser who it is, and a browser can be told what to say.
   async startCheckout(plan){
+    if(typeof canBuyHere==="function" && !canBuyHere()) return;   // no checkout inside a store build
     if(!(typeof Auth!=="undefined" && Auth.loggedIn())){
       toast("Create an account first, so your subscription has somewhere to live.");
       try{ openAccountScreen&&openAccountScreen(); }catch(e){}
@@ -11585,6 +11591,19 @@ function isIOSApp(){ return nativePlatform() === "ios"; }
 // come out of BOTH store builds, not just the iPhone one. Everything that is not a purchase — the
 // talent unlock, restore, asking for help — stays exactly where it was.
 function isStoreApp(){ return nativePlatform() !== "web"; }
+/* ---- what a store build may not do ---------------------------------------------------------
+   The first submission carries no way to spend money at all. Not because it is forbidden outright
+   — since 2025 a US app may link out to its own checkout, and Google now allows it too for a fee —
+   but because review is where an app gets stuck, and a submission with no purchase surface gives a
+   reviewer nothing to argue about. The link-out is an update, once it is through.
+
+   What is NOT a purchase all stays exactly where it was, and that is the whole distinction:
+   redeeming a code somebody else bought, unlocking one lesson with talents earned by using the
+   app, restoring, cancelling, and deleting the account — which Apple requires to be in here.
+
+   Every route to a payment asks this, so when the answer changes it changes in one place rather
+   than being hunted for across six screens. tests/qa/store-build.js walks all six.             */
+function canBuyHere(){ return !isStoreApp(); }
 // Named here so it can be reworded without hunting through the paywall markup.
 const PAY_IOS_NOTE = "Pro is managed from your account on the web. Sign in here with an account that already has it and everything unlocks.";
 
@@ -11595,6 +11614,7 @@ function nudgeState(){ Prog.nudge = Prog.nudge || {}; return Prog.nudge; }
 // Every reason not to ask, in one place, so the answer is always visible rather than scattered.
 function nudgeAllowed(){
   try{
+    if(!canBuyHere()) return false;                             // nothing to ask for in a store build
     const n = nudgeState();
     if(n.off) return false;                                     // waved away for good
     if((n.dismissed||0) >= NUDGE_GIVE_UP) return false;
@@ -11705,7 +11725,10 @@ function openLicences(){
     });
     m.querySelectorAll("[data-newcode]").forEach(b=>b.onclick=()=>askNewCode(b.dataset.newcode, load));
   };
-  const wireBuy=()=>{ const b=el("lcBuy"); if(b) b.onclick=()=>{ m.style.display="none"; openGroupBuy(); }; };
+  // Seats already bought stay manageable — that is not a purchase. Buying more is.
+  const wireBuy=()=>{ const b=el("lcBuy"); if(!b) return;
+    if(!canBuyHere()) return b.remove();
+    b.onclick=()=>{ m.style.display="none"; openGroupBuy(); }; };
   load();
 }
 /* Owners want a code they can say out loud, and a minted one is awkward at the front of a room. */
@@ -11751,6 +11774,7 @@ function askNewCode(from, after){
    rather than dollars paid, because that is the number a giver is actually deciding about. */
 const GIVE_YEAR_CENTS=3500, GIVE_FIVE_CENTS=9900;
 function openGive(){
+  if(!canBuyHere()) return;
   const m=el("giveModal")||(()=>{ const d=document.createElement("div"); d.id="giveModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   let batches=1, custom="";
   const draw=()=>{
@@ -11821,6 +11845,7 @@ function openGive(){
    that is what the buyer is actually thinking about. */
 const GROUP_SEATS_PER = 5, GROUP_PRICE_EACH = 99;
 function openGroupBuy(){
+  if(!canBuyHere()) return;
   if(!(typeof Auth!=="undefined" && Auth.loggedIn())){
     toast("Create an account first, so the licence has an owner.");
     try{ openAccountScreen&&openAccountScreen(); }catch(e){}
@@ -11917,7 +11942,7 @@ function openPaywall(sk){ const m=el("payModal"); if(!m) return;
   // On iOS the two price buttons come out and a line goes in their place. Restore, the talent
   // unlock and the assistance request all stay: none of them is a purchase.
   { const ios=isStoreApp();
-    ["payYearly","payMonthly"].forEach(id=>{ const b=el(id); if(b) b.style.display=ios?"none":""; });
+    ["payYearly","payMonthly","payGroup"].forEach(id=>{ const b=el(id); if(b) b.style.display=ios?"none":""; });
     let note=el("payIosNote");
     if(ios && !note){
       note=document.createElement("p"); note.id="payIosNote"; note.className="hint";
@@ -12324,6 +12349,7 @@ function applyFeatureVisibility(){
   const pb=(s,on)=>{ const b=document.querySelector('#profGrid [data-prof="'+s+'"]'); if(b) b.style.display=on?"":"none"; };
   pb("badges", feat("badges")); pb("reference-library", feat("reference"));
   pb("get-the-app", !isInstalledApp());   // already installed → nothing to offer
+  pb("give", canBuyHere());               // giving is a purchase; group licences stay, being management
   const fc=el("pFeatCount"); if(fc){ const n=featOffCount(); fc.textContent=n?` \u00b7 ${n} to try`:""; }
 }
 /* ---- Profile, in the Library's shape -------------------------------------------------------
@@ -12658,7 +12684,7 @@ if(el("foundBack")) el("foundBack").onclick=()=>{ const r=foundReturn; foundRetu
 if(el("refBtn")) el("refBtn").onclick=()=>{ closeProfile(); openFoundations(); };
 if(el("pFeatures")) el("pFeatures").onclick=()=>openFeatureStore();
 if(el("pLicences")) el("pLicences").onclick=()=>openLicences();
-if(el("pGive")) el("pGive").onclick=()=>openGive();
+if(el("pGive")){ if(canBuyHere()) el("pGive").onclick=()=>openGive(); else el("pGive").style.display="none"; }
 el("pChangelog").textContent=`📋 Version history · v${APP_VERSION}`;
 el("pChangelog").onclick=()=>{ closeProfile(); openWhatsNew(true); };
 el("themeModal").onclick=e=>{ if(e.target===el("themeModal")) closeProfile(); };

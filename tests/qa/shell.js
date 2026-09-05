@@ -17,7 +17,10 @@ const fs = require('fs');
 const path = require('path');
 const { chromium } = require('C:/Projects/BurningBush/tests/lib/harness.js');
 
-const WWW = path.resolve('C:/Projects/BurningBush/mobile/www');   // resolved, so the containment check below compares like with like
+const WWW = path.resolve('C:/Projects/BurningBush/mobile/www');
+// Read rather than written down, so a release does not have to remember to come and edit a test.
+const WANT = (fs.readFileSync(path.resolve(__dirname, '..', '..', 'src', 'index.html'), 'utf8')
+  .match(/const APP_VERSION="([^"]+)"/) || [])[1];   // resolved, so the containment check below compares like with like
 const TYPES = { '.html':'text/html', '.js':'text/javascript', '.json':'application/json',
                 '.css':'text/css', '.svg':'image/svg+xml', '.png':'image/png', '.woff2':'font/woff2',
                 '.webmanifest':'application/manifest+json', '.txt':'text/plain' };
@@ -107,7 +110,7 @@ if (!fs.existsSync(path.join(WWW, 'index.html'))) {
   const bad = [];
   const t = (ok, m) => { say(ok, m); if (!ok) bad.push(m); };
 
-  t(r.version === '2.2.0',        'the packaged app boots and is v' + r.version);
+  t(r.version === WANT,           'the packaged app boots, at the version src says (' + r.version + ')');
   t(r.painted > 150, 'it paints a screen, not a blank one: ' + JSON.stringify(r.screen.slice(0,90)));
   t(r.bible > 60,                 'the whole Bible loaded from the root path (' + r.bible + ' books)');
   t(r.tabs > 0,                   'the navigation rendered');

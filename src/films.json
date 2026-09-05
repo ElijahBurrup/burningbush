@@ -1,13 +1,37 @@
 {
   "_comment": "Where the films live and which cut is current. The app reads ONLY src and rev from here; titles and everything else stay in the app, so a wrong entry can misdirect a video file but can never rewrite what the app says. A relative src resolves against FILM_HOST; an absolute https:// src is used as-is, which is how the films move to their own host without an app release. Bump rev whenever a file is re-exported under the same name, or caches keep serving the old cut.",
   "films": {
-    "intro":  { "src": "intro.mp4",  "rev": "20260831" },
-    "major":  { "src": "major1.mp4", "rev": "20260831" },
-    "major2": { "src": "major2.mp4", "rev": "20260831" },
-    "verse":  { "src": "scenes.mp4", "rev": "20260828" },
-    "palace": { "src": "palace.mp4", "rev": "20260828" },
-    "book":   { "src": "book.mp4",   "rev": "20260831" },
-    "sr":     { "src": "sr.mp4",     "rev": "20260901" },
-    "recall": { "src": "",           "rev": "" }
+    "intro": {
+      "src": "https://films.kingdombuilders.ai/intro.mp4",
+      "rev": "20260831"
+    },
+    "major": {
+      "src": "https://films.kingdombuilders.ai/major1.mp4",
+      "rev": "20260831"
+    },
+    "major2": {
+      "src": "https://films.kingdombuilders.ai/major2.mp4",
+      "rev": "20260831"
+    },
+    "verse": {
+      "src": "https://films.kingdombuilders.ai/scenes.mp4",
+      "rev": "20260828"
+    },
+    "palace": {
+      "src": "https://films.kingdombuilders.ai/palace.mp4",
+      "rev": "20260828"
+    },
+    "book": {
+      "src": "https://films.kingdombuilders.ai/book.mp4",
+      "rev": "20260831"
+    },
+    "sr": {
+      "src": "https://films.kingdombuilders.ai/sr.mp4",
+      "rev": "20260901"
+    },
+    "recall": {
+      "src": "",
+      "rev": ""
+    }
   }
 }

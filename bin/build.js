@@ -22,7 +22,12 @@ const SRC = path.join(ROOT, 'src');
 // rather than at /app, the films come from a host on the internet instead of from the download, and
 // there is no landing page and no service worker — the shell is already the app.
 const NATIVE = process.argv.includes('--native');
-const FILM_ORIGIN = process.env.FILM_ORIGIN || 'https://burningbush.kingdombuilders.ai';
+// Where a packaged app looks for the films when the manifest has not reached it — on a first run
+// with no signal, or when the manifest fetch is refused for being cross-origin, which it is from
+// inside the shell unless the host sends CORS. Overridable, but the default has to be somewhere
+// the films actually are, because this is the answer the app falls back to.
+const FILM_HOST_URL = process.env.FILM_HOST_URL || 'https://films.kingdombuilders.ai/';
+const FILM_MANIFEST_URL = process.env.FILM_MANIFEST_URL || 'https://films.kingdombuilders.ai/films.json';
 const OUT = path.join(ROOT, NATIVE ? path.join('mobile', 'www') : 'burningbush');
 const CHECK = process.argv.includes('--check');
 
@@ -52,8 +57,8 @@ const RULES = [
 // contain 111MB of film. Both are still overridable at runtime by the manifest, so the films can
 // move host again without another store release.
 const NATIVE_RULES = [
-  ['const FILM_HOST = "/videos/"', `const FILM_HOST = "${FILM_ORIGIN}/videos/"`, 1],
-  ['const FILM_MANIFEST = "/films.json"', `const FILM_MANIFEST = "${FILM_ORIGIN}/films.json"`, 1],
+  ['const FILM_HOST = "/videos/"', `const FILM_HOST = "${FILM_HOST_URL}"`, 1],
+  ['const FILM_MANIFEST = "/films.json"', `const FILM_MANIFEST = "${FILM_MANIFEST_URL}"`, 1],
 ];
 
 // copied through untouched. The service worker is a web thing: inside the shell it would sit in
@@ -129,6 +134,6 @@ for (const f of COPY_FILES) fs.copyFileSync(path.join(SRC, f), path.join(OUT, f)
 if (!NATIVE) fs.copyFileSync(path.join(SRC,'landing.html'), path.join(OUT,'index.html'));
 for (const d of COPY_DIRS) copyDir(path.join(SRC, d), path.join(OUT, d));
 
-console.log(`built v${ver} → ${path.relative(ROOT, OUT).split(path.sep).join("/")}/` + (NATIVE ? `  films from ${FILM_ORIGIN}` : ""));
+console.log(`built v${ver} → ${path.relative(ROOT, OUT).split(path.sep).join("/")}/` + (NATIVE ? `  films from ${FILM_HOST_URL}` : ""));
 console.log('  rewrites: ' + Object.entries(counts).map(([k, v]) => `${v}×${k.slice(0, 22)}`).join(', '));
 console.log(`  index.html ${(Buffer.byteLength(html) / 1024).toFixed(0)}KB, ${COPY_FILES.length} data files, ${COPY_DIRS.join(' + ')}`);

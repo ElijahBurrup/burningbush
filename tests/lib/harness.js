@@ -97,13 +97,32 @@ const determinism = ({ now, seed }) => {
  *   pro     grant Pro
  */
 async function open(browser, o = {}) {
-  const { which = 'src', width = 390, height = 844, seed = 12345, prog = null, pro = false } = o;
+  const { which = 'src', width = 390, height = 844, seed = 12345, prog = null, pro = false,
+          native = false } = o;
   const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
   const errors = [];
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
   page.on('pageerror', e => errors.push('PAGEERROR: ' + e.message));
 
   await page.addInitScript(determinism, { now: FIXED_NOW, seed });
+  // Run as the phone app. Set BEFORE the app loads, because some of what the shell changes is
+  // decided at boot rather than asked again later — the profile menu is built once.
+  if (native) await page.addInitScript(() => {
+    window.Capacitor = {
+      getPlatform: () => 'android',
+      Plugins: {
+        SpeechRecognition: {
+          async checkPermissions() { return { speechRecognition: 'granted' }; },
+          async requestPermissions() { return { speechRecognition: 'granted' }; },
+          async available() { return { available: true }; },
+          async start() {}, async stop() {},
+          async addListener() { return { remove() {} }; },
+          removeAllListeners() {}
+        },
+        NativeSettings: { async openAndroid() { window.__openedSettings = true; } }
+      }
+    };
+  });
   await page.goto(await appUrl(which));
   await page.waitForFunction(() => typeof window.Prog !== 'undefined' && typeof window.show === 'function', null, { timeout: 15000 })
     .catch(() => { });
