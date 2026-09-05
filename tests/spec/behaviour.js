@@ -1299,7 +1299,7 @@ const DAY = 86400000;
   has(srCount.afterBegin, 'First look back', 'and the first thing after Begin really is a new verse');
   is(srCount.queueLeft, 1, '...one of the two, with the other still queued behind it');
 
-  describe('review carries the goal three times, then stops', () => { });
+  describe('review earns exactly one marker, and it is the last', () => { });
   const cap = await $(() => {
     const K = ['43:11:35', '45:8:28', '19:23:1', '40:5:9', '40:6:33'];
     Prog.memorized = K.slice();
@@ -1323,12 +1323,15 @@ const DAY = 86400000;
     out.freshTomorrow = srGoalLeft();
     return out;
   });
-  is(cap.max, 3, 'review carries the goal three times a day');
-  is(cap.steps.join(','), '1,2,3,3,3', '...the fourth and fifth reviews leave the goal where it is');
+  // The rule changed: review used to carry the goal up to three times, which meant a day could be
+  // finished without ever reviewing. It now earns exactly ONE marker — the last one — so no amount
+  // of reviewing moves the count past it, and no amount of other work reaches it.
+  is(cap.max, 3, 'the raw review allowance is still three a day');
+  is(cap.steps.join(','), '1,1,1,1,1', 'but review earns ONE marker however many are done');
   is(cap.leftAsWeGo.join(','), '2,1,0,0,0', '...and the allowance counts down to nothing');
   is(cap.trailAdvanced, 5, 'but every verse still moved along its trail — the cap is on the goal, not the review');
   is(cap.srUsed, 3, '...with exactly three of the allowance spent');
-  ok(cap.newWorkCounts, 'new work still counts toward the goal after the cap is reached');
+  ok(cap.newWorkCounts, 'other work still counts alongside it');
   is(cap.freshTomorrow, 3, 'and the allowance is whole again the next day');
 
   const capSaid = await $(() => {

@@ -568,6 +568,9 @@
   .gf-node{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;background:var(--panel3);border:2px solid var(--line);color:var(--muted)}
   .gf-node.done{background:var(--gold);border-color:var(--gold-ink);color:var(--on-accent)}
   .gf-node.just{background:var(--green);border-color:var(--green);color:var(--on-green);animation:gfpop .5s cubic-bezier(.2,1.5,.5,1)}
+  /* The review marker: blue, empty until a whole set is finished, and always the last one. */
+  .gf-node.sr{border-color:var(--blue);color:var(--blue-ink);background:var(--panel3)}
+  .gf-node.sr.done,.gf-node.sr.just{background:var(--blue);border-color:var(--blue-ink);color:var(--on-accent)}
   @keyframes gfpop{0%{transform:scale(.3)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
   .gf-sub{margin-top:12px;font-weight:800;color:var(--muted)}
   /* goal settings */
@@ -2183,8 +2186,15 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.5.0";
+const APP_VERSION="2.5.1";
 const CHANGELOG=[
+ {v:"2.5.1", d:"September 5, 2026", t:"The last marker is the review", items:[
+   ["chg","<b>One of the day’s markers belongs to spaced repetition, and it is the last one.</b> Three word-for-word against a goal of three now earns two markers, not three — the day is not finished until the review is. It is drawn in <b style=\"color:var(--blue)\">blue</b> so you can see which one it is, and it fills when a whole set is done."],
+   ["fix","<b>Reviews falling due later in the day no longer take the day back.</b> Clearing everything at breakfast and finding more due by tea is the system working, not a failure — and it used to cost people the streak. Finishing a set is now recorded as a fact about the day. You pick the new ones up tomorrow."],
+   ["chg","<b>A day with nothing due is finishable on ordinary work alone.</b> The marker is only reserved when there is actually a review to earn it with, so a quiet day is never impossible to finish."],
+   ["new","<b>Everything done but the review? It says so, and offers to go and do it.</b> Once, quietly, at the moment you would otherwise have thought the day was finished."],
+   ["fix","<b>The day no longer celebrates too early.</b> The well-done was counting things done rather than the goal being met, so it could fire before the review — and then the day turned out not to have counted, which is worse than never having celebrated."]
+ ]},
  {v:"2.5.0", d:"September 5, 2026", t:"Why the streak broke, and going back for it", items:[
    ["fix","<b>The app could not tell you why a streak ended, because it had thrown the evidence away.</b> A day counts only when <i>both</i> halves are done — the daily goal AND every review that had come due — but yesterday's record was overwritten the moment a new day began. Every day is now kept for a fortnight, with what was <i>asked</i> as well as what was done."],
    ["new","<b>Streak review</b>, at the top of Daily Goal. Every day of your last run, the goal beside what you actually did, and which half was missing on the day it broke. Days you missed entirely are listed too, so you can count them."],
@@ -4411,6 +4421,7 @@ function migrateProg(p){
   p.freezes=cnt(p.freezes); p.freezeAwards=arr(p.freezeAwards); // Streak-Freeze power-ups + which milestones already granted one
   p.goalLog=arr(p.goalLog).filter(x=>x&&x.d).slice(-GOAL_LOG_DAYS);   // a fortnight of what was asked and what was done
   if(!p.streakLost || !p.streakLost.at) p.streakLost=null;
+  if(typeof p.srDay!=="string") p.srDay="";   // the day a whole review set was finished
   if(typeof p.hints!=="number") p.hints=0; // "Peek" tokens spendable in the verse test
   if(typeof p.weekKey!=="string") p.weekKey=""; if(typeof p.weekDays!=="number") p.weekDays=0; if(typeof p.weekGoalHit!=="boolean") p.weekGoalHit=false; // Perfect-Week tracking
   // Caesar's weekly levy + the church it builds
@@ -4505,6 +4516,7 @@ function mergeProg(a,b){
   ["talents","streak","bestStreak","dayStreak","bestDayStreak","freezes","hints","level"].forEach(f=>m[f]=Math.max(a[f]||0,b[f]||0)); // keep the higher
   m.onboarded=!!(a.onboarded||b.onboarded);
   m.lastReviewDay=(a.lastReviewDay>b.lastReviewDay)?a.lastReviewDay:b.lastReviewDay;
+  m.srDay=(a.srDay>b.srDay)?a.srDay:b.srDay;   // finished on either device is finished
   // One row per day, and where two devices both recorded one, the fuller day is the truer one.
   { const by={};
     [...(a.goalLog||[]), ...(b.goalLog||[])].forEach(x=>{ if(!x||!x.d) return;
@@ -8448,6 +8460,7 @@ function finishDue(){ if(MS && MS.dueWork) doneForToday(); else practiceNext(tru
 // The "you're done for today" moment — the emotional close of the daily loop; credits the day streak, then offers optional free practice.
 function doneForToday(){
   const V=el("verse");
+  markSrDone();    // the set is finished; more arriving later must not take that back
   creditToday();   // the review half just finished — credit the streak if the goal is in too
   const wd=weekDaysNow();
   const gotBonus = MS && MS.dueWork && !MS._bonusGiven;
@@ -8522,7 +8535,10 @@ function restoreStreak(){
 function creditToday(){
   const today=dayKey(new Date());
   if(Prog.lastReviewDay===today) return;                       // already credited today
-  if(!goalMet() || reviewDueCount()>0) return;                 // half a day's work isn't a streak day
+  // goalMet() now includes the review marker, so asking again whether anything is due would only
+  // ever punish somebody for reviews that arrived AFTER they finished — which is the system
+  // working, not a day's work undone.
+  if(!goalMet()) return;                                       // half a day's work isn't a streak day
   const yest=dayKey(new Date(Date.now()-DAY)), twoAgo=dayKey(new Date(Date.now()-2*DAY));
   if(!Prog.lastReviewDay) Prog.dayStreak=1;
   else if(Prog.lastReviewDay===yest) Prog.dayStreak=(Prog.dayStreak||0)+1;   // consecutive day → +1
@@ -8596,28 +8612,122 @@ function srGoalState(){ const t=dayKey(new Date()); if(!Prog.srGoalDay || Prog.s
 function srGoalLeft(){ return Math.max(0, SR_GOAL_MAX - srGoalState().count); }
 function bumpGoalFromReview(defer){
   const s=srGoalState();
-  if(s.count>=SR_GOAL_MAX) return function(){};
+  // Clearing the last one due is what earns the marker, and it is remembered as a fact about the
+  // day rather than re-measured later.
+  const cleared = reviewDueCount()<=1;
+  if(s.count>=SR_GOAL_MAX){ if(cleared) markSrDone(); return function(){}; }
   s.count++; saveProg();
-  return bumpGoal(defer);
+  const done=bumpGoal(defer);
+  if(cleared && markSrDone()){ updateMetrics(); creditToday(); }
+  return done;
 }
-function goalCount(){ return goalState().count; }
-function goalMet(){ return goalCount()>=goalToday(); }
+/* ---- the last marker belongs to spaced repetition ---------------------------------------------
+   A day's goal is N markers, and the LAST of them is the review. Other work fills the first N-1
+   and then stops counting: three word-for-word against a goal of three earns two markers, not
+   three, and the day is not done until the review is.
+
+   Two edges decide whether this is fair or infuriating.
+
+   NOTHING DUE. Some days have no review in them. On those the marker cannot be earned, so it is
+   not reserved either — the whole goal is reachable from ordinary work. Otherwise a quiet day
+   would be impossible to finish.
+
+   MORE ARRIVING LATER. Finishing every review at breakfast and finding three more due by tea is
+   the system working, not a failure, and it must not take the day back. So the marker is earned
+   by COMPLETING A SET, recorded as a fact about the day, rather than measured by asking whether
+   anything is due at this exact second — which is what used to cost people their streak. */
+function srDoneToday(){ return Prog.srDay===dayKey(new Date()); }
+function srPending(){ return reviewDueCount()>0; }
+function srInPlay(){ return srDoneToday() || srPending(); }   // is there a review marker to earn today at all?
+function markSrDone(){
+  const t=dayKey(new Date());
+  if(Prog.srDay===t) return false;
+  Prog.srDay=t; saveProg();
+  return true;
+}
+// Work that is not review: the total bumps, less the ones review contributed.
+function goalOtherCount(){ return Math.max(0, (goalState().count|0) - (srGoalState().count|0)); }
+function goalOtherCap(){ return Math.max(0, goalToday() - (srInPlay()?1:0)); }
+/* MET ONCE IS MET FOR THE DAY.
+
+   Finish a quiet day on ordinary work — nothing was due, so no marker was reserved — and then
+   have three reviews fall due at three in the afternoon. Everything above is computed live, so
+   the marker would suddenly BE reserved, the cap would drop, and a day that was finished two
+   hours ago would quietly come undone on the screen.
+
+   So the moment it is met, that is written down. Reviews arriving afterwards are tomorrow's
+   work: they show as due, they are waiting when the reader comes back, and they take nothing
+   away from a day that was already done. */
+function goalLatched(){ const st=goalState(); return !!st.met && st.metTarget===goalToday(); }
+function goalCount(){
+  const raw=Math.min(goalOtherCount(), goalOtherCap()) + (srDoneToday()?1:0);
+  const N=goalToday();
+  return (goalLatched() && raw<N) ? N : raw;
+}
+function goalMet(){
+  const st=goalState();
+  // Latched against the target it was met AGAINST, not just "met". Reviews falling due later must
+  // not undo a finished day; RAISING the goal afterwards is a different thing entirely, and should
+  // reopen it — you have not done twenty things because you once did three.
+  if(goalLatched()) return true;
+  const ok = goalCount()>=goalToday();
+  if(ok){ st.met=true; st.metTarget=goalToday(); saveProg(); }
+  return ok;
+}
 // Returns a function that plays the goal celebration. Pass defer=true to hold it back and
 // play it yourself later (the word for word screen waits for "Done" so nothing covers the result).
 function bumpGoal(defer){ const noop=function(){};
-  const st=goalState(), before=st.count, target=goalToday();
-  if(before>=target){ st.count++; saveProg(); maybePaceNudge(); return noop; }   // already met → still count, no flash
+  const st=goalState(), target=goalToday();
+  const wasMet=goalMet();
+  if(wasMet){ st.count++; saveProg(); maybePaceNudge(); return noop; }   // already met → still count, no flash
   st.count++; saveProg(); updateMetrics();                               // refresh HUD + the Verses tab badge
   maybePaceNudge();                                                      // a big day earns the "little and often" word, not applause
-  const celebrate=()=>{ goalFlash(st.count, target);
-    if(st.count>=target && !st.celebrated){ st.celebrated=true; saveProg(); setTimeout(onGoalComplete, 1300); } };
+  const celebrate=()=>{ goalFlash(goalCount(), target);
+    /* The day is finished by goalMet(), which now includes the review — not by the raw number of
+       things done. Otherwise the celebration fires on ordinary work alone and then the day turns
+       out not to have counted, which is worse than never having celebrated. */
+    if(goalMet()){ if(!st.celebrated){ st.celebrated=true; saveProg(); setTimeout(onGoalComplete, 1300); } }
+    else if(onlySrLeft() && !st.srAsked){ st.srAsked=true; saveProg(); setTimeout(askSrNow, 1200); } };
   if(defer) return celebrate;
   celebrate(); creditToday(); return noop; }
+/* Everything done but the review. Worth interrupting for, because it is the one case where
+   somebody has genuinely finished their work, believes the day is done, and will lose the streak
+   anyway — and the fix is two minutes they would happily have spent had anyone said so. Asked
+   once a day, never repeated, and "later" is a real answer. */
+function onlySrLeft(){
+  return srInPlay() && !srDoneToday() &&
+         Math.min(goalOtherCount(), goalOtherCap()) >= goalOtherCap();
+}
+function askSrNow(){
+  if(!onlySrLeft()) return;
+  if(typeof anyOverlayUp==="function" && anyOverlayUp()) return;   // never on top of something else
+  const due=reviewDueCount();
+  const m=el("srAskModal")||(()=>{ const d=document.createElement("div"); d.id="srAskModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card center">
+      <div style="font-size:44px;line-height:1">🔁</div>
+      <h2 style="margin:8px 0 4px;color:var(--blue)">One thing left</h2>
+      <p class="lead" style="font-size:14.5px;margin:0 0 4px">Everything else for today is done. Your review is the last marker \u2014 ${due} waiting \u2014 and the day does not count toward your streak until it is in.</p>
+      <p class="hint" style="margin:0 0 12px">It is the part that actually moves a verse into long-term memory.</p>
+      <button class="btn blue" id="srAskGo" style="width:100%">🔁 Review now</button>
+      <button class="btn ghost" id="srAskNo" style="width:100%;margin-top:8px">Later today</button>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; };
+  el("srAskNo").onclick=close;
+  el("srAskGo").onclick=()=>{ close(); try{ show("verse"); startMemTest(); }catch(e){} };
+}
 // a 1–10 node path; the just-completed node fills and pulses
 function goalFlash(now, target){
   const host=document.querySelector(".phone"); if(!host) return;
   const wrap=document.createElement("div"); wrap.className="goalflash";
-  let nodes=""; for(let i=1;i<=target;i++) nodes+=`<span class="gf-node ${i<now?"done":(i===now?"just":"")}"">${i<=now?"✓":i}</span>`;
+  // The review marker is the last one and is drawn blue, so which marker it is can be seen
+  // rather than read. On a day with nothing due there is no review marker to draw.
+  const srSlot = srInPlay() ? target : 0;
+  let nodes=""; for(let i=1;i<=target;i++){
+    const isSr = i===srSlot;
+    const filled = isSr ? srDoneToday() : i<=Math.min(goalOtherCount(), goalOtherCap());
+    nodes+=`<span class="gf-node ${isSr?"sr ":""}${filled?(i===now?"just":"done"):""}">${filled?"✓":(isSr?"🔁":i)}</span>`;
+  }
   wrap.innerHTML=`<div class="gf-card"><div class="gf-title">${now>=target?"🙏 Well done":"Daily goal"}</div><div class="gf-nodes">${nodes}</div><div class="gf-sub">${now}/${target} today</div></div>`;
   host.appendChild(wrap); requestAnimationFrame(()=>wrap.classList.add("show"));
   if(now>=target) Sfx.goalDone(); else Sfx.goalStep(now);
@@ -8626,9 +8736,12 @@ function goalFlash(now, target){
 // what's still standing between today and a streak day
 function streakNeedLine(){
   if(Prog.lastReviewDay===dayKey(new Date())) return "";
-  const need=[], g=goalToday()-goalCount(), d=reviewDueCount();
-  if(g>0) need.push(`${g} more toward today's goal`);
-  if(d>0) need.push(`${d} review${d>1?"s":""} still due`);
+  const need=[];
+  const shortOther=Math.max(0, goalOtherCap()-Math.min(goalOtherCount(), goalOtherCap()));
+  if(shortOther>0) need.push(`${shortOther} more toward today's goal`);
+  // Named separately, because "1 more" when the one thing missing is the review sends people to
+  // do another verse and wonder why the marker did not fill.
+  if(srInPlay() && !srDoneToday()) need.push(`<b style="color:var(--blue)">🔁 spaced repetition</b>`);
   return need.length ? `<div class="hint" style="margin-top:3px">🔥 Streak needs: ${need.join(" · ")}</div>` : "";
 }
 /* One banner for the whole day: the goal, what is still due, the streak, and the tick that only
@@ -8912,7 +9025,7 @@ function streakDayRows(){
       : `<span style="color:var(--miss)">${Math.max(0,need-got)} short</span>`;
     return `<div style="display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px${isToday?";font-weight:800":""}">
       <span style="flex:0 0 84px">${k}${isToday?" · today":""}</span>
-      <span style="flex:0 0 84px;text-align:center">goal ${need} · did ${got}</span>
+      <span style="flex:0 0 84px;text-align:center;line-height:1.25">goal ${need}<br><span class="muted">did ${got}</span></span>
       <span style="flex:1;text-align:right">${why}</span></div>`;
   }).join("");
 }
@@ -9210,6 +9323,9 @@ const PACE_VERSES=[
  [[27,6,10],"Three times a day, as he did aforetime. The habit was older than the danger."],
  [[19,119,164],"Seven times a day. Little and often, all day long."]
 ];
+/* The count here is the RAW number of things done, not goalCount(): the markers are capped at the
+   day's goal, and this nudge exists precisely because somebody has gone far past it. "That's 1 today
+   · a full day's work and more" would be a strange thing to say to somebody who has done fifteen. */
 function openPaceNudge(){
   const m=el("paceModal")||(()=>{ const d=document.createElement("div"); d.id="paceModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   const i=(Prog.paceIdx||0)%PACE_VERSES.length;
@@ -9218,7 +9334,7 @@ function openPaceNudge(){
   const txt=kjvText(ref[0],ref[1],ref[2])||"";
   m.innerHTML=`<div class="modal-card center"><div style="font-size:40px">🌱</div>
     <h2 style="margin:6px 0 2px;font-size:20px">A little, and often</h2>
- <p class="lead" style="margin:6px 0 10px">That's <b class="gold">${goalCount()}</b> today · a full day's work and more. But Scripture settles by <b>returning</b>, not by rushing. Ten minutes tomorrow will hold more than an hour tonight.</p>
+ <p class="lead" style="margin:6px 0 10px">That's <b class="gold">${goalState().count}</b> today · a full day's work and more. But Scripture settles by <b>returning</b>, not by rushing. Ten minutes tomorrow will hold more than an hour tonight.</p>
     <div class="teachbox" style="text-align:left;font-style:italic">“${txt}”
       <div class="gold" style="font-style:normal;font-weight:800;font-size:12px;margin-top:6px">${bookName(ref[0])} ${ref[1]}:${ref[2]}</div></div>
     <p class="hint" style="margin-top:10px">${why}</p>
