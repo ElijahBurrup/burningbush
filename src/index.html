@@ -2171,8 +2171,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.2.3";
+const APP_VERSION="2.3.0";
 const CHANGELOG=[
+ {v:"2.3.0", d:"September 5, 2026", t:"Turning the microphone on, and the small print", items:[
+   ["fix","<b>The instructions for turning the microphone on were wrong for the commonest case</b> \u2014 the app added to an Android home screen \u2014 and wrong in the way that wastes an evening: they sent you to Settings \u2192 Apps \u2192 Burning Bush \u2192 Permissions, where there is no Microphone switch at all. There is none because an app added to a home screen is not really an app holding a permission: the microphone belongs to the <i>address</i>, and the browser is what keeps that decision. It now sends you to Chrome \u2192 Site settings, which is where the switch is. Same address, so granting it there fixes the copy on your home screen too."],
+   ["chg","<b>On iPhone it now points at your keyboard's own microphone</b> rather than claiming speaking is impossible. That key beside the space bar types into any box, including this one, and it always works."],
+   ["new","<b>A privacy policy, terms, and a page to delete everything.</b> All three are on the web where anyone can read them without signing in, and the deletion page really deletes \u2014 it is not a form that emails somebody. It also cancels a subscription before it deletes, so nobody is charged for an account that no longer exists."],
+   ["chg","<b>A comp code now lasts 90 days instead of for ever.</b> A code travels by being said out loud, and a permanent one is a permanent hole. Yours still works, it just has an end date now, and the Account screen shows it."]
+ ]},
  {v:"2.2.3", d:"September 5, 2026", t:"Straight in", items:[
    ["chg","<b>Going to the website now opens the app, once you have started.</b> The front page is there to explain Burning Bush to somebody who has never heard of it — which is not you, after the first morning. It still opens for anyone new, and you can still reach it on purpose by adding <b>?stay</b> to the address if you want to send it to somebody."]
  ]},
@@ -4615,6 +4621,7 @@ const FREE_SKILLS = new Set([
 ]);
 // What one lesson costs in talents when the user isn't subscribed. Non-Pro users can only
 // buy the lesson that is NEXT in sequence — the path stays in order for them.
+const COMP_DAYS = 90;   // how long a comp code lasts. See Billing.codes.
 const LESSON_UNLOCK_COST=1000;      // one book, for a user who isn't subscribed
 const PALACE_COST=1000;             // a memory palace beyond the free five
 const PALACE_FREE=5;                // how many palaces come without charge
@@ -4654,24 +4661,34 @@ const Billing = {
   //   • a local grant, which now exists ONLY for the admin "simulate Pro" tool
   // What is gone is the fourth: a URL that says so. That used to be enough.
   isPro(){
-    if(Prog && Prog.compPro) return true;
+    // A comp code is a loan, not a gift. It was permanent, which meant one shared code was a
+    // permanent hole in the paid app for anyone who ever heard it said out loud.
+    const comp = (Prog && Prog.compPro) || 0;
+    if(comp && Date.now() - comp < COMP_DAYS*DAY) return true;
     const s=Billing.ent(); if(s && s.pro) return true;
-    const d=Billing.data(); if(!d||!d.active) return false; if(d.until && Date.now()>d.until) return false; return true;
+    const d=Billing.data(); if(!d||!d.active) return false;
+    // The comp grant is recorded in TWO places: on the account, which syncs, and in this browser,
+    // which does not. Only the account one is the authority — otherwise the browser copy outlives
+    // the grant it is a copy of, and an expired code goes on working on the device that typed it,
+    // which is the one device where it matters that it stopped.
+    if(d.plan==="code" && comp) return false;
+    if(d.until && Date.now()>d.until) return false; return true;
   },
   // Local only, and deliberately so: the admin tool that shows what a Pro account sees. A purchase
   // never comes through here — it comes from the server, through refresh().
   grant(months=12){ Store.setJSON("vv_pro",{active:true, plan:"local", since:Date.now(), until:Date.now()+Math.round(months*30.44*DAY)}); },
   revoke(){ Store.remove("vv_pro"); Store.remove("vv_ent"); if(Prog){ Prog.compPro=0; saveProg(); } },
-  // Comp / promo codes that unlock the full app permanently (no expiry).
-  // A shared code unlocks the paid app for anyone who learns it, and this one is in the shipped
-  // HTML where anybody can read it. It is here to test what a Pro account sees, and it must come
-  // out before the app takes its first payment — see A3 in the launch plan.
+  /* Comp codes, which now RUN OUT. A code travels by being said out loud, and this one is in the
+     shipped HTML where anyone can read it, so as a permanent grant it was a permanent hole in
+     the paid app. Ninety days keeps it useful — for testing, and for handing to somebody who
+     needs carrying — while making it something that has to be renewed rather than something
+     that is quietly given away forever. */
   codes: ["elijahsentme"],
   // Redeeming writes to Prog as well as localStorage. localStorage is per browser and is cleared
   // when accounts change, which meant a comp code had to be typed again after every switch and did
   // not follow the reader to another device at all. Prog syncs, so now it does both.
   redeem(code){ const c=(code||"").trim().toLowerCase().replace(/\s+/g,""); if(Billing.codes.includes(c)){
-    Store.setJSON("vv_pro",{active:true, plan:"code", since:Date.now(), until:null});
+    Store.setJSON("vv_pro",{active:true, plan:"code", since:Date.now(), until:Date.now()+COMP_DAYS*DAY});
     Prog.compPro=Date.now(); saveProg(); try{ Auth.push(); }catch(e){}
     return true; } return false; },
   // The server makes the checkout session, so the account is attached to the payment by us. A link
@@ -11212,18 +11229,40 @@ function micSettingsHelp(){
   if(native) return { native:true, title:"Microphone is switched off",
     steps:["Open the app's settings","Turn Microphone on","Come back here"] };
 
-  if(android && installed) return { title:"Microphone is switched off for the app",
-    steps:["Open Android <b>Settings</b>","<b>Apps</b>, then <b>Burning Bush</b>",
-           "<b>Permissions</b> → <b>Microphone</b>","Choose <b>Allow</b>, then come back"] };
+  /* Installed to an Android home screen. This is the case that had the WRONG answer, and it was
+     wrong in a way that wastes somebody's evening: it sent them to Settings → Apps → Burning
+     Bush → Permissions, where there is no Microphone line to turn on.
+
+     There is none because an installed web app is not really an app holding a permission. The
+     microphone belongs to the ADDRESS, and the browser is the one keeping that decision — so it
+     has to be granted in the browser, where the address bar and the site settings live. The
+     installed copy has neither, which is exactly why you cannot fix it from inside it.
+
+     Same address means the same permission, so granting it in the browser fixes the installed
+     copy too. */
+  if(android && installed) return { site:true, title:"This has to be turned on in Chrome",
+    /* Chrome's site list only ever shows sites that have already ASKED and been answered. There
+       is no way to add one by hand. So if Chrome itself has no microphone, the request never
+       reaches a prompt, no entry is ever created, and the list stays empty — which looks exactly
+       like there is nothing to fix. That gate goes first for that reason, not because it is the
+       likelier one. */
+    steps:["<b>Settings → Apps → Chrome → Permissions → Microphone → Allow.</b> Do this one first: while Chrome has no microphone, no site can be given one, and none will appear in any list",
+           "Open <b>Chrome</b> — the browser, not this icon — and go to <b>" + (location.host || "this site") + "</b>",
+           "Tap <b>🎤 Speak it instead</b> there. Chrome should ask; say <b>Allow</b>",
+           "If it does not ask, tap the icon just left of the web address → <b>Permissions</b> → <b>Microphone</b> → <b>Allow</b>",
+           "Come back here. It is the same address, so it now has permission"],
+    also:"The address matters: a copy added to your home screen keeps the address it was added from, and a permission given to a different address does nothing for it.",
+    app:true };
 
   if(android) return { title:"Microphone is switched off for this site",
     steps:["Tap the icon just left of the web address","<b>Permissions</b>, or <b>Site settings</b>",
-           "Turn <b>Microphone</b> on","Reload the page"] };
+           "Turn <b>Microphone</b> on","Reload the page"],
+    also:"Still nothing? The browser itself may not have it: <b>Settings → Apps → Chrome → Permissions → Microphone</b>." };
 
-  if(ios) return { title:"Speaking is not available on iPhone browsers",
-    steps:["Safari on iPhone cannot do dictation inside a web page",
-           "Use the microphone on your own keyboard instead — it is the key beside the space bar",
-           "It types into any box, including this one"] };
+  if(ios) return { title:"Use the microphone on your keyboard",
+    steps:["Speaking inside a web page is unreliable on iPhone, and worst of all in a copy added to the home screen",
+           "Your keyboard's own microphone always works — the key beside the space bar",
+           "Tap into the box, tap that key, and talk. It types into any box, including this one"] };
 
   return { title:"Microphone is switched off for this site",
     steps:["Click the padlock beside the web address","Turn <b>Microphone</b> on","Reload the page"] };
@@ -11237,7 +11276,9 @@ function openMicHelp(){
       <ol style="margin:0 0 4px;padding-left:20px;font-size:14px;line-height:1.6">
         ${h.steps.map(s=>`<li style="margin:6px 0">${s}</li>`).join("")}
       </ol>
+      ${h.also?`<p class="hint" style="margin:10px 0 0;font-size:12px">${h.also}</p>`:""}
       ${h.native?`<button class="btn" id="mhOpen" style="width:100%;margin-top:12px">Open settings for me</button>`:""}
+      ${h.app?`<p class="hint" style="margin:12px 0 0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);font-size:12.5px"><b>Or stop fighting it.</b> The Android app asks for the microphone the ordinary way, with a button that says Allow \u2014 none of the above applies to it.</p>`:""}
       <button class="btn ghost" id="mhNo" style="width:100%;margin-top:8px">Close</button>
       <p class="hint" style="margin:10px 0 0;font-size:11.5px">Nothing you have written is lost — it is still in the box behind this.</p>
     </div>`;
@@ -11465,10 +11506,12 @@ function renderAcctBox(){
   const until=(pro&&untilMs)?new Date(untilMs).toLocaleDateString():null;
   // A cancelled subscription is still a paid one until the period ends. Say which it is.
   const ending=!!(s&&s.cancelAtPeriodEnd);
-  const how = (Prog&&Prog.compPro) ? "Comp code"
+  const compEnds = (Prog&&Prog.compPro) ? Prog.compPro + COMP_DAYS*DAY : 0;
+  const how = compEnds ? "Comp code"
             : (s&&s.pro) ? (s.plan==="monthly"?"Monthly":"Yearly")
             : "Pro";
-  const line = ending ? (until?"Ends "+until:"Ends when this period does")
+  const line = compEnds ? "Ends " + new Date(compEnds).toLocaleDateString()
+             : ending ? (until?"Ends "+until:"Ends when this period does")
              : until ? "Renews "+until : "Active";
   const proRow = pro
     ? `<div class="acct-row" style="margin-top:10px"><div class="acct-av" style="background:var(--gold);color:#241a02">★</div>
@@ -11489,7 +11532,8 @@ function renderAcctBox(){
         <div class="muted" style="font-size:11px">via ${prov}${unverified?" · unverified":""} · ☁ synced</div></div>
         <button class="btn sm ghost" id="signOut">Sign out</button></div>
        <button class="btn ghost" id="resetAcct" style="width:100%;margin-top:8px;font-size:13px">♻️ Reset this account's progress</button>
-       <button class="btn ghost" id="delAcct" style="width:100%;margin-top:8px;font-size:13px;color:var(--miss)">🗑️ Delete my account</button>`
+       <button class="btn ghost" id="delAcct" style="width:100%;margin-top:8px;font-size:13px;color:var(--miss)">🗑️ Delete my account</button>
+       <p class="hint" style="margin:10px 0 0;font-size:11.5px;text-align:center"><a href="https://burningbush.app/privacy" target="_blank" rel="noopener">Privacy</a> &middot; <a href="https://burningbush.app/terms" target="_blank" rel="noopener">Terms</a></p>`
     : `<button class="btn" id="signInBtn">Sign in / Create account</button>`) + verifyRow + proRow;
   if(el("signInBtn")) el("signInBtn").onclick=()=>{ closeProfile(); setLoginModal(true); };
   if(el("resendVerify")) el("resendVerify").onclick=()=>{ Auth.resendVerification().then(()=>toast("Verification email sent.")).catch(()=>toast("Couldn't send right now.")); };

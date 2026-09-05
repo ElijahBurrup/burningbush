@@ -40,7 +40,12 @@ async function serveBuilt() {
     '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2', '.webmanifest': 'application/manifest+json', '.json': 'application/json' };
   const srv = http.createServer((req, res) => {
     let p = decodeURIComponent(req.url.split('?')[0]);
-    if (p === '/app') p = '/app/index.html';                          // exactly how production resolves
+    // A static host resolves an extensionless path to that folder's index. It was special-cased
+    // for /app alone, which meant /privacy, /terms and /delete 404d here and nowhere else.
+    if (!path.extname(p) && p !== '/') {
+      const asDir = path.join(ROOT, 'burningbush', p, 'index.html');
+      if (fsExists(asDir)) p = (p.endsWith('/') ? p.slice(0, -1) : p) + '/index.html';
+    }
     if (p.endsWith('/')) p += 'index.html';
     const f = path.join(ROOT, 'burningbush', p);   // the published folder is the site root
     if (!f.startsWith(ROOT) || !fsExists(f)) { res.writeHead(404); return res.end('not found'); }

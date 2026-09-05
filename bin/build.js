@@ -70,6 +70,12 @@ const COPY_FILES = ['sw.js', 'manifest.webmanifest', 'kjv.js', 'strongs.js', 'kj
 const COPY_DIRS = (NATIVE || process.argv.includes('--no-films'))
   ? ['images', 'fonts', 'bibles']
   : ['images', 'fonts', 'videos', 'bibles'];
+// Pages that both stores require to be reachable on the open web, without an account and without
+// installing anything. Each is written to its own folder so the address has no .html on the end:
+// /privacy rather than /privacy.html, because that is what gets typed into a store listing and
+// pasted into an email, and it should not look like a file.
+const LEGAL_PAGES = ['privacy', 'terms', 'delete'];
+
 // dev-only helpers that live beside the art but must never ship
 const SKIP = new Set(['preview.html', 'books-preview.html', 'manifest.json']);
 
@@ -133,7 +139,16 @@ for (const f of COPY_FILES) fs.copyFileSync(path.join(SRC, f), path.join(OUT, f)
 // the root, and there is nobody to land.
 if (!NATIVE) fs.copyFileSync(path.join(SRC,'landing.html'), path.join(OUT,'index.html'));
 for (const d of COPY_DIRS) copyDir(path.join(SRC, d), path.join(OUT, d));
+// The store builds have no web server of their own to serve these from, and both stores want a
+// URL rather than a screen — so they are published to the site in every build, and the app links
+// out to them wherever it is running.
+for (const p of LEGAL_PAGES) {
+  const from = path.join(SRC, p + '.html');
+  if (!fs.existsSync(from)) fail(`missing ${p}.html — both stores refuse a listing without it`);
+  fs.mkdirSync(path.join(OUT, p), { recursive: true });
+  fs.copyFileSync(from, path.join(OUT, p, 'index.html'));
+}
 
 console.log(`built v${ver} → ${path.relative(ROOT, OUT).split(path.sep).join("/")}/` + (NATIVE ? `  films from ${FILM_HOST_URL}` : ""));
 console.log('  rewrites: ' + Object.entries(counts).map(([k, v]) => `${v}×${k.slice(0, 22)}`).join(', '));
-console.log(`  index.html ${(Buffer.byteLength(html) / 1024).toFixed(0)}KB, ${COPY_FILES.length} data files, ${COPY_DIRS.join(' + ')}`);
+console.log(`  index.html ${(Buffer.byteLength(html) / 1024).toFixed(0)}KB, ${COPY_FILES.length} data files, ${COPY_DIRS.join(' + ')}, ${LEGAL_PAGES.length} legal pages`);

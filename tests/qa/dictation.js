@@ -199,10 +199,19 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
   say(/Nothing was heard/i.test(r.messages.silence), 'silence is its own message, not an error');
   say(/connection/i.test(r.messages.offline), 'being offline is its own message');
   say(/No microphone/i.test(r.messages.noMic), 'a missing microphone is its own message');
-  say(/Apps/.test(r.paths.androidInstalled) && /Permissions/.test(r.paths.androidInstalled),
-      'installed on Android, the path is Settings → Apps → Permissions');
+  // This assertion used to pin the WRONG answer, which is worse than having no assertion: it made
+  // a real complaint look like correct behaviour. An installed web app has no Microphone line
+  // under Settings → Apps at all — the permission belongs to the address, and the browser is what
+  // holds that decision. So the help has to send people to Chrome, and must NOT send them hunting
+  // through an app's permission list for a switch that is not there.
+  say(/Apps → Chrome → Permissions/.test(r.paths.androidInstalled),
+      'installed on Android, it names the gate that hides all the others first');
+  say(/Open <b>Chrome<\/b>/.test(r.paths.androidInstalled),
+      '...then sends you to Chrome, where the site permission actually lives');
+  say(!/Apps<\/b>, then/.test(r.paths.androidInstalled),
+      '...and never to Settings → Apps → Burning Bush, where there is no such switch');
   say(/address/.test(r.paths.androidTab), '...in a browser tab it is the icon by the address instead');
-  say(/keyboard/i.test(r.paths.iphone), '...and on iPhone it points at the keyboard microphone, which does work');
+  say(/keyboard/i.test(r.paths.iphone), '...and on iPhone it points at the keyboard microphone, which always works');
 
   const n = r.nat;
   say(n.offeredWithNoWebEngine, 'in the phone app the microphone is offered though the WebView has no speech engine');

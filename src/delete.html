@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delete your data · Burning Bush</title>
+<meta name="description" content="Delete your Burning Bush account and everything in it, without installing anything.">
+<link rel="icon" href="/images/icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+  :root{
+    --bg:#f7f4ec; --surface:#fffdf7; --surface-2:#eeeade; --line:#ddd7c7;
+    --ink:#17211c; --ink-2:#4a564e; --ink-3:#7f8a82;
+    --accent:#14503c; --gold:#b07d1a; --field:#0b2b22;
+    --bad:#7c2b23; --bad-bg:#f6e2df;
+    --good:#245c42; --good-bg:#e3efe7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0a1310; --surface:#0f1c17; --surface-2:#15271f; --line:#22372c;
+      --ink:#e9ece6; --ink-2:#a7b3ab; --ink-3:#78847c;
+      --accent:#7fd0a5; --gold:#e9a93a;
+      --bad:#e6a49c; --bad-bg:#2c1c19;
+      --good:#8ed0aa; --good-bg:#12271d;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0a1310; --surface:#0f1c17; --surface-2:#15271f; --line:#22372c;
+    --ink:#e9ece6; --ink-2:#a7b3ab; --ink-3:#78847c;
+    --accent:#7fd0a5; --gold:#e9a93a;
+    --bad:#e6a49c; --bad-bg:#2c1c19;
+    --good:#8ed0aa; --good-bg:#12271d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font:17px/1.68 "Source Sans 3",ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:600px; margin:0 auto; padding:44px 22px 100px;}
+  .mast{display:flex; align-items:center; gap:12px; margin-bottom:26px;}
+  .mark{width:42px; height:42px; border-radius:11px; background:var(--field); display:grid;
+    place-items:center; font-size:21px; flex:0 0 auto;}
+  .mast b{font-family:"Cinzel",Georgia,serif; font-size:18px; letter-spacing:.02em;}
+  h1{font-family:"Cinzel",Georgia,serif; font-weight:600; font-size:clamp(27px,5vw,36px);
+    line-height:1.1; margin:0 0 8px; letter-spacing:.01em;}
+  .sub{color:var(--ink-3); font-size:14px; margin:0 0 6px;}
+  .lede{font-size:18px; color:var(--ink-2); margin:16px 0 0;}
+  h2{font-size:19px; margin:34px 0 6px; font-weight:700;}
+  p{margin:12px 0;} ul{margin:10px 0; padding-left:20px;} li{margin:7px 0;}
+  label{display:block; font-weight:600; font-size:14px; margin:16px 0 5px;}
+  input[type=email],input[type=password],input[type=text]{
+    width:100%; padding:11px 13px; font:inherit; font-size:16px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); border-radius:9px;}
+  .opt{display:block; border:1px solid var(--line); background:var(--surface); border-radius:10px;
+    padding:12px 14px; margin:9px 0; cursor:pointer; font-weight:400;}
+  .opt input{margin-right:9px;}
+  .opt b{display:inline;}
+  .opt small{display:block; color:var(--ink-2); font-size:13.5px; margin:4px 0 0 24px;}
+  .opt:has(input:checked){border-color:var(--accent); background:var(--good-bg);}
+  button{width:100%; padding:13px; font:inherit; font-weight:700; font-size:16px;
+    border-radius:10px; border:1px solid var(--bad); background:var(--bad); color:#fff;
+    cursor:pointer; margin-top:18px;}
+  button[disabled]{opacity:.45; cursor:not-allowed;}
+  button.ghost{background:transparent; color:var(--accent); border-color:var(--line); font-weight:600;}
+  .note{border-left:3px solid var(--accent); background:var(--surface); border-radius:0 9px 9px 0;
+    padding:13px 16px; margin:18px 0; font-size:15.5px;}
+  .note.bad{border-left-color:var(--bad); background:var(--bad-bg);}
+  .note.good{border-left-color:var(--good); background:var(--good-bg);}
+  .note p:first-child{margin-top:0} .note p:last-child{margin-bottom:0}
+  #msg{min-height:22px; margin:12px 0 0; font-size:15px;}
+  #msg.err{color:var(--bad); font-weight:600;}
+  #msg.ok{color:var(--good); font-weight:600;}
+  a{color:var(--accent); text-underline-offset:2px;}
+  footer{margin-top:44px; padding-top:18px; border-top:1px solid var(--line); color:var(--ink-3);
+    font-size:14px;}
+  footer a{margin-right:16px;}
+  :focus-visible{outline:2px solid var(--gold); outline-offset:2px; border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="mast"><div class="mark">&#128293;</div><b>Burning Bush</b></div>
+
+<h1>Delete your data</h1>
+<p class="sub"><a href="/privacy">Privacy Policy</a> &middot; <a href="/terms">Terms</a></p>
+
+<p class="lede">You can do this here, now, without installing anything and without asking anybody's
+permission. It happens immediately and it cannot be undone.</p>
+
+<div class="note">
+  <p><b>If you have the app,</b> the same thing is under <b>Profile &rarr; Account &rarr; Delete my
+  account</b>. This page exists for people who no longer have it installed, or never did.</p>
+</div>
+
+<h2>What goes</h2>
+<p>Everything you have done: the verses you have memorised, the scenes you wrote, your memory
+palaces, your talents, streaks and review schedule, and any messages you have sent us. If you have a
+subscription, <b>we cancel it before deleting</b> so you are not charged again.</p>
+
+<form id="f" autocomplete="off">
+  <label for="em">The email address on the account</label>
+  <input id="em" type="email" autocomplete="username" placeholder="you@example.com" required>
+
+  <label for="pw">Your password</label>
+  <input id="pw" type="password" autocomplete="current-password" placeholder="So we know it is you" required>
+
+  <h2>How much should go?</h2>
+  <label class="opt"><input type="radio" name="scope" value="product" checked>
+    <b>Only my Burning Bush data</b>
+    <small>Your verses, scenes and progress are deleted. Your sign-in stays, so other Kingdom
+    Builders apps still work. Choose this if you use any of them.</small></label>
+  <label class="opt"><input type="radio" name="scope" value="identity">
+    <b>My whole account</b>
+    <small>Everything above, and the account itself. You will not be able to sign in to any Kingdom
+    Builders app afterwards.</small></label>
+
+  <label for="cf">Type your email address again to confirm</label>
+  <input id="cf" type="text" autocomplete="off" spellcheck="false" placeholder="The same address">
+
+  <button id="go" type="submit" disabled>Delete for ever</button>
+  <p id="msg"></p>
+</form>
+
+<div id="done" style="display:none">
+  <div class="note good">
+    <p><b>It is done.</b> <span id="what"></span> Nothing is kept, and there is nothing to undo.</p>
+  </div>
+  <p>If you had a subscription, it has been cancelled and you will not be charged again. Thank you
+  for the time you spent here.</p>
+  <p><a href="/">Back to burningbush.app</a></p>
+</div>
+
+<h2>If you cannot sign in</h2>
+<p>If you have forgotten your password, reset it in the app first. If you cannot get in at all,
+write to <a href="mailto:support@burningbush.app">support@burningbush.app</a> from the address on the
+account and we will delete it for you. A person will answer.</p>
+
+<footer>
+  <a href="/">Burning Bush</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a>
+</footer>
+
+<script>
+/* The same two calls the app makes: sign in to prove who you are, then delete. Nothing is stored
+   here — the token lives in a variable for the length of one form submission and is never written
+   anywhere. The server asks for the password again on the delete itself, which is why it is sent
+   twice: signing in is not, on its own, permission to destroy an account. */
+(function(){
+  var API = "https://burningbush-api.onrender.com/api";
+  var f = document.getElementById("f"), em = document.getElementById("em"),
+      pw = document.getElementById("pw"), cf = document.getElementById("cf"),
+      go = document.getElementById("go"), msg = document.getElementById("msg");
+
+  function norm(v){ return (v||"").trim().toLowerCase(); }
+  function check(){
+    var ready = norm(em.value).length > 3 && pw.value.length > 0 && norm(cf.value) === norm(em.value);
+    go.disabled = !ready;
+    if (cf.value && norm(cf.value) !== norm(em.value)) { msg.className = ""; msg.textContent = "The two addresses do not match yet."; }
+    else if (!go.disabled) { msg.className = ""; msg.textContent = ""; }
+  }
+  [em, pw, cf].forEach(function(x){ x.addEventListener("input", check); });
+
+  f.addEventListener("submit", function(e){
+    e.preventDefault();
+    var scope = (document.querySelector('input[name=scope]:checked') || {}).value || "product";
+    var wide = scope === "identity";
+    if (!confirm(wide
+      ? "Delete your whole Kingdom Builders account? This cannot be undone."
+      : "Delete all your Burning Bush data? This cannot be undone.")) return;
+
+    go.disabled = true; go.textContent = "Deleting…";
+    msg.className = ""; msg.textContent = "";
+
+    var body = { email: norm(em.value), password: pw.value };
+    fetch(API + "/login", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body) })
+      .then(function(r){ return r.json().then(function(d){ if(!r.ok) throw new Error(d.error || "Could not sign in."); return d; }); })
+      .then(function(d){
+        return fetch(API + "/account/delete", {
+          method:"POST",
+          headers:{ "Content-Type":"application/json", "Authorization":"Bearer " + d.token },
+          body: JSON.stringify({ email: norm(em.value), password: pw.value, scope: scope })
+        }).then(function(r){ return r.json().then(function(x){ if(!r.ok) throw new Error(x.error || "Could not delete."); return x; }); });
+      })
+      .then(function(){
+        document.getElementById("what").textContent = wide
+          ? "Your account and everything in it has been deleted."
+          : "All of your Burning Bush data has been deleted. Your sign-in still works for other Kingdom Builders apps.";
+        f.style.display = "none";
+        document.getElementById("done").style.display = "";
+        window.scrollTo(0, 0);
+      })
+      .catch(function(err){
+        msg.className = "err";
+        msg.textContent = err.message || "Something went wrong. Please try again, or write to support@burningbush.app.";
+        go.disabled = false; go.textContent = "Delete for ever";
+      });
+  });
+})();
+</script>
+
+</div>
+</body>
+</html>
