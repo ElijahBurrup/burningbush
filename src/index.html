@@ -2171,8 +2171,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.3.0";
+const APP_VERSION="2.3.1";
 const CHANGELOG=[
+ {v:"2.3.1", d:"September 5, 2026", t:"Turn the page with your thumb", items:[
+   ["new","<b>Swipe through the Bible.</b> On a book's chapter list, swipe left for the next book and right for the one before. Inside a chapter, the same swipes move you a chapter at a time."],
+   ["chg","<b>A swipe will not carry you out of the book you are reading.</b> At the first or last chapter it stops, nudges, and tells you where you are \u2014 leaving a book should take the same deliberate step going out as it did coming in."],
+   ["chg","<b>It stays out of the way of scrolling.</b> A drag that is more up than across, or too short, or slow enough to be somebody thinking, is left alone as the scroll it is."]
+ ]},
  {v:"2.3.0", d:"September 5, 2026", t:"Turning the microphone on, and the small print", items:[
    ["fix","<b>The instructions for turning the microphone on were wrong for the commonest case</b> \u2014 the app added to an Android home screen \u2014 and wrong in the way that wastes an evening: they sent you to Settings \u2192 Apps \u2192 Burning Bush \u2192 Permissions, where there is no Microphone switch at all. There is none because an app added to a home screen is not really an app holding a permission: the microphone belongs to the <i>address</i>, and the browser is what keeps that decision. It now sends you to Chrome \u2192 Site settings, which is where the switch is. Same address, so granting it there fixes the copy on your home screen too."],
    ["chg","<b>On iPhone it now points at your keyboard's own microphone</b> rather than claiming speaking is impossible. That key beside the space bar types into any box, including this one, and it always works."],
@@ -5220,6 +5225,7 @@ document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
 let bibleView="num";   // whole-Bible tile display: num | numimg | bookimg | name
 function renderJourney(){
   updateMetrics();
+  swipeTarget = null;   // the whole Bible is already on this screen; there is no next one
   if(!Prog.onboarded){ renderOnboard(); return; }
   const J=el("journey");
   try{ bibleView = Store.get("vv_bibleview","num")||"num"; }catch(e){}
@@ -5321,6 +5327,53 @@ function wireLegend(rerender){
   const b=el("legToggle"); if(!b) return;
   b.onclick=()=>{ Store.set("vv_legend", Store.get("vv_legend","0")==="1"?"0":"1"); rerender(); };
 }
+/* ---- turning the page with a thumb ----------------------------------------------------------
+   The Bible screens are a stack of pages and reading them one-handed should feel like one. Swipe
+   left for the next, right for the one before, the same direction the arrows point.
+
+   Two things this had to get right or it would be worse than not having it:
+
+   ONE LISTENER, NOT ONE PER RENDER. #journey survives every render — only its innerHTML is
+   replaced — so attaching handlers inside a render function would stack a new pair on every
+   navigation, and by the fourth chapter a single swipe would jump four. The listeners go on once
+   and read a target that each screen sets.
+
+   IT MUST LOSE TIES WITH THE SCROLL. These are long scrolling lists, and a gesture that steals
+   an intended scroll is infuriating in a way that a gesture which occasionally misses is not. So
+   it is deliberately hard to trigger: one finger, far enough to be meant, decisively more
+   sideways than up, and quick — a slow drag is somebody scrolling and thinking. */
+let swipeTarget = null;   // {left, right} for whichever Bible screen is showing, or null for none
+let _swipeWired = false;
+function wireSwipe(){
+  if(_swipeWired) return; _swipeWired = true;
+  const host = el("journey"); if(!host) return;
+  let x0=0, y0=0, t0=0, live=false;
+  host.addEventListener("touchstart", e=>{
+    live = e.touches.length === 1 && !!swipeTarget;
+    if(!live) return;
+    const p = e.touches[0]; x0=p.clientX; y0=p.clientY; t0=performance.now();
+  }, {passive:true});
+  host.addEventListener("touchend", e=>{
+    if(!live) return; live=false;
+    const p = e.changedTouches && e.changedTouches[0]; if(!p || !swipeTarget) return;
+    const dx = p.clientX-x0, dy = p.clientY-y0;
+    if(performance.now()-t0 > 700) return;                 // a slow drag is a scroll
+    if(Math.abs(dx) < 60) return;                          // too small to have been meant
+    if(Math.abs(dx) < Math.abs(dy)*1.5) return;            // more up than across: a scroll
+    (dx < 0 ? swipeTarget.left : swipeTarget.right)();
+  }, {passive:true});
+}
+/* The end of a book is a real edge and should feel like one: a nudge, and a word about where you
+   are. Silence would read as a broken gesture rather than as a boundary. */
+function swipeEdge(msg){
+  toast(msg);
+  const card = el("journey") && el("journey").querySelector(".card");
+  if(!card) return;
+  try{
+    card.animate([{transform:"translateX(0)"},{transform:"translateX(-9px)"},{transform:"translateX(0)"}],
+                 {duration:190, easing:"ease-out"});
+  }catch(e){}   // no Web Animations: the toast has already said it
+}
 function renderBookScreen(bn){
   const J=el("journey"), w=pegFor(bn).word, SS=storyStarts();
   let chips="";
@@ -5363,6 +5416,11 @@ function renderBookScreen(bn){
   wireLegend(()=>renderBookScreen(bn));
   J.querySelectorAll("[data-gob]").forEach(b=>b.onclick=()=>renderBookScreen(+b.dataset.gob));
   J.querySelectorAll("[data-chap]").forEach(h=>h.onclick=()=>renderChapterScreen(bn,+h.dataset.chap));
+  wireSwipe();
+  swipeTarget = {
+    left:  ()=> nextB ? renderBookScreen(nextB) : swipeEdge("Revelation is the last book."),
+    right: ()=> prevB ? renderBookScreen(prevB) : swipeEdge("Genesis is the first book.")
+  };
 }
 function renderChapterScreen(bn,c){
   const J=el("journey"), SS=storyStarts();
@@ -5399,6 +5457,16 @@ function renderChapterScreen(bn,c){
   wireLegend(()=>renderChapterScreen(bn,c));
   J.querySelectorAll("[data-goc]").forEach(b=>b.onclick=()=>renderChapterScreen(bn,+b.dataset.goc));
   J.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{ const v=+b.dataset.v; openVerseWizard(bn,c,v,()=>{show("journey");renderChapterScreen(bn,c);}); });
+  wireSwipe();
+  /* Chapters only. A swipe that carried you out of Malachi and into Matthew would move you 400
+     years and two testaments without your having chosen to — the book is the thing you picked,
+     and leaving it should take the same deliberate step going out as it did coming in. */
+  swipeTarget = {
+    left:  ()=> nextC ? renderChapterScreen(bn,nextC)
+                      : swipeEdge("End of " + bookName(bn) + " — go back to choose another book."),
+    right: ()=> prevC ? renderChapterScreen(bn,prevC)
+                      : swipeEdge("Start of " + bookName(bn) + " — go back to choose another book.")
+  };
 }
 
 let obIdx=0;
