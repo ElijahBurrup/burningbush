@@ -89,6 +89,10 @@ if (!fs.existsSync(path.join(WWW, 'index.html'))) {
     // the microphone must be live rather than the dead button it is in a plain WebView
     out.micLives  = typeof Dictation !== 'undefined' && Dictation.supported();
     out.micHelp   = typeof micSettingsHelp === 'function' ? !!micSettingsHelp().native : null;
+    // WHICH SERVER. The shell's own origin is called localhost, which for a long time also meant
+    // "use the sandbox" — so the phone app signed in successfully, to the wrong database. There is
+    // no visible symptom for that, which is exactly why it needs a test rather than an eye.
+    out.api       = typeof API_BASE === 'string' ? API_BASE : null;
     return out;
   });
 
@@ -120,6 +124,8 @@ if (!fs.existsSync(path.join(WWW, 'index.html'))) {
   t(r.platform === 'android' && r.store === true, 'it knows it is inside the shell');
   t(/^https:\/\//.test(r.filmHost || ''), 'the films point at a host on the internet: ' + r.filmHost);
   t(/^https:\/\/.+intro\.mp4$/.test(r.aFilm || ''), '...and a film resolves to a real URL: ' + r.aFilm);
+  t(/burningbush-api\.onrender\.com/.test(r.api || '') && !/-qa\./.test(r.api || ''),
+      'it talks to the PRODUCTION server, not the sandbox: ' + r.api);
   t(r.micLives === true,          'the microphone is live through the native recogniser');
   t(r.micHelp === true,           '...and its help offers to open the settings screen');
   t(pay.yearly === false && pay.monthly === false, 'the paywall has no price buttons');

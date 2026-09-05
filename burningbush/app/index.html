@@ -2171,8 +2171,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.2.1";
+const APP_VERSION="2.2.2";
 const CHANGELOG=[
+ {v:"2.2.2", d:"September 5, 2026", t:"The phone app was signing in to the wrong place", items:[
+   ["fix","<b>The Android app was talking to the test server instead of the real one.</b> Inside the app the page is served from an address called <i>localhost</i>, and that address had long meant \"use the test server\" — which is right on a developer's machine and wrong in somebody's hand. There was no symptom: you signed in, it worked, and your verses went into a database that is not the one your account lives in. The app now always reaches the real server, whatever it is called from the inside."],
+   ["fix","<b>And the app could not reach the server at all.</b> A phone app asks from its own address rather than from the website's, and that address had never been allowed. Sign-in, syncing and Pro all now work from the app."],
+   ["chg","<b>Both are now checked automatically before every release</b>, because neither of them looks like anything is wrong from the outside."]
+ ]},
  {v:"2.2.1", d:"September 4, 2026", t:"Nothing to buy in the phone app", items:[
    ["chg","<b>The phone app carries no way to spend money at all</b> — no prices, no giving, no buying seats, and no asking. Pro is set up on the web and simply arrives when you sign in. This changes nothing here on the web, where all of it stays exactly where it was."],
    ["chg","<b>What is not a purchase is untouched.</b> A group code somebody else bought can still be redeemed, a single lesson can still be opened with talents you earned, and your account — including deleting it — stays where it always was."],
@@ -4719,11 +4724,26 @@ const Billing = {
 /* =================== ACCOUNTS + CLOUD SYNC (Kingdom Builders API) =================== */
 // One shared Kingdom Builders login (kb.users) backs every product; this app syncs its progress to burningbush.progress.
 // Progress travels as JSON blobs; on pull we UNION-MERGE cloud with local (mergeProg) so no device ever loses data.
-// Environment-aware backend: the QA build (served from a burningbush-qa host, or run locally) talks to the QA API +
-// QA data schemas; production (kingdombuilders.ai) talks to the production API. One codebase, two environments.
-const API_BASE = (/burningbush-qa|localhost|127\.0\.0\.1|^$/.test(location.hostname))
-  ? "https://burningbush-api-qa.onrender.com/api"
-  : "https://burningbush-api.onrender.com/api";
+/* Which server this copy of the app talks to.
+
+   The sandbox is for the QA site and for a developer machine. It is NOT for the phone app — and
+   the phone app was getting it anyway, because Capacitor names the WebView's own origin
+   "localhost", which was also the oldest rule for choosing the sandbox. That failure does not
+   look like a failure: the tester signs in, successfully, to a different database, and everything
+   they do there is lost the day they install the real thing.
+
+   So the shell is answered first and always gets production. Written without depending on
+   anything declared further down the file, and without depending on the hostname at all, because
+   the hostname is exactly what was misleading. */
+const API_BASE = (() => {
+  const PROD = "https://burningbush-api.onrender.com/api";
+  const SANDBOX = "https://burningbush-api-qa.onrender.com/api";
+  try{
+    const C = window.Capacitor;
+    if(C && typeof C.getPlatform === "function" && C.getPlatform() !== "web") return PROD;
+  }catch(e){}
+  return /burningbush-qa|localhost|127\.0\.0\.1|^$/.test(location.hostname) ? SANDBOX : PROD;
+})();
 function firebaseReady(){ return true; }   // cloud accounts are live (kept the name so existing call sites just work)
 /* Whose progress is on this device. Empty = nobody has ever signed in here, so what is stored is
    the person's own trial run and travels with them into the account they make. */
