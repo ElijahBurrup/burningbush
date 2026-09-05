@@ -2171,8 +2171,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.2.2";
+const APP_VERSION="2.2.3";
 const CHANGELOG=[
+ {v:"2.2.3", d:"September 5, 2026", t:"Straight in", items:[
+   ["chg","<b>Going to the website now opens the app, once you have started.</b> The front page is there to explain Burning Bush to somebody who has never heard of it — which is not you, after the first morning. It still opens for anyone new, and you can still reach it on purpose by adding <b>?stay</b> to the address if you want to send it to somebody."]
+ ]},
  {v:"2.2.2", d:"September 5, 2026", t:"The phone app was signing in to the wrong place", items:[
    ["fix","<b>The Android app was talking to the test server instead of the real one.</b> Inside the app the page is served from an address called <i>localhost</i>, and that address had long meant \"use the test server\" — which is right on a developer's machine and wrong in somebody's hand. There was no symptom: you signed in, it worked, and your verses went into a database that is not the one your account lives in. The app now always reaches the real server, whatever it is called from the inside."],
    ["fix","<b>And the app could not reach the server at all.</b> A phone app asks from its own address rather than from the website's, and that address had never been allowed. Sign-in, syncing and Pro all now work from the app."],
