@@ -3,31 +3,31 @@
   "films": {
     "intro": {
       "src": "https://films.kingdombuilders.ai/intro.mp4",
-      "rev": "20260831"
+      "rev": "20260904"
     },
     "major": {
       "src": "https://films.kingdombuilders.ai/major1.mp4",
-      "rev": "20260831"
+      "rev": "20260904"
     },
     "major2": {
       "src": "https://films.kingdombuilders.ai/major2.mp4",
-      "rev": "20260831"
+      "rev": "20260904"
     },
     "verse": {
       "src": "https://films.kingdombuilders.ai/scenes.mp4",
-      "rev": "20260828"
+      "rev": "20260904"
     },
     "palace": {
       "src": "https://films.kingdombuilders.ai/palace.mp4",
-      "rev": "20260828"
+      "rev": "20260904"
     },
     "book": {
       "src": "https://films.kingdombuilders.ai/book.mp4",
-      "rev": "20260831"
+      "rev": "20260904"
     },
     "sr": {
       "src": "https://films.kingdombuilders.ai/sr.mp4",
-      "rev": "20260901"
+      "rev": "20260904"
     },
     "recall": {
       "src": "",

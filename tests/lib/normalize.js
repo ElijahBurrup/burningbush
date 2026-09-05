@@ -42,7 +42,9 @@ const CAPTURE = function (sel) {
     // — so folding it to one token keeps a host move from reading as hundreds of broken screens.
     // The FILENAME stays, because which film a screen shows is very much layout.
     // Both attributes: the player carries data-vsrc, and the real src is put on it at play time.
-    .replace(/((?:data-vsrc|src)=")[^"]*?([^/"]+\.mp4)/g, '$1#FILM/$2')
+    // The ?v= cut-date goes with the host, for the same reason: re-exporting a film is not a change
+    // to any screen's layout, and it should not read as ten broken ones.
+    .replace(/((?:data-vsrc|src)=")[^"]*?([^/"]+\.mp4)(\?v=[^"]*)?/g, '$1#FILM/$2')
     .replace(/\b\d{1,2}:\d{2}\s?(AM|PM)\b/gi, '#TIME')          // "today at 5:23 PM"
     .replace(/\b(today|tomorrow) at #TIME/gi, '#WHEN')
     .replace(/\b\d{10,}\b/g, '#TS')                              // epoch millis
