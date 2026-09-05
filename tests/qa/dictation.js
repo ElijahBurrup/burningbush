@@ -108,6 +108,25 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
       iphone: helpFor('Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)', false)
     };
 
+    // 7b. ON A PHONE BROWSER, where the app must NOT use the web engine even though it exists.
+    //     The keyboard's own microphone is better at the job and needs no permission from us,
+    //     which is the entire reason this branch exists — three rounds of permission instructions
+    //     for an engine that was the worse one anyway.
+    const asPhone = (ua) => {
+      Object.defineProperty(navigator, 'userAgent', { value: ua, configurable: true });
+      openEditor('');
+      const b = el('edMic');
+      const r = { route: speechRoute(), label: (b || {}).textContent || '' };
+      if (b) { b.click(); r.note = (el('edMicNote').innerText || '').replace(/\s+/g, ' '); }
+      r.focused = document.activeElement === el('edTa');
+      return r;
+    };
+    res.phone = {
+      android: asPhone('Mozilla/5.0 (Linux; Android 14) Chrome/140'),
+      iphone:  asPhone('Mozilla/5.0 (iPhone; CPU iPhone OS 17_0) Safari/605')
+    };
+    Object.defineProperty(navigator, 'userAgent', { value: 'Mozilla/5.0 (Windows NT 10.0) Chrome/140', configurable: true });
+
     // 8. INSIDE THE PHONE APP, where there is no Web Speech engine at all and Android's own
     //    recogniser does the work through a plugin. Its habits are different in ways that matter:
     //    it reports the whole utterance again on every partial rather than the new words, and it
@@ -212,6 +231,14 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
       '...and never to Settings → Apps → Burning Bush, where there is no such switch');
   say(/address/.test(r.paths.androidTab), '...in a browser tab it is the icon by the address instead');
   say(/keyboard/i.test(r.paths.iphone), '...and on iPhone it points at the keyboard microphone, which always works');
+
+  const ph = r.phone;
+  say(ph.android.route === 'keyboard', 'on an Android browser it chooses the keyboard, not the web engine');
+  say(/keyboard/i.test(ph.android.label), '...and the button says so: "' + ph.android.label.trim() + '"');
+  say(ph.android.focused, '...tapping it puts the cursor in the box, ready for the keyboard');
+  say(/space bar/i.test(ph.android.note || ''), '...and says where the key is');
+  say(!/permission/i.test(ph.android.label), '...and never mentions a permission, because none is needed');
+  say(ph.iphone.route === 'keyboard', 'an iPhone browser gets the same answer');
 
   const n = r.nat;
   say(n.offeredWithNoWebEngine, 'in the phone app the microphone is offered though the WebView has no speech engine');

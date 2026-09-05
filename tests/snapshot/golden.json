@@ -135,13 +135,13 @@
   "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word for word practices on this verse. Next practice "
  },
  "classic/practice/num-setup": {
-  "h": "b4e865595029e58c",
-  "len": 1359,
-  "els": 24,
-  "buttons": 9,
+  "h": "da0029f952757146",
+  "len": 1687,
+  "els": 28,
+  "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
+  "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Chronological All 66 books you know, in Bible order. "
  },
  "classic/practice/number-test": {
   "h": "1092bbfd6f503e3f",
@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "c314bd578acdce1c",
+  "h": "0f7bd9307218f85b",
   "len": 20199,
   "els": 474,
   "buttons": 50,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "b25983fa58a9d060",
-  "len": 160638,
-  "els": 2748,
+  "h": "480691c6473040b0",
+  "len": 162327,
+  "els": 2769,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.3.1 September 5, 2026 Turn the page with your thumb NEW Swipe through the Bible. On a book's chapte"
+  "text": "✕ Version history v2.4.0 September 5, 2026 Walk the books, and a better microphone NEW Chronological. A new option at th"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "c6466b6908778d7f",
+  "h": "a2352baa0984b181",
   "len": 19398,
   "els": 466,
   "buttons": 48,
@@ -657,13 +657,13 @@
   "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word for word practices on this verse. Next practice "
  },
  "illumined/practice/num-setup": {
-  "h": "b4e865595029e58c",
-  "len": 1359,
-  "els": 24,
-  "buttons": 9,
+  "h": "da0029f952757146",
+  "len": 1687,
+  "els": 28,
+  "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
+  "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Chronological All 66 books you know, in Bible order. "
  },
  "illumined/practice/number-test": {
   "h": "1092bbfd6f503e3f",
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "3e53a3429e58ff0e",
+  "h": "d4c6e442c00c83c6",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "b25983fa58a9d060",
-  "len": 160638,
-  "els": 2748,
+  "h": "480691c6473040b0",
+  "len": 162327,
+  "els": 2769,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.3.1 September 5, 2026 Turn the page with your thumb NEW Swipe through the Bible. On a book's chapte"
+  "text": "✕ Version history v2.4.0 September 5, 2026 Walk the books, and a better microphone NEW Chronological. A new option at th"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "3e53a3429e58ff0e",
+  "h": "d4c6e442c00c83c6",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -1179,13 +1179,13 @@
   "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word for word practices on this verse. Next practice "
  },
  "glass/practice/num-setup": {
-  "h": "b4e865595029e58c",
-  "len": 1359,
-  "els": 24,
-  "buttons": 9,
+  "h": "da0029f952757146",
+  "len": 1687,
+  "els": 28,
+  "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
+  "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Chronological All 66 books you know, in Bible order. "
  },
  "glass/practice/number-test": {
   "h": "1092bbfd6f503e3f",
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "6745847eb23aa56b",
+  "h": "94f24117c7541d7b",
   "len": 19404,
   "els": 466,
   "buttons": 48,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "b25983fa58a9d060",
-  "len": 160638,
-  "els": 2748,
+  "h": "480691c6473040b0",
+  "len": 162327,
+  "els": 2769,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.3.1 September 5, 2026 Turn the page with your thumb NEW Swipe through the Bible. On a book's chapte"
+  "text": "✕ Version history v2.4.0 September 5, 2026 Walk the books, and a better microphone NEW Chronological. A new option at th"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "6745847eb23aa56b",
+  "h": "94f24117c7541d7b",
   "len": 19404,
   "els": 466,
   "buttons": 48,
@@ -1701,13 +1701,13 @@
   "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word for word practices on this verse. Next practice "
  },
  "quest/practice/num-setup": {
-  "h": "b4e865595029e58c",
-  "len": 1359,
-  "els": 24,
-  "buttons": 9,
+  "h": "da0029f952757146",
+  "len": 1687,
+  "els": 28,
+  "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
+  "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Chronological All 66 books you know, in Bible order. "
  },
  "quest/practice/number-test": {
   "h": "1092bbfd6f503e3f",
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "29bd031cdc8c23ef",
+  "h": "e1827f50241a06e6",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "b25983fa58a9d060",
-  "len": 160638,
-  "els": 2748,
+  "h": "480691c6473040b0",
+  "len": 162327,
+  "els": 2769,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.3.1 September 5, 2026 Turn the page with your thumb NEW Swipe through the Bible. On a book's chapte"
+  "text": "✕ Version history v2.4.0 September 5, 2026 Walk the books, and a better microphone NEW Chronological. A new option at th"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "29bd031cdc8c23ef",
+  "h": "e1827f50241a06e6",
   "len": 19406,
   "els": 466,
   "buttons": 48,
@@ -2223,13 +2223,13 @@
   "text": "✕ ⏳ Come apart and rest a while John 3:16 You've completed 3 of 10 word for word practices on this verse. Next practice "
  },
  "buddy/practice/num-setup": {
-  "h": "b4e865595029e58c",
-  "len": 1359,
-  "els": 24,
-  "buttons": 9,
+  "h": "da0029f952757146",
+  "len": 1687,
+  "els": 28,
+  "buttons": 10,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Numbers to Books Books to Numbers Numbers to Images I"
+  "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Chronological All 66 books you know, in Bible order. "
  },
  "buddy/practice/number-test": {
   "h": "1092bbfd6f503e3f",
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "4699c7e960cab97c",
+  "h": "f0c1a93b8afc664b",
   "len": 19402,
   "els": 466,
   "buttons": 48,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "b25983fa58a9d060",
-  "len": 160638,
-  "els": 2748,
+  "h": "480691c6473040b0",
+  "len": 162327,
+  "els": 2769,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.3.1 September 5, 2026 Turn the page with your thumb NEW Swipe through the Bible. On a book's chapte"
+  "text": "✕ Version history v2.4.0 September 5, 2026 Walk the books, and a better microphone NEW Chronological. A new option at th"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "4699c7e960cab97c",
+  "h": "f0c1a93b8afc664b",
   "len": 19402,
   "els": 466,
   "buttons": 48,

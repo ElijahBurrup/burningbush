@@ -2171,8 +2171,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.3.1";
+const APP_VERSION="2.4.0";
 const CHANGELOG=[
+ {v:"2.4.0", d:"September 5, 2026", t:"Walk the books, and a better microphone", items:[
+   ["new","<b>Chronological.</b> A new option at the top of Number &amp; Book Practice: every book you know, in Bible order, asked one way only \u2014 here is a number, name the book. It is as long as the number of books you have learned, so there is no length to choose."],
+   ["chg","<b>You type it or you say it. No choices, no hints.</b> Picking the right answer out of four is recognition, and letters turning green as you go is the app telling you the answer while it asks for it. A run whose whole point is proving you have the order does neither. Get one wrong and it simply tells you the book and moves on."],
+   ["chg","<b>It forgives the ways a right answer arrives</b> \u2014 \"first samuel\", \"I Samuel\", \"Psalm\" for Psalms, or a microphone that heard \"revelations\". None of those is somebody who does not know the book."],
+   ["fix","<b>On a phone, the microphone button now points at your keyboard's own microphone</b> \u2014 the key beside the space bar. It is a better recogniser than anything a web page can reach: it punctuates, you can edit while it runs, and it needs no permission at all, because the keyboard owns the microphone rather than the page. That removes the whole tangle of settings that was standing between people and speaking a scene."]
+ ]},
  {v:"2.3.1", d:"September 5, 2026", t:"Turn the page with your thumb", items:[
    ["new","<b>Swipe through the Bible.</b> On a book's chapter list, swipe left for the next book and right for the one before. Inside a chapter, the same swipes move you a chapter at a time."],
    ["chg","<b>A swipe will not carry you out of the book you are reading.</b> At the first or last chapter it stops, nudges, and tells you where you are \u2014 leaving a book should take the same deliberate step going out as it did coming in."],
@@ -9822,44 +9828,100 @@ const NT_FORMS=[
   {id:"q_b2i", label:"Books to Images"},
 ];
 const NT_BOOKFORM=new Set(["q_n2b","q_b2n","q_i2b","q_b2i"]);   // these need a number that names a book (1-66)
+/* ---- the chronological run ------------------------------------------------------------------
+   Every book you know, in the order they sit in the Bible, asked one way only: here is a number,
+   name the book. No four options to recognise the answer among, and no letters going green as
+   you get them right. Recognition is not recall, and a run whose whole purpose is to prove you
+   have the order cannot also be handing you the answer.
+
+   It is exclusive with the six forms below it for the same reason: the moment it is mixed with
+   anything else it stops being a straight walk through the books and becomes another quiz. */
+const NT_CHRONO="q_chrono";
+function knownBookNums(){ const out=[]; for(let b=1;b<=66;b++) if(knownNum(b)) out.push(b); return out; }
+/* Typed or spoken, so it has to forgive the ways a right answer arrives: "1 Samuel", "first
+   samuel", "I Samuel"; "Psalm" for "Psalms"; a recogniser that heard "revelations". None of
+   those is somebody who does not know the book. */
+function bookAnswerOk(typed, n){
+  const ord = s => (s||"").toLowerCase()
+    .replace(/\bfirst\b/g,"1").replace(/\bsecond\b/g,"2").replace(/\bthird\b/g,"3")
+    .replace(/\biii\b/g,"3").replace(/\bii\b/g,"2");
+  const a=normWord(ord(typed)), b=normWord(ord(bookName(n)));
+  if(!a) return false;
+  if(a===b) return true;
+  const s = a.length<b.length ? a : b, l = a.length<b.length ? b : a;
+  return s.length>=5 && l.indexOf(s)===0;   // a plural or a missing ending is not a wrong answer
+}
 const NT_COUNTS=Array.from({length:46},(_,i)=>i+5);             // 5 - 50
 function ntPrefs(){
   const p=Prog.ntPrefs||{};
   let t=Array.isArray(p.types)?p.types.filter(x=>NT_FORMS.some(f=>f.id===x)):[];
   if(!t.length) t=NT_FORMS.map(f=>f.id);
-  return { types:t, count:Math.max(5,Math.min(50,+p.count||15)) };
+  // count is the last number the reader CHOSE. A chronological run sets its own length from how
+  // many books they know, and deliberately does not overwrite this — so turning it off puts the
+  // number they picked back, rather than however many books they happen to have learned.
+  return { types:t, count:Math.max(5,Math.min(50,+p.count||15)), chrono:!!p.chrono };
 }
 function openNumTestSetup(round){
   round=round||1;
   if(recentKnownNumbers().length<2){ toast("Learn a few number images first!"); return; }
   const draft=ntPrefs(), V=el("verse");
+  const books=knownBookNums();
+  if(books.length<2) draft.chrono=false;            // nothing to walk through yet
   const paint=()=>{
-    el("ntsForms").innerHTML=NT_FORMS.map(f=>`<button type="button" class="mtradio chk ${draft.types.includes(f.id)?"sel":""}" data-form="${f.id}"><span class="rdot"></span>${f.label}</button>`).join("");
+    const chr=!!draft.chrono;
+    el("ntsChrono").className="mtradio chk"+(chr?" sel":"");
+    el("ntsChrono").disabled=books.length<2;
+    el("ntsChrono").style.opacity=books.length<2?".5":"";
+    el("ntsChronoSub").textContent=books.length<2
+      ? "Learn a couple of books first."
+      : "All " + books.length + " books you know, in Bible order. Type or say each one \u2014 no choices, no hints.";
+    el("ntsForms").innerHTML=NT_FORMS.map(f=>`<button type="button" class="mtradio chk ${!chr&&draft.types.includes(f.id)?"sel":""}" data-form="${f.id}"><span class="rdot"></span>${f.label}</button>`).join("");
+    el("ntsForms").style.opacity=chr?".45":"";
     el("ntsForms").querySelectorAll("[data-form]").forEach(x=>x.onclick=()=>{
       const id=x.dataset.form;
+      // Choosing any of the six turns the chronological run off, and the number goes back to being
+      // the reader's own rather than a count of books.
+      if(draft.chrono){ draft.chrono=false; draft.types=[id]; paint(); return; }
       draft.types = draft.types.includes(id) ? draft.types.filter(t=>t!==id) : [...draft.types,id];
       paint();
     });
-    el("ntsCount").textContent=draft.count;
-    el("ntsGo").disabled=!draft.types.length;
-    el("ntsGo").style.opacity=draft.types.length?"":".5";
-    el("ntsWarn").textContent=draft.types.length?"":"Choose at least one kind of question.";
+    el("ntsCount").textContent = chr ? books.length : draft.count;
+    el("ntsCount").disabled = chr;
+    el("ntsCount").style.opacity = chr?".55":"";
+    const ready = chr ? books.length>=2 : !!draft.types.length;
+    el("ntsGo").disabled=!ready;
+    el("ntsGo").style.opacity=ready?"":".5";
+    el("ntsWarn").textContent = ready ? (chr?"":"") : (chr?"Learn a couple of books first.":"Choose at least one kind of question.");
   };
   V.innerHTML=`<div class="card">
       <div class="lv-topbar"><button class="lclose" id="ntsClose">✕</button><div style="flex:1;text-align:center;font-weight:800">Number &amp; Book Practice</div><span style="width:34px"></span></div>
       <p class="hint" style="margin:6px 0 0">Which way would you like to be asked?</p>
-      <div class="mtradiolist one" id="ntsForms" style="margin-top:10px"></div>
+      <div class="mtradiolist one" style="margin-top:10px">
+        <button type="button" class="mtradio chk" id="ntsChrono"><span class="rdot"></span>Chronological</button>
+      </div>
+      <p class="hint" id="ntsChronoSub" style="margin:5px 0 0;font-size:11.5px"></p>
+      <div class="mtradiolist one" id="ntsForms" style="margin-top:12px"></div>
       <div class="goalrow" style="margin-top:14px">
         <div class="goalrow-k tight">#</div><button type="button" class="goalfield" id="ntsCount">15</button>
         <button class="btn goalrow-go" id="ntsGo">Begin Practice</button></div>
       <div class="hint" id="ntsWarn" style="min-height:18px;margin:6px 0 0"></div>
     </div>`;
   el("ntsClose").onclick=renderVerse;
-  el("ntsCount").onclick=()=>numberSheet({ title:"How many questions?", value:draft.count, choices:NT_COUNTS, onPick:n=>{ draft.count=n; paint(); } });
+  el("ntsChrono").onclick=()=>{
+    draft.chrono=!draft.chrono;
+    if(draft.chrono) draft.types=[];        // exclusive: it is a walk, not a mix
+    else if(!draft.types.length) draft.types=NT_FORMS.map(f=>f.id);
+    paint();
+  };
+  el("ntsCount").onclick=()=>{ if(draft.chrono) return;   // its length is how many books you know
+    numberSheet({ title:"How many questions?", value:draft.count, choices:NT_COUNTS, onPick:n=>{ draft.count=n; paint(); } }); };
   el("ntsGo").onclick=()=>{
     try{ libUse("numbers"); }catch(e){}
-    if(!draft.types.length) return;
-    Prog.ntPrefs={types:draft.types, count:draft.count}; saveProg();
+    if(!draft.chrono && !draft.types.length) return;
+    // draft.count is written back untouched even on a chronological run, so it is still waiting
+    // when they come back to the six forms.
+    Prog.ntPrefs={types:draft.types.length?draft.types:NT_FORMS.map(f=>f.id), count:draft.count, chrono:!!draft.chrono}; saveProg();
+    if(draft.chrono) return startChronoTest();
     startNumberTest(round);
   };
   paint();
@@ -9886,8 +9948,17 @@ function startNumberTest(round){
   }
   NT={qs, i:0, ok:0, wrong:0, round, hasMore: round===1 && recent.length>10}; renderNumTest();
 }
+/* Every book they know, in Bible order rather than shuffled — the order IS the thing being
+   practised. Length is however many that is; there is no count to choose. */
+function startChronoTest(){
+  const books=knownBookNums();
+  if(books.length<2){ toast("Learn a couple of books first."); return; }
+  NT={ qs:books.map(n=>({n, type:NT_CHRONO})), i:0, ok:0, wrong:0, round:1, chrono:true, hasMore:false };
+  renderNumTest();
+}
 function renderNumTest(){
   const V=el("verse"); if(NT.i>=NT.qs.length) return finishNumberTest();
+  if(NT.qs[NT.i].type===NT_CHRONO) return renderChronoQ();
   const q=NT.qs[NT.i], n=q.n, word=pegFor(n).word, pct=Math.round(100*NT.i/NT.qs.length);
   // TEXT-ONLY questions — the cue (number, image NAME, or book name) is shown once as text; the prompt never repeats it and no drawn image is used
   let prompt="", stimulus="", options=[], correct;
@@ -9936,6 +10007,63 @@ function renderNumTest(){
       gradeKey(`sk:${(NT&&NT.kind)==="book"?"book":"num"}:${n}`,"miss");
     }
   });
+}
+/* One question, one answer box. No options to recognise among, no scene to reveal, and no letters
+   turning colour as they are typed — all three of those are the app telling you the answer while
+   asking for it. Wrong shows the book plainly and moves on: the point is the walk, not the score. */
+function renderChronoQ(){
+  const V=el("verse"), q=NT.qs[NT.i], n=q.n, pct=Math.round(100*NT.i/NT.qs.length);
+  V.innerHTML=`<div class="qhead"><button class="lclose" id="ntClose">✕</button>
+      <div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>
+      <div style="font-size:12px;color:var(--muted);font-weight:700;margin-left:8px">${NT.i+1}/${NT.qs.length}</div></div>
+    <div class="card numtest"><div class="prompt">Which book is this number?</div>
+      <div class="numtest-stim" style="text-align:center;margin:4px 0 10px"><div class="bignum">${dispNum("book",n)}</div></div>
+      <input id="chIn" class="typein" style="width:100%;box-sizing:border-box;text-align:center;font-size:18px;font-weight:700" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Name the book">
+      <div id="chMic"></div>
+      <button class="btn" id="chGo" style="width:100%;margin-top:10px">Check</button>
+      <div id="ntFb" style="min-height:24px;margin-top:8px;text-align:center"></div></div>`;
+  el("ntClose").onclick=renderVerse;
+  const inp=el("chIn"), fb=el("ntFb"), go=el("chGo");
+  try{ inp.focus(); }catch(e){}
+
+  // Speaking is the whole reason a typed answer is bearable on a phone.
+  if(speechRoute()==="keyboard"){
+    el("chMic").innerHTML=`<p class="hint" style="margin:8px 0 0;font-size:11.5px">${KEYBOARD_MIC_TIP}</p>`;
+  } else if(speechRoute()!=="none"){
+    el("chMic").innerHTML=`<button class="btn ghost" id="chSpeak" style="width:100%;margin-top:8px">🎤 Say it instead</button>`;
+    const mic=el("chSpeak");
+    mic.onclick=()=>{
+      if(Dictation.listening()) return Dictation.stop();
+      mic.textContent="● Listening…"; mic.classList.add("blue");
+      Dictation.start(
+        (fin,mid)=>{ inp.value=((inp.__heard=(inp.__heard||"")+fin)+mid).trim(); },
+        ()=>{ mic.textContent="🎤 Say it instead"; mic.classList.remove("blue"); inp.__heard=""; }
+      );
+    };
+  }
+
+  let answered=false;
+  const next=()=>{ NT.i++; renderNumTest(); };
+  const check=()=>{
+    if(answered) return;
+    const said=inp.value.trim(); if(!said) return;
+    answered=true; inp.disabled=true;
+    try{ statBump("q"); }catch(e){}
+    if(bookAnswerOk(said,n)){
+      try{ statBump("qc"); }catch(e){}
+      NT.run=0; NT.ok++; Sfx.right(); strengthenNumber(n);
+      fb.innerHTML=`<b class="gold">${bookName(n)}</b>`;
+      go.textContent="Next"; go.onclick=next;
+      setTimeout(()=>{ if(NT && NT.i===NT.qs.indexOf(q)) next(); }, 700);
+    } else {
+      NT.wrong++; Sfx.wrong(NT.run=(NT.run||0)+1);
+      gradeKey(`sk:book:${n}`,"miss");
+      fb.innerHTML=`<div style="color:var(--miss)">Not quite.</div><div style="margin-top:2px">${dispNum("book",n)} is <b class="gold">${bookName(n)}</b></div>`;
+      go.textContent="Next"; go.onclick=next;
+    }
+  };
+  go.onclick=check;
+  inp.addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); (answered?next:check)(); } });
 }
 // Text-only pop-up: whatever the user has written (or the built-in scene) for this number/book.
 function showSceneReveal(n, isBook){
@@ -11285,6 +11413,33 @@ const Dictation = (()=>{
     }
   };
 })();
+/* ---- which speech engine to use ---------------------------------------------------------------
+   There are two on an Android phone and they are not close.
+
+   The web one — webkitSpeechRecognition — streams your voice to a server, comes back without
+   punctuation, stops when it feels like it, and first has to be given permission through a chain
+   of three settings that has already cost this project three rounds of instructions.
+
+   The KEYBOARD one is the microphone key beside the space bar. It is the recogniser the phone
+   uses for everything else, it punctuates, you can edit while it runs, and — the part that
+   matters most — it needs no permission from us AT ALL, because the keyboard owns the microphone
+   rather than the web page. There is nothing for a reader to switch on and nothing for us to get
+   wrong.
+
+   So on a phone browser we stop competing with it and point at it. In the native app the plugin
+   is the platform recogniser and asks the ordinary way, so that stays. On a desktop there is no
+   keyboard microphone and the web engine is genuinely useful, so that stays too. */
+function speechRoute(){
+  if((typeof nativePlatform==="function") && nativePlatform()!=="web" &&
+     (typeof Dictation!=="undefined") && Dictation.supported()) return "native";
+  const ua=navigator.userAgent||"";
+  if(/Android|iPhone|iPad|iPod/i.test(ua)) return "keyboard";   // the phone already has a better one
+  if(typeof Dictation!=="undefined" && Dictation.supported()) return "web";
+  return "none";
+}
+// Said in one place because it is said on three screens.
+const KEYBOARD_MIC_TIP = "Tap in the box, then the <b>🎤</b> on your keyboard — bottom row, beside the space bar. It punctuates as you talk and needs no permission.";
+
 /* Where microphone permission actually lives, for the way THIS person is running the app. Getting
    this wrong is worse than saying nothing: it sends somebody hunting through a settings screen that
    does not contain the switch. */
@@ -11389,9 +11544,18 @@ function editText({title, hint, value, onSave, autoCap, keyWords, tagWord}){
     (()=>{
       const mic=el("edMic"), note=el("edMicNote");
       if(!mic) return;
-      if(!Dictation.supported()){
-        // Rather than a dead button: on an iPhone the keyboard's own microphone does this job, and
-        // that is worth saying, because it is the answer for the reader rather than a refusal.
+      const route=speechRoute();
+      if(route==="keyboard"){
+        // Not a refusal and not a fallback — on a phone this IS the better answer. One tap puts the
+        // cursor where it needs to be and says where the key is; the keyboard does the rest.
+        mic.textContent="🎤 Use your keyboard's mic";
+        mic.onclick=()=>{
+          try{ ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }catch(e){}
+          note.innerHTML=`<span class="muted">${KEYBOARD_MIC_TIP}</span>`;
+        };
+        return;
+      }
+      if(route==="none"){
         mic.textContent="🎤 Speaking isn't available here";
         mic.style.opacity=".65";
         mic.onclick=()=>openMicHelp();
