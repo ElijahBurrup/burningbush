@@ -3920,6 +3920,15 @@ const DAY = 86400000;
                opts: [...document.querySelectorAll('#verse .opt')].map(o => o.textContent),
                imgs: document.querySelectorAll('#verse img').length }; };
     r.name = shot('q_n2w'); r.num = shot('q_n2r');
+    // the review as it is actually dealt: the number on the card, the plain question, and the way
+    // back to the scene when the answer will not come
+    NT = { qs:[{n:16,type:'q_n2b'}], i:0, ok:0, wrong:0, ret:null, kind:'book' }; renderNumTest();
+    r.prompt = (document.querySelector('#verse .prompt')||{}).textContent || '';
+    r.numberShown = (document.querySelector('#verse .bignum')||{}).textContent || '';
+    r.hasScene = !!document.getElementById('ntScene');
+    if(r.hasScene){ document.getElementById('ntScene').click();
+      r.scene = (document.getElementById('sceneRevealModal')||{}).textContent || '';
+      document.getElementById('srvOk').click(); }
     // a miss in a book phase marks the book's card and leaves the number's alone
     SRS['sk:book:16'] = { box:3, due:Date.now()+99999 }; SRS['sk:num:16'] = { box:3, due:Date.now()+99999 };
     NT = { qs:[{n:16,type:'q_b2n'}], i:0, ok:0, wrong:0, ret:null, kind:'book' }; renderNumTest();
@@ -3927,10 +3936,12 @@ const DAY = 86400000;
     r.miss = { book: SRS['sk:book:16'].box, num: SRS['sk:num:16'].box };
     return r;
   });
-  is(bookQ.plain.join(','), 'q_n2b,q_b2n,q_i2b,q_b2i', 'a book with no chosen pictures is asked the four it has');
-  ok(bookQ.withName.includes('q_n2w'), 'choosing a name picture adds it to the review');
-  no(bookQ.plain.includes('q_n2r'), '...and an unchosen number picture is never asked about');
-  is(bookQ.withBoth.length, 8, 'with all three pictures there are eight ways to be asked');
+  is(bookQ.plain.join(','), 'q_n2b', 'the daily review asks a book one way: here is the number, which book');
+  is(bookQ.withBoth.join(','), 'q_n2b', '...and owning both pictures does not widen it');
+  is(bookQ.numberShown, '16', 'the number is what is put on the card');
+  has(bookQ.prompt, 'Which book', '...and the question is the plain one');
+  ok(bookQ.hasScene, 'the scene button is offered, as it is on a verse');
+  has(bookQ.scene, 'Nehemiah', '...and it opens the BOOK scene, not the number one');
   is(bookQ.name.imgs + bookQ.num.imgs, 0, 'a book is reviewed in words, the way it is taught');
   ok(bookQ.name.opts.includes('Knee Socks'), 'the name question offers what was chosen');
   ok(bookQ.num.opts.includes("Driver's Licence"), '...and so does the number one');

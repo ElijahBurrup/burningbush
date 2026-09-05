@@ -2186,8 +2186,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.5.1";
+const APP_VERSION="2.6.0";
 const CHANGELOG=[
+ {v:"2.6.0", d:"September 5, 2026", t:"Book scenes come back too", items:[
+   ["new","Your book scenes now come back on the same trail as your verses — day 1, 3, 7, 16 and 30 — instead of stopping at three weeks."],
+   ["new","The daily review asks a book one way: here is the number, which book is it? The scene is what holds the answer."],
+   ["new","Reveal my scene now appears on book reviews, the same button in the same place as on a verse."]
+ ]},
  {v:"2.5.1", d:"September 5, 2026", t:"The last marker is the review", items:[
    ["chg","<b>One of the day’s markers belongs to spaced repetition, and it is the last one.</b> Three word-for-word against a goal of three now earns two markers, not three — the day is not finished until the review is. It is drawn in <b style=\"color:var(--blue)\">blue</b> so you can see which one it is, and it fills when a whole set is done."],
    ["fix","<b>Reviews falling due later in the day no longer take the day back.</b> Clearing everything at breakfast and finding more due by tea is the system working, not a failure — and it used to cost people the streak. Finishing a set is now recorded as a fact about the day. You pick the new ones up tomorrow."],
@@ -4353,6 +4358,12 @@ function wireTeachCard(kind, n, rerender){
 /* =================== SRS (Leitner) + PROGRESS STATE =================== */
 const DAY = 86400000;
 const INTERVAL = {1:0,2:1,3:3,4:7,5:21};
+// A book scene is a verse-sized thing to hold, so it fades on a verse's schedule rather than a
+// number's: the same 0-1-3-7-16-30 trail the verses walk, instead of stopping at 21.
+const BOOK_INTERVAL = {1:0,2:1,3:3,4:7,5:16,6:30};
+function isBookKey(k){ return String(k||"").indexOf("sk:book:")===0; }
+function intervalsFor(k){ return isBookKey(k) ? BOOK_INTERVAL : INTERVAL; }
+function topBox(k){ return isBookKey(k) ? 6 : 5; }
 const SRS_KEY="vv_srs_v3", PROG_KEY="vv_progress_v3";
 const PROG_SCHEMA=1; // bump when the saved-progress shape changes; migrateProg() upgrades old saves
 function load(k,f){ return Store.getJSON(k,f); }   // thin wrappers over the storage layer
@@ -4990,8 +5001,8 @@ function verseBoxClass(b,c,v){
 function cardState(k){ const st=SRS[k]; return (st && typeof st.box==="number") ? st : {box:1,due:0}; } // heal entries missing/NaN box (which would poison due dates)
 function gradeKey(k,g){
   const st=cardState(k), now=Date.now();
-  if(g==="good"){ st.box=Math.min(st.box+1,5); st.due=now+INTERVAL[st.box]*DAY; }
-  else if(g==="hard"){ st.due=now+Math.max(INTERVAL[st.box]*0.4,0.01)*DAY; }
+  if(g==="good"){ st.box=Math.min(st.box+1,topBox(k)); st.due=now+(intervalsFor(k)[st.box]||0)*DAY; }
+  else if(g==="hard"){ st.due=now+Math.max((intervalsFor(k)[st.box]||0)*0.4,0.01)*DAY; }
   else { st.box=1; st.due=now; }
   SRS[k]=st; save(SRS_KEY,SRS);
 }
@@ -6325,7 +6336,7 @@ function numbersDueCount(){ return numbersDueList().length; }
 // are two different pieces of learning that fade at their own rates.
 function booksDueList(){ const soon=Date.now()+SR_GRACE, eod=endOfToday(), out=[];
   knownBooks().forEach(n=>{ const st=SRS['sk:book:'+n]; if(!st || typeof st.box!=='number') return;
-    const gap=INTERVAL[st.box]||0, limit = gap<=1 ? soon : eod;
+    const gap=BOOK_INTERVAL[st.box]||0, limit = gap<=1 ? soon : eod;
     if(st.due<=limit) out.push(n); });
   return out.sort((a,b)=>a-b); }
 function booksDueCount(){ return booksDueList().length; }
@@ -8019,12 +8030,13 @@ function startNumberReview(nums, ret, kind){
     : ((n<=66 && nums.filter(x=>x<=66).length>=1) ? ["q_n2i","q_i2n","q_n2b","q_b2n"] : ["q_n2i","q_i2n"])) }));
   NT={qs, i:0, ok:0, wrong:0, ret, kind:isBook?"book":"num"}; renderNumTest();
 }
-function bookReviewTypes(n){
-  const t=["q_n2b","q_b2n","q_i2b","q_b2i"];
-  if(bookWordOf(n)) t.push("q_n2w","q_w2n");
-  if(numRefOf(n))   t.push("q_n2r","q_r2n");
-  return t;
-}
+// One question, asked the plain way round: here is the number, which book is it? The scene is what
+// carries the answer, and the button under the options is there for when it doesn't come.
+// This used to pick from up to eight forms — name to number, image to book, and the reader's own two
+// pictures both ways. Eight ways of asking made the review feel like a quiz about the bookkeeping
+// rather than a check on the one thing the scene exists to hold. renderNumTest still knows every
+// form, and the practice screens still use them; only the daily review is narrowed to this one.
+function bookReviewTypes(n){ return ["q_n2b"]; }
 /* Close the app in the middle of a verse test and it is waiting for you when you come back -
    the same verse, not the hub. The marker is dropped the moment you leave the test yourself. */
 function setActiveTest(k){ try{ Store.set("vv_active", k||""); }catch(err){} }
@@ -10134,7 +10146,8 @@ function runDuePalaces(done, queue){            // walk each due palace in turn 
 
 /* =================== NUMBERS TEST — 15 Qs translating number ↔ image ↔ book =================== */
 // Correct answers STRENGTHEN the item's spaced repetition (jump toward box 5) so it stays gold longer.
-function strengthen(k){ const st=cardState(k), now=Date.now(); st.box=Math.min((st.box||1)+2,5); st.due=now+INTERVAL[st.box]*DAY; SRS[k]=st; save(SRS_KEY,SRS); }
+function strengthen(k){ const st=cardState(k), now=Date.now(), IV=intervalsFor(k);
+  st.box=Math.min((st.box||1)+2,topBox(k)); st.due=now+(IV[st.box]||0)*DAY; SRS[k]=st; save(SRS_KEY,SRS); }
 function strengthenNumber(n){ strengthen(`sk:num:${n}`); if(n>=1&&n<=66) strengthen(`sk:book:${n}`); }
 let NT=null;
 // known numbers ordered MOST-RECENTLY-learned first (by completion order in doneSkills)
@@ -10317,10 +10330,12 @@ function renderNumTest(){
     <div class="card numtest"><div class="prompt">${prompt}</div>
       <div class="numtest-stim" style="text-align:center;margin:4px 0 8px">${stimulus}</div>
       <div class="opts">${options.map(o=>`<button class="opt" data-ok="${o===correct?1:0}">${o}</button>`).join("")}</div>
-      ${q.type.indexOf("b")>=0?"":`<button class="btn ghost sm" id="ntScene" style="width:100%;margin-top:10px">📝 Reveal my scene</button>`}
+      <button class="btn ghost sm" id="ntScene" style="width:100%;margin-top:10px">📝 Reveal my scene</button>
       <div id="ntFb"></div></div>`;
   el("ntClose").onclick=renderVerse;
-  if(el("ntScene")) el("ntScene").onclick=()=>showSceneReveal(n, false);   // number questions only
+  // A book review reveals the BOOK scene — its name picture, its number picture and the coded
+  // image — while a number review reveals the number's. Same button, same place, either way.
+  if(el("ntScene")) el("ntScene").onclick=()=>showSceneReveal(n, NT.kind==="book");
   V.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
     if(b.disabled) return;
     try{ statBump("q"); if(b.dataset.ok==="1") statBump("qc"); }catch(e){}
