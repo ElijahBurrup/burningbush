@@ -6328,6 +6328,43 @@ const DAY = 86400000;
   is(films.firstBook, 'book', 'Building the Books plays as the first book lesson opens');
   is(films.reviewBook, 'book', '...and stays behind Review Lesson for every book lesson after it');
   is(films.firstVerse, 'verse', 'Building Scenes plays the first time a verse is opened to build');
+
+  // A ticket and a film both wait 700ms before showing themselves. Whichever timer was set first
+  // won, and the scratch overlay sits above modals — so a lost race put the card on top of a film
+  // that was still opening underneath it, and claiming the card took the film with it.
+  const race = await $(() => {
+    const out = {};
+    // Other tests share this page and may have left something open, so this measures the mechanism
+    // rather than the ambient state: does a queued film add a hold, and is it released again.
+    document.querySelectorAll('.modal').forEach(m => { m.style.display = 'none'; });
+    out.baseFilm = filmUp();
+    filmQueued();
+    out.queuedHold = filmUp();
+    out.queuedBlocks = anyOverlayUp();     // decided, not yet on screen — already counts
+    filmDone();
+    out.released = filmUp();
+
+    const V = VIDEOS.major2;
+    Prog.doneSkills = (Prog.doneSkills || []).filter(id => id !== V.skill);
+    openVideoScreen('major2', () => { });
+    out.isFilm = (el('videoModal') || {}).style.display === 'flex';
+    out.whileUp = anyOverlayUp();          // seen as a visible modal, with no flag of its own
+    out.noLeak = !filmUp();                // ...so nothing is left holding when it is hidden
+    el('vsClose').click();
+    out.filmGone = (el('videoModal') || {}).style.display === 'none';
+    out.afterClose = filmUp();
+    return out;
+  });
+  no(race.baseFilm, 'no film is holding anything to begin with');
+  ok(race.queuedHold, 'a film that is merely decided takes a hold');
+  ok(race.queuedBlocks, '...and that hold is enough to keep the ticket back');
+  no(race.released, '...and it lets go again if the film never opens');
+  ok(race.isFilm, 'the film opens');
+  ok(race.noLeak, '...without a second hold that hiding it could leak');
+  ok(race.whileUp, '...so the ticket stays back');
+  ok(race.filmGone, 'closing the film puts it away');
+  no(race.afterClose, '...and releases the ticket to appear after it rather than over it');
+
   is(films.reviewVerse, 'verse', '...and Review Lesson on that screen plays it again');
   has(films.keep, 'wkeep', 'Save for later is marked as the one that keeps the verse');
   has(films.pass, 'wpass', '...and Skip as the one that passes over it');

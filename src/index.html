@@ -4157,6 +4157,30 @@ function buildTheBookBox(n){
     <div class="bbsent" id="bbSent" style="display:${sent?"block":"none"}">${sent}</div>
   </div>`;
 }
+// Above 66 a number has no book, so there is no third picture and nothing to name it after. What is
+// left is the pair that matters: the thing the number already means to you, and the Major System
+// image its sounds spell. Two pictures in one scene is the whole method at its smallest.
+function numberSceneSentence(n){
+  const r=numRefOf(n), w=pegFor(n).word;
+  if(!r) return "";
+  return `Build one scene with <b>${bbEsc(r)}</b> and your <b>${bbEsc(w)}</b>. `+
+    `Both touching, both moving, far too big to be real.`;
+}
+function buildTheNumberBox(n){
+  const sent=numberSceneSentence(n);
+  return `<div class="bb">
+    <div class="bbhead">🔨 Build the Number</div>
+    <div class="bbrow">
+      <label>Number / Image Relationship</label>
+      ${relationRow(n,"num")}
+    </div>
+    <div class="bbrow">
+      <label>Major System Image</label>
+      ${relationRow(n,"peg")}
+    </div>
+    <div class="bbsent" id="bbSent" style="display:${sent?"block":"none"}">${sent}</div>
+  </div>`;
+}
 // The Major System row opens the same sheet, but its list is fixed by the code rather than by taste:
 // every word here decodes to the same number, so choosing among them changes the picture and nothing
 // else. Writing the choice to Prog.customPeg is what keeps this and the chip picker in step.
@@ -4328,17 +4352,36 @@ function teachCardBody(kind, n){
       ${buildTheBookBox(n)}
       <button class="btn ghost" id="tcEdit" style="width:100%;margin-top:10px">✏️ ${Prog.customBook[n]?"Edit my scene":"Write my scene"}</button>${custom}`;
   }
+  // A number with relationship pictures of its own gets the same treatment a book does: choose the
+  // second picture, then write the two into one scene. Numbers with no list are left exactly as they
+  // were — nothing to choose from is worse than not being asked.
+  // Only above 66. At or below it the number already has a book, and its book lesson carries the
+  // three-picture box including this very relationship — a second, thinner copy on the number
+  // lesson would be the same choice asked twice.
+  const hasRel = n>66 && ((numRefOptions(n)||[]).length>0 || !!numRefOf(n) || !!(Prog.numScene||{})[n]);
+  const mine = (Prog.numScene||{})[n]
+    ? `<div class="relbox" style="border:1px solid var(--gold2)"><div class="rl" style="color:var(--gold-ink)">★ My scene</div>${(Prog.numScene||{})[n]}</div>` : "";
   return `<div class="stage">
       <div class="prompt">Learn the picture for number</div>
       <div class="tnum">${dispNum(kind,n)}</div>
       <div class="tline"><span class="tword">${word}</span>${pegImg(kind,n,word,true)}</div>
       <div class="sounds">sounds: <b>${snd}</b></div></div>
-    ${pegPicker(n)}
-    <div class="teachbox"><b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${(!Prog.customPeg[n]&&NOTE[n])?" ("+NOTE[n]+")":""}.<br><br>${decode}</div>`;
+    ${hasRel?"":pegPicker(n)}
+    <div class="teachbox"><b class="gold">Picture it:</b> a vivid, exaggerated <b class="gold">${word}</b>${(!Prog.customPeg[n]&&NOTE[n])?" ("+NOTE[n]+")":""}.<br><br>${decode}</div>
+    ${hasRel?buildTheNumberBox(n):""}
+    ${hasRel?`<button class="btn ghost" id="tcNumEdit" style="width:100%;margin-top:10px">✏️ ${(Prog.numScene||{})[n]?"Edit my scene":"Write my scene"}</button>`:""}${mine}`;
 }
 function wireTeachCard(kind, n, rerender){
   if(el("tcBookImg")) el("tcBookImg").onclick=()=>openBookImagePicker(n, rerender);
-  if(kind==="book") wireBuildTheBook(n, rerender);
+  wireBuildTheBook(n, rerender);   // both boxes use the same rows and the same sheets
+  if(el("tcNumEdit")) el("tcNumEdit").onclick=()=>editText({
+    title:`My scene for ${dispNum("num",n)}`,
+    hint:`Write the scene out in full sentences. Capitals are fixed as you go, and both of your key images are spelled right and set in CAPITALS so review is quick.`,
+    value:(Prog.numScene||{})[n]||"", autoCap:true,
+    keyWords:[numRefOf(n), pegFor(n).word],
+    tagWord:{ word:numRefOf(n), tag:n },
+    onSave:v=>{ Prog.numScene=Prog.numScene||{};
+      if(v){Prog.numScene[n]=v;} else {delete Prog.numScene[n];} saveProg(); rerender(); }});
   if(el("tcEdit")) el("tcEdit").onclick=()=>editText({
     title:`My scene for ${bookName(n)}`,
     hint:`Write the scene out in full sentences. Capitals are fixed as you go, and your three key images are spelled right and set in CAPITALS so review is quick.`,
@@ -4389,7 +4432,7 @@ function migrateProg(p){
   p.memorized=arr(p.memorized); p.doneSkills=arr(p.doneSkills); p.chosen=obj(p.chosen);
   if(typeof p.onboarded!=="boolean") p.onboarded=!!p.onboarded;
   p.saved=arr(p.saved); p.skipped=arr(p.skipped);               // green (come back later) / red (skip)
-  p.extraKnown=arr(p.extraKnown); p.palaces=arr(p.palaces); p.customBook=obj(p.customBook); p.badges=arr(p.badges); p.customScene=obj(p.customScene); p.customPeg=obj(p.customPeg); p.customBookImg=obj(p.customBookImg); p.bookWord=obj(p.bookWord); p.numRef=obj(p.numRef); // ad-hoc numbers, palaces, edited book scenes, badges, user's own verse scenes, user-chosen number words, user-written book images
+  p.extraKnown=arr(p.extraKnown); p.palaces=arr(p.palaces); p.customBook=obj(p.customBook); p.badges=arr(p.badges); p.customScene=obj(p.customScene); p.customPeg=obj(p.customPeg); p.customBookImg=obj(p.customBookImg); p.bookWord=obj(p.bookWord); p.numRef=obj(p.numRef); p.numScene=obj(p.numScene); // ad-hoc numbers, palaces, edited book scenes, badges, user's own verse scenes, user-chosen number words, user-written book images
   p.lessonUnlocks=arr(p.lessonUnlocks); // individual paid lessons unlocked with talents (500 each) instead of subscribing
   if(typeof p.firstWin!=="boolean") p.firstWin=false; // completed the 90-second "first verse hidden" onboarding win
   if(!("persona" in p)) p.persona=null; if(!("dailyMin" in p)) p.dailyMin=null; if(!("bibleFam" in p)) p.bibleFam=null; // intake answers (tailor copy/goalpost/pacing)
@@ -4540,7 +4583,7 @@ function mergeProg(a,b){
     ? (a.streakLost.at>b.streakLost.at ? a.streakLost : b.streakLost)
     : (a.streakLost===null || b.streakLost===null ? null : (a.streakLost||b.streakLost||null));
   m.chosen=Object.assign({},b.chosen,a.chosen); m.customBook=Object.assign({},b.customBook,a.customBook);
-  m.customScene=Object.assign({},b.customScene,a.customScene); m.customPeg=Object.assign({},b.customPeg,a.customPeg); m.customBookImg=Object.assign({},b.customBookImg,a.customBookImg); m.bookWord=Object.assign({},b.bookWord,a.bookWord); m.numRef=Object.assign({},b.numRef,a.numRef); m.talentLog=Object.assign({},b.talentLog,a.talentLog); m.verseLoc=Object.assign({},b.verseLoc,a.verseLoc); m.msSeen=Object.assign({},b.msSeen,a.msSeen);
+  m.customScene=Object.assign({},b.customScene,a.customScene); m.customPeg=Object.assign({},b.customPeg,a.customPeg); m.customBookImg=Object.assign({},b.customBookImg,a.customBookImg); m.bookWord=Object.assign({},b.bookWord,a.bookWord); m.numRef=Object.assign({},b.numRef,a.numRef); m.numScene=Object.assign({},b.numScene,a.numScene); m.talentLog=Object.assign({},b.talentLog,a.talentLog); m.verseLoc=Object.assign({},b.verseLoc,a.verseLoc); m.msSeen=Object.assign({},b.msSeen,a.msSeen);
   m.firstWin=!!(a.firstWin||b.firstWin); m.persona=a.persona||b.persona; m.dailyMin=a.dailyMin||b.dailyMin; m.bibleFam=a.bibleFam||b.bibleFam; m.covenant=a.covenant||b.covenant;
   m.scratchWon=uniq(a.scratchWon,b.scratchWon); m.scratchInit=!!(a.scratchInit||b.scratchInit); m.fiveVerseHintShown=!!(a.fiveVerseHintShown||b.fiveVerseHintShown);
   m.tickets=[...(a.tickets||[]),...(b.tickets||[])].filter((t,i,arr)=>arr.findIndex(x=>x.ts===t.ts&&x.type===t.type)===i); // union by (ts,type)
@@ -5124,9 +5167,21 @@ function showScratchReqs(){
   if(el("reqScratch")) el("reqScratch").onclick=()=>{ m.style.display="none"; Scratch.open(i); };
 }
 // the next unwon ladder rung whose milestone is met (or -1). Robust to out-of-order back-compat grants.
+// A film about to play counts as up. Both the ticket and the film wait 700ms before appearing, so
+// which one lands first came down to which timer was set first — and the scratch overlay sits above
+// modals, so losing that race put the card on top of a film that was still opening underneath it.
+// Claiming the card then re-rendered the screen and took the film with it.
+// Only the gap between DECIDING to play a film and it actually appearing needs marking; once it is
+// on screen it is a visible modal and speaks for itself. The gap is 700ms and always closed by the
+// timer that opens the film, so this cannot be left standing.
+let filmPending=0;
+function filmQueued(){ filmPending++; }
+function filmDone(){ filmPending=Math.max(0,filmPending-1); }
+function filmUp(){ return filmPending>0; }
 // Anything already covering the screen. A scratch card that opens on top of a film, a ticket or a
 // modal is a card nobody asked for over something they did.
 function anyOverlayUp(){
+  if(filmUp()) return true;
   if(["taxov","buildov","scov","simov","obov"].some(id=>{ const n=el(id); return n && n.classList.contains("on"); })) return true;
   return [...document.querySelectorAll(".modal")].some(m=>m.style.display==="flex");
 }
@@ -5988,7 +6043,13 @@ function openVideoScreen(key, after){
     </div>`;
   { const vd=m.querySelector("[data-vsrc]"); if(vd && vd.dataset.vsrc) vd.src=vd.dataset.vsrc; }
   m.style.display="flex"; raiseModal(m);
-  const close=()=>{ const vd=m.querySelector("video"); if(vd){ try{ vd.pause(); }catch(err){} } m.style.display="none"; };
+  // No hold is taken here: a film that is ON SCREEN is already a visible .modal, which anyOverlayUp
+  // sees on its own. Counting it again would leak — anything that hides this modal without coming
+  // through close() (the suite does, in several places) would leave a hold nobody ever releases,
+  // and tickets would stop appearing for good.
+  const close=()=>{ const vd=m.querySelector("video"); if(vd){ try{ vd.pause(); }catch(err){} } m.style.display="none";
+    // Whatever was held back while the film played gets its turn now, not on the next screen change.
+    try{ updateTabLocks(); }catch(err){} };
   // Both ways out mark it watched - it stays available from Video Review, and nothing pops up twice.
   el("vsClose").onclick=()=>{ markVideoSeen(key); close(); if(after) after(); };
   el("vsDone").onclick=()=>{ markVideoSeen(key); close(); if(after) after(); if(V.cta) setTimeout(()=>flashNav(V.cta),300); };
@@ -7011,10 +7072,15 @@ function finishLesson(){
   const thenTicket = ()=>{
     if(!maybePhaseScratch(()=>{ renderLessonDone(); setTimeout(maybeSuggestPalace,500); })) maybeSuggestPalace();
   };
+  // Decided here, synchronously, so the ladder's own 700ms ticket sees a film coming and waits.
+  // Deciding it inside the timer below would be 700ms too late to win that race.
+  const filmNext = wasNew && sk.id==="snd:5-9" && !videoSeen("major2");
+  if(filmNext) filmQueued();
   if(wasNew) setTimeout(()=>{
     // Part two turns the sounds into words and pictures, so it waits until the sounds are actually
     // learned. That is this moment, and nowhere earlier. The lesson screen comes back behind it.
-    if(sk.id==="snd:5-9" && !videoSeen("major2")){
+    if(filmNext){
+      filmDone();                       // openVideoScreen takes its own hold as it opens
       openVideoScreen("major2", ()=>{ renderLessonDone(); thenTicket(); });
       return;
     }
