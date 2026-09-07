@@ -14,6 +14,9 @@ const DAY = 86400000;
   const browser = await chromium().launch();
   const page = await open(browser, { prog: SEEDED });
   const $ = fn => page.evaluate(fn);
+  // Beginning a review now counts 3-2-1 before it starts, so a click no longer lands the first
+  // question in the same tick. The blocks below wait for the real thing rather than reaching
+  // past it — the pause is what a reader actually meets.
   const $$ = (fn, a) => page.evaluate(fn, a);
 
   // ─────────────────────────────── data integrity ───────────────────────────────
@@ -1259,7 +1262,7 @@ const DAY = 86400000;
   ok(afterLesson.restored, 'and the fixture is left exactly as it was found');
 
   describe('the review count matches the work', () => { });
-  const srCount = await $(() => {
+  const srCount = await $(async () => {
     const FOUR_H = 4 * 3600000;
     // Two verses waiting for their first look, one genuinely due on its trail.
     const fresh1 = '43:11:35', fresh2 = '45:8:28', due1 = '19:23:1';
@@ -1285,6 +1288,12 @@ const DAY = 86400000;
     // and the thing that actually comes next must be one of the new verses. There is no phase flag
     // for that leg — it is observable only on screen, which is the honest thing to assert anyway.
     el('srGo').click();
+    // Wait for the banner to LEAVE. Watching for words that belong to the next screen is how this
+    // went wrong the first time: the banner itself ends "then palaces", so a check for /Palace/i
+    // was satisfied before the countdown had even started.
+    await new Promise(r => { const t = setInterval(() => {
+      if (!/Begin review/i.test(el('verse').innerText || '')) { clearInterval(t); r(); } }, 40);
+      setTimeout(() => { clearInterval(t); r(); }, 6000); });
     out.afterBegin = el('verse').innerText;
     out.queueLeft = (MS.newQueue || []).length;
     return out;
@@ -3885,7 +3894,7 @@ const DAY = 86400000;
   ok(quest.showing, '...putting it on the screen');
 
   describe('books come back before they are forgotten', () => { });
-  const bookSR = await $(() => {
+  const bookSR = await $(async () => {
     const r = {};
     const wasDone = (Prog.doneSkills || []).slice(), wasMem = (Prog.memorized || []).slice();
     // Earlier blocks leave palaces dated to the epoch, which are due forever. This one measures
@@ -3905,7 +3914,14 @@ const DAY = 86400000;
     show('verse'); startMemTest();
     r.queue = (MS.bookQueue || []).length;
     r.banner = (document.getElementById('verse').textContent || '').split(/\s+/).join(' ');
+    // Cleared first: an earlier block leaves NT standing, and waiting for "NT exists" would be
+    // satisfied by that one before the countdown had finished — reading a question from a set that
+    // is no longer on screen.
+    NT = null;
     document.getElementById('srGo').click();
+    await new Promise(res => { const t = setInterval(() => {
+      if (NT && NT.qs && NT.qs.length) { clearInterval(t); res(); } }, 40);
+      setTimeout(() => { clearInterval(t); res(); }, 6000); });
     r.kind = NT ? NT.kind : null;
     const n = NT.qs[0].n, before = SRS['sk:book:' + n].due;
     document.querySelector('#verse [data-ok="1"]').click();
@@ -3962,6 +3978,92 @@ const DAY = 86400000;
   ok(bookQ.num.opts.includes("Driver's Licence"), '...and so does the number one');
   is(bookQ.miss.book, 1, 'a miss on a book sends its own card back to the start');
   is(bookQ.miss.num, 3, '...and leaves the number card where it was');
+
+  describe('the review is timed, and the clock survives walking away', () => { });
+
+  const clock = await $(() => {
+    const out = {};
+    const snapClock = Prog.srClock, snapDay = Prog.srDay;
+    // An earlier block begins a real review and leaves its clock running, which is correct
+    // behaviour there and simply not the starting point this block is describing.
+    srClockStop();
+    Prog.srClock = null; delete Prog.srDay; saveProg();
+
+    out.freshSeconds = srClockSeconds();
+    out.freshRunning = srClockRunning();
+
+    // a first sitting: three minutes of review, then walking away half way through
+    srClockStart();
+    out.startedRunning = srClockRunning();
+    window.__advanceClock(180000);
+    out.midRun = srClockSeconds();
+    srClockStop();
+    out.bankedOnLeaving = srClockSeconds();
+    out.stoppedRunning = srClockRunning();
+    out.notFinished = !srClockDay().done;
+
+    // time passes with the app shut — a closed clock must not keep counting
+    window.__advanceClock(3600000);
+    out.whileAway = srClockSeconds();
+
+    // coming back: a second sitting adds to the first rather than replacing it
+    srClockStart();
+    window.__advanceClock(60000);
+    srClockStop();
+    out.afterSecond = srClockSeconds();
+    out.runs = srClockDay().runs;
+
+    // finishing marks the day done
+    srClockDay().done = true; saveProg();
+    out.finished = srClockDay().done;
+
+    // tomorrow is a different record: the day key is the reset
+    out.dayBefore = srClockDay().d;
+    window.__advanceClock(24 * 3600000);
+    out.tomorrow = srClockSeconds();
+    out.tomorrowRuns = srClockDay().runs;
+    out.dayAfter = srClockDay().d;
+
+    out.fmt = [fmtSecs(0), fmtSecs(9), fmtSecs(60), fmtSecs(184), fmtSecs(600)].join('|');
+
+    Prog.srClock = snapClock; if (snapDay) Prog.srDay = snapDay; saveProg();
+    return out;
+  });
+  is(clock.freshSeconds, 0, 'a day starts with no time on the clock');
+  no(clock.freshRunning, '...and nothing running');
+  ok(clock.startedRunning, 'beginning a review starts it');
+  is(clock.midRun, 180, '...and it counts the seconds while it runs');
+  is(clock.bankedOnLeaving, 180, 'walking away banks what was spent');
+  no(clock.stoppedRunning, '...and stops the clock');
+  ok(clock.notFinished, '...without claiming the review was finished');
+  is(clock.whileAway, 180, 'an hour with the app shut adds nothing');
+  is(clock.afterSecond, 240, 'coming back adds to the total rather than starting over');
+  is(clock.runs, 2, '...and the day knows it took two sittings');
+  ok(clock.finished, 'completing the set marks the day finished');
+  is(clock.tomorrow, 0, 'tomorrow starts from nothing');
+  is(clock.tomorrowRuns, 0, '...with no sittings carried over');
+  no(clock.dayBefore === clock.dayAfter, '...because the day key is what resets it');
+  is(clock.fmt, '0s|9s|1m|3m 4s|10m', 'the time reads the way a person would say it');
+
+  const clockUI = await $(() => {
+    const out = {};
+    const snapClock = Prog.srClock;
+    Prog.srClock = { d: dayKey(new Date()), sec: 245, done: false, runs: 2 };
+    saveProg();
+    openStreakReview();
+    const box = el('streakRevModal');
+    out.unfinished = (box.textContent || '').replace(/\s+/g, ' ');
+    Prog.srClock.done = true; saveProg();
+    openStreakReview();
+    out.finished = (el('streakRevModal').textContent || '').replace(/\s+/g, ' ');
+    const x = el('srvX'); if (x) x.click();
+    Prog.srClock = snapClock; saveProg();
+    return out;
+  });
+  has(clockUI.unfinished, '4m 5s', 'the goal review screen publishes the time spent');
+  has(clockUI.unfinished, '2', '...and how many sittings it took');
+  has(clockUI.unfinished, 'not finished yet', '...and says plainly that it is unfinished');
+  has(clockUI.finished, 'finished', '...and that it is done once it is');
 
   describe('typing fits a phone with the keyboard up', () => { });
   const fits = await $(() => {

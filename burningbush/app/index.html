@@ -760,6 +760,10 @@
   .imgph-sm{width:104px;height:104px;display:none;align-items:center;justify-content:center;flex-direction:column;color:var(--muted);font-size:10px;text-align:center}
   .srflash{animation:srpop .4s cubic-bezier(.2,.8,.2,1)}
   .srcount{font-size:52px;font-weight:900;color:var(--gold-ink);line-height:1;margin:2px 0 6px}
+  .srcd{padding:34px 24px}
+  .srcd-n{font-size:82px;font-weight:900;color:var(--gold-ink);line-height:1;
+    font-variant-numeric:tabular-nums;animation:srpop .32s cubic-bezier(.2,.8,.2,1)}
+  .srtime{font-variant-numeric:tabular-nums}
   /* talent reward: a big coin blooms center, a stream flies to the top counter */
   .talfx{position:absolute;inset:0;z-index:120;pointer-events:none;overflow:visible}
   /* solid square panel so the screen behind never bleeds through the reward */
@@ -2193,7 +2197,9 @@ const CHANGELOG=[
    ["new","The daily review asks a book one way: here is the number, which book is it? The scene is what holds the answer."],
    ["new","Reveal my scene now appears on book reviews, the same button in the same place as on a verse."],
    ["new","Every number from 67 to 176 now has its own list of picture ideas — things the number already means — so you can pair one with its Major System image and write the two into a single scene."],
-   ["fix","The Major System Part 2 film no longer has a scratch off land on top of it, and closing the card no longer closes the film with it."]
+   ["fix","The Major System Part 2 film no longer has a scratch off land on top of it, and closing the card no longer closes the film with it."],
+   ["new","Spaced repetition counts you in — 3, 2, 1 — and times the review. Walk away part way and the clock keeps what you spent; come back and it carries on from there. It starts fresh each day."],
+   ["new","Your review time for the day, and whether you finished it, now show on the streak review screen — for today and for every day behind it."]
  ]},
  {v:"2.5.1", d:"September 5, 2026", t:"The last marker is the review", items:[
    ["chg","<b>One of the day’s markers belongs to spaced repetition, and it is the last one.</b> Three word-for-word against a goal of three now earns two markers, not three — the day is not finished until the review is. It is drawn in <b style=\"color:var(--blue)\">blue</b> so you can see which one it is, and it fills when a whole set is done."],
@@ -4589,6 +4595,7 @@ function migrateProg(p){
   p.talents=cnt(p.talents); p.streak=cnt(p.streak); p.bestStreak=cnt(p.bestStreak); p.talentLog=obj(p.talentLog); // Talents (verse-practice points), streaks, per-verse 24h earn log
   p.dayStreak=cnt(p.dayStreak); p.bestDayStreak=cnt(p.bestDayStreak); if(typeof p.lastReviewDay!=="string") p.lastReviewDay=""; // daily review streak (distinct from the per-answer streak)
   p.freezes=cnt(p.freezes); p.freezeAwards=arr(p.freezeAwards); // Streak-Freeze power-ups + which milestones already granted one
+  p.srClock=(p.srClock&&typeof p.srClock==='object')?p.srClock:null;   // {d,sec,done,runs}
   p.goalLog=arr(p.goalLog).filter(x=>x&&x.d).slice(-GOAL_LOG_DAYS);   // a fortnight of what was asked and what was done
   if(!p.streakLost || !p.streakLost.at) p.streakLost=null;
   if(typeof p.srDay!=="string") p.srDay="";   // the day a whole review set was finished
@@ -5429,7 +5436,7 @@ function show(tab){
   // leaving the intro via a tab tap = onboarding is done; stamp it so Journey doesn't re-show the intro from step 0 (state desync)
   if(!Prog.onboarded && tab!=="journey"){ Prog.onboarded=true; saveProg(); }
   try{ if(["learn","verse","palace","journey","stories"].includes(tab)) Store.set("vv_tab", tab); }catch(e){}  // remember the tab so a page refresh returns here
-  if(tab!=="verse") clearActiveTest();   // walked away from the test - do not drag them back into it
+  if(tab!=="verse"){ clearActiveTest(); srClockStop(); }   // walked away from the test - do not drag them back into it, and stop its clock
   // Arriving somewhere has its own short motif, so where you are is audible before it is read.
   // Only on an actual change: re-rendering the screen you are already on is not an arrival.
   { const was=(document.querySelector(".view.active")||{}).id; if(was!==tab) Sfx.screen(tab); }
@@ -7592,6 +7599,10 @@ function openSuggestedForBook(bn){
   if(bn) openSuggBook(bn, ()=>openVerseView("sugg","library"));
 }
 function renderVerse(){
+  // Standing at the hub is not reviewing. Whether the set was finished or abandoned half way, the
+  // seconds already spent are banked here — abandoning must cost nothing, and must record nothing
+  // extra either.
+  srClockStop();
   updateMetrics();
   const V=el("verse");
   const saved=Prog.saved.map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2]));
@@ -8628,10 +8639,12 @@ function srBanner(kind){
       <div class="srcount">${total}</div>
  <p class="lead">${parts.join(" · ")} due for review. We'll lock them back in, ${nf?"<b>the new ones first</b>, then ":""}<b>numbers, then books, then verses, then palaces</b>, then move on to free practice + your streak.</p>
       <button class="btn blue" id="srGo">Begin review →</button></div>`;
-    el("srGo").onclick=beginDueReview; return;
+    el("srGo").onclick=()=>srCountdown(beginDueReview); return;
   }
   V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">✅</div>
  <h2 class="gold">Spaced Repetition · Complete</h2>
+ <div class="srcount srtime">${fmtSecs(srClockSeconds())}</div>
+ <p class="hint" style="margin:0 0 8px">${srClockDay().runs>1?`across ${srClockDay().runs} sittings today`:"start to finish"}</p>
  <p class="lead">Every due verse reviewed. The ones you recalled just moved forward on their D0…D30 trail. The rest stay due for next time.</p>
     <button class="btn" id="srNext">Continue →</button></div>`;
   el("srNext").onclick=afterSR;
@@ -8654,6 +8667,8 @@ function finishDue(){ if(MS && MS.dueWork) doneForToday(); else practiceNext(tru
 // The "you're done for today" moment — the emotional close of the daily loop; credits the day streak, then offers optional free practice.
 function doneForToday(){
   const V=el("verse");
+  srClockStop();                       // the run is over; bank what it took
+  { const c=srClockDay(); c.done=true; saveProg(); }
   markSrDone();    // the set is finished; more arriving later must not take that back
   creditToday();   // the review half just finished — credit the streak if the goal is in too
   const wd=weekDaysNow();
@@ -8782,8 +8797,12 @@ function goalToday(){ return goalForDate(new Date()); }
 function archiveGoalDay(d){
   if(!d || !d.date) return;
   Prog.goalLog = (Prog.goalLog||[]).filter(x=>x && x.d!==d.date);
+  // The review clock belongs to the same day, so it is archived with it rather than left to be
+  // wiped by the next day's first read of srClockDay().
+  const sc=(Prog.srClock && Prog.srClock.d===d.date) ? Prog.srClock : null;
   Prog.goalLog.push({ d:d.date, got:d.count|0, need:(d.target!=null?d.target|0:null),
-                      due:(d.dueAtEnd!=null?d.dueAtEnd|0:null), ok:!!d.credited });
+                      due:(d.dueAtEnd!=null?d.dueAtEnd|0:null), ok:!!d.credited,
+                      srSec:sc?(sc.sec|0):null, srDone:sc?!!sc.done:null });
   Prog.goalLog.sort((a,b)=>a.d<b.d?-1:1);
   if(Prog.goalLog.length>GOAL_LOG_DAYS) Prog.goalLog=Prog.goalLog.slice(-GOAL_LOG_DAYS);
 }
@@ -8830,6 +8849,54 @@ function bumpGoalFromReview(defer){
    the system working, not a failure, and it must not take the day back. So the marker is earned
    by COMPLETING A SET, recorded as a fact about the day, rather than measured by asking whether
    anything is due at this exact second — which is what used to cost people their streak. */
+/* ---- How long the review took --------------------------------------------------------------
+   One clock per day, not per sitting. Walk away half way through and the seconds already spent
+   are kept; come back and the count carries on from there, however many times that happens. The
+   day key is what resets it — a new day simply is not the same record, so midnight needs no timer
+   of its own and no clock running while the app is shut.
+
+   The seconds banked are in Prog so they survive being closed; the segment currently running is
+   held in memory only, because a running segment has no meaning once the app is gone. */
+function srClockDay(){
+  const t=dayKey(new Date());
+  if(!Prog.srClock || Prog.srClock.d!==t) Prog.srClock={d:t, sec:0, done:false, runs:0};
+  return Prog.srClock;
+}
+let srTickFrom=null;                      // when the current segment began; null when not running
+function srClockStart(){ const c=srClockDay(); c.runs=(c.runs|0)+1; srTickFrom=Date.now(); saveProg(); }
+function srClockStop(){
+  if(srTickFrom==null) return false;
+  const c=srClockDay();
+  c.sec=(c.sec|0)+Math.max(0, Math.round((Date.now()-srTickFrom)/1000));
+  srTickFrom=null; saveProg(); return true;
+}
+function srClockSeconds(){
+  const c=srClockDay();
+  return (c.sec|0) + (srTickFrom!=null ? Math.max(0, Math.round((Date.now()-srTickFrom)/1000)) : 0);
+}
+function srClockRunning(){ return srTickFrom!=null; }
+function fmtSecs(s){
+  s=Math.max(0, s|0);
+  const m=Math.floor(s/60), r=s%60;
+  return m ? (r ? m+"m "+r+"s" : m+"m") : r+"s";
+}
+// 3 · 2 · 1 and then the clock starts. It is a .modal, so nothing else can open on top of it while
+// it counts — the same rule that keeps a scratch card off a film.
+function srCountdown(after){
+  const m=el("srCountModal")||(()=>{ const d=document.createElement("div"); d.id="srCountModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  let n=3;
+  const paint=()=>{ m.innerHTML=`<div class="modal-card center srcd"><div class="srcd-n">${n>0?n:"Go"}</div>
+    <p class="hint" style="margin:10px 0 0">${n>0?"Get ready…":"Timing your review"}</p></div>`; };
+  m.style.display="flex"; raiseModal(m); paint();
+  try{ Sfx.tick&&Sfx.tick(); }catch(e){}
+  const step=()=>{
+    n--;
+    if(n<0){ m.style.display="none"; srClockStart(); if(after) after(); return; }
+    paint(); try{ n>0 ? (Sfx.tick&&Sfx.tick()) : (Sfx.srStart&&Sfx.srStart()); }catch(e){}
+    setTimeout(step, n>0?800:550);
+  };
+  setTimeout(step, 800);
+}
 function srDoneToday(){ return Prog.srDay===dayKey(new Date()); }
 function srPending(){ return reviewDueCount()>0; }
 function srInPlay(){ return srDoneToday() || srPending(); }   // is there a review marker to earn today at all?
@@ -9209,6 +9276,10 @@ function streakDayRows(){
     const k=dayKey(new Date(ms));
     const rec=(Prog.goalLog||[]).find(x=>x.d===k);
     const isToday=ms===today;
+    // Today reads the live clock; earlier days read what was archived with them.
+    const srSec = isToday ? srClockSeconds() : (rec && rec.srSec!=null ? rec.srSec|0 : null);
+    const srFin = isToday ? !!srClockDay().done : (rec && rec.srDone!=null ? !!rec.srDone : null);
+    const srBit = srSec ? `<div class="muted srtime" style="font-size:11.5px">🔁 ${fmtSecs(srSec)}${srFin?" · finished":" · unfinished"}</div>` : "";
     const need = rec && rec.need!=null ? rec.need : (isToday ? goalToday() : goalForDate(new Date(ms)));
     const got  = rec ? (rec.got|0) : (isToday ? goalCount() : 0);
     const ok   = isToday ? (Prog.lastReviewDay===k) : !!(rec && rec.ok);
@@ -9220,7 +9291,7 @@ function streakDayRows(){
     return `<div style="display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px${isToday?";font-weight:800":""}">
       <span style="flex:0 0 84px">${k}${isToday?" · today":""}</span>
       <span style="flex:0 0 84px;text-align:center;line-height:1.25">goal ${need}<br><span class="muted">did ${got}</span></span>
-      <span style="flex:1;text-align:right">${why}</span></div>`;
+      <span style="flex:1;text-align:right">${why}${srBit}</span></div>`;
   }).join("");
 }
 function streakTimelineHTML(R){
@@ -9258,6 +9329,9 @@ function openStreakReview(){
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="srvX" style="margin:0">✕</button>
         <div style="flex:1;text-align:center;font-weight:800">Streak review</div><span style="width:34px"></span></div>
       <div class="teachbox" style="margin:0 0 10px;font-size:13px">A day counts only when <b>both</b> halves are done: the daily goal, <b>and</b> every review that has come due. Doing one of them is real work, but it is not a streak day.<br><span class="muted">Spaced repetition counts toward the goal too, up to <b class="gold">${SR_GOAL_MAX} a day</b> — so a big catch-up cannot finish the goal on its own.</span></div>
+      ${(()=>{ const s=srClockSeconds(), c=srClockDay();
+        if(!s && !c.done) return "";
+        return `<div class="teachbox" style="margin:0 0 10px;font-size:13px">🔁 <b class="gold srtime">${fmtSecs(s)}</b> on spaced repetition today${c.runs>1?` across <b>${c.runs}</b> sittings`:""} — <b>${c.done?"finished":"not finished yet"}</b>.${c.done?"":" The clock carries on where it left off."}</div>`; })()}
       <div style="display:flex;justify-content:space-between;gap:8px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700"><span style="flex:0 0 84px">Day</span><span style="flex:0 0 84px;text-align:center">Goal · did</span><span style="flex:1;text-align:right">Why</span></div>
       ${rows}
       <div class="teachbox" style="margin:12px 0 0;font-size:13px"><b>Today:</b> ${Prog.lastReviewDay===today?`<span class="gold">already counted</span>`:`${g>0?`${g} more toward the goal`:`goal met`}${due>0?` · ${due} review${due>1?"s":""} still due`:` · nothing due`}`}</div>
@@ -10232,6 +10306,10 @@ function bootPopups(){
 }
 // Rome does not forget. An unsettled levy is put again every time the app comes back to the front,
 // so closing it mid-wheel is no way to keep your talents.
+// Backgrounding the app is walking away. Bank the seconds now rather than trusting that anything
+// runs on the way out — on a phone, often nothing does.
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden") srClockStop(); });
+window.addEventListener("pagehide",()=>{ srClockStop(); });
 document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState!=="visible") return;
   const up=id=>{ const o=el(id); return !!o && o.classList.contains("on"); };

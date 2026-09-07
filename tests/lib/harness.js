@@ -81,6 +81,10 @@ const determinism = ({ now, seed }) => {
   };
   Frozen.prototype = Real.prototype;
   Frozen.now = () => now;
+  // A clock that never moves cannot test anything that measures elapsed time — a review
+  // timer, a streak rolling into tomorrow. Tests move it deliberately and by an exact
+  // amount; nothing here ever advances on its own, so determinism is untouched.
+  window.__advanceClock = ms => { now += ms; return now; };
   Frozen.parse = Real.parse;
   Frozen.UTC = Real.UTC;
   window.Date = Frozen;
