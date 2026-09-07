@@ -558,6 +558,9 @@
   .gb-tick path{stroke-dasharray:100;stroke-dashoffset:100;animation:gbDraw 2.8s ease-in-out infinite}
   @keyframes gbDraw{0%{stroke-dashoffset:100} 30%,72%{stroke-dashoffset:0} 92%,100%{stroke-dashoffset:100}}
   .goalbar .gb-dot.on{background:var(--gold);border-color:var(--gold-ink)}
+  /* The review marker, drawn as the goal flash draws it: ringed blue until it is earned. */
+  .goalbar .gb-dot.sr{border-color:var(--blue);border-width:2px;background:var(--panel3)}
+  .goalbar .gb-dot.sr.on{background:var(--blue);border-color:var(--blue-ink)}
   .goalbar .gb-count{font-weight:900;font-size:18px;color:var(--gold-ink);font-variant-numeric:tabular-nums;flex:none}
   /* goal flash (node path) */
   .goalflash{position:absolute;inset:0;display:grid;place-items:center;z-index:125;pointer-events:none;opacity:0;transition:opacity .25s}
@@ -2202,8 +2205,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.6.0";
+const APP_VERSION="2.6.1";
 const CHANGELOG=[
+ {v:"2.6.1", d:"September 7, 2026", t:"The goal box counts what the dots count", items:[
+   ["fix","<b>“5 Still Due” under five filled dots.</b> The dots count goal markers; the line was counting review cards. Spaced repetition is ONE marker however many cards fall due, so a finished day with nine newly due now says <b>Caught Up Today</b> with the green tick, and one outstanding review says <b>1</b>."],
+   ["new","The review marker is drawn on the goal button as the last dot, ringed blue and unfilled until the review is done — the way the goal celebration has always drawn it."]
+ ]},
  {v:"2.6.0", d:"September 5, 2026", t:"Book scenes come back too", items:[
    ["new","Your book scenes now come back on the same trail as your verses — day 1, 3, 7, 16 and 30 — instead of stopping at three weeks."],
    ["new","The daily review asks a book one way: here is the number, which book is it? The scene is what holds the answer."],
@@ -9098,21 +9105,46 @@ function streakNeedLine(){
 /* One banner for the whole day: the goal, what is still due, the streak, and the tick that only
    appears when BOTH are done — which is exactly what creditToday() requires before a streak day
    is credited. It used to live on the Bible page, where it had nothing to do with the Bible. */
+/* This said "5 Still Due" under five filled dots, which cannot both be true.
+
+   The dots count GOAL MARKERS. The line was counting REVIEW ITEMS — every verse, palace and number
+   whose checkpoint had come round — so a finished day with nine cards newly due read "9 Still Due"
+   beside a full row of gold. Two different units in one widget, and the number that shouted was the
+   one that meant least: review contributes exactly ONE marker to the day however many cards arrive.
+
+   (It was not even a consistent item count. It summed verses, palaces and numbers but left out
+   books and new verses, which reviewDueCount includes.)
+
+   Both halves speak in markers now, and the review marker is drawn the way the goal flash has always
+   drawn it: the last one, ringed blue, filled only once the review is done. */
 function libStatusHTML(){
-  const c=goalCount(), t=goalToday(), goalMet=c>=t;
-  const dueV=versesDueCount(), dueP=palacesDueCount(), dueN=numbersDueCount(), due=dueV+dueP+dueN;
-  const caught=goalMet && due===0;
+  const t=goalToday(), goalMet=goalCount()>=t;
+  const srSlot = srInPlay() ? t : 0;                 // the review marker is the last one, or none today
+  const others = Math.min(goalOtherCount(), goalOtherCap());
+  const srEarned = srDoneToday();
+  const filled = others + (srEarned?1:0);
+  const left = Math.max(0, t - filled);
+  // Anything falling due AFTER the day was finished is tomorrow's work and must not reopen it —
+  // the same rule goalLatched() applies to the streak.
+  const caught = goalMet;
   // Each dot is handed the same wave, one after another, and the whole thing runs back the way it
   // came. --i and --n are what make one rule serve any goal from 3 to 15.
-  const dots=Array.from({length:t},(_,i)=>`<span class="gb-dot ${i<c?"on":""}" style="--i:${i};--n:${t}"></span>`).join("");
+  const dots=Array.from({length:t},(_,i)=>{
+    const isSr = (i+1)===srSlot;
+    const on = goalMet || (isSr ? srEarned : (i+1)<=others);
+    return `<span class="gb-dot ${on?"on":""}${isSr?" sr":""}" style="--i:${i};--n:${t}"></span>`;
+  }).join("");
   // A bare flame and a number told nobody what it was. It says so now, and it says so even at zero,
   // because a streak you cannot see is a streak you will not start.
   const dstk=Prog.dayStreak||0;
   const streak=`<span class="gb-streak${dstk?"":" off"}"><b><span class="gb-flame">🔥</span> ${dstk}</b><small>day streak</small></span>`;
   // The freeze count lived here and squeezed the streak into a corner. Freezes are still bought and
   // still spent; they are just not what this button is for.
+  // One marker outstanding is "1", whether it stands for one card or forty.
+  const onlySr = left===1 && srSlot && !srEarned;
   const line = caught ? "Caught Up Today"
-    : (due ? `${due} Still Due` : `${Math.max(0,t-c)} Remaining`);
+    : onlySr ? "1 Still Due · review"
+    : `${left} Remaining`;
   // The tick is drawn rather than typed, because a drawn one can draw itself again.
   const tick=`<svg class="gb-tick" viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="10.4" fill="var(--ok-bg)" stroke="var(--green)" stroke-width="1.6"/>

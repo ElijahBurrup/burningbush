@@ -3146,16 +3146,29 @@ const DAY = 86400000;
 
   describe('the numbers teach some history', () => { });
   const history = await $(() => {
-    const filler = /five foot|six foot|shy of|one past|almost (thirty|forty|fifty|eighteen)|^route d+$|^d+ seconds$/i;
+    // These lost their backslashes: the word boundaries had become literal backspace
+    // characters and the digit classes plain letters, so the whole guard matched nothing.
+    const filler = /five foot|six foot|\bshy of\b|\bone past\b|almost (thirty|forty|fifty|eighteen)|^\d+ seconds$/i;   // 'route N' came out: Route 66 is the best anchor 66 has
     const bad = [], noYear = [];
-    for (let n = 1; n <= 66; n++) numRefOptions(n).forEach(o => {
+    // Was 1-66, from when the table stopped there. The range added for 67-176 leans hardest on
+    // year anchors, which is exactly what the year check below exists to police.
+    for (let n = 1; n <= 176; n++) numRefOptions(n).forEach(o => {
       if (filler.test(optName(o)) || filler.test(optWhy(o))) bad.push(n + ': ' + optName(o));
-      // every year named must end in the two digits of the number it belongs to, unless the number
-      // is in the name itself (Apollo 13, the 62nd homer)
-      const inName = new RegExp('\b' + n + '\b').test(optName(o));
-      (optWhy(o).match(/d{3,4}/g) || []).forEach(y => {
-        if (+String(y).slice(-2) !== n && !inName) noYear.push(n + ': ' + y + ' ' + optName(o));
-      });
+      // A year must end in the last two digits of the number it belongs to: 62 takes 1962, and
+      // 165 takes 1965 — the same rule, since a three digit number is anchored by its tail.
+      // Comparing the year against the whole of 165 was what made this fire on every correct
+      // entry above ninety-nine.
+      const tail = n % 100;
+      // Loose containment, not a word boundary: '62nd Homer' names 62 and a boundary after
+      // the digits refuses to see it.
+      const inName = optName(o).indexOf(String(n)) >= 0 || optName(o).indexOf(String(tail)) >= 0;
+      // Only a plausible YEAR counts. 747 is an aeroplane, .406 a batting average and 119 a
+      // psalm; treating every three or four digit run as a date invented hundreds of faults.
+      // One RIGHT year is enough. '2001: A Space Odyssey premiered in 1968' names a title and a
+      // date; demanding that every year match would fail an entry that is exactly correct.
+      const years = optWhy(o).match(/\b(1[0-9]{3}|20[0-9]{2})\b/g) || [];
+      if (years.length && !inName && !years.some(y => +String(y).slice(-2) === tail))
+        noYear.push(n + ': ' + years.join('/') + ' ' + optName(o));
     });
     const has = (n, name) => numRefOptions(n).some(o => optName(o) === name);
     return {
@@ -4032,6 +4045,57 @@ const DAY = 86400000;
   ok(palaceWalk.lastIsStation1, '...by name, so you can pick the walk back up');
   ok(palaceWalk.lastCarriesRef, '...with its verse alongside');
   ok(palaceWalk.emptyRoomSaysSo, 'a room with nothing in it says that rather than looking broken');
+
+  describe('the goal box counts markers, not cards', () => { });
+
+  const gbox = await $(() => {
+    const out = {};
+    const snapDone = (Prog.doneSkills||[]).slice(), snapMem = (Prog.memorized||[]).slice();
+    const snapPal = Prog.palaces, snapDay = Prog.goalDay, snapSr = Prog.srDay, snapSRS = SRS;
+    const snapVSR = Prog.verseSR, snapGoal = Prog.dailyGoal;
+
+    const read = () => { const s = libStatusHTML();
+      const d = document.createElement('div'); d.innerHTML = s;
+      return { title: (d.querySelector('.gb-title')||{}).textContent || '',
+               dots: [...d.querySelectorAll('.gb-dot')].map(x => x.className).join(' | '),
+               tick: !!d.querySelector('.gb-tick'),
+               icon: (d.querySelector('.gb-ic')||{}).textContent || '' }; };
+
+    // A finished day, with a pile of cards falling due afterwards. This is the reported case.
+    Prog.goalMode = 'same'; Prog.dailyGoal = 5; Prog.goalDay = null; Prog.palaces = [];
+    Prog.srDay = dayKey(new Date());                       // review was done today
+    Prog.memorized = []; Prog.verseSR = {};
+    goalState().count = 99;                                 // plenty of ordinary work done
+    saveProg(); bustCaches();
+    SRS = {};
+    [...knownNumbers()].slice(0, 9).forEach(n => { SRS['sk:num:'+n] = { box:2, due: Date.now()-99999 }; });
+    const done = read();
+    out.doneTitle = done.title; out.doneTick = done.tick;
+    out.cardsDue = numbersDueCount();                       // the number that used to be shouted
+
+    // The same day with the review NOT done.
+    delete Prog.srDay; saveProg(); bustCaches();
+    const owed = read();
+    out.owedTitle = owed.title;
+    out.owedDots = owed.dots;
+    out.dbgT = goalToday();
+    const lastDot = owed.dots.split('|').pop().split(' ').filter(Boolean);
+    out.lastIsSr = lastDot.indexOf('sr') >= 0;
+    out.srUnfilled2 = lastDot.indexOf('on') < 0;
+
+    Prog.doneSkills = snapDone; Prog.memorized = snapMem; Prog.palaces = snapPal;
+    Prog.goalDay = snapDay; Prog.dailyGoal = snapGoal; Prog.verseSR = snapVSR;
+    if (snapSr) Prog.srDay = snapSr; else delete Prog.srDay;
+    SRS = snapSRS; saveProg(); bustCaches();
+    return out;
+  });
+  ok(gbox.cardsDue >= 5, 'the day has a pile of individual cards due');
+  is(gbox.doneTitle, 'Caught Up Today', '...but a finished day says so rather than counting them');
+  ok(gbox.doneTick, '...and shows the tick, not the praying hands');
+  is(gbox.owedTitle, '1 Still Due · review', 'an unfinished review is ONE marker, however many cards');
+  ok(gbox.lastIsSr, '...drawn as the last dot');
+  is(gbox.dbgT, 5, '...on a goal of five, as reported');
+  ok(gbox.srUnfilled2, '...left unfilled until the review is actually done');
 
   describe('two devices land on the same review count', () => { });
 
