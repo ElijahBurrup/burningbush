@@ -1814,6 +1814,18 @@ const DAY = 86400000;
     return {
       gaps: gaps.length, thin: thin.length, dupes: dupes.length, shape: shape.length,
       words: Object.keys(BOOK_WORDS).length, refs: Object.keys(NUM_REFS).length,
+      // The table used to stop at 66 because only books needed it. It now runs the whole Major
+      // System: above 66 a number has no book, so this list is the only second picture it gets.
+      // Every number has SOMETHING to offer. The floor in the original 1-66 block is four
+      // (22, 28, 32, 36, 45, 49, 63 and 64 have exactly that), so the guarantee here is
+      // presence; the six-option promise below applies to the range added for the numbers
+      // that have no book to fall back on.
+      refsToTop: Array.from({length:176},(_,i)=>i+1).every(n=>(NUM_REFS[n]||[]).length>=1),
+      refsAbove66: Array.from({length:110},(_,i)=>i+67).every(n=>(NUM_REFS[n]||[]).length>=6),
+      refsNeverThePeg: Array.from({length:110},(_,i)=>i+67).every(n=>{
+        const peg=(pegFor(n).word||'').toLowerCase();
+        return !(NUM_REFS[n]||[]).some(o=>{ const nm=optName(o).toLowerCase();
+          return peg && (nm===peg || nm.includes(peg) || peg.includes(nm)); }); }),
       // the two examples the lesson itself promises
       nehemiah: bookWordOptions(16).some(o => /knee.high/i.test(optName(o))),
       exodus: bookWordOptions(2).some(o => /exit sign/i.test(optName(o))),
@@ -1824,7 +1836,10 @@ const DAY = 86400000;
     };
   });
   is(bbData.words, 66, 'a list of name pictures for every book');
-  is(bbData.refs, 66, '…and a list of number pictures for every book number');
+  is(bbData.refs, 176, '…and a list of number pictures for every number in the system');
+  ok(bbData.refsToTop, '...with no number in 1-176 left without one');
+  ok(bbData.refsAbove66, '...the ones past the books carrying a full six');
+  ok(bbData.refsNeverThePeg, '...and never offering the number its own Major System image back');
   is(bbData.gaps, 0, 'no book is left with an empty dropdown');
   is(bbData.thin, 0, '…and none of them is a token list of one or two');
   is(bbData.dupes, 0, 'no option is offered twice in the same list');
