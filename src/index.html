@@ -720,6 +720,14 @@
   .teachbox{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;line-height:1.55;font-size:14px}
   .opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
   .opt{background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;text-align:left;color:var(--ink)}
+  /* A palace answer is two lines: the room, and what is standing in it. */
+  .pp-opt{display:flex;flex-direction:column;gap:2px;padding:12px 15px}
+  .pp-o-n{font-size:16px;font-weight:800;line-height:1.25}
+  .pp-o-v{font-size:12.5px;font-weight:700;color:var(--gold-ink);letter-spacing:.01em}
+  .pp-o-empty{color:var(--muted);font-weight:600;font-style:italic}
+  .pp-last{margin-top:8px;text-align:center;font-size:12.5px;color:var(--muted);font-weight:700}
+  .pp-last b{color:var(--ink)}
+  .pp-last-v{color:var(--gold-ink)}
   /* Numbers & Books test: keep the whole question — stimulus + all 4 answers — visible without scrolling */
   .numtest .prompt{margin:2px 0 2px}
   .numtest-stim .bignum{font-size:58px;margin:4px 0}
@@ -2064,6 +2072,10 @@
       <div class="prof-sect" style="margin-top:16px">Get the app</div>
       <button class="btn ghost" id="pInstall" style="width:100%">📲 Install on your phone (home screen app)</button>
 
+      <div class="prof-sect" style="margin-top:16px">Sync</div>
+ <p class="hint" style="margin:0 0 8px">Your devices sync when you open the app and again whenever you come back to it. Use this if you have just finished on another device and want this one to catch up now.</p>
+      <button class="btn ghost" id="syncNow" style="width:100%">🔄 Sync now</button>
+
       <div class="prof-sect" style="margin-top:16px">Back up your progress</div>
  <p class="hint" style="margin:0 0 8px">Signing in keeps your progress safe in the cloud. A backup file is a second copy you hold yourself. Useful before switching devices.</p>
       <div class="btnrow" style="margin-top:0">
@@ -2199,7 +2211,10 @@ const CHANGELOG=[
    ["new","Every number from 67 to 176 now has its own list of picture ideas — things the number already means — so you can pair one with its Major System image and write the two into a single scene."],
    ["fix","The Major System Part 2 film no longer has a scratch off land on top of it, and closing the card no longer closes the film with it."],
    ["new","Spaced repetition counts you in — 3, 2, 1 — and times the review. Walk away part way and the clock keeps what you spent; come back and it carries on from there. It starts fresh each day."],
-   ["new","Your review time for the day, and whether you finished it, now show on the streak review screen — for today and for every day behind it."]
+   ["new","Your review time for the day, and whether you finished it, now show on the streak review screen — for today and for every day behind it."],
+   ["fix","<b>Your devices agree again.</b> Numbers and books were merging the wrong way round — the device that had done LESS won, and pushed its old cards back over the good ones, so a phone and a computer could sit on different review counts for ever. They now merge the way verses always have: whichever card has got further wins."],
+   ["new","The app checks for work done on your other devices whenever you come back to it, not just when it starts — which is what an installed app needs, since reopening it never restarts it. There is a <b>Sync now</b> button in Profile too."],
+   ["new","Walking a palace now shows the verse kept in each room under its name, and keeps the last room you named at the top — so a walk you put down halfway can be picked back up."]
  ]},
  {v:"2.5.1", d:"September 5, 2026", t:"The last marker is the review", items:[
    ["chg","<b>One of the day’s markers belongs to spaced repetition, and it is the last one.</b> Three word-for-word against a goal of three now earns two markers, not three — the day is not finished until the review is. It is drawn in <b style=\"color:var(--blue)\">blue</b> so you can see which one it is, and it fills when a whole set is done."],
@@ -4813,6 +4828,27 @@ function mergeProg(a,b){
     m.locPast=m.locPast||{}; m.locPast[k]=m.verseLoc[k]; delete m.verseLoc[k]; } });
   return migrateProg(m);
 }
+/* The number and book cards used to merge with Object.assign({}, cloud, local) — which is not a
+   merge at all. Local won every key outright, so a phone that had not done today's numbers kept its
+   own stale cards on the way in AND pushed them back over the good ones on the way out. The device
+   that was BEHIND won, both directions, and two devices could sit at different counts indefinitely
+   while syncing successfully.
+
+   Same rule as the verse trail below: the card that has got further wins, and the later due date is
+   kept. That makes the merge monotonic, so it converges no matter which device pulls first — which
+   is what lets an already-diverged pair heal themselves rather than needing to be reset.
+
+   The cost is deliberate: a card knocked back to box 1 on one device is overruled by a higher box on
+   the other. Losing one miss is a smaller harm than a review that never leaves the screen. */
+function mergeSRS(a,b){ a=a||{}; b=b||{}; const out={};
+  new Set([...Object.keys(a),...Object.keys(b)]).forEach(k=>{
+    const x=a[k], y=b[k];
+    if(!x||typeof x.box!=="number"){ out[k]=y; return; }
+    if(!y||typeof y.box!=="number"){ out[k]=x; return; }
+    const primary=((x.box||1)>=(y.box||1))?x:y, other=(primary===x)?y:x;
+    out[k]={...other, ...primary, due:Math.max(x.due||0, y.due||0)};
+  });
+  return out; }
 function mergeSR(a,b){ a=a||{}; b=b||{}; const out={}; new Set([...Object.keys(a),...Object.keys(b)]).forEach(k=>{
   const x=a[k], y=b[k]; if(!x){out[k]=y;return;} if(!y){out[k]=x;return;}
   const primary=((x.step||1)>=(y.step||1))?x:y, other=(primary===x)?y:x;   // the more-advanced D0…D30 trail wins the base
@@ -5102,7 +5138,7 @@ const Auth = {
         if(cloud){
           Prog=mergeProg(Prog,cloud);
           let cloudSRS={}; try{ cloudSRS=JSON.parse(d.srsJson||"{}")||{}; }catch(e){}
-          SRS=Object.assign({},cloudSRS,SRS);
+          SRS=mergeSRS(cloudSRS,SRS);
           Store.setJSON(PROG_KEY,Prog); Store.setJSON(SRS_KEY,SRS); Store.setJSON(PROG_KEY+"_bak",Prog);
           bustCaches(); recomputeLevel(); updateMetrics();
           if(Prog.theme && Prog.theme!==Store.get("vv_theme",null)) applyTheme(Prog.theme);   // the theme follows the account too
@@ -5122,6 +5158,20 @@ const Auth = {
     try{ await Auth._req("/sync","PUT",{ progJson:JSON.stringify(Prog), srsJson:JSON.stringify(SRS), updatedAt:Number(Store.get("vv_localts",0))||Date.now() }); }
     catch(e){ console.warn("cloud push failed:", e && e.message); } },
   syncUp(){ if(!Auth._token||Auth._pulling) return; clearTimeout(Auth._timer); Auth._timer=setTimeout(()=>Auth.push(),2000); },
+  /* Coming back to the app is the moment to ask what the other device did.
+
+     Boot used to be the only pull, which is fine in a browser tab and useless once the app is
+     installed to a home screen: reopening it RESUMES the page rather than reloading it, so boot
+     never runs again and the app can go days without asking. Throttled, because returning to the
+     front happens constantly and this is a network call. */
+  _lastPull:0,
+  refresh(force){
+    if(!Auth._token || Auth._pulling) return Promise.resolve(false);
+    const now=Date.now();
+    if(!force && now-Auth._lastPull < 60000) return Promise.resolve(false);
+    Auth._lastPull=now;
+    return Auth.pull().then(()=>true).catch(()=>false);
+  },
   isAdmin(){ return !!(Auth.user && ADMIN_EMAILS.includes((Auth.user.email||"").toLowerCase())); },
   adminTickets(type){ return Auth._req("/admin/tickets"+(type?("?type="+encodeURIComponent(type)):""),"GET"); },
   adminSetDone(key,done){ return Auth._req("/admin/tickets/status","POST",{key,done}); },
@@ -6565,6 +6615,31 @@ function startPalaceLesson(sk){
 }
 /* ---- palace practice: name shown, pick each room in order (re-gilds a decayed palace) ---- */
 let PP=null;
+/* A station is not just a name — it is where a verse was put. Showing the reference under the name
+   makes the walk what it is meant to be: the place, then what is standing in it. Recognising
+   "Driveway" alone is a memory of the house; recognising "Driveway · Deuteronomy 4:2" is the thing
+   the palace was built to hold.
+
+   Verses kept by heart have no station any more (setLocHeart clears it), so they are not counted. */
+function versesAtStation(slot, station){
+  const lv=Prog.verseLoc||{}, out=[];
+  Object.keys(lv).forEach(k=>{
+    const l=lv[k];
+    if(!l || l.heart || l.p!==slot) return;
+    if(String(l.room||"")!==String(station||"")) return;
+    const p=k.split(":").map(Number);
+    if(p.length===3 && p[0]>=1 && p[0]<=66) out.push({k, b:p[0], c:p[1], v:p[2]});
+  });
+  out.sort((x,y)=>x.b-y.b || x.c-y.c || x.v-y.v);
+  return out;
+}
+// "Deuteronomy 4:2", or "Deuteronomy 4:2 + 2 more" when a station holds a shelf of them.
+function stationVerseLabel(slot, station){
+  const vs=versesAtStation(slot, station);
+  if(!vs.length) return "";
+  const first=`${bookName(vs[0].b)} ${vs[0].c}:${vs[0].v}`;
+  return vs.length>1 ? `${first} + ${vs.length-1} more` : first;
+}
 function startPalacePractice(slot, host, ret, onAbort){
   const p=Prog.palaces[slot]; if(!p) return;
   PP={slot, p, host:host||"learn", ret:ret||renderPath, onAbort:onAbort||null, i:0, wrong:0};
@@ -6592,13 +6667,28 @@ function renderPalacePractice(){
   const distract=shuffle(p.stations.filter((_,j)=>j!==pos).slice()).slice(0,3);
   const options=shuffle([correct,...distract]);
   const pct=Math.round(100*pos/p.stations.length);
+  // Where you just were, kept on screen. Put the walk down half way, come back an hour later, and
+  // the question alone ("stop #4") does not tell you where you are standing — the room you last
+  // named does.
+  const prev = pos>0 ? p.stations[pos-1] : null;
+  const prevRef = prev ? stationVerseLabel(PP.slot, prev) : "";
+  const lastLine = prev
+    ? `<div class="pp-last">↩ Last stop <b>${bbEsc(prev)}</b>${prevRef?` · <span class="pp-last-v">${bbEsc(prevRef)}</span>`:""}</div>`
+    : `<div class="pp-last">Starting at the door</div>`;
+  const optHTML=o=>{
+    const ref=stationVerseLabel(PP.slot, o);
+    return `<button class="opt pp-opt" data-ok="${o===correct?1:0}"><span class="pp-o-n">${bbEsc(o)}</span>`+
+      (ref?`<span class="pp-o-v">${bbEsc(ref)}</span>`:`<span class="pp-o-v pp-o-empty">nothing kept here yet</span>`)+
+      `</button>`;
+  };
   L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="ppClose">✕</button>
       <div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>
       <div style="font-size:12px;color:var(--muted);font-weight:700;margin-left:8px">${pos+1}/${p.stations.length}</div></div>
     <div class="card">
       <div style="font-weight:800;color:var(--gold-ink);text-align:center;font-size:16px">🏛️ ${p.place}</div>
-      <div class="prompt" style="margin-top:12px">What is stop #${pos+1} on your walk?</div>
-      <div class="opts">${options.map(o=>`<button class="opt" data-ok="${o===correct?1:0}">${o}</button>`).join("")}</div>
+      ${lastLine}
+      <div class="prompt" style="margin-top:10px">What is stop #${pos+1} on your walk?</div>
+      <div class="opts">${options.map(optHTML).join("")}</div>
       <div id="ppFb"></div></div>`;
   el("ppClose").onclick=PP.onAbort||PP.ret;   // in the SR queue, ✕ aborts the whole queue (onAbort) instead of re-looping the same still-due palace
   L.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
@@ -10309,6 +10399,11 @@ function bootPopups(){
 // Backgrounding the app is walking away. Bank the seconds now rather than trusting that anything
 // runs on the way out — on a phone, often nothing does.
 document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden") srClockStop(); });
+// Back to the front: ask the server what changed elsewhere. This is the one that matters on a phone
+// with the app installed, where nothing else ever asks again.
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="visible"){ try{ Auth.refresh(); }catch(e){} } });
+window.addEventListener("focus",()=>{ try{ Auth.refresh(); }catch(e){} });
 window.addEventListener("pagehide",()=>{ srClockStop(); });
 document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState!=="visible") return;
@@ -13391,7 +13486,7 @@ function applyFeatureVisibility(){
 const PROF_ICONS={ "Admin":"🛠️", "Badges":"🎖️", "Feature store":"✨", "Account":"👤",
   "Group licences":"🎫", "Give":"🎁",
   "Bible translation":"📗", "Reference library":"📚", "What's new":"📋", "Theme":"🎨",
-  "Get the app":"📲", "Back up your progress":"💾" };
+  "Get the app":"📲", "Sync":"🔄", "Back up your progress":"💾" };
 const PROF_SUBS={
   "Admin":()=>"Test tools",
   "Badges":()=>{ const n=BADGES.filter(b=>b.have()).length; return n+" earned"; },
@@ -13408,12 +13503,13 @@ const PROF_SUBS={
   "Theme":()=>{ const t=(document.querySelector(".phone")||{getAttribute:()=>""}).getAttribute("data-theme")||"illumined";
     return {classic:"Classic",illumined:"Illumined Night",glass:"Stained Glass",quest:"Scripture Quest",buddy:"Verse Buddy"}[t]||t; },
   "Get the app":()=>"Home screen",
+  "Sync":()=>((typeof Auth!=="undefined"&&Auth._token)?"Across your devices":"Sign in to sync"),
   "Back up your progress":()=>"Export or restore",
   "App version":()=>"v"+APP_VERSION,
 };
 // The order Profile reads in. Anything not named here follows, in the order it was authored.
 const PROF_ORDER=["Admin","Badges","Get the app","Feature store","Group licences","Give","Bible translation","Theme",
-  "Reference library","Back up your progress","What's new","App version"];   // the version sits last
+  "Reference library","Sync","Back up your progress","What's new","App version"];   // the version sits last
 // Installed already? Then there is nothing to install, and the button is noise.
 function isInstalledApp(){
   try{ return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone===true; }
@@ -13581,6 +13677,16 @@ el("themeBtn").onclick=()=>{ buildProfileGrid(); el("themeModal").classList.add(
   if(el("testUnpaid")) el("testUnpaid").textContent = Billing.isPro() ? "🆓 Simulate unpaid user" : "✨ Restore Pro access";
   el("themeModal").style.display="flex"; };
 el("expBtn").onclick=exportBackup;
+// Asked for by name: a way to make this device catch up without waiting for anything.
+if(el("syncNow")) el("syncNow").onclick=async(e)=>{
+  const b=e.currentTarget; if(b.disabled) return;
+  if(!Auth._token){ toast("Sign in first — syncing needs an account."); return; }
+  const was=b.textContent; b.disabled=true; b.textContent="🔄 Syncing…";
+  const ok=await Auth.refresh(true);          // forced: the throttle is for the automatic pulls
+  b.textContent = ok ? "✅ Up to date" : "Couldn't reach the server";
+  setTimeout(()=>{ b.textContent=was; b.disabled=false; }, 1800);
+  try{ const a=document.querySelector(".view.active"); if(a && a.id==="verse") renderVerse(); }catch(err){}
+};
 el("impBtn").onclick=()=>el("impFile").click();
 // Share progress and the Talents Store were removed from Profile — the store lives on the
 // top bar, which is where people actually reach for it.

@@ -3979,6 +3979,148 @@ const DAY = 86400000;
   is(bookQ.miss.book, 1, 'a miss on a book sends its own card back to the start');
   is(bookQ.miss.num, 3, '...and leaves the number card where it was');
 
+  describe('a palace walk says what is standing in each room', () => { });
+
+  const palaceWalk = await $(() => {
+    const out = {};
+    const snapPal = Prog.palaces, snapLoc = Prog.verseLoc, snapDone = (Prog.doneSkills || []).slice();
+
+    Prog.palaces = [{ place: 'My House', stations: ['Driveway', 'Front Door', 'Kitchen', 'Landing', 'Loft'],
+                      learnedAt: Date.now(), step: 1, sr: {} }];
+    // Deuteronomy 4:2 lives in the driveway; two verses share the kitchen; the loft is empty.
+    Prog.verseLoc = {
+      '5:4:2':   { p: 0, room: 'Driveway' },
+      '19:23:1': { p: 0, room: 'Kitchen' },
+      '43:3:16': { p: 0, room: 'Kitchen' },
+      '40:6:33': { p: 0, room: 'Front Door' },
+      '45:8:28': { heart: true },                       // by heart: no room any more
+    };
+    saveProg();
+
+    out.driveway = stationVerseLabel(0, 'Driveway');
+    out.kitchen  = stationVerseLabel(0, 'Kitchen');
+    out.loft     = stationVerseLabel(0, 'Loft');
+    out.heartNotPlaced = versesAtStation(0, '').length;
+
+    startPalacePractice(0, 'verse', () => {}, () => {});
+    out.firstScreen = (el('verse').innerText || '').replace(/\s+/g, ' ');
+    out.firstHasRefs = /Deuteronomy 4:2|John 3:16|Psalms 23:1|Matthew 6:33/.test(out.firstScreen);
+    out.startsAtDoor = /Starting at the door/.test(out.firstScreen);
+
+    // answer stop 1, then look at stop 2
+    const right = el('verse').querySelector('[data-ok="1"]');
+    const chosen = right.querySelector('.pp-o-n').textContent;
+    PP.i = 1; renderPalacePractice();
+    out.secondScreen = (el('verse').innerText || '').replace(/\s+/g, ' ');
+    out.showsLast = out.secondScreen.indexOf('Last stop') >= 0;
+    out.lastIsStation1 = out.secondScreen.indexOf('Last stop ' + Prog.palaces[0].stations[0]) >= 0;
+    out.lastCarriesRef = out.secondScreen.indexOf('Deuteronomy 4:2') >= 0;
+    out.emptyRoomSaysSo = /nothing kept here yet/.test(out.secondScreen);
+
+    PP = null;
+    Prog.palaces = snapPal; Prog.verseLoc = snapLoc; Prog.doneSkills = snapDone;
+    saveProg(); bustCaches();
+    return out;
+  });
+  is(palaceWalk.driveway, 'Deuteronomy 4:2', 'a room names the verse kept in it');
+  is(palaceWalk.kitchen, 'Psalms 23:1 + 1 more', '...and says so when a room holds more than one');
+  is(palaceWalk.loft, '', '...and stays quiet about an empty one');
+  is(palaceWalk.heartNotPlaced, 0, 'a verse known by heart has no room to be listed in');
+  ok(palaceWalk.firstHasRefs, 'the answers on the walk carry their verses');
+  ok(palaceWalk.startsAtDoor, 'the first stop says where the walk begins');
+  ok(palaceWalk.showsLast, 'every stop after that names the one before it');
+  ok(palaceWalk.lastIsStation1, '...by name, so you can pick the walk back up');
+  ok(palaceWalk.lastCarriesRef, '...with its verse alongside');
+  ok(palaceWalk.emptyRoomSaysSo, 'a room with nothing in it says that rather than looking broken');
+
+  describe('two devices land on the same review count', () => { });
+
+  const twoDev = await $(() => {
+    const out = {};
+    const snapSRS = SRS, snapDone = (Prog.doneSkills || []).slice();
+
+    // A pair of cards learned on both devices. The PC then reviews them; the phone does not.
+    const PHONE = { 'sk:num:42': { box: 2, due: 1000 }, 'sk:num:43': { box: 2, due: 1000 } };
+    const PC    = { 'sk:num:42': { box: 4, due: 9000 }, 'sk:num:43': { box: 4, due: 9000 } };
+
+    // The old rule, kept here so the difference is visible rather than asserted from memory.
+    const oldWay = Object.assign({}, PC, PHONE);
+    out.oldKeptStale = oldWay['sk:num:42'].box;          // the phone's box 2 survived the PC's 4
+
+    const a = mergeSRS(PC, PHONE);      // phone pulls the PC's work
+    const b = mergeSRS(PHONE, PC);      // PC pulls the phone's stale copy
+    out.phoneAfter = a['sk:num:42'].box;
+    out.pcAfter    = b['sk:num:42'].box;
+    out.phoneDue   = a['sk:num:42'].due;
+    out.pcDue      = b['sk:num:42'].due;
+    out.sameBothWays = JSON.stringify(a) === JSON.stringify(b);
+
+    // Merging again changes nothing — which is what stops the two devices pushing each other back
+    // and forth for ever.
+    out.settles = JSON.stringify(mergeSRS(a, b)) === JSON.stringify(a);
+
+    // A card only one device has ever seen is kept, not dropped.
+    const c = mergeSRS({ 'sk:num:7': { box: 3, due: 5 } }, { 'sk:num:8': { box: 1, due: 6 } });
+    out.keepsBoth = Object.keys(c).sort().join(',');
+
+    // Junk on one side does not destroy a good card on the other.
+    const d = mergeSRS({ 'sk:num:9': { box: 5, due: 77 } }, { 'sk:num:9': null });
+    out.survivesJunk = d['sk:num:9'] && d['sk:num:9'].box;
+
+    // And the count a reader actually sees: the phone stops showing what the PC has done.
+    Prog.doneSkills = [];
+    UNITS.forEach(U => U.skills.forEach(sk => { if (sk.kind === 'num') Prog.doneSkills.push(sk.id); }));
+    saveProg(); bustCaches();
+    const soon = Date.now() - 1000, later = Date.now() + 40 * 86400000;
+    SRS = {}; knownNumbers().forEach(n => { SRS['sk:num:' + n] = { box: 2, due: soon }; });
+    out.phoneDueCount = numbersDueList().length;                       // everything looks due here
+    const cloud = {}; Object.keys(SRS).forEach(k => { cloud[k] = { box: 4, due: later }; });
+    SRS = mergeSRS(cloud, SRS);                                        // ...then it pulls
+    out.afterSync = numbersDueList().length;
+
+    SRS = snapSRS; Prog.doneSkills = snapDone; saveProg(); bustCaches();
+    return out;
+  });
+  is(twoDev.oldKeptStale, 2, 'the old rule kept the device that was BEHIND');
+  is(twoDev.phoneAfter, 4, 'the phone now takes the PC\'s more advanced card');
+  is(twoDev.pcAfter, 4, '...and the PC keeps its own rather than adopting the stale one');
+  is(twoDev.phoneDue, 9000, 'the later due date wins');
+  is(twoDev.pcDue, 9000, '...whichever side it came from');
+  ok(twoDev.sameBothWays, 'both devices reach the same answer, whoever pulls first');
+  ok(twoDev.settles, '...and merging again changes nothing, so they stop overwriting each other');
+  is(twoDev.keepsBoth, 'sk:num:7,sk:num:8', 'a card only one device has seen is kept');
+  is(twoDev.survivesJunk, 5, '...and a missing card on one side never destroys a good one');
+  ok(twoDev.phoneDueCount > 0, 'before syncing, the phone shows a pile of numbers due');
+  is(twoDev.afterSync, 0, '...and after syncing it agrees with the PC that they are done');
+
+  const pullBack = await $(() => {
+    const out = {};
+    const realPull = Auth.pull, realToken = Auth._token;
+    let calls = 0;
+    Auth.pull = () => { calls++; return Promise.resolve(); };
+    Auth._token = 'test'; Auth._lastPull = 0; Auth._pulling = false;
+
+    return Auth.refresh().then(() => {
+      out.first = calls;
+      return Auth.refresh();                       // straight away: throttled
+    }).then(() => {
+      out.second = calls;
+      return Auth.refresh(true);                   // forced, the way the button does it
+    }).then(() => {
+      out.forced = calls;
+      Auth._token = null;
+      return Auth.refresh(true);                   // signed out: nothing to ask
+    }).then(() => {
+      out.signedOut = calls;
+      Auth.pull = realPull; Auth._token = realToken; Auth._lastPull = 0;
+      return out;
+    });
+  });
+  is(pullBack.first, 1, 'coming back to the app asks the server what changed');
+  is(pullBack.second, 1, '...but not again a moment later, because returning happens constantly');
+  is(pullBack.forced, 2, 'Sync now asks regardless');
+  is(pullBack.signedOut, 2, '...and signed out it asks nobody');
+
   describe('the review is timed, and the clock survives walking away', () => { });
 
   const clock = await $(() => {
@@ -5574,7 +5716,7 @@ const DAY = 86400000;
   ok(pgrid.allSubbed, '...and a line saying what is inside');
   is(pgrid.labels.split(' | ')[0], 'Admin', 'Admin comes first');
   is(pgrid.labels.split(' | ')[1], "Badges", '...then the badges');
-  is(pgrid.labels.split(' | ').slice(0,11).join(','), "Admin,Badges,Get the app,Feature store,Group licences,Give,Bible translation,Theme,Reference library,Back up your progress,What's new", '...then the rest, in the order asked for, with the release notes last');
+  is(pgrid.labels.split(' | ').slice(0, 12).join(','), "Admin,Badges,Get the app,Feature store,Group licences,Give,Bible translation,Theme,Reference library,Sync,Back up your progress,What's new", '...then the rest, in the order asked for, with the release notes last');
   has(pgrid.labels, 'Theme', 'Theme is one of them');
   has(pgrid.labels, 'Account', '...and Account');
   has(pgrid.labels, 'Back up', '...and the backup');
