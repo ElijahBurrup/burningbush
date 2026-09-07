@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "3254f86555a58b87",
+  "h": "2629fbc91cd6f58c",
   "len": 20760,
   "els": 482,
   "buttons": 52,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "54aa0bed796cad16",
-  "len": 170952,
-  "els": 2895,
+  "h": "6bb698f2eb1b6896",
+  "len": 171942,
+  "els": 2908,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.7.0 September 7, 2026 Six at a time, and your devices agree NEW Phase 12 is now eighteen smaller ph"
+  "text": "✕ Version history v2.7.1 September 7, 2026 Your devices actually agree now FIX The goal still would not cross between de"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "df8caac7895a5d1d",
+  "h": "45e727369964dd65",
   "len": 19959,
   "els": 474,
   "buttons": 50,
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "29832923aa56721c",
+  "h": "61c6347323e0150d",
   "len": 19967,
   "els": 474,
   "buttons": 50,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "54aa0bed796cad16",
-  "len": 170952,
-  "els": 2895,
+  "h": "6bb698f2eb1b6896",
+  "len": 171942,
+  "els": 2908,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.7.0 September 7, 2026 Six at a time, and your devices agree NEW Phase 12 is now eighteen smaller ph"
+  "text": "✕ Version history v2.7.1 September 7, 2026 Your devices actually agree now FIX The goal still would not cross between de"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "29832923aa56721c",
+  "h": "61c6347323e0150d",
   "len": 19967,
   "els": 474,
   "buttons": 50,
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "553be6218af3fdef",
+  "h": "9947ce9abed4c31e",
   "len": 19965,
   "els": 474,
   "buttons": 50,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "54aa0bed796cad16",
-  "len": 170952,
-  "els": 2895,
+  "h": "6bb698f2eb1b6896",
+  "len": 171942,
+  "els": 2908,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.7.0 September 7, 2026 Six at a time, and your devices agree NEW Phase 12 is now eighteen smaller ph"
+  "text": "✕ Version history v2.7.1 September 7, 2026 Your devices actually agree now FIX The goal still would not cross between de"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "553be6218af3fdef",
+  "h": "9947ce9abed4c31e",
   "len": 19965,
   "els": 474,
   "buttons": 50,
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "0c429727c9d64c21",
+  "h": "81d523eb38b4c2ff",
   "len": 19967,
   "els": 474,
   "buttons": 50,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "54aa0bed796cad16",
-  "len": 170952,
-  "els": 2895,
+  "h": "6bb698f2eb1b6896",
+  "len": 171942,
+  "els": 2908,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.7.0 September 7, 2026 Six at a time, and your devices agree NEW Phase 12 is now eighteen smaller ph"
+  "text": "✕ Version history v2.7.1 September 7, 2026 Your devices actually agree now FIX The goal still would not cross between de"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "0c429727c9d64c21",
+  "h": "81d523eb38b4c2ff",
   "len": 19967,
   "els": 474,
   "buttons": 50,
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "429b83f6ca20be5b",
+  "h": "50ab3da70e634f04",
   "len": 19963,
   "els": 474,
   "buttons": 50,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "54aa0bed796cad16",
-  "len": 170952,
-  "els": 2895,
+  "h": "6bb698f2eb1b6896",
+  "len": 171942,
+  "els": 2908,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.7.0 September 7, 2026 Six at a time, and your devices agree NEW Phase 12 is now eighteen smaller ph"
+  "text": "✕ Version history v2.7.1 September 7, 2026 Your devices actually agree now FIX The goal still would not cross between de"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "429b83f6ca20be5b",
+  "h": "50ab3da70e634f04",
   "len": 19963,
   "els": 474,
   "buttons": 50,

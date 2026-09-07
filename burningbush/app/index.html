@@ -2206,8 +2206,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.7.0";
+const APP_VERSION="2.7.1";
 const CHANGELOG=[
+ {v:"2.7.1", d:"September 7, 2026", t:"Your devices actually agree now", items:[
+   ["fix","<b>The goal still would not cross between devices.</b> The rule was right — the newest choice wins — but only a profile that had CHANGED a setting since the last release carried a timestamp, and no existing profile did. Without one it fell back to whatever this device already had, which is the very thing it was written to stop. A missing timestamp now falls back to when the profile was last saved."],
+   ["fix","<b>A palace walked on one device stayed due on the other.</b> Palaces were merged by taking whichever device had the longer list, whole — so the rooms survived but the walk did not. They now merge one slot at a time, keeping whichever walk has got further."]
+ ]},
  {v:"2.7.0", d:"September 7, 2026", t:"Six at a time, and your devices agree", items:[
    ["new","<b>Phase 12 is now eighteen smaller phases</b> — 12A, 12B and so on, six numbers each. Every number has its own lesson button, and a test on the six comes at the end. The next phase opens the way the others do: finish all six, scratch the ticket."],
    ["fix","<b>Your daily goal now follows your account.</b> A goal set on one device never reached the other — each kept its own and both thought they were right. Settings now cross with whichever choice you made last. The same was true of your theme."],
@@ -4768,10 +4772,10 @@ function mergeProg(a,b){
     : (a.streakLost===null || b.streakLost===null ? null : (a.streakLost||b.streakLost||null));
   m.chosen=Object.assign({},b.chosen,a.chosen); m.customBook=Object.assign({},b.customBook,a.customBook);
   m.customScene=Object.assign({},b.customScene,a.customScene); m.customPeg=Object.assign({},b.customPeg,a.customPeg); m.customBookImg=Object.assign({},b.customBookImg,a.customBookImg); m.bookWord=Object.assign({},b.bookWord,a.bookWord); m.numRef=Object.assign({},b.numRef,a.numRef); m.numScene=Object.assign({},b.numScene,a.numScene); m.talentLog=Object.assign({},b.talentLog,a.talentLog); m.verseLoc=Object.assign({},b.verseLoc,a.verseLoc); m.msSeen=Object.assign({},b.msSeen,a.msSeen);
-  m.firstWin=!!(a.firstWin||b.firstWin); m.persona=a.persona||b.persona; m.dailyMin=a.dailyMin||b.dailyMin; m.bibleFam=a.bibleFam||b.bibleFam; m.covenant=a.covenant||b.covenant;
+  m.firstWin=!!(a.firstWin||b.firstWin); m.persona=a.persona||b.persona; m.bibleFam=a.bibleFam||b.bibleFam;   // dailyMin is settled above with the other stamped settings; repeating it here (local first) put the stale one straight back m.covenant=a.covenant||b.covenant;
   m.scratchWon=uniq(a.scratchWon,b.scratchWon); m.scratchInit=!!(a.scratchInit||b.scratchInit); m.fiveVerseHintShown=!!(a.fiveVerseHintShown||b.fiveVerseHintShown);
   m.tickets=[...(a.tickets||[]),...(b.tickets||[])].filter((t,i,arr)=>arr.findIndex(x=>x.ts===t.ts&&x.type===t.type)===i); // union by (ts,type)
-  m.palaces=((a.palaces||[]).length>=(b.palaces||[]).length)?a.palaces:b.palaces;   // keep the fuller palace set
+  m.palaces=mergePalaces(a.palaces,b.palaces);
   m.verseSR=mergeSR(a.verseSR,b.verseSR);
   m.palaceSlots=Math.max(a.palaceSlots||0,b.palaceSlots||0); m.storySections=uniq(a.storySections,b.storySections);
   m.taxAt=Math.max(a.taxAt||0,b.taxAt||0); m.taxWeek=Math.max(a.taxWeek||0,b.taxWeek||0);
@@ -4899,6 +4903,37 @@ function mergeSRS(a,b){ a=a||{}; b=b||{}; const out={};
     out[k]={...other, ...primary, due:Math.max(x.due||0, y.due||0)};
   });
   return out; }
+/* Palaces used to merge by taking whichever ARRAY was longer, whole. The rooms survived that; the
+   walk did not. A palace walked on the computer stayed due on the phone for ever, because its
+   checkpoint travelled only as a passenger of the array that happened to win — the same fault the
+   number cards had, wearing different clothes.
+
+   They merge one slot at a time now. The slot IS the identity: verseLoc remembers which palace a
+   verse lives in by index, so matching on anything else would move verses into rooms they were
+   never put in. Within a slot the fuller list of stations is the truer one, and the trail that has
+   got further wins the checkpoint — the rule the verses and the cards already use. */
+function mergePalaces(a,b){
+  a=Array.isArray(a)?a:[]; b=Array.isArray(b)?b:[];
+  const n=Math.max(a.length,b.length), out=[];
+  for(let i=0;i<n;i++){
+    const x=a[i], y=b[i];
+    const okx=x&&typeof x==="object", oky=y&&typeof y==="object";
+    if(!okx && !oky){ out.push(x||y||null); continue; }
+    if(!okx){ out.push(y); continue; }
+    if(!oky){ out.push(x); continue; }
+    const fuller=((x.stations||[]).length>=(y.stations||[]).length)?x:y;
+    const other =(fuller===x)?y:x;
+    const ahead =((x.step||1)>=(y.step||1))?x:y;
+    const merged={...other, ...fuller};
+    merged.step=ahead.step||1;
+    const due=Math.max(x.dueAt||0, y.dueAt||0);
+    if(due) merged.dueAt=due; else delete merged.dueAt;
+    merged.learnedAt=Math.min(x.learnedAt||Date.now(), y.learnedAt||Date.now());
+    if(ahead.lt!==undefined){ merged.lt=ahead.lt; merged.ltAt=ahead.ltAt; }
+    out.push(merged);
+  }
+  return out;
+}
 function mergeSR(a,b){ a=a||{}; b=b||{}; const out={}; new Set([...Object.keys(a),...Object.keys(b)]).forEach(k=>{
   const x=a[k], y=b[k]; if(!x){out[k]=y;return;} if(!y){out[k]=x;return;}
   const primary=((x.step||1)>=(y.step||1))?x:y, other=(primary===x)?y:x;   // the more-advanced D0…D30 trail wins the base
@@ -5186,6 +5221,18 @@ const Auth = {
           cloud=null;
         }
         if(cloud){
+          /* Settings are decided by whoever chose last — but only a profile that has CHANGED one
+             since this shipped carries a stamp, and no profile that already existed does. Without
+             one, newest-wins fell back to local-wins and two devices kept their own goals for ever,
+             which is exactly what it was written to stop.
+
+             So when a stamp is missing, stand in the time the blob was last WRITTEN: the server
+             keeps that for the account, and vv_localts keeps it here. It is a proxy rather than the
+             real answer — a device merely used more recently will carry its settings across — but it
+             is deterministic, it converges, and re-choosing the setting stamps it properly and
+             settles the matter for good. */
+          if(cloud.settingsAt==null) cloud.settingsAt = Number(d.updatedAt)||0;
+          if(Prog.settingsAt==null)  Prog.settingsAt  = Number(Store.get("vv_localts",0))||0;
           Prog=mergeProg(Prog,cloud);
           let cloudSRS={}; try{ cloudSRS=JSON.parse(d.srsJson||"{}")||{}; }catch(e){}
           SRS=mergeSRS(cloudSRS,SRS);

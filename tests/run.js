@@ -17,6 +17,9 @@ const only = process.argv.slice(2).filter(a => !a.startsWith('--'));
 const LAYERS = [
   { name: 'static', file: 'static/check.js', args: [] },
   { name: 'spec', file: 'spec/behaviour.js', args: [] },
+  // Two browsers, one account. Everything else runs a single device, and a sync fault is
+  // invisible to a single device by definition.
+  { name: 'sync', file: 'sync/run.js', args: [], slow: true },
   { name: 'snapshot', file: 'snapshot/run.js', args: [], slow: true },
   { name: 'layout', file: 'layout/overflow.js', args: [], slow: true },
 ];
