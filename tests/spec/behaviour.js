@@ -4017,18 +4017,26 @@ const DAY = 86400000;
 
     startPalacePractice(0, 'verse', () => {}, () => {});
     out.firstScreen = (el('verse').innerText || '').replace(/\s+/g, ' ');
-    out.firstHasRefs = /Deuteronomy 4:2|John 3:16|Psalms 23:1|Matthew 6:33/.test(out.firstScreen);
     out.startsAtDoor = /Starting at the door/.test(out.firstScreen);
+    // The cue: the verse standing at THIS stop, shown once, above the options.
+    out.cues = document.querySelectorAll('#verse .pp-cue').length;
+    out.cueText = (document.querySelector('#verse .pp-cue') || {}).textContent || '';
+    // ...and nothing on the buttons but the room itself.
+    out.optTexts = [...document.querySelectorAll('#verse .opt')].map(b => b.textContent);
+    out.optsAreRoomsOnly = out.optTexts.every(t => Prog.palaces[0].stations.indexOf(t) >= 0);
 
     // answer stop 1, then look at stop 2
-    const right = el('verse').querySelector('[data-ok="1"]');
-    const chosen = right.querySelector('.pp-o-n').textContent;
     PP.i = 1; renderPalacePractice();
     out.secondScreen = (el('verse').innerText || '').replace(/\s+/g, ' ');
     out.showsLast = out.secondScreen.indexOf('Last stop') >= 0;
     out.lastIsStation1 = out.secondScreen.indexOf('Last stop ' + Prog.palaces[0].stations[0]) >= 0;
     out.lastCarriesRef = out.secondScreen.indexOf('Deuteronomy 4:2') >= 0;
-    out.emptyRoomSaysSo = /nothing kept here yet/.test(out.secondScreen);
+    // stop 3 is the Kitchen, which holds two — the cue names one and says how many more
+    PP.i = 2; renderPalacePractice();
+    out.kitchenCue = (document.querySelector('#verse .pp-cue') || {}).textContent || '';
+    // stop 5 is the empty Loft: no cue at all rather than an empty box
+    PP.i = 4; renderPalacePractice();
+    out.loftCues = document.querySelectorAll('#verse .pp-cue').length;
 
     PP = null;
     Prog.palaces = snapPal; Prog.verseLoc = snapLoc; Prog.doneSkills = snapDone;
@@ -4039,12 +4047,117 @@ const DAY = 86400000;
   is(palaceWalk.kitchen, 'Psalms 23:1 + 1 more', '...and says so when a room holds more than one');
   is(palaceWalk.loft, '', '...and stays quiet about an empty one');
   is(palaceWalk.heartNotPlaced, 0, 'a verse known by heart has no room to be listed in');
-  ok(palaceWalk.firstHasRefs, 'the answers on the walk carry their verses');
+  is(palaceWalk.cues, 1, 'the verse at this stop is shown once, not on every button');
+  has(palaceWalk.cueText, 'Deuteronomy 4:2', '...and it is the one kept at THIS stop');
+  ok(palaceWalk.optsAreRoomsOnly, '...leaving the answers as rooms, with nothing to read off');
   ok(palaceWalk.startsAtDoor, 'the first stop says where the walk begins');
   ok(palaceWalk.showsLast, 'every stop after that names the one before it');
   ok(palaceWalk.lastIsStation1, '...by name, so you can pick the walk back up');
   ok(palaceWalk.lastCarriesRef, '...with its verse alongside');
-  ok(palaceWalk.emptyRoomSaysSo, 'a room with nothing in it says that rather than looking broken');
+  has(palaceWalk.kitchenCue, '+ 1 more', 'a stop holding two says so');
+  is(palaceWalk.loftCues, 0, 'a stop holding nothing shows no cue at all');
+
+  describe('Phase 12 is subsections of six, one number to a button', () => { });
+
+  const p12 = await $(() => {
+    const subs = UNITS.filter(U => /^Phase 12/.test(U.name || ''));
+    const lessonsOf = U => U.skills.filter(s => !s.testOnly);
+    const testOf    = U => U.skills.filter(s => s.testOnly);
+    const taught = [];
+    subs.forEach(U => lessonsOf(U).forEach(s => s.items.forEach(n => taught.push(n))));
+    const sizes = subs.map(U => lessonsOf(U).length);
+    return {
+      count: subs.length,
+      names: subs.map(U => U.name.split(':')[0]).join(','),
+      firstName: subs[0] && subs[0].name,
+      lastName: subs[subs.length - 1] && subs[subs.length - 1].name,
+      // one number per lesson, never a batch
+      everyLessonOneNumber: subs.every(U => lessonsOf(U).every(s => s.items.length === 1)),
+      // exactly one test tile per subsection, covering that subsection's numbers
+      oneTestEach: subs.every(U => testOf(U).length === 1),
+      testCoversAll: subs.every(U => {
+        const t = testOf(U)[0], ls = lessonsOf(U).map(s => s.items[0]);
+        return t && t.items.length === ls.length && ls.every(n => t.items.indexOf(n) >= 0); }),
+      sizes: sizes.join(','),
+      // every number from 67 to 176, once each
+      covered: taught.length,
+      complete: Array.from({length: 110}, (_, i) => i + 67).every(n => taught.indexOf(n) >= 0),
+      noDupes: new Set(taught).size === taught.length,
+    };
+  });
+  is(p12.count, 18, 'Phase 12 is eighteen subsections');
+  has(p12.firstName, 'Phase 12A: 67', '...starting at 12A');
+  has(p12.lastName, '176', '...and ending on 176');
+  ok(p12.everyLessonOneNumber, 'every lesson button teaches exactly one number');
+  ok(p12.oneTestEach, '...with one test tile at the end of each subsection');
+  ok(p12.testCoversAll, '...asking for exactly the six that subsection taught');
+  is(p12.sizes, '6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,8', 'sixes throughout, the tail folded into the last');
+  is(p12.covered, 110, 'all 110 numbers are taught');
+  ok(p12.complete, '...every one of 67 to 176');
+  ok(p12.noDupes, '...and none of them twice');
+
+  const p12gate = await $(() => {
+    const out = {};
+    const snap = (Prog.doneSkills || []).slice(), snapMax = Prog.phaseMax;
+    const idx = UNITS.findIndex(U => /^Phase 12A/.test(U.name || ''));
+    const U = UNITS[idx], lessons = U.skills.filter(s => !s.testOnly);
+
+    Prog.doneSkills = lessons.slice(0, 5).map(s => s.id);   // five of six done
+    saveProg(); bustCaches();
+    out.fiveDone = phaseComplete(idx);
+    Prog.doneSkills = lessons.map(s => s.id);               // all six lessons, test still owed
+    saveProg(); bustCaches();
+    out.lessonsOnly = phaseComplete(idx);
+    Prog.doneSkills = U.skills.map(s => s.id);              // and the test
+    saveProg(); bustCaches();
+    out.allDone = phaseComplete(idx);
+
+    // the old batch ids become the numbers they stood for
+    const migrated = migrateProg({ doneSkills: ['peg:76', 'snd:0-4'] }).doneSkills;
+    out.batchGone = migrated.indexOf('peg:76') < 0;
+    out.batchBecame = migrated.filter(x => /^num:(7[6-9]|8[0-5])$/.test(x)).length;
+    out.keptOthers = migrated.indexOf('snd:0-4') >= 0;
+
+    Prog.doneSkills = snap; Prog.phaseMax = snapMax; saveProg(); bustCaches();
+    return out;
+  });
+  no(p12gate.fiveDone, 'five of the six lessons does not finish the subsection');
+  no(p12gate.lessonsOnly, '...nor all six with the test still owed');
+  ok(p12gate.allDone, '...it takes the six and the test, and then the next phase is scratched open');
+  ok(p12gate.batchGone, 'an old batch tile no longer counts as itself');
+  is(p12gate.batchBecame, 10, '...it becomes the ten numbers it used to stand for');
+  ok(p12gate.keptOthers, '...leaving every other skill alone');
+
+  describe('a setting chosen on one device reaches the other', () => { });
+
+  const settings = await $(() => {
+    const out = {};
+    // The PC, left on nine. The phone, set to five a moment later.
+    const pc    = { memorized:['1:1:1'], doneSkills:['x'], dailyGoal:9, goalMode:'same', settingsAt: 1000 };
+    const phone = { memorized:['1:1:1'], doneSkills:['x'], dailyGoal:5, goalMode:'same', settingsAt: 2000 };
+
+    out.pcPullsPhone    = mergeProg(pc, phone).dailyGoal;    // the PC learns the newer choice
+    out.phonePullsPc    = mergeProg(phone, pc).dailyGoal;    // ...and the phone keeps its own
+    out.settles         = mergeProg(mergeProg(pc, phone), mergeProg(phone, pc)).dailyGoal;
+
+    // A profile that has never chosen anything must not overwrite one that has.
+    const virgin = { memorized:['1:1:1'], doneSkills:['x'] };
+    out.unsetLoses = mergeProg(phone, virgin).dailyGoal;
+    out.unsetGains = mergeProg(virgin, phone).dailyGoal;
+
+    // The whole set moves together: mode and number cannot come from different devices.
+    const weekly = { memorized:['1:1:1'], doneSkills:['x'], dailyGoal:3, goalMode:'week',
+                     goalWeekday:7, goalWeekend:2, settingsAt: 3000 };
+    const m = mergeProg(phone, weekly);
+    out.together = [m.goalMode, m.dailyGoal, m.goalWeekday, m.goalWeekend].join(',');
+    return out;
+  });
+  is(settings.pcPullsPhone, 5, 'the newer choice crosses to the other device');
+  is(settings.phonePullsPc, 5, '...and the device that made it keeps it');
+  is(settings.settles, 5, '...so both land on the same goal and stay there');
+  is(settings.unsetLoses, 5, 'a device that never chose does not overwrite one that did');
+  is(settings.unsetGains, 5, '...it adopts the choice instead');
+  is(settings.together, 'week,3,7,2', 'a goal arrives whole, never half from each device');
 
   describe('the goal box counts markers, not cards', () => { });
 
@@ -4083,6 +4196,11 @@ const DAY = 86400000;
     out.lastIsSr = lastDot.indexOf('sr') >= 0;
     out.srUnfilled2 = lastDot.indexOf('on') < 0;
 
+    // nothing due at all, and the review done: the only state that earns the tick
+    Prog.srDay = dayKey(new Date()); SRS = {}; saveProg(); bustCaches();
+    const clear = read();
+    out.clearTitle = clear.title; out.clearTick = clear.tick;
+
     Prog.doneSkills = snapDone; Prog.memorized = snapMem; Prog.palaces = snapPal;
     Prog.goalDay = snapDay; Prog.dailyGoal = snapGoal; Prog.verseSR = snapVSR;
     if (snapSr) Prog.srDay = snapSr; else delete Prog.srDay;
@@ -4090,12 +4208,16 @@ const DAY = 86400000;
     return out;
   });
   ok(gbox.cardsDue >= 5, 'the day has a pile of individual cards due');
-  is(gbox.doneTitle, 'Caught Up Today', '...but a finished day says so rather than counting them');
-  ok(gbox.doneTick, '...and shows the tick, not the praying hands');
+  // The day stays finished — the dots and the streak are latched — but the LINE reports what is
+  // actually waiting, because "Caught Up Today" over nine due reviews is simply untrue.
+  is(gbox.doneTitle, '1 Still Due · review', '...and the line counts the session, not the cards');
+  no(gbox.doneTick, '...withholding the tick while reviews are waiting');
   is(gbox.owedTitle, '1 Still Due · review', 'an unfinished review is ONE marker, however many cards');
   ok(gbox.lastIsSr, '...drawn as the last dot');
   is(gbox.dbgT, 5, '...on a goal of five, as reported');
   ok(gbox.srUnfilled2, '...left unfilled until the review is actually done');
+  is(gbox.clearTitle, 'Caught Up Today', 'with the review done AND nothing waiting, the day is clear');
+  ok(gbox.clearTick, '...and that is when the tick appears');
 
   describe('two devices land on the same review count', () => { });
 
@@ -5517,12 +5639,14 @@ const DAY = 86400000;
     };
   });
   is(lpath.headers, 0, 'nothing folds — the collapsible headers are gone');
-  is(lpath.phaseCount, 13, 'the Code, then Foundations, then eleven numbered phases');
-  is(lpath.numbered, 'Phase 2,Phase 3,Phase 4,Phase 5,Phase 6,Phase 7,Phase 8,Phase 9,Phase 10,Phase 11,Phase 12', 'numbered Phase 2 through Phase 12, with Foundations as the first');
+  // The Code, Foundations, ten book phases, then Phase 12 in eighteen subsections of six.
+  is(lpath.phaseCount, 30, 'the Code, then Foundations, then the numbered phases');
+  is(lpath.numbered.split(',').slice(0, 10).join(','), 'Phase 2,Phase 3,Phase 4,Phase 5,Phase 6,Phase 7,Phase 8,Phase 9,Phase 10,Phase 11', 'numbered Phase 2 through Phase 11 are the books');
+  is(lpath.numbered.split(',').slice(10).join(','), 'Phase 12A,Phase 12B,Phase 12C,Phase 12D,Phase 12E,Phase 12F,Phase 12G,Phase 12H,Phase 12I,Phase 12J,Phase 12K,Phase 12L,Phase 12M,Phase 12N,Phase 12O,Phase 12P,Phase 12Q,Phase 12R', '...and the numbers are 12A through 12R, six at a time');
   has(lpath.names, 'The Code: Major System Sounds', 'the first is the Code');
   has(lpath.names, 'Foundations', '...then Foundations');
   has(lpath.names, 'Phase 2: Mark–John + Joshua–Ruth', '...then Mark–John first, which finishes the four Gospels, and Joshua–Ruth after');
-  has(lpath.names, 'Phase 12: All the Numbers', '...and the numbers alone at the end');
+  has(lpath.names, 'Phase 12A: 67', '...and the numbers begin at 12A, alone at the end');
   hasNot(lpath.names, 'Memory Palace', 'the Memory Palace section is gone from the path');
   is(lpath.palaceSkills, 0, 'and no Add Palace tile is left anywhere on it');
   no(lpath.lastPhaseHasPalace, '...least of all on the last phase');

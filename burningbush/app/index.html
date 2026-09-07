@@ -723,11 +723,12 @@
   .teachbox{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;line-height:1.55;font-size:14px}
   .opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
   .opt{background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;text-align:left;color:var(--ink)}
-  /* A palace answer is two lines: the room, and what is standing in it. */
-  .pp-opt{display:flex;flex-direction:column;gap:2px;padding:12px 15px}
-  .pp-o-n{font-size:16px;font-weight:800;line-height:1.25}
-  .pp-o-v{font-size:12.5px;font-weight:700;color:var(--gold-ink);letter-spacing:.01em}
-  .pp-o-empty{color:var(--muted);font-weight:600;font-style:italic}
+  /* The verse kept at this stop, shown once above the options as the cue. */
+  .pp-cue{margin:0 0 10px;text-align:center;background:var(--panel2);border:1px solid var(--gold2);
+    border-radius:12px;padding:9px 12px}
+  .pp-cue-k{display:block;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--muted);font-weight:800;margin-bottom:2px}
+  .pp-cue b{color:var(--gold-ink);font-size:16px}
   .pp-last{margin-top:8px;text-align:center;font-size:12.5px;color:var(--muted);font-weight:700}
   .pp-last b{color:var(--ink)}
   .pp-last-v{color:var(--gold-ink)}
@@ -2205,8 +2206,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.6.1";
+const APP_VERSION="2.7.0";
 const CHANGELOG=[
+ {v:"2.7.0", d:"September 7, 2026", t:"Six at a time, and your devices agree", items:[
+   ["new","<b>Phase 12 is now eighteen smaller phases</b> — 12A, 12B and so on, six numbers each. Every number has its own lesson button, and a test on the six comes at the end. The next phase opens the way the others do: finish all six, scratch the ticket."],
+   ["fix","<b>Your daily goal now follows your account.</b> A goal set on one device never reached the other — each kept its own and both thought they were right. Settings now cross with whichever choice you made last. The same was true of your theme."],
+   ["fix","The goal button no longer says <b>Caught Up Today</b> while reviews are waiting. The day stays finished, but the line tells you there is work."],
+   ["chg","On a palace walk the verse kept at each stop is shown <b>once at the top</b> as the cue, rather than under every answer — which had made the right room the one whose reference you recognised."]
+ ]},
  {v:"2.6.1", d:"September 7, 2026", t:"The goal box counts what the dots count", items:[
    ["fix","<b>“5 Still Due” under five filled dots.</b> The dots count goal markers; the line was counting review cards. Spaced repetition is ONE marker however many cards fall due, so a finished day with nine newly due now says <b>Caught Up Today</b> with the green tick, and one outstanding review says <b>1</b>."],
    ["new","The review marker is drawn on the goal button as the last dot, ringed blue and unfilled until the review is done — the way the goal celebration has always drawn it."]
@@ -4577,6 +4584,23 @@ function migrateProg(p){
   if(typeof p.onboarded!=="boolean") p.onboarded=!!p.onboarded;
   p.saved=arr(p.saved); p.skipped=arr(p.skipped);               // green (come back later) / red (skip)
   p.extraKnown=arr(p.extraKnown); p.palaces=arr(p.palaces); p.customBook=obj(p.customBook); p.badges=arr(p.badges); p.customScene=obj(p.customScene); p.customPeg=obj(p.customPeg); p.customBookImg=obj(p.customBookImg); p.bookWord=obj(p.bookWord); p.numRef=obj(p.numRef); p.numScene=obj(p.numScene); // ad-hoc numbers, palaces, edited book scenes, badges, user's own verse scenes, user-chosen number words, user-written book images
+  /* Phase 12 used to be ten batch tiles — peg:67 meant "67 through 75 are learned". It is now a
+     button per number under 12A…12R, so those ids name nothing and knownNumbers(), which reads
+     doneSkills, would quietly forget every number a reader had already learned. Each old batch is
+     therefore exchanged for the individual numbers it stood for. */
+  { const done=arr(p.doneSkills);
+    if(done.some(id=>/^peg:\d+$/.test(id))){
+      const OLD={67:75}; for(let a=76;a<=156;a+=10) OLD[a]=a+9; OLD[166]=176;
+      const out=[];
+      done.forEach(id=>{
+        const m=/^peg:(\d+)$/.exec(id);
+        if(!m){ out.push(id); return; }
+        const a=+m[1], b=OLD[a];
+        if(!b){ out.push(id); return; }                   // not a batch we know: leave it alone
+        for(let n=a;n<=b;n++) out.push("num:"+n);
+      });
+      p.doneSkills=[...new Set(out)];
+    } }
   p.lessonUnlocks=arr(p.lessonUnlocks); // individual paid lessons unlocked with talents (500 each) instead of subscribing
   if(typeof p.firstWin!=="boolean") p.firstWin=false; // completed the 90-second "first verse hidden" onboarding win
   if(!("persona" in p)) p.persona=null; if(!("dailyMin" in p)) p.dailyMin=null; if(!("bibleFam" in p)) p.bibleFam=null; // intake answers (tailor copy/goalpost/pacing)
@@ -4714,6 +4738,21 @@ function mergeProg(a,b){
   m.saved=uniq(a.saved,b.saved).filter(k=>!m.memorized.includes(k)); m.skipped=uniq(a.skipped,b.skipped).filter(k=>!m.memorized.includes(k));
   ["talents","streak","bestStreak","dayStreak","bestDayStreak","freezes","hints","level"].forEach(f=>m[f]=Math.max(a[f]||0,b[f]||0)); // keep the higher
   m.onboarded=!!(a.onboarded||b.onboarded);
+  /* SETTINGS. mergeProg starts from a copy of the LOCAL profile and merges only the fields named
+     here, so anything not named keeps whatever this device already had — which meant the daily goal
+     never crossed between devices at all. A phone set to five and a computer left on nine both kept
+     their own and both thought they were right, for ever.
+
+     A setting is not progress: it cannot be unioned, and taking the larger is meaningless. It is a
+     decision, so the one made LAST wins. Every screen that changes one stamps settingsAt, and the
+     newer stamp brings its whole set across together — a half-merged goal (mode from one device,
+     numbers from the other) would be worse than either. */
+  { const SETTINGS=["dailyGoal","goalMode","goalByDay","goalWeekday","goalWeekend","theme",
+                    "reminder","dailyMin"];   // real field names; the translation key is trActive
+    const at = p => (p && p.settingsAt) || 0;
+    const from = at(b) > at(a) ? b : a;
+    SETTINGS.forEach(f=>{ if(from[f]!==undefined) m[f]=from[f]; else delete m[f]; });
+    m.settingsAt = Math.max(at(a), at(b)); }
   m.lastReviewDay=(a.lastReviewDay>b.lastReviewDay)?a.lastReviewDay:b.lastReviewDay;
   m.srDay=(a.srDay>b.srDay)?a.srDay:b.srDay;   // finished on either device is finished
   // One row per day, and where two devices both recorded one, the fuller day is the truer one.
@@ -4783,8 +4822,12 @@ function mergeProg(a,b){
     m.weekDays=Math.max(a.weekDays||0,b.weekDays||0);
     m.weekGoalHit=!!(a.weekGoalHit||b.weekGoalHit); }
 
-  /* ---- Settings the device holds: keep what this one has, otherwise take the account's. ---- */
-  ["dailyGoal","reminders","theme","trActive","persona","dailyMin","bibleFam","covenant"].forEach(k=>{
+  /* ---- Settings the device holds: keep what this one has, otherwise take the account's. ----
+     This rule is right for a preference a device has never expressed, and wrong for one that was
+     just CHANGED: local always winning is why a goal set on the phone never reached the computer.
+     The ones stamped with settingsAt are handled above by newest-decision-wins and are deliberately
+     NOT repeated here, because this block runs later and would put the stale value straight back. */
+  ["reminders","trActive","persona","bibleFam","covenant"].forEach(k=>{
     const av=a[k], bv=b[k];
     const empty = av===undefined || av===null || av==="" || (Array.isArray(av)&&!av.length);
     m[k] = empty ? bv : av;
@@ -5927,14 +5970,30 @@ function buildUnits(){
     const label=`Phase ${r+1}: ${rng(first)}${second.length?(first.length?" + ":"")+rng(second):""}`;
     units.push({name:label, ic:ROUND_ICONS[r-1], skills});
   }
-  // 4) Round 13 — the remaining number pegs (67-176) as batch tiles, for chapter/verse numbers
-  //    beyond the 66 books. Psalms reaches chapter 150; Psalm 119 reaches verse 176 (the Bible's highest).
-  const numBatches=[[67,75]];
-  for(let a=76;a<=156;a+=10) numBatches.push([a,a+9]);  // 76–85, 86–95, … 156–165
-  numBatches.push([166,176]);                           // the finish
-  // Phase 12 stands alone: the numbers, and no palace tile on the end of it.
-  units.push({name:"Phase 12: All the Numbers (67–176)", ic:ROUND_ICONS[12],
-    skills: numBatches.map(([a,b])=>({id:`peg:${a}`,label:`${a}–${b}`,kind:"num",items:range(a,b)}))});
+  /* 4) The remaining number pegs, 67-176, for chapter and verse numbers beyond the 66 books.
+        Psalms reaches chapter 150; Psalm 119 reaches verse 176, the highest in the Bible.
+
+        This was one enormous phase of ten batch tiles, each teaching nine or ten numbers and then
+        testing all of them together. Ten new pictures before a single question is a lot to hold, and
+        one tile could not be finished in a sitting.
+
+        It is now subsections of six — 12A, 12B and so on — with a BUTTON PER NUMBER and a test on
+        the six at the end of each. The phase machinery does the rest on its own: a phase is complete
+        only when every skill in it is done, and the next one is opened by scratching a ticket. */
+  { const NUMS=range(67,176), PER=6, chunks=[];
+    for(let i=0;i<NUMS.length;i+=PER) chunks.push(NUMS.slice(i,i+PER));
+    // 110 does not divide by six. Rather than end on a stub of two, the tail joins the last full set.
+    if(chunks.length>1 && chunks[chunks.length-1].length<PER/2){
+      const tail=chunks.pop(); chunks[chunks.length-1]=chunks[chunks.length-1].concat(tail); }
+    chunks.forEach((nums,ci)=>{
+      const a=nums[0], b=nums[nums.length-1];
+      const letter=String.fromCharCode(65+ci);            // A, B, C …
+      const skills=nums.map(n=>({id:`num:${n}`, label:String(n), kind:"num", items:[n]}));
+      // The test is its own tile at the end, so the six are asked together AFTER they are all taught
+      // rather than one number being taught and quizzed in the same breath.
+      skills.push({id:`numtest:${a}`, label:`Test ${a}–${b}`, kind:"num", items:nums.slice(), testOnly:true});
+      units.push({name:`Phase 12${letter}: ${a}–${b}`, ic:ROUND_ICONS[12], skills});
+    }); }
   // 5) Bible Stories — 20 themed sections of 5, learned after the numbers.
   let sgid=0;
   STORY_GROUPS.forEach((g,gi)=>{
@@ -6682,12 +6741,15 @@ function renderPalacePractice(){
   const lastLine = prev
     ? `<div class="pp-last">↩ Last stop <b>${bbEsc(prev)}</b>${prevRef?` · <span class="pp-last-v">${bbEsc(prevRef)}</span>`:""}</div>`
     : `<div class="pp-last">Starting at the door</div>`;
-  const optHTML=o=>{
-    const ref=stationVerseLabel(PP.slot, o);
-    return `<button class="opt pp-opt" data-ok="${o===correct?1:0}"><span class="pp-o-n">${bbEsc(o)}</span>`+
-      (ref?`<span class="pp-o-v">${bbEsc(ref)}</span>`:`<span class="pp-o-v pp-o-empty">nothing kept here yet</span>`)+
-      `</button>`;
-  };
+  // The verse belongs at the TOP, once, as the cue — not under every option. Printing each room's
+  // own verse on its button turned the walk into a reading test with the answer written on it: the
+  // right room was the one whose reference you recognised, and the room itself did no work. Shown
+  // once, as what is standing at this stop, it asks the question the palace was built to ask.
+  const hereRef = stationVerseLabel(PP.slot, correct);
+  const cueLine = hereRef
+    ? `<div class="pp-cue"><span class="pp-cue-k">Standing here</span><b>${bbEsc(hereRef)}</b></div>`
+    : "";
+  const optHTML=o=>`<button class="opt" data-ok="${o===correct?1:0}">${bbEsc(o)}</button>`;
   L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="ppClose">✕</button>
       <div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>
       <div style="font-size:12px;color:var(--muted);font-weight:700;margin-left:8px">${pos+1}/${p.stations.length}</div></div>
@@ -6695,6 +6757,7 @@ function renderPalacePractice(){
       <div style="font-weight:800;color:var(--gold-ink);text-align:center;font-size:16px">🏛️ ${p.place}</div>
       ${lastLine}
       <div class="prompt" style="margin-top:10px">What is stop #${pos+1} on your walk?</div>
+      ${cueLine}
       <div class="opts">${options.map(optHTML).join("")}</div>
       <div id="ppFb"></div></div>`;
   el("ppClose").onclick=PP.onAbort||PP.ret;   // in the SR queue, ✕ aborts the whole queue (onAbort) instead of re-looping the same still-due palace
@@ -6879,8 +6942,10 @@ function startLesson(sk, ret){
     LZ={sk,steps:steps.concat(tests),i:0,total:0,ok:0}; LZ.total=LZ.steps.length; renderStep(); return;
   }
   const steps=[];
-  // Teach each new item, then test a sample of the six number/image/book pairings.
-  sk.items.forEach(n=>steps.push({type:"teach",kind:sk.kind,n}));
+  // Teach each new item, then test a sample of the six number/image/book pairings. A test tile skips
+  // the teaching: its numbers were taught one at a time on the tiles before it, and the point of it
+  // is to ask for them together, cold.
+  if(!sk.testOnly) sk.items.forEach(n=>steps.push({type:"teach",kind:sk.kind,n}));
   const tests=[];
   sk.items.forEach(n=>{
     shuffle(pairTypesFor(n).slice()).slice(0,3).forEach(t=>tests.push({type:t,kind:sk.kind,n}));
@@ -9124,9 +9189,12 @@ function libStatusHTML(){
   const srEarned = srDoneToday();
   const filled = others + (srEarned?1:0);
   const left = Math.max(0, t - filled);
-  // Anything falling due AFTER the day was finished is tomorrow's work and must not reopen it —
-  // the same rule goalLatched() applies to the streak.
-  const caught = goalMet;
+  /* The DAY stays finished — the dots and the streak are latched, and reviews arriving later do not
+     take that back. But the line is what a reader looks at to know whether there is anything to do,
+     and saying "Caught Up Today" over fifteen waiting reviews is simply false. So the latch governs
+     the marks; what is actually waiting governs the words. */
+  const waiting = reviewDueCount() > 0;
+  const caught = goalMet && !waiting;
   // Each dot is handed the same wave, one after another, and the whole thing runs back the way it
   // came. --i and --n are what make one rule serve any goal from 3 to 15.
   const dots=Array.from({length:t},(_,i)=>{
@@ -9140,10 +9208,10 @@ function libStatusHTML(){
   const streak=`<span class="gb-streak${dstk?"":" off"}"><b><span class="gb-flame">🔥</span> ${dstk}</b><small>day streak</small></span>`;
   // The freeze count lived here and squeezed the streak into a corner. Freezes are still bought and
   // still spent; they are just not what this button is for.
-  // One marker outstanding is "1", whether it stands for one card or forty.
-  const onlySr = left===1 && srSlot && !srEarned;
+  // A review session is ONE thing to do, whether it holds one card or forty — which is the whole
+  // point of the marker. It is never reported as the number of cards.
   const line = caught ? "Caught Up Today"
-    : onlySr ? "1 Still Due · review"
+    : waiting ? "1 Still Due · review"
     : `${left} Remaining`;
   // The tick is drawn rather than typed, because a drawn one can draw itself again.
   const tick=`<svg class="gb-tick" viewBox="0 0 24 24" aria-hidden="true">
@@ -9533,6 +9601,7 @@ function openGoalSettings(){
   paint();
   reminderUI("goalReminderBox");
   el("gsSave").onclick=()=>{
+    Prog.settingsAt=Date.now();   // a decision, and the newest decision is the one that syncs
     Prog.goalMode=draft.mode; Prog.dailyGoal=draft.same;
     Prog.goalWeekday=draft.weekday; Prog.goalWeekend=draft.weekend;
     if(draft.mode==="days"){ const gb={}; for(let i=0;i<7;i++) gb[i]=(draft.byDay[i]!=null?draft.byDay[i]:draft.same); Prog.goalByDay=gb; }
@@ -13213,7 +13282,7 @@ function applyTheme(t){
   document.querySelector(".phone").setAttribute("data-theme",t);
   Store.set("vv_theme",t);
   // the theme is a choice a person makes once, so it belongs to them and not to the phone
-  if(typeof Prog==="object" && Prog && Prog.theme!==t){ Prog.theme=t; try{ saveProg(); }catch(e){} }
+  if(typeof Prog==="object" && Prog && Prog.theme!==t){ Prog.theme=t; Prog.settingsAt=Date.now(); try{ saveProg(); }catch(e){} }
   document.querySelectorAll(".theme-opt").forEach(b=>b.classList.toggle("sel",b.dataset.th===t));
   buildSky(t==="illumined");
   paintTheme();
