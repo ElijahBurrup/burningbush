@@ -20,6 +20,9 @@ const LAYERS = [
   // Two browsers, one account. Everything else runs a single device, and a sync fault is
   // invisible to a single device by definition.
   { name: 'sync', file: 'sync/run.js', args: [], slow: true },
+  // Every recording the palette can ask for, fetched and DECODED in a real browser. A missing or
+  // unplayable sound file never throws — it is simply silent, which is the hardest fault to report.
+  { name: 'sound', file: 'sound/run.js', args: [], slow: true },
   { name: 'snapshot', file: 'snapshot/run.js', args: [], slow: true },
   { name: 'layout', file: 'layout/overflow.js', args: [], slow: true },
 ];

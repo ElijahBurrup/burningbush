@@ -3280,7 +3280,7 @@ const DAY = 86400000;
   is(goalRow.dots, 20, 'a goal of twenty draws twenty dots');
   is(goalRow.cols, 10, '…ten to a line, so twenty is two clean rows');
   is(goalRow.lit, 16, '…with the ones already done lit');
-  is(goalRow.line, '4 Remaining', 'and it says what is left, plainly');
+  is(goalRow.line, '4 Due', 'and it says what is left, plainly');
 
   const goalDone = await $(() => {
     const st = goalState(); st.count = 20; saveProg();
@@ -4270,6 +4270,15 @@ const DAY = 86400000;
     out.lastIsSr = lastDot.indexOf('sr') >= 0;
     out.srUnfilled2 = lastDot.indexOf('on') < 0;
 
+    /* Work left AND a review owed at the same time — the state the goal button used to
+       describe as "1 Still Due · review", hiding everything else the day still wanted. */
+    Prog.dailyGoal = 10; goalState().count = 1; saveProg(); bustCaches();
+    const both = read();
+    out.bothTitle = both.title;
+    out.bothLeft = parseInt(both.title, 10);
+    out.bothExpect = Math.max(0, goalOtherCap() - Math.min(goalOtherCount(), goalOtherCap()));
+    Prog.dailyGoal = 5; goalState().count = 99; saveProg(); bustCaches();
+
     // nothing due at all, and the review done: the only state that earns the tick
     Prog.srDay = dayKey(new Date()); SRS = {}; saveProg(); bustCaches();
     const clear = read();
@@ -4287,7 +4296,13 @@ const DAY = 86400000;
   // asking for something already done.
   is(gbox.doneTitle, 'Caught Up Today', '...and a review already done finishes the day');
   ok(gbox.doneTick, '...tick and all, whatever has fallen due since');
-  is(gbox.owedTitle, '1 Still Due · review', 'a review NOT yet done is one marker, however many cards');
+  is(gbox.owedTitle, 'Spaced Repetition Due', 'a review NOT yet done is one marker, however many cards');
+  /* The reported fault: nine markers still to earn AND a review outstanding read as "1 Still Due",
+     which looks like a day nearly finished. Both halves are named, and the number is the work
+     left to do rather than the one review standing behind it. */
+  ok(/^[0-9]+ Due \+ Spaced Repetition$/.test(gbox.bothTitle),
+     'with work left AND a review owed, it names both — got: ' + gbox.bothTitle);
+  is(gbox.bothLeft, gbox.bothExpect, '...and the number is what is left to learn, not counting the review');
   ok(gbox.lastIsSr, '...drawn as the last dot');
   is(gbox.dbgT, 5, '...on a goal of five, as reported');
   ok(gbox.srUnfilled2, '...left unfilled until the review is actually done');

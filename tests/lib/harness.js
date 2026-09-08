@@ -37,7 +37,7 @@ async function serveBuilt() {
   if (_server) return _server.url;
   const http = require('http');
   const TYPES = { '.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css',
-    '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2', '.webmanifest': 'application/manifest+json', '.json': 'application/json' };
+    '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2', '.webmanifest': 'application/manifest+json', '.json': 'application/json', '.mp3': 'audio/mpeg' };
   const srv = http.createServer((req, res) => {
     let p = decodeURIComponent(req.url.split('?')[0]);
     // A static host resolves an extensionless path to that folder's index. It was special-cased

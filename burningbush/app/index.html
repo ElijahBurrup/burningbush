@@ -2241,8 +2241,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.9.0";
+const APP_VERSION="2.10.0";
 const CHANGELOG=[
+ {v:"2.10.0", d:"September 8, 2026", t:"Real sounds, not tones", items:[
+   ["chg","<b>Every sound is a recording now.</b> The palette was synthesised — pure tones, which is why it chirped rather than sounded. The same sixty-five moments now play real recorded audio: wood, bells, coins, doors, paper and stone. Nothing moved and nothing was renamed; only what you hear changed."],
+   ["chg","<b>The wheel is a real ratchet.</b> Thirteen recorded clicks slowing against the pegs, rather than one recording of a spin that ends when it likes instead of when the wheel stops."],
+   ["chg","<b>A run of right answers climbs.</b> The same struck note, a step higher each time, up a fifth by the eighth in a row."],
+   ["fix","<b>The goal button hid the rest of the day.</b> With nine markers still to earn and a review outstanding it said only \"1 Still Due · review\", which read as though the day were nearly finished. It now names both: <b>9 Due + Spaced Repetition</b>, and once the review is done, simply <b>9 Due</b>."]
+ ]},
  {v:"2.9.0", d:"September 8, 2026", t:"The app has a voice now", items:[
    ["new","<b>Sixty-five sounds</b>, where there were twenty-eight. All played on one imagined instrument — a bell, a wooden table, a stone floor, a handful of coins, and the air of the room — so a hundred moments still sound like one app."],
    ["new","<b>Each screen has its own door.</b> A creaking wooden one for the Library, a door of light for the Bible, a school bell for Learn, a tale striking up for Stories, and the king’s own gates for the Palaces — and each opens a little differently every time."],
@@ -8716,10 +8722,102 @@ function sfxSetEnabled(key, on){
    hold several variants and never play the same one twice running — a small thing that keeps the
    twentieth correct answer of a session from feeling like the first one repeated. */
 const _sfxLast = {};
+/* The recordings. Every sound in the palette that has a real one names its files here, as
+   [ [file, ...], gain ]. More than one file is a family the picker rotates through, so the tenth
+   time you hear a thing it is not the same take as the first.
+
+   These are CC0 recordings (Kenney.nl), converted to mp3 because Safari before 17 will not decode
+   ogg and a silent app on an older iPhone is not a trade worth making. The synthesised palette is
+   still underneath all of it: anything without an entry here, and anything whose file fails to
+   load, falls through to the tones and still makes its noise. */
+// Where the recordings live. The build makes this root-absolute for the web, where the app is
+// served at /burningbush with no trailing slash, and leaves it relative for the packaged apps,
+// which sit at the root of their own folder.
+const SFX_DIR = "/sounds/";
+const SFX_FILES = {
+  verseNew:[["impact__impactBell_heavy_002.mp3"],0.8],
+  comboBuild:[["ui__pluck_001.mp3","ui__pluck_002.mp3"],0.45],
+  scratchReveal:[["ui__scratch_001.mp3","ui__scratch_003.mp3","ui__scratch_005.mp3"],0.55],
+  ticketWon:[["ui__confirmation_004.mp3"],0.6],
+  wheelSpin:[["ui__scroll_001.mp3","ui__scroll_002.mp3","ui__scroll_003.mp3"],0.5],
+  wheelLand:[["impact__impactWood_medium_000.mp3","impact__impactWood_medium_002.mp3"],0.7],
+  giftOpen:[["rpg__handleSmallLeather.mp3","rpg__handleSmallLeather2.mp3"],1],
+  testStart:[["ui__question_001.mp3","ui__question_002.mp3","ui__question_003.mp3","ui__question_004.mp3"],0.45],
+  testWin:[["jingle__jingles_PIZZI00.mp3","jingle__jingles_PIZZI03.mp3","jingle__jingles_STEEL00.mp3","jingle__jingles_STEEL04.mp3"],0.7],
+  testFail:[["impact__impactSoft_heavy_000.mp3","impact__impactSoft_heavy_002.mp3"],0.5],
+  countTick:[["ui__tick_001.mp3"],0.35],
+  countUrgent:[["ui__tick_002.mp3"],0.45],
+  timerStart:[["rpg__metalClick.mp3"],0.5],
+  hintReveal:[["rpg__cloth1.mp3","rpg__cloth2.mp3","rpg__cloth3.mp3"],0.5],
+  nextQuestion:[["rpg__bookFlip1.mp3","rpg__bookFlip2.mp3","rpg__bookFlip3.mp3"],0.45],
+  right:[["ui__confirmation_001.mp3","ui__confirmation_002.mp3","ui__confirmation_003.mp3"],0.5],
+  wrong:[["impact__impactSoft_medium_000.mp3","impact__impactSoft_medium_003.mp3"],0.45],
+  wordRight:[["ui__tick_004.mp3"],0.3],
+  wordWrong:[["impact__impactSoft_medium_001.mp3"],0.35],
+  cardUp:[["ui__maximize_001.mp3","ui__maximize_002.mp3"],0.5],
+  cardDown:[["ui__minimize_001.mp3","ui__minimize_002.mp3"],0.5],
+  verseSaved:[["rpg__bookPlace1.mp3","rpg__bookPlace2.mp3"],0.6],
+  verseSkipped:[["rpg__cloth4.mp3"],0.8],
+  verseLoved:[["ui__bong_001.mp3"],0.5],
+  reviewStart:[["impact__impactBell_heavy_001.mp3"],0.5],
+  reviewDone:[["rpg__bookClose.mp3"],0.65],
+  lessonDone:[["jingle__jingles_PIZZI05.mp3","jingle__jingles_PIZZI13.mp3"],0.5],
+  phaseDone:[["jingle__jingles_STEEL02.mp3","jingle__jingles_STEEL06.mp3"],0.6],
+  bookOpen:[["rpg__bookOpen.mp3"],0.6],
+  pageTurn:[["rpg__bookFlip1.mp3","rpg__bookFlip2.mp3","rpg__bookFlip3.mp3"],0.35],
+  palaceStep:[["impact__footstep_concrete_000.mp3","impact__footstep_concrete_001.mp3","impact__footstep_concrete_002.mp3","impact__footstep_concrete_003.mp3","impact__footstep_concrete_004.mp3"],0.4],
+  stoneSet:[["impact__impactMining_000.mp3","impact__impactMining_002.mp3","impact__impactMining_004.mp3"],0.8],
+  roomDone:[["impact__impactPlate_heavy_000.mp3"],0.7],
+  palaceDone:[["jingle__jingles_HIT00.mp3"],0.75],
+  arriveLibrary:[["rpg__creak1.mp3","rpg__creak2.mp3","rpg__creak3.mp3","rpg__doorOpen_1.mp3","rpg__doorOpen_2.mp3"],0.8],
+  arriveBible:[["ui__glass_001.mp3","ui__glass_004.mp3","ui__glass_006.mp3"],0.7],
+  arriveLearn:[["impact__impactBell_heavy_000.mp3","impact__impactBell_heavy_002.mp3","impact__impactBell_heavy_004.mp3"],0.55],
+  arriveStories:[["jingle__jingles_PIZZI07.mp3","jingle__jingles_PIZZI10.mp3","jingle__jingles_PIZZI14.mp3"],0.6],
+  arrivePalaces:[["rpg__doorClose_1.mp3","rpg__doorClose_2.mp3","rpg__doorClose_4.mp3"],0.9],
+  appOpen:[["jingle__jingles_PIZZI16.mp3"],0.45],
+  swipeForward:[["ui__maximize_004.mp3","ui__maximize_006.mp3","ui__maximize_008.mp3"],0.35],
+  swipeBack:[["ui__minimize_004.mp3","ui__minimize_006.mp3","ui__minimize_008.mp3"],0.35],
+  tabChange:[["impact__impactWood_light_000.mp3","impact__impactWood_light_002.mp3","impact__impactWood_light_004.mp3"],0.4],
+  modalOpen:[["ui__open_001.mp3","ui__open_002.mp3"],0.4],
+  modalClose:[["ui__close_001.mp3","ui__close_002.mp3"],0.4],
+  talent:[["rpg__handleCoins.mp3","rpg__handleCoins2.mp3"],0.65],
+  levy:[["rpg__dropLeather.mp3"],0.7],
+  purchase:[["rpg__metalLatch.mp3"],0.6],
+  freezeBuy:[["impact__impactGlass_light_000.mp3","impact__impactGlass_light_003.mp3"],0.5],
+  praise:[["jingle__jingles_PIZZI02.mp3","jingle__jingles_PIZZI08.mp3","jingle__jingles_STEEL03.mp3","jingle__jingles_STEEL08.mp3"],0.6],
+  badge:[["impact__impactBell_heavy_000.mp3"],0.7],
+  levelUp:[["jingle__jingles_STEEL10.mp3"],0.7],
+  streakDay:[["impact__impactMetal_light_000.mp3","impact__impactMetal_light_002.mp3"],0.45],
+  streakLost:[["impact__impactBell_heavy_004.mp3"],0.4],
+  streakSaved:[["ui__glass_003.mp3"],0.55],
+  goalStep:[["impact__impactWood_medium_004.mp3"],0.5],
+  goalDone:[["jingle__jingles_PIZZI01.mp3","jingle__jingles_PIZZI04.mp3"],0.65],
+  dayDone:[["rpg__doorClose_3.mp3"],0.5],
+  storyUnlocked:[["jingle__jingles_PIZZI10.mp3"],0.6],
+  sealed:[["impact__impactBell_heavy_003.mp3"],1.0],
+  refuse:[["impact__impactWood_heavy_002.mp3"],0.45],
+  toggleOn:[["ui__switch_002.mp3"],0.4],
+  toggleOff:[["ui__switch_003.mp3"],0.4],
+  notify:[["impact__impactBell_heavy_001.mp3"],0.3],
+  buttonTap:[["ui__click_001.mp3","ui__click_002.mp3","ui__click_003.mp3"],0.3]
+};
+
+/* Sound has its own randomness, deliberately separate from Math.random.
+
+   Rotation is decoration — which of three creaks a door makes. The app draws on Math.random for
+   things that are not decoration: which verse it asks for, which distractors it offers, which
+   chapter it opens at. While the two shared a stream, giving a screen a rotating sound changed
+   the question that screen asked, because the pick happened first and moved everything after it
+   along by one. Cosmetic choices must not be able to do that, so they are made over here. */
+let _sfxSeed = 0x9e3779b9 >>> 0;
+function sfxRand(){
+  _sfxSeed = (Math.imul(_sfxSeed, 1664525) + 1013904223) >>> 0;
+  return _sfxSeed / 4294967296;
+}
 function sfxPick(key, variants){
   if(!variants || !variants.length) return null;
   if(variants.length===1) return variants[0];
-  let i = Math.floor(Math.random()*variants.length);
+  let i = Math.floor(sfxRand()*variants.length);
   if(i===_sfxLast[key]) i = (i+1)%variants.length;   // never the same one twice in a row
   _sfxLast[key]=i;
   return variants[i];
@@ -8793,9 +8891,110 @@ const Sfx = (()=>{
   const LADDER=[0,2,4,7,9,12,14,16,19,21];
   const deg = i => C5*Math.pow(2, LADDER[Math.max(0,Math.min(LADDER.length-1,i))]/12);
 
+  /* Playing a recording. The synthesised palette above is a room of instruments; this is the
+     same room recorded. Everything goes through the same AudioContext, so one tap unlocks both
+     and a sound that has no recording sits beside one that does without anybody hearing a seam.
+
+     Decoded buffers are held forever - the whole set is about a megabyte, and re-decoding a
+     10KB clip on every press is how you get audible lag on an old phone. */
+  const Files = (()=>{
+    const buf={}, pending={};
+    let queue=[], live=0;
+    // Opened from disk rather than served. Every fetch would fail, so none is attempted and the
+    // whole palette falls through to the synthesised tones, which need nothing but the speaker.
+    const SERVED = (typeof location==="undefined") || location.protocol!=="file:";
+
+    function decode(name){
+      if(!SERVED) return Promise.reject();
+      const c=ac(); if(!c) return Promise.reject();
+      return fetch(SFX_DIR+name)
+        .then(r=> r.ok ? r.arrayBuffer() : Promise.reject(r.status))
+        .then(a=> new Promise((res,rej)=> c.decodeAudioData(a,res,rej)))
+        .then(b=>{ buf[name]=b; return b; });
+    }
+    function load(name){
+      if(buf[name]) return Promise.resolve(buf[name]);
+      if(pending[name]) return pending[name];
+      pending[name]=decode(name).catch(e=>{ delete pending[name]; throw e; });
+      return pending[name];
+    }
+    // Six at a time. Firing a hundred and twenty requests the instant somebody touches the screen
+    // is how you make the first tap of the app feel slow on a phone.
+    function pump(){
+      while(live<6 && queue.length){
+        const n=queue.shift(); live++;
+        load(n).catch(()=>{}).then(()=>{ live--; pump(); });
+      }
+    }
+    function warm(){
+      if(!SERVED) return;
+      const seen={};
+      Object.keys(SFX_FILES).forEach(k=>{
+        SFX_FILES[k][0].forEach(f=>{ if(!seen[f]){ seen[f]=1; queue.push(f); } });
+      });
+      pump();
+    }
+
+    function start(name, gain, rate, at){
+      const c=ac(), b=buf[name]; if(!c||!b) return;
+      const s=c.createBufferSource(), g=c.createGain();
+      s.buffer=b; s.playbackRate.value=rate||1;
+      g.gain.value=(gain==null?1:gain)*0.9;
+      s.connect(g); g.connect(c.destination);
+      s.start(c.currentTime+(at||0));
+    }
+
+    /* A sound the wheel needs and no single recording gives: one clack per peg, slowing as the
+       wheel does, until it can barely pass one more. Thirteen real clicks decelerating beat any
+       one recording of a spin, because it ends when the wheel ends rather than at its own length. */
+    const RATCHET = { wheelSpin:{n:13, gap:0.042, grow:1.13} };
+    // A run of right answers should sound like it is going somewhere. The recording is one pluck;
+    // the ladder is the same pluck played faster each step - a fifth up by the eighth in a row.
+    const RATE = { comboBuild: n => 1 + Math.min(Math.max((n||1)-1, 0), 7) * 0.075 };
+    // Sounds with only two takes, where the ear would otherwise learn the pair. A few percent
+    // either way is under the threshold of sounding "processed" and well over the threshold of
+    // stopping two recordings from becoming a tell.
+    const VARY = { talent:0.05, purchase:0.04, verseSkipped:0.04 };
+
+    return {
+      warm,
+      has(key){ return !!SFX_FILES[key]; },
+      /* Returns true when this key is ours - including when the answer is silence, because the
+         sound is off or the clip has not arrived yet. False means "no recording, use the tones". */
+      play(key, arg){
+        const e=SFX_FILES[key]; if(!e || !SERVED) return false;
+        if(!unlocked || !on()) return true;
+        const c=ac(); if(!c) return false;
+        const names=e[0], gain=e[1];
+        let rate = RATE[key] ? RATE[key](arg) : 1;
+        if(VARY[key]) rate *= 1 + (sfxRand()*2 - 1) * VARY[key];
+        const pickAny = () => names.length===1 ? names[0] : names[Math.floor(sfxRand()*names.length)];
+        const r=RATCHET[key];
+        if(r){
+          let at=0, gap=r.gap;
+          for(let i=0;i<r.n;i++){
+            const nm=pickAny();
+            if(buf[nm]) start(nm, gain, 1+i*0.012, at);
+            at+=gap; gap*=r.grow;
+          }
+          if(!buf[names[0]]) load(names[0]).catch(()=>{});
+          return true;
+        }
+        const nm=sfxPick("f:"+key, names);
+        if(buf[nm]){ start(nm, gain, rate, 0); return true; }
+        // Not decoded yet. Fetch it, and still play it if it lands quickly enough to belong to
+        // the thing that asked for it - a door that creaks three seconds after you walked
+        // through it is worse than a door that does not creak at all.
+        const asked=Date.now();
+        load(nm).then(()=>{ if(Date.now()-asked < 600) start(nm, gain, rate, 0); }).catch(()=>{});
+        return true;
+      }
+    };
+  })();
+
   const api = {
     // Called from the first touch or click anywhere. Until then nothing makes a sound at all.
-    unlock(){ if(unlocked) return; unlocked=true; ac();
+    unlock(){ if(unlocked) return; unlocked=true; ac(); Files.warm();
       // The room opening: the first sound of a session, once, on the first touch.
       setTimeout(()=>{ try{ if(sfxEnabled("appOpen")) api._preview_appOpen(); }catch(e){} }, 120); },
     muted(){ return !on(); },
@@ -8959,12 +9158,17 @@ const Sfx = (()=>{
   Object.keys(PALETTE).forEach(k=>{
     const e = PALETTE[k];
     const one = () => (e.rotate ? sfxPick(k, e.play) : e.play);
+    const synth = (arg) => { const fn=one(); if(typeof fn==="function"){ try{ fn(arg); }catch(err){} } };
+    // A recording if there is one, the tones if there is not. Deciding here rather than at the
+    // call sites means every sound keeps its switch, its rotation and its settings row whichever
+    // of the two it turns out to be.
+    const run = (arg) => { try{ if(Files.play(k, arg)) return; }catch(err){} synth(arg); };
     // The switch is checked HERE rather than inside each sound, so an effect Fable adds later is
     // gated without having to remember to ask.
-    api[k] = function(){ if(!sfxEnabled(k)) return; const fn=one(); if(typeof fn==="function"){ try{ fn(); }catch(err){} } };
+    api[k] = function(arg){ if(!sfxEnabled(k)) return; run(arg); };
     // Heard from the settings screen even when switched off: you cannot judge a sound you are not
     // allowed to hear.
-    api["_preview_"+k] = function(){ const fn=one(); if(typeof fn==="function"){ try{ fn(); }catch(err){} } };
+    api["_preview_"+k] = function(arg){ run(arg); };
   });
 
   api._palette = PALETTE;
@@ -10135,7 +10339,6 @@ function libStatusHTML(){
   const others = Math.min(goalOtherCount(), goalOtherCap());
   const srEarned = srDoneToday();
   const filled = others + (srEarned?1:0);
-  const left = Math.max(0, t - filled);
   /* The DAY stays finished — the dots and the streak are latched, and reviews arriving later do not
      take that back. But the line is what a reader looks at to know whether there is anything to do,
      and saying "Caught Up Today" over fifteen waiting reviews is simply false. So the latch governs
@@ -10162,9 +10365,17 @@ function libStatusHTML(){
   // still spent; they are just not what this button is for.
   // A review session is ONE thing to do, whether it holds one card or forty — which is the whole
   // point of the marker. It is never reported as the number of cards.
+  /* Two things can be owed at once, and saying only one of them sends people to the wrong screen.
+     "1 Still Due · review" over nine unstarted markers was true about the review and silent about
+     the nine; it read as though the day were nearly done. The day's other work and the review are
+     counted in the same unit but they are not the same job, so both are named: the number is what
+     is left to learn, and the review is called by its name after it. */
+  const otherLeft = Math.max(0, goalOtherCap() - others);
+  const srWord = `<span style="color:var(--blue)">Spaced Repetition</span>`;
   const line = caught ? "Caught Up Today"
-    : owedReview ? "1 Still Due · review"
-    : `${left} Remaining`;
+    : (owedReview && otherLeft > 0) ? `${otherLeft} Due + ${srWord}`
+    : owedReview ? `${srWord} Due`
+    : `${otherLeft} Due`;
   // The tick is drawn rather than typed, because a drawn one can draw itself again.
   const tick=`<svg class="gb-tick" viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="10.4" fill="var(--ok-bg)" stroke="var(--green)" stroke-width="1.6"/>

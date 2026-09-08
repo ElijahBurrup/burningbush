@@ -9,22 +9,22 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "classic/verse/hub": {
-  "h": "ef11b81919c8ca4a",
-  "len": 3270,
+  "h": "406a8258372b1b56",
+  "len": 3264,
   "els": 65,
   "buttons": 7,
   "svgs": 3,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 Remaining 🔥 4 day streak Spaced Repetiti"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 Due 🔥 4 day streak Spaced Repetition Due"
  },
  "classic/verse/hub-full": {
-  "h": "641b3efde32ce3bd",
-  "len": 3046,
+  "h": "00dacb7c1321bba7",
+  "len": 3040,
   "els": 59,
   "buttons": 7,
   "svgs": 3,
   "imgs": 0,
-  "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 Remaining 🔥 4 day streak Spaced Repetiti"
+  "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 Due 🔥 4 day streak Spaced Repetition Due"
  },
  "classic/verse/suggested": {
   "h": "40da0dd103c31523",
@@ -144,13 +144,13 @@
   "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Chronological All 66 books you know, in Bible order. "
  },
  "classic/practice/number-test": {
-  "h": "17f0c9fb8a529608",
-  "len": 785,
+  "h": "1092bbfd6f503e3f",
+  "len": 782,
   "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 01 s/z · t/d Soap Seed Sock Sumo 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 02 s/z · n Seed Sore Seal Sun 📝 Reveal my scene"
  },
  "classic/practice/text-fade": {
   "h": "23af52e5eb88851b",
@@ -288,8 +288,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "1d2e81bce7a8ce45",
-  "len": 51092,
+  "h": "42330efe65712ee8",
+  "len": 51097,
   "els": 1132,
   "buttons": 222,
   "svgs": 0,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "9d3d0e43221e32b5",
-  "len": 175766,
-  "els": 2971,
+  "h": "d406b94a86b0113a",
+  "len": 177129,
+  "els": 2994,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.9.0 September 8, 2026 The app has a voice now NEW Sixty-five sounds , where there were twenty-eight"
+  "text": "✕ Version history v2.10.0 September 8, 2026 Real sounds, not tones FIX Every sound is a recording now. The palette was s"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,8 +387,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "c7e00193d28ecff9",
-  "len": 50291,
+  "h": "1a458595b13ef7e6",
+  "len": 50296,
   "els": 1124,
   "buttons": 220,
   "svgs": 0,
@@ -666,13 +666,13 @@
   "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Chronological All 66 books you know, in Bible order. "
  },
  "illumined/practice/number-test": {
-  "h": "17f0c9fb8a529608",
-  "len": 785,
+  "h": "1092bbfd6f503e3f",
+  "len": 782,
   "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 01 s/z · t/d Soap Seed Sock Sumo 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 02 s/z · n Seed Sore Seal Sun 📝 Reveal my scene"
  },
  "illumined/practice/text-fade": {
   "h": "23af52e5eb88851b",
@@ -810,8 +810,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "ff33fc0f683e93d3",
-  "len": 50299,
+  "h": "60403be97ba2e70b",
+  "len": 50304,
   "els": 1124,
   "buttons": 220,
   "svgs": 0,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "9d3d0e43221e32b5",
-  "len": 175766,
-  "els": 2971,
+  "h": "d406b94a86b0113a",
+  "len": 177129,
+  "els": 2994,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.9.0 September 8, 2026 The app has a voice now NEW Sixty-five sounds , where there were twenty-eight"
+  "text": "✕ Version history v2.10.0 September 8, 2026 Real sounds, not tones FIX Every sound is a recording now. The palette was s"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,8 +909,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "ff33fc0f683e93d3",
-  "len": 50299,
+  "h": "60403be97ba2e70b",
+  "len": 50304,
   "els": 1124,
   "buttons": 220,
   "svgs": 0,
@@ -1188,13 +1188,13 @@
   "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Chronological All 66 books you know, in Bible order. "
  },
  "glass/practice/number-test": {
-  "h": "17f0c9fb8a529608",
-  "len": 785,
+  "h": "1092bbfd6f503e3f",
+  "len": 782,
   "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 01 s/z · t/d Soap Seed Sock Sumo 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 02 s/z · n Seed Sore Seal Sun 📝 Reveal my scene"
  },
  "glass/practice/text-fade": {
   "h": "23af52e5eb88851b",
@@ -1332,8 +1332,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "2bd591454334e0f4",
-  "len": 50297,
+  "h": "8464281745b3d68c",
+  "len": 50302,
   "els": 1124,
   "buttons": 220,
   "svgs": 0,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "9d3d0e43221e32b5",
-  "len": 175766,
-  "els": 2971,
+  "h": "d406b94a86b0113a",
+  "len": 177129,
+  "els": 2994,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.9.0 September 8, 2026 The app has a voice now NEW Sixty-five sounds , where there were twenty-eight"
+  "text": "✕ Version history v2.10.0 September 8, 2026 Real sounds, not tones FIX Every sound is a recording now. The palette was s"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,8 +1431,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "2bd591454334e0f4",
-  "len": 50297,
+  "h": "8464281745b3d68c",
+  "len": 50302,
   "els": 1124,
   "buttons": 220,
   "svgs": 0,
@@ -1710,13 +1710,13 @@
   "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Chronological All 66 books you know, in Bible order. "
  },
  "quest/practice/number-test": {
-  "h": "17f0c9fb8a529608",
-  "len": 785,
+  "h": "1092bbfd6f503e3f",
+  "len": 782,
   "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 01 s/z · t/d Soap Seed Sock Sumo 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 02 s/z · n Seed Sore Seal Sun 📝 Reveal my scene"
  },
  "quest/practice/text-fade": {
   "h": "23af52e5eb88851b",
@@ -1854,8 +1854,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "106e2c7d97a5777f",
-  "len": 50299,
+  "h": "020dc738db99b13f",
+  "len": 50304,
   "els": 1124,
   "buttons": 220,
   "svgs": 0,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "9d3d0e43221e32b5",
-  "len": 175766,
-  "els": 2971,
+  "h": "d406b94a86b0113a",
+  "len": 177129,
+  "els": 2994,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.9.0 September 8, 2026 The app has a voice now NEW Sixty-five sounds , where there were twenty-eight"
+  "text": "✕ Version history v2.10.0 September 8, 2026 Real sounds, not tones FIX Every sound is a recording now. The palette was s"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,8 +1953,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "106e2c7d97a5777f",
-  "len": 50299,
+  "h": "020dc738db99b13f",
+  "len": 50304,
   "els": 1124,
   "buttons": 220,
   "svgs": 0,
@@ -2232,13 +2232,13 @@
   "text": "✕ Number &amp; Book Practice Which way would you like to be asked? Chronological All 66 books you know, in Bible order. "
  },
  "buddy/practice/number-test": {
-  "h": "17f0c9fb8a529608",
-  "len": 785,
+  "h": "1092bbfd6f503e3f",
+  "len": 782,
   "els": 17,
   "buttons": 6,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 1/15 Which image is this number? 01 s/z · t/d Soap Seed Sock Sumo 📝 Reveal my scene"
+  "text": "✕ 1/15 Which image is this number? 02 s/z · n Seed Sore Seal Sun 📝 Reveal my scene"
  },
  "buddy/practice/text-fade": {
   "h": "23af52e5eb88851b",
@@ -2376,8 +2376,8 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "d57be55cb7e0a97a",
-  "len": 50295,
+  "h": "958fd6cdbabc6085",
+  "len": 50300,
   "els": 1124,
   "buttons": 220,
   "svgs": 0,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "9d3d0e43221e32b5",
-  "len": 175766,
-  "els": 2971,
+  "h": "d406b94a86b0113a",
+  "len": 177129,
+  "els": 2994,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.9.0 September 8, 2026 The app has a voice now NEW Sixty-five sounds , where there were twenty-eight"
+  "text": "✕ Version history v2.10.0 September 8, 2026 Real sounds, not tones FIX Every sound is a recording now. The palette was s"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,8 +2475,8 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "d57be55cb7e0a97a",
-  "len": 50295,
+  "h": "958fd6cdbabc6085",
+  "len": 50300,
   "els": 1124,
   "buttons": 220,
   "svgs": 0,

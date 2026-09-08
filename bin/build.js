@@ -47,6 +47,7 @@ const RULES = [
   ['const FILM_MANIFEST = "films.json"', 'const FILM_MANIFEST = "/films.json"', 1],
   ['file:"bibles/', 'file:"/bibles/', 1],   // +2 the tile thumbnail (chosen word, then the default)
   // fetched by absolute path: a relative one would resolve to /sw.js against the trailing-slash-less URL
+  ['const SFX_DIR = "sounds/"', 'const SFX_DIR = "/sounds/"', 1],
   ['register("sw.js")', 'register("/sw.js")', 1],
   ['one("strongs.js")', 'one("/strongs.js")', 1],
   ['one("kjvtag.js")', 'one("/kjvtag.js")', 1],
@@ -57,6 +58,8 @@ const RULES = [
 // contain 111MB of film. Both are still overridable at runtime by the manifest, so the films can
 // move host again without another store release.
 const NATIVE_RULES = [
+  // The packaged app sits at the root of its own folder, so the sounds are relative again.
+  ['const SFX_DIR = "/sounds/"', 'const SFX_DIR = "sounds/"', 1],
   ['const FILM_HOST = "/videos/"', `const FILM_HOST = "${FILM_HOST_URL}"`, 1],
   ['const FILM_MANIFEST = "/films.json"', `const FILM_MANIFEST = "${FILM_MANIFEST_URL}"`, 1],
 ];
@@ -68,8 +71,8 @@ const COPY_FILES = ['sw.js', 'manifest.webmanifest', 'kjv.js', 'strongs.js', 'kj
 // The films are copied for the WEB build, where they cost nothing to serve. The store builds pass
 // --no-films and take them from FILM_HOST instead, which is what keeps the download small.
 const COPY_DIRS = (NATIVE || process.argv.includes('--no-films'))
-  ? ['images', 'fonts', 'bibles']
-  : ['images', 'fonts', 'videos', 'bibles'];
+  ? ['images', 'fonts', 'bibles', 'sounds']
+  : ['images', 'fonts', 'videos', 'bibles', 'sounds'];
 // Pages that both stores require to be reachable on the open web, without an account and without
 // installing anything. Each is written to its own folder so the address has no .html on the end:
 // /privacy rather than /privacy.html, because that is what gets typed into a store listing and
