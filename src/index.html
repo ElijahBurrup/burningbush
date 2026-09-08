@@ -2251,8 +2251,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.11.0";
+const APP_VERSION="2.11.1";
 const CHANGELOG=[
+ {v:"2.11.1", d:"September 8, 2026", t:"The writing boxes stay where you are", items:[
+   ["fix","<b>Editing a scene threw the box away from the cursor.</b> It was told to scroll to the end of the note on every keystroke, so touching a word half way down jumped you to the bottom and you could not see what you were deleting or typing. It now moves only as far as it takes to keep the cursor in view, and if you have scrolled back to look at an earlier line it leaves you there."],
+   ["fix","<b>Speaking a scene now follows the words.</b> The newest words stay in sight as they arrive — and when you start speaking with the cursor half way through something already written, it follows the words being added rather than showing you the end of the note."]
+ ]},
  {v:"2.11.0", d:"September 8, 2026", t:"The timer, the swipes, and a switch for every recording", items:[
    ["fix","<b>A thirty-five minute review reported 0s.</b> The clock stopped whenever the app went to the background and nothing ever started it again \u2014 and on a phone that happens within a minute, as soon as the screen dims or a notification arrives. It recorded the seconds before the first sleep and nothing after. Sleeping now pauses it and coming back resumes it, a pocketed phone still adds nothing, and waking is not counted as a second sitting."],
    ["fix","<b>Swiping made no sound anywhere except the lesson path.</b> The Bible and the verse reader both swipe and both were silent. They now rise going forward and fall going back \u2014 and at the first or last book there is no swoosh at all, because nothing moved."],
@@ -13278,7 +13282,10 @@ function renderWalk(){
   { const ta=el("wScene");
     if(ta) ta.addEventListener("input",()=>{
       const p=ta.selectionStart, val=capAfterPunct(ta.value);
-      if(val!==ta.value){ ta.value=val; try{ ta.setSelectionRange(p,p); }catch(err){} }
+      // Setting .value scrolls the box back to the top. capAfterPunct never changes the length, so
+      // the layout is identical and putting the scroll back exactly where it was is right.
+      if(val!==ta.value){ const y=ta.scrollTop; ta.value=val;
+        try{ ta.setSelectionRange(p,p); }catch(err){} ta.scrollTop=y; }
     });
     if(ta){
       fitBoxTo(ta, 190);                        // the mic button, its note, and the two buttons
@@ -13812,6 +13819,56 @@ function applyFit(){
   ta.style.resize="none";
   ta.style.overflowY="auto";   // .ed-ta hides overflow, which with a fixed height would clip
 }
+/* Keeping the caret in sight in a writing box.
+
+   Two faults met in the scene boxes and between them made a long note nearly uneditable.
+
+   Setting a textarea's value resets its scroll to the top, and the capitalisation runs on every
+   keystroke — so every letter typed in the middle of a long scene threw the view back to the
+   beginning while the caret stayed where it was. You could not see the word you were deleting.
+
+   And the box was told to scroll to the bottom on EVERY input, which is right while dictation is
+   adding words to the end and wrong for every other kind of typing: it dragged you to the end of
+   the note the moment you touched a word in the middle.
+
+   A textarea will not say where its caret is, so the text up to it is laid out in a hidden div
+   that copies the box's own metrics, and the marker's offset is read off that. The div is made
+   once and reused, because this runs on every keystroke. */
+let _caretMirror = null;
+function taCaretTop(ta, pos){
+  const cs = getComputedStyle(ta);
+  const d = _caretMirror || (_caretMirror = document.createElement("div"));
+  ["fontFamily","fontSize","fontWeight","fontStyle","fontVariant","letterSpacing","lineHeight",
+   "textTransform","wordSpacing","textIndent","paddingTop","paddingRight","paddingBottom",
+   "paddingLeft","borderTopWidth","borderRightWidth","borderBottomWidth","borderLeftWidth"]
+    .forEach(k=>{ d.style[k]=cs[k]; });
+  d.style.position="absolute"; d.style.visibility="hidden"; d.style.left="-9999px"; d.style.top="0";
+  d.style.boxSizing=cs.boxSizing; d.style.width=ta.clientWidth+"px";
+  d.style.whiteSpace="pre-wrap"; d.style.overflowWrap="break-word"; d.style.wordBreak=cs.wordBreak;
+  d.textContent = ta.value.slice(0, pos);
+  const mark = document.createElement("span");
+  mark.textContent = "\u200b";                 // something with a height, and no width to speak of
+  d.appendChild(mark);
+  document.body.appendChild(d);
+  const top = mark.offsetTop;
+  document.body.removeChild(d);
+  d.removeChild(mark);
+  return top;
+}
+/* Scroll only as far as it takes to see the caret, and not one pixel further. Somebody who has
+   scrolled back to look at an earlier line is left where they put themselves; the view moves only
+   when the caret would otherwise be off the top or the bottom. */
+function taKeepCaretInView(ta, pos){
+  if(!ta) return;
+  if(pos==null) pos = ta.selectionStart;
+  if(typeof pos!=="number") return;
+  let top;
+  try{ top = taCaretTop(ta, pos); }catch(e){ return; }
+  const line = parseFloat(getComputedStyle(ta).lineHeight) || 18;
+  const view = ta.clientHeight;
+  if(top < ta.scrollTop) ta.scrollTop = Math.max(0, top - line);
+  else if(top + line > ta.scrollTop + view) ta.scrollTop = top + line - view;
+}
 function fitBoxTo(ta, reserve){
   if(!ta) return;
   _fitTa=ta; _fitReserve=(reserve==null?110:reserve);
@@ -13821,9 +13878,11 @@ function fitBoxTo(ta, reserve){
     if(vv){ vv.addEventListener("resize", applyFit); vv.addEventListener("scroll", applyFit); }
     else window.addEventListener("resize", applyFit);
   }
-  // The newest words stay where they can be seen. Only on input, never on every keystroke’s
-  // caret move, so somebody scrolling back to fix a word is left where they put themselves.
-  ta.addEventListener("input", ()=>{ ta.scrollTop=ta.scrollHeight; });
+  /* Stay with the caret. This used to jump to the bottom on every input, which is right only
+     while dictation is adding to the end — and dictation sets the value directly, which fires no
+     input event at all, so this never was the thing keeping spoken words in view. What it did do
+     was drag the reader to the end of the note whenever they edited a word in the middle. */
+  ta.addEventListener("input", ()=>{ taKeepCaretInView(ta); });
   ta.addEventListener("focus", ()=>setTimeout(applyFit, 60));
   setTimeout(applyFit, 30);
 }
@@ -13863,8 +13922,13 @@ function wireSpeakButton(btn, note, ta, opts){
     const said=(heard+interim).replace(/\s+/g," ");
     const join=(a,b)=>!a?b:(!b?a:(/\s$/.test(a)?a+b:a+" "+b));
     ta.value = join(before, said) + (after ? (/^\s/.test(after)?after:" "+after) : "");
-    try{ const p=join(before,said).length; ta.setSelectionRange(p,p); }catch(e){}
-    ta.scrollTop=ta.scrollHeight;
+    const p = join(before, said).length;
+    try{ ta.setSelectionRange(p,p); }catch(e){}
+    /* The words just spoken are at the caret, which is the end of the dictated run — not
+       necessarily the end of the box, because speaking can be started with the caret half way
+       through an existing scene. Scrolling to the bottom showed the end of the note in that case
+       and left the reader watching text that was not changing. */
+    if(after) taKeepCaretInView(ta, p); else ta.scrollTop = ta.scrollHeight;
   };
   btn.onclick=()=>{
     if(Dictation.listening()) return Dictation.stop();
@@ -13909,7 +13973,9 @@ function editText({title, hint, value, onSave, autoCap, keyWords, tagWord}){
     // caret back where it was is enough to keep typing from jumping to the end.
     if(autoCap) ta.addEventListener("input",()=>{
       const p=ta.selectionStart, v=capAfterPunct(ta.value);
-      if(v!==ta.value){ ta.value=v; try{ ta.setSelectionRange(p,p); }catch(e){} }
+      // As above: .value resets the scroll, and the length is unchanged, so it is restored exactly.
+      if(v!==ta.value){ const y=ta.scrollTop; ta.value=v;
+        try{ ta.setSelectionRange(p,p); }catch(e){} ta.scrollTop=y; }
     });
     fitBoxTo(ta, 150);                          // room below for the mic button and the two buttons
     if(el("edTick")) el("edTick").onclick=()=>{ if(el("edSave")) el("edSave").click(); };

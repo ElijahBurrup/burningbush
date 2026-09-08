@@ -4397,6 +4397,65 @@ const DAY = 86400000;
   is(pullBack.forced, 2, 'Sync now asks regardless');
   is(pullBack.signedOut, 2, '...and signed out it asks nobody');
 
+  describe('a writing box stays where the cursor is', () => { });
+
+  /* Editing a long scene was close to impossible on a phone. The box was told to scroll to the
+     bottom on every input, so touching a word half way down threw the view to the end of the note
+     and you could not see what you were deleting. Setting the value for the capitalisation pass
+     scrolls a textarea back to the top as well, so the two of them fought over where you were.
+
+     Dictation is the one case where the bottom IS the right place, and it never depended on this:
+     it sets the value directly, which fires no input event at all. */
+  const box = await $(async () => {
+    const out = {};
+    const lines = [];
+    for (let i = 1; i <= 40; i++) lines.push('line ' + i + ' of the scene, with words in it. ');
+    const text = lines.join('');
+
+    editText({ title: 'Scene', value: text, onSave: () => {}, autoCap: true });
+    await new Promise(r => setTimeout(r, 120));
+    const ta = document.getElementById('edTa');
+    out.scrolls = ta.scrollHeight > ta.clientHeight;
+
+    // Far enough down that the box must scroll to show it — where the fault actually bit.
+    const at = Math.floor(text.length * 0.92);
+    ta.focus();
+    ta.setSelectionRange(at, at);
+    taKeepCaretInView(ta, at);
+    out.parked = ta.scrollTop;
+
+    // One character typed there, the way a browser does it: value, caret, then the input event.
+    ta.value = text.slice(0, at) + 'X' + text.slice(at);
+    ta.setSelectionRange(at + 1, at + 1);
+    ta.dispatchEvent(new Event('input', { bubbles: true }));
+    out.afterTyping = ta.scrollTop;
+    out.atBottom = ta.scrollTop >= ta.scrollHeight - ta.clientHeight - 2;
+
+    // A capitalisation that genuinely rewrites the value must not move the view either.
+    ta.value = text.slice(0, at) + 'and this. sentence here' + text.slice(at);
+    const p = at + 'and this. sentence'.length;
+    ta.setSelectionRange(p, p);
+    const y = ta.scrollTop;
+    ta.dispatchEvent(new Event('input', { bubbles: true }));
+    out.capApplied = ta.value.indexOf('and this. Sentence') >= 0;
+    out.capHeld = Math.abs(ta.scrollTop - y) < 40;
+
+    // A caret pushed off the top must be followed back up, not left off screen.
+    ta.scrollTop = ta.scrollHeight;
+    taKeepCaretInView(ta, 0);
+    out.followedUp = ta.scrollTop < 40;
+
+    document.getElementById('edCancel').click();
+    return out;
+  });
+  ok(box.scrolls, 'a long scene fills more than the box can show');
+  ok(Math.abs(box.afterTyping - box.parked) < 40,
+     'typing in the middle leaves the view where the cursor is — was ' + box.parked + ', now ' + box.afterTyping);
+  ok(!box.atBottom, '...and does not throw you to the end of the note');
+  ok(box.capApplied, 'the capitalisation still runs on every keystroke');
+  ok(box.capHeld, '...without scrolling the box out from under the cursor');
+  ok(box.followedUp, 'a cursor above the view is followed back up to');
+
   describe('the clock survives the phone going to sleep', () => { });
 
   /* Reported from a real review: thirty-five minutes of work, and the screen said 0s.
