@@ -4208,11 +4208,12 @@ const DAY = 86400000;
     return out;
   });
   ok(gbox.cardsDue >= 5, 'the day has a pile of individual cards due');
-  // The day stays finished — the dots and the streak are latched — but the LINE reports what is
-  // actually waiting, because "Caught Up Today" over nine due reviews is simply untrue.
-  is(gbox.doneTitle, '1 Still Due · review', '...and the line counts the session, not the cards');
-  no(gbox.doneTick, '...withholding the tick while reviews are waiting');
-  is(gbox.owedTitle, '1 Still Due · review', 'an unfinished review is ONE marker, however many cards');
+  // A review done this morning discharges the day, however many cards fall due afterwards: the
+  // marker is earned, its dot is blue, and demanding another review for work that arrived later is
+  // asking for something already done.
+  is(gbox.doneTitle, 'Caught Up Today', '...and a review already done finishes the day');
+  ok(gbox.doneTick, '...tick and all, whatever has fallen due since');
+  is(gbox.owedTitle, '1 Still Due · review', 'a review NOT yet done is one marker, however many cards');
   ok(gbox.lastIsSr, '...drawn as the last dot');
   is(gbox.dbgT, 5, '...on a goal of five, as reported');
   ok(gbox.srUnfilled2, '...left unfilled until the review is actually done');

@@ -2215,8 +2215,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.8.1";
+const APP_VERSION="2.8.2";
 const CHANGELOG=[
+ {v:"2.8.2", d:"September 8, 2026", t:"One review a day, and the day is done", items:[
+   ["fix","<b>A review done in the morning now finishes the day.</b> The goal button was asking whether any card was due rather than whether you had reviewed — so reviews falling due later kept demanding a review you had already done, with its own blue dot filled in beside the message. Whatever comes due after your review is tomorrow's work."]
+ ]},
  {v:"2.8.1", d:"September 7, 2026", t:"Today's progress crosses too", items:[
    ["fix","<b>Two devices drew a different number of filled dots.</b> The day's progress — what you have done today — was never merged at all, so each device counted only its own work. It now takes the higher of the two."],
    ["new","<b>Profile → Sync now shows the numbers behind the numbers:</b> what is due broken into new verses, numbers, books, verses and palaces, the goal, and what date this device thinks it is. Read it on two devices and whatever differs names itself."]
@@ -9333,8 +9336,13 @@ function libStatusHTML(){
      take that back. But the line is what a reader looks at to know whether there is anything to do,
      and saying "Caught Up Today" over fifteen waiting reviews is simply false. So the latch governs
      the marks; what is actually waiting governs the words. */
-  const waiting = reviewDueCount() > 0;
-  const caught = goalMet && !waiting;
+  /* What is owed is one review SESSION a day, and doing it discharges it. Asking whether any card
+     is due instead meant a review done at breakfast never cleared the line: three more fall due by
+     tea, the marker is already earned and its dot already blue, and the button still demands a
+     review you have done. Cards arriving after the day's review are tomorrow's work — the rule
+     goalLatched already applies to the streak, and the one this line kept contradicting. */
+  const owedReview = srInPlay() && !srDoneToday();
+  const caught = goalMet;
   // Each dot is handed the same wave, one after another, and the whole thing runs back the way it
   // came. --i and --n are what make one rule serve any goal from 3 to 15.
   const dots=Array.from({length:t},(_,i)=>{
@@ -9351,7 +9359,7 @@ function libStatusHTML(){
   // A review session is ONE thing to do, whether it holds one card or forty — which is the whole
   // point of the marker. It is never reported as the number of cards.
   const line = caught ? "Caught Up Today"
-    : waiting ? "1 Still Due · review"
+    : owedReview ? "1 Still Due · review"
     : `${left} Remaining`;
   // The tick is drawn rather than typed, because a drawn one can draw itself again.
   const tick=`<svg class="gb-tick" viewBox="0 0 24 24" aria-hidden="true">
