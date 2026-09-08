@@ -1397,6 +1397,16 @@
     background:var(--muted);transition:left .15s ease,background .15s ease}
   .sfx-sw.on{background:var(--gold);border-color:var(--gold-ink)}
   .sfx-sw.on span{left:21px;background:var(--on-accent,#fff)}
+  .sfx-sw.sm{width:34px;height:20px}
+  .sfx-sw.sm span{width:14px;height:14px}
+  .sfx-sw.sm.on span{left:17px}
+  .sfx-more{background:none;border:0;padding:2px 0;margin-top:3px;font:inherit;font-size:11.5px;
+    font-weight:700;color:var(--muted);cursor:pointer;letter-spacing:.02em}
+  .sfx-more.open{color:var(--gold-ink,var(--gold))}
+  .sfx-takes{margin:4px 0 2px;border-left:2px solid var(--line);padding-left:8px}
+  .sfx-take{display:flex;align-items:center;gap:8px;padding:3px 0}
+  .sfx-take .sfx-t{flex:1;min-width:0}
+  .sfx-take .sfx-t small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .prof-sect{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--gold-ink);font-weight:800;margin-bottom:8px}
   .prof-sect.prof-collapsible{cursor:pointer;padding:8px 10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;margin-bottom:6px;user-select:none}
   .prof-sect .prof-caret{display:inline-block;width:14px;color:var(--muted)}
@@ -2241,8 +2251,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.10.0";
+const APP_VERSION="2.11.0";
 const CHANGELOG=[
+ {v:"2.11.0", d:"September 8, 2026", t:"The timer, the swipes, and a switch for every recording", items:[
+   ["fix","<b>A thirty-five minute review reported 0s.</b> The clock stopped whenever the app went to the background and nothing ever started it again \u2014 and on a phone that happens within a minute, as soon as the screen dims or a notification arrives. It recorded the seconds before the first sleep and nothing after. Sleeping now pauses it and coming back resumes it, a pocketed phone still adds nothing, and waking is not counted as a second sitting."],
+   ["fix","<b>Swiping made no sound anywhere except the lesson path.</b> The Bible and the verse reader both swipe and both were silent. They now rise going forward and fall going back \u2014 and at the first or last book there is no swoosh at all, because nothing moved."],
+   ["new","<b>A switch for every recording, under the switch for the sound.</b> \"Door opening\" is one thing to read and five takes to hear, and the five are not equally good. Open any sound in Profile \u2192 Sound effects to hear each recording behind it and switch off the ones you do not like, without losing the ones you do."],
+   ["chg","<b>The profile menu sounds like what it does.</b> It was answering with the interface pack \u2014 synthesised blips \u2014 for things like Give and Reference library. Each of the fourteen now comes from wood, cloth, leather, books or glass: the reference library blows the dust off a cover before it opens, Give opens a purse and lets the coins go, and Theme is glass struck twice with the new light coming up behind it."]
+ ]},
  {v:"2.10.0", d:"September 8, 2026", t:"Real sounds, not tones", items:[
    ["chg","<b>Every sound is a recording now.</b> The palette was synthesised — pure tones, which is why it chirped rather than sounded. The same sixty-five moments now play real recorded audio: wood, bells, coins, doors, paper and stone. Nothing moved and nothing was renamed; only what you hear changed."],
    ["chg","<b>The wheel is a real ratchet.</b> Thirteen recorded clicks slowing against the pegs, rather than one recording of a spin that ends when it likes instead of when the wheel stops."],
@@ -4812,7 +4828,7 @@ function mergeProg(a,b){
      newer stamp brings its whole set across together — a half-merged goal (mode from one device,
      numbers from the other) would be worse than either. */
   { const SETTINGS=["dailyGoal","goalMode","goalByDay","goalWeekday","goalWeekend","theme",
-                    "reminder","dailyMin","sfxOff"];   // real field names; the translation key is trActive
+                    "reminder","dailyMin","sfxOff","sfxVarOff"];   // real field names; the translation key is trActive
     const at = p => (p && p.settingsAt) || 0;
     const from = at(b) > at(a) ? b : a;
     SETTINGS.forEach(f=>{ if(from[f]!==undefined) m[f]=from[f]; else delete m[f]; });
@@ -5889,12 +5905,19 @@ function wireSwipe(){
     if(performance.now()-t0 > 700) return;                 // a slow drag is a scroll
     if(Math.abs(dx) < 60) return;                          // too small to have been meant
     if(Math.abs(dx) < Math.abs(dy)*1.5) return;            // more up than across: a scroll
+    const edgesBefore = _swipeEdges;
     (dx < 0 ? swipeTarget.left : swipeTarget.right)();
+    // Only if it actually moved. Pitch carries the direction the way it does on the lesson path:
+    // forward rises, back falls.
+    if(_swipeEdges === edgesBefore) sfx(dx < 0 ? "swipeForward" : "swipeBack");
   }, {passive:true});
 }
 /* The end of a book is a real edge and should feel like one: a nudge, and a word about where you
    are. Silence would read as a broken gesture rather than as a boundary. */
+let _swipeEdges = 0;   // how many times a swipe has run into the end of a book
 function swipeEdge(msg){
+  _swipeEdges++;
+  sfx("refuse");        // the boundary has its own sound, and it is not a swoosh
   toast(msg);
   const card = el("journey") && el("journey").querySelector(".card");
   if(!card) return;
@@ -8185,6 +8208,59 @@ return {
       note(G6,{at:0.02,t:0.25,type:"sine",vol:0.04});
       seq([{f:E6,at:0.34,t:0.16},{f:G6,at:0.46,t:0.40,vol:0.07}],{type:"sine",vol:0.08}); } },
 
+  /* THE PROFILE MENU. Each of these answers for one feature, and each was chosen from what that
+     feature actually does rather than from a list of interface noises. They are wood, cloth,
+     leather, books, glass and struck metal; the synthesised fallbacks below are deliberately plain,
+     because they only play when the app is opened from disk and cannot fetch its recordings. */
+  pullRefresh: { label: "Pull to refresh", group: "Navigation",
+    desc: "The page let go and dropping back into place.",
+    play: () => { note(A4,{t:0.08,type:"triangle",vol:0.07}); note(D5,{at:0.10,t:0.16,type:"sine",vol:0.06}); } },
+
+  menuAdmin: { label: "Admin", group: "Profile menu",
+    desc: "A toolbox: the catch lifted, then the lid.",
+    play: () => { note(G3,{t:0.06,type:"triangle",vol:0.08}); note(C4,{at:0.09,t:0.07,type:"triangle",vol:0.07}); } },
+  menuBadges: { label: "Badges", group: "Profile menu",
+    desc: "Struck metal. An award rings.",
+    play: () => note(C6,{t:0.34,type:"sine",vol:0.07}) },
+  menuStore: { label: "Feature store", group: "Profile menu",
+    desc: "Something new, offered rather than announced.",
+    play: () => seq([{f:E5,at:0},{f:A5,at:0.08,t:0.20}],{type:"triangle",t:0.10,vol:0.07}) },
+  menuAccount: { label: "Account", group: "Profile menu",
+    desc: "Your own door, and the key only you have.",
+    play: () => note(A3,{t:0.10,type:"triangle",vol:0.09}) },
+  menuLicences: { label: "Group licences", group: "Profile menu",
+    desc: "The purse, then their names set down in the ledger.",
+    play: () => { note(D4,{t:0.08,type:"triangle",vol:0.07}); note(G3,{at:0.20,t:0.10,type:"triangle",vol:0.06}); } },
+  menuGive: { label: "Give", group: "Profile menu",
+    desc: "The purse opens, the coins leave your hand, and the warm thing that happens is not yours to keep.",
+    play: () => { note(G4,{t:0.08,type:"triangle",vol:0.07});
+      seq([{f:C5,at:0.18},{f:E5,at:0.26},{f:G5,at:0.34,t:0.30}],{type:"sine",t:0.12,vol:0.07}); } },
+  menuTranslate: { label: "Bible translation", group: "Profile menu",
+    desc: "Pages, hunting for the same words said another way.",
+    play: () => note(E4,{t:0.09,type:"triangle",vol:0.06}) },
+  menuReference: { label: "Reference library", group: "Profile menu",
+    desc: "The dust brushed off a cover, and only then the book opening.",
+    play: () => { note(A5,{t:0.16,type:"sine",vol:0.04}); note(D4,{at:0.24,t:0.14,type:"triangle",vol:0.08}); } },
+  menuWhatsNew: { label: "What's new", group: "Profile menu",
+    desc: "A notice pinned up: one page, turned.",
+    play: () => note(F4,{t:0.08,type:"triangle",vol:0.06}) },
+  menuTheme: { label: "Theme", group: "Profile menu",
+    desc: "Glass struck twice, and the new light coming up behind it.",
+    play: () => { seq([{f:C6,at:0},{f:E6,at:0.09}],{type:"sine",t:0.16,vol:0.05});
+      seq([{f:G4,at:0.24},{f:C5,at:0.32,t:0.26}],{type:"sine",t:0.12,vol:0.05}); } },
+  menuGetApp: { label: "Get the app", group: "Profile menu",
+    desc: "Set down where it belongs, once, firmly.",
+    play: () => note(C4,{t:0.11,type:"triangle",vol:0.09}) },
+  menuSfx: { label: "Sound effects", group: "Profile menu",
+    desc: "A bell, because that is what this screen is for.",
+    play: () => note(A5,{t:0.30,type:"sine",vol:0.06}) },
+  menuSync: { label: "Sync", group: "Profile menu",
+    desc: "A call, and the answer that matches it.",
+    play: () => { note(E5,{t:0.14,type:"sine",vol:0.05}); note(E5,{at:0.15,t:0.16,type:"sine",vol:0.05}); } },
+  menuBackup: { label: "Back up your progress", group: "Profile menu",
+    desc: "Everything you have done, closed and latched somewhere safe.",
+    play: () => { note(D4,{t:0.10,type:"triangle",vol:0.08}); note(G3,{at:0.20,t:0.09,type:"triangle",vol:0.07}); } },
+
   comboBuild: { label: "Answer run building", group: "Rewards",
     desc: "One clear step up a ladder that climbs with every correct answer.",
     play: (n) => { const s=[C5,E5,G5,C6,E6,G6], f=s[Math.max(0,Math.min(s.length-1,(n||1)-1))];
@@ -8718,6 +8794,33 @@ function sfxSetEnabled(key, on){
   Prog.settingsAt = Date.now();
   saveProg();
 }
+/* A switch per RECORDING, under the switch for the sound.
+
+   "Door opening" is one thing to a person and five takes to the app, and the five are not equally
+   good — one creak lands and another sounds like furniture. Turning the whole door off to be rid
+   of the bad take loses the good one too, so each take answers for itself. The effect's own switch
+   still governs the lot: this only decides which takes it may draw from.
+
+   Kept per effect rather than per file, because the same recording can serve two effects and be
+   right in one of them. Stored in Prog beside sfxOff and merged as a setting, so a judgement made
+   on the phone is not undone by the laptop. */
+function sfxVarOffMap(){ return (typeof Prog==="object" && Prog && Prog.sfxVarOff) ? Prog.sfxVarOff : {}; }
+function sfxVarEnabled(key, file){ const m=sfxVarOffMap()[key]; return !(m && m[file]); }
+function sfxVarSetEnabled(key, file, on){
+  Prog.sfxVarOff = Prog.sfxVarOff || {};
+  const m = Prog.sfxVarOff[key] = Prog.sfxVarOff[key] || {};
+  if(on) delete m[file]; else m[file]=1;
+  if(!Object.keys(m).length) delete Prog.sfxVarOff[key];
+  Prog.settingsAt = Date.now();
+  saveProg();
+}
+// The takes an effect may actually draw on. Empty means every one was switched off, which is a
+// deliberate silence and not a reason to fall back to the tones.
+function sfxLiveFiles(key){
+  const e = (typeof SFX_FILES!=="undefined") && SFX_FILES[key];
+  if(!e) return null;
+  return e[0].filter(f=>sfxVarEnabled(key,f));
+}
 /* A reward that always sounds the same stops being a reward and becomes a notification. Families
    hold several variants and never play the same one twice running — a small thing that keeps the
    twentieth correct answer of a session from feeling like the first one repeated. */
@@ -8733,6 +8836,57 @@ const _sfxLast = {};
 // Where the recordings live. The build makes this root-absolute for the web, where the app is
 // served at /burningbush with no trailing slash, and leaves it relative for the packaged apps,
 // which sit at the root of their own folder.
+/* Some things cannot be said with one recording.
+
+   Blowing the dust off a book and opening it is two sounds with a gap between them, and no single
+   clip in any library is that. So a sound may instead be a short score: which recording, how long
+   after the one before, how loud, and at what pitch. It is the same mechanism the wheel's ratchet
+   uses, written down instead of hard-coded.
+
+   [file, delayMs, gain, rate]. These are deliberately built from wood, cloth, leather, books and
+   glass — the profile menu used to answer with the interface pack, which is synthesised blips, and
+   a menu of things like GIVE and REFERENCE LIBRARY answering in sci-fi chirps says nothing true
+   about any of them. */
+const SFX_SEQ = {
+  // A toolbox: the catch lifted, then the lid. Mechanical, because that is what these tools are.
+  // Letting go of the page and it dropping back: cloth, then the shelf under it.
+  pullRefresh:   [["rpg__cloth2.mp3",0,0.5], ["rpg__bookPlace2.mp3",120,0.45]],
+  menuAdmin:     [["rpg__metalLatch.mp3",0,0.55], ["rpg__metalClick.mp3",130,0.5]],
+  // Struck metal. A badge is a thing awarded, and awards ring.
+  menuBadges:    [["impact__impactBell_heavy_000.mp3",0,0.5]],
+  // Something new to try, offered rather than announced.
+  menuStore:     [["jingle__jingles_PIZZI03.mp3",0,0.45]],
+  // Your own door, and the key that only you have.
+  menuAccount:   [["rpg__metalLatch.mp3",0,0.6]],
+  // Seats bought for other people: the purse, then their names set down in the ledger.
+  menuLicences:  [["rpg__handleSmallLeather.mp3",0,0.7], ["rpg__bookPlace2.mp3",210,0.55]],
+  /* GENEROSITY, which is a sequence and not a noise: the purse opens, the coins leave your hand,
+     and something warm happens that you do not get to keep. The gift is the last sound, and it is
+     the nicest one — that is the whole point of the feature. */
+  menuGive:      [["rpg__handleSmallLeather.mp3",0,0.7], ["rpg__handleCoins.mp3",170,0.55],
+                  ["jingle__jingles_PIZZI09.mp3",330,0.6]],
+  // Looking for the same words said another way: pages, hunting.
+  menuTranslate: [["rpg__bookFlip2.mp3",0,0.6]],
+  /* THE REFERENCE LIBRARY: a book nobody has opened in a while. The dust is brushed off the cover
+     first, and only then does it open. The gap is what makes it two actions rather than a smear. */
+  menuReference: [["rpg__cloth1.mp3",0,0.6], ["rpg__bookOpen.mp3",240,0.85]],
+  // A notice pinned up: one page, turned.
+  menuWhatsNew:  [["rpg__bookFlip1.mp3",0,0.5]],
+  /* THEME: the whole room changes colour. Stained glass is the app's own window, so the theme
+     answers in glass — struck, then a warm phrase as the new light comes up behind it. */
+  menuTheme:     [["impact__impactGlass_light_000.mp3",0,0.5],
+                  ["impact__impactGlass_light_002.mp3",90,0.4],
+                  ["jingle__jingles_STEEL00.mp3",240,0.4]],
+  // Putting the app where it belongs: set down, once, firmly.
+  menuGetApp:    [["rpg__bookPlace2.mp3",0,0.7]],
+  // This screen. It rings, because that is what it is for.
+  menuSfx:       [["impact__impactBell_heavy_000.mp3",0,0.45]],
+  // Two devices agreeing: a call, and the answer that matches it.
+  menuSync:      [["impact__impactGlass_light_000.mp3",0,0.4],
+                  ["impact__impactGlass_light_002.mp3",150,0.4]],
+  // Everything you have done, closed and latched somewhere safe.
+  menuBackup:    [["rpg__bookClose.mp3",0,0.6], ["rpg__metalLatch.mp3",200,0.5]]
+};
 const SFX_DIR = "sounds/";
 const SFX_FILES = {
   verseNew:[["impact__impactBell_heavy_002.mp3"],0.8],
@@ -8932,6 +9086,9 @@ const Sfx = (()=>{
       Object.keys(SFX_FILES).forEach(k=>{
         SFX_FILES[k][0].forEach(f=>{ if(!seen[f]){ seen[f]=1; queue.push(f); } });
       });
+      if(typeof SFX_SEQ!=="undefined") Object.keys(SFX_SEQ).forEach(k=>{
+        SFX_SEQ[k].forEach(p=>{ const f=p[0]; if(!seen[f]){ seen[f]=1; queue.push(f); } });
+      });
       pump();
     }
 
@@ -8959,13 +9116,39 @@ const Sfx = (()=>{
     return {
       warm,
       has(key){ return !!SFX_FILES[key]; },
+      // Play one named recording, whatever the switches say — the settings screen has to be able
+      // to play a take in order for anyone to decide about it.
+      one(key, file){
+        const e=SFX_FILES[key];
+        const score=(typeof SFX_SEQ!=="undefined") && SFX_SEQ[key];
+        if((!e && !score) || !SERVED) return false;
+        const c=ac(); if(!c) return false;
+        const g = e ? e[1] : ((score.find(p=>p[0]===file)||[])[2] || 0.6);
+        if(buf[file]){ start(file, g, 1, 0); return true; }
+        const asked=Date.now();
+        load(file).then(()=>{ if(Date.now()-asked < 1500) start(file, g, 1, 0); }).catch(()=>{});
+        return true;
+      },
       /* Returns true when this key is ours - including when the answer is silence, because the
          sound is off or the clip has not arrived yet. False means "no recording, use the tones". */
       play(key, arg){
+        // A score first: several recordings with gaps, which is how the menu sounds are written.
+        const score = (typeof SFX_SEQ!=="undefined") && SFX_SEQ[key];
+        if(score){
+          if(!SERVED) return false;
+          if(!unlocked || !on()) return true;
+          if(!ac()) return false;
+          score.forEach(([f, ms, g, r])=>{
+            if(buf[f]) start(f, g==null?0.6:g, r||1, (ms||0)/1000);
+            else load(f).catch(()=>{});          // not yet decoded: warm it for next time
+          });
+          return true;
+        }
         const e=SFX_FILES[key]; if(!e || !SERVED) return false;
         if(!unlocked || !on()) return true;
         const c=ac(); if(!c) return false;
-        const names=e[0], gain=e[1];
+        const names=sfxLiveFiles(key) || e[0], gain=e[1];
+        if(!names.length) return true;        // every take switched off: silent on purpose
         let rate = RATE[key] ? RATE[key](arg) : 1;
         if(VARY[key]) rate *= 1 + (sfxRand()*2 - 1) * VARY[key];
         const pickAny = () => names.length===1 ? names[0] : names[Math.floor(sfxRand()*names.length)];
@@ -9172,6 +9355,7 @@ const Sfx = (()=>{
   });
 
   api._palette = PALETTE;
+  api._one = (k,f)=>Files.one(k,f);
   api._play = function(k){ const f=api["_preview_"+k]; if(f) f(); else if(typeof api[k]==="function") api[k](); };
   return api;
 })();
@@ -9234,6 +9418,13 @@ const SFX_MANIFEST = (()=>{
   return out;
 })();
 function sfxPreview(key){ try{ Sfx._play(key); }catch(e){} }
+function sfxPreviewFile(key, file){ try{ Sfx.unlock(); if(Sfx._one) Sfx._one(key, file); }catch(e){} }
+// A recording's file name is not a thing to show a person. "rpg__doorOpen_2.mp3" becomes
+// "door open 2": the pack prefix goes, the separators become spaces, the extension goes.
+function sfxTakeName(file){
+  return String(file||"").replace(/\.[a-z0-9]+$/i,"").replace(/^[a-z]+__/,"")
+    .replace(/[_-]+/g," ").replace(/([a-z])([A-Z])/g,"$1 $2").toLowerCase().trim();
+}
 function PALETTE_HAS(k){ return !!(typeof Sfx!=="undefined" && Sfx._palette && Sfx._palette[k]); }
 /* Call a sound by name without knowing whether it exists yet. The palette is authored separately
    from the places that ring it, so a call site can be written before its sound and simply stay
@@ -9252,6 +9443,7 @@ document.addEventListener("pointerdown", ev=>{
   if(t.disabled || t.getAttribute("aria-disabled")==="true"){ sfx("refuse"); return; }
   if(t.classList.contains("lclose")){ sfx("modalClose"); return; }
   if(t.classList.contains("sfx-sw")){ return; }        // the sound switches speak for themselves
+  if(t.classList.contains("profbtn")){ return; }       // each profile tile answers with its own
   sfx("buttonTap");
 }, {capture:true, passive:true});
 /* ---- what this account did, month by month --------------------------------------------------
@@ -10187,6 +10379,25 @@ function srClockSeconds(){
   return (c.sec|0) + (srTickFrom!=null ? Math.max(0, Math.round((Date.now()-srTickFrom)/1000)) : 0);
 }
 function srClockRunning(){ return srTickFrom!=null; }
+/* A review paused because the phone went to sleep has to start again when it wakes.
+
+   Backgrounding banked the seconds and left the clock stopped for good, and nothing ever started
+   it again. A half-hour review on a phone reported the few seconds before the screen first
+   locked — and if it locked while the first verse was being read, it reported nothing at all,
+   which is what was seen: thirty-five minutes of work, "0s".
+
+   Only a clock that the pause actually stopped is resumed. srClockStop() reports whether it had
+   anything to stop, so a wake cannot start a clock that was not already running: standing on the
+   hub with the app in the background and coming back must still be zero. Resuming does not count
+   a new sitting either — the screen going dark is not a decision to stop reviewing. */
+let srPausedByHide=false;
+function srClockPause(){ if(srClockStop()) srPausedByHide=true; }
+function srClockWake(){
+  if(!srPausedByHide) return;
+  srPausedByHide=false;
+  if(srClockDay().done) return;        // it finished while away; nothing left to time
+  srTickFrom=Date.now();
+}
 function fmtSecs(s){
   s=Math.max(0, s|0);
   const m=Math.floor(s/60), r=s%60;
@@ -11666,13 +11877,15 @@ function bootPopups(){
 // so closing it mid-wheel is no way to keep your talents.
 // Backgrounding the app is walking away. Bank the seconds now rather than trusting that anything
 // runs on the way out — on a phone, often nothing does.
-document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden") srClockStop(); });
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="hidden") srClockPause(); else srClockWake(); });
 // Back to the front: ask the server what changed elsewhere. This is the one that matters on a phone
 // with the app installed, where nothing else ever asks again.
 document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState==="visible"){ try{ Auth.refresh(); }catch(e){} } });
 window.addEventListener("focus",()=>{ try{ Auth.refresh(); }catch(e){} });
-window.addEventListener("pagehide",()=>{ srClockStop(); });
+window.addEventListener("pagehide",()=>{ srClockPause(); });
+window.addEventListener("pageshow",()=>{ srClockWake(); });
 document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState!=="visible") return;
   const up=id=>{ const o=el(id); return !!o && o.classList.contains("on"); };
@@ -12807,6 +13020,7 @@ function attachVerseSwipe(host){
     const t=ev.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
     if(Math.abs(dx)<60 || Math.abs(dx)<Math.abs(dy)*1.6) return;
     const to = dx<0 ? SWIPE_NAV.next : SWIPE_NAV.prev;      // drag left to go on, right to go back
+    if(to) sfx(dx<0 ? "swipeForward" : "swipeBack");
     if(to) goVerseKeepingPlace(to, SWIPE_NAV.ret);
   }, {passive:true});
 }
@@ -14852,7 +15066,15 @@ function paintProfileGrid(){
     const sub=PROF_SUBS[p.title]?PROF_SUBS[p.title]():"";
     return `<button type="button" class="profbtn" data-prof="${p.slug}"><span class="pi">${PROF_ICONS[p.title]||"⚙️"}</span><span>${p.title}</span><small>${sub}</small></button>`;
   }).join("");
+  /* Which sound belongs to which tile. Keyed by the slug the tile already carries, so a renamed
+     section loses its sound rather than playing another feature's. */
+  const PROF_SFX={ "admin":"menuAdmin", "badges":"menuBadges", "feature-store":"menuStore",
+    "account":"menuAccount", "group-licences":"menuLicences", "give":"menuGive",
+    "bible-translation":"menuTranslate", "reference-library":"menuReference",
+    "what-s-new":"menuWhatsNew", "theme":"menuTheme", "get-the-app":"menuGetApp",
+    "sound-effects":"menuSfx", "sync":"menuSync", "back-up-your-progress":"menuBackup" };
   grid.querySelectorAll("[data-prof]").forEach(b=>b.onclick=()=>{
+    { const s=PROF_SFX[b.dataset.prof]; sfx(s || "buttonTap"); }
     const go=PROF_DIRECT[b.dataset.prof];
     if(go){ go(); return; }            // one control behind the button is one tap too many
     openProfSection(b.dataset.prof);
@@ -14999,20 +15221,66 @@ function paintSfxList(){
     const e=SFX_MANIFEST[k]; const g=e.group||"Other";
     (groups[g]=groups[g]||[]).push([k,e]);
   });
-  const order=["Rewards","Tests","Learning","Palaces","Milestones","Economy","Navigation","Interface","Other"];
+  const order=["Rewards","Tests","Learning","Palaces","Milestones","Economy","Navigation","Profile menu","Interface","Other"];
   const names=Object.keys(groups).sort((a,b)=>{
     const i=order.indexOf(a), j=order.indexOf(b);
     return (i<0?99:i)-(j<0?99:j) || (a<b?-1:1); });
+  /* Each effect lists the actual recordings behind it, because "door opening" is one thing to
+     read and five takes to hear, and the five are not equally good. A take can be auditioned
+     and switched off on its own; the effect's own switch still governs whether any of them
+     play at all. */
+  const takesFor = k => (typeof SFX_FILES!=="undefined" && SFX_FILES[k]) ? SFX_FILES[k][0] : [];
   host.innerHTML=names.map(g=>
     `<div class="sfx-g">${bbEsc(g)}</div>` + groups[g].map(([k,e])=>{
-      const on=sfxEnabled(k);
+      const on=sfxEnabled(k), takes=takesFor(k);
+      const liveN=takes.filter(f=>sfxVarEnabled(k,f)).length;
+      const badge = takes.length>1
+        ? `<span class="sfx-var">${liveN} of ${takes.length}</span>`
+        : (e.rotate?'<span class="sfx-var">several</span>':"");
+      const rows = takes.map(f=>{
+        const von=sfxVarEnabled(k,f);
+        return `<div class="sfx-take">
+          <button type="button" class="sfx-play" data-take-play="${bbEsc(k)}" data-take-file="${bbEsc(f)}"
+            title="Hear this take">▶</button>
+          <div class="sfx-t"><small>${bbEsc(sfxTakeName(f))}</small></div>
+          <button type="button" class="sfx-sw sm${von?" on":""}" data-take-on="${bbEsc(k)}"
+            data-take-file="${bbEsc(f)}" aria-pressed="${von?"true":"false"}"><span></span></button>
+        </div>`;
+      }).join("");
+      const expand = takes.length
+        ? `<button type="button" class="sfx-more" data-sfx-more="${bbEsc(k)}">${takes.length>1?`the ${takes.length} recordings`:"the recording"} ▾</button><div class="sfx-takes" data-takes="${bbEsc(k)}" hidden>${rows}</div>`
+        : "";
       return `<div class="sfx-row">
         <button type="button" class="sfx-play" data-sfx-play="${bbEsc(k)}" title="Hear it">▶</button>
-        <div class="sfx-t"><b>${bbEsc(e.label||k)}</b>${e.rotate?'<span class="sfx-var">several</span>':""}
-          <small>${bbEsc(e.desc||"")}</small></div>
+        <div class="sfx-t"><b>${bbEsc(e.label||k)}</b>${badge}
+          <small>${bbEsc(e.desc||"")}</small>${expand}</div>
         <button type="button" class="sfx-sw${on?" on":""}" data-sfx-on="${bbEsc(k)}"
           aria-pressed="${on?"true":"false"}"><span></span></button>
       </div>`; }).join("")).join("");
+  host.querySelectorAll("[data-sfx-more]").forEach(b=>b.onclick=()=>{
+    const k=b.getAttribute("data-sfx-more");
+    const box=host.querySelector('[data-takes="'+CSS.escape(k)+'"]'); if(!box) return;
+    const open=box.hasAttribute("hidden");
+    if(open) box.removeAttribute("hidden"); else box.setAttribute("hidden","");
+    b.classList.toggle("open", open);
+    try{ Sfx.unlock(); sfx(open?"toggleOn":"toggleOff"); }catch(e){}
+  });
+  host.querySelectorAll("[data-take-play]").forEach(b=>b.onclick=()=>{
+    sfxPreviewFile(b.getAttribute("data-take-play"), b.getAttribute("data-take-file"));
+  });
+  host.querySelectorAll("[data-take-on]").forEach(b=>b.onclick=()=>{
+    const k=b.getAttribute("data-take-on"), f=b.getAttribute("data-take-file");
+    const now=!sfxVarEnabled(k,f);
+    // The last take standing cannot be switched off from here: an effect with nothing to play
+    // is what the effect's own switch is for, and silently emptying it would look like a fault.
+    if(!now && (sfxLiveFiles(k)||[]).length<=1){
+      toast("That is the last recording — switch the whole sound off instead."); return; }
+    sfxVarSetEnabled(k, f, now);
+    b.classList.toggle("on", now); b.setAttribute("aria-pressed", now?"true":"false");
+    const badge=b.closest(".sfx-row").querySelector(".sfx-var");
+    if(badge){ const t=takesFor(k); badge.textContent=(sfxLiveFiles(k)||[]).length+" of "+t.length; }
+    if(now) sfxPreviewFile(k,f); else { try{ Sfx.unlock(); sfx("toggleOff"); }catch(e){} }
+  });
   host.querySelectorAll("[data-sfx-play]").forEach(b=>b.onclick=()=>{
     const k=b.getAttribute("data-sfx-play");
     // Heard even when switched off: you cannot decide about a sound you are not allowed to hear.
@@ -16457,7 +16725,7 @@ function initPullRefresh(){
   },{passive:true});
   sc.addEventListener("touchend",()=>{
     if(firing||y0==null) return;
-    if(dy>=PTR_TRIGGER){ firing=true; ind.classList.add("go"); txt.textContent="Refreshing…";
+    if(dy>=PTR_TRIGGER){ firing=true; sfx("pullRefresh"); ind.classList.add("go"); txt.textContent="Refreshing…";
       setTimeout(()=>location.reload(), 180); return; }
     reset();
   },{passive:true});

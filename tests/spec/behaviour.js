@@ -4397,6 +4397,116 @@ const DAY = 86400000;
   is(pullBack.forced, 2, 'Sync now asks regardless');
   is(pullBack.signedOut, 2, '...and signed out it asks nobody');
 
+  describe('the clock survives the phone going to sleep', () => { });
+
+  /* Reported from a real review: thirty-five minutes of work, and the screen said 0s.
+
+     The clock was stopped whenever the app went to the background and nothing ever started it
+     again. On a phone that happens within a minute — the screen dims, a notification arrives, the
+     reader looks something up — so the timer recorded the seconds before the first sleep and
+     nothing else. If the screen slept while the first verse was being read, it recorded nothing,
+     which is exactly what was seen. */
+  const sleep = await $(() => {
+    const out = {};
+    const hide = () => { Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+                         document.dispatchEvent(new Event('visibilitychange')); };
+    const wake = () => { Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true });
+                         document.dispatchEvent(new Event('visibilitychange')); };
+    srClockStop(); Prog.srClock = null; delete Prog.srDay; saveProg();
+
+    srClockStart();
+    window.__advanceClock(60000);            // a minute of reviewing
+    hide();                                  // the screen sleeps
+    out.bankedOnSleep = srClockSeconds();
+    window.__advanceClock(30 * 60000);       // half an hour in a pocket
+    out.whileAsleep = srClockSeconds();      // must not count time the app was not being used
+    wake();
+    out.runningOnWake = srClockRunning();
+    window.__advanceClock(5 * 60000);        // five more real minutes of reviewing
+    out.afterMoreWork = srClockSeconds();
+    out.stillOneSitting = srClockDay().runs; // waking is not a new sitting
+
+    // Standing on the hub with no review running, the same two events must bank nothing at all.
+    srClockStop(); Prog.srClock = null; saveProg();
+    hide(); window.__advanceClock(10 * 60000); wake(); window.__advanceClock(60000);
+    out.idle = srClockSeconds();
+    out.idleRunning = srClockRunning();
+
+    // A review that finished while the app was away must not start timing again on return.
+    Prog.srClock = null; saveProg();
+    srClockStart(); window.__advanceClock(30000);
+    hide(); srClockDay().done = true; saveProg(); wake();
+    out.finishedRunning = srClockRunning();
+
+    srClockStop(); Prog.srClock = null; delete Prog.srDay; saveProg();
+    return out;
+  });
+  is(sleep.bankedOnSleep, 60, 'the seconds so far are banked when the screen sleeps');
+  is(sleep.whileAsleep, 60, '...and a pocketed phone adds nothing to them');
+  ok(sleep.runningOnWake, 'coming back starts the clock again');
+  is(sleep.afterMoreWork, 360, '...so the work done after the sleep is counted too');
+  is(sleep.stillOneSitting, 1, '...and waking up is not counted as a second sitting');
+  is(sleep.idle, 0, 'with no review running, sleeping and waking banks nothing');
+  ok(!sleep.idleRunning, '...and does not start a clock that was never running');
+  ok(!sleep.finishedRunning, 'a review that finished while away does not start timing again');
+
+  describe('a swipe makes a sound, and only when it moves', () => { });
+
+  /* Three screens swipe and only the lesson path made a sound; the Bible and the verse reader were
+     silent. The rule the lesson path already had is the right one everywhere: a swoosh that plays
+     when nothing moved is a lie about what just happened. */
+  const swipes = await $(() => {
+    const out = { heard: [] };
+    const real = window.sfx;
+    window.sfx = function (n) { out.heard.push(n); return real.apply(this, arguments); };
+
+    const swipe = (host, dx) => {
+      const t = (x) => ({ clientX: x, clientY: 200 });
+      host.dispatchEvent(Object.assign(new Event('touchstart', { bubbles: true }), { touches: [t(200)] }));
+      host.dispatchEvent(Object.assign(new Event('touchend', { bubbles: true }), { changedTouches: [t(200 + dx)] }));
+    };
+
+    // Mid-Bible: both directions have somewhere to go.
+    show('journey'); renderBookScreen(2);
+    out.heard = []; swipe(document.getElementById('journey'), -140); out.forward = out.heard.slice();
+    out.heard = []; swipe(document.getElementById('journey'), 140); out.back = out.heard.slice();
+
+    // Genesis: swiping back runs into the start of the Bible and must not swoosh.
+    renderBookScreen(1);
+    out.heard = []; swipe(document.getElementById('journey'), 140); out.atEdge = out.heard.slice();
+
+    window.sfx = real;
+    return out;
+  });
+  ok(swipes.forward.includes('swipeForward'), 'swiping on through the Bible rises');
+  ok(swipes.back.includes('swipeBack'), '...and swiping back falls');
+  ok(!swipes.atEdge.includes('swipeForward') && !swipes.atEdge.includes('swipeBack'),
+     'at the first book there is no swoosh, because nothing moved');
+  ok(swipes.atEdge.includes('refuse'), '...the edge says so in its own way instead');
+
+  describe('a recording can be switched off without losing the sound', () => { });
+
+  const takes = await $(() => {
+    const out = {};
+    Prog.sfxVarOff = {}; saveProg();
+    const all = SFX_FILES.arriveLibrary[0];
+    out.total = all.length;
+    sfxVarSetEnabled('arriveLibrary', all[0], false);
+    out.live = sfxLiveFiles('arriveLibrary');
+    out.dropped = !sfxVarEnabled('arriveLibrary', all[0]);
+    out.othersKept = sfxVarEnabled('arriveLibrary', all[1]);
+    out.effectStillOn = sfxEnabled('arriveLibrary');
+    out.stamped = !!Prog.settingsAt;
+    Prog.sfxVarOff = {}; saveProg();
+    return out;
+  });
+  ok(takes.total > 1, 'the Library door has more than one recording behind it');
+  ok(takes.dropped, 'one take can be switched off on its own');
+  ok(takes.othersKept, '...leaving the others to play');
+  is(takes.live.length, takes.total - 1, '...and the sound draws only on what is left');
+  ok(takes.effectStillOn, '...while the sound itself stays on');
+  ok(takes.stamped, '...stamped as a setting, so it crosses to the other device');
+
   describe('the review is timed, and the clock survives walking away', () => { });
 
   const clock = await $(() => {

@@ -28,7 +28,15 @@ function check(name, ok, detail) {
     dir: typeof SFX_DIR === 'undefined' ? null : SFX_DIR,
     keys: typeof SFX_FILES === 'undefined' ? null : Object.keys(SFX_FILES),
     files: typeof SFX_FILES === 'undefined' ? null
-      : [...new Set([].concat(...Object.keys(SFX_FILES).map(k => SFX_FILES[k][0])))],
+      : [...new Set([].concat(
+          ...Object.keys(SFX_FILES).map(k => SFX_FILES[k][0]),
+          ...(typeof SFX_SEQ === 'undefined' ? []
+              : Object.keys(SFX_SEQ).map(k => SFX_SEQ[k].map(p => p[0])))))],
+    seqKeys: typeof SFX_SEQ === 'undefined' ? [] : Object.keys(SFX_SEQ),
+    seqGains: typeof SFX_SEQ === 'undefined' ? []
+      : [].concat(...Object.keys(SFX_SEQ).map(k => SFX_SEQ[k].map(p => p[2]))),
+    seqDelays: typeof SFX_SEQ === 'undefined' ? []
+      : [].concat(...Object.keys(SFX_SEQ).map(k => SFX_SEQ[k].map(p => p[1]))),
     gains: typeof SFX_FILES === 'undefined' ? null
       : Object.keys(SFX_FILES).map(k => SFX_FILES[k][1]),
     palette: typeof Sfx === 'undefined' || !Sfx._palette ? null : Object.keys(Sfx._palette)
@@ -42,6 +50,17 @@ function check(name, ok, detail) {
   // Every key in the map must be a real palette entry, or it is a recording nothing can play.
   const orphan = meta.keys.filter(k => !meta.palette.includes(k));
   check('every mapped key exists in the palette', orphan.length === 0, orphan.join(', '));
+
+  /* A score is several recordings with gaps between them. It fails in one more way than a single
+     clip: a part can name a file nobody shipped, and the sound then plays with a hole in it rather
+     than not at all — which is far harder to notice than silence. */
+  const seqOrphan = meta.seqKeys.filter(k => !meta.palette.includes(k));
+  check('every score has a palette row', seqOrphan.length === 0, seqOrphan.join(', '));
+  check('every score part has a sane gain',
+    meta.seqGains.every(g => g > 0 && g <= 1), JSON.stringify(meta.seqGains.filter(g => !(g > 0 && g <= 1))));
+  // A part scheduled a second and a half after the press is no longer a response to the press.
+  check('no score part is delayed past 1200ms',
+    meta.seqDelays.every(d => d >= 0 && d <= 1200), JSON.stringify(meta.seqDelays.filter(d => !(d >= 0 && d <= 1200))));
 
   // Every gain must be sane. A gain of 0 is a silent sound that looks wired.
   const quiet = meta.keys.filter((k, i) => !(meta.gains[i] > 0 && meta.gains[i] <= 1));
