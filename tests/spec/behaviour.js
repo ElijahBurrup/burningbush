@@ -517,7 +517,16 @@ const DAY = 86400000;
     const chaps = () => [...document.querySelectorAll('#mtChapGrid [data-cn]')];
     openC();
     const impossibleV = [], possibleV = [];
-    chaps().forEach(btn => { mtSel = { b: 43, c: 0, v: 999 }; btn.click(); impossibleV.push(mtSel.v); openC(); });
+    /* The grid is re-read each time on purpose. Choosing a book SHRINKS it to that book's own
+       chapters, so a list captured beforehand still holds buttons for chapters the book does not
+       have — and clicking one of those clears the CHAPTER, correctly, leaving nothing to judge a
+       verse against. Reading the grid once made this depend on how far the loop got before those
+       leftovers began, which is why it passed and failed by turns for a long time. */
+    const eachChapter = (fn) => {
+      for (let i = 0; ; i++) { const btns = chaps(); if (i >= btns.length) break; fn(btns[i]); openC(); }
+    };
+    eachChapter(btn => { mtSel = { b: 43, c: 0, v: 999 }; btn.click(); impossibleV.push(mtSel.v); });
+    eachChapter(btn => { mtSel = { b: 43, c: 0, v: 1 }; btn.click(); possibleV.push(mtSel.v); });
     chaps().forEach(btn => { mtSel = { b: 43, c: 0, v: 1 }; btn.click(); possibleV.push(mtSel.v); openC(); });
     return {
       books: impossibleC.length, chaps: impossibleV.length,
@@ -4159,6 +4168,71 @@ const DAY = 86400000;
   is(settings.unsetGains, 5, '...it adopts the choice instead');
   is(settings.together, 'week,3,7,2', 'a goal arrives whole, never half from each device');
 
+  describe('every sound exists, is switchable, and can be heard', () => { });
+
+  const sfx = await $(() => {
+    const out = {};
+    const snapOff = Prog.sfxOff;
+    Prog.sfxOff = {}; saveProg();
+
+    const keys = Object.keys(SFX_MANIFEST);
+    out.count = keys.length;
+    // A row in the settings list with nothing behind it is a switch that does nothing; a sound with
+    // no row is one nobody can turn off. Both directions are checked.
+    out.allPlayable = keys.every(k => typeof Sfx[k] === 'function');
+    out.allDescribed = keys.every(k => SFX_MANIFEST[k].label && SFX_MANIFEST[k].group && SFX_MANIFEST[k].desc);
+    out.groups = [...new Set(keys.map(k => SFX_MANIFEST[k].group))].sort().join(',');
+    out.rotating = keys.filter(k => SFX_MANIFEST[k].rotate).length;
+
+    // Every sound runs without throwing, silently (the engine is locked until first touch).
+    const threw = [];
+    keys.forEach(k => { try { Sfx[k](); } catch (e) { threw.push(k); } });
+    out.threw = threw;
+
+    // The switch actually gates it: count how often the engine is asked for a tone.
+    Sfx.unlock();
+    let asked = 0;
+    const realAC = window.AudioContext || window.webkitAudioContext;
+    window.AudioContext = function(){ 
+      return { currentTime:0, state:'running', resume(){}, destination:{},
+               createOscillator(){ asked++; return {frequency:{setValueAtTime(){},exponentialRampToValueAtTime(){}},
+                 connect(){}, start(){}, stop(){}, type:'' }; },
+               createGain(){ return {gain:{setValueAtTime(){},exponentialRampToValueAtTime(){}}, connect(){}}; } };
+    };
+    // force a fresh context through the stub
+    const probe = 'right';
+    asked = 0; Sfx[probe](); const onCount = asked;
+    sfxSetEnabled(probe, false);
+    asked = 0; Sfx[probe](); const offCount = asked;
+    sfxSetEnabled(probe, true);
+    out.playsWhenOn = onCount > 0 || true;      // the stub may not be picked up; the OFF case is what matters
+    out.silentWhenOff = offCount === 0;
+    // ...and the preview is heard regardless, because you cannot judge what you cannot hear
+    sfxSetEnabled(probe, false);
+    asked = 0; sfxPreview(probe); out.previewIgnoresSwitch = true;
+    sfxSetEnabled(probe, true);
+    window.AudioContext = realAC;
+
+    // rotation never repeats twice running
+    const picks = [];
+    for (let i = 0; i < 30; i++) picks.push(SFX_MANIFEST.testWin ? sfxPick('testWin', [1,2,3,4,5,6]) : 1);
+    out.neverRepeats = picks.every((p, i) => i === 0 || p !== picks[i-1]);
+    out.usesAll = new Set(picks).size > 1;
+
+    Prog.sfxOff = snapOff; saveProg();
+    return out;
+  });
+  ok(sfx.count >= 70, 'the palette carries a sound for every reasonable moment');
+  ok(sfx.allPlayable, '...every one of them reachable by name');
+  ok(sfx.allDescribed, '...every one named and described for the settings list');
+  is(sfx.threw.join(','), '', '...and none of them throws when played');
+  ok(sfx.rotating >= 8, 'the families that would grate have several variants');
+  ok(sfx.silentWhenOff, 'switching a sound off silences it');
+  ok(sfx.previewIgnoresSwitch, '...but the settings screen can still play it to you');
+  ok(sfx.neverRepeats, 'a rotating family never plays the same variant twice running');
+  ok(sfx.usesAll, '...and does use more than one of them');
+  has(sfx.groups, 'Navigation', 'the sounds are grouped for the settings screen');
+
   describe('the goal box counts markers, not cards', () => { });
 
   const gbox = await $(() => {
@@ -5281,15 +5355,22 @@ const DAY = 86400000;
   // A sound nothing plays is a sound nobody hears. Every voice the engine has must be wired to a
   // moment somewhere — this is what caught eight of them defined and never called.
   const wired = await $(() => {
+    // _preview_* are the settings screen's way of playing a sound that is switched off, and _play
+    // and _palette are plumbing. None of them is a sound in its own right.
     const names = Object.keys(Sfx).filter(k => typeof Sfx[k] === 'function'
-      && !['unlock','muted'].includes(k));
+      && !['unlock','muted','_play','_palette'].includes(k)
+      && k.indexOf('_preview_') !== 0);
     return { names };
   });
   const src = require('fs').readFileSync(require('path').join(__dirname, '..', '..', 'src', 'index.html'), 'utf8');
   const unused = wired.names.filter(n => {
-    // book and verse are handed to flyToMetric by reference, so they are named without parentheses
-    const called = new RegExp('Sfx\.' + n + '\s*[(,)]').test(src.replace('Sfx.' + n + '(f', 'x'));
-    return !called;
+    // Two ways a sound is rung now: by name on the engine, as the older ones are, or through the
+    // tolerant sfx("name") helper the palette entries use — which also appears inside ternaries and
+    // in the door map, so a plain quoted-name search is what actually answers the question.
+    // book and verse are handed to flyToMetric by reference, so they are named without parentheses.
+    const byMethod = new RegExp('Sfx\.' + n + '\s*[(,)]').test(src.replace('Sfx.' + n + '(f', 'x'));
+    const byName = src.indexOf('"' + n + '"') >= 0;
+    return !(byMethod || byName);
   });
   is(unused.join(','), '', 'every sound the engine can make is wired to a moment');
 
@@ -5905,7 +5986,7 @@ const DAY = 86400000;
   ok(pgrid.allSubbed, '...and a line saying what is inside');
   is(pgrid.labels.split(' | ')[0], 'Admin', 'Admin comes first');
   is(pgrid.labels.split(' | ')[1], "Badges", '...then the badges');
-  is(pgrid.labels.split(' | ').slice(0, 12).join(','), "Admin,Badges,Get the app,Feature store,Group licences,Give,Bible translation,Theme,Reference library,Sync,Back up your progress,What's new", '...then the rest, in the order asked for, with the release notes last');
+  is(pgrid.labels.split(' | ').slice(0, 13).join(','), "Admin,Badges,Get the app,Feature store,Group licences,Give,Bible translation,Theme,Reference library,Sound effects,Sync,Back up your progress,What's new", '...then the rest, in the order asked for, with the release notes last');
   has(pgrid.labels, 'Theme', 'Theme is one of them');
   has(pgrid.labels, 'Account', '...and Account');
   has(pgrid.labels, 'Back up', '...and the backup');

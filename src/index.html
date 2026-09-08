@@ -1380,6 +1380,23 @@
   .sd-row b{color:var(--gold-ink);font-variant-numeric:tabular-nums}
   .sd-sep{margin:7px 0 3px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
     color:var(--muted);font-weight:800;border-top:1px solid var(--line);padding-top:6px}
+  /* The sound list: a row per effect, its own switch, and a way to hear it before deciding. */
+  .sfx-g{margin:12px 0 4px;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--muted);font-weight:800;border-top:1px solid var(--line);padding-top:8px}
+  .sfx-row{display:flex;align-items:center;gap:9px;padding:5px 0}
+  .sfx-t{flex:1;min-width:0;line-height:1.25}
+  .sfx-t b{font-size:14px}
+  .sfx-t small{display:block;color:var(--muted);font-size:11.5px}
+  .sfx-var{margin-left:6px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--gold-ink);border:1px solid var(--gold2);border-radius:999px;padding:1px 6px}
+  .sfx-play{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);
+    background:var(--panel2);color:var(--gold-ink);font-size:11px;cursor:pointer}
+  .sfx-sw{flex:none;width:42px;height:24px;border-radius:999px;border:1px solid var(--line);
+    background:var(--panel3);position:relative;cursor:pointer;padding:0}
+  .sfx-sw span{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;
+    background:var(--muted);transition:left .15s ease,background .15s ease}
+  .sfx-sw.on{background:var(--gold);border-color:var(--gold-ink)}
+  .sfx-sw.on span{left:21px;background:var(--on-accent,#fff)}
   .prof-sect{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--gold-ink);font-weight:800;margin-bottom:8px}
   .prof-sect.prof-collapsible{cursor:pointer;padding:8px 10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;margin-bottom:6px;user-select:none}
   .prof-sect .prof-caret{display:inline-block;width:14px;color:var(--muted)}
@@ -2083,6 +2100,15 @@
       <div class="prof-sect" style="margin-top:16px">Get the app</div>
       <button class="btn ghost" id="pInstall" style="width:100%">📲 Install on your phone (home screen app)</button>
 
+      <div class="prof-sect" style="margin-top:16px">Sound effects</div>
+ <p class="hint" style="margin:0 0 8px">Every sound in the app, one switch each. Tap a name to hear it.
+   Turning one off never turns off anything else, and the choices follow your account.</p>
+      <div class="btnrow" style="margin:0 0 8px">
+        <button class="btn ghost sm" id="sfxAllOn">All on</button>
+        <button class="btn ghost sm" id="sfxAllOff">All off</button>
+      </div>
+      <div id="sfxList"></div>
+
       <div class="prof-sect" style="margin-top:16px">Sync</div>
  <p class="hint" style="margin:0 0 8px">Your devices sync when you open the app and again whenever you come back to it. Use this if you have just finished on another device and want this one to catch up now.</p>
       <button class="btn ghost" id="syncNow" style="width:100%">🔄 Sync now</button>
@@ -2215,8 +2241,16 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.8.2";
+const APP_VERSION="2.9.0";
 const CHANGELOG=[
+ {v:"2.9.0", d:"September 8, 2026", t:"The app has a voice now", items:[
+   ["new","<b>Sixty-five sounds</b>, where there were twenty-eight. All played on one imagined instrument — a bell, a wooden table, a stone floor, a handful of coins, and the air of the room — so a hundred moments still sound like one app."],
+   ["new","<b>Each screen has its own door.</b> A creaking wooden one for the Library, a door of light for the Bible, a school bell for Learn, a tale striking up for Stories, and the king’s own gates for the Palaces — and each opens a little differently every time."],
+   ["new","<b>Tests announce themselves</b> and finish with a flourish that is never the same one twice. Talents, praise and the doors all rotate the same way."],
+   ["new","<b>Rome sounds like Rome.</b> The wheel ticks and slows, and the levy takes something from you rather than giving it."],
+   ["new","<b>Swiping through lessons</b> rises going forward and falls going back."],
+   ["new","<b>Profile → Sound effects:</b> every sound in the app with its own switch and a button to hear it, on or off. Your choices follow your account."]
+ ]},
  {v:"2.8.2", d:"September 8, 2026", t:"One review a day, and the day is done", items:[
    ["fix","<b>A review done in the morning now finishes the day.</b> The goal button was asking whether any card was due rather than whether you had reviewed — so reviews falling due later kept demanding a review you had already done, with its own blue dot filled in beside the message. Whatever comes due after your review is tomorrow's work."]
  ]},
@@ -4607,7 +4641,7 @@ function migrateProg(p){
   p.memorized=arr(p.memorized); p.doneSkills=arr(p.doneSkills); p.chosen=obj(p.chosen);
   if(typeof p.onboarded!=="boolean") p.onboarded=!!p.onboarded;
   p.saved=arr(p.saved); p.skipped=arr(p.skipped);               // green (come back later) / red (skip)
-  p.extraKnown=arr(p.extraKnown); p.palaces=arr(p.palaces); p.customBook=obj(p.customBook); p.badges=arr(p.badges); p.customScene=obj(p.customScene); p.customPeg=obj(p.customPeg); p.customBookImg=obj(p.customBookImg); p.bookWord=obj(p.bookWord); p.numRef=obj(p.numRef); p.numScene=obj(p.numScene); // ad-hoc numbers, palaces, edited book scenes, badges, user's own verse scenes, user-chosen number words, user-written book images
+  p.extraKnown=arr(p.extraKnown); p.palaces=arr(p.palaces); p.customBook=obj(p.customBook); p.badges=arr(p.badges); p.customScene=obj(p.customScene); p.customPeg=obj(p.customPeg); p.customBookImg=obj(p.customBookImg); p.bookWord=obj(p.bookWord); p.numRef=obj(p.numRef); p.numScene=obj(p.numScene); p.sfxOff=obj(p.sfxOff); // ad-hoc numbers, palaces, edited book scenes, badges, user's own verse scenes, user-chosen number words, user-written book images
   /* Phase 12 used to be ten batch tiles — peg:67 meant "67 through 75 are learned". It is now a
      button per number under 12A…12R, so those ids name nothing and knownNumbers(), which reads
      doneSkills, would quietly forget every number a reader had already learned. Each old batch is
@@ -4772,7 +4806,7 @@ function mergeProg(a,b){
      newer stamp brings its whole set across together — a half-merged goal (mode from one device,
      numbers from the other) would be worse than either. */
   { const SETTINGS=["dailyGoal","goalMode","goalByDay","goalWeekday","goalWeekend","theme",
-                    "reminder","dailyMin"];   // real field names; the translation key is trActive
+                    "reminder","dailyMin","sfxOff"];   // real field names; the translation key is trActive
     const at = p => (p && p.settingsAt) || 0;
     const from = at(b) > at(a) ? b : a;
     SETTINGS.forEach(f=>{ if(from[f]!==undefined) m[f]=from[f]; else delete m[f]; });
@@ -5410,9 +5444,10 @@ function verseBoxClass(b,c,v){
 function cardState(k){ const st=SRS[k]; return (st && typeof st.box==="number") ? st : {box:1,due:0}; } // heal entries missing/NaN box (which would poison due dates)
 function gradeKey(k,g){
   const st=cardState(k), now=Date.now();
-  if(g==="good"){ st.box=Math.min(st.box+1,topBox(k)); st.due=now+(intervalsFor(k)[st.box]||0)*DAY; }
+  if(g==="good"){ const was=st.box; st.box=Math.min(st.box+1,topBox(k)); st.due=now+(intervalsFor(k)[st.box]||0)*DAY;
+    if(st.box>was) sfx("cardUp"); }
   else if(g==="hard"){ st.due=now+Math.max((intervalsFor(k)[st.box]||0)*0.4,0.01)*DAY; }
-  else { st.box=1; st.due=now; }
+  else { if((st.box||1)>1) sfx("cardDown"); st.box=1; st.due=now; }   // back to the beginning, and it sounds like it
   SRS[k]=st; save(SRS_KEY,SRS);
 }
 // set-based mastery: every completed skill contributes its item numbers to "known"
@@ -5618,6 +5653,7 @@ const el=id=>document.getElementById(id);
 // Raise a modal above any full-screen overlay that is currently showing.
 function raiseModal(m){
   if(!m) return;
+  sfx("modalOpen");
   const up=["taxov","buildov","scov","simov","obov"].some(id=>{
     const o=el(id); if(!o) return false;
     return o.classList.contains("on") || (o.style.display && o.style.display!=="none");
@@ -5710,6 +5746,7 @@ document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
 /* =================== JOURNEY (onboarding + mastery grid) =================== */
 let bibleView="num";   // whole-Bible tile display: num | numimg | bookimg | name
 function renderJourney(){
+  sfx("bookOpen");   // the Bible opening on the shelf
   updateMetrics();
   swipeTarget = null;   // the whole Bible is already on this screen; there is no next one
   if(!Prog.onboarded){ renderOnboard(); return; }
@@ -6649,7 +6686,9 @@ function finishStory(){
 // stories inside stay closed until that section is bought. Subscribers see them all.
 function storySectionOwned(ui){ return Billing.isPro() || (Prog.storySections||[]).includes((UNITS[ui]||{}).name); }
 function buyStorySection(ui, after){
-  Sfx.buy();
+  sfx("purchase");
+  const _storyWas=(Prog.storySections||[]).length;
+  setTimeout(()=>{ if((Prog.storySections||[]).length>_storyWas) sfx("storyUnlocked"); }, 0);
  if((Prog.talents||0) < STORY_SECTION_COST){ toast(`That section costs ${STORY_SECTION_COST} talents, you have ${talDisp(Prog.talents||0)}.`); return; }
   confirmSpend(`Open this section for <b class="gold">${STORY_SECTION_COST} 🪙</b>?`,
     `Five Bible stories, yours to keep. You'll have ${talDisp(Math.max(0,(Prog.talents||0)-STORY_SECTION_COST))} talents left.`,
@@ -6860,7 +6899,7 @@ function renderPalacePractice(){
     const id="palace:"+PP.slot; if(!Prog.doneSkills.includes(id)) Prog.doneSkills.push(id);
     const stored=Prog.palaces[PP.slot];
     const advanced = !!(stored && srAdvance(stored));     // clear the due checkpoint + restart the counter to the next gap
-    strengthen("sk:palace:"+PP.slot); saveProg(); updateMetrics(); checkBadges();
+    strengthen("sk:palace:"+PP.slot); sfx("roomDone"); saveProg(); updateMetrics(); checkBadges();
     const done=stored&&palaceTrailDone(stored), nextMs=stored?palaceNextReviewMs(stored):null;
     const trailMsg = !stored ? "" : done
  ? "🕊️ You've walked the whole spaced repetition trail. This palace is kept in long term memory."
@@ -6907,6 +6946,7 @@ function renderPalacePractice(){
   L.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
     if(b.disabled) return;
     if(b.dataset.ok==="1"){ // correct → next room
+      sfx("palaceStep");                    // a footfall on stone, alternating feet
       b.classList.add("correct"); L.querySelectorAll("[data-ok]").forEach(x=>x.disabled=true);
       setTimeout(()=>{ PP.i++; renderPalacePractice(); }, 450);
     } else { // wrong → red, retry this room
@@ -7057,6 +7097,9 @@ function attachLessonSwipe(host){
     if(Math.abs(dx)<60 || Math.abs(dx)<Math.abs(dy)*1.6) return;
     const dir = dx<0 ? 1 : -1;                    // drag left to go on, right to go back
     const to = lessonNeighbour(LZ.sk, dir);
+    // Pitch carries the direction, so the movement is audible before the screen has redrawn:
+    // forward rises, back falls. Only when there is somewhere to go — a swoosh into a wall is a lie.
+    if(to) sfx(dir>0 ? "swipeForward" : "swipeBack");
     if(to) openLessonLikeTile(to);
     else toast(dir>0 ? "That is the last lesson on the path." : "This is the first lesson.");
   }, {passive:true});
@@ -7393,7 +7436,7 @@ function ensurePhaseMax(){
   return Prog.phaseMax;
 }
 function nextPhaseIdx(){ const list=phaseIdxs(), at=list.indexOf(ensurePhaseMax()); return (at>=0 && at+1<list.length) ? list[at+1] : -1; }
-function openPhase(idx){ Prog.phaseMax=idx; saveProg(); show("learn"); renderPath(true); }
+function openPhase(idx){ sfx("phaseDone"); Prog.phaseMax=idx; saveProg(); show("learn"); renderPath(true); }
 function openPhaseScratch(idx, after){
   const U=UNITS[idx];
   Scratch.open(0, {
@@ -8056,6 +8099,631 @@ function awardTalents(k, firstTry, ignoreCap){
 
    Nothing plays until the reader has touched the screen once. Browsers require that, and it is also
    plain good manners: a page that makes a noise before you have touched it is a page you close.  */
+/* The palette is authored separately (with Fable 5) and handed the engine's own voice —
+   note, seq and the pitch constants — so the sounds are written in the same terms the
+   engine speaks and cannot drift into a second style. It returns data, not behaviour:
+   what each sound IS, and what to call it in the settings list. */
+function SFX_PALETTE_SRC(P){
+  // Six sounds came out here: a delete, an undo, two for dragging, a soft error and a gift
+  // received. Each was a reasonable thing to write and none of them has a moment in THIS app —
+  // nothing is dragged, nothing is deleted, and a gift is given rather than received. A switch
+  // that does nothing is worse than no switch, so they are not here rather than silent.
+
+  const {note, seq, cue, deg, N, C2, D2, E2, F2, G2, A2, B2, C3, E3, F3, G3, A3, B3, C4, D4, E4, F4, G4, A4, B4, C5, D5, E5, G5, A5, B5, C6, D6, E6, F6, G6, A6, B6, C7} = P;
+/* ===========================================================================
+   THE SOUND OF BURNING BUSH — the whole palette, played in one room.
+
+   Everything here happens in a single imagined place: a small stone room with
+   a few old instruments in it. A bronze bell that is struck and then left
+   alone. A wooden table you can knock on. The stone floor itself, which moves
+   only for the largest things. A handful of coins. And the air of the room,
+   which you hear when something merely passes through it. Five instruments,
+   two waveforms: the sine is anything that RINGS (bell, stone, breath), the
+   triangle is anything that is STRUCK (wood, coin, clapper). Nothing else is
+   allowed in, which is why a hundred sounds feel like one instrument rather
+   than a hundred apps.
+
+   The instruments map to the groups. Bell — rewards and milestones, because a
+   bell is the oldest way of telling a town that something good is now true.
+   Wood — learning and the interface, because honest work sounds like wood and
+   so does furniture. Stone — the palaces and anything permanent: the bottom
+   octave moves only when something is being SET, and a verse hidden for good
+   gets the tap-then-ring of a mason seating a block. Coins — the economy,
+   bright triangle clinks that always end by settling somewhere (a jar, a
+   pocket, or — for the Romans — someone else's purse). Air — navigation:
+   quiet glides that are punctuation, not events. The one exception to
+   "navigation is punctuation" is arriving at a tab screen, which is allowed a
+   second of theatre: each of the five screens has its own DOOR — a creaking
+   wooden one for the Library, a door of light for the Bible, a school bell
+   for Learn, a tale striking up for Stories, and the king's own gates for the
+   Palaces — and each door opens a little differently every time.
+
+   The grammar underneath: structure is low, work is in the middle, joy is
+   high. Only a reward is allowed to end above where it began. Loss descends
+   and then goes QUIET — a tolling bell, a sigh, a purse leaving — never a
+   buzzer, because this app belongs to someone learning Scripture badly at
+   first, and a harsh noise teaches them to stop trying. The ancient colour
+   comes from open fifths and fourths — organum, the oldest harmony we have —
+   and from letting a low root ring underneath bright notes the way a real
+   room rings. Tension (the tests) is a held low note with an unresolved tone
+   hanging over it: a question, not a threat.
+
+   The rotating families exist because handmade things never sound the same
+   twice. A minted coin always clinks identically; a coin dropped by a hand
+   does not. So talents, praises, test-stings, finishes, footsteps and the
+   five doors are small families of siblings — same instrument, same register,
+   different gesture — picked at random so the hundredth hearing is still a
+   sound and not yet a noise.
+
+   Deliberately avoided: square and sawtooth waves entirely (that is the game
+   console's register, not ours), harp glissandi, anything that goes "aaah",
+   cartoon boings, and every kind of punishment noise. Also avoided: length.
+   Almost everything is done inside a second — arrivals and finishes get a
+   little longer, nothing gets much — because these sounds sit underneath a
+   person's concentration, and the palette's job is to warm the room, not to
+   perform in it.
+   =========================================================================== */
+
+// Pitches the engine does not already name, written the way it writes them.
+const P_ = n => 440*Math.pow(2, n/12);
+const F5 = P_(8), D3 = P_(-19);
+
+return {
+
+  /* ------------------------------------------------------------ Rewards */
+
+  verseNew: { label: "New verse hidden", group: "Rewards",
+    desc: "A mason's tap, then the bell rings over it — set in place for good.",
+    play: () => { note(C4,{t:0.20,type:"triangle",vol:0.12});
+      note(C5,{at:0.02,t:0.65,type:"sine",vol:0.10});
+      note(G6,{at:0.02,t:0.25,type:"sine",vol:0.04});
+      seq([{f:E6,at:0.34,t:0.16},{f:G6,at:0.46,t:0.40,vol:0.07}],{type:"sine",vol:0.08}); } },
+
+  comboBuild: { label: "Answer run building", group: "Rewards",
+    desc: "One clear step up a ladder that climbs with every correct answer.",
+    play: (n) => { const s=[C5,E5,G5,C6,E6,G6], f=s[Math.max(0,Math.min(s.length-1,(n||1)-1))];
+      note(f,{t:0.10,type:"triangle",vol:0.09}); note(f/2,{t:0.10,type:"sine",vol:0.04}); } },
+
+  scratchReveal: { label: "Scratch-off revealed", group: "Rewards",
+    desc: "A quick run of light as the last of the covering comes away.",
+    play: () => { seq([{f:C6,at:0,t:0.10},{f:D6,at:0.04,t:0.10},{f:E6,at:0.08,t:0.10},
+        {f:G6,at:0.12,t:0.10},{f:A6,at:0.16,t:0.28}],{type:"sine",vol:0.06});
+      note(G4,{t:0.45,type:"sine",vol:0.05}); } },
+
+  ticketWon: { label: "Ticket won", group: "Rewards",
+    desc: "Bright but deliberately unfinished — the prize is still to come.",
+    play: () => { seq([{f:D5,at:0,t:0.14},{f:G5,at:0.09,t:0.16},{f:B5,at:0.18,t:0.30}],
+        {type:"sine",vol:0.09});
+      note(G3,{t:0.45,type:"sine",vol:0.05}); } },
+
+  wheelSpin: { label: "Wheel spinning", group: "Rewards",
+    desc: "A wooden clacker slowing against the pegs until it can barely pass one more.",
+    play: () => { const ticks=[]; let at=0, gap=0.042;
+      for(let i=0;i<13;i++){ ticks.push({f:(i%2?D5:G5), at:at, t:0.03, vol:0.055}); at+=gap; gap*=1.13; }
+      seq(ticks,{type:"triangle"}); } },
+
+  wheelLand: { label: "Wheel lands", group: "Rewards",
+    desc: "The pointer drops into its slot: a thock, then the slot rings.",
+    play: () => { note(C4,{t:0.10,type:"triangle",vol:0.12});
+      note(C5,{at:0.03,t:0.30,type:"sine",vol:0.09});
+      note(E5,{at:0.03,t:0.30,type:"sine",vol:0.08});
+      note(G6,{at:0.10,t:0.18,type:"sine",vol:0.04}); } },
+
+  giftOpen: { label: "Gift opened", group: "Rewards",
+    desc: "A lid lifting, and two small bells found inside.",
+    play: () => { note(C5,{to:A5,t:0.20,type:"sine",vol:0.07});
+      seq([{f:A5,at:0.22,t:0.12},{f:C6,at:0.30,t:0.28}],{type:"sine",vol:0.09});
+      note(F4,{at:0.22,t:0.35,type:"sine",vol:0.05}); } },
+
+  /* -------------------------------------------------------------- Tests */
+
+  testStart: { label: "Test begins", group: "Tests", rotate: true,
+    desc: "The room goes quiet and a question hangs in it — tension, never menace.",
+    play: [
+      // The hush: a low held fifth, then two bells far apart.
+      () => { note(A3,{t:0.85,type:"sine",vol:0.09}); note(E4,{at:0.02,t:0.85,type:"sine",vol:0.06});
+        seq([{f:E5,at:0.30,t:0.18},{f:A5,at:0.60,t:0.40,vol:0.08}],{type:"sine",vol:0.07}); },
+      // The summons: three knocks on the same door, then a rising call.
+      () => { seq([{f:D4,at:0,t:0.10},{f:D4,at:0.22,t:0.10},{f:D4,at:0.44,t:0.10}],
+          {type:"triangle",vol:0.08});
+        note(A4,{to:D5,at:0.62,t:0.35,type:"sine",vol:0.09}); },
+      // The suspension: a held chord with the leading tone left hanging in it.
+      () => { note(C4,{t:0.90,type:"sine",vol:0.08}); note(G4,{at:0.02,t:0.90,type:"sine",vol:0.07});
+        note(B4,{at:0.40,t:0.55,type:"sine",vol:0.07}); },
+      // The drawn bow: one slow rise of an octave, and a bell at the top of the draw.
+      () => { note(A3,{to:A4,t:0.70,type:"sine",vol:0.07});
+        note(E5,{at:0.62,t:0.35,type:"sine",vol:0.08}); }
+    ] },
+
+  testWin: { label: "Test passed", group: "Tests", rotate: true,
+    desc: "Six different ways for the bell tower to say yes.",
+    play: [
+      // The peal: bells climbing out of a deep root.
+      () => { note(C3,{t:1.2,type:"sine",vol:0.07});
+        seq([{f:C5,at:0,t:0.16},{f:G5,at:0.12,t:0.16},{f:C6,at:0.24,t:0.16},
+          {f:E6,at:0.38,t:0.20},{f:G6,at:0.54,t:0.55,vol:0.09}],{type:"sine",vol:0.11}); },
+      // The amen: a plagal cadence, the oldest "so be it" there is.
+      () => { seq([{f:F4,at:0,t:0.38},{f:A4,at:0.02,t:0.38},{f:C5,at:0.04,t:0.38}],
+          {type:"sine",vol:0.08});
+        seq([{f:C4,at:0.42,t:0.85},{f:G4,at:0.44,t:0.85},{f:E5,at:0.46,t:0.85}],
+          {type:"sine",vol:0.09}); },
+      // The turn: bells fall like a bow of the head, then one lifts back up.
+      () => { seq([{f:E6,at:0,t:0.14},{f:C6,at:0.12,t:0.14},{f:A5,at:0.24,t:0.16}],
+          {type:"sine",vol:0.09});
+        note(G5,{to:C6,at:0.44,t:0.35,type:"sine",vol:0.10});
+        note(C4,{at:0.44,t:0.60,type:"sine",vol:0.06}); },
+      // Wood and bell: two knocks of arrival, then the bright answer.
+      () => { seq([{f:E3,at:0,t:0.08},{f:G3,at:0.10,t:0.08}],{type:"triangle",vol:0.09});
+        seq([{f:C5,at:0.26,t:0.13},{f:E5,at:0.34,t:0.13},{f:G5,at:0.42,t:0.13},
+          {f:C6,at:0.52,t:0.40,vol:0.11}],{type:"triangle",vol:0.10}); },
+      // The one great bell: struck once and allowed to finish its say.
+      () => { note(C5,{t:1.10,type:"sine",vol:0.06}); note(C6,{t:1.00,type:"sine",vol:0.10});
+        note(G6,{t:0.35,type:"sine",vol:0.05}); note(E6,{at:0.70,t:0.45,type:"sine",vol:0.05}); },
+      // Organum: fifths stacked hand over hand, the oldest harmony climbing.
+      () => { seq([{f:C4,at:0,t:0.30},{f:G4,at:0.14,t:0.30},{f:D5,at:0.28,t:0.30},
+          {f:A5,at:0.42,t:0.35}],{type:"sine",vol:0.09});
+        note(E6,{at:0.60,t:0.45,type:"sine",vol:0.06}); }
+    ] },
+
+  testFail: { label: "Test not passed", group: "Tests",
+    desc: "A sigh that comes to rest on solid ground — honest, never cruel.",
+    play: () => { seq([{f:E5,at:0,t:0.20},{f:C5,at:0.16,t:0.20},{f:A4,at:0.32,t:0.30}],
+        {type:"sine",vol:0.08});
+      note(A3,{at:0.50,t:0.55,type:"sine",vol:0.07}); } },
+
+  countTick: { label: "Countdown tick", group: "Tests",
+    desc: "A dry wooden tick, one to the second.",
+    play: () => note(E4,{t:0.04,type:"triangle",vol:0.06}) },
+
+  countUrgent: { label: "Countdown, last seconds", group: "Tests",
+    desc: "The same tick, a step higher and a shade brighter.",
+    play: () => { note(G4,{t:0.04,type:"triangle",vol:0.07});
+      note(D5,{at:0.005,t:0.03,type:"sine",vol:0.03}); } },
+
+  timerStart: { label: "Timer starts", group: "Tests",
+    desc: "Two quick wooden notes on the upbeat: go.",
+    play: () => seq([{f:G4,at:0,t:0.07},{f:C5,at:0.07,t:0.12}],{type:"triangle",vol:0.08}) },
+
+  hintReveal: { label: "Hint revealed", group: "Tests",
+    desc: "A veil lifted quietly — help should not sound like winning.",
+    play: () => { note(E5,{to:A5,t:0.18,type:"sine",vol:0.06});
+      note(C6,{at:0.16,t:0.18,type:"sine",vol:0.05}); } },
+
+  nextQuestion: { label: "Next question", group: "Tests",
+    desc: "A small turn of the page between one asking and the next.",
+    play: () => { note(D5,{t:0.08,type:"triangle",vol:0.06});
+      note(G4,{at:0.05,t:0.10,type:"sine",vol:0.05}); } },
+
+  /* ----------------------------------------------------------- Learning */
+
+  right: { label: "Correct answer", group: "Learning",
+    desc: "A rising third into a fifth: short, bright, out of the way.",
+    play: () => seq([{f:E5,at:0,t:0.12},{f:G5,at:0.07,t:0.12},{f:C6,at:0.14,t:0.20}],
+      {type:"triangle",vol:0.14}) },
+
+  wrong: { label: "Wrong answer", group: "Learning",
+    desc: "A soft step down — enough to know, never enough to sting.",
+    play: () => seq([{f:A4,at:0,t:0.16},{f:F4,at:0.09,t:0.22}],{type:"sine",vol:0.12}) },
+
+  wordRight: { label: "Correct word typed", group: "Learning",
+    desc: "The smallest tick in the palette, one per word, a fifth of full volume.",
+    play: () => note(E5,{t:0.05,type:"triangle",vol:0.05}) },
+
+  wordWrong: { label: "Wrong word typed", group: "Learning",
+    desc: "A little slip downhill, gone before it embarrasses anyone.",
+    play: () => note(G4,{to:E4,t:0.12,type:"sine",vol:0.07}) },
+
+  cardUp: { label: "Card moves up", group: "Learning",
+    desc: "A footstep and a small lift — one rung up the trail.",
+    play: () => { note(E4,{t:0.06,type:"triangle",vol:0.08});
+      note(C5,{to:E5,at:0.05,t:0.14,type:"sine",vol:0.08}); } },
+
+  cardDown: { label: "Card falls back", group: "Learning",
+    desc: "The same step taken back down, landing on wood.",
+    play: () => { note(E5,{to:C5,t:0.14,type:"sine",vol:0.07});
+      note(A3,{at:0.10,t:0.12,type:"triangle",vol:0.06}); } },
+
+  verseSaved: { label: "Verse saved for later", group: "Learning",
+    desc: "A bookmark laid in: one warm interval, held a moment.",
+    play: () => { note(A4,{t:0.28,type:"sine",vol:0.08});
+      note(E5,{at:0.03,t:0.30,type:"sine",vol:0.07}); } },
+
+  verseSkipped: { label: "Verse skipped", group: "Learning",
+    desc: "Brushed aside without comment — no verdict in it.",
+    play: () => note(D5,{to:A4,t:0.12,type:"sine",vol:0.06}) },
+
+  verseLoved: { label: "Verse marked loved", group: "Learning",
+    desc: "Held and warm, with no sparkle on it: devotion, not loot.",
+    play: () => { note(C5,{t:0.45,type:"sine",vol:0.07});
+      note(E5,{at:0.05,t:0.45,type:"sine",vol:0.09});
+      note(A5,{at:0.10,t:0.50,type:"sine",vol:0.09}); } },
+
+  reviewStart: { label: "Review begins", group: "Learning",
+    desc: "One bell struck once at the start of the day's remembering.",
+    play: () => { note(E5,{t:0.50,type:"sine",vol:0.07});
+      note(A5,{at:0.02,t:0.50,type:"sine",vol:0.07}); } },
+
+  reviewDone: { label: "Review complete", group: "Learning",
+    desc: "Steps down into a settled chord: work finished, tools put away.",
+    play: () => { seq([{f:E5,at:0,t:0.18},{f:C5,at:0.14,t:0.18},{f:G4,at:0.28,t:0.22}],
+        {type:"sine",vol:0.09});
+      note(C4,{at:0.44,t:0.55,type:"sine",vol:0.07});
+      note(G4,{at:0.46,t:0.50,type:"sine",vol:0.05}); } },
+
+  lessonDone: { label: "Lesson complete", group: "Learning",
+    desc: "Three wooden steps upward, modest on purpose.",
+    play: () => seq([{f:G4,at:0,t:0.13},{f:C5,at:0.07,t:0.13},{f:E5,at:0.14,t:0.30}],
+      {type:"triangle",vol:0.12}) },
+
+  phaseDone: { label: "Phase complete", group: "Learning",
+    desc: "The lesson's climb again, but taller, over a ringing root.",
+    play: () => { note(C4,{t:0.70,type:"sine",vol:0.06});
+      seq([{f:C5,at:0,t:0.13},{f:E5,at:0.09,t:0.13},{f:G5,at:0.18,t:0.13},
+        {f:C6,at:0.28,t:0.40,vol:0.12}],{type:"triangle",vol:0.11}); } },
+
+  bookOpen: { label: "Book opened", group: "Learning",
+    desc: "A wooden cover lifting, with a breath of paper off the top.",
+    play: () => { seq([{f:D4,at:0,t:0.13},{f:G4,at:0.09,t:0.20}],{type:"triangle",vol:0.10});
+      note(C6,{to:G5,at:0.14,t:0.15,type:"sine",vol:0.04}); } },
+
+  pageTurn: { label: "Page turned", group: "Learning",
+    desc: "Just the air moving — a page is not an event.",
+    play: () => note(G5,{to:D5,t:0.10,type:"sine",vol:0.05}) },
+
+  /* ------------------------------------------------------------ Palaces */
+
+  palaceStep: { label: "Palace walk step", group: "Palaces", rotate: true,
+    desc: "Footsteps on stone, left and right never quite alike.",
+    play: [
+      () => { note(G3,{t:0.07,type:"triangle",vol:0.08});
+        note(D4,{at:0.01,t:0.04,type:"sine",vol:0.03}); },
+      () => { note(E3,{t:0.07,type:"triangle",vol:0.08});
+        note(C4,{at:0.01,t:0.04,type:"sine",vol:0.03}); }
+    ] },
+
+  stoneSet: { label: "Stone set", group: "Palaces",
+    desc: "A block seated in its course, and a little light falling on it.",
+    play: () => { note(G2,{to:C3,t:0.45,type:"sine",vol:0.13});
+      note(C3,{at:0.05,t:0.25,type:"triangle",vol:0.10});
+      note(E6,{at:0.55,t:0.25,type:"sine",vol:0.04}); } },
+
+  roomDone: { label: "Room complete", group: "Palaces",
+    desc: "A low chord standing up where the scaffolding was.",
+    play: () => { seq([{f:C4,at:0,t:0.20},{f:E4,at:0.10,t:0.20},{f:G4,at:0.20,t:0.28}],
+        {type:"triangle",vol:0.10});
+      note(G5,{at:0.34,t:0.30,type:"sine",vol:0.05}); } },
+
+  palaceDone: { label: "Palace complete", group: "Palaces",
+    desc: "Wide and low, the whole building answering at once.",
+    play: () => { seq([{f:C3,at:0,t:0.25},{f:G3,at:0.10,t:0.25},{f:C4,at:0.20,t:0.25},
+        {f:E4,at:0.30,t:0.25}],{type:"triangle",vol:0.12});
+      note(G4,{at:0.45,t:0.50,type:"sine",vol:0.09}); } },
+
+  /* ----------------------------------------------- Navigation: the doors */
+  // Each tab screen is a room, and each room has its own door. These are the
+  // one place navigation is allowed theatre, and every door opens a little
+  // differently each time you come through it.
+
+  arriveLibrary: { label: "Library door", group: "Navigation", rotate: true,
+    desc: "Old wood under strain, a thin hinge, and a room beyond.",
+    play: [
+      // The everyday door: a slow creak, the latch swings free, the room greets you.
+      () => { note(E3,{to:G3,t:0.45,type:"triangle",vol:0.07});
+        note(B5,{to:C6,at:0.05,t:0.40,type:"sine",vol:0.04});
+        note(C4,{at:0.50,t:0.10,type:"triangle",vol:0.08});
+        seq([{f:G4,at:0.62,t:0.40},{f:C5,at:0.68,t:0.45}],{type:"sine",vol:0.06}); },
+      // The heavy door: deeper timber, a thud of a latch, one quiet bell inside.
+      () => { note(D3,{to:E3,t:0.55,type:"triangle",vol:0.08});
+        note(A5,{to:B5,at:0.10,t:0.35,type:"sine",vol:0.035});
+        note(C3,{at:0.60,t:0.20,type:"triangle",vol:0.09});
+        note(E5,{at:0.78,t:0.40,type:"sine",vol:0.05}); },
+      // The door that sticks: two short scrapes, then it gives all at once.
+      () => { note(G3,{to:A3,t:0.15,type:"triangle",vol:0.07});
+        note(A3,{to:C4,at:0.22,t:0.25,type:"triangle",vol:0.07});
+        note(C4,{to:G4,at:0.52,t:0.30,type:"sine",vol:0.06});
+        note(C6,{at:0.80,t:0.30,type:"sine",vol:0.04}); }
+    ] },
+
+  arriveBible: { label: "Bible door", group: "Navigation", rotate: true,
+    desc: "A door made of light — it shines open instead of scraping.",
+    play: [
+      // The bloom: three notes of one chord waking, with a shimmer across the top.
+      () => { seq([{f:C5,at:0,t:0.70},{f:E5,at:0.10,t:0.65},{f:G5,at:0.20,t:0.60}],
+          {type:"sine",vol:0.06});
+        note(C7,{to:A6,at:0.25,t:0.45,type:"sine",vol:0.035});
+        note(G6,{at:0.55,t:0.35,type:"sine",vol:0.04}); },
+      // The widening: the same note opening out octave by octave, then a glint.
+      () => { seq([{f:C4,at:0,t:0.80},{f:C5,at:0.12,t:0.70},{f:C6,at:0.24,t:0.60}],
+          {type:"sine",vol:0.055});
+        note(E6,{at:0.50,t:0.40,type:"sine",vol:0.045}); },
+      // The radiance: one slow rise with lights coming on above it.
+      () => { note(G4,{to:C5,t:0.50,type:"sine",vol:0.07});
+        note(A5,{at:0.30,t:0.45,type:"sine",vol:0.05});
+        note(E6,{at:0.55,t:0.40,type:"sine",vol:0.04});
+        note(C4,{t:0.90,type:"sine",vol:0.04}); }
+    ] },
+
+  arriveLearn: { label: "Learning bell", group: "Navigation", rotate: true,
+    desc: "A school bell, not a church one — the day's work starting.",
+    play: [
+      // Three brisk strikes of the yard bell.
+      () => { seq([{f:A5,at:0,t:0.12},{f:A5,at:0.16,t:0.12},{f:A5,at:0.32,t:0.20}],
+          {type:"triangle",vol:0.09});
+        seq([{f:E6,at:0,t:0.06},{f:E6,at:0.16,t:0.06},{f:E6,at:0.32,t:0.08}],
+          {type:"sine",vol:0.03}); },
+      // Two strikes, then the scrape of benches as everyone sits.
+      () => { seq([{f:D6,at:0,t:0.12},{f:D6,at:0.18,t:0.16}],{type:"triangle",vol:0.09});
+        note(G3,{at:0.42,t:0.10,type:"triangle",vol:0.07});
+        note(C4,{at:0.50,t:0.12,type:"triangle",vol:0.06}); },
+      // The handbell: a quick shake, then it is caught and held quiet.
+      () => { seq([{f:A5,at:0,t:0.07},{f:C6,at:0.07,t:0.07},{f:A5,at:0.14,t:0.07},
+          {f:C6,at:0.21,t:0.12}],{type:"triangle",vol:0.08});
+        note(E5,{at:0.36,t:0.25,type:"sine",vol:0.05}); }
+    ] },
+
+  arriveStories: { label: "Story strikes up", group: "Navigation", rotate: true,
+    desc: "A little tune sitting down to tell you something.",
+    play: [
+      // Once upon a time: a skipping phrase over a low storyteller's drone.
+      () => { note(A3,{t:0.90,type:"sine",vol:0.05});
+        seq([{f:A4,at:0,t:0.14},{f:C5,at:0.16,t:0.10},{f:D5,at:0.26,t:0.14},
+          {f:E5,at:0.44,t:0.45,vol:0.10}],{type:"triangle",vol:0.09}); },
+      // The road: four marching notes setting out, and a glint on the horizon.
+      () => { seq([{f:D4,at:0,t:0.12},{f:G4,at:0.14,t:0.10},{f:A4,at:0.24,t:0.10},
+          {f:D5,at:0.36,t:0.35,vol:0.10}],{type:"triangle",vol:0.09});
+        note(G5,{at:0.60,t:0.25,type:"sine",vol:0.05}); },
+      // The sail: a swell of wind, then three notes leaping off with it.
+      () => { note(C5,{to:E5,t:0.25,type:"sine",vol:0.07});
+        seq([{f:G5,at:0.28,t:0.12},{f:A5,at:0.42,t:0.10},{f:C6,at:0.54,t:0.40,vol:0.09}],
+          {type:"triangle",vol:0.08}); },
+      // The mystery: a darker climb that stops short, and one far-off light.
+      () => { seq([{f:E4,at:0,t:0.16},{f:G4,at:0.14,t:0.16},{f:B4,at:0.28,t:0.16},
+          {f:D5,at:0.42,t:0.30}],{type:"sine",vol:0.08});
+        note(A6,{at:0.60,t:0.30,type:"sine",vol:0.035}); }
+    ] },
+
+  arrivePalaces: { label: "Palace gates", group: "Navigation", rotate: true,
+    desc: "The king comes home: gates, a great hall, the end of a road.",
+    play: [
+      // The gates: a deep fifth swings wide, a call of welcome, one bell in the hall.
+      () => { seq([{f:C3,at:0,t:0.55},{f:G3,at:0.06,t:0.55}],{type:"sine",vol:0.09});
+        note(G4,{to:C5,at:0.35,t:0.30,type:"sine",vol:0.08});
+        note(G5,{at:0.70,t:0.35,type:"sine",vol:0.05}); },
+      // The road ends: two last footsteps, the doors, and the hall answering.
+      () => { seq([{f:G3,at:0,t:0.08},{f:E3,at:0.16,t:0.08}],{type:"triangle",vol:0.07});
+        note(D3,{to:G3,at:0.30,t:0.40,type:"sine",vol:0.09});
+        seq([{f:C4,at:0.70,t:0.35},{f:E4,at:0.76,t:0.35},{f:G4,at:0.82,t:0.38}],
+          {type:"sine",vol:0.07}); },
+      // The homecoming: fifths climbing over a floor that never stops ringing.
+      () => { note(C3,{t:1.00,type:"sine",vol:0.07});
+        seq([{f:C4,at:0.05,t:0.30},{f:G4,at:0.22,t:0.30},{f:C5,at:0.40,t:0.45,vol:0.09}],
+          {type:"sine",vol:0.08});
+        note(E5,{at:0.70,t:0.40,type:"sine",vol:0.05}); }
+    ] },
+
+  /* --------------------------------------------- Navigation: punctuation */
+
+  appOpen: { label: "App opens", group: "Navigation",
+    desc: "Three notes waking one at a time, like light coming into the room.",
+    play: () => { note(C4,{t:0.80,type:"sine",vol:0.07});
+      note(G4,{at:0.15,t:0.65,type:"sine",vol:0.06});
+      note(E5,{at:0.32,t:0.50,type:"sine",vol:0.05}); } },
+
+  swipeForward: { label: "Swipe forward", group: "Navigation",
+    desc: "The air rising as you go onward, with its own shadow an octave below.",
+    play: () => { note(C5,{to:G5,t:0.14,type:"sine",vol:0.06});
+      note(C4,{to:G4,t:0.14,type:"sine",vol:0.03}); } },
+
+  swipeBack: { label: "Swipe back", group: "Navigation",
+    desc: "The same breath breathed the other way.",
+    play: () => { note(G5,{to:C5,t:0.14,type:"sine",vol:0.06});
+      note(G4,{to:C4,t:0.14,type:"sine",vol:0.03}); } },
+
+  tabChange: { label: "Tab changed", group: "Navigation",
+    desc: "A knuckle on the doorframe of the next room.",
+    play: () => { note(A4,{t:0.07,type:"triangle",vol:0.06});
+      note(D5,{at:0.04,t:0.09,type:"sine",vol:0.05}); } },
+
+  modalOpen: { label: "Panel opens", group: "Navigation",
+    desc: "A small upward breath as something slides into view.",
+    play: () => note(G4,{to:C5,t:0.10,type:"sine",vol:0.06}) },
+
+  modalClose: { label: "Panel closes", group: "Navigation",
+    desc: "The same breath let out again.",
+    play: () => note(C5,{to:G4,t:0.10,type:"sine",vol:0.06}) },
+
+  /* ------------------------------------------------------------ Economy */
+
+  talent: { label: "Talents earned", group: "Economy", rotate: true,
+    desc: "Coins from a hand, not a mint — never the same coin twice.",
+    play: [
+      // Two clinks and the jar takes them.
+      () => { seq([{f:C6,at:0,t:0.07},{f:E6,at:0.06,t:0.07}],{type:"triangle",vol:0.10});
+        note(G4,{to:D4,at:0.16,t:0.25,type:"sine",vol:0.10}); },
+      // One heavy coin, bouncing itself quiet.
+      () => { note(A5,{t:0.10,type:"triangle",vol:0.12}); note(E6,{t:0.06,type:"sine",vol:0.06});
+        note(A5,{at:0.14,t:0.06,type:"triangle",vol:0.07});
+        note(A5,{at:0.24,t:0.04,type:"triangle",vol:0.04}); },
+      // Three quick ones counted up a chord.
+      () => seq([{f:G5,at:0,t:0.06},{f:C6,at:0.055,t:0.06},{f:E6,at:0.11,t:0.09}],
+        {type:"triangle",vol:0.09}),
+      // A coin spun on the table, wobbling down flat.
+      () => { note(C7,{to:A6,t:0.22,type:"sine",vol:0.05});
+        note(E6,{at:0.24,t:0.08,type:"triangle",vol:0.10});
+        note(A4,{at:0.30,t:0.20,type:"sine",vol:0.07}); },
+      // The purse set down first, coins shifting inside it.
+      () => { note(G3,{t:0.12,type:"triangle",vol:0.09});
+        seq([{f:C6,at:0.10,t:0.06},{f:D6,at:0.17,t:0.08}],{type:"triangle",vol:0.08}); },
+      // Two clinks dropped into a deep pocket.
+      () => { seq([{f:E6,at:0,t:0.06},{f:C6,at:0.07,t:0.06}],{type:"triangle",vol:0.09});
+        note(E4,{at:0.16,t:0.22,type:"sine",vol:0.08}); }
+    ] },
+
+  levy: { label: "Levy taken", group: "Economy",
+    desc: "Coins scooped, the purse pulled away, and a dark note where it was.",
+    play: () => { seq([{f:C6,at:0,t:0.05},{f:G5,at:0.05,t:0.05}],{type:"triangle",vol:0.10});
+      note(D5,{to:G4,at:0.12,t:0.22,type:"sine",vol:0.10});
+      note(A2,{at:0.30,t:0.45,type:"sine",vol:0.12});
+      note(F4,{at:0.32,t:0.35,type:"sine",vol:0.05}); } },
+
+  purchase: { label: "Purchase made", group: "Economy",
+    desc: "Two coins counted out and the deal settling — smaller than earning.",
+    play: () => { note(C6,{t:0.08,type:"triangle",vol:0.08});
+      note(G5,{at:0.07,t:0.08,type:"triangle",vol:0.07});
+      note(E4,{at:0.18,t:0.30,type:"sine",vol:0.09}); } },
+
+
+  freezeBuy: { label: "Streak freeze bought", group: "Economy",
+    desc: "A thin, icy shimmer — provision laid up against a cold day.",
+    play: () => { note(A5,{t:0.35,type:"sine",vol:0.08});
+      note(C7,{to:A6,at:0.05,t:0.35,type:"sine",vol:0.045}); } },
+
+  /* --------------------------------------------------------- Milestones */
+
+  praise: { label: "Milestone praise", group: "Milestones", rotate: true,
+    desc: "Six small congratulations, all from the same bell shelf.",
+    play: [
+      // The plain climb, done properly.
+      () => seq([{f:C5,at:0,t:0.13},{f:E5,at:0.08,t:0.13},{f:G5,at:0.16,t:0.13},
+        {f:C6,at:0.26,t:0.32,vol:0.12}],{type:"triangle",vol:0.11}),
+      // A swell instead of a climb: three notes blooming together.
+      () => seq([{f:C5,at:0,t:0.50},{f:E5,at:0.06,t:0.50},{f:G5,at:0.12,t:0.55}],
+        {type:"sine",vol:0.08}),
+      // Three high bells over a deep floor.
+      () => { note(C4,{t:0.50,type:"sine",vol:0.05});
+        seq([{f:A5,at:0,t:0.16},{f:C6,at:0.10,t:0.16},{f:E6,at:0.20,t:0.34}],
+          {type:"sine",vol:0.09}); },
+      // One lift and a glint at the top of it.
+      () => { note(C5,{to:G5,t:0.22,type:"sine",vol:0.09});
+        note(E6,{at:0.20,t:0.28,type:"sine",vol:0.06}); },
+      // Up in fourths — the older, opener colour.
+      () => seq([{f:C5,at:0,t:0.12},{f:F5,at:0.08,t:0.12},{f:A5,at:0.16,t:0.12},
+        {f:C6,at:0.26,t:0.30}],{type:"triangle",vol:0.10}),
+      // A bow of the head first, then the rise.
+      () => seq([{f:E5,at:0,t:0.12},{f:D5,at:0.08,t:0.12},{f:C5,at:0.16,t:0.12},
+        {f:G5,at:0.28,t:0.35,vol:0.11}],{type:"sine",vol:0.09})
+    ] },
+
+  badge: { label: "Badge earned", group: "Milestones",
+    desc: "A wide leap upward with the room ringing underneath it.",
+    play: () => { seq([{f:C5,at:0,t:0.14},{f:G5,at:0.08,t:0.14},{f:E6,at:0.16,t:0.35}],
+        {type:"triangle",vol:0.13});
+      note(C4,{t:0.60,type:"sine",vol:0.05}); } },
+
+  levelUp: { label: "Level up", group: "Milestones",
+    desc: "Root, fifth, octave: a plain strong ladder with no ornament.",
+    play: () => seq([{f:C5,at:0,t:0.13},{f:G5,at:0.08,t:0.13},{f:C6,at:0.18,t:0.35,vol:0.14}],
+      {type:"triangle",vol:0.13}) },
+
+  streakDay: { label: "Streak day kept", group: "Milestones",
+    desc: "Another link set on the chain, unhurried.",
+    play: () => seq([{f:G4,at:0,t:0.14},{f:C5,at:0.09,t:0.14},{f:E5,at:0.18,t:0.35}],
+      {type:"sine",vol:0.12}) },
+
+  streakLost: { label: "Streak lost", group: "Milestones",
+    desc: "A low bell tolling twice, unanswered. Grief, kept small.",
+    play: () => { note(A3,{t:0.50,type:"sine",vol:0.09});
+      note(E4,{at:0.02,t:0.45,type:"sine",vol:0.04});
+      note(A3,{at:0.55,t:0.65,type:"sine",vol:0.07}); } },
+
+  streakSaved: { label: "Streak saved by freeze", group: "Milestones",
+    desc: "The ice melting into a warm chord: it held.",
+    play: () => { note(C7,{to:A6,t:0.30,type:"sine",vol:0.04});
+      note(A5,{t:0.30,type:"sine",vol:0.07});
+      note(C5,{at:0.32,t:0.35,type:"sine",vol:0.08});
+      note(E5,{at:0.34,t:0.35,type:"sine",vol:0.06}); } },
+
+  goalStep: { label: "Daily goal step", group: "Milestones",
+    desc: "One clear note with its shadow an octave down — a notch on the day.",
+    play: () => { note(C5,{t:0.20,type:"sine",vol:0.10});
+      note(C4,{t:0.20,type:"sine",vol:0.04}); } },
+
+  goalDone: { label: "Daily goal reached", group: "Milestones",
+    desc: "The day's small fanfare, standing on a long low root.",
+    play: () => { seq([{f:C5,at:0,t:0.14},{f:E5,at:0.08,t:0.14},{f:G5,at:0.16,t:0.14},
+        {f:C6,at:0.24,t:0.40,vol:0.13}],{type:"sine",vol:0.12});
+      note(C4,{t:0.70,type:"sine",vol:0.05}); } },
+
+  dayDone: { label: "Day's work done", group: "Milestones",
+    desc: "A descent to rest rather than a celebration. Peace, not fanfare.",
+    play: () => { seq([{f:E5,at:0,t:0.20},{f:C5,at:0.12,t:0.20},{f:G4,at:0.24,t:0.20}],
+        {type:"sine",vol:0.10});
+      note(C4,{at:0.40,t:0.55,type:"sine",vol:0.07}); } },
+
+  storyUnlocked: { label: "Story unlocked", group: "Milestones",
+    desc: "A cover knocked open and a voice rising to begin the tale.",
+    play: () => { note(D4,{t:0.10,type:"triangle",vol:0.08});
+      note(A4,{to:E5,at:0.10,t:0.25,type:"sine",vol:0.07});
+      note(A5,{at:0.34,t:0.30,type:"sine",vol:0.06}); } },
+
+  sealed: { label: "Verse known by heart", group: "Milestones",
+    desc: "The crown: the whole ladder climbed in one breath over a double root.",
+    play: () => { seq([{f:C5,at:0,t:0.16},{f:E5,at:0.06,t:0.16},{f:G5,at:0.12,t:0.16},
+        {f:C6,at:0.18,t:0.16},{f:E6,at:0.24,t:0.16},{f:G6,at:0.32,t:0.55,vol:0.12}],
+        {type:"sine",vol:0.11});
+      note(C4,{t:0.90,type:"sine",vol:0.05}); note(G4,{t:0.90,type:"sine",vol:0.05}); } },
+
+  /* ---------------------------------------------------------- Interface */
+
+  refuse: { label: "Not allowed", group: "Interface",
+    desc: "Two knocks on a door that does not answer — no movement means no.",
+    play: () => { note(D4,{t:0.06,type:"triangle",vol:0.08});
+      note(D4,{at:0.09,t:0.06,type:"triangle",vol:0.08}); } },
+
+  toggleOn: { label: "Switch on", group: "Interface",
+    desc: "A small wooden click that lands a step higher.",
+    play: () => { note(G4,{t:0.05,type:"triangle",vol:0.07});
+      note(D5,{at:0.04,t:0.08,type:"sine",vol:0.06}); } },
+
+  toggleOff: { label: "Switch off", group: "Interface",
+    desc: "The same click, stepping back down.",
+    play: () => { note(D5,{t:0.05,type:"triangle",vol:0.06});
+      note(G4,{at:0.04,t:0.08,type:"sine",vol:0.07}); } },
+
+  notify: { label: "Gentle notice", group: "Interface",
+    desc: "One bell heard from another room — something is waiting, no hurry.",
+    play: () => { note(A5,{t:0.40,type:"sine",vol:0.06});
+      note(E5,{at:0.02,t:0.40,type:"sine",vol:0.04}); } },
+
+
+
+
+
+
+  buttonTap: { label: "Button tap", group: "Interface",
+    desc: "The faintest touch of wood under the finger. Off by default is fine.",
+    play: () => note(A4,{t:0.03,type:"triangle",vol:0.04}) }
+};
+}
+
+/* ---- Which sounds play -----------------------------------------------------------------------
+   There used to be one switch for all of them, in the Feature Store. That is the right default and
+   the wrong granularity: somebody who cannot bear the coins should not have to silence the whole
+   app to escape them. Each effect is now switchable on its own, and only the ones switched OFF are
+   stored — so the default costs nothing and a new sound arrives already on.
+
+   The choice travels with the account like any other setting, because a person who has turned six
+   things off does not want to do it again on their phone. */
+function sfxOffMap(){ return (typeof Prog==="object" && Prog && Prog.sfxOff) ? Prog.sfxOff : {}; }
+function sfxEnabled(key){ return !sfxOffMap()[key]; }
+function sfxSetEnabled(key, on){
+  Prog.sfxOff = Prog.sfxOff || {};
+  if(on) delete Prog.sfxOff[key]; else Prog.sfxOff[key]=1;
+  Prog.settingsAt = Date.now();
+  saveProg();
+}
+/* A reward that always sounds the same stops being a reward and becomes a notification. Families
+   hold several variants and never play the same one twice running — a small thing that keeps the
+   twentieth correct answer of a session from feeling like the first one repeated. */
+const _sfxLast = {};
+function sfxPick(key, variants){
+  if(!variants || !variants.length) return null;
+  if(variants.length===1) return variants[0];
+  let i = Math.floor(Math.random()*variants.length);
+  if(i===_sfxLast[key]) i = (i+1)%variants.length;   // never the same one twice in a row
+  _sfxLast[key]=i;
+  return variants[i];
+}
 const Sfx = (()=>{
   let ctx=null, unlocked=false;
   const AC = window.AudioContext || window.webkitAudioContext;
@@ -8125,9 +8793,11 @@ const Sfx = (()=>{
   const LADDER=[0,2,4,7,9,12,14,16,19,21];
   const deg = i => C5*Math.pow(2, LADDER[Math.max(0,Math.min(LADDER.length-1,i))]/12);
 
-  return {
+  const api = {
     // Called from the first touch or click anywhere. Until then nothing makes a sound at all.
-    unlock(){ if(unlocked) return; unlocked=true; ac(); },
+    unlock(){ if(unlocked) return; unlocked=true; ac();
+      // The room opening: the first sound of a session, once, on the first touch.
+      setTimeout(()=>{ try{ if(sfxEnabled("appOpen")) api._preview_appOpen(); }catch(e){} }, 120); },
     muted(){ return !on(); },
 
     // A rising third into a fifth: short, bright, and over before it is in the way.
@@ -8223,7 +8893,7 @@ const Sfx = (()=>{
     // Honest work sounds like wood. The finger sets the rate, so this one is never queued.
     knock(i){ note((i||0)%2 ? G3 : E3, {t:0.07, type:"triangle", vol:0.07});
       if((i||0)%5===4) note(C4,{at:0.02,t:0.10,type:"sine",vol:0.05}); },
-    stone(built){ cue(built?1800:900, ()=>{
+    stone(built){ sfx("stoneSet"); cue(built?1800:900, ()=>{
       note(G2,{to:C3,t:0.45,type:"sine",vol:0.13}); note(C3,{at:0.05,t:0.25,type:"triangle",vol:0.10});
       note(E6,{at:0.55,t:0.25,type:"sine",vol:0.04});                        // light falling on the stone
       if(built) seq([{f:C4,at:0.85},{f:G4,at:0.95},{f:C5,at:1.05,t:0.50,vol:0.11}], {type:"sine", t:0.14, vol:0.10});
@@ -8252,7 +8922,134 @@ const Sfx = (()=>{
       seq(m, {type:"sine", t:0.13, vol:0.09});                    // quieter than an answer: it is punctuation
     }
   };
+
+  /* Arriving at a tab is the one piece of navigation allowed some theatre: each screen has its own
+     door, and each door opens a little differently every time. The three-note motifs above stay as
+     the fallback, so a screen with no door of its own is still punctuated rather than silent. */
+  const DOORS = {verse:"arriveLibrary", journey:"arriveBible", learn:"arriveLearn",
+                 stories:"arriveStories", palace:"arrivePalaces"};
+  const MOTIF_IDS = {learn:1, verse:1, palace:1, journey:1, stories:1};
+  const plainScreen = api.screen;
+  api.screen = function(id){
+    const door = DOORS[id];
+    if(door && PALETTE[door]){ if(sfxEnabled(door)){ const f=api["_preview_"+door]; if(f) f(); } return; }
+    // A screen with no motif of its own stays SILENT — that was true before the palette and stays
+    // true after it. tabChange replaces a motif where one existed; it does not invent one where
+    // none did, or every corner of the app would start announcing itself.
+    if(!MOTIF_IDS[id]) return;
+    if(PALETTE.tabChange && sfxEnabled("tabChange")){ const f=api._preview_tabChange; if(f){ f(); return; } }
+    return plainScreen.call(api, id);
+  };
+
+  /* ---- The palette ---------------------------------------------------------------------------
+     Written as data rather than as methods: every entry carries the sound AND what to call it, so
+     the settings screen is built from the same object that makes the noise. A sound that exists but
+     has no row is one nobody can switch off; a row for a sound that no longer exists is a switch
+     that does nothing. One source, and neither can happen.
+
+     It lives inside this closure because the sounds are written in terms of `note`, `seq` and the
+     pitch constants, which belong to the engine and are deliberately not global.                */
+  const PALETTE = (typeof SFX_PALETTE_SRC === "function") ? SFX_PALETTE_SRC({note, seq, cue, deg, N,
+      C2:N(-33), D2:N(-31), E2:N(-29), F2:N(-28), G2, A2, B2:N(-22),
+      C3, D3:N(-19), E3, F3:N(-16), G3, A3, B3:N(-10),
+      C4, D4, E4, F4, G4, A4, B4,
+      C5, D5, E5, F5:N(8), G5, A5, B5,
+      C6, D6, E6, F6:N(20), G6, A6, B6:N(26), C7 }) : {};
+
+  Object.keys(PALETTE).forEach(k=>{
+    const e = PALETTE[k];
+    const one = () => (e.rotate ? sfxPick(k, e.play) : e.play);
+    // The switch is checked HERE rather than inside each sound, so an effect Fable adds later is
+    // gated without having to remember to ask.
+    api[k] = function(){ if(!sfxEnabled(k)) return; const fn=one(); if(typeof fn==="function"){ try{ fn(); }catch(err){} } };
+    // Heard from the settings screen even when switched off: you cannot judge a sound you are not
+    // allowed to hear.
+    api["_preview_"+k] = function(){ const fn=one(); if(typeof fn==="function"){ try{ fn(); }catch(err){} } };
+  });
+
+  api._palette = PALETTE;
+  api._play = function(k){ const f=api["_preview_"+k]; if(f) f(); else if(typeof api[k]==="function") api[k](); };
+  return api;
 })();
+
+/* Everything the engine already had, gated the same way as the palette. These predate the palette
+   and are still called by name from all over the app; wrapping them here means one rule for every
+   sound rather than two, and no call site has to change. */
+(function gateLegacySfx(){
+  const SKIP = {unlock:1, muted:1, _palette:1, _play:1};
+  Object.keys(Sfx).forEach(k=>{
+    if(SKIP[k] || k.indexOf("_preview_")===0) return;
+    if(typeof Sfx[k]!=="function" || (Sfx._palette && Sfx._palette[k])) return;   // palette ones already gated
+    const fn = Sfx[k];
+    Sfx[k] = function(){ if(!sfxEnabled(k)) return; return fn.apply(Sfx, arguments); };
+  });
+})();
+
+/* What the settings screen lists. The palette describes itself; the older effects are described
+   here, because they were written before anybody had to name them out loud. */
+const SFX_LEGACY = {
+  right:      {label:"Correct answer",      group:"Learning",  desc:"Three notes climbing — a thing clicking into place."},
+  wrong:      {label:"Wrong answer",        group:"Learning",  desc:"A soft fall. Wrong, not shameful."},
+  slip:       {label:"Near miss",           group:"Learning",  desc:"A short slide down, quieter than a wrong answer."},
+  reveal:     {label:"Answer revealed",     group:"Learning",  desc:"The curtain going back."},
+  tick:       {label:"Countdown tick",      group:"Interface", desc:"A dry tap marking time."},
+  knock:      {label:"Typing",              group:"Learning",  desc:"Wood under the finger, one tap a letter."},
+  screen:     {label:"Moving between tabs", group:"Navigation",desc:"A short motif per screen, so where you are is audible."},
+  book:       {label:"Book learned",        group:"Rewards",   desc:"Two notes opening out."},
+  verse:      {label:"Verse hidden",        group:"Rewards",   desc:"A bright rise — something set in place."},
+  heart:      {label:"Known by heart",      group:"Rewards",   desc:"Warm and settled."},
+  sealed:     {label:"Verse sealed",        group:"Rewards",   desc:"A seal pressed home."},
+  mastered:   {label:"Verse mastered",      group:"Milestones",desc:"The long form of the verse cue."},
+  lessonDone: {label:"Lesson finished",     group:"Learning",  desc:"A run of notes closing the lesson."},
+  palaceDone: {label:"Palace walked",       group:"Palaces",   desc:"A wide, low chord — a building complete."},
+  goalStep:   {label:"A goal marker filled",group:"Milestones",desc:"One step of the daily path."},
+  goalDone:   {label:"Daily goal met",      group:"Milestones",desc:"The path completed."},
+  dayDone:    {label:"Day finished",        group:"Milestones",desc:"The close of the daily loop."},
+  streakDay:  {label:"Streak day earned",   group:"Milestones",desc:"The flame catching."},
+  levelUp:    {label:"Level up",            group:"Milestones",desc:"A rise through the ladder."},
+  badge:      {label:"Badge earned",        group:"Milestones",desc:"Struck metal."},
+  coins:      {label:"Talents earned",      group:"Economy",   desc:"Coins falling."},
+  buy:        {label:"Something bought",    group:"Economy",   desc:"Decisive, and smaller than earning."},
+  freeze:     {label:"Streak freeze spent", group:"Economy",   desc:"Cold and thin."},
+  ticket:     {label:"Scratch ticket",      group:"Rewards",   desc:"Anticipation, deliberately unresolved."},
+  unlock:     {label:"Something unlocked",  group:"Rewards",   desc:"A latch giving."},
+  stone:      {label:"A stone laid",        group:"Milestones",desc:"Weight settling, and light falling on it."},
+  fly:        {label:"Icon flying home",    group:"Interface", desc:"A short arc through the air."},
+  land:       {label:"Icon landing",        group:"Interface", desc:"The arc arriving."},
+  srStart:    {label:"Review begins",       group:"Tests",     desc:"One bell, struck once."},
+};
+const SFX_MANIFEST = (()=>{
+  const out = {};
+  Object.keys(SFX_LEGACY).forEach(k=>{ if(typeof Sfx[k]==="function") out[k]=SFX_LEGACY[k]; });
+  const P = Sfx._palette || {};
+  Object.keys(P).forEach(k=>{
+    const e=P[k];
+    out[k] = {label:e.label||k, group:e.group||"Other", desc:e.desc||"",
+              rotate:!!e.rotate, variants:(e.rotate && e.play) ? e.play.length : 1};
+  });
+  return out;
+})();
+function sfxPreview(key){ try{ Sfx._play(key); }catch(e){} }
+function PALETTE_HAS(k){ return !!(typeof Sfx!=="undefined" && Sfx._palette && Sfx._palette[k]); }
+/* Call a sound by name without knowing whether it exists yet. The palette is authored separately
+   from the places that ring it, so a call site can be written before its sound and simply stay
+   quiet until one arrives — and a sound that is later renamed or removed silences itself instead of
+   throwing in the middle of a lesson. */
+function sfx(name, arg){ try{ const f=Sfx&&Sfx[name]; if(typeof f==="function") f.call(Sfx, arg); }catch(e){} }
+/* The interface's own noises, hooked once at the document rather than at three hundred call sites.
+   Delegated, so anything drawn later is covered without being told; capture, so it is heard even
+   where a handler stops the event; and passive, so nothing here can delay a tap.
+
+   A tap is the quietest sound in the app on purpose — it is under everything else all day, and the
+   moment it asks to be noticed it becomes the thing people switch the sound off to escape. */
+document.addEventListener("pointerdown", ev=>{
+  const t = ev.target && ev.target.closest && ev.target.closest("button, .opt, .tabbar button, .pickbtn");
+  if(!t) return;
+  if(t.disabled || t.getAttribute("aria-disabled")==="true"){ sfx("refuse"); return; }
+  if(t.classList.contains("lclose")){ sfx("modalClose"); return; }
+  if(t.classList.contains("sfx-sw")){ return; }        // the sound switches speak for themselves
+  sfx("buttonTap");
+}, {capture:true, passive:true});
 /* ---- what this account did, month by month --------------------------------------------------
    Fields, all counts:
      v   verses memorized            q   questions answered        qc  answered correctly
@@ -8282,7 +9079,10 @@ function earnTalents(delta){
   if(!(delta>0)) return;
   Prog.talents=(Prog.talents||0)+delta; saveProg();
   try{ statBump("t", delta); }catch(e){}
-  talentBurst(delta); Sfx.coins(delta);
+  talentBurst(delta);
+  // Rotating variants where there used to be one sound. Talents arrive many times a session
+  // and the twentieth should not sound like a recording of the first.
+  if(SFX_MANIFEST && SFX_MANIFEST.talent) sfx("talent"); else Sfx.coins(delta);
 }
 // Talents are reduced when a hint is used (verse review, word for word). Never below 0.
 function spendTalents(n){
@@ -8566,7 +9366,7 @@ function openAnswerPopup(b,c,v,onNext){
   m.style.display="flex"; raiseModal(m);
   el("ansNext").onclick=()=>{ m.style.display="none"; if(onNext) onNext(); };
 }
-function askVerse(key){ setActiveTest(key); memTestCur=key.split(":").map(Number); memTestWrong=0; memHintUses=0; memTestRender(); }
+function askVerse(key){ sfx("nextQuestion"); setActiveTest(key); memTestCur=key.split(":").map(Number); memTestWrong=0; memHintUses=0; memTestRender(); }
 function nextMemVerse(){                       // the "go to next" hook fired after each answered verse
   if(MS && MS.phase==="sr"){
     while(MS.srQueue.length && !verseDue(MS.srQueue[0])) MS.srQueue.shift(); // drop any already cleared
@@ -8972,6 +9772,7 @@ function finishDue(){ if(MS && MS.dueWork) doneForToday(); else practiceNext(tru
 // The "you're done for today" moment — the emotional close of the daily loop; credits the day streak, then offers optional free practice.
 function doneForToday(){
   const V=el("verse");
+  sfx("reviewDone");
   srClockStop();                       // the run is over; bank what it took
   { const c=srClockDay(); c.done=true; saveProg(); }
   markSrDone();    // the set is finished; more arriving later must not take that back
@@ -9002,7 +9803,7 @@ const ANS_FREEZE=[25,50,100,200,500];                   // correct-in-a-row mile
 function grantFreeze(key, reason){
   if(Prog.freezeAwards.includes(key)) return;           // one grant per milestone, ever
   if((Prog.freezes||0)>=freezeMax()) return;            // at the cap → don't burn the milestone; grant it later when there's room
- Prog.freezeAwards.push(key); Prog.freezes=(Prog.freezes||0)+1; toast(`🧊 Streak Freeze earned, ${reason}!`); Sfx.freeze(); saveProg();
+ Prog.freezeAwards.push(key); Prog.freezes=(Prog.freezes||0)+1; toast(`🧊 Streak Freeze earned, ${reason}!`); sfx("freezeBuy"); saveProg();
 }
 // A day key back to a timestamp, so two day keys can be subtracted.
 function dayStart(key){ const p=String(key||"").split("-").map(Number);
@@ -9056,8 +9857,9 @@ function creditToday(){
   const yest=dayKey(new Date(Date.now()-DAY)), twoAgo=dayKey(new Date(Date.now()-2*DAY));
   if(!Prog.lastReviewDay) Prog.dayStreak=1;
   else if(Prog.lastReviewDay===yest) Prog.dayStreak=(Prog.dayStreak||0)+1;   // consecutive day → +1
-  else if(Prog.lastReviewDay===twoAgo && (Prog.freezes||0)>0){ Prog.freezes--; Prog.dayStreak=(Prog.dayStreak||0)+1; setTimeout(()=>toast(`🧊 A Streak Freeze saved your ${Prog.dayStreak}-day streak!`),500); } // exactly ONE missed day → a freeze bridges it
+  else if(Prog.lastReviewDay===twoAgo && (Prog.freezes||0)>0){ sfx("streakSaved"); Prog.freezes--; Prog.dayStreak=(Prog.dayStreak||0)+1; setTimeout(()=>toast(`🧊 A Streak Freeze saved your ${Prog.dayStreak}-day streak!`),500); } // exactly ONE missed day → a freeze bridges it
   else {
+    sfx("streakLost");
     /* The streak breaks here. Write down what was lost and how far back it goes, so it can be
        explained afterwards and, if they have the freezes, bought back. Without this the only
        record of a broken streak was the number going to 1. */
@@ -9168,7 +9970,8 @@ function srClockDay(){
   return Prog.srClock;
 }
 let srTickFrom=null;                      // when the current segment began; null when not running
-function srClockStart(){ const c=srClockDay(); c.runs=(c.runs|0)+1; srTickFrom=Date.now(); saveProg(); }
+function srClockStart(){ const c=srClockDay(); c.runs=(c.runs|0)+1; srTickFrom=Date.now(); saveProg();
+  sfx("timerStart"); }   // the clock is running now, and you can hear it start
 function srClockStop(){
   if(srTickFrom==null) return false;
   const c=srClockDay();
@@ -9193,11 +9996,12 @@ function srCountdown(after){
   const paint=()=>{ m.innerHTML=`<div class="modal-card center srcd"><div class="srcd-n">${n>0?n:"Go"}</div>
     <p class="hint" style="margin:10px 0 0">${n>0?"Get ready…":"Timing your review"}</p></div>`; };
   m.style.display="flex"; raiseModal(m); paint();
-  try{ Sfx.tick&&Sfx.tick(); }catch(e){}
+  sfx("countTick");
   const step=()=>{
     n--;
     if(n<0){ m.style.display="none"; srClockStart(); if(after) after(); return; }
-    paint(); try{ n>0 ? (Sfx.tick&&Sfx.tick()) : (Sfx.srStart&&Sfx.srStart()); }catch(e){}
+    // The last number before "Go" tightens: three and two are taps, one is a held breath.
+    paint(); sfx(n>1 ? "countTick" : n===1 ? "countUrgent" : "reviewStart");
     setTimeout(step, n>0?800:550);
   };
   setTimeout(step, 800);
@@ -9451,7 +10255,7 @@ function openHeartClaim(b,c,v,k,after){
   el("hcClose").onclick=()=>{ close(); if(after) after(null); };
   el("hcNo").onclick=()=>{ close(); noteStageAsk(k,"heart",w4wCount(k)); if(after) after(null); };
   el("hcGo").onclick=()=>{
-    Sfx.heart();                       // devotion, not loot: held and warm
+    sfx("verseLoved");                 // devotion, not loot: held and warm
     if(!pick) return;
     close();
     let freed=null;
@@ -10593,10 +11397,14 @@ function openTaxWheel(preview, after){
     const jitter=(Math.random()-0.5)*step*0.6;
     const deg=360*5 + (360 - (seat*step + step/2 + jitter));
     wheel.classList.add("spin");
+    sfx("wheelSpin");                                  // the spin itself, slowing as it goes
     requestAnimationFrame(()=>{ wheel.style.transform=`rotate(${deg.toFixed(2)}deg)`; });
     setTimeout(()=>{
       const seal=el("taxSeal");
       if(seal){ seal.classList.add("stamp","live"); seal.onclick=openSpqrNote; }   // tap the seal for what SPQR means
+      // Landing is not a reward. When Rome takes something it should sound like a loss, and when it
+      // passes you by it should sound like relief — the same wheel, two different endings.
+      sfx(band ? "levy" : "wheelLand");
       let built=0;
       if(!band){
         el("taxResult").textContent="Caesar takes no notice of the poor.";
@@ -10751,7 +11559,10 @@ function runDuePalaces(done, queue){            // walk each due palace in turn 
 /* =================== NUMBERS TEST — 15 Qs translating number ↔ image ↔ book =================== */
 // Correct answers STRENGTHEN the item's spaced repetition (jump toward box 5) so it stays gold longer.
 function strengthen(k){ const st=cardState(k), now=Date.now(), IV=intervalsFor(k);
-  st.box=Math.min((st.box||1)+2,topBox(k)); st.due=now+(IV[st.box]||0)*DAY; SRS[k]=st; save(SRS_KEY,SRS); }
+  const was=st.box||1;
+  st.box=Math.min(was+2,topBox(k)); st.due=now+(IV[st.box]||0)*DAY; SRS[k]=st; save(SRS_KEY,SRS);
+  if(st.box>was) sfx("cardUp");        // audible progress along the trail, not just a green flash
+}
 function strengthenNumber(n){ strengthen(`sk:num:${n}`); if(n>=1&&n<=66) strengthen(`sk:book:${n}`); }
 let NT=null;
 // known numbers ordered MOST-RECENTLY-learned first (by completion order in doneSkills)
@@ -10873,6 +11684,7 @@ function openNumTestSetup(round){
   paint();
 }
 function startNumberTest(round){
+  sfx("testStart");        // you are in a test now, and you can hear that you are
   round=round||1;
   const recent=recentKnownNumbers();
   if(recent.length<2){ toast("Learn a few number images first!"); return; }
@@ -10943,7 +11755,11 @@ function renderNumTest(){
   V.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
     if(b.disabled) return;
     try{ statBump("q"); if(b.dataset.ok==="1") statBump("qc"); }catch(e){}
-    if(b.dataset.ok==="1"){ NT.run=0; Sfx.right();  // correct → green, strengthen, next
+    if(b.dataset.ok==="1"){ NT.run=0;
+      // A run building has its own sound from the third onward, rising with the run: getting five
+      // in a row should not sound exactly like getting one.
+      NT.streak=(NT.streak||0)+1;
+      if(NT.streak>=3 && PALETTE_HAS("comboBuild")) sfx("comboBuild"); else Sfx.right();
       b.classList.add("correct"); V.querySelectorAll("[data-ok]").forEach(x=>x.disabled=true);
       NT.ok++; strengthenNumber(n);
       setTimeout(()=>{ NT.i++;
@@ -11096,6 +11912,9 @@ function showSceneReveal(n, isBook){
   el("srvOk").onclick=()=>m.style.display="none";
 }
 function finishNumberTest(){
+  // A different flourish each time. The same one twice running stops being a reward and becomes a
+  // notification that the test has ended.
+  sfx((NT && NT.ok >= Math.ceil((NT.qs||[]).length*0.6)) ? "testWin" : "testFail");
   updateMetrics();
   if(NT && NT.ret){ const ret=NT.ret; NT=null; ret(); return; }   // part of the daily review → flow into verses
   const hasMore=NT&&NT.hasMore, round=(NT&&NT.round)||1;
@@ -11140,6 +11959,7 @@ const BOOK_FAMILY={};
   Object.keys(byBase).forEach(k=>{ const g=byBase[k]; if(g.length>1) g.forEach(n=>{ BOOK_FAMILY[n]=g.filter(m=>m!==n); }); });
 })();
 function memTestRender(){
+  sfx("pageTurn");   // moving to the next thing to answer
   const V=el("verse"), b=memTestCur[0], c=memTestCur[1], v=memTestCur[2], k=knownNumbers();
   mtSel={b:0,c:0,v:0}; mtLock=false;
   // book choices for the picker: the correct book + a short set of decoys. Look alike books (confusables) always come first.
@@ -11390,6 +12210,7 @@ function checkBadges(defer){
 }
 function showBadgeModal(b){
   Sfx.badge();
+  sfx("praise");   // a rotating flourish behind the struck metal, so the tenth badge is not the first
   let m=document.getElementById("badgeModal");
   if(!m){ m=document.createElement("div"); m.id="badgeModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
   m.innerHTML=`<div class="modal-card center" style="max-width:320px">
@@ -11604,8 +12425,8 @@ function editVerseScene(b,c,v, doneRet, cancelRet){
   sceneBackfill=true; wPhase="scene"; show("verse"); renderWalk();
 }
 let walkReturn=renderVerse; // where to go on save/skip/finish
-function markSaved(){ const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.skipped=Prog.skipped.filter(x=>x!==k); if(!Prog.saved.includes(k))Prog.saved.push(k); saveProg(); }
-function markSkipped(){ const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.saved=Prog.saved.filter(x=>x!==k); if(!Prog.skipped.includes(k))Prog.skipped.push(k); saveProg(); }
+function markSaved(){ sfx("verseSaved"); const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.skipped=Prog.skipped.filter(x=>x!==k); if(!Prog.saved.includes(k))Prog.saved.push(k); saveProg(); }
+function markSkipped(){ sfx("verseSkipped"); const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.saved=Prog.saved.filter(x=>x!==k); if(!Prog.skipped.includes(k))Prog.skipped.push(k); saveProg(); }
 /* ---- Tappable references ---------------------------------------------------------------------
    Anywhere a verse is named in ordinary text — a badge, a milestone, a blessing, release notes —
    it becomes tappable and goes to that verse. Where it goes is already decided for us by
@@ -12337,6 +13158,7 @@ window.addEventListener("resize", fitFrame);
 window.addEventListener("orientationchange", ()=>{ fitFrame.full=0; setTimeout(fitFrame, 260); });
 if(window.visualViewport) window.visualViewport.addEventListener("resize", fitFrame);
 function toast(msg){
+  sfx("notify");
   let t=document.getElementById("vvToast");
   if(!t){ t=document.createElement("div"); t.id="vvToast";
     t.style.cssText="position:absolute;left:50%;bottom:78px;transform:translateX(-50%);background:#12151b;color:#e9ecf1;border:1px solid var(--line);padding:11px 16px;border-radius:12px;font-size:13px;z-index:70;max-width:88%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:none;opacity:0";
@@ -13151,6 +13973,7 @@ function askNewCode(from, after){
 const GIVE_YEAR_CENTS=3500, GIVE_FIVE_CENTS=9900;
 function openGive(){
   if(!canBuyHere()) return;
+  sfx("giftOpen");
   const m=el("giveModal")||(()=>{ const d=document.createElement("div"); d.id="giveModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   let batches=1, custom="";
   const draw=()=>{
@@ -13735,7 +14558,7 @@ function applyFeatureVisibility(){
 const PROF_ICONS={ "Admin":"🛠️", "Badges":"🎖️", "Feature store":"✨", "Account":"👤",
   "Group licences":"🎫", "Give":"🎁",
   "Bible translation":"📗", "Reference library":"📚", "What's new":"📋", "Theme":"🎨",
-  "Get the app":"📲", "Sync":"🔄", "Back up your progress":"💾" };
+  "Get the app":"📲", "Sound effects":"🔔", "Sync":"🔄", "Back up your progress":"💾" };
 const PROF_SUBS={
   "Admin":()=>"Test tools",
   "Badges":()=>{ const n=BADGES.filter(b=>b.have()).length; return n+" earned"; },
@@ -13752,13 +14575,15 @@ const PROF_SUBS={
   "Theme":()=>{ const t=(document.querySelector(".phone")||{getAttribute:()=>""}).getAttribute("data-theme")||"illumined";
     return {classic:"Classic",illumined:"Illumined Night",glass:"Stained Glass",quest:"Scripture Quest",buddy:"Verse Buddy"}[t]||t; },
   "Get the app":()=>"Home screen",
+  "Sound effects":()=>{ const off=Object.keys((Prog&&Prog.sfxOff)||{}).length;
+    return off ? off+" switched off" : "All on"; },
   "Sync":()=>((typeof Auth!=="undefined"&&Auth._token)?"Across your devices":"Sign in to sync"),
   "Back up your progress":()=>"Export or restore",
   "App version":()=>"v"+APP_VERSION,
 };
 // The order Profile reads in. Anything not named here follows, in the order it was authored.
 const PROF_ORDER=["Admin","Badges","Get the app","Feature store","Group licences","Give","Bible translation","Theme",
-  "Reference library","Sync","Back up your progress","What's new","App version"];   // the version sits last
+  "Reference library","Sound effects","Sync","Back up your progress","What's new","App version"];   // the version sits last
 // Installed already? Then there is nothing to install, and the button is noise.
 function isInstalledApp(){
   try{ return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone===true; }
@@ -13953,6 +14778,49 @@ function paintSyncDiag(){
       row("goal", goalToday()) + row("done today", goalCount()) +
       row("review marker earned", srDoneToday() ? "yes" : "no");
 }
+/* The sound list is built from the palette itself rather than from a second list kept beside it —
+   a sound that exists but is missing from this screen is a sound nobody can switch off, and a row
+   for a sound that no longer exists is a switch that does nothing. One source, so neither happens. */
+function paintSfxList(){
+  const host=el("sfxList"); if(!host || typeof SFX_MANIFEST==="undefined") return;
+  const groups={};
+  Object.keys(SFX_MANIFEST).forEach(k=>{
+    const e=SFX_MANIFEST[k]; const g=e.group||"Other";
+    (groups[g]=groups[g]||[]).push([k,e]);
+  });
+  const order=["Rewards","Tests","Learning","Palaces","Milestones","Economy","Navigation","Interface","Other"];
+  const names=Object.keys(groups).sort((a,b)=>{
+    const i=order.indexOf(a), j=order.indexOf(b);
+    return (i<0?99:i)-(j<0?99:j) || (a<b?-1:1); });
+  host.innerHTML=names.map(g=>
+    `<div class="sfx-g">${bbEsc(g)}</div>` + groups[g].map(([k,e])=>{
+      const on=sfxEnabled(k);
+      return `<div class="sfx-row">
+        <button type="button" class="sfx-play" data-sfx-play="${bbEsc(k)}" title="Hear it">▶</button>
+        <div class="sfx-t"><b>${bbEsc(e.label||k)}</b>${e.rotate?'<span class="sfx-var">several</span>':""}
+          <small>${bbEsc(e.desc||"")}</small></div>
+        <button type="button" class="sfx-sw${on?" on":""}" data-sfx-on="${bbEsc(k)}"
+          aria-pressed="${on?"true":"false"}"><span></span></button>
+      </div>`; }).join("")).join("");
+  host.querySelectorAll("[data-sfx-play]").forEach(b=>b.onclick=()=>{
+    const k=b.getAttribute("data-sfx-play");
+    // Heard even when switched off: you cannot decide about a sound you are not allowed to hear.
+    try{ Sfx.unlock(); sfxPreview(k); }catch(e){}
+  });
+  host.querySelectorAll("[data-sfx-on]").forEach(b=>b.onclick=()=>{
+    const k=b.getAttribute("data-sfx-on"), now=!sfxEnabled(k);
+    sfxSetEnabled(k, now);
+    b.classList.toggle("on", now); b.setAttribute("aria-pressed", now?"true":"false");
+    try{ Sfx.unlock(); sfx(now ? "toggleOn" : "toggleOff"); }catch(e){}
+    // Switching one ON plays it, after the switch's own click, so the two do not collide.
+    if(now) setTimeout(()=>{ try{ sfxPreview(k); }catch(e){} }, 190);
+  });
+}
+if(el("sfxAllOn")) el("sfxAllOn").onclick=()=>{ Prog.sfxOff={}; Prog.settingsAt=Date.now(); saveProg(); paintSfxList(); };
+if(el("sfxAllOff")) el("sfxAllOff").onclick=()=>{
+  Prog.sfxOff={}; Object.keys(SFX_MANIFEST||{}).forEach(k=>Prog.sfxOff[k]=1);
+  Prog.settingsAt=Date.now(); saveProg(); paintSfxList(); };
+paintSfxList();
 if(el("syncCopy")) el("syncCopy").onclick=()=>{
     const t=[...document.querySelectorAll("#syncDiag .sd-row")]
       .map(r=>r.children[0].textContent+": "+r.children[1].textContent).join("\n");
@@ -14349,12 +15217,12 @@ function renderTypeTest(){
   const commitWord=()=>{
     const expected=TT.words[TT.idx]; if(expected===undefined) return;
     const typed=inp.value.trim(); if(!typed) return;
-    if(normWord(typed)===normWord(expected)){ Sfx.tick(TT.run=(TT.run||0)+1);   // correct → commit to the top (green), advance
+    if(normWord(typed)===normWord(expected)){ TT.run=(TT.run||0)+1; sfx("wordRight");   // correct → commit to the top (green), advance
       TT.idx++; TT.wrong=false; TT.wrongWord=null; TT.typos=0; TT.typoNote="";   // the crosses are per WORD
       inp.value=""; inp.classList.remove("good","wrong");
       if(TT.idx>=total){ typeTestComplete(); return; }
       paintTop();
-    } else { Sfx.slip(); TT.run=0;                      // wrong → show it red at top, clear the box to retry
+    } else { sfx("wordWrong"); TT.run=0;                // wrong → show it red at top, clear the box to retry
       TT.wrong=true; TT.wrongWord=typed;
       // Only the strict test forgives typos. Practice already has hints and counts no misses, so
       // there is nothing there to protect anyone from.
@@ -14388,6 +15256,7 @@ function renderTypeTest(){
   // the verse must be completed with NO hints, so on completion it blanks out and starts over.
   if(hintBtn) hintBtn.onclick=()=>{
     const expected=TT.words[TT.idx]; if(expected===undefined) return;
+    sfx("hintReveal");
     if(!TT.hintCharged){ TT.hintCharged=true; spendTalents(3); }   // a hint costs talents (once per session)
     TT.hintUsed=true;
     inp.value=expected.slice(0, inp.value.length+1);
@@ -14456,7 +15325,7 @@ function w4wTestResult(b,c,v,vkey,ret){
   const freed = clean ? heartMaybeFreeStation(vkey) : null;
   // The rarest thing in the app: the whole trail walked clean. It gets the one sound allowed to
   // take a second over itself. Anything short of that is an ordinary clean review.
-  if(freed) Sfx.sealed(); else if(clean) Sfx.verse();
+  if(freed) Sfx.sealed(); else if(clean) sfx("verseNew");
   const showGoal = clean ? bumpGoalFromReview(true) : (()=>{});
   const doneSteps=heartTrailStep(vkey), left=Math.max(0, SR_TRAIL.length-doneSteps);
   V.innerHTML=`<div class="card center">
@@ -14980,7 +15849,7 @@ const Scratch = (()=>{
     ctx.font=`${Math.round(34*dpr)}px system-ui`; ctx.fillText("👆", foil.width/2, foil.height/2+20*dpr);
   }
   function ptr(e){ const r=foil.getBoundingClientRect(), t=e.touches&&e.touches[0]?e.touches[0]:e; return {x:(t.clientX-r.left)*dpr, y:(t.clientY-r.top)*dpr}; }
-  function reveal(){ if(revealed) return; revealed=true; Sfx.reveal(); foil.classList.add("gone"); el("scClaim").style.display=""; }
+  function reveal(){ if(revealed) return; revealed=true; sfx("scratchReveal"); foil.classList.add("gone"); el("scClaim").style.display=""; }
   function scratch(e){ if(!drawing||revealed) return; if(e.cancelable) e.preventDefault(); const p=ptr(e);
     ctx.globalCompositeOperation="destination-out"; ctx.beginPath(); ctx.arc(p.x,p.y,26*dpr,0,7); ctx.fill();
     const gx=Math.min(GRID-1,Math.max(0,Math.floor(p.x/(foil.width/GRID)))), gy=Math.min(GRID-1,Math.max(0,Math.floor(p.y/(foil.height/GRID))));
@@ -15041,7 +15910,7 @@ const Scratch = (()=>{
       el("scClaim").textContent = opts.claimText || "Claim & unlock \u2192";
       el("scClaim").style.display="none"; foil.classList.remove("gone");
       ov.classList.add("on"); ov.setAttribute("aria-hidden","false");
-      Sfx.ticket();                       // anticipation, and deliberately unresolved
+      sfx("ticketWon");                   // anticipation, and deliberately unresolved
       requestAnimationFrame(fitCanvas);
     }
   };
