@@ -1373,6 +1373,13 @@
   .cl-tag{flex:0 0 auto;font-size:9.5px;font-weight:800;letter-spacing:.06em;padding:3px 6px;border-radius:5px;margin-top:2px}
   .cl-tag.new{background:var(--green-soft);color:var(--good);border:1px solid var(--green)}
   .cl-tag.fix{background:var(--accent-soft);color:var(--blue-ink);border:1px solid var(--blue2)}
+  /* The sync read-out: the same figures on every device, so two can be compared. */
+  .syncdiag{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;
+    background:var(--panel2);font-size:12.5px}
+  .sd-row{display:flex;justify-content:space-between;gap:10px;padding:3px 0}
+  .sd-row b{color:var(--gold-ink);font-variant-numeric:tabular-nums}
+  .sd-sep{margin:7px 0 3px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);font-weight:800;border-top:1px solid var(--line);padding-top:6px}
   .prof-sect{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--gold-ink);font-weight:800;margin-bottom:8px}
   .prof-sect.prof-collapsible{cursor:pointer;padding:8px 10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;margin-bottom:6px;user-select:none}
   .prof-sect .prof-caret{display:inline-block;width:14px;color:var(--muted)}
@@ -2079,6 +2086,8 @@
       <div class="prof-sect" style="margin-top:16px">Sync</div>
  <p class="hint" style="margin:0 0 8px">Your devices sync when you open the app and again whenever you come back to it. Use this if you have just finished on another device and want this one to catch up now.</p>
       <button class="btn ghost" id="syncNow" style="width:100%">🔄 Sync now</button>
+      <div id="syncDiag" class="syncdiag"></div>
+      <button class="btn ghost sm" id="syncCopy" style="width:100%;margin-top:6px">📋 Copy these numbers</button>
 
       <div class="prof-sect" style="margin-top:16px">Back up your progress</div>
  <p class="hint" style="margin:0 0 8px">Signing in keeps your progress safe in the cloud. A backup file is a second copy you hold yourself. Useful before switching devices.</p>
@@ -2206,8 +2215,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.8.0";
+const APP_VERSION="2.8.1";
 const CHANGELOG=[
+ {v:"2.8.1", d:"September 7, 2026", t:"Today's progress crosses too", items:[
+   ["fix","<b>Two devices drew a different number of filled dots.</b> The day's progress — what you have done today — was never merged at all, so each device counted only its own work. It now takes the higher of the two."],
+   ["new","<b>Profile → Sync now shows the numbers behind the numbers:</b> what is due broken into new verses, numbers, books, verses and palaces, the goal, and what date this device thinks it is. Read it on two devices and whatever differs names itself."]
+ ]},
  {v:"2.8.0", d:"September 7, 2026", t:"An old app stops syncing rather than overwriting", items:[
    ["new","<b>If the phone app falls behind the website, it now stops syncing and says so.</b> An older copy merges by the older rules and then writes the result back — so one out-of-date phone could undo what two up-to-date devices had just agreed. Nothing on that device is lost; it keeps working and catches up the moment it is updated."],
    ["chg","The website now publishes which version it is running, so the app can tell whether it has fallen behind. Browsers are never affected — they load the current version every time."]
@@ -4761,6 +4774,27 @@ function mergeProg(a,b){
     const from = at(b) > at(a) ? b : a;
     SETTINGS.forEach(f=>{ if(from[f]!==undefined) m[f]=from[f]; else delete m[f]; });
     m.settingsAt = Math.max(at(a), at(b)); }
+  /* TODAY. goalDay and srGoalDay were never merged at all — and the backstop below only fills in
+     what a device LACKS, so the moment you have done anything today your own record wins and the
+     other device's work is invisible. Two devices then draw different numbers of filled dots from
+     the same account, which is exactly what was reported.
+
+     A day's work merges by taking the HIGHER count, not the sum: a merge runs many times a day and
+     adding would inflate the day with every sync. The cost is that work genuinely split across two
+     devices counts as the larger half rather than the whole — under-crediting, which is the safe
+     direction. Anything latched — met, credited — holds if either device latched it, because the
+     day being finished is a fact about the day and not about the device that noticed. */
+  { const dayMerge=(x,y)=>{
+      if(!x||typeof x!=="object") return y; if(!y||typeof y!=="object") return x;
+      if(x.date!==y.date) return (String(x.date||"")>String(y.date||""))?x:y;   // a newer day stands alone
+      return {...y, ...x,
+        count:Math.max(x.count|0, y.count|0),
+        target:Math.max(x.target|0, y.target|0),
+        metTarget:Math.max(x.metTarget|0, y.metTarget|0),
+        dueAtEnd:Math.max(x.dueAtEnd|0, y.dueAtEnd|0),
+        met:!!(x.met||y.met), credited:!!(x.credited||y.credited)}; };
+    m.goalDay=dayMerge(a.goalDay,b.goalDay);
+    m.srGoalDay=dayMerge(a.srGoalDay,b.srGoalDay); }
   m.lastReviewDay=(a.lastReviewDay>b.lastReviewDay)?a.lastReviewDay:b.lastReviewDay;
   m.srDay=(a.srDay>b.srDay)?a.srDay:b.srDay;   // finished on either device is finished
   // One row per day, and where two devices both recorded one, the fuller day is the truer one.
@@ -5301,6 +5335,7 @@ const Auth = {
         }
       }
       await Auth.push();   // seed cloud on first login, or upload the merged result
+      try{ Store.set("vv_lastsync", String(Date.now())); }catch(e){}
     }catch(e){ console.warn("cloud pull failed:", e && e.message); }
     Auth._pulling=false;
   },
@@ -13884,6 +13919,39 @@ el("themeBtn").onclick=()=>{ buildProfileGrid(); el("themeModal").classList.add(
   el("themeModal").style.display="flex"; };
 el("expBtn").onclick=exportBackup;
 // Asked for by name: a way to make this device catch up without waiting for anything.
+/* Two devices disagreeing is hard to chase from a screenshot of one of them: "13 due" says
+     nothing about WHICH thirteen. This puts the same figures on both screens, broken into the parts
+     that add up to the total, so the two can be read side by side and the one that differs names
+     itself. The day key is in there because it is computed from the DEVICE clock — two devices in
+     different timezones, or one with the wrong date, will honestly disagree about what is due
+     today from identical data, and nothing in the syncing can fix that. */
+function paintSyncDiag(){
+    const box=el("syncDiag"); if(!box) return;
+    const parts=[
+      ["new verses", newVersesDueCount()], ["numbers", numbersDueCount()],
+      ["books", booksDueCount()], ["verses", versesDueCount()], ["palaces", palacesDueCount()],
+    ];
+    const total=parts.reduce((n,[,v])=>n+v,0);
+    const last=Number(Store.get("vv_lastsync",0))||0;
+    const row=(k,v)=>`<div class="sd-row"><span>${k}</span><b>${v}</b></div>`;
+    box.innerHTML =
+      row("app version", APP_VERSION) +
+      row("signed in", (Auth.user&&Auth.user.email) ? bbEsc(Auth.user.email) : "no") +
+      row("last synced", last ? new Date(last).toLocaleTimeString() : "not yet this session") +
+      row("this device calls today", dayKey(new Date())) +
+      `<div class="sd-sep">due now — ${total} in total</div>` +
+      parts.map(([k,v])=>row(k,v)).join("") +
+      `<div class="sd-sep">the daily goal</div>` +
+      row("goal", goalToday()) + row("done today", goalCount()) +
+      row("review marker earned", srDoneToday() ? "yes" : "no");
+}
+if(el("syncCopy")) el("syncCopy").onclick=()=>{
+    const t=[...document.querySelectorAll("#syncDiag .sd-row")]
+      .map(r=>r.children[0].textContent+": "+r.children[1].textContent).join("\n");
+    try{ navigator.clipboard.writeText("Burning Bush sync\n"+t); toast("Copied — paste both devices side by side"); }
+    catch(e){ toast("Could not copy here; read them off the screen instead"); }
+};
+paintSyncDiag();
 if(el("syncNow")) el("syncNow").onclick=async(e)=>{
   const b=e.currentTarget; if(b.disabled) return;
   if(!Auth._token){ toast("Sign in first — syncing needs an account."); return; }
@@ -13891,6 +13959,7 @@ if(el("syncNow")) el("syncNow").onclick=async(e)=>{
   const ok=await Auth.refresh(true);          // forced: the throttle is for the automatic pulls
   b.textContent = ok ? "✅ Up to date" : "Couldn't reach the server";
   setTimeout(()=>{ b.textContent=was; b.disabled=false; }, 1800);
+  try{ paintSyncDiag(); }catch(err){}
   try{ const a=document.querySelector(".view.active"); if(a && a.id==="verse") renderVerse(); }catch(err){}
 };
 el("impBtn").onclick=()=>el("impFile").click();

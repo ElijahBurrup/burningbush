@@ -289,6 +289,129 @@ const pull = page => page.evaluate(() => Auth.pull());
     await web.close();
   }
 
+  // ── the sweep ────────────────────────────────────────────────────────────────────────────────
+  /* Two numbers on the goal button disagreed between devices, and each round of guessing found one
+     more field that had never been merged. Guessing is the wrong instrument.
+
+     This walks EVERY input to those two numbers. For each one the devices are given deliberately
+     different values, the real sync runs, and every reported figure must agree afterwards — not
+     just the field under test, because a field that merges correctly can still be read through one
+     that does not. A failure names the field, so the next fix is never a hunt. */
+  say('— the sweep: every field that feeds the due count and the dots');
+  {
+    const metrics = page => page.evaluate(() => {
+      const box = document.createElement('div'); box.innerHTML = libStatusHTML();
+      const dots = [...box.querySelectorAll('.gb-dot')];
+      return {
+        goal: goalToday(),
+        due: reviewDueCount(),
+        newVerses: newVersesDueCount(), numbers: numbersDueCount(), books: booksDueCount(),
+        verses: versesDueCount(), palaces: palacesDueCount(),
+        goalCount: goalCount(), goalOther: goalOtherCount(),
+        dotsFilled: dots.filter(d => /\bon\b/.test(d.className)).length,
+        dotsTotal: dots.length,
+        line: (box.querySelector('.gb-title') || {}).textContent || '',
+      };
+    });
+
+    const BASE = {
+      goal: 5,
+      memorized: ['1:1:1', '19:23:1', '43:3:16'],
+      doneSkills: ['num:67', 'num:68', 'num:69', 'num:70'],
+    };
+
+    // Each case makes the two devices genuinely different in ONE respect.
+    const CASES = [
+      ['today\'s progress toward the goal',
+        () => { goalState().count = 8; saveProg(); },
+        () => { goalState().count = 2; saveProg(); }],
+      ['how much of the goal review has earned',
+        () => { srGoalState().count = 2; saveProg(); },
+        () => { srGoalState().count = 0; saveProg(); }],
+      ['whether the review was finished today',
+        () => { Prog.srDay = dayKey(new Date()); saveProg(); },
+        () => { delete Prog.srDay; saveProg(); }],
+      ['number cards',
+        () => { [67,68,69,70].forEach(n => SRS['sk:num:'+n] = {box:4, due: Date.now()+40*86400000}); save(SRS_KEY, SRS); },
+        () => { [67,68,69,70].forEach(n => SRS['sk:num:'+n] = {box:1, due: 1}); save(SRS_KEY, SRS); }],
+      ['book cards',
+        () => { [1,2,3].forEach(n => SRS['sk:book:'+n] = {box:5, due: Date.now()+40*86400000}); save(SRS_KEY, SRS); },
+        () => { [1,2,3].forEach(n => SRS['sk:book:'+n] = {box:1, due: 1}); save(SRS_KEY, SRS); }],
+      ['the verse trail',
+        () => { Prog.verseSR = {'1:1:1':{learnedAt:1, step:4, dueAt:Date.now()+9*86400000, r0:1},
+                                '19:23:1':{learnedAt:1, step:4, dueAt:Date.now()+9*86400000, r0:1},
+                                '43:3:16':{learnedAt:1, step:4, dueAt:Date.now()+9*86400000, r0:1}}; saveProg(); },
+        () => { Prog.verseSR = {'1:1:1':{learnedAt:1, step:1, dueAt:1, r0:1},
+                                '19:23:1':{learnedAt:1, step:1, dueAt:1, r0:1},
+                                '43:3:16':{learnedAt:1, step:1, dueAt:1, r0:1}}; saveProg(); }],
+      ['verses waiting for their first look',
+        () => { Prog.verseSR = {'1:1:1':{learnedAt:1, step:1, dueAt:Date.now()+9*86400000, r0:1},
+                                '19:23:1':{learnedAt:1, step:1, dueAt:Date.now()+9*86400000, r0:1},
+                                '43:3:16':{learnedAt:1, step:1, dueAt:Date.now()+9*86400000, r0:1}}; saveProg(); },
+        () => { Prog.verseSR = {'1:1:1':{learnedAt:1, step:1, dueAt:Date.now()+9*86400000},
+                                '19:23:1':{learnedAt:1, step:1, dueAt:Date.now()+9*86400000},
+                                '43:3:16':{learnedAt:1, step:1, dueAt:Date.now()+9*86400000}}; saveProg(); }],
+      ['palace walks',
+        () => { Prog.palaces = [{place:'House', stations:['A','B','C'], learnedAt:1, step:4,
+                                 dueAt: Date.now()+9*86400000, sr:{}}]; saveProg(); },
+        () => { Prog.palaces = [{place:'House', stations:['A','B','C'], learnedAt:1, step:1,
+                                 dueAt:1, sr:{}}]; saveProg(); }],
+      ['which lessons have been done',
+        () => { Prog.doneSkills = ['num:67','num:68','num:69','num:70','num:71','num:72']; saveProg(); },
+        () => { Prog.doneSkills = ['num:67','num:68']; saveProg(); }],
+      ['numbers learned ad hoc from the verse screen',
+        () => { Prog.extraKnown = [101,102,103]; [101,102,103].forEach(n => SRS['sk:num:'+n]={box:1,due:1}); save(SRS_KEY,SRS); saveProg(); },
+        () => { Prog.extraKnown = []; saveProg(); }],
+      ['verses marked known by heart',
+        () => { Prog.verseLoc = {'1:1:1':{heart:true}}; Prog.verseStage = {'1:1:1':'heart'}; saveProg(); },
+        () => { Prog.verseLoc = {}; Prog.verseStage = {}; saveProg(); }],
+      ['everything at once, the way two real devices drift',
+        () => { goalState().count = 9; srGoalState().count = 1; Prog.srDay = dayKey(new Date());
+                Prog.doneSkills = ['num:67','num:68','num:69','num:70','num:71','num:72'];
+                Prog.extraKnown = [101];
+                Prog.memorized = ['1:1:1','19:23:1','43:3:16','40:6:33'];
+                Prog.verseSR = {'1:1:1':{learnedAt:1,step:4,dueAt:Date.now()+9*86400000,r0:1},
+                                '19:23:1':{learnedAt:1,step:1,dueAt:1,r0:1},
+                                '43:3:16':{learnedAt:1,step:2,dueAt:Date.now()+9*86400000,r0:1},
+                                '40:6:33':{learnedAt:1,step:1,dueAt:Date.now()+9*86400000}};
+                Prog.palaces = [{place:'House',stations:['A','B','C'],learnedAt:1,step:4,dueAt:Date.now()+9*86400000,sr:{}}];
+                [67,68,69,70,71,72,101].forEach(n=>SRS['sk:num:'+n]={box:4,due:Date.now()+40*86400000});
+                save(SRS_KEY,SRS); saveProg(); },
+        () => { goalState().count = 2; srGoalState().count = 0; delete Prog.srDay;
+                Prog.doneSkills = ['num:67','num:68'];
+                Prog.extraKnown = [];
+                Prog.memorized = ['1:1:1'];
+                Prog.verseSR = {'1:1:1':{learnedAt:1,step:1,dueAt:1,r0:1}};
+                Prog.palaces = [{place:'House',stations:['A','B'],learnedAt:1,step:1,dueAt:1,sr:{}}];
+                [67,68].forEach(n=>SRS['sk:num:'+n]={box:1,due:1});
+                save(SRS_KEY,SRS); saveProg(); }],
+      ['which verses are memorized',
+        () => { Prog.memorized = ['1:1:1','19:23:1','43:3:16','40:6:33']; saveProg(); },
+        () => { Prog.memorized = ['1:1:1']; saveProg(); }],
+    ];
+
+    for (const [name, mutA, mutB] of CASES) {
+      const cloud = makeCloud();
+      const A = await device(browser, cloud, 'phone');
+      const B = await device(browser, cloud, 'pc');
+      await seed(A, Object.assign({ writtenAt: 2000 }, BASE));
+      await seed(B, Object.assign({ writtenAt: 1000 }, BASE));
+      await A.evaluate(mutA); await A.evaluate(() => { bustCaches(); updateMetrics(); });
+      await B.evaluate(mutB); await B.evaluate(() => { bustCaches(); updateMetrics(); });
+
+      await pull(A); await pull(B); await pull(A); await pull(B);
+
+      const x = await metrics(A), y = await metrics(B);
+      const differing = Object.keys(x).filter(k => JSON.stringify(x[k]) !== JSON.stringify(y[k]));
+      if (differing.length) {
+        fail++;
+        console.log('  ✗ ' + name);
+        differing.forEach(k => console.log(`      ${k}: phone ${JSON.stringify(x[k])} · pc ${JSON.stringify(y[k])}`));
+      } else pass++;
+      await A.close(); await B.close();
+    }
+  }
+
   await browser.close();
   stopServer();
   console.log('\n================================================');
