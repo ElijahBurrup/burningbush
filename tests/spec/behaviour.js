@@ -4397,6 +4397,90 @@ const DAY = 86400000;
   is(pullBack.forced, 2, 'Sync now asks regardless');
   is(pullBack.signedOut, 2, '...and signed out it asks nobody');
 
+  describe('a verse gives you back the screen you came from', () => { });
+
+  /* A reference can be tapped from anywhere, and coming back has to land on THAT screen. The way
+     back restored the tab and the scroll and then drew the tab's DEFAULT screen, so returning from
+     a verse landed on the Library hub, the top of the Bible, or the lesson path — whichever tab
+     the screen happened to live in. The list you were working through was gone, and the restored
+     scroll only made it look deliberate. */
+  const back = await $(() => {
+    const out = {};
+    const seen = () => {
+      const v = (document.querySelector('.view.active') || {}).id || '?';
+      return v + '::' + ((document.getElementById(v) || {}).textContent || '')
+        .replace(/\s+/g, ' ').trim().slice(0, 40);
+    };
+
+    // The skill-complete card, with the verses that lesson just put in reach.
+    LESSON_DONE = { ok: 8, msg: '', unlocked: '<div id="probeSug">verses to learn</div>',
+                    hasNew: true, canBuild: true, buildBook: 1 };
+    lessonReturn = null;
+    renderLessonDone();
+    out.lessonBefore = seen();
+    const r1 = hereAgain();
+    show('journey'); renderJourney();
+    r1();
+    out.lessonAfter = seen();
+    out.suggestionsBack = !!document.getElementById('probeSug');
+
+    // A palace walk, mid-scene.
+    curScene = SCENES[0]; wPhase = 'scene'; sceneBackfill = false;
+    show('verse'); renderWalk();
+    out.walkBefore = seen();
+    const walkScene = curScene.b + ' ' + curScene.c + ':' + curScene.v;
+    const r2 = hereAgain();
+    show('journey'); renderJourney();
+    r2();
+    out.walkAfter = seen();
+    out.walkScene = (curScene.b + ' ' + curScene.c + ':' + curScene.v) === walkScene && wPhase === 'scene';
+
+    // A chapter list in the Bible.
+    show('journey'); renderChapterScreen(43, 3);
+    out.chapBefore = seen();
+    const r3 = hereAgain();
+    show('learn'); renderPath();
+    r3();
+    out.chapAfter = seen();
+
+    LESSON_DONE = null;
+    return out;
+  });
+  is(back.lessonAfter, back.lessonBefore, 'a verse opened from the skill-complete card comes back to it');
+  ok(back.suggestionsBack, '...with the verses it suggested still listed, ready to be tagged');
+  is(back.walkAfter, back.walkBefore, 'a verse opened from a palace walk comes back to the walk');
+  ok(back.walkScene, '...on the same verse, at the same step of it');
+  is(back.chapAfter, back.chapBefore, 'a verse opened from a chapter list comes back to that chapter');
+
+  describe('the saved verses list reads newest first', () => { });
+
+  const savedList = await $(() => {
+    const out = {};
+    const snapSaved = (Prog.saved || []).slice(), snapAt = Prog.savedAt, snapView = vView;
+    Prog.saved = []; Prog.savedAt = {};
+    ['43:3:16', '19:23:1', '40:5:9'].forEach((k, i) => { Prog.saved.push(k); Prog.savedAt[k] = 1000 + i * 1000; });
+    Prog.saved.unshift('1:1:1');            // set aside before there were dates to record
+    saveProg();
+
+    vView = 'saved'; vFrom = 'library';
+    show('verse'); renderVerse();
+    const card = [...document.querySelectorAll('#verse .card')]
+      .find(c => /EVERYTHING YOU SAVED/.test(c.textContent));
+    out.present = !!card;
+    if (card) {
+      out.order = [...card.querySelectorAll('[data-vb]')].map(x => x.dataset.vb);
+      out.wired = !!card.querySelector('[data-vb]').onclick;
+      out.counted = /4 verses/.test(card.textContent);
+    }
+    Prog.saved = snapSaved; Prog.savedAt = snapAt; vView = snapView; saveProg();
+    return out;
+  });
+  ok(savedList.present, 'the saved screen lists every verse you saved');
+  is((savedList.order || []).join(' '), '40:5:9 19:23:1 43:3:16 1:1:1',
+     'newest first, and the ones saved before there were dates come last');
+  ok(savedList.counted, '...and says how many there are');
+  ok(savedList.wired, '...and each row opens its verse');
+
   describe('a writing box stays where the cursor is', () => { });
 
   /* Editing a long scene was close to impossible on a phone. The box was told to scroll to the

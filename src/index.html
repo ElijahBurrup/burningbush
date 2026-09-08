@@ -2251,8 +2251,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.11.1";
+const APP_VERSION="2.12.0";
 const CHANGELOG=[
+ {v:"2.12.0", d:"September 8, 2026", t:"Back to where you were", items:[
+   ["fix","<b>A verse now returns you to the screen you opened it from.</b> A reference can be tapped from anywhere, and coming back was landing on the top of whichever tab that screen lived in — the Library hub, the front of the Bible, the lesson path. Opening a verse from a palace walk now returns you to that walk, on the same verse and the same step."],
+   ["fix","<b>The skill-complete screen comes back with its suggested verses.</b> Tapping one of the verses a lesson just put in reach used to cost you the whole list; you can look at one and come straight back to tag the rest."],
+   ["new","<b>Every verse you have saved, in one scroll.</b> At the bottom of Saved for later, under the books, the whole list in the same shape the Bible uses — most recently saved first."]
+ ]},
  {v:"2.11.1", d:"September 8, 2026", t:"The writing boxes stay where you are", items:[
    ["fix","<b>Editing a scene threw the box away from the cursor.</b> It was told to scroll to the end of the note on every keystroke, so touching a word half way down jumped you to the bottom and you could not see what you were deleting or typing. It now moves only as far as it takes to keep the cursor in view, and if you have scrolled back to look at an earlier line it leaves you there."],
    ["fix","<b>Speaking a scene now follows the words.</b> The newest words stay in sight as they arrive — and when you start speaking with the cursor half way through something already written, it follows the words being added rather than showing you the end of the note."]
@@ -4726,6 +4731,7 @@ function migrateProg(p){
   p.dayStreak=cnt(p.dayStreak); p.bestDayStreak=cnt(p.bestDayStreak); if(typeof p.lastReviewDay!=="string") p.lastReviewDay=""; // daily review streak (distinct from the per-answer streak)
   p.freezes=cnt(p.freezes); p.freezeAwards=arr(p.freezeAwards); // Streak-Freeze power-ups + which milestones already granted one
   p.srClock=(p.srClock&&typeof p.srClock==='object')?p.srClock:null;   // {d,sec,done,runs}
+  p.savedAt=(p.savedAt&&typeof p.savedAt==='object')?p.savedAt:{};     // {verseKey: when set aside}
   p.goalLog=arr(p.goalLog).filter(x=>x&&x.d).slice(-GOAL_LOG_DAYS);   // a fortnight of what was asked and what was done
   if(!p.streakLost || !p.streakLost.at) p.streakLost=null;
   if(typeof p.srDay!=="string") p.srDay="";   // the day a whole review set was finished
@@ -4858,6 +4864,13 @@ function mergeProg(a,b){
         met:!!(x.met||y.met), credited:!!(x.credited||y.credited)}; };
     m.goalDay=dayMerge(a.goalDay,b.goalDay);
     m.srGoalDay=dayMerge(a.srGoalDay,b.srGoalDay); }
+  /* When each verse was set aside. The FIRST time it was saved is the true answer, so where
+     both devices hold a date the earlier one stands: re-saving on a second device is not a new
+     decision about a verse that was already waiting. */
+  { const at={...(b.savedAt||{}), ...(a.savedAt||{})};
+    Object.keys(b.savedAt||{}).forEach(k=>{ const x=(a.savedAt||{})[k], y=b.savedAt[k];
+      if(x&&y) at[k]=Math.min(x,y); });
+    m.savedAt=at; }
   m.lastReviewDay=(a.lastReviewDay>b.lastReviewDay)?a.lastReviewDay:b.lastReviewDay;
   m.srDay=(a.srDay>b.srDay)?a.srDay:b.srDay;   // finished on either device is finished
   // One row per day, and where two devices both recorded one, the fuller day is the truer one.
@@ -5772,6 +5785,7 @@ document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
 /* =================== JOURNEY (onboarding + mastery grid) =================== */
 let bibleView="num";   // whole-Bible tile display: num | numimg | bookimg | name
 function renderJourney(){
+  markScreen(()=>{ show("journey"); renderJourney(); });
   sfx("bookOpen");   // the Bible opening on the shelf
   updateMetrics();
   swipeTarget = null;   // the whole Bible is already on this screen; there is no next one
@@ -5931,6 +5945,7 @@ function swipeEdge(msg){
   }catch(e){}   // no Web Animations: the toast has already said it
 }
 function renderBookScreen(bn){
+  markScreen(()=>{ show("journey"); renderBookScreen(bn); });
   const J=el("journey"), w=pegFor(bn).word, SS=storyStarts();
   let chips="";
   for(let c=1;c<=chapCount(bn);c++){
@@ -5979,6 +5994,7 @@ function renderBookScreen(bn){
   };
 }
 function renderChapterScreen(bn,c){
+  markScreen(()=>{ show("journey"); renderChapterScreen(bn,c); });
   const J=el("journey"), SS=storyStarts();
   let boxes="";
   for(let v=1;v<=verseCount(bn,c);v++){ const story=SS.v.has(bn+":"+c+":"+v);
@@ -6556,6 +6572,7 @@ function goalpostCard(){
 // folded away. Finish a section and the next one opens itself, because "cur" has moved on.
 function defaultExpanded(ui){ const s=new Set([ui]); if(ui>0) s.add(ui-1); return s; }
 function renderPath(focus){
+  markScreen(()=>{ show("learn"); renderPath(); });
   updateMetrics();
   const L=el("learn");
   const nb=nextBlueSkill();
@@ -6732,6 +6749,7 @@ function buyStorySection(ui, after){
     {icon:"📜", yes:`Yes, ${STORY_SECTION_COST} talents`});
 }
 function renderStories(){
+  markScreen(()=>{ show("stories"); renderStories(); });
   updateMetrics();
   const S=el("stories"); if(!S) return;
   const groups=[]; UNITS.forEach((U,ui)=>{ if(U.story) groups.push({U,ui}); });
@@ -7515,9 +7533,15 @@ function maybeSuggestPalace(){
 let LESSON_DONE=null;
 function renderLessonDone(){
   const d=LESSON_DONE; if(!d) return false;
+  /* The skill-complete card, with the verses that lesson just put in reach. Somebody who taps one
+     of those to look at it wants to come back to the list and tag the rest, not to the path. */
   // show("learn") renders the path as part of opening the tab, so it goes FIRST or not at all —
   // called afterwards it wipes the card this function exists to draw.
   if(!el("learn").classList.contains("active")) show("learn");
+  // Marked AFTER that show(), which draws the path and marks ITSELF on the way past. Marking
+  // first meant the path quietly replaced this card as the screen to come back to.
+  { const _d=d, _r=lessonReturn;
+    markScreen(()=>{ LESSON_DONE=_d; lessonReturn=_r; renderLessonDone(); }); }
   el("learn").innerHTML=`<div class="card center">
     <div style="font-size:56px">🏅</div>
     <h2>Skill complete!</h2>
@@ -7980,6 +8004,7 @@ function openSuggestedForBook(bn){
   if(bn) openSuggBook(bn, ()=>openVerseView("sugg","library"));
 }
 function renderVerse(){
+  { const _v=vView, _f=vFrom; markScreen(()=>{ vView=_v; vFrom=_f; renderVerse(); }); }
   // Standing at the hub is not reviewing. Whether the set was finished or abandoned half way, the
   // seconds already spent are banked here — abandoning must cost nothing, and must record nothing
   // extra either.
@@ -8032,6 +8057,15 @@ function renderVerse(){
     } else if(vView==="saved"){ title="🔖 Saved for later";
       body=saved.length
         ? savedBoardHTML(saved)+`<div class="sbhead">WHERE THEY ARE</div><p class="hint" style="margin:2px 0 8px">Tap a book to see what you set aside in it.</p>`+bookGrid(saved,"saved")
+          /* The whole list, newest first, under the books. The grid answers "where are
+             they"; this answers "what have I got", which is what somebody scrolling their
+             saved verses is actually asking. Same row as the book screen, so a saved verse
+             looks the same wherever it is met. */
+          +`<div class="card" style="margin-top:12px">
+              <span class="screenkind vs">🔖 EVERYTHING YOU SAVED</span>
+              <div class="hint" style="margin:0 0 6px">${saved.length} verse${saved.length===1?"":"s"} · most recently saved first</div>
+              <div class="vlist bkverses">${savedNewestFirst(saved).map(a=>verseRow(a[0],a[1],a[2],"saved")).join("")}</div>
+            </div>`
         : `<div class="card center" style="padding:26px 18px"><div style="font-size:44px">🔖</div>
              <h2 style="font-size:19px;margin:8px 0 2px">Nothing set aside yet</h2>
              <p class="lead" style="margin:6px 0 0">Tap <b>Save · come back later</b> on any verse and it will wait for you here.</p></div>`;
@@ -12673,7 +12707,7 @@ function addMemorized(s, defer){
 function forgotVerse(b,c,v){
   const k=refKey(b,c,v);
   Prog.memorized=Prog.memorized.filter(x=>x!==k);       // no longer "learned"
-  if(!Prog.saved.includes(k)) Prog.saved.push(k);        // queue it to rebuild
+  if(!Prog.saved.includes(k)){ Prog.saved.push(k); stampSaved(k); }   // queue it to rebuild
   if(Prog.talentLog) delete Prog.talentLog[k];           // clear the 24h points lock
   if(Prog.verseSR) delete Prog.verseSR[k];               // drop its spaced repetition trail
   if(SRS[k]){ delete SRS[k]; save(SRS_KEY,SRS); }        // drop its review strength
@@ -12853,7 +12887,22 @@ function editVerseScene(b,c,v, doneRet, cancelRet){
   sceneBackfill=true; wPhase="scene"; show("verse"); renderWalk();
 }
 let walkReturn=renderVerse; // where to go on save/skip/finish
-function markSaved(){ sfx("verseSaved"); const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.skipped=Prog.skipped.filter(x=>x!==k); if(!Prog.saved.includes(k))Prog.saved.push(k); saveProg(); }
+function markSaved(){ sfx("verseSaved"); const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.skipped=Prog.skipped.filter(x=>x!==k); if(!Prog.saved.includes(k))Prog.saved.push(k); stampSaved(k); saveProg(); }
+/* WHEN it was set aside. The list itself is a plain array and a merge unions two of them, so
+   the order it happens to be in stops being a record of anything once two devices have met.
+   Verses saved before this existed have no stamp and never will — they sort after the stamped
+   ones, keeping the order they are already in, which is the most that can honestly be said. */
+function stampSaved(k){ Prog.savedAt=Prog.savedAt||{}; if(!Prog.savedAt[k]) Prog.savedAt[k]=Date.now(); }
+function savedNewestFirst(list){
+  const at=Prog.savedAt||{};
+  const pos={}; (Prog.saved||[]).forEach((k,i)=>{ pos[k]=i; });
+  return list.slice().sort((a,b)=>{
+    const ka=refKey(a[0],a[1],a[2]), kb=refKey(b[0],b[1],b[2]);
+    const ta=at[ka]||0, tb=at[kb]||0;
+    if(ta!==tb) return tb-ta;                 // dated: newest first, and a dated one is newer
+    return (pos[kb]|0)-(pos[ka]|0);           // neither dated: later in the list is the newer
+  });
+}
 function markSkipped(){ sfx("verseSkipped"); const k=refKey(bookNum(curScene.b),curScene.c,curScene.v); Prog.saved=Prog.saved.filter(x=>x!==k); if(!Prog.skipped.includes(k))Prog.skipped.push(k); saveProg(); }
 /* ---- Tappable references ---------------------------------------------------------------------
    Anywhere a verse is named in ordinary text — a badge, a milestone, a blessing, release notes —
@@ -12915,6 +12964,29 @@ function linkifyRefs(root){
   _linking=false;
 }
 // Where to come back to when they are done with the verse they tapped.
+/* WHERE THE READER ACTUALLY IS, precisely enough to put them back.
+
+   A verse reference can be tapped from anywhere: a lesson's list of suggestions, a palace walk, a
+   chapter list, a story, a search. Coming back has to land on THAT screen — not on the top of
+   whichever tab it happened to live in.
+
+   hereAgain() restored the tab and the scroll and then called that tab's DEFAULT renderer, so
+   returning from a verse landed on the Library hub, or the top of the Bible, or the lesson path.
+   The screen you were looking at was gone, and with it the list of verses you were working
+   through. Restoring the scroll on the wrong screen only made it look deliberate.
+
+   So a screen says how to redraw itself as it draws, and coming back replays that. Each mark
+   captures the state it needs by value: the walk carries its own scene and phase, the chapter list
+   its book and chapter, and replaying one cannot be knocked off course by what has happened since. */
+let SCREEN_NOW = null;
+/* The mark carries the tab it was made on. Not every screen marks itself — the palaces draw
+   through palHere and are restored that way — so without this a mark left behind by the last
+   screen that DID mark would be replayed on a tab it knows nothing about, and coming back from a
+   palace would land on the lesson path. A mark from another tab is no mark at all. */
+function markScreen(fn){
+  const v=(document.querySelector(".view.active")||{}).id||null;
+  SCREEN_NOW = v ? {view:v, fn:fn} : null;
+}
 const VIEW_RENDER={learn:()=>renderPath(), verse:()=>renderVerse(), palace:()=>renderPalaceHere(),
   journey:()=>renderJourney(), stories:()=>renderStories()};
 function hereAgain(){
@@ -12922,10 +12994,13 @@ function hereAgain(){
   // show("palace") renders the LIST, which clears palHere — so which palace screen was open has to
   // be carried across by hand, or coming back always lands on the list
   const here = view==="palace" ? palHere : null;
+  const back = (SCREEN_NOW && SCREEN_NOW.view===view) ? SCREEN_NOW.fn : null;   // the exact screen, and only if it belongs to this tab
   const sc=document.querySelector(".content"); const y=sc?sc.scrollTop:0;
   return ()=>{
     show(view); if(view==="palace") palHere=here;
-    const r=VIEW_RENDER[view]; if(r) r();
+    // show() has already drawn the tab's default screen. Replaying the mark puts the actual one
+    // back over it; only when nothing was marked is the default the right answer.
+    if(back) back(); else { const r=VIEW_RENDER[view]; if(r) r(); }
     requestAnimationFrame(()=>{ const s=document.querySelector(".content"); if(s) s.scrollTop=y; });
   };
 }
@@ -13044,6 +13119,7 @@ function wireVerseNav(scopeEl, nav, ret){   // buttons route through openVerseWi
 // and its spaced repetition trail at the bottom. No learning steps, save or skip.
 function renderLearnedVerse(b,c,v,ret){
   const V=el("verse"); show("verse");
+  markScreen(()=>renderLearnedVerse(b,c,v,ret));   // after show(), which marks the hub as it draws
   const vkey=refKey(b,c,v), cnt=w4wCount(vkey), mastered=cnt>=10, o=verseSRobj(vkey);
   const inPool=verseStage(vkey)!=="loc";   // in the pool -> the button TESTS instead of teaching
   const text=kjvText(b,c,v)||"";
@@ -13137,6 +13213,12 @@ function lvSceneBlock(vkey){
   </div>`;
 }
 function renderWalk(){
+  /* The palace walk, carrying everything that decides what it is showing: which verse, which step
+     of it, and the way back it was given. Tapping a reference out of a walk used to return to the
+     Library hub and lose the walk entirely. */
+  { const _s=curScene, _p=wPhase, _i=wIdx, _st=wSteps, _bf=sceneBackfill, _r=walkReturn, _n=sceneNote;
+    markScreen(()=>{ curScene=_s; wPhase=_p; wIdx=_i; wSteps=_st; sceneBackfill=_bf;
+                     walkReturn=_r; sceneNote=_n; show("verse"); renderWalk(); }); }
   const V=el("verse");
   const b=bookNum(curScene.b), c=curScene.c, v=curScene.v, vkey=refKey(b,c,v);
   const bp=pegFor(b), cp=pegFor(c), vp=pegFor(v);
