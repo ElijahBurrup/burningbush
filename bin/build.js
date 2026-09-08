@@ -138,6 +138,10 @@ for (const f of COPY_FILES) fs.copyFileSync(path.join(SRC, f), path.join(OUT, f)
 // the landing page takes the site root; the app sits at /app beside it. In the shell the app IS
 // the root, and there is nobody to land.
 if (!NATIVE) fs.copyFileSync(path.join(SRC,'landing.html'), path.join(OUT,'index.html'));
+// What the web is running, published where anyone can read it without an API call. The store
+// build carries its version inside the bundle and asks this one whether it has fallen behind.
+if (!NATIVE) fs.writeFileSync(path.join(OUT, 'version.json'),
+  JSON.stringify({ version: ver, at: new Date().toISOString() }) + '\n');
 for (const d of COPY_DIRS) copyDir(path.join(SRC, d), path.join(OUT, d));
 // The store builds have no web server of their own to serve these from, and both stores want a
 // URL rather than a screen — so they are published to the site in every build, and the app links

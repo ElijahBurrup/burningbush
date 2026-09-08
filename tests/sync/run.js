@@ -16,6 +16,7 @@
 const { chromium, open, stopServer } = require('../lib/harness');
 
 let pass = 0, fail = 0;
+const no = (cond, msg) => ok(!cond, msg);
 const ok = (cond, msg) => { if (cond) { pass++; } else { fail++; console.log('  ✗ ' + msg); } };
 const is = (got, want, msg) => {
   if (JSON.stringify(got) === JSON.stringify(want)) pass++;
@@ -220,6 +221,72 @@ const pull = page => page.evaluate(() => Auth.pull());
     const b2 = await screen(pc);
     is(b2.dueTotal, b.dueTotal, '...and it stays settled after another round');
     await phone.close(); await pc.close();
+  }
+
+  // ── the store build, left behind ─────────────────────────────────────────────────────────────
+  // A shell on an older release merges by the OLD rules and then pushes the result, writing its
+  // stale state over an account two corrected devices had just agreed on. One forgotten phone can
+  // undo everything, so it is stopped from syncing at all rather than merely warned.
+  say('— an app that has fallen behind the web');
+  {
+    const cloud = makeCloud();
+    const web = await device(browser, cloud, 'web');
+    const app = await device(browser, cloud, 'android');
+
+    // the shell reports itself as android, and the site says it is newer than this bundle
+    await app.evaluate(() => {
+      window.Capacitor = { getPlatform: () => 'android' };
+      // Keep the real fetch BEFORE replacing it: saving it afterwards captures the replacement and
+      // every ordinary request recurses into the stand-in instead of reaching the route handler.
+      const realFetch = window.fetch.bind(window);
+      window.fetch = (u, o) => (String(u).indexOf('version.json') >= 0)
+        ? Promise.resolve({ ok: true, json: async () => ({ version: '9.9.9' }) })
+        : realFetch(u, o);
+    });
+
+    await seed(web, { goal: 5, doneSkills: ['num:67'], notDue: [67], writtenAt: 3000 });
+    await seed(app, { goal: 10, doneSkills: ['num:67'], due: [67], writtenAt: 1000 });
+
+    await pull(web);                                    // the account holds the good state
+    const cloudBefore = cloud.progJson;
+
+    const stale = await app.evaluate(() => Auth.versionCheck());
+    ok(stale, 'the app notices the website has moved on');
+    const warned = await app.evaluate(() => {
+      const m = el('staleAppModal');
+      return !!m && m.style.display === 'flex' && /will not sync/i.test(m.textContent || ''); });
+    ok(warned, '...and says so, plainly, rather than failing quietly');
+
+    await app.evaluate(() => Auth.push());
+    is(cloud.progJson, cloudBefore, '...and cannot write its stale state over the account');
+    await pull(app);
+    is(cloud.progJson, cloudBefore, '...nor through a pull, which ends in a push');
+
+    const w = await screen(web);
+    is(w.goal, 5, 'the account keeps the goal the up-to-date device chose');
+
+    // once updated, it syncs again
+    await app.evaluate(() => { Auth._stale = false; });
+    await pull(app);
+    const a2 = await screen(app);
+    is(a2.goal, 5, '...and the moment it is updated it catches up');
+    await web.close(); await app.close();
+  }
+
+  // ── and the browser is never gated ───────────────────────────────────────────────────────────
+  say('— the browser is never told it is out of date');
+  {
+    const cloud = makeCloud();
+    const web = await device(browser, cloud, 'web');
+    await web.evaluate(() => {
+      const realFetch = window.fetch.bind(window);
+      window.fetch = (u, o) => (String(u).indexOf('version.json') >= 0)
+        ? Promise.resolve({ ok: true, json: async () => ({ version: '9.9.9' }) })
+        : realFetch(u, o);
+    });
+    const stale = await web.evaluate(() => Auth.versionCheck());
+    no(stale, 'a browser is current by definition and is never blocked');
+    await web.close();
   }
 
   await browser.close();

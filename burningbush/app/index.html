@@ -2206,8 +2206,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.7.1";
+const APP_VERSION="2.8.0";
 const CHANGELOG=[
+ {v:"2.8.0", d:"September 7, 2026", t:"An old app stops syncing rather than overwriting", items:[
+   ["new","<b>If the phone app falls behind the website, it now stops syncing and says so.</b> An older copy merges by the older rules and then writes the result back — so one out-of-date phone could undo what two up-to-date devices had just agreed. Nothing on that device is lost; it keeps working and catches up the moment it is updated."],
+   ["chg","The website now publishes which version it is running, so the app can tell whether it has fallen behind. Browsers are never affected — they load the current version every time."]
+ ]},
  {v:"2.7.1", d:"September 7, 2026", t:"Your devices actually agree now", items:[
    ["fix","<b>The goal still would not cross between devices.</b> The rule was right — the newest choice wins — but only a profile that had CHANGED a setting since the last release carried a timestamp, and no existing profile did. Without one it fell back to whatever this device already had, which is the very thing it was written to stop. A missing timestamp now falls back to when the profile was last saved."],
    ["fix","<b>A palace walked on one device stayed due on the other.</b> Palaces were merged by taking whichever device had the longer list, whole — so the rooms survived but the walk did not. They now merge one slot at a time, keeping whichever walk has got further."]
@@ -5127,6 +5131,36 @@ const API_BASE = (() => {
   }catch(e){}
   return /burningbush-qa|localhost|127\.0\.0\.1|^$/.test(location.hostname) ? SANDBOX : PROD;
 })();
+// Where the web publishes what it is running. Absolute, because the shell's own origin is the
+// bundle rather than the site.
+const WEB_VERSION_URL = "https://burningbush.kingdombuilders.ai/version.json";
+// "2.10.0" is newer than "2.9.1", which a string comparison gets backwards.
+function cmpVersion(a,b){
+  const x=String(a||"").split(".").map(n=>parseInt(n,10)||0);
+  const y=String(b||"").split(".").map(n=>parseInt(n,10)||0);
+  for(let i=0;i<Math.max(x.length,y.length);i++){
+    const d=(x[i]||0)-(y[i]||0);
+    if(d) return d<0?-1:1;
+  }
+  return 0;
+}
+function openStaleAppNotice(){
+  const m=el("staleAppModal")||(()=>{ const d=document.createElement("div"); d.id="staleAppModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  m.innerHTML=`<div class="modal-card center">
+      <div style="font-size:46px">⬆️</div>
+      <h2 class="gold" style="margin:6px 0 4px">Update to keep syncing</h2>
+      <p class="lead" style="margin:0 0 10px">This app is on <b>v${APP_VERSION}</b> and the website has moved on.
+        Until it is updated, <b>your progress here will not sync</b> to your other devices.</p>
+      <p class="hint" style="margin:0 0 14px">Nothing on this device is lost — it keeps working, and it will
+        catch up the moment the app is updated. Syncing is paused rather than broken, so an old copy
+        cannot write over what your other devices have done.</p>
+      <button class="btn" id="staleOk" style="width:100%">Got it</button>
+      <button class="btn ghost" id="staleWeb" style="width:100%;margin-top:8px">Open the web version instead</button>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  el("staleOk").onclick=()=>{ m.style.display="none"; };
+  el("staleWeb").onclick=()=>{ try{ window.open("https://burningbush.kingdombuilders.ai/app","_blank"); }catch(e){} };
+}
 function firebaseReady(){ return true; }   // cloud accounts are live (kept the name so existing call sites just work)
 /* Whose progress is on this device. Empty = nobody has ever signed in here, so what is stored is
    the person's own trial run and travels with them into the account they make. */
@@ -5155,7 +5189,7 @@ const Auth = {
     // an install from before progress was owned: adopt the signed-in account as the owner rather
     // than treating its progress as anonymous
     if(Auth._token && Auth.user && Auth.user.email && !progOwner()) setProgOwner(Auth.user.email);
-    if(Auth._token) Auth.pull();          // already signed in → merge cloud on boot
+    if(Auth._token) Auth.versionCheck().then(stale=>{ if(!stale) Auth.pull(); });   // signed in → confirm this build may still sync, then merge
     renderAcctBox();
   },
   loggedIn(){ return !!Auth._token; },
@@ -5203,8 +5237,31 @@ const Auth = {
     return Promise.resolve();
   },
   // pull cloud → union-merge with local → push the merged truth back (both devices converge, nothing lost)
+  /* ---- Out of date, and therefore dangerous ------------------------------------------------
+     The store build carries its own copy of this code. A shell left on an older release does not
+     merely miss what is new: it merges by the OLD rules and then pushes the result, writing its
+     stale cards and settings back over an account two corrected devices had just agreed on. One
+     forgotten phone can undo the lot.
+
+     So a shell that has fallen behind the web does not sync at all — neither half — and says why.
+     The browser is never gated: it reloads to the current version by definition, and gating it on a
+     failed fetch would strand somebody on a train.                                              */
+  _stale:false, _staleAsked:false,
+  async versionCheck(){
+    if(nativePlatform()==="web") return false;          // the browser is always current
+    try{
+      const r=await fetch(WEB_VERSION_URL+"?cb="+Date.now(), {cache:"no-store"});
+      if(!r.ok) return false;                            // unreachable is not out of date
+      const d=await r.json();
+      Auth._stale = cmpVersion(String(d.version||""), APP_VERSION) > 0;
+    }catch(e){ Auth._stale=false; }                      // offline is not out of date either
+    if(Auth._stale && !Auth._staleAsked){ Auth._staleAsked=true; openStaleAppNotice(); }
+    return Auth._stale;
+  },
   async pull(){
-    if(!Auth._token) return; Auth._pulling=true;
+    if(!Auth._token) return;
+    if(Auth._stale){ openStaleAppNotice(); return; }     // never read-and-write-back on old rules
+    Auth._pulling=true;
     // Who has paid is the server's to say, and this is the moment we have a token to ask with.
     try{ Billing.refresh(); }catch(e){}
     try{
@@ -5247,7 +5304,7 @@ const Auth = {
     }catch(e){ console.warn("cloud pull failed:", e && e.message); }
     Auth._pulling=false;
   },
-  async push(){ if(!Auth._token) return;
+  async push(){ if(!Auth._token || Auth._stale) return;   // an old shell must never write over the account
     // The blob says whose it is. A row that ends up holding the wrong person's progress can then be
     // recognised and refused on the way back in, instead of being handed over as if it were theirs.
     Prog.owner = String((Auth.user&&Auth.user.email)||"").toLowerCase();
@@ -5264,6 +5321,7 @@ const Auth = {
   _lastPull:0,
   refresh(force){
     if(!Auth._token || Auth._pulling) return Promise.resolve(false);
+    if(Auth._stale){ openStaleAppNotice(); return Promise.resolve(false); }
     const now=Date.now();
     if(!force && now-Auth._lastPull < 60000) return Promise.resolve(false);
     Auth._lastPull=now;
