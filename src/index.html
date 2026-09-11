@@ -1397,6 +1397,19 @@
     background:var(--muted);transition:left .15s ease,background .15s ease}
   .sfx-sw.on{background:var(--gold);border-color:var(--gold-ink)}
   .sfx-sw.on span{left:21px;background:var(--on-accent,#fff)}
+  .vrow-note{font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--muted);margin-top:3px}
+  .mem-filter{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 8px}
+  .mem-filter input[type=date]{padding:5px 7px;font:inherit;font-size:12.5px;border-radius:8px;
+    border:1px solid var(--line);background:var(--panel2);color:var(--ink)}
+  .mem-filter .lbl{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .srl-row{display:flex;align-items:center;gap:8px;padding:4px 0}
+  .srl-n{flex:0 0 56px;font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--muted);
+    text-transform:uppercase}
+  .srl-in{flex:0 0 84px;text-align:center;padding:6px 8px}
+  .srl-tag{flex:1;font-size:11.5px;font-weight:700;color:var(--gold-ink,var(--gold))}
+  .srl-tag.off{color:var(--muted);font-weight:600}
+  .srl-x{flex:0 0 auto;padding:4px 9px}
+  .srl-x[disabled]{opacity:.3}
   .sfx-sw.sm{width:34px;height:20px}
   .sfx-sw.sm span{width:14px;height:14px}
   .sfx-sw.sm.on span{left:17px}
@@ -2110,6 +2123,17 @@
       <div class="prof-sect" style="margin-top:16px">Get the app</div>
       <button class="btn ghost" id="pInstall" style="width:100%">📲 Install on your phone (home screen app)</button>
 
+      <div class="prof-sect" style="margin-top:16px">Review schedule</div>
+ <p class="hint" style="margin:0 0 8px">The days after learning a verse that it comes back to you.
+   The first 6 are the dots drawn on a verse, so changing them changes the trail you see.
+   Anything beyond those comes round quietly once a verse is sealed.</p>
+      <div id="srLadderRows"></div>
+      <div class="btnrow" style="margin:8px 0 0">
+        <button class="btn ghost sm" id="srAddStep">+ Add a checkpoint</button>
+        <button class="btn ghost sm" id="srResetLadder">Back to the default</button>
+      </div>
+      <div id="srLadderNote" class="hint" style="margin:8px 0 0;min-height:17px"></div>
+
       <div class="prof-sect" style="margin-top:16px">Sound effects</div>
  <p class="hint" style="margin:0 0 8px">Every sound in the app, one switch each. Tap a name to hear it.
    Turning one off never turns off anything else, and the choices follow your account.</p>
@@ -2163,6 +2187,7 @@
     </div>
   </div>
 
+<!--STRIP:PAYMODAL:START-->
   <div class="modal" id="payModal" style="display:none">
     <div class="modal-card" style="text-align:center;position:relative">
       <button class="lclose" id="payX" style="position:absolute;top:8px;right:10px;font-size:22px">✕</button>
@@ -2197,6 +2222,7 @@
       <p class="hint" style="margin-top:12px">Secure checkout by Stripe. Cancel anytime. A <b>gifted</b> subscription is billed once and does <b>not</b> auto-renew.</p>
     </div>
   </div>
+<!--STRIP:PAYMODAL:END-->
 </div>
 
 <script src="kjv.js"></script>
@@ -2251,8 +2277,36 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.12.0";
+const APP_VERSION="2.17.0";
 const CHANGELOG=[
+ {v:"2.17.0", d:"September 10, 2026", t:"Double zero, and every verse you know", items:[
+   ["new","<b>00 joins the numbers, right after 99.</b> It is the last of the two-digit pegs and it comes with everything the others have: <b>Sauce</b> as its Major System word with Seesaw, Zeus, Oasis and Suez to choose between, and six things the world already ties to it \u2014 midnight on a 24-hour clock, the green pocket an American roulette wheel adds, double-aught buckshot, Italian 00 flour, OO gauge track, and the licence to kill."],
+   ["new","<b>Every verse you know, in one list.</b> At the bottom of My Verses, under your books, the whole lot with the most recently learned at the top and the date beside each one. Narrow it to a date or a range to find what you learned in a particular week. Verses learned before the app kept dates say so rather than guessing."]
+ ]},
+ {v:"2.16.0", d:"September 10, 2026", t:"A day of work counts once, on every device", items:[
+   ["fix","<b>A review and a new number both done, and the goal reading nothing.</b> The day\u2019s tally held review and other work together and subtracted the review part back out \u2014 two numbers that only meant anything side by side. Syncing keeps the higher of each separately, which is right for numbers that stand alone and wrong for those two: a review on the phone and two numbers on the laptop cancelled out to nothing. Neither device was wrong; the subtraction was. They are counted apart now, so the day reads what you actually did wherever you did it. Days recorded the old way convert themselves."],
+   ["new","<b>Set the days a verse comes back to you.</b> Profile \u2192 Review schedule. The default is 0, 1, 3, 7, 16, 30 and then two months, six months and two years \u2014 change any of them, add more, or put it back. The first six are the dots drawn on a verse, so setting 0, 1, 3, 7, 14, 28 changes the trail you see as well as when the verse returns."],
+   ["new","<b>Practice by how long ago you learned a verse.</b> Practice Verses asks first: everything you know, or the verses you learned between two dates. 10 to 14 days and 25 to 29 are offered because they straddle the checkpoints that slip most, and you can set your own."]
+ ]},
+ {v:"2.15.1", d:"September 10, 2026", t:"The review clock survives a reload", items:[
+   ["fix","<b>Fourteen minutes of review still reported four.</b> The seconds already banked were kept safely, but the run currently in progress was held in memory only \u2014 and a phone reloads the page whenever it likes: coming back from the background, a tab being reclaimed, a pull to refresh. Every one of those threw away whatever had not been banked yet. The run is now folded into the stored total every few seconds, so losing the page costs a few seconds instead of the session, and starting again adds to what is already there rather than beginning from nothing."]
+ ]},
+ {v:"2.15.0", d:"September 10, 2026", t:"A broken streak says so, and asks", items:[
+   ["fix","<b>A missed day went unnoticed and the streak went on reading as unbroken.</b> The streak was only ever judged when a day was FINISHED, so missing one meant nothing ran at all — the number kept yesterday’s value, no freeze was spent, nothing was offered, and the whole question waited to be settled on the next completed day. The gap is looked for when you open the app now, and the number stops claiming a run that ended."],
+   ["chg","<b>A Streak Freeze is offered rather than taken.</b> It used to be spent silently the moment a single missed day was noticed. You earned or paid for it, so you are asked: bridge the gap and carry on, or let the run go. If you are short a freeze you can buy the difference there. Either way the streak stays buyable from the streak screen for ten days."]
+ ]},
+ {v:"2.14.0", d:"September 10, 2026", t:"Your own review schedule", items:[
+   ["new","<b>Set the days a verse comes back to you.</b> Profile → Review schedule. The default is 0, 1, 3, 7, 16, 30 and then two months, six months and two years — change any of them, add more, or put it back. The first six are the dots drawn on a verse, so setting 0, 1, 3, 7, 14, 28 changes the trail you see as well as when the verse returns. Verses already walking the trail keep the step they had reached; the new days apply to the reviews still to come."],
+   ["new","<b>Practice by how long ago you learned a verse.</b> Practice Verses now asks first: everything you know, or the verses you learned between two dates. <b>10 to 14 days</b> and <b>25 to 29</b> are offered because they straddle the checkpoints that slip most, and you can set your own. Tick both and you get both groups, oldest first, one after another — a checkpoint walked on purpose rather than waited for."]
+ ]},
+ {v:"2.13.1", d:"September 9, 2026", t:"Looking a verse up no longer costs you the test", items:[
+   ["fix","<b>Tapping a reference during word for word lost the test.</b> The way back landed on the Library hub, so the verse you were half way through had to be started again — which is exactly when you most want to look it up. The ✕ and ✓ now put you back on the same word of the same verse, and the same is true of the number test, the word warm-up and the quizzes."],
+   ["fix","<b>A thirty minute review reported four minutes.</b> The same trip out to a verse stopped the review clock and nothing ever started it again, so only the time before your first lookup was counted. The clock now runs for as long as you are in the review — looking a verse up counts, because that is part of reviewing it — and stops when you leave."]
+ ]},
+ {v:"2.13.0", d:"September 8, 2026", t:"Ready for the app stores", items:[
+   ["new","<b>The phone app is being prepared for Google Play and the App Store.</b> That build is free from end to end — every lesson, palace and story open — and it carries no payment code of any kind rather than payment code that is switched off. Nothing changes here on the web, where Pro works exactly as it did."],
+   ["chg","<b>The store build starts silent.</b> Sound is off by default there and can be switched on in Profile → Sound effects. On the web it stays on."]
+ ]},
  {v:"2.12.0", d:"September 8, 2026", t:"Back to where you were", items:[
    ["fix","<b>A verse now returns you to the screen you opened it from.</b> A reference can be tapped from anywhere, and coming back was landing on the top of whichever tab that screen lived in — the Library hub, the front of the Bible, the lesson path. Opening a verse from a palace walk now returns you to that walk, on the same verse and the same step."],
    ["fix","<b>The skill-complete screen comes back with its suggested verses.</b> Tapping one of the verses a lesson just put in reach used to cost you the whole list; you can look at one and come straight back to tag the rest."],
@@ -3503,7 +3557,7 @@ function pad2(n){ return (n>=0 && n<10) ? "0"+n : ""+n; }   // two-digit for a r
    Each list is Major System verified (tools/gen-alt-pegs.js): every word decodes to the same
    two-digit code, so a user can swap Soap→Soup for 09 but never Cat (71). Generated, do not hand-edit. */
 const ALT_PEGS = {
-  "00":["Sauce","Seesaw"],"01":["Seed","Side","Seat","Suit","Soda","City"],"02":["Sun","Swan","Sauna"],
+  "00":["Sauce","Seesaw","Zeus","Oasis","Suez"],"01":["Seed","Side","Seat","Suit","Soda","City"],"02":["Sun","Swan","Sauna"],
   "03":["Sumo","Seam"],"04":["Sari","Soar","Sewer","Sore"],"05":["Sail","Seal","Soul","Silo","Sole"],
   "06":["Sage","Sash","Sushi"],"07":["Sock","Sack","Saga","Ski","Sky"],"08":["Sofa","Safe"],
   "09":["Soap","Soup","Sub","Sap","Spa"],"10":["Toes","Daisy","Dice","Dose"],"11":["Tot","Dad","Toad","Date","Data"],
@@ -4146,6 +4200,10 @@ const BOOK_WORDS={
 // place is something that happened in a year ending in those digits. Every date has been checked.
 // You cannot learn 58 from "58 seconds"; you can learn it from the year NASA was founded.
 const NUM_REFS={
+ /* 00 sits at the end of the two-digit pegs. Its Major System sound is s/z twice over, and the
+    world has plenty to hang on it — a clock at midnight, the green pocket an American roulette
+    wheel adds, the coarsest buckshot, the finest Italian flour. */
+ 0:[["Midnight","A 24-hour clock reads 00:00 at midnight."],["Roulette","The American wheel adds a green 00 beside the 0."],["Double-Aught","00 buckshot is the largest common shot size."],["Pizza Flour","Italian 00 flour is the finest grind there is."],["OO Gauge","Model railways run on OO gauge track."],["Secret Agent","The 00 prefix is the licence to kill."]],
  1:[["Hole-in-One","One stroke puts the ball in the hole."],["Foam Finger","The foam finger says number one."],["One Candle","A first birthday cake has one candle."],["Gold Medal","Gold is for first place."],["Lone Wolf","A lone wolf is one alone."],["Unicycle","A unicycle has one wheel."],["Podium","The top podium spot is number one."]],
  2:[["Shoes","Shoes come in twos."],["Bicycle","A bicycle has two wheels."],["Twins","Twins are two."],["Thumbs Up","The classic rating is two thumbs up."],["Duet","A duet is sung by two."],["Domino","A domino has two halves."],["Peace Sign","A peace sign holds up two fingers."]],
  3:[["Tricycle","A tricycle has three wheels."],["Stool","A milking stool stands on three legs."],["Hat Trick","A hat trick is three goals."],["Three-Point Line","Shots from there score three."],["Triangle","A triangle has three sides."],["Three Strikes","Three strikes and you are out."],["Traffic Light","Red, amber, green, three lights."]],
@@ -4730,8 +4788,10 @@ function migrateProg(p){
   p.talents=cnt(p.talents); p.streak=cnt(p.streak); p.bestStreak=cnt(p.bestStreak); p.talentLog=obj(p.talentLog); // Talents (verse-practice points), streaks, per-verse 24h earn log
   p.dayStreak=cnt(p.dayStreak); p.bestDayStreak=cnt(p.bestDayStreak); if(typeof p.lastReviewDay!=="string") p.lastReviewDay=""; // daily review streak (distinct from the per-answer streak)
   p.freezes=cnt(p.freezes); p.freezeAwards=arr(p.freezeAwards); // Streak-Freeze power-ups + which milestones already granted one
-  p.srClock=(p.srClock&&typeof p.srClock==='object')?p.srClock:null;   // {d,sec,done,runs}
+  p.srClock=(p.srClock&&typeof p.srClock==='object')?p.srClock:null;   // {d,sec,ms,done,runs}
   p.savedAt=(p.savedAt&&typeof p.savedAt==='object')?p.savedAt:{};     // {verseKey: when set aside}
+  p.srLadder=Array.isArray(p.srLadder)?p.srLadder:null;                // the reader's own review days
+  p.pracRanges=Array.isArray(p.pracRanges)?p.pracRanges:null;          // practise-by-age windows
   p.goalLog=arr(p.goalLog).filter(x=>x&&x.d).slice(-GOAL_LOG_DAYS);   // a fortnight of what was asked and what was done
   if(!p.streakLost || !p.streakLost.at) p.streakLost=null;
   if(typeof p.srDay!=="string") p.srDay="";   // the day a whole review set was finished
@@ -4807,6 +4867,16 @@ function migrateProg(p){
   p.reminder.time=p.reminder.times[0].t;   // keep the legacy field in step
   p.saved=p.saved.filter(k=>!p.memorized.includes(k)); p.skipped=p.skipped.filter(k=>!p.memorized.includes(k)); // heal verses stuck in saved/skip after being learned
   // (future) if(p.__v<2){ ...transform... }
+  /* Until now goalDay.count held review AND other work together, with the review part taken back
+     out by subtraction. The two are separate counters now, so a record written under the old shape
+     is converted once: what is left after removing the review part IS the other work. Marked on the
+     day itself, because only the current day's counters are live — older days are already archived
+     in goalLog and are not read this way. */
+  if(p.goalDay && typeof p.goalDay==="object" && !p.goalDay.split){
+    const sr=(p.srGoalDay && p.srGoalDay.date===p.goalDay.date) ? (p.srGoalDay.count|0) : 0;
+    p.goalDay.count=Math.max(0, (p.goalDay.count|0) - sr);
+    p.goalDay.split=true;
+  }
   p.__v=PROG_SCHEMA;
   return p;
 }
@@ -4838,7 +4908,7 @@ function mergeProg(a,b){
      newer stamp brings its whole set across together — a half-merged goal (mode from one device,
      numbers from the other) would be worse than either. */
   { const SETTINGS=["dailyGoal","goalMode","goalByDay","goalWeekday","goalWeekend","theme",
-                    "reminder","dailyMin","sfxOff","sfxVarOff"];   // real field names; the translation key is trActive
+                    "reminder","dailyMin","sfxOff","sfxVarOff","srLadder","pracRanges"];   // real field names; the translation key is trActive
     const at = p => (p && p.settingsAt) || 0;
     const from = at(b) > at(a) ? b : a;
     SETTINGS.forEach(f=>{ if(from[f]!==undefined) m[f]=from[f]; else delete m[f]; });
@@ -4857,6 +4927,7 @@ function mergeProg(a,b){
       if(!x||typeof x!=="object") return y; if(!y||typeof y!=="object") return x;
       if(x.date!==y.date) return (String(x.date||"")>String(y.date||""))?x:y;   // a newer day stands alone
       return {...y, ...x,
+        split:!!(x.split||y.split),          // converted on either device is converted
         count:Math.max(x.count|0, y.count|0),
         target:Math.max(x.target|0, y.target|0),
         metTarget:Math.max(x.metTarget|0, y.metTarget|0),
@@ -5106,6 +5177,7 @@ function skillPaywalled(sk){ return isPaidSkill(sk) && !Billing.isPro() && !((Pr
 // Single choke-point for the subscription. Web uses Stripe; the mobile app must use the
 // App Store / Play in-app purchase instead (stores forbid Stripe for digital goods) — only
 // this object changes for that. Entitlement is stored via Store so it survives with progress.
+/*STRIP:BILLING:START*/
 const Billing = {
   // ── configure these once your Stripe product exists ──
   cfg: {
@@ -5217,6 +5289,7 @@ const Billing = {
     setTimeout(ask, 900);
   }
 };
+/*STRIP:BILLING:END*/
 
 /* =================== ACCOUNTS + CLOUD SYNC (Kingdom Builders API) =================== */
 // One shared Kingdom Builders login (kb.users) backs every product; this app syncs its progress to burningbush.progress.
@@ -6209,7 +6282,10 @@ function buildUnits(){
         It is now subsections of six — 12A, 12B and so on — with a BUTTON PER NUMBER and a test on
         the six at the end of each. The phase machinery does the rest on its own: a phase is complete
         only when every skill in it is done, and the next one is opened by scratching a ticket. */
-  { const NUMS=range(67,176), PER=6, chunks=[];
+  /* 00 is taught with the two-digit pegs it belongs to rather than at the very start, so it lands
+     after 99 and before the hundreds begin. It is a real peg — PEGS[0] is "Sauce" and pegFor(0)
+     has always worked — it simply had no place on the path and nothing tying it to the world. */
+  { const NUMS=range(67,99).concat([0], range(100,176)), PER=6, chunks=[];
     for(let i=0;i<NUMS.length;i+=PER) chunks.push(NUMS.slice(i,i+PER));
     // 110 does not divide by six. Rather than end on a stub of two, the tail joins the last full set.
     if(chunks.length>1 && chunks[chunks.length-1].length<PER/2){
@@ -6217,11 +6293,12 @@ function buildUnits(){
     chunks.forEach((nums,ci)=>{
       const a=nums[0], b=nums[nums.length-1];
       const letter=String.fromCharCode(65+ci);            // A, B, C …
-      const skills=nums.map(n=>({id:`num:${n}`, label:String(n), kind:"num", items:[n]}));
+      const skills=nums.map(n=>({id:`num:${n}`, label:dispNum("num",n), kind:"num", items:[n]}));
       // The test is its own tile at the end, so the six are asked together AFTER they are all taught
       // rather than one number being taught and quizzed in the same breath.
-      skills.push({id:`numtest:${a}`, label:`Test ${a}–${b}`, kind:"num", items:nums.slice(), testOnly:true});
-      units.push({name:`Phase 12${letter}: ${a}–${b}`, ic:ROUND_ICONS[12], skills});
+      const A=dispNum("num",a), B=dispNum("num",b);
+      skills.push({id:`numtest:${a}`, label:`Test ${A}–${B}`, kind:"num", items:nums.slice(), testOnly:true});
+      units.push({name:`Phase 12${letter}: ${A}–${B}`, ic:ROUND_ICONS[12], skills});
     }); }
   // 5) Bible Stories — 20 themed sections of 5, learned after the numbers.
   let sgid=0;
@@ -6814,15 +6891,51 @@ function openStorySection(ui){
 }
 /* ---- Memory Palace builder (build 3 personal palaces) ---- */
 const PALACE_IDEAS=["A Home","A Commute","A Business","A Church","A School"];   // inspiration prompts on the naming page
-/* ---- palace spaced repetition trail: review at D0, D1, D3, D7, D16, D30 ---- */
-const SR_TRAIL=[0,1,3,7,16,30]; // the trail you can SEE — six dots, and six is what stays on screen
-// The long tail: two months, six months, two years. The engine walks these exactly like the rest,
-// but they are deliberately NOT part of the drawn trail — a verse is "sealed" when the visible six
-// are done, and these come round quietly afterwards. What IS kept is which one a verse last came
-// back from, so the app can name it when you pass one without turning it into more track.
-const SR_LONG=[60,180,730];
-const SR_ALL=SR_TRAIL.concat(SR_LONG);
-const SR_LONG_NAME={60:"two month",180:"six month",730:"two year"};
+/* ---- the review ladder ----------------------------------------------------------------------
+   Days from learning at which a verse comes back: D0, D1, D3, D7, D16, D30, then a long tail of
+   two months, six months and two years. The first six are the trail you SEE — six dots, and six is
+   what stays on screen. The tail is walked exactly like the rest but is deliberately not drawn: a
+   verse is "sealed" when the visible six are done, and the rest come round quietly afterwards.
+   What IS kept is which tail checkpoint a verse last came back from, so the app can name it when
+   you pass one without turning it into more track.
+
+   The reader can set their own ladder (Profile -> Review schedule), so these three arrays are
+   FILLED IN rather than declared, and refilled in place when the setting changes. Filled in place
+   deliberately: thirty-odd places read SR_TRAIL.length or SR_ALL[step] directly, and rebinding the
+   names would have meant changing every one of them and getting one wrong. */
+const SR_LADDER_DEFAULT=[0,1,3,7,16,30,60,180,730];
+const SR_VISIBLE=6;                    // how many checkpoints the drawn trail can hold
+const SR_TRAIL=[], SR_LONG=[], SR_ALL=[], SR_LONG_NAME={};
+const SR_LONG_NAME_BASE={60:"two month",180:"six month",730:"two year"};
+/* A ladder is only usable if it starts at zero and climbs. Anything else — a stray letter, a
+   duplicate, days out of order, a single entry — falls back to the default rather than scheduling
+   a verse into nonsense. Sorting rather than rejecting means typing them in any order still works. */
+function srLadderOf(p){
+  const raw=(p && Array.isArray(p.srLadder)) ? p.srLadder : null;
+  if(!raw) return SR_LADDER_DEFAULT.slice();
+  const clean=raw.map(n=>Math.round(Number(n)))
+                 .filter(n=>isFinite(n) && n>=0 && n<=36500)
+                 .filter((n,i,a)=>a.indexOf(n)===i)
+                 .sort((x,y)=>x-y);
+  if(clean.length<2 || clean[0]!==0) return SR_LADDER_DEFAULT.slice();
+  return clean;
+}
+function srLongLabel(d){
+  if(SR_LONG_NAME_BASE[d]) return SR_LONG_NAME_BASE[d];
+  if(d>=365){ const y=Math.round(d/365); return y+" year"; }
+  if(d>=30){ const m=Math.round(d/30); return m+" month"; }
+  return d+" day";
+}
+function srApplyLadder(){
+  const L=srLadderOf(typeof Prog!=="undefined"?Prog:null);
+  SR_ALL.length=0;   L.forEach(d=>SR_ALL.push(d));
+  SR_TRAIL.length=0; L.slice(0,SR_VISIBLE).forEach(d=>SR_TRAIL.push(d));
+  SR_LONG.length=0;  L.slice(SR_VISIBLE).forEach(d=>SR_LONG.push(d));
+  Object.keys(SR_LONG_NAME).forEach(k=>{ delete SR_LONG_NAME[k]; });
+  SR_LONG.forEach(d=>{ SR_LONG_NAME[d]=srLongLabel(d); });
+}
+srApplyLadder();
+function srLadderIsCustom(){ return !!(Prog && Array.isArray(Prog.srLadder) && Prog.srLadder.length); }
 // checkpoint days. Intervals are RELATIVE: each completed review restarts the clock to the NEXT gap,
 // so a backlog only ever advances ONE checkpoint at a time (fall 3 days behind and D1+D3 due → doing it counts as D1, then D3 waits 2 more days).
 const SR_GRACE=60*60*1000;   // pull in anything due within the next hour so near-due items batch together (23h ≈ 24h)
@@ -7656,7 +7769,7 @@ function confirmSpend(title, sub, onYes, opts){ opts=opts||{};
   el("spNo").onclick=()=>{ m.style.display="none"; };
 }
 const vSec={sugg:false, topics:false, mem:false, saved:false}; // sections start minimized
-function verseRow(b,c,v,st,star){
+function verseRow(b,c,v,st,star,note){
   const t=kjvText(b,c,v);
   let srBadge="", trail="";
   if(st==="mem"){
@@ -7671,7 +7784,7 @@ function verseRow(b,c,v,st,star){
   const hk = st==="mem" && isHeart(refKey(b,c,v));
   const mst = st!=="mem" ? '' : (hk ? heartEtchSVG() : (w4wMastered(refKey(b,c,v)) ? '★ ' : ''));
   const prom = isPromiseVerse(b,c,v);
-  return `<div class="vrow clkrow${hk?" heartrow":""}" data-vb="${b}:${c}:${v}"><div class="vt"><b class="${prom?"promise-ref":"gold"}">${prom?"🤝 ":""}${star?"✨ ":""}${mst}${bookName(b)} ${c}:${v}${srBadge}</b><div class="muted">${t.length>56?t.slice(0,56).replace(/\s+\S*$/,"")+"…":t}</div>${trail}</div><div>${st==="mem"?'<span style="color:var('+(hk?'--on-accent':'--good')+');font-weight:800">✓</span>':'→'}</div></div>`;
+  return `<div class="vrow clkrow${hk?" heartrow":""}" data-vb="${b}:${c}:${v}"><div class="vt"><b class="${prom?"promise-ref":"gold"}">${prom?"🤝 ":""}${star?"✨ ":""}${mst}${bookName(b)} ${c}:${v}${srBadge}</b><div class="muted">${t.length>56?t.slice(0,56).replace(/\s+\S*$/,"")+"…":t}</div>${note?`<div class="vrow-note">${note}</div>`:""}${trail}</div><div>${st==="mem"?'<span style="color:var('+(hk?'--on-accent':'--good')+');font-weight:800">✓</span>':'→'}</div></div>`;
 }
 function suggestedVerses(){
   // all curated heart-verses, not yet memorized/skipped; reachable ones first
@@ -8005,10 +8118,22 @@ function openSuggestedForBook(bn){
 }
 function renderVerse(){
   { const _v=vView, _f=vFrom; markScreen(()=>{ vView=_v; vFrom=_f; renderVerse(); }); }
-  // Standing at the hub is not reviewing. Whether the set was finished or abandoned half way, the
-  // seconds already spent are banked here — abandoning must cost nothing, and must record nothing
-  // extra either.
-  srClockStop();
+  /* The review clock, and why this waits a tick.
+
+     Standing at the hub is not reviewing, so the seconds are banked here. But PASSING THROUGH the
+     hub is not standing on it: show("verse") draws the hub before the screen that asked for it, so
+     looking a verse up from inside a test came through here and stopped the clock on the way. A
+     thirty minute review that dipped into a verse read as four.
+
+     The rule the reader described is the right one: the clock ticks for as long as they are in the
+     review, lookups included, and stops when they leave it. So the decision is deferred by a tick —
+     if another screen has drawn by then, the hub was a corridor and the clock keeps running; if
+     nothing has, this is where they stopped and the seconds are banked. */
+  if(!srSessionLive()) srClockStop();
+  else { const mine=SCREEN_NOW; setTimeout(()=>{
+    // The mark is a fresh object per screen, so if it is still ours the hub is still what is showing.
+    if(SCREEN_NOW===mine && srSessionLive()) srClockStop();   // they stopped here: bank it
+  }, 0); }
   updateMetrics();
   const V=el("verse");
   const saved=Prog.saved.map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2]));
@@ -8041,7 +8166,7 @@ function renderVerse(){
         return !sc || !loc || loc.p==null || !((loc.room||"").trim()); });
  const nudge = memBare.length ? `<div class="mem-backfill"><div class="mem-backfill-t"><b>🏛️ ${memBare.length} verse${memBare.length>1?"s":""}</b> ${memBare.length>1?"are":"is"} missing a scene, a palace or a room, fill ${memBare.length>1?"them":"it"} in so ${memBare.length>1?"they":"it"} stick${memBare.length>1?"":"s"}.</div><button class="btn sm" id="memBackfill">Finish ${memBare.length>1?"Them":"It"} →</button></div>` : "";
       body=mem.length
-        ? scoreboardHTML()+nudge+`<div class="sbhead">YOUR BOOKS</div><p class="hint" style="margin:2px 0 8px">Tap one to see your verses in it.</p>`+bookGrid(mem,"mem")
+        ? scoreboardHTML()+nudge+`<div class="sbhead">YOUR BOOKS</div><p class="hint" style="margin:2px 0 8px">Tap one to see your verses in it.</p>`+bookGrid(mem,"mem")+memListHTML(mem)
         : `<div class="card center" style="padding:26px 18px"><div style="font-size:44px">\u{1F49B}</div>
              <h2 style="font-size:19px;margin:8px 0 2px">Your scoreboard starts here</h2>
  <p class="lead" style="margin:6px 0 0">Every verse you finish building is counted on this page. How many you have, how many words, how many you know by heart, and how long you have held them.</p></div>`;
@@ -8078,6 +8203,14 @@ function renderVerse(){
       else { vView="hub"; renderVerse(); }
       const sc=document.querySelector(".content"); if(sc) sc.scrollTop=0;
     };
+    /* The date boxes redraw the list in place. verseScroll is kept so the redraw does not throw
+       the reader back to the top of a long list they were part way down. */
+    { const redraw=()=>{ verseScroll=document.querySelector(".content").scrollTop; renderVerse();
+        requestAnimationFrame(()=>{ const s=document.querySelector(".content"); if(s) s.scrollTop=verseScroll; }); };
+      const f=el("memFrom"), t=el("memTo"), c=el("memClear");
+      if(f) f.onchange=()=>{ memFilter.from=f.value||""; redraw(); };
+      if(t) t.onchange=()=>{ memFilter.to=t.value||""; redraw(); };
+      if(c) c.onclick=()=>{ memFilter={from:"",to:""}; redraw(); }; }
     V.querySelectorAll("[data-topicopen]").forEach(b=>b.onclick=()=>{
       const ti=+b.dataset.topicopen;
       verseScroll=document.querySelector(".content").scrollTop;
@@ -8125,8 +8258,8 @@ function renderVerse(){
   if(el("vLearn")) el("vLearn").onclick=openLearnVerses;
   if(el("vPracVerse")) el("vPracVerse").onclick=()=>{
  if(!mem.length){ toast("Memorize a verse first, tap Learn Verses."); return; }
-    memTestRecent=[]; suppressGrowth=false; reviewedThisSession=[]; Prog.streak=0; saveProg(); refreshHUD&&refreshHUD();
-    practiceNext(true);   // anything you know, not only what is due
+    // The chooser resets the run state and starts practice itself, for whichever deck is picked.
+    openPracRangeSetup();
   };
   if(el("vPracNum")) el("vPracNum").onclick=()=> knownNumbers().size>=2
     ? (feat("ntsetup")?openNumTestSetup():startNumberTest())
@@ -9815,7 +9948,58 @@ function nextMemVerse(){                       // the "go to next" hook fired af
   practiceNext(false);
 }
 let suppressGrowth=false;   // set when the user chooses to keep reviewing already-established verses (so we don't re-nag)
+/* ---- practising by age: a spaced repetition you drive yourself ------------------------------
+   The review queue decides what is due. This decides nothing — it hands you every verse you
+   learned between two dates, one after another, so a checkpoint can be walked deliberately rather
+   than waited for. Ten to fourteen days and twenty-five to twenty-nine are offered because they
+   straddle the D16 and D30 checkpoints, which are the two that most often slip.
+
+   Age is measured from when the verse was LEARNED, not from when it is next due: "everything I
+   learned twelve days ago" is a question about the verse, and one a reader can actually hold in
+   their head. */
+const PRAC_RANGE_DEFAULTS=[{lo:10,hi:14},{lo:25,hi:29}];
+function pracRanges(){
+  const r=(Prog && Array.isArray(Prog.pracRanges)) ? Prog.pracRanges : null;
+  if(!r || !r.length) return PRAC_RANGE_DEFAULTS.map(x=>({lo:x.lo,hi:x.hi,on:false}));
+  return r.map(x=>({lo:Math.max(0,Math.round(Number(x.lo)||0)),
+                    hi:Math.max(0,Math.round(Number(x.hi)||0)), on:!!x.on}));
+}
+function pracRangesSave(list){
+  Prog.pracRanges=list.map(x=>({lo:x.lo,hi:x.hi,on:!!x.on}));
+  Prog.settingsAt=Date.now(); saveProg();
+}
+// How many whole days ago a verse was learned. Verses with no record are ageless and never match.
+function verseAgeDays(k){
+  const o=vsr(k); const t=o && o.learnedAt;
+  if(!t) return null;
+  return Math.floor((Date.now()-t)/DAY);
+}
+/* Every verse whose age falls inside any ticked range, oldest first so the run has an order the
+   reader can predict. A union rather than a single window: ticking both offered ranges asks for
+   the D16 and the D30 group in one sitting, which is the whole point of offering two. */
+function pracRangeDeck(){
+  const on=pracRanges().filter(r=>r.on && r.hi>r.lo);
+  if(!on.length) return null;                       // nothing ticked: practise everything, as before
+  const hits=[];
+  memArr().map(a=>a.join(":")).forEach(k=>{
+    const age=verseAgeDays(k); if(age==null) return;
+    if(on.some(r=>age>=r.lo && age<=r.hi)) hits.push({k,age});
+  });
+  hits.sort((a,b)=>b.age-a.age || (a.k<b.k?-1:1));  // oldest first, then stable
+  return hits.map(x=>x.k);
+}
 function practiceNext(first){
+  /* A range run has its own queue and is handed out in order. It is emptied one verse at a time
+     and never reshuffled, so "one after another" means what it says. */
+  if(MS && MS.pracQueue && MS.pracQueue.length){
+    const k=MS.pracQueue.shift();
+    const q=MS.pracQueue, left=q.length;
+    MS.phase="practice";
+    askVerseIn(k);
+    if(!left) MS.pracDone=true;
+    return;
+  }
+  if(MS && MS.pracDone){ MS.pracDone=false; MS.pracQueue=null; pracRangeDone(); return; }
   MS={phase:"practice", srQueue:[]};
   const mem=memArr(); if(!mem.length){ renderVerse(); return; }
   if(!suppressGrowth && allEstablished()){ showGrowthEncouragement(); return; }  // everything mastered → celebrate + suggest moving on
@@ -9830,6 +10014,144 @@ function practiceNext(first){
   const cur=pool[Math.floor(Math.random()*pool.length)];
   memTestRecent.push(cur); while(memTestRecent.length>Math.min(deck.length-1,6)) memTestRecent.shift();
   askVerseIn(cur);
+}
+/* The end of a range run says what was covered rather than dropping the reader back on the hub
+   with no idea whether it finished. */
+function pracRangeDone(){
+  const V=el("verse"); if(!V) return;
+  const on=pracRanges().filter(r=>r.on && r.hi>r.lo)
+    .map(r=>`${r.lo}\u2013${r.hi} days`).join(" and ");
+  V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">\u2705</div>
+    <h2 class="gold">That is the whole range</h2>
+    <p class="lead">Every verse you learned ${on||"in the range"} has been round once.</p>
+    <div class="btnrow" style="margin-top:12px">
+      <button class="btn" id="prAgain">Choose another range</button>
+      <button class="btn ghost" id="prBack">Back to the Library</button></div></div>`;
+  if(el("prAgain")) el("prAgain").onclick=()=>openPracRangeSetup();
+  if(el("prBack")) el("prBack").onclick=()=>{ vView="hub"; renderVerse(); };
+}
+/* The setup screen. Nothing is ticked by default, and with nothing ticked Begin practises
+   everything you know — which is exactly what the tile did before this existed, so the familiar
+   path is still the shortest one. */
+function openPracRangeSetup(){
+  const V=el("verse"); if(!V) return;
+  show("verse");
+  markScreen(()=>{ show("verse"); openPracRangeSetup(); });
+  const draw=()=>{
+    const rs=pracRanges();
+    const deck=pracRangeDeck();
+    const n=deck ? deck.length : memArr().length;
+    V.innerHTML=`<div class="navrow"><button class="btn sm ghost" id="prClose">\u2190 Library</button></div>
+      <h2>\u{1F4D6} Practice Verses</h2>
+      <div class="card">
+        <p class="hint" style="margin:0 0 10px">Practise everything you know, or pick the verses by
+        how long ago you learned them \u2014 a checkpoint walked on purpose instead of waited for.</p>
+        ${rs.map((r,i)=>`<div class="srl-row">
+          <button type="button" class="sfx-sw${r.on?" on":""}" data-pron="${i}"
+            aria-pressed="${r.on?"true":"false"}"><span></span></button>
+          <span style="flex:0 0 auto;font-size:13px;font-weight:700">Learned</span>
+          <input class="typein srl-in" type="number" min="0" max="3650" value="${r.lo}" data-prlo="${i}" aria-label="from days ago">
+          <span style="flex:0 0 auto;color:var(--muted)">to</span>
+          <input class="typein srl-in" type="number" min="0" max="3650" value="${r.hi}" data-prhi="${i}" aria-label="to days ago">
+          <span style="flex:0 0 auto;font-size:13px;color:var(--muted)">days ago</span>
+          <button class="btn ghost sm srl-x" data-prx="${i}" ${rs.length<=1?"disabled":""} title="Remove">\u2715</button>
+        </div>`).join("")}
+        <div class="btnrow" style="margin:8px 0 0">
+          <button class="btn ghost sm" id="prAdd">+ Add a range</button>
+        </div>
+        <p class="hint" id="prCount" style="margin:10px 0 0"></p>
+        <button class="btn" id="prGo" style="width:100%;margin-top:10px">Begin practice \u2192</button>
+      </div>`;
+    const count=el("prCount");
+    if(count) count.innerHTML = deck
+      ? (deck.length ? `<b class="gold">${deck.length}</b> verse${deck.length===1?"":"s"} in the ranges you ticked.`
+                     : `<b style="color:var(--miss)">No verses were learned in those ranges.</b> Widen them, or untick to practise everything.`)
+      : `Nothing ticked \u2014 Begin will draw on all <b class="gold">${n}</b> verses you know.`;
+    if(el("prClose")) el("prClose").onclick=()=>{ vView="hub"; renderVerse(); };
+    V.querySelectorAll("[data-pron]").forEach(b=>b.onclick=()=>{
+      const rs2=pracRanges(); const i=+b.dataset.pron;
+      if(!rs2[i].on && !(rs2[i].hi>rs2[i].lo)){ toast("The second number has to be higher than the first."); return; }
+      rs2[i].on=!rs2[i].on; pracRangesSave(rs2); draw();
+    });
+    const edit=(sel,key)=>V.querySelectorAll(sel).forEach(inp=>inp.onchange=()=>{
+      const rs2=pracRanges(); const i=+inp.dataset[key==="lo"?"prlo":"prhi"];
+      const v=Math.max(0,Math.round(Number(inp.value)||0));
+      rs2[i][key]=v;
+      if(rs2[i].on && !(rs2[i].hi>rs2[i].lo)){
+        rs2[i].on=false;
+        toast("The second number has to be higher than the first.");
+      }
+      pracRangesSave(rs2); draw();
+    });
+    edit("[data-prlo]","lo"); edit("[data-prhi]","hi");
+    V.querySelectorAll("[data-prx]").forEach(b=>b.onclick=()=>{
+      const rs2=pracRanges(); rs2.splice(+b.dataset.prx,1); pracRangesSave(rs2); draw();
+    });
+    if(el("prAdd")) el("prAdd").onclick=()=>{
+      const rs2=pracRanges(); rs2.push({lo:0,hi:7,on:false}); pracRangesSave(rs2); draw();
+    };
+    if(el("prGo")) el("prGo").onclick=()=>{
+      const deck2=pracRangeDeck();
+      memTestRecent=[]; suppressGrowth=false; reviewedThisSession=[];
+      Prog.streak=0; saveProg(); refreshHUD&&refreshHUD();
+      if(deck2 && !deck2.length){ toast("No verses in those ranges yet."); return; }
+      MS={phase:"practice", srQueue:[], pracQueue:deck2?deck2.slice():null, pracDone:false};
+      practiceNext(true);
+    };
+  };
+  draw();
+}
+/* ---- every verse you know, newest first ------------------------------------------------------
+   The books above answer "where are they". This answers "what have I got, and when did I get it",
+   which is the question somebody scrolling their own verses is actually asking.
+
+   The date comes from the verse's review record, which has held learnedAt since the trail existed.
+   Verses learned before that have no date: they sort after the dated ones, keeping the order they
+   are already in, and a date filter never claims them. */
+function verseLearnedAt(k){ const o=vsr(k); return (o && o.learnedAt) || null; }
+let memFilter={from:"",to:""};        // not saved: a filter that outlives the visit is a trap
+function memNewestFirst(list){
+  const pos={}; (Prog.memorized||[]).forEach((k,i)=>{ pos[k]=i; });
+  return list.slice().sort((a,b)=>{
+    const ka=refKey(a[0],a[1],a[2]), kb=refKey(b[0],b[1],b[2]);
+    const ta=verseLearnedAt(ka)||0, tb=verseLearnedAt(kb)||0;
+    if(ta!==tb) return tb-ta;                       // newest first; a dated one outranks an undated
+    return (pos[kb]|0)-(pos[ka]|0);
+  });
+}
+function memInRange(list){
+  const f=memFilter.from ? dayStart(memFilter.from) : null;
+  const t=memFilter.to   ? dayStart(memFilter.to)+DAY-1 : null;   // the whole of the closing day
+  if(f==null && t==null) return list;
+  return list.filter(a=>{
+    const at=verseLearnedAt(refKey(a[0],a[1],a[2]));
+    if(!at) return false;                            // undated cannot be claimed by a date range
+    if(f!=null && at<f) return false;
+    if(t!=null && at>t) return false;
+    return true;
+  });
+}
+function memListHTML(mem){
+  const ordered=memNewestFirst(memInRange(mem));
+  const rows=ordered.map(a=>{
+    const at=verseLearnedAt(refKey(a[0],a[1],a[2]));
+    return verseRow(a[0],a[1],a[2],"mem",false, at?("learned "+fmtDay(at)):"learned before dates were kept");
+  }).join("");
+  const filtered=(memFilter.from||memFilter.to);
+  return `<div class="card" style="margin-top:12px">
+    <span class="screenkind vs">\u{1F49B} EVERY VERSE YOU KNOW</span>
+    <div class="mem-filter">
+      <span class="lbl">Learned</span>
+      <input type="date" id="memFrom" value="${bbEsc(memFilter.from)}" aria-label="from date">
+      <span class="lbl">to</span>
+      <input type="date" id="memTo" value="${bbEsc(memFilter.to)}" aria-label="to date">
+      ${filtered?`<button class="btn ghost sm" id="memClear">Clear</button>`:""}
+    </div>
+    <div class="hint" style="margin:0 0 6px">${ordered.length} of ${mem.length} verse${mem.length===1?"":"s"}${filtered?" in that range":""} \u00b7 newest first</div>
+    ${ordered.length
+      ? `<div class="vlist bkverses">${rows}</div>`
+      : `<p class="hint" style="margin:8px 0 0">Nothing was learned in that range.</p>`}
+  </div>`;
 }
 /* ---- Verse practice DECK: a correctly-answered verse drops out of the deck until the whole deck is cleared, then a
    new round begins. State (cr=correct-in-a-row, rd=cleared this round, lc=last-correct, sz=snooze-until) lives on each
@@ -9866,6 +10188,12 @@ const FEATURES=[
 function featDef(id){ return FEATURES.find(x=>x.id===id)||null; }
 function feat(id){ const f=featDef(id); if(!f) return true;
   const v=(Prog.features||{})[id];
+  /* The store builds ship silent. The sounds are recordings now rather than tones and have not
+     been through a round of real use yet, and the first submission is not the place to find out
+     that one of them grates — a reviewer hears every screen once, in a quiet room, with no
+     context. It is a DEFAULT and not a lock: the switch is still in Profile, and anybody who
+     turns it on gets the whole palette. Nothing is stripped from the build. */
+  if(v===undefined && id==="sound" && typeof isStoreApp==="function" && isStoreApp()) return false;
   if(v===undefined) return !!f.on;
   return !!v; }
 function setFeat(id,on){ Prog.features=Prog.features||{}; Prog.features[id]=!!on; saveProg(); }
@@ -10279,6 +10607,96 @@ function restoreStreak(){
   try{ Sfx.freeze(); }catch(e){}
   return { bought, spent:bought*FREEZE_COST, used:R.cost, streak:Prog.dayStreak };
 }
+/* ---- a streak that lapsed, noticed when it lapses ------------------------------------------
+   creditToday() was the only thing that ever judged the streak, and it runs when a day is
+   FINISHED. Miss a day and nothing ran: the number on screen kept yesterday's value, no freeze
+   was spent, nothing was offered, and the whole question waited until the next completed day to
+   be settled retroactively. Which is how a broken streak went on reading as unbroken.
+
+   So the gap is looked for when the app opens. The number stops lying immediately, and the bridge
+   is OFFERED rather than taken — a freeze is a thing somebody paid for, and spending it without
+   asking is not a favour. */
+function streakGapDays(){
+  const last=Prog.lastReviewDay; if(!last) return 0;
+  const today=dayKey(new Date());
+  if(last===today) return 0;
+  const gap=Math.round((dayStart(today)-dayStart(last))/DAY);
+  return gap>1 ? gap-1 : 0;             // whole days missed BETWEEN the last one and today
+}
+/* Spending freezes to bridge days already missed, BEFORE today's work is done. Distinct from
+   restoreStreak, which settles the same bargain after a day has been credited and therefore adds
+   today on top. Here the freeze stands in for the missed day and nothing else: lastReviewDay
+   becomes yesterday, so finishing today counts the ordinary way and the streak lands where it
+   would have if the day had never been missed. */
+function bridgeStreak(){
+  const L=Prog.streakLost; if(!L || !L.had) return null;
+  const need=L.missed||1, have=Prog.freezes||0;
+  if(have<need) return null;
+  Prog.freezes=have-need;
+  Prog.dayStreak=L.had;
+  Prog.lastReviewDay=dayKey(new Date(Date.now()-DAY));   // the freeze stands in for yesterday
+  Prog.streakLost=null;
+  saveProg(); updateMetrics();
+  try{ sfx("streakSaved"); }catch(e){}
+  return { used:need, streak:Prog.dayStreak };
+}
+// Run once when the app opens, and again if it is still open when the date turns over.
+function streakLapseCheck(){
+  if(!Prog || !Prog.lastReviewDay) return false;
+  const missed=streakGapDays();
+  if(!missed) return false;
+  const had=Prog.dayStreak||0;
+  if(!had) return false;                                  // nothing to lose
+  const today=dayKey(new Date());
+  if(Prog.streakLost && Prog.streakLost.at===today) return false;   // already dealt with today
+  Prog.streakLost={ at:today, had, from:Prog.lastReviewDay, missed };
+  Prog.dayStreak=0;                                       // the number stops claiming a run that ended
+  saveProg(); updateMetrics();
+  return true;
+}
+function openStreakGapNotice(){
+  const L=Prog.streakLost; if(!L || !L.had) return;
+  const need=L.missed||1, have=Prog.freezes||0;
+  const short=Math.max(0, need-have);
+  const cost=short*FREEZE_COST, canPay=(Prog.talents||0)>=cost;
+  const m=el("streakGapModal")||(()=>{ const d=document.createElement("div"); d.id="streakGapModal";
+    d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const days=need===1?"a day":`${need} days`;
+  m.innerHTML=`<div class="modal-card center">
+    <div style="font-size:52px">${have>=need?"\u{1F9CA}":"\u{1F614}"}</div>
+    <h2 class="gold" style="margin:6px 0 2px">Your ${L.had}-day streak</h2>
+    <p class="lead" style="margin:6px 0 0">You missed ${days}, so the run ended.
+      ${have>=need
+        ? `You have <b class="gold">${have} Streak Freeze${have>1?"s":""}</b> \u2014 spending ${need===1?"one":need} bridges it and your streak carries on at <b class="gold">${L.had}</b>.`
+        : (short && canPay
+            ? `A freeze would bridge it. You have <b>${have}</b> and need <b>${need}</b>; the ${short===1?"one":short} short ${short===1?"costs":"cost"} <b class="gold">${cost} \u{1FA99}</b>.`
+            : `Bridging it needs <b>${need}</b> Streak Freeze${need>1?"s":""} and you have <b>${have}</b>.`)}
+    </p>
+    <div class="btnrow" style="margin-top:14px">
+      ${have>=need
+        ? `<button class="btn" id="sgUse">Use ${need===1?"a freeze":need+" freezes"}</button>`
+        : (short && canPay ? `<button class="btn" id="sgBuy">Buy ${short} and bridge it</button>` : "")}
+      <button class="btn ghost" id="sgNo">${have>=need||canPay?"Let it go":"Start again"}</button>
+    </div>
+    <p class="hint" style="margin:10px 0 0">You can still come back for it from the streak screen
+      for the next ${STREAK_LOOKBACK_DAYS} days.</p></div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; };
+  if(el("sgUse")) el("sgUse").onclick=()=>{
+    const r=bridgeStreak(); close();
+    if(r) toast(`\u{1F9CA} Bridged \u2014 your ${r.streak}-day streak stands.`);
+    refreshHUD&&refreshHUD();
+  };
+  if(el("sgBuy")) el("sgBuy").onclick=()=>{
+    const r=canRestoreStreak(); if(!r || !r.canPay){ close(); return; }
+    Prog.talents=Math.max(0,(Prog.talents||0)-r.talents);
+    Prog.freezes=(Prog.freezes||0)+r.short;
+    const b=bridgeStreak(); close();
+    if(b) toast(`\u{1F9CA} Bridged \u2014 your ${b.streak}-day streak stands.`);
+    refreshHUD&&refreshHUD();
+  };
+  if(el("sgNo")) el("sgNo").onclick=()=>{ close(); toast("Starting a new run today."); };
+}
 // The day streak is earned by finishing BOTH halves of the day: every spaced repetition
 // review that came due, AND the daily goal. Called from each place either half can complete.
 function creditToday(){
@@ -10291,7 +10709,15 @@ function creditToday(){
   const yest=dayKey(new Date(Date.now()-DAY)), twoAgo=dayKey(new Date(Date.now()-2*DAY));
   if(!Prog.lastReviewDay) Prog.dayStreak=1;
   else if(Prog.lastReviewDay===yest) Prog.dayStreak=(Prog.dayStreak||0)+1;   // consecutive day → +1
-  else if(Prog.lastReviewDay===twoAgo && (Prog.freezes||0)>0){ sfx("streakSaved"); Prog.freezes--; Prog.dayStreak=(Prog.dayStreak||0)+1; setTimeout(()=>toast(`🧊 A Streak Freeze saved your ${Prog.dayStreak}-day streak!`),500); } // exactly ONE missed day → a freeze bridges it
+  /* A freeze used to be spent HERE, silently, the moment a single missed day was noticed. It is
+     something the reader earned or bought, so it is offered rather than taken — the gap is
+     recorded and openStreakGapNotice asks. Reaching this branch at all means the lapse check did
+     not run first, which happens when the date turns over mid-session. */
+  else if(Prog.lastReviewDay===twoAgo && (Prog.freezes||0)>0){
+    Prog.streakLost={ at:today, had:Prog.dayStreak||0, from:Prog.lastReviewDay, missed:1 };
+    Prog.dayStreak=1;
+    setTimeout(()=>{ try{ openStreakGapNotice(); }catch(e){} }, 600);
+  }
   else {
     sfx("streakLost");
     /* The streak breaks here. Write down what was lost and how far back it goes, so it can be
@@ -10371,7 +10797,7 @@ function bumpGoalFromReview(defer){
   const cleared = reviewDueCount()<=1;
   if(s.count>=SR_GOAL_MAX){ if(cleared) markSrDone(); return function(){}; }
   s.count++; saveProg();
-  const done=bumpGoal(defer);
+  const done=bumpGoal(defer, true);   // the review's own counter is the one above
   if(cleared && markSrDone()){ updateMetrics(); creditToday(); }
   return done;
 }
@@ -10400,23 +10826,62 @@ function bumpGoalFromReview(defer){
    held in memory only, because a running segment has no meaning once the app is gone. */
 function srClockDay(){
   const t=dayKey(new Date());
-  if(!Prog.srClock || Prog.srClock.d!==t) Prog.srClock={d:t, sec:0, done:false, runs:0};
-  return Prog.srClock;
+  if(!Prog.srClock || Prog.srClock.d!==t) Prog.srClock={d:t, sec:0, ms:0, done:false, runs:0};
+  const c=Prog.srClock;
+  // Older records kept whole seconds only. Milliseconds are the unit now, so nothing is lost to
+  // rounding when a run is banked over and over.
+  if(c.ms==null) c.ms=(c.sec|0)*1000;
+  return c;
 }
-let srTickFrom=null;                      // when the current segment began; null when not running
+let srTickFrom=null;                      // when the CURRENT segment began; null when not running
+/* Fold everything elapsed so far into the stored total WITHOUT stopping, and re-anchor.
+
+   The design was right and one word in it was wrong: the banked seconds lived in Prog and survived
+   being closed, but the segment currently running was "held in memory only". A phone reloads the
+   page whenever it feels like it — a PWA coming back from the background, the tab being evicted, a
+   pull to refresh — and every one of those threw away whatever had not been banked yet. Fourteen
+   minutes of review with one reload after four banked exactly four.
+
+   So the running segment is folded in every few seconds. The stored total is then never more than
+   a tick behind the truth, and losing the page costs a tick rather than the session. */
+const SR_BANK_EVERY=10000;
+function srClockBank(){
+  if(srTickFrom==null) return;
+  const c=srClockDay(), now=Date.now();
+  c.ms=(c.ms|0)+Math.max(0, now-srTickFrom);
+  c.sec=Math.round(c.ms/1000);            // kept in step for anything that reads seconds
+  srTickFrom=now;                         // re-anchored, so the same milliseconds cannot count twice
+  saveProg();
+}
 function srClockStart(){ const c=srClockDay(); c.runs=(c.runs|0)+1; srTickFrom=Date.now(); saveProg();
   sfx("timerStart"); }   // the clock is running now, and you can hear it start
 function srClockStop(){
   if(srTickFrom==null) return false;
-  const c=srClockDay();
-  c.sec=(c.sec|0)+Math.max(0, Math.round((Date.now()-srTickFrom)/1000));
+  srClockBank();
   srTickFrom=null; saveProg(); return true;
 }
 function srClockSeconds(){
   const c=srClockDay();
-  return (c.sec|0) + (srTickFrom!=null ? Math.max(0, Math.round((Date.now()-srTickFrom)/1000)) : 0);
+  const live = srTickFrom!=null ? Math.max(0, Date.now()-srTickFrom) : 0;
+  return Math.round(((c.ms|0)+live)/1000);
 }
 function srClockRunning(){ return srTickFrom!=null; }
+// Nothing here runs while the clock is stopped, so an idle app does no work and writes nothing.
+setInterval(()=>{ try{ if(srTickFrom!=null) srClockBank(); }catch(e){} }, SR_BANK_EVERY);
+/* Is a timed review actually happening right now? MS is the review session; dueWork marks it as
+   the day's real review rather than free practice, and it survives the phase moving from numbers
+   to books to verses because the same object is mutated throughout. */
+function srSessionLive(){
+  try{ return !!(MS && MS.dueWork && !srClockDay().done); }catch(e){ return false; }
+}
+/* Walking out of a test to look a verse up STOPS the clock, because renderVerse cannot tell the
+   difference between arriving at the hub and passing through it. Nothing started it again, so a
+   half-hour review that dipped into a verse three times reported the few minutes before the first
+   dip. Every review screen asks for the clock back as it draws: if a review is still live and the
+   clock is not running, it starts a new segment. The seconds already banked are untouched. */
+function srClockResumeIfReviewing(){
+  if(srTickFrom==null && srSessionLive()) srTickFrom=Date.now();
+}
 /* A review paused because the phone went to sleep has to start again when it wakes.
 
    Backgrounding banked the seconds and left the clock stopped for good, and nothing ever started
@@ -10468,8 +10933,19 @@ function markSrDone(){
   Prog.srDay=t; saveProg();
   return true;
 }
-// Work that is not review: the total bumps, less the ones review contributed.
-function goalOtherCount(){ return Math.max(0, (goalState().count|0) - (srGoalState().count|0)); }
+/* Work that is not review. This used to be the TOTAL less the part review contributed, because
+   both were counted into goalDay and one had to be taken back out. That subtraction is why a day
+   done across two devices could come out at nothing.
+
+   dayMerge takes the higher of each counter INDEPENDENTLY, which is right for two numbers that
+   mean separate things and wrong for two that only mean something together. A phone that did
+   three reviews (goalDay 3, srGoalDay 3) merged with a laptop that did two numbers (goalDay 2,
+   srGoalDay 0) gives goalDay 3 and srGoalDay 3 — and the difference is zero, so the two numbers
+   are simply gone. Neither device is wrong; the subtraction is.
+
+   So they no longer overlap: goalDay counts work that is NOT review, srGoalDay counts review, and
+   the higher of each is exactly the right merge. */
+function goalOtherCount(){ return Math.max(0, goalState().count|0); }
 function goalOtherCap(){ return Math.max(0, goalToday() - (srInPlay()?1:0)); }
 /* MET ONCE IS MET FOR THE DAY.
 
@@ -10499,11 +10975,15 @@ function goalMet(){
 }
 // Returns a function that plays the goal celebration. Pass defer=true to hold it back and
 // play it yourself later (the word for word screen waits for "Done" so nothing covers the result).
-function bumpGoal(defer){ const noop=function(){};
+/* `fromReview` bumps everything a completed thing bumps EXCEPT the other-work tally, which the
+   review has already recorded on its own counter. Before this the review counted twice and one of
+   them was subtracted back out again. */
+function bumpGoal(defer, fromReview){ const noop=function(){};
   const st=goalState(), target=goalToday();
   const wasMet=goalMet();
-  if(wasMet){ st.count++; saveProg(); maybePaceNudge(); return noop; }   // already met → still count, no flash
-  st.count++; saveProg(); updateMetrics();                               // refresh HUD + the Verses tab badge
+  if(wasMet){ if(!fromReview) st.count++; saveProg(); maybePaceNudge(); return noop; }   // already met → still count, no flash
+  if(!fromReview) st.count++;
+  saveProg(); updateMetrics();                                           // refresh HUD + the Verses tab badge
   maybePaceNudge();                                                      // a big day earns the "little and often" word, not applause
   const celebrate=()=>{ goalFlash(goalCount(), target);
     /* The day is finished by goalMet(), which now includes the review — not by the raw number of
@@ -12177,6 +12657,12 @@ function startChronoTest(){
   renderNumTest();
 }
 function renderNumTest(){
+  /* A number test that has been left can still have an advance timer in flight, and it used to
+     throw in here on a session that no longer exists rather than simply not drawing — the same
+     reason srBanner checks MS before it draws. */
+  if(!NT || !NT.qs) return;
+  srClockResumeIfReviewing();
+  { const _n=NT; markScreen(()=>{ NT=_n; show("verse"); renderNumTest(); }); }
   const V=el("verse"); if(NT.i>=NT.qs.length) return finishNumberTest();
   if(NT.qs[NT.i].type===NT_CHRONO) return renderChronoQ();
   const q=NT.qs[NT.i], n=q.n, word=pegFor(n).word, pct=Math.round(100*NT.i/NT.qs.length);
@@ -12224,8 +12710,12 @@ function renderNumTest(){
       if(NT.streak>=3 && PALETTE_HAS("comboBuild")) sfx("comboBuild"); else Sfx.right();
       b.classList.add("correct"); V.querySelectorAll("[data-ok]").forEach(x=>x.disabled=true);
       NT.ok++; strengthenNumber(n);
-      setTimeout(()=>{ NT.i++;
-        if(NT && NT.ret && NT.i<NT.qs.length) srFlash(renderNumTest);   // daily review → flash the count between number questions
+      /* Guarded FIRST. This read NT.i before the NT check on the line below it, so leaving the
+         test inside the half second after a right answer threw rather than doing nothing — the
+         two sibling callbacks below already check, this one only looked as though it did. */
+      setTimeout(()=>{ if(!NT || !NT.qs) return;
+        NT.i++;
+        if(NT.ret && NT.i<NT.qs.length) srFlash(renderNumTest);   // daily review → flash the count between number questions
         else renderNumTest();
       }, 550);
     } else { Sfx.wrong(NT.run=(NT.run||0)+1);      // wrong → red, stay to retry
@@ -12421,6 +12911,9 @@ const BOOK_FAMILY={};
   Object.keys(byBase).forEach(k=>{ const g=byBase[k]; if(g.length>1) g.forEach(n=>{ BOOK_FAMILY[n]=g.filter(m=>m!==n); }); });
 })();
 function memTestRender(){
+  srClockResumeIfReviewing();
+  { const _c=memTestCur, _w=memTestWrong, _h=memHintUses;
+    markScreen(()=>{ memTestCur=_c; memTestWrong=_w; memHintUses=_h; show("verse"); memTestRender(); }); }
   sfx("pageTurn");   // moving to the next thing to answer
   const V=el("verse"), b=memTestCur[0], c=memTestCur[1], v=memTestCur[2], k=knownNumbers();
   mtSel={b:0,c:0,v:0}; mtLock=false;
@@ -14434,6 +14927,7 @@ async function maybeGiveNudge(){
 /* ---- the licences somebody bought ------------------------------------------------------------
    Seats are worth reassigning only if you can see which are going unused, so each one carries how
    much it is actually being used. Counts, never content. */
+/*STRIP:LICENCES:START*/
 function openLicences(){
   const m=el("licModal")||(()=>{ const d=document.createElement("div"); d.id="licModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   const shell=(body)=>{ m.innerHTML=`<div class="modal-card">
@@ -14502,6 +14996,7 @@ function openLicences(){
     b.onclick=()=>{ m.style.display="none"; openGroupBuy(); }; };
   load();
 }
+/*STRIP:LICENCES:END*/
 /* Owners want a code they can say out loud, and a minted one is awkward at the front of a room. */
 function askNewCode(from, after){
   const m=el("codeSetModal")||(()=>{ const d=document.createElement("div"); d.id="codeSetModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
@@ -14544,6 +15039,7 @@ function askNewCode(from, after){
    One pool, drawn a month at a time by people who ask for help. Amounts are shown as people carried
    rather than dollars paid, because that is the number a giver is actually deciding about. */
 const GIVE_YEAR_CENTS=3500, GIVE_FIVE_CENTS=9900;
+/*STRIP:GIVE:START*/
 function openGive(){
   if(!canBuyHere()) return;
   sfx("giftOpen");
@@ -14609,6 +15105,7 @@ function openGive(){
   };
   draw(); m.style.display="flex"; raiseModal(m);
 }
+/*STRIP:GIVE:END*/
 
 /* ---- buying seats for other people ----------------------------------------------------------
    A licence is five seats for a year at $99. Somebody buying for a youth group wants one; somebody
@@ -14616,6 +15113,7 @@ function openGive(){
    code is a separate thing to hand out — but the sheet leads with the number of people, because
    that is what the buyer is actually thinking about. */
 const GROUP_SEATS_PER = 5, GROUP_PRICE_EACH = 99;
+/*STRIP:GROUPBUY:START*/
 function openGroupBuy(){
   if(!canBuyHere()) return;
   if(!(typeof Auth!=="undefined" && Auth.loggedIn())){
@@ -14663,6 +15161,7 @@ function openGroupBuy(){
   };
   draw(); m.style.display="flex"; raiseModal(m);
 }
+/*STRIP:GROUPBUY:END*/
 
 /* ---- entering a code ------------------------------------------------------------------------
    One box, two kinds of code. A group licence code takes a seat on somebody's licence and is
@@ -14710,6 +15209,7 @@ function fmtDay(ms){ try{ return new Date(ms).toLocaleDateString(undefined,{year
 
 /* ---- paywall ---- */
 let payTargetSkill=null;
+/*STRIP:PAYWALL:START*/
 function openPaywall(sk){ const m=el("payModal"); if(!m) return;
   // On iOS the two price buttons come out and a line goes in their place. Restore, the talent
   // unlock and the assistance request all stay: none of them is a purchase.
@@ -14734,6 +15234,7 @@ function openPaywall(sk){ const m=el("payModal"); if(!m) return;
   }
   m.style.display="flex";
 }
+/*STRIP:PAYWALL:END*/
 function closePaywall(){ if(el("payModal")) el("payModal").style.display="none"; }
 function wirePaywall(){
   if(el("payYearly")) el("payYearly").onclick=()=>Billing.startCheckout("yearly");
@@ -15129,6 +15630,7 @@ function applyFeatureVisibility(){
    popup when their button is pressed. Every id and every handler already wired to them survives,
    which is the whole reason for doing it this way rather than re-authoring the markup.        */
 const PROF_ICONS={ "Admin":"🛠️", "Badges":"🎖️", "Feature store":"✨", "Account":"👤",
+  "Review schedule":"🗓️",
   "Group licences":"🎫", "Give":"🎁",
   "Bible translation":"📗", "Reference library":"📚", "What's new":"📋", "Theme":"🎨",
   "Get the app":"📲", "Sound effects":"🔔", "Sync":"🔄", "Back up your progress":"💾" };
@@ -15148,6 +15650,7 @@ const PROF_SUBS={
   "Theme":()=>{ const t=(document.querySelector(".phone")||{getAttribute:()=>""}).getAttribute("data-theme")||"illumined";
     return {classic:"Classic",illumined:"Illumined Night",glass:"Stained Glass",quest:"Scripture Quest",buddy:"Verse Buddy"}[t]||t; },
   "Get the app":()=>"Home screen",
+  "Review schedule":()=>srLadderIsCustom() ? "Your own" : "Default",
   "Sound effects":()=>{ const off=Object.keys((Prog&&Prog.sfxOff)||{}).length;
     return off ? off+" switched off" : "All on"; },
   "Sync":()=>((typeof Auth!=="undefined"&&Auth._token)?"Across your devices":"Sign in to sync"),
@@ -15359,6 +15862,70 @@ function paintSyncDiag(){
       row("goal", goalToday()) + row("done today", goalCount()) +
       row("review marker earned", srDoneToday() ? "yes" : "no");
 }
+/* ---- the review schedule, as the reader's to set -------------------------------------------
+   Each row is one checkpoint, in days after the verse was learned. The first SR_VISIBLE of them
+   are the dots drawn on a verse, so editing those changes the trail on screen as well as when the
+   verse comes back; the rest are the quiet tail.
+
+   Editing the ladder does NOT re-date verses already walking it. A verse keeps the step it has
+   reached and its next date is worked out from the new ladder when it is next answered — changing
+   the schedule is a decision about the reviews still to come, not a licence to move ones already
+   earned. */
+function srLadderPaint(){
+  const host=el("srLadderRows"); if(!host) return;
+  const L=srLadderOf(Prog);
+  host.innerHTML=L.map((d,i)=>{
+    const shown=i<SR_VISIBLE;
+    return `<div class="srl-row">
+      <span class="srl-n">${i===0?"learned":"#"+i}</span>
+      <input class="typein srl-in" type="number" min="0" max="36500" value="${d}" data-srl="${i}"
+        ${i===0?"disabled":""} aria-label="days after learning">
+      <span class="srl-tag${shown?"":" off"}">${shown?"on the trail":srLongLabel(d)}</span>
+      <button class="btn ghost sm srl-x" data-srlx="${i}" ${(i===0||L.length<=2)?"disabled":""}
+        title="Remove">✕</button>
+    </div>`;
+  }).join("");
+  const note=el("srLadderNote");
+  if(note) note.innerHTML = srLadderIsCustom()
+    ? `Your own schedule · <b>${L.length}</b> checkpoints, the first <b>${Math.min(SR_VISIBLE,L.length)}</b> drawn on each verse.`
+    : `The default: ${L.join(", ")} days.`;
+  host.querySelectorAll("[data-srl]").forEach(inp=>{
+    inp.onchange=()=>{
+      const L2=srLadderOf(Prog).slice();
+      L2[+inp.dataset.srl]=Math.round(Number(inp.value)||0);
+      srLadderSave(L2);
+    };
+  });
+  host.querySelectorAll("[data-srlx]").forEach(b=>{
+    b.onclick=()=>{ const L2=srLadderOf(Prog).slice(); L2.splice(+b.dataset.srlx,1); srLadderSave(L2); };
+  });
+}
+/* Saving is where a typed-in ladder is checked. srLadderOf sorts, de-duplicates and refuses
+   anything that does not start at zero, so the app can never be left scheduling against nonsense —
+   but a reader who typed something impossible deserves to be told rather than silently corrected. */
+function srLadderSave(L){
+  const before=srLadderOf(Prog).join(",");
+  const cleaned=srLadderOf({srLadder:L});
+  if(cleaned.join(",")!==L.map(n=>Math.round(Number(n))).filter(n=>isFinite(n)).join(",")){
+    toast("Days must start at 0 and climb — sorted that out for you.");
+  }
+  Prog.srLadder=cleaned;
+  Prog.settingsAt=Date.now();
+  saveProg();
+  srApplyLadder();
+  srLadderPaint();
+  if(cleaned.join(",")!==before) toast("Review schedule saved.");
+}
+if(el("srAddStep")) el("srAddStep").onclick=()=>{
+  const L=srLadderOf(Prog).slice();
+  L.push((L[L.length-1]||0)*2 || 1);       // a sensible next guess: twice the last gap
+  srLadderSave(L);
+};
+if(el("srResetLadder")) el("srResetLadder").onclick=()=>{
+  Prog.srLadder=null; Prog.settingsAt=Date.now(); saveProg();
+  srApplyLadder(); srLadderPaint(); toast("Back to the default schedule.");
+};
+srLadderPaint();
 /* The sound list is built from the palette itself rather than from a second list kept beside it —
    a sound that exists but is missing from this screen is a sound nobody can switch off, and a row
    for a sound that no longer exists is a switch that does nothing. One source, so neither happens. */
@@ -15722,6 +16289,9 @@ function startWordPick(b,c,v,ret){
   show("verse"); renderWordPick();
 }
 function renderWordPick(){
+  if(!WP || !WP.words) return;   // as above: a warm-up that has been left does not draw
+  srClockResumeIfReviewing();
+  { const _w=WP; markScreen(()=>{ WP=_w; show("verse"); renderWordPick(); }); }
   if(WP.idx>=WP.stop){ const {b,c,v,ret}=WP; WP=null; startTypeTest(b,c,v,ret); return; }
   const V=el("verse"), done=WP.idx;
   if(!WP.opts) WP.opts=wpChoices();
@@ -15810,6 +16380,10 @@ function isTypo(typed, expected, words){
 function startTypeTest(b,c,v,ret,isTest){ const words=(kjvText(b,c,v)||"").split(/\s+/).filter(Boolean);
   TT={b,c,v,ret,words,idx:0,wrong:false,wrongWord:null,hintUsed:false,test:!!isTest,misses:0,typos:0,typoNote:"",typedOut:false}; renderTypeTest(); }
 function renderTypeTest(){
+  srClockResumeIfReviewing();
+  /* Word for word is the test people leave most often, because looking the verse up is the whole
+     point of failing it. Coming back has to land on the same word of the same verse. */
+  { const _t=TT; markScreen(()=>{ TT=_t; show("verse"); renderTypeTest(); }); }
   const V=el("verse"), total=TT.words.length;
   // Build the shell ONCE. From here on we mutate only the top display + counter in place — the input element
   // is never recreated, so focus and the on-screen keyboard hold steady (no flashing, no jump).
@@ -16792,6 +17366,14 @@ OnboardWalk.recover();   // a walkthrough that was closed mid-run put the real p
 // silent by design: the built-in table stays in charge, which is the right answer on a plane.
 setTimeout(()=>{ FilmHost.refresh().catch(()=>{}); }, 2500);
 grandfatherFeatures();   // an account that predates the Feature Store keeps everything it had
+/* A streak that lapsed while the app was shut is noticed on the way in, so the number on screen is
+   honest before anything else is drawn, and the bridge is offered rather than taken. */
+if(streakLapseCheck()) setTimeout(()=>{ try{ openStreakGapNotice(); }catch(e){} }, 900);
+// And again if the app is left open across midnight.
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState!=="visible") return;
+  if(streakLapseCheck()) setTimeout(()=>{ try{ openStreakGapNotice(); }catch(e){} }, 400);
+});
 resumeActiveTest();      // straight back into an unfinished verse test, if there was one
 applyFeatureVisibility();
 /* ---- Pull down for the newest code ---------------------------------------------------------

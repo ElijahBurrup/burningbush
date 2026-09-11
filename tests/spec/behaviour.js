@@ -1854,7 +1854,7 @@ const DAY = 86400000;
     };
   });
   is(bbData.words, 66, 'a list of name pictures for every book');
-  is(bbData.refs, 176, '…and a list of number pictures for every number in the system');
+  is(bbData.refs, 177, '…and a list of number pictures for every number in the system');   // 1-176 and 00
   ok(bbData.refsToTop, '...with no number in 1-176 left without one');
   ok(bbData.refsAbove66, '...the ones past the books carrying a full six');
   ok(bbData.refsNeverThePeg, '...and never offering the number its own Major System image back');
@@ -3265,7 +3265,13 @@ const DAY = 86400000;
   const goalRow = await $(() => {
     Prog.goalMode = 'same'; Prog.dailyGoal = 20;
     const st = goalState(); st.count = 16; st.celebrated = false;
-    Prog.memorized = []; Prog.verseSR = {}; Prog.palaces = []; saveProg();
+    Prog.memorized = []; Prog.verseSR = {}; Prog.palaces = [];
+    /* Sixteen of twenty done as ORDINARY work, with no review in play — which is what this block
+       is about. It used to inherit both from whichever block ran before it, and a leftover review
+       counter happened to cancel a leftover review marker. Said out loud now. */
+    Prog.srGoalDay = { date: dayKey(new Date()), count: 0 };
+    delete Prog.srDay;
+    saveProg(); bustCaches();
     show('verse'); vView = 'hub'; renderVerse();
     const bar = document.querySelector('#verse .goalbar');
     const dots = bar.querySelectorAll('.gb-dot');
@@ -4094,14 +4100,14 @@ const DAY = 86400000;
       noDupes: new Set(taught).size === taught.length,
     };
   });
-  is(p12.count, 18, 'Phase 12 is eighteen subsections');
+  is(p12.count, 19, 'Phase 12 is nineteen subsections');   // 00 made it 111 numbers, so one more set
   has(p12.firstName, 'Phase 12A: 67', '...starting at 12A');
   has(p12.lastName, '176', '...and ending on 176');
   ok(p12.everyLessonOneNumber, 'every lesson button teaches exactly one number');
   ok(p12.oneTestEach, '...with one test tile at the end of each subsection');
   ok(p12.testCoversAll, '...asking for exactly the six that subsection taught');
-  is(p12.sizes, '6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,8', 'sixes throughout, the tail folded into the last');
-  is(p12.covered, 110, 'all 110 numbers are taught');
+  is(p12.sizes, '6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,3', 'sixes throughout, and a last set of three that stands on its own');
+  is(p12.covered, 111, 'all 111 numbers are taught');   // 67-99, then 00, then 100-176
   ok(p12.complete, '...every one of 67 to 176');
   ok(p12.noDupes, '...and none of them twice');
 
@@ -4540,6 +4546,332 @@ const DAY = 86400000;
   ok(box.capHeld, '...without scrolling the box out from under the cursor');
   ok(box.followedUp, 'a cursor above the view is followed back up to');
 
+  describe('a day of work counts once, and survives two devices', () => { });
+
+  /* Reported: a spaced repetition and a new number both done, and the goal reading nothing.
+
+     goalDay.count used to hold review AND other work together, with the review part subtracted
+     back out by srGoalDay.count — because review earns ONE marker however many cards it holds.
+     The two numbers only meant anything together, and dayMerge takes the higher of each
+     INDEPENDENTLY. A phone that did three reviews (goalDay 3, srGoalDay 3) merged with a laptop
+     that did two numbers (goalDay 2, srGoalDay 0) gives goalDay 3 and srGoalDay 3, and the
+     difference is nothing. Neither device was wrong. The subtraction was.
+
+     They no longer overlap: goalDay counts work that is not review, srGoalDay counts review, and
+     the higher of each is exactly the right merge. */
+  const tally = await $(() => {
+    const out = {};
+    const today = dayKey(new Date());
+    const snap = { g: Prog.goalDay, s: Prog.srGoalDay, d: Prog.srDay,
+                   dg: Prog.dailyGoal, gm: Prog.goalMode };
+    const reset = (goal) => {
+      Prog.dailyGoal = goal; Prog.goalMode = 'same';
+      Prog.goalDay = { date: today, count: 0, celebrated: false, target: goal, met: false, split: true };
+      Prog.srGoalDay = { date: today, count: 0 };
+      delete Prog.srDay; saveProg(); bustCaches();
+    };
+    const aNumber = () => bumpGoal();
+    const aReview = () => { srGoalState().count++; saveProg(); bumpGoal(undefined, true); };
+
+    reset(10);
+    for (let i = 0; i < 3; i++) aReview();
+    Prog.srDay = today; saveProg();
+    out.reviewOnlyOther = goalOtherCount();
+    out.reviewOnlyCount = goalCount();
+    aNumber();
+    out.plusNumber = goalCount();
+    aNumber(); aNumber();
+    out.plusThree = goalCount();
+
+    /* The reported case, merged the way dayMerge does it: the higher of each counter. */
+    reset(10);
+    Prog.goalDay = { date: today, split: true, target: 10, count: Math.max(0, 2) };  // phone 0 other, laptop 2
+    Prog.srGoalDay = { date: today, count: Math.max(3, 0) };                         // phone 3 reviews
+    Prog.srDay = today; saveProg(); bustCaches();
+    out.mergedOther = goalOtherCount();
+    out.mergedCount = goalCount();
+
+    /* A record written under the old shape is converted once, and keeps the number it was
+       showing rather than jumping. */
+    reset(10);
+    Prog.goalDay = { date: today, count: 5, target: 10, met: false };   // old: 3 review + 2 other
+    Prog.srGoalDay = { date: today, count: 3 };
+    delete Prog.goalDay.split;
+    Prog = migrateProg(Prog); saveProg(); bustCaches();
+    out.convertedOther = goalOtherCount();
+    out.convertedFlag = !!Prog.goalDay.split;
+    // ...and converting twice must not take it down again.
+    Prog = migrateProg(Prog); saveProg(); bustCaches();
+    out.convertedTwice = goalOtherCount();
+
+    Prog.goalDay = snap.g; Prog.srGoalDay = snap.s; Prog.dailyGoal = snap.dg;
+    Prog.goalMode = snap.gm;
+    if (snap.d) Prog.srDay = snap.d; else delete Prog.srDay;
+    saveProg(); bustCaches();
+    return out;
+  });
+  is(tally.reviewOnlyOther, 0, 'a review adds nothing to the tally of work that is not review');
+  is(tally.reviewOnlyCount, 1, '...it earns the one marker the day reserves for it');
+  is(tally.plusNumber, 2, 'a number learned after the review counts as well');
+  is(tally.plusThree, 4, '...and each one after that');
+  is(tally.mergedOther, 2, 'a review on the phone and two numbers on the laptop keeps the two numbers');
+  is(tally.mergedCount, 3, '...so the day reads three, not one');
+  is(tally.convertedOther, 2, 'a day recorded under the old shape converts to the same number it showed');
+  ok(tally.convertedFlag, '...and is marked so it is only converted once');
+  is(tally.convertedTwice, 2, '...so a second pass cannot take it down again');
+
+  describe('a lapsed streak is noticed when it lapses', () => { });
+
+  /* Reported: a day was missed, the streak went on reading as unbroken, and no freeze was spent.
+
+     creditToday() was the only thing that ever judged the streak, and it runs when a day is
+     FINISHED. Miss a day and nothing ran at all: the number kept yesterday's value and the whole
+     question waited to be settled retroactively on the next completed day. The gap is looked for
+     when the app opens now, and the bridge is OFFERED rather than taken — a freeze is something
+     the reader earned or paid for. */
+  const lapse = await $(() => {
+    const out = {};
+    const today = dayKey(new Date());
+    const dayAgo = n => dayKey(new Date(Date.now() - n * DAY));
+    const snap = { l: Prog.lastReviewDay, s: Prog.dayStreak, f: Prog.freezes,
+                   x: Prog.streakLost, t: Prog.talents, g: Prog.goalDay, d: Prog.srDay };
+    const setup = (lastDaysAgo, streak, freezes) => {
+      Prog.lastReviewDay = dayAgo(lastDaysAgo); Prog.dayStreak = streak;
+      Prog.freezes = freezes; Prog.streakLost = null; Prog.talents = 500; saveProg();
+    };
+    /* creditToday awards badges and freezes as a side effect, and a badge modal draws over
+       whatever screen a later block is inspecting. This block is about the streak arithmetic, so
+       those are held back and put straight afterwards. */
+    const realBadges = window.checkBadges, realGrant = window.grantFreeze;
+    window.checkBadges = () => {}; window.grantFreeze = () => {};
+    const finishToday = () => {
+      Prog.goalDay = { date: today, count: 99, target: 1, met: true, credited: false };
+      Prog.srDay = today; saveProg(); creditToday();
+    };
+
+    setup(2, 7, 2);
+    out.noticed = streakLapseCheck();
+    out.streakNow = Prog.dayStreak;
+    out.recordedHad = Prog.streakLost && Prog.streakLost.had;
+    out.recordedMissed = Prog.streakLost && Prog.streakLost.missed;
+    out.freezesSpentUnasked = 2 - (Prog.freezes || 0);
+
+    const b = bridgeStreak();
+    out.bridgedTo = b && b.streak;
+    out.freezesAfter = Prog.freezes;
+    out.lastIsYesterday = Prog.lastReviewDay === dayAgo(1);
+    finishToday();
+    out.afterToday = Prog.dayStreak;
+
+    setup(2, 7, 2);
+    streakLapseCheck();
+    out.declined = Prog.dayStreak;
+    out.stillBuyable = !!Prog.streakLost;
+    finishToday();
+    out.declinedThenToday = Prog.dayStreak;
+
+    setup(1, 9, 1);
+    out.intact = streakLapseCheck();
+    out.intactStreak = Prog.dayStreak;
+    setup(0, 4, 1);
+    out.doneToday = streakLapseCheck();
+
+    setup(4, 12, 1);
+    streakLapseCheck();
+    out.longMissed = Prog.streakLost && Prog.streakLost.missed;
+    out.longRefused = bridgeStreak() === null;
+    out.longFreezesKept = Prog.freezes;
+
+    window.checkBadges = realBadges; window.grantFreeze = realGrant;
+    Prog.lastReviewDay = snap.l; Prog.dayStreak = snap.s; Prog.freezes = snap.f;
+    Prog.streakLost = snap.x; Prog.talents = snap.t; Prog.goalDay = snap.g;
+    if (snap.d) Prog.srDay = snap.d; else delete Prog.srDay;
+    saveProg();
+    return out;
+  });
+  ok(lapse.noticed, 'a missed day is noticed on the way in, not on the next completed day');
+  is(lapse.streakNow, 0, '...and the number stops claiming a run that ended');
+  is(lapse.recordedHad, 7, '...with what was lost written down');
+  is(lapse.recordedMissed, 1, '...and how many days broke it');
+  is(lapse.freezesSpentUnasked, 0, 'no freeze is spent without being asked for');
+  is(lapse.bridgedTo, 7, 'bridging it puts the streak back where it was');
+  is(lapse.freezesAfter, 1, '...for the price of one freeze');
+  ok(lapse.lastIsYesterday, '...with the freeze standing in for the missed day');
+  is(lapse.afterToday, 8, '...so finishing today counts the ordinary way on top');
+  is(lapse.declined, 0, 'letting it go leaves no streak');
+  ok(lapse.stillBuyable, '...but it can still be bought back from the streak screen');
+  is(lapse.declinedThenToday, 1, '...and today starts a new run');
+  ok(!lapse.intact, 'a streak that is not broken is left alone');
+  is(lapse.intactStreak, 9, '...at the number it had');
+  ok(!lapse.doneToday, 'a day already credited is not a lapse');
+  is(lapse.longMissed, 3, 'three missed days are counted as three');
+  ok(lapse.longRefused, '...and one freeze cannot bridge them');
+  is(lapse.longFreezesKept, 1, '...so the freeze is not taken for a bridge it cannot buy');
+
+  describe('the review schedule is the reader\'s to set', () => { });
+
+  const ladder = await $(() => {
+    const out = {};
+    const dots = () => { const o = { learnedAt: Date.now(), step: 1 };
+      const d = document.createElement('div'); d.innerHTML = srTrailHTML(o);
+      return [...d.querySelectorAll('.srlbl')].map(x => x.textContent).join(' '); };
+
+    Prog.srLadder = null; saveProg(); srApplyLadder();
+    out.defaultAll = SR_ALL.join(',');
+    out.defaultDots = dots();
+
+    // The reader's own: seven checkpoints, the first six drawn.
+    Prog.srLadder = [0, 1, 3, 7, 14, 28, 49]; saveProg(); srApplyLadder();
+    out.customDots = dots();
+    out.customTrail = SR_TRAIL.join(',');
+    out.customTail = SR_LONG.join(',');
+    out.customAll = SR_ALL.join(',');
+
+    /* The gap that matters is the one to the NEXT checkpoint, worked out from the new ladder.
+       Finishing the 28 day review sets the next date 21 days out, because 49 - 28 is 21. */
+    const o = { learnedAt: Date.now(), step: 5, dueAt: Date.now() - 1000 };
+    srAdvance(o);
+    out.nextGap = Math.round((o.dueAt - Date.now()) / DAY);
+
+    // A verse already walking the trail keeps the step it reached.
+    out.keptStep = o.step;
+
+    // Nonsense falls back rather than scheduling against it; valid-but-unsorted is sorted.
+    Prog.srLadder = [5, 'x', 3]; saveProg(); srApplyLadder();
+    out.rejected = SR_ALL.join(',');
+    Prog.srLadder = [7, 0, 3, 1]; saveProg(); srApplyLadder();
+    out.sorted = SR_ALL.join(',');
+    Prog.srLadder = [0]; saveProg(); srApplyLadder();
+    out.tooShort = SR_ALL.join(',');
+
+    Prog.srLadder = null; saveProg(); srApplyLadder();
+    out.backToDefault = SR_ALL.join(',');
+    return out;
+  });
+  is(ladder.defaultAll, '0,1,3,7,16,30,60,180,730', 'the default ladder is unchanged');
+  is(ladder.defaultDots, 'D0 D1 D3 D7 D16 D30', '...and draws the six dots it always did');
+  is(ladder.customDots, 'D0 D1 D3 D7 D14 D28', 'a reader\'s own days redraw the trail on the verse');
+  is(ladder.customTrail, '0,1,3,7,14,28', '...the first six are the drawn trail');
+  is(ladder.customTail, '49', '...and anything past six becomes the quiet tail');
+  is(ladder.nextGap, 21, 'the next review is scheduled from the new ladder, not the old one');
+  is(ladder.keptStep, 6, '...and a verse keeps the step it had already reached');
+  is(ladder.rejected, '0,1,3,7,16,30,60,180,730', 'a ladder that does not start at zero is refused');
+  is(ladder.sorted, '0,1,3,7', 'days typed out of order are sorted rather than refused');
+  is(ladder.tooShort, '0,1,3,7,16,30,60,180,730', 'a single checkpoint is not a ladder');
+  is(ladder.backToDefault, '0,1,3,7,16,30,60,180,730', 'and it can be put back');
+
+  describe('practising by how long ago a verse was learned', () => { });
+
+  const byAge = await $(() => {
+    const out = {};
+    const keys = memArr().map(a => a.join(':')).slice(0, 3);
+    out.enough = keys.length >= 3;
+    if (!out.enough) return out;
+    const snapSR = Prog.verseSR, snapR = Prog.pracRanges;
+    Prog.verseSR = Object.assign({}, Prog.verseSR);
+    [12, 27, 40].forEach((age, i) => {
+      Prog.verseSR[keys[i]] = Object.assign({}, Prog.verseSR[keys[i]] || {},
+        { learnedAt: Date.now() - age * DAY, step: 2 });
+    });
+    saveProg();
+    out.ages = keys.map(k => verseAgeDays(k));
+
+    Prog.pracRanges = null; saveProg();
+    out.offered = pracRanges().map(r => r.lo + '-' + r.hi).join(' ');
+    out.noneTicked = pracRangeDeck();
+
+    Prog.pracRanges = [{ lo: 10, hi: 14, on: true }, { lo: 25, hi: 29, on: false }]; saveProg();
+    out.one = (pracRangeDeck() || []).map(k => verseAgeDays(k)).join(',');
+
+    Prog.pracRanges = [{ lo: 10, hi: 14, on: true }, { lo: 25, hi: 29, on: true }]; saveProg();
+    out.both = (pracRangeDeck() || []).map(k => verseAgeDays(k)).join(',');
+
+    Prog.pracRanges = [{ lo: 14, hi: 10, on: true }]; saveProg();
+    out.backwards = pracRangeDeck();
+
+    Prog.verseSR = snapSR; Prog.pracRanges = snapR; saveProg();
+    return out;
+  });
+  ok(byAge.enough, 'the fixture has verses to age');
+  is(byAge.offered, '10-14 25-29', 'the two offered ranges straddle the checkpoints that slip most');
+  is(byAge.noneTicked, null, 'with nothing ticked, practice draws on everything as it always did');
+  is(byAge.one, '12', 'one range gives only the verses learned in that window');
+  is(byAge.both, '27,12', 'two ranges give the union, oldest first, one after another');
+  is(byAge.backwards, null, 'a range whose second number is not higher selects nothing');
+
+  describe('looking a verse up mid-test does not cost you the test', () => { });
+
+  /* Reported after a real morning's review. Failing word for word is when you most want to look the
+     verse up, and pressing the reference walked out of the test — the way back landed on the Library
+     hub, so the verse you were half way through had to be started again.
+
+     The same trip stopped the review clock and nothing started it again, so a thirty minute review
+     that dipped into a verse early reported four minutes.
+
+     The rule: the clock ticks for as long as you are in the review, lookups included, and stops
+     when you leave it. The hub is on the way to everything, so arriving there proves nothing —
+     PASSING THROUGH it is not STOPPING on it, and only the second one ends the timing. */
+  const lookupTrip = await $(async () => {
+    const out = {};
+    Prog.srClock = null; delete Prog.srDay; saveProg();
+    /* openVerseWizard shows the teaching film first if it has not been seen, and that arrives
+       asynchronously and would draw over the restored test. Marking it seen keeps this block about
+       the thing it is testing rather than about which blocks ran before it. */
+    try{ markVideoSeen('verse'); }catch(e){}
+    MS = { phase: 'sr', dueWork: true, srQueue: [], numQueue: [], bookQueue: [], newQueue: [] };
+    srClockStart();
+
+    show('verse');
+    startTypeTest(43, 3, 16, () => {}, true);
+    TT.idx = 5; renderTypeTest();
+    out.wordBefore = TT.idx;
+    out.verseBefore = TT.b + ':' + TT.c + ':' + TT.v;
+    window.__advanceClock(10 * 60000);            // ten minutes of reviewing
+
+    const back = hereAgain();
+    openVerseWizard(43, 11, 35, back);            // the reference, tapped from inside the test
+    await new Promise(r => setTimeout(r, 30));    // the deferred decision runs here
+    out.leftTheTest = !document.getElementById('ttIn');
+    out.stillTiming = srClockRunning();
+    window.__advanceClock(5 * 60000);             // five minutes reading it
+
+    back();                                       // the ✕ / ✓ back into the test
+    await new Promise(r => setTimeout(r, 30));
+    out.backInTest = !!document.getElementById('ttIn');
+    out.wordAfter = TT.idx;
+    out.verseAfter = TT.b + ':' + TT.c + ':' + TT.v;
+    window.__advanceClock(15 * 60000);            // and finish the review
+    out.counted = srClockSeconds();
+
+    /* Leaving the review for good is the other half of the rule: stop on the hub and the clock
+       banks, however long the app is left open afterwards. */
+    /* An earlier block leaves a number test standing, and its own advance timer can draw the
+       "numbers done" screen over this one — which is a real render, so the clock correctly decides
+       the reader went somewhere. Cleared first, the way the book-review block clears it, so this
+       block is about the hub and not about what ran before it. */
+    NT = null; WP = null;
+    srClockStop(); Prog.srClock = null; saveProg();
+    srClockStart();
+    show('verse'); startTypeTest(43, 3, 16, () => {}, true); renderTypeTest();
+    window.__advanceClock(10 * 60000);
+    vView = 'hub'; renderVerse();
+    await new Promise(r => setTimeout(r, 30));
+    out.stoppedOnHub = !srClockRunning();
+    window.__advanceClock(20 * 60000);
+    out.afterLeaving = srClockSeconds();
+
+    srClockStop(); Prog.srClock = null; MS = null; saveProg();
+    return out;
+  });
+  ok(lookupTrip.leftTheTest, 'tapping a reference leaves the test');
+  ok(lookupTrip.stillTiming, '...and the clock keeps running, because looking a verse up is part of the review');
+  ok(lookupTrip.backInTest, 'coming back puts you in the test rather than on the Library hub');
+  is(lookupTrip.wordAfter, lookupTrip.wordBefore, '...at the same word');
+  is(lookupTrip.verseAfter, lookupTrip.verseBefore, '...of the same verse');
+  is(lookupTrip.counted, 30 * 60, 'thirty minutes of reviewing reads as thirty, lookups included');
+  ok(lookupTrip.stoppedOnHub, 'stopping on the hub ends the timing');
+  is(lookupTrip.afterLeaving, 10 * 60, '...and the app left open afterwards adds nothing');
+
   describe('the clock survives the phone going to sleep', () => { });
 
   /* Reported from a real review: thirty-five minutes of work, and the screen said 0s.
@@ -4592,6 +4924,52 @@ const DAY = 86400000;
   is(sleep.idle, 0, 'with no review running, sleeping and waking banks nothing');
   ok(!sleep.idleRunning, '...and does not start a clock that was never running');
   ok(!sleep.finishedRunning, 'a review that finished while away does not start timing again');
+
+  describe('the clock survives the page being reloaded', () => { });
+
+  /* Reported twice: fourteen minutes read as four. The banked seconds lived in Prog and survived
+     being closed, but the running segment was held in memory only — and a phone reloads the page
+     whenever it likes. Everything not yet banked went with it. The run is folded into the stored
+     total every few seconds now, so losing the page costs a tick rather than the session. */
+  const durable = await $(() => {
+    const out = {};
+    Prog.srClock = null; delete Prog.srDay; saveProg();
+    srClockStart();
+    srTickFrom = Date.now() - 4 * 60000;      // four minutes in
+    srClockBank();                            // the ticker, firing
+    out.bankedMs = Prog.srClock.ms;
+    out.reported = srClockSeconds();
+
+    // What a reload leaves behind: the stored record, with no in-memory anchor.
+    const kept = JSON.parse(JSON.stringify(Prog.srClock));
+    srTickFrom = null;
+    Prog.srClock = kept; saveProg();
+    out.survived = srClockSeconds();
+    out.notRunning = !srClockRunning();
+
+    // Starting again appends rather than replacing.
+    srClockStart();
+    srTickFrom = Date.now() - 10 * 60000;
+    srClockBank();
+    out.total = srClockSeconds();
+    out.sittings = srClockDay().runs;
+
+    // Banking over and over must not drift.
+    Prog.srClock = null; saveProg();
+    srClockStart();
+    for (let i = 0; i < 60; i++) { srTickFrom = Date.now() - 1500; srClockBank(); }
+    out.noDrift = srClockSeconds();
+
+    srClockStop(); Prog.srClock = null; saveProg();
+    return out;
+  });
+  is(durable.bankedMs, 240000, 'the run is banked in milliseconds, not rounded seconds');
+  is(durable.reported, 240, '...and reads as four minutes');
+  is(durable.survived, 240, 'a reload keeps what was banked instead of losing the session');
+  ok(durable.notRunning, '...and does not go on counting a segment that died with the page');
+  is(durable.total, 840, 'starting again appends: four minutes plus ten is fourteen');
+  is(durable.sittings, 2, '...counted as two sittings');
+  is(durable.noDrift, 90, 'sixty banks of a second and a half come to ninety seconds exactly');
 
   describe('a swipe makes a sound, and only when it moves', () => { });
 
@@ -5990,9 +6368,9 @@ const DAY = 86400000;
   });
   is(lpath.headers, 0, 'nothing folds — the collapsible headers are gone');
   // The Code, Foundations, ten book phases, then Phase 12 in eighteen subsections of six.
-  is(lpath.phaseCount, 30, 'the Code, then Foundations, then the numbered phases');
+  is(lpath.phaseCount, 31, 'the Code, then Foundations, then the numbered phases');
   is(lpath.numbered.split(',').slice(0, 10).join(','), 'Phase 2,Phase 3,Phase 4,Phase 5,Phase 6,Phase 7,Phase 8,Phase 9,Phase 10,Phase 11', 'numbered Phase 2 through Phase 11 are the books');
-  is(lpath.numbered.split(',').slice(10).join(','), 'Phase 12A,Phase 12B,Phase 12C,Phase 12D,Phase 12E,Phase 12F,Phase 12G,Phase 12H,Phase 12I,Phase 12J,Phase 12K,Phase 12L,Phase 12M,Phase 12N,Phase 12O,Phase 12P,Phase 12Q,Phase 12R', '...and the numbers are 12A through 12R, six at a time');
+  is(lpath.numbered.split(',').slice(10).join(','), 'Phase 12A,Phase 12B,Phase 12C,Phase 12D,Phase 12E,Phase 12F,Phase 12G,Phase 12H,Phase 12I,Phase 12J,Phase 12K,Phase 12L,Phase 12M,Phase 12N,Phase 12O,Phase 12P,Phase 12Q,Phase 12R,Phase 12S', '...and the numbers are 12A through 12S, six at a time');
   has(lpath.names, 'The Code: Major System Sounds', 'the first is the Code');
   has(lpath.names, 'Foundations', '...then Foundations');
   has(lpath.names, 'Phase 2: Mark–John + Joshua–Ruth', '...then Mark–John first, which finishes the four Gospels, and Joshua–Ruth after');

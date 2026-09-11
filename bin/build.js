@@ -32,6 +32,78 @@ const OUT = path.join(ROOT, NATIVE ? path.join('mobile', 'www') : 'burningbush')
 const CHECK = process.argv.includes('--check');
 
 // [find, replace, expected number of sites]
+
+/* ---- what a store build must not merely hide, but not contain -------------------------------
+ * Switching the paywall off at runtime leaves the Stripe URLs, the prices, the group-seat button
+ * and a hardcoded comp code sitting in a bundle that anyone can read, because the whole app is one
+ * readable file inside the APK. Both stores forbid shipping hidden or dormant features, and an
+ * automated scan reads strings before a human reads anything. What is not in the file cannot be
+ * found, so for the store builds these regions are REMOVED and replaced with the smallest stub
+ * that keeps every call site valid.
+ *
+ * The first release is genuinely free rather than free-looking: isPro() is true, so nothing is
+ * locked, and there is no paywall to reach. In-app purchases arrive as an update once the store
+ * accounts exist and their products can actually be tested.
+ */
+function cutRegion(html, name, replacement, html_comment) {
+  const o = html_comment ? `<!--STRIP:${name}:START-->` : `/*STRIP:${name}:START*/`;
+  const c = html_comment ? `<!--STRIP:${name}:END-->` : `/*STRIP:${name}:END*/`;
+  const i = html.indexOf(o), j = html.indexOf(c);
+  if (i < 0 || j < 0) throw new Error(`build: strip markers missing for ${name} — did src/index.html move?`);
+  if (j < i) throw new Error(`build: strip markers crossed for ${name}`);
+  return html.slice(0, i) + replacement + html.slice(j + c.length);
+}
+
+// Everything the rest of the app asks of Billing, answering "yes, it is all yours" and holding no
+// URL, price or code of any kind.
+const BILLING_FREE = `const Billing = {
+  isPro(){ return true; },            // the store release is free; nothing is locked
+  data(){ return null; },
+  ent(){ return null; },
+  codes: [],
+  refresh(){ return Promise.resolve(); },
+  handleReturn(){},
+  grant(){}, revoke(){}, redeem(){ return false; },
+  startCheckout(){}, manage(){}
+};`;
+
+const NOOP = (name) => `function ${name}(){ /* not in the store build */ }`;
+
+const nlOf = (s) => s.indexOf(String.fromCharCode(13,10)) >= 0 ? String.fromCharCode(13,10) : String.fromCharCode(10);
+function stripPayments(html) {
+  html = cutRegion(html, 'PAYMODAL', '', true);
+  html = cutRegion(html, 'BILLING', BILLING_FREE, false);
+  html = cutRegion(html, 'LICENCES', NOOP('openLicences'), false);
+  html = cutRegion(html, 'GIVE', NOOP('openGive'), false);
+  html = cutRegion(html, 'GROUPBUY', NOOP('openGroupBuy'), false);
+  html = cutRegion(html, 'PAYWALL', NOOP('openPaywall'), false);
+  /* Two release notes describe how paying works — the server opening checkout, managing a card in
+     Stripe's portal. They are true of the web and describe nothing that exists in this build, so a
+     reviewer reading the version history would be told about a paid feature they cannot find. Only
+     whole changelog ITEMS naming Stripe go; the peg word "Darts Checkout" is not one of them. */
+  { const before = html.length;
+    html = html.split(nlOf(html)).filter(line =>
+      !(/^\s*\["(new|chg|fix)",/.test(line) && /Stripe/.test(line))).join(nlOf(html));
+    if (html.length === before) throw new Error('build: expected to drop the payment release notes, dropped none'); }
+
+  /* No WORKING way to pay, and no key to the door, may survive. The test is deliberately about
+     function rather than vocabulary: the word "Stripe" also appears in code comments and in old
+     changelog entries describing releases that happened, and a comment is not a hidden feature.
+     What must not exist is a live endpoint, an unlock code, or a button that buys something. */
+  const banned = [
+    [/elijahsentme/i,            'the comp unlock code'],
+    [/(js|checkout|api)\.stripe\.com/i, 'a Stripe endpoint'],
+    [/id="payGroup"/,            'the group-seat button'],
+    [/checkoutUrl\s*:/,          'a checkout URL setting'],
+    [/monthlyUrl\s*:/,           'a monthly checkout URL'],
+    [/id="payModal"/,            'the paywall markup'],
+  ];
+  for (const [re, what] of banned) {
+    if (re.test(html)) throw new Error(`build: ${what} is still in the store build after stripping (${re})`);
+  }
+  return html;
+}
+
 const RULES = [
   ['src="kjv.js"', 'src="/kjv.js"', 1],
   ['href="fonts/fonts.css"', 'href="/fonts/fonts.css"', 1],
@@ -99,6 +171,8 @@ function buildHtml() {
     if (n !== expect) fail(`native rule "${from}" matched ${n} site(s), expected ${expect}.`);
     h = h.split(from).join(to);
   }
+  // The store builds carry no payment code at all. See stripPayments for why removing beats hiding.
+  if (NATIVE) { try { h = stripPayments(h); } catch (e) { fail(e.message); } }
   // nothing relative may survive. ${...} values are built elsewhere or are external URLs.
   const left = [
     ...h.matchAll(/src="(?!\/|https?:|data:|\$\{)[^"]*"/g),
