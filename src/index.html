@@ -1398,6 +1398,10 @@
   .sfx-sw.on{background:var(--gold);border-color:var(--gold-ink)}
   .sfx-sw.on span{left:21px;background:var(--on-accent,#fff)}
   .vrow-note{font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--muted);margin-top:3px}
+  .feedback .prac-step{margin-top:6px;font-weight:700}
+  .feedback .prac-next{margin-top:4px;opacity:.8;font-size:12px}
+  .lock-why{margin:10px 0 6px;padding:9px 12px;border-radius:10px;border:1px solid var(--gold);
+    background:var(--panel2);color:var(--gold-ink);font-weight:800;font-size:13.5px;text-align:center}
   .mem-filter{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 8px}
   .mem-filter input[type=date]{padding:5px 7px;font:inherit;font-size:12.5px;border-radius:8px;
     border:1px solid var(--line);background:var(--panel2);color:var(--ink)}
@@ -2277,8 +2281,15 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.17.0";
+const APP_VERSION="2.18.0";
 const CHANGELOG=[
+ {v:"2.18.0", d:"September 11, 2026", t:"A shaky verse gets locked in", items:[
+   ["new","<b>A verse that needed help is reviewed before you move on.</b> Use a reveal, or miss one three times, and its review page opens with a line saying why \u2014 <i>let\u2019s lock it in</i>. Closing it carries on to the next question in your practice or your daily review, never back out to the Library."],
+   ["fix","<b>Your first ever Practice Verses answer threw you out to the Library.</b> That answer unlocks Word for Word, and the app jumped to the Library to peel the sticker off \u2014 in the middle of your test. The sticker now waits and comes off the next time you open the Library."]
+ ]},
+ {v:"2.17.1", d:"September 11, 2026", t:"Practice counts toward your goal", items:[
+   ["new","<b>Every three verses in Practice Verses is a step toward your daily goal.</b> Practice used to count for nothing, so a long session of drilling finished with the goal exactly where it started. Now the third verse you get right says <i>That\u2019s 3 \u2014 one step closer to your daily target</i>, and the ones between count down to the next. Your daily review is not counted twice: it already earns its own marker."]
+ ]},
  {v:"2.17.0", d:"September 10, 2026", t:"Double zero, and every verse you know", items:[
    ["new","<b>00 joins the numbers, right after 99.</b> It is the last of the two-digit pegs and it comes with everything the others have: <b>Sauce</b> as its Major System word with Seesaw, Zeus, Oasis and Suez to choose between, and six things the world already ties to it \u2014 midnight on a 24-hour clock, the green pocket an American roulette wheel adds, double-aught buckshot, Italian 00 flour, OO gauge track, and the licence to kill."],
    ["new","<b>Every verse you know, in one list.</b> At the bottom of My Verses, under your books, the whole lot with the most recently learned at the top and the date beside each one. Narrow it to a date or a range to find what you learned in a particular week. Verses learned before the app kept dates say so rather than guessing."]
@@ -5654,7 +5665,19 @@ function libUse(id){
   // A round of Practice Verses is what wins the Bible and what lifts the Word for Word sticker, so
   // both have to be looked at again here — nothing else would ask until a screen happened to redraw.
   try{ updateTabLocks(); }catch(e){}
-  if(id==="verses") setTimeout(()=>{ try{ peelFoil(".sl-w4w", renderVerse); }catch(e){} }, 300);
+  /* The Word for Word sticker lives on the Library. It used to be peeled 300ms from now wherever the
+     reader happened to be — and with no sticker on screen, peelFoil goes straight to its callback,
+     renderVerse, which drew the Library over the test they were answering in. It waits for the
+     Library now, and comes off there. */
+  if(id==="verses"){ w4wPeelPending=true;
+    setTimeout(()=>{ try{ if(document.querySelector(".sl-w4w")) runW4WPeel(); }catch(e){} }, 300); }
+}
+let w4wPeelPending=false;
+function runW4WPeel(){
+  if(!w4wPeelPending) return;
+  w4wPeelPending=false;
+  // Redraw only if the Library is still what is showing when the peel finishes a second later.
+  peelFoil(".sl-w4w", ()=>{ if(el("vPracVerse")) renderVerse(); });
 }
 function tabWon(t){ return t==="learn" || (Prog.scratchWon||[]).includes(t); }
 function tabUnlocked(tab){ return tabWon(tab); }
@@ -8246,7 +8269,7 @@ function renderVerse(){
       <button class="vhub sq" id="vhubVideos" data-view="videos"><span class="vi ani ani-snap">🎬</span><span>Video Review</span><small>${videoReviewList().length||"none yet"}</small></button>
       <button class="vhub sq" id="vPracVerse"><span class="vi ani ani-flip">📖</span><span>Practice Verses</span><small>${mem.length} to draw on</small></button>
       <button class="vhub sq" id="vPracNum"><span class="vi ani ani-roll">🎲</span><span>Practice Books</span><small>${knownNumbers().size} known</small></button>
-      ${feat("w4w") ? (libUsed("verses")
+      ${feat("w4w") ? ((libUsed("verses") && !w4wPeelPending)
         ? `<button class="vhub wide" id="vW4W"><span class="vi ani ani-speak">${speakIconSVG()}</span><span>Practice Word for Word</span></button>`
         // the same rectangle, under a sticker that says what lifts it — nothing is hidden, only closed
         : `<span class="slockwrap wide"><button class="vhub wide" id="vW4W"><span class="vi ani ani-speak">${speakIconSVG()}</span><span>Practice Word for Word</span></button>${foilHTML("Practice Verses to Unlock","sl-w4w")}</span>`) : ""}
@@ -8269,6 +8292,7 @@ function renderVerse(){
    : (mem.length ? startMemTest() : toast("Memorize a verse first, tap Suggested!"));
   { const f=document.querySelector(".sl-sr"); if(f) f.onclick=()=>toast("Build your first memory palace, and this opens with the film that explains it"); }
   { const f=document.querySelector(".sl-w4w"); if(f) f.onclick=()=>toast("Finish a round of Practice Verses and this opens"); }
+  if(w4wPeelPending && document.querySelector(".sl-w4w")) setTimeout(runW4WPeel, 400);   // earned in a test, peeled here
   if(srFlashPending && el("vMemTest")){ srFlashPending=false; const rb=el("vMemTest"); rb.classList.add("srbtn-flash"); setTimeout(()=>rb.classList.remove("srbtn-flash"),6000); }
   // A present due is offered here, on arrival, and not only on the timer that follows using a tool:
   // that timer refuses while anything else is open, and a verse is usually finished with the goal
@@ -9918,7 +9942,26 @@ function resumeActiveTest(){
 // bottom of the card, under the pickers, where the eye does not go and a thumb can scroll past it
 // without ever reading it. It gets the whole screen instead: the reference, the words, and the one
 // button that moves you on.
-function openAnswerPopup(b,c,v,onNext){
+/* ---- a verse that needed help is reviewed before moving on ---------------------------------
+   A reveal, or three misses, means the verse was only just there. Going straight to the next one
+   leaves it exactly as shaky as it was, so its review page opens first — the verse, its scene,
+   its trail — with one line saying why. Closing it goes ON to the next question in the test and
+   never back out to the Library: the reader is part way through something, and this is a pause
+   in it, not the end of it. Practice and the daily review both come through here. */
+const LOCK_WHY={
+  reveal:"You needed a reveal \u2014 let\u2019s lock it in.",
+  missed:"A bit of a struggle \u2014 let\u2019s lock it in."
+};
+function lockItIn(b,c,v,why,next){
+  /* Only while this verse's question is still what is showing. The reveal path waits a moment so
+     the green tick can be seen, and a timer that outlives the test must not drag anyone back. */
+  if(!el("mtCheck")) return;
+  if(!memTestCur || memTestCur[0]!==b || memTestCur[1]!==c || memTestCur[2]!==v) return;
+  let gone=false;
+  const onward=()=>{ if(gone) return; gone=true; next(); };   // one tap, one next question
+  renderLearnedVerse(b,c,v,onward,why);
+}
+function openAnswerPopup(b,c,v,onNext,btnLabel){
   const m=el("answerModal")||(()=>{ const d=document.createElement("div"); d.id="answerModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
   const text=(kjvText(b,c,v)||"").trim();
   const more=memArr().length>1;
@@ -9928,7 +9971,7 @@ function openAnswerPopup(b,c,v,onNext){
       <div class="ansref">${bookName(b)} ${c}:${v}</div>
       ${text?`<div class="anstext">“${text.replace(/</g,"&lt;")}”</div>`:""}
  <p class="hint" style="margin:12px 0 0">Take a moment with it. Getting one wrong is how it gets learned. It will come round again.</p>
-      <button class="btn" id="ansNext" style="width:100%;margin-top:16px">${more?"Next verse →":"Done"}</button>
+      <button class="btn" id="ansNext" style="width:100%;margin-top:16px">${btnLabel||(more?"Next verse →":"Done")}</button>
     </div>`;
   m.style.display="flex"; raiseModal(m);
   el("ansNext").onclick=()=>{ m.style.display="none"; if(onNext) onNext(); };
@@ -10421,6 +10464,29 @@ function deckKeys(){ const now=Date.now();
     return !o.r0 && now>=firstReviewAt(o) && (o.lc||0)<firstReviewAt(o);
   }); } // askable = not snoozed, and not already correct this round unless its first look back has come due
 function deckRoundReset(){ const now=Date.now(); (Prog.memorized||[]).forEach(k=>{ const o=vsr(k); if(o && !(o.sz>now)) o.rd=false; }); saveProg(); }
+/* ---- practice earns goal steps, three verses at a time -------------------------------------
+   Practice Verses used to count toward nothing, so a long session of drilling addresses finished
+   with the daily goal exactly where it started. Every third verse answered correctly in practice is
+   now a step. Three rather than one because a single address is quick, and a goal that filled from
+   a minute of tapping would stop meaning anything.
+
+   Only FREE practice counts. The daily review walks through this same screen, and it already earns
+   its own marker; counting its verses here as well would pay for the same work twice. The count
+   is per day and kept in progress so a reload mid-session does not lose the verses already done. */
+const PRAC_PER_STEP=3;
+function pracDayState(){
+  const t=dayKey(new Date());
+  if(!Prog.pracDay || Prog.pracDay.date!==t) Prog.pracDay={date:t, n:0};
+  return Prog.pracDay;
+}
+function isFreePractice(){ return !!(MS && MS.phase==="practice" && !MS.dueWork); }
+// Counts one correct practice verse. Returns true when that one completed a step.
+function pracGoalTick(){
+  if(!isFreePractice()) return false;
+  const s=pracDayState();
+  s.n=(s.n|0)+1; saveProg();
+  return s.n % PRAC_PER_STEP === 0;
+}
 function markAnswer(k, correct, firstTry){ Prog.verseSR=Prog.verseSR||{}; const o=Prog.verseSR[k]||(Prog.verseSR[k]=newSR());
   if(correct){ o.rd=true; o.lc=Date.now(); o.cr=firstTry?(o.cr||0)+1:0; } else { o.cr=0; } return o.cr||0; }   // any miss breaks the streak
 // Five clean recalls in a row -> offer to rest the verse for a fortnight. It gets its own popup now:
@@ -13027,12 +13093,21 @@ function memTestRender(){
       reviewVerseSR(kk); const cr=markAnswer(kk,true,firstTry); const pts=awardTalents(kk, firstTry, MS && MS.phase==="sr"); saveProg(); refreshHUD(); checkBadges();
       if(!reviewedThisSession.includes(kk)) reviewedThisSession.push(kk);   // remember what we reviewed → show trails at the end
       creditToday();   // a real recall = showing up today (idempotent per day; credits SR & free practice alike, never a no-recall open)
+      const pracStep = pracGoalTick();              // every third verse in free practice is a goal step
+      const pracLeft = isFreePractice() ? PRAC_PER_STEP - (pracDayState().n % PRAC_PER_STEP) : 0;
       mtLock=true; paintAll(); el("mtCheck").disabled=true; el("mtWarn").textContent="";
       const card=V.querySelector(".card"); if(card){ card.classList.add("mt-correctflash"); setTimeout(()=>card.classList.remove("mt-correctflash"),900); }   // flash the whole practice card green
       ["mtFieldB","mtFieldC","mtFieldV"].forEach(id=>{const e=el(id);if(e)e.classList.add("correctflash");});
-      el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Kept ✓</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}${peeked?` · <span style="opacity:.85">🔥 streak held (peek used)</span>`:""}</div></div>`;
-      if(cr>=5 && cr%5===0) setTimeout(()=>openSnoozeAsk(b,c,v,kk,goNext), 700);   // every 5 clean recalls in a row -> ASK, in a popup of its own
-      else setTimeout(goNext, 900);
+      el("mtFb").innerHTML=`<div class="feedback ok" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Kept ✓</div><div class="sub"><b class="gold">${bookName(b)} ${c}:${v}</b> · ${talentMsg(pts)}${peeked?` · <span style="opacity:.85">🔥 streak held (peek used)</span>`:""}</div>${
+        pracStep ? `<div class="sub prac-step">\u{1F3AF} <b>That's ${PRAC_PER_STEP}</b> \u2014 one step closer to your daily target.</div>`
+        : (isFreePractice() ? `<div class="sub prac-next">${pracLeft} more for your next goal step</div>` : "")}</div>`;
+      if(pracStep){ try{ bumpGoal(); }catch(e){} }   // the step itself, with the same dots every other step shows
+      // A step is worth a moment to read before the next verse arrives.
+      const wait = pracStep ? 1800 : 900;
+      // Right after a reveal is right, but only just: its review page comes before the next verse.
+      if(peeked) setTimeout(()=>lockItIn(b,c,v,"reveal",goNext), wait);
+      else if(cr>=5 && cr%5===0) setTimeout(()=>openSnoozeAsk(b,c,v,kk,goNext), Math.max(700, wait-200));   // every 5 clean recalls in a row -> ASK, in a popup of its own
+      else setTimeout(goNext, wait);
     } else {
       memTestWrong++; markAnswer(refKey(b,c,v),false); saveProg(); refreshHUD();   // a miss no longer breaks the streak — only 3-in-a-row does
       ["mtFieldB","mtFieldC","mtFieldV"].forEach(id=>{const e=el(id);if(e)e.classList.add("wrongflash");});
@@ -13041,7 +13116,8 @@ function memTestRender(){
         bumpStreak(false); refreshHUD();
         mtSel={b,c,v}; mtLock=true; paintAll(); el("mtCheck").disabled=true; el("mtWarn").textContent="";
         el("mtFb").innerHTML="";
-        openAnswerPopup(b,c,v,goNext);
+        // The answer first, as before; then the review page, so the verse is steadied before moving on.
+        openAnswerPopup(b,c,v,()=>lockItIn(b,c,v,"missed",goNext),"Lock it in →");
       } else {
         el("mtWarn").textContent=warnText(memTestWrong);
  el("mtFb").innerHTML=`<div class="feedback no" style="position:static;margin:16px -20px -20px;border-radius:0 0 18px 18px"><div class="ttl">Not quite · try again</div><div class="sub">${warnText(memTestWrong)}</div></div>`;
@@ -13610,9 +13686,9 @@ function wireVerseNav(scopeEl, nav, ret){   // buttons route through openVerseWi
 }
 // A memorized verse's home: verse text, a "Learn Word for Word" rectangle (X/10, where 10 = Mastered),
 // and its spaced repetition trail at the bottom. No learning steps, save or skip.
-function renderLearnedVerse(b,c,v,ret){
+function renderLearnedVerse(b,c,v,ret,why){
   const V=el("verse"); show("verse");
-  markScreen(()=>renderLearnedVerse(b,c,v,ret));   // after show(), which marks the hub as it draws
+  markScreen(()=>renderLearnedVerse(b,c,v,ret,why));   // after show(), which marks the hub as it draws
   const vkey=refKey(b,c,v), cnt=w4wCount(vkey), mastered=cnt>=10, o=verseSRobj(vkey);
   const inPool=verseStage(vkey)!=="loc";   // in the pool -> the button TESTS instead of teaching
   const text=kjvText(b,c,v)||"";
@@ -13620,6 +13696,7 @@ function renderLearnedVerse(b,c,v,ret){
   const cell=(kindLbl,n)=>`<div class="lv-cell"><div class="lv-cell-k">${kindLbl}</div>${pegImg("num",n,pegFor(n).word)}<div class="lv-cell-w">${pegFor(n).word}</div></div>`;
   V.innerHTML=`<div class="card">
       ${nav.html}
+      ${why?`<div class="lock-why">🔒 ${LOCK_WHY[why]||why}</div>`:""}
  ${verseStage(vkey)==="heart"?`<div class="mastered-ribbon">💛 Known by heart. Tested on the words themselves</div>`
  :(mastered?`<div class="mastered-ribbon">★ Ready. Recited word for word ${cnt}×</div>`:"")}
       <div class="lv-ref">${bookName(b)} <span class="lv-ref-cv">${c}:${v}</span></div>

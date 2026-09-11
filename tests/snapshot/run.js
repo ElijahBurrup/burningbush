@@ -39,8 +39,12 @@ async function main() {
       for (const s of screens.filter(x => !!x.pro === pro)) {
         const key = `${theme}/${s.name}`;
         try {
-          await page.evaluate(() => window.__reseed && window.__reseed(12345));
+          /* Reseeded INSIDE the same evaluate as go(). As two separate calls, a timer left running
+             by the previous screen could fire between them and draw from the generator first, so
+             a screen that deals at random (the church piece on rome/build) dealt a different one
+             depending on timing. Nothing can run between two statements of one evaluate. */
           await page.evaluate(fn => {
+            if (window.__reseed) window.__reseed(12345);
             document.querySelectorAll('.modal').forEach(m => (m.style.display = 'none'));
             ['taxov', 'buildov'].forEach(id => { const e = document.getElementById(id); if (e) e.classList.remove('on', 'march'); });
             // eslint-disable-next-line no-new-func

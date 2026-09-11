@@ -41,7 +41,7 @@ Phase 12D   85 86 87 88 89 90
 Phase 12E   91 92 93 94 95 96
 Phase 12F   97 98 99 00               ← four lessons + test. THE PEG SET IS COMPLETE.
                                           ↓ the path forks here
-Phase 13A   100 101 102 103 104 105   ← numbers continue
+Phase 12G   100 101 102 103 104 105   ← numbers continue (the hundreds keep the 12 lettering)
 Phase W1    The Threshold             ← word for word begins
 ```
 
@@ -63,7 +63,7 @@ track active and scrolls the path to it.
 ```
 ┌──────────────────────────┬──────────────────────────┐
 │  📖  Word for Word       │  🔢  Numbers             │
-│  Phase W2 · The Doorway  │  Phase 13C · 114–119     │
+│  Phase W2 · The Doorway  │  Phase 12I · 112–117     │
 │  ●●●○○○  3 of 6          │  ●●●●●○  5 of 6          │
 └──────────────────────────┴──────────────────────────┘
 ```

@@ -1588,7 +1588,7 @@ const DAY = 86400000;
   ok(answer.afterThree.hasVerseText, '...and showing the verse itself, not only its address');
   has(answer.afterThree.text, 'The LORD is my shepherd', '...the actual words');
   is(answer.afterThree.verseScrolls, 'auto', '...scrolling on its own so a long verse cannot push the button away');
-  is(answer.afterThree.btn, 'Next verse →', 'the button that moves you on is right there');
+  is(answer.afterThree.btn, 'Lock it in →', 'the button that moves you on is right there');
   ok(answer.closed, '...and it closes when you take it');
 
   describe('every named verse is a door', () => { });
@@ -4545,6 +4545,150 @@ const DAY = 86400000;
   ok(box.capApplied, 'the capitalisation still runs on every keystroke');
   ok(box.capHeld, '...without scrolling the box out from under the cursor');
   ok(box.followedUp, 'a cursor above the view is followed back up to');
+
+  describe('the first practice answer does not throw you out of the test', () => { });
+
+  /* The first answer ever given in Practice Verses unlocks Word for Word, and the app used to jump
+     to the Library 300ms later to peel the sticker off — drawing the Library over the test the
+     reader was in the middle of. The sticker waits now, and comes off on the Library itself. */
+  const firstUse = await $(async () => {
+    const out = {};
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    /* An earlier block leaves a number test standing, and its advance timer can draw "numbers
+       done" over this screen inside the very window being checked. Cleared first, as the
+       book-review block does, so this is about the first answer and not about what ran before. */
+    NT = null; WP = null;
+    const snapLib = Prog.libUsed;
+    Prog.libUsed = Object.assign({}, Prog.libUsed); delete Prog.libUsed.verses; saveProg();
+    deckRoundReset(); suppressGrowth = true; memTestRecent = [];
+    const k = memArr()[0].join(':'); const [b, c, v] = k.split(':').map(Number);
+    show('verse');
+    MS = { phase: 'practice', srQueue: [] };
+    askVerse(k); mtSel = { b, c, v };
+    el('mtCheck').click();
+    await wait(450);                                   // past the 300ms the sticker used to go at
+    out.stillInTest = !!document.getElementById('mtCheck');
+    out.onHub = !!document.getElementById('vPracVerse');
+    out.unlocked = libUsed('verses');
+    await wait(700);                                   // let the next question arrive as normal
+    document.querySelectorAll('.modal').forEach(m => (m.style.display = 'none'));
+    MS = null; vView = 'hub'; renderVerse();           // then the reader goes to the Library
+    out.stickerWaiting = !!document.querySelector('.sl-w4w');
+    await wait(1700);
+    out.stickerGone = !document.querySelector('.sl-w4w');
+    out.hubAfter = !!document.getElementById('vPracVerse');
+    Prog.libUsed = snapLib; suppressGrowth = false; saveProg();
+    return out;
+  });
+  ok(firstUse.stillInTest && !firstUse.onHub, 'the first practice answer stays in the test instead of jumping to the Library');
+  ok(firstUse.unlocked, '...though it still unlocks Word for Word');
+  ok(firstUse.stickerWaiting, 'the sticker is waiting on the Library the next time it is opened');
+  ok(firstUse.stickerGone && firstUse.hubAfter, '...and peels off there');
+
+  describe('a verse that needed help is reviewed before moving on', () => { });
+
+  /* Reported: after a reveal the test simply moved on, leaving the verse as shaky as it was.
+     A reveal, or three misses, now opens the verse's review page with a line saying why, and
+     closing it goes ON to the next question in the test, never back out to the Library. */
+  const lockin = await $(async () => {
+    const out = {};
+    const snapPrac = Prog.pracDay;
+    Prog.pracDay = { date: dayKey(new Date()), n: 0 };   // keep clear of a goal-step pause
+    deckRoundReset(); suppressGrowth = true; memTestRecent = [];
+    const k = memArr()[0].join(':');
+    const [b, c, v] = k.split(':').map(Number);
+    const onScreen = () => ({
+      review: !!document.getElementById('lvClose'),
+      why: ((document.querySelector('.lock-why') || {}).textContent || '').trim(),
+      test: !!document.getElementById('mtCheck'),
+      hub: !!document.getElementById('vPracVerse')
+    });
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    show('verse');
+
+    // 1. A reveal, then the right answer.
+    MS = { phase: 'practice', srQueue: [] };
+    askVerse(k); memHintUses = 1; mtSel = { b, c, v };
+    el('mtCheck').click();
+    await wait(1100);
+    out.afterReveal = onScreen();
+    if (document.getElementById('lvClose')) document.getElementById('lvClose').click();
+    await wait(250);
+    out.afterClose = onScreen();
+
+    // 2. Three misses: the answer is shown first, then the review.
+    MS = { phase: 'practice', srQueue: [] };
+    askVerse(k);
+    const wrong = { b: b === 1 ? 2 : 1, c: 1, v: 1 };
+    for (let i = 0; i < 3; i++) { mtSel = { ...wrong }; el('mtCheck').click(); }
+    const modal = document.getElementById('answerModal');
+    out.popup = !!modal && modal.style.display === 'flex';
+    out.popupLabel = ((document.getElementById('ansNext') || {}).textContent || '').trim();
+    if (document.getElementById('ansNext')) document.getElementById('ansNext').click();
+    await wait(150);
+    out.afterMisses = onScreen();
+    if (document.getElementById('lvClose')) document.getElementById('lvClose').click();
+    await wait(250);
+    out.afterMissClose = onScreen();
+
+    // 3. A clean answer goes straight on, as it always did.
+    MS = { phase: 'practice', srQueue: [] };
+    askVerse(k); mtSel = { b, c, v };
+    el('mtCheck').click();
+    await wait(1100);
+    out.clean = onScreen();
+
+    Prog.pracDay = snapPrac; MS = null; suppressGrowth = false; saveProg();
+    return out;
+  });
+  ok(lockin.afterReveal.review, 'a verse answered after a reveal opens its review page');
+  ok(/needed a reveal/.test(lockin.afterReveal.why), '...with a line saying why');
+  ok(lockin.afterClose.test && !lockin.afterClose.hub, 'closing it goes on to the next question, not the Library');
+  ok(lockin.popup, 'three misses still show the answer first');
+  ok(/Lock it in/.test(lockin.popupLabel), '...with a button that says what comes next');
+  ok(lockin.afterMisses.review && /struggle/.test(lockin.afterMisses.why), '...and then the review page, saying why');
+  ok(lockin.afterMissClose.test && !lockin.afterMissClose.hub, 'closing that goes on to the next question as well');
+  ok(lockin.clean.test && !lockin.clean.review, 'a verse answered cleanly goes straight on, with no review');
+
+  describe('practice earns a goal step every three verses', () => { });
+
+  /* Practice Verses counted toward nothing, so a long session of drilling ended with the goal where
+     it began. Every third verse answered correctly in FREE practice is a step now. The daily review
+     walks the same screen and earns its own marker, so its verses must not count here as well. */
+  const pracGoal = await $(async () => {
+    const out = { free: [], review: [], lines: [] };
+    const t = dayKey(new Date());
+    const snap = { g: Prog.goalDay, p: Prog.pracDay, dg: Prog.dailyGoal, gm: Prog.goalMode };
+    Prog.pracDay = { date: t, n: 0 };
+    Prog.goalDay = { date: t, count: 0, target: 10, met: false, split: true, celebrated: false };
+    Prog.dailyGoal = 10; Prog.goalMode = 'same'; saveProg();
+    const k = memArr()[0].join(':');
+    const [b, c, v] = k.split(':').map(Number);
+    /* Each right answer schedules the next verse a second later. Answered back to back, those
+       timers from earlier answers would redraw this screen before it is read, so they are held for
+       the length of the block and the feedback is read in the same breath as the click. */
+    const realST = window.setTimeout; window.setTimeout = () => 0;
+    const one = (phase, dueWork) => {
+      MS = { phase, srQueue: [], dueWork };
+      askVerse(k); mtSel = { b, c, v };
+      el('mtCheck').click();
+      return { goal: goalState().count | 0,
+               line: ((el('mtFb') || {}).textContent || '').replace(/\s+/g, ' ') };
+    };
+    for (let i = 0; i < 6; i++) { const r = one('practice', false); out.free.push(r.goal); out.lines.push(r.line); }
+    for (let i = 0; i < 3; i++) { const r = one('sr', true); out.review.push(r.goal); }
+    window.setTimeout = realST;
+    out.counted = Prog.pracDay.n;
+    Prog.goalDay = snap.g; Prog.pracDay = snap.p; Prog.dailyGoal = snap.dg; Prog.goalMode = snap.gm;
+    MS = null; saveProg();
+    return out;
+  });
+  is(pracGoal.free.join(','), '0,0,1,1,1,2', 'the third and sixth practice verses are each a goal step');
+  ok(/That's 3/.test(pracGoal.lines[2]) && /one step closer to your daily target/.test(pracGoal.lines[2]),
+     '...and the third says so');
+  ok(/2 more for your next goal step/.test(pracGoal.lines[0]), 'the verses between count down to the next one');
+  is(pracGoal.review.join(','), '2,2,2', 'verses answered in the daily review do not count again here');
+  is(pracGoal.counted, 6, '...and do not advance the practice count');
 
   describe('a day of work counts once, and survives two devices', () => { });
 
