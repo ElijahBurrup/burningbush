@@ -2281,8 +2281,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.18.0";
+const APP_VERSION="2.18.1";
 const CHANGELOG=[
+ {v:"2.18.1", d:"September 14, 2026", t:"The Bible is silent", items:[
+   ["chg","<b>Nothing on the Bible makes a sound any more.</b> People have it open in church during the sermon, so the shelf, every book and chapter, a verse you open from a chapter, and the lists the Bible opens are all quiet now, whatever your sound setting says. Tapping the Bible tab is quiet too. Everywhere else sounds exactly as it did."]
+ ]},
  {v:"2.18.0", d:"September 11, 2026", t:"A shaky verse gets locked in", items:[
    ["new","<b>A verse that needed help is reviewed before you move on.</b> Use a reveal, or miss one three times, and its review page opens with a line saying why \u2014 <i>let\u2019s lock it in</i>. Closing it carries on to the next question in your practice or your daily review, never back out to the Library."],
    ["fix","<b>Your first ever Practice Verses answer threw you out to the Library.</b> That answer unlocks Word for Word, and the app jumped to the Library to peel the sticker off \u2014 in the middle of your test. The sticker now waits and comes off the next time you open the Library."]
@@ -5853,7 +5856,9 @@ function show(tab){
   if(tab!=="verse"){ clearActiveTest(); srClockStop(); }   // walked away from the test - do not drag them back into it, and stop its clock
   // Arriving somewhere has its own short motif, so where you are is audible before it is read.
   // Only on an actual change: re-rendering the screen you are already on is not an arrival.
-  { const was=(document.querySelector(".view.active")||{}).id; if(was!==tab) Sfx.screen(tab); }
+  // Except the Bible, where arriving is silent like everything else there (bibleQuiet).
+  { const was=(document.querySelector(".view.active")||{}).id; if(was!==tab && tab!=="journey") Sfx.screen(tab); }
+  if(tab!=="verse") bibleVerseOpen=false;   // a verse opened from the Bible ends when you go anywhere else
   views.forEach(v=>v.classList.toggle("active",v.id===tab));
   document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
   document.querySelector(".content").scrollTop=0;
@@ -5874,6 +5879,7 @@ document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
   // tapping Verse while already in a Verse sub-view backs out to the main hub (a second tap = home)
   if(b.dataset.tab==="verse" && document.querySelector(".view.active")?.id==="verse" && typeof vView!=="undefined" && vView!=="hub"){ vView="hub"; vFrom="library"; }
   show(b.dataset.tab);
+  bibleVerseOpen=false;   // choosing a tab, Library included, is leaving the Bible behind
   // the only automatic check there is. Tapping a tab means this screen is already being left.
   try{ Update.onTabTap(); }catch(e){}
 });
@@ -5882,7 +5888,6 @@ document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
 let bibleView="num";   // whole-Bible tile display: num | numimg | bookimg | name
 function renderJourney(){
   markScreen(()=>{ show("journey"); renderJourney(); });
-  sfx("bookOpen");   // the Bible opening on the shelf
   updateMetrics();
   swipeTarget = null;   // the whole Bible is already on this screen; there is no next one
   if(!Prog.onboarded){ renderOnboard(); return; }
@@ -6124,7 +6129,8 @@ function renderChapterScreen(bn,c){
   el("chBack").onclick=()=>renderBookScreen(bn);
   wireLegend(()=>renderChapterScreen(bn,c));
   J.querySelectorAll("[data-goc]").forEach(b=>b.onclick=()=>renderChapterScreen(bn,+b.dataset.goc));
-  J.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{ const v=+b.dataset.v; openVerseWizard(bn,c,v,()=>{show("journey");renderChapterScreen(bn,c);}); });
+  // A verse opened from here is still the Bible, even though it is drawn in the Library view.
+  J.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{ const v=+b.dataset.v; bibleVerseOpen=true; openVerseWizard(bn,c,v,()=>{show("journey");renderChapterScreen(bn,c);}); });
   wireSwipe();
   /* Chapters only. A swipe that carried you out of Malachi and into Matthew would move you 400
      years and two testaments without your having chosen to — the book is the thing you picked,
@@ -8638,10 +8644,7 @@ return {
       seq([{f:C5,at:0,t:0.13},{f:E5,at:0.09,t:0.13},{f:G5,at:0.18,t:0.13},
         {f:C6,at:0.28,t:0.40,vol:0.12}],{type:"triangle",vol:0.11}); } },
 
-  bookOpen: { label: "Book opened", group: "Learning",
-    desc: "A wooden cover lifting, with a breath of paper off the top.",
-    play: () => { seq([{f:D4,at:0,t:0.13},{f:G4,at:0.09,t:0.20}],{type:"triangle",vol:0.10});
-      note(C6,{to:G5,at:0.14,t:0.15,type:"sine",vol:0.04}); } },
+  // The Bible opening on its shelf had a sound of its own here. It is gone: the Bible is silent (bibleQuiet).
 
   pageTurn: { label: "Page turned", group: "Learning",
     desc: "Just the air moving — a page is not an event.",
@@ -9112,7 +9115,6 @@ const SFX_FILES = {
   reviewDone:[["rpg__bookClose.mp3"],0.65],
   lessonDone:[["jingle__jingles_PIZZI05.mp3","jingle__jingles_PIZZI13.mp3"],0.5],
   phaseDone:[["jingle__jingles_STEEL02.mp3","jingle__jingles_STEEL06.mp3"],0.6],
-  bookOpen:[["rpg__bookOpen.mp3"],0.6],
   pageTurn:[["rpg__bookFlip1.mp3","rpg__bookFlip2.mp3","rpg__bookFlip3.mp3"],0.35],
   palaceStep:[["impact__footstep_concrete_000.mp3","impact__footstep_concrete_001.mp3","impact__footstep_concrete_002.mp3","impact__footstep_concrete_003.mp3","impact__footstep_concrete_004.mp3"],0.4],
   stoneSet:[["impact__impactMining_000.mp3","impact__impactMining_002.mp3","impact__impactMining_004.mp3"],0.8],
@@ -9175,7 +9177,9 @@ const Sfx = (()=>{
   let ctx=null, unlocked=false;
   const AC = window.AudioContext || window.webkitAudioContext;
 
-  function on(){ return feat("sound"); }   // one switch, in the Feature Store, and no second one to hunt for
+  // One switch, in the Feature Store, and no second one to hunt for. The Bible is silent whatever it
+  // says, because the Bible is what people have open in church during the sermon (bibleQuiet).
+  function on(){ return feat("sound") && !bibleQuiet(); }
   function ac(){
     if(!AC) return null;
     if(!ctx){ try{ ctx=new AC(); }catch(e){ return null; } }
@@ -9621,6 +9625,20 @@ function sfxTakeName(file){
     .replace(/[_-]+/g," ").replace(/([a-z])([A-Z])/g,"$1 $2").toLowerCase().trim();
 }
 function PALETTE_HAS(k){ return !!(typeof Sfx!=="undefined" && Sfx._palette && Sfx._palette[k]); }
+/* Church quiet. The Bible is read during sermons, so nothing on a Bible screen makes a sound: not a
+   tap, not an arrival, not a reward, and not the tab that opens it. That is the Bible itself (the
+   journey view: the shelf, a book, a chapter), a verse opened from one of its chapters, and the
+   lists it opens in the Library view. A rule rather than a setting: the one place a sound is never
+   wanted is exactly the place nobody remembers to switch it off first. */
+var bibleVerseOpen=false;   // var, so nothing that reads it early can meet an undeclared name
+function bibleQuiet(){
+  try{
+    const a=(document.querySelector(".view.active")||{}).id;
+    if(a==="journey") return true;
+    if(a==="verse") return bibleVerseOpen || (vFrom==="bible" && vView!=="hub");
+  }catch(e){}
+  return false;
+}
 /* Call a sound by name without knowing whether it exists yet. The palette is authored separately
    from the places that ring it, so a call site can be written before its sound and simply stay
    quiet until one arrives — and a sound that is later renamed or removed silences itself instead of
@@ -9635,6 +9653,7 @@ function sfx(name, arg){ try{ const f=Sfx&&Sfx[name]; if(typeof f==="function") 
 document.addEventListener("pointerdown", ev=>{
   const t = ev.target && ev.target.closest && ev.target.closest("button, .opt, .tabbar button, .pickbtn");
   if(!t) return;
+  if(t.closest('.tabbar button[data-tab="journey"]')) return;   // opening the Bible is silent (bibleQuiet)
   if(t.disabled || t.getAttribute("aria-disabled")==="true"){ sfx("refuse"); return; }
   if(t.classList.contains("lclose")){ sfx("modalClose"); return; }
   if(t.classList.contains("sfx-sw")){ return; }        // the sound switches speak for themselves

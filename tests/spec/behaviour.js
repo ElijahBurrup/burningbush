@@ -6164,6 +6164,42 @@ const DAY = 86400000;
   });
   is(unused.join(','), '', 'every sound the engine can make is wired to a moment');
 
+  // The Bible is read in church during the sermon, so nothing on it makes a sound.
+  describe('church quiet: the Bible never makes a sound', () => { });
+  const quiet = await $(() => {
+    let made = 0;
+    const proto = (window.AudioContext || window.webkitAudioContext).prototype, real = proto.createOscillator;
+    proto.createOscillator = function () { made++; return real.apply(this, arguments); };
+    const count = fn => { made = 0; try { fn(); } catch (e) { return 'threw: ' + e.message; } return made; };
+    Sfx.unlock();
+    const out = {};
+    show('learn'); out.learnRight = count(() => Sfx.right());
+    out.arrive = count(() => show('journey'));
+    out.quiet = bibleQuiet();
+    out.bibleRight = count(() => Sfx.right());
+    out.bibleCoins = count(() => Sfx.screen('learn'));
+    show('learn');
+    const tab = document.querySelector('.tabbar button[data-tab="journey"]');
+    out.tabTap = count(() => tab.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })));
+    // a verse opened from one of its chapters is still the Bible, though it is drawn in the Library
+    show('journey'); bibleVerseOpen = true; show('verse');
+    out.verseFromBible = count(() => Sfx.right());
+    // and choosing a tab, even Library, leaves it behind
+    document.querySelector('.tabbar button[data-tab="verse"]').click();
+    out.afterTab = count(() => Sfx.right());
+    show('learn');
+    proto.createOscillator = real;
+    return out;
+  });
+  ok(quiet.learnRight > 0, 'away from the Bible a right answer still sounds');
+  is(quiet.arrive, 0, 'arriving at the Bible is silent');
+  ok(quiet.quiet, '...because the Bible is quiet by rule, not by setting');
+  is(quiet.bibleRight, 0, 'on the Bible nothing sounds, not even a right answer');
+  is(quiet.bibleCoins, 0, '...nor any motif');
+  is(quiet.tabTap, 0, 'the tap on the Bible tab is silent too');
+  is(quiet.verseFromBible, 0, 'a verse opened from a chapter is still the Bible');
+  ok(quiet.afterTab > 0, 'choosing a tab leaves the Bible, and the sound comes back');
+
   describe('a book lesson will not move on half-answered', () => { });
   const bookGuard = await $(() => {
     closeEveryOverlay();
