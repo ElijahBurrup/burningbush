@@ -2324,8 +2324,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.20.0";
+const APP_VERSION="2.20.1";
 const CHANGELOG=[
+ {v:"2.20.1", d:"September 15, 2026", t:"A Psalm for every new number", items:[
+   ["new","<b>Every number past 66 opens a Psalm of its own.</b> Learn 91 and the lesson ends with a verse from Psalm 91 to memorize straight away, so the number you just learned goes to work, and into review, the same day. Psalms stops at 150; Psalm 119 runs to verse 176, so 151 to 176 each open the verse of Psalm 119 with that number."],
+   ["new","<b>All of them wait in Suggested to memorize, under Psalms,</b> as their numbers are learned: one verse from each psalm, chosen to stand on its own."]
+ ]},
  {v:"2.20.0", d:"September 15, 2026", t:"Videos, where there is something to watch", items:[
    ["new","<b>📺 Videos.</b> A book’s lesson now offers BibleProject’s animated overview of that book, all 66 of them, in two parts where the book has two. 1 Kings 1 and 2 have Gary Hamrick’s verse-by-verse study of each chapter, and Romans 16:23 has a video that goes deep on that one verse. The button appears only where there is something to watch, always at the top right, and everything plays inside the app."],
    ["fix","<b>The streak review called today “missed” before it was over.</b> A streak only breaks when a whole day has been missed, and the count always worked that way; the review now shows today as <i>in progress</i> until it ends."]
@@ -4026,13 +4030,39 @@ const GEMS=[
 /* ---- per-book early-reachable additions (auto-curated, validated vs KJV, dedup'd) ---- */
 ["Judges",2,1,"promise"],["Judges",7,7,"power"],["Ruth",1,8,"character"],["Ruth",2,4,"worship"],["1 Samuel",2,3,"wisdom"],["1 Samuel",2,9,"promise"],["2 Samuel",5,10,"promise"],["2 Samuel",7,3,"faith"],["2 Samuel",9,7,"comfort"],["1 Kings",2,2,"character"],["1 Kings",2,3,"command"],["1 Kings",3,5,"promise"],["1 Kings",3,9,"wisdom"],["2 Kings",2,2,"faith"],["2 Kings",2,9,"power"],["2 Kings",7,9,"gospel"],["1 Chronicles",4,10,"faith"],["2 Chronicles",1,7,"character"],["2 Chronicles",1,10,"wisdom"],["2 Chronicles",6,14,"worship"],["2 Chronicles",7,3,"worship"],["Ezra",1,3,"command"],["Ezra",3,11,"worship"],["Ezra",5,5,"power"],["Ezra",7,9,"faith"],["Ezra",7,10,"character"],["Nehemiah",1,4,"character"],["Nehemiah",4,14,"command"],["Nehemiah",6,9,"faith"],["Esther",2,15,"character"],["Esther",5,2,"comfort"],["Esther",9,1,"power"],["Job",5,8,"faith"],["Job",5,17,"wisdom"],["Job",8,7,"promise"],["Job",12,10,"power"],["Lamentations",3,24,"identity"],["Lamentations",3,25,"promise"],["Ezekiel",2,1,"command"],["Ezekiel",2,2,"power"],["Ezekiel",2,6,"comfort"],["Ezekiel",3,3,"wisdom"],["Hosea",3,5,"promise"],["Hosea",6,1,"comfort"],["Joel",1,3,"command"],["Joel",2,1,"command"],["Joel",2,12,"command"],["Amos",3,3,"wisdom"],["Amos",4,13,"power"],["Amos",5,4,"promise"],["Amos",5,8,"worship"],["Amos",5,14,"command"],["Obadiah",1,3,"wisdom"],["Obadiah",1,4,"power"],["Obadiah",1,12,"command"],["Jonah",1,9,"identity"],["Jonah",2,2,"faith"],["Jonah",2,7,"faith"],["Jonah",4,2,"character"],["Nahum",1,3,"power"],["Nahum",1,13,"promise"],["Nahum",1,15,"gospel"],["Zephaniah",2,3,"command"],["Zephaniah",3,9,"promise"],["Zephaniah",3,12,"faith"],["Zephaniah",3,14,"worship"],["Zephaniah",3,15,"comfort"],["Haggai",1,5,"command"],["Haggai",1,13,"comfort"],["Haggai",2,4,"command"],["Haggai",2,5,"comfort"],["Zechariah",1,3,"promise"],["Zechariah",2,5,"comfort"],["Zechariah",2,8,"identity"],["Malachi",2,10,"identity"],["Malachi",3,1,"gospel"],["Malachi",3,6,"character"],["Mark",1,11,"identity"],["Luke",2,14,"worship"],["Luke",4,4,"wisdom"],["Luke",4,8,"worship"],["John",4,14,"promise"],["2 Thessalonians",1,2,"worship"],["2 Thessalonians",2,15,"faith"],["2 Thessalonians",3,5,"comfort"],["Titus",1,2,"promise"],["Titus",2,11,"gospel"],["Titus",2,12,"command"],["Philemon",1,3,"worship"],["Philemon",1,4,"character"],["Philemon",1,5,"faith"],["Philemon",1,7,"comfort"],["2 Peter",1,2,"worship"],["2 Peter",1,4,"promise"],["2 Peter",1,5,"faith"],["2 John",1,2,"comfort"],["2 John",1,3,"worship"],["2 John",1,5,"command"],["2 John",1,9,"faith"],["3 John",1,5,"character"],["3 John",1,8,"command"],["3 John",1,11,"wisdom"],["Jude",1,1,"identity"],["Jude",1,2,"worship"],["Jude",1,3,"faith"],["Jude",1,21,"command"],["Esther",7,3,"faith"]
 ].map(g=>({b:g[0],c:g[1],v:g[2],cat:g[3]}));
+/* ---- a Psalm for every number past the books ---------------------------------------------------
+   Numbers 1–66 each open a book. Past 66 a number opens nothing of its own, so each is given the
+   Psalm of the same number: learn 91 and Psalm 91 is yours, with one verse from it to memorize
+   straight away, which puts the new number to work and into review the same day. Psalms stops at
+   150; Psalm 119 runs to verse 176, so 151–176 are its verses of the same number.
+
+   One verse per psalm, chosen to stand on its own; where a verse of that psalm was already a gem,
+   that verse is the one. Every verse number is below its chapter's, so it is already known by the
+   time the chapter's number is learned and the verse can be built the moment the lesson ends. */
+const PSALM_FOR={
+  67:1, 68:19, 69:30, 70:4, 71:5, 72:19, 73:26, 74:16, 75:7, 76:1, 77:11, 78:4, 79:9, 80:3,
+  81:10, 82:3, 83:18, 84:10, 85:10, 86:5, 87:3, 88:13, 89:1, 90:12, 91:1, 92:12, 93:4, 94:19,
+  95:6, 96:1, 97:11, 98:4, 99:9, 100:4, 101:3, 102:27, 103:12, 104:24, 105:4, 106:3, 107:9,
+  108:13, 109:30, 110:1, 111:10, 112:7, 113:3, 114:7, 115:1, 116:1, 117:2, 118:24, 119:11,
+  120:1, 121:2, 122:1, 123:1, 124:8, 125:1, 126:5, 127:1, 128:1, 129:4, 130:5, 131:2, 132:9,
+  133:1, 134:2, 135:3, 136:1, 137:1, 138:8, 139:14, 140:12, 141:3, 142:5, 143:8, 144:15,
+  145:18, 146:3, 147:3, 148:13, 149:4, 150:6
+};
+function psalmForNumber(n){
+  if(PSALM_FOR[n]) return [19, n, PSALM_FOR[n]];
+  if(n>=151 && n<=176) return [19, 119, n];
+  return null;
+}
+const PSALM_PICKS=[];
+for(let n=67;n<=176;n++){ const a=psalmForNumber(n); if(a) PSALM_PICKS.push({b:"Psalms",c:a[1],v:a[2]}); }
 function reachableGemCounts(){ const c={}; GEMS.forEach(g=>{ if(reachable(bookNum(g.b),g.c,g.v)) c[g.cat]=(c[g.cat]||0)+1; }); return c; }
 function totalGemCounts(){ const c={}; GEMS.forEach(g=>c[g.cat]=(c[g.cat]||0)+1); return c; }
 function totalGems(){ return GEMS.length; }
 function reachableGems(){ return GEMS.filter(g=>reachable(bookNum(g.b),g.c,g.v)).length; }
 
 let _vmap=null;
-function _vm(){ if(!_vmap){ _vmap={}; [GEMS,TORAH_VERSES,TORAH5_VERSES,NT_VERSES,SCENES].forEach(p=>p.forEach(v=>_vmap[refKey(bookNum(v.b),v.c,v.v)]=v)); } return _vmap; }
+// The Psalm picks go first, so a verse curated elsewhere as well keeps its concept and its scene.
+function _vm(){ if(!_vmap){ _vmap={}; [PSALM_PICKS,GEMS,TORAH_VERSES,TORAH5_VERSES,NT_VERSES,SCENES].forEach(p=>p.forEach(v=>_vmap[refKey(bookNum(v.b),v.c,v.v)]=v)); } return _vmap; }
 function allVerses(){ return Object.values(_vm()); }
 function verseAt(k){ return _vm()[k]; }
 
@@ -8001,18 +8031,26 @@ function renderLessonDone(){
   // first meant the path quietly replaced this card as the screen to come back to.
   { const _d=d, _r=lessonReturn;
     markScreen(()=>{ LESSON_DONE=_d; lessonReturn=_r; renderLessonDone(); }); }
+  // The Psalm of the number just learned, offered until that verse has been learned too.
+  const ps=(d.psalm && !lessonReturn && !Prog.memorized.includes(refKey(d.psalm[0],d.psalm[1],d.psalm[2]))) ? d.psalm : null;
+  const psNote=ps?`<div class="callout" style="text-align:left"><b>📖 ${d.num>150?`Psalm 119 runs to verse 176, so ${d.num} opens Psalm 119:${d.num}.`:`${d.num} opens Psalm ${d.num}.`}</b> A verse from it to practice your new number with:
+      <div style="margin-top:6px"><b class="gold">Psalm ${ps[1]}:${ps[2]}</b> ${bbEsc(kjvText(ps[0],ps[1],ps[2]))}</div></div>`:"";
   el("learn").innerHTML=`<div class="card center">
     <div style="font-size:56px">🏅</div>
     <h2>Skill complete!</h2>
     <p class="lead">${d.ok} correct. Now <b class="gold">gold</b>. It will fade over the coming days, so come back to keep it locked in.</p>
     ${d.msg?`<div class="callout">${d.msg}</div>`:""}
+    ${psNote}
     ${d.unlocked}
     <div class="btnrow">
       ${lessonReturn?`<button class="btn" id="lBackVerse">Back to Your Verse →</button>`
+        :ps?`<button class="btn" id="lPsalm">Memorize Psalm ${ps[1]}:${ps[2]} →</button>`
         :(d.canBuild?`<button class="btn" id="lBuild">Build a new verse →</button>`:`<button class="btn" id="lNextNum">Learn another →</button>`)}
       <button class="btn ghost" id="lPath2">Back to path</button></div></div>`;
   // Somebody who came here from a half-saved verse wants that verse back, not the path.
   if(el("lBackVerse")) el("lBackVerse").onclick=()=>{ const go=lessonReturn; lessonReturn=null; go(); };
+  // Built like any verse, and back here after, so the scene walk ends where it began.
+  if(el("lPsalm")) el("lPsalm").onclick=()=>openVerseWizard(ps[0],ps[1],ps[2], renderLessonDone);
   if(el("lBuild")) el("lBuild").onclick=()=>openSuggestedForBook(d.buildBook);
   if(el("lNextNum")) el("lNextNum").onclick=()=>renderPath(true);
   el("lPath2").onclick=()=>{ lessonReturn=null; renderPath(true); };
@@ -8052,7 +8090,10 @@ function finishLesson(){
   // book that opened nothing new ended with "Learn another" and no way through to a verse at all.
   // It is the way into the Library now, so it appears whenever that book has a verse to build.
   const canBuild = newly.length>0 || (buildBook && ((suggestedByBook()[buildBook]||[]).length>0));
-  LESSON_DONE={ ok:LZ.ok, msg, unlocked, hasNew:newly.length>0, canBuild, buildBook };
+  // Past 66 a number opens a Psalm of its own, and the lesson ends with one verse from it to learn.
+  const pa=(sk.kind==="num" && !sk.testOnly && (sk.items||[]).length===1) ? psalmForNumber(sk.items[0]) : null;
+  const psalm=(pa && reachable(pa[0],pa[1],pa[2]) && !Prog.skipped.includes(refKey(pa[0],pa[1],pa[2]))) ? pa : null;
+  LESSON_DONE={ ok:LZ.ok, msg, unlocked, hasNew:newly.length>0, canBuild, buildBook, psalm, num:psalm?sk.items[0]:null };
   renderLessonDone();
   LZ=null;
   // The ticket goes up over this screen, so claiming it puts this screen back rather than the path.

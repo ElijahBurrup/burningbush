@@ -9,7 +9,7 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "classic/verse/hub": {
-  "h": "406a8258372b1b56",
+  "h": "0267cc4948fb64d2",
   "len": 3264,
   "els": 65,
   "buttons": 7,
@@ -18,7 +18,7 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 Due 🔥 4 day streak Spaced Repetition Due"
  },
  "classic/verse/hub-full": {
-  "h": "00dacb7c1321bba7",
+  "h": "240414794e0b2c5b",
   "len": 3040,
   "els": 59,
   "buttons": 7,
@@ -27,22 +27,22 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 Due 🔥 4 day streak Spaced Repetition Due"
  },
  "classic/verse/suggested": {
-  "h": "40da0dd103c31523",
-  "len": 8599,
+  "h": "db678d71962a7761",
+  "len": 8600,
   "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · le"
+  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 656 verses you can build right now 548 of 548 heart-verses opened · le"
  },
  "classic/verse/topics": {
-  "h": "8956a562840f7bff",
+  "h": "6d6b9182ad57f820",
   "len": 4687,
   "els": 121,
   "buttons": 23,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
+  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 613 verses in rea"
  },
  "classic/verse/memorized": {
   "h": "d2b9f01784777611",
@@ -225,8 +225,8 @@
   "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
  },
  "classic/bible/chapter-long": {
-  "h": "9087df87423b9052",
-  "len": 8826,
+  "h": "25e07973463822a5",
+  "len": 8852,
   "els": 195,
   "buttons": 4,
   "svgs": 0,
@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "8b565671ae8681b0",
+  "h": "748bf1edfab26ef0",
   "len": 121723,
   "els": 2233,
   "buttons": 585,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "0d47e29d5b9ad540",
-  "len": 197886,
-  "els": 3277,
+  "h": "122870f0440147fb",
+  "len": 198694,
+  "els": 3290,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.20.0 September 15, 2026 Videos, where there is something to watch NEW 📺 Videos. A book’s lesson no"
+  "text": "✕ Version history v2.20.1 September 15, 2026 A Psalm for every new number NEW Every number past 66 opens a Psalm of its "
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "c5b61931692ada43",
+  "h": "f3c8399c669d0af2",
   "len": 120922,
   "els": 2225,
   "buttons": 583,
@@ -531,7 +531,7 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "illumined/verse/hub": {
-  "h": "fd6451e542d4350e",
+  "h": "6d04922cb3fde86d",
   "len": 3612,
   "els": 68,
   "buttons": 7,
@@ -540,7 +540,7 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "illumined/verse/hub-full": {
-  "h": "780d48b5084bdb4f",
+  "h": "4754a3c1bab040b6",
   "len": 3388,
   "els": 62,
   "buttons": 7,
@@ -549,22 +549,22 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "illumined/verse/suggested": {
-  "h": "40da0dd103c31523",
-  "len": 8599,
+  "h": "db678d71962a7761",
+  "len": 8600,
   "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · le"
+  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 656 verses you can build right now 548 of 548 heart-verses opened · le"
  },
  "illumined/verse/topics": {
-  "h": "8956a562840f7bff",
+  "h": "6d6b9182ad57f820",
   "len": 4687,
   "els": 121,
   "buttons": 23,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
+  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 613 verses in rea"
  },
  "illumined/verse/memorized": {
   "h": "d2b9f01784777611",
@@ -747,8 +747,8 @@
   "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
  },
  "illumined/bible/chapter-long": {
-  "h": "9087df87423b9052",
-  "len": 8826,
+  "h": "25e07973463822a5",
+  "len": 8852,
   "els": 195,
   "buttons": 4,
   "svgs": 0,
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "2b4140bfbb6a708b",
+  "h": "2a213ef5bcb38577",
   "len": 120930,
   "els": 2225,
   "buttons": 583,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "0d47e29d5b9ad540",
-  "len": 197886,
-  "els": 3277,
+  "h": "122870f0440147fb",
+  "len": 198694,
+  "els": 3290,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.20.0 September 15, 2026 Videos, where there is something to watch NEW 📺 Videos. A book’s lesson no"
+  "text": "✕ Version history v2.20.1 September 15, 2026 A Psalm for every new number NEW Every number past 66 opens a Psalm of its "
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "2b4140bfbb6a708b",
+  "h": "2a213ef5bcb38577",
   "len": 120930,
   "els": 2225,
   "buttons": 583,
@@ -1053,7 +1053,7 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "glass/verse/hub": {
-  "h": "fd6451e542d4350e",
+  "h": "6d04922cb3fde86d",
   "len": 3612,
   "els": 68,
   "buttons": 7,
@@ -1062,7 +1062,7 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "glass/verse/hub-full": {
-  "h": "780d48b5084bdb4f",
+  "h": "4754a3c1bab040b6",
   "len": 3388,
   "els": 62,
   "buttons": 7,
@@ -1071,22 +1071,22 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "glass/verse/suggested": {
-  "h": "40da0dd103c31523",
-  "len": 8599,
+  "h": "db678d71962a7761",
+  "len": 8600,
   "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · le"
+  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 656 verses you can build right now 548 of 548 heart-verses opened · le"
  },
  "glass/verse/topics": {
-  "h": "8956a562840f7bff",
+  "h": "6d6b9182ad57f820",
   "len": 4687,
   "els": 121,
   "buttons": 23,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
+  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 613 verses in rea"
  },
  "glass/verse/memorized": {
   "h": "d2b9f01784777611",
@@ -1269,8 +1269,8 @@
   "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
  },
  "glass/bible/chapter-long": {
-  "h": "9087df87423b9052",
-  "len": 8826,
+  "h": "25e07973463822a5",
+  "len": 8852,
   "els": 195,
   "buttons": 4,
   "svgs": 0,
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "470fbc14376492f7",
+  "h": "193a15ee2ce81886",
   "len": 120928,
   "els": 2225,
   "buttons": 583,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "0d47e29d5b9ad540",
-  "len": 197886,
-  "els": 3277,
+  "h": "122870f0440147fb",
+  "len": 198694,
+  "els": 3290,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.20.0 September 15, 2026 Videos, where there is something to watch NEW 📺 Videos. A book’s lesson no"
+  "text": "✕ Version history v2.20.1 September 15, 2026 A Psalm for every new number NEW Every number past 66 opens a Psalm of its "
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "470fbc14376492f7",
+  "h": "193a15ee2ce81886",
   "len": 120928,
   "els": 2225,
   "buttons": 583,
@@ -1575,7 +1575,7 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "quest/verse/hub": {
-  "h": "fd6451e542d4350e",
+  "h": "6d04922cb3fde86d",
   "len": 3612,
   "els": 68,
   "buttons": 7,
@@ -1584,7 +1584,7 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "quest/verse/hub-full": {
-  "h": "780d48b5084bdb4f",
+  "h": "4754a3c1bab040b6",
   "len": 3388,
   "els": 62,
   "buttons": 7,
@@ -1593,22 +1593,22 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "quest/verse/suggested": {
-  "h": "40da0dd103c31523",
-  "len": 8599,
+  "h": "db678d71962a7761",
+  "len": 8600,
   "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · le"
+  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 656 verses you can build right now 548 of 548 heart-verses opened · le"
  },
  "quest/verse/topics": {
-  "h": "8956a562840f7bff",
+  "h": "6d6b9182ad57f820",
   "len": 4687,
   "els": 121,
   "buttons": 23,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
+  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 613 verses in rea"
  },
  "quest/verse/memorized": {
   "h": "d2b9f01784777611",
@@ -1791,8 +1791,8 @@
   "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
  },
  "quest/bible/chapter-long": {
-  "h": "9087df87423b9052",
-  "len": 8826,
+  "h": "25e07973463822a5",
+  "len": 8852,
   "els": 195,
   "buttons": 4,
   "svgs": 0,
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "a14f14260280bd70",
+  "h": "27639084ddd41d4f",
   "len": 120930,
   "els": 2225,
   "buttons": 583,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "0d47e29d5b9ad540",
-  "len": 197886,
-  "els": 3277,
+  "h": "122870f0440147fb",
+  "len": 198694,
+  "els": 3290,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.20.0 September 15, 2026 Videos, where there is something to watch NEW 📺 Videos. A book’s lesson no"
+  "text": "✕ Version history v2.20.1 September 15, 2026 A Psalm for every new number NEW Every number past 66 opens a Psalm of its "
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "a14f14260280bd70",
+  "h": "27639084ddd41d4f",
   "len": 120930,
   "els": 2225,
   "buttons": 583,
@@ -2097,7 +2097,7 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "buddy/verse/hub": {
-  "h": "fd6451e542d4350e",
+  "h": "6d04922cb3fde86d",
   "len": 3612,
   "els": 68,
   "buttons": 7,
@@ -2106,7 +2106,7 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "buddy/verse/hub-full": {
-  "h": "780d48b5084bdb4f",
+  "h": "4754a3c1bab040b6",
   "len": 3388,
   "els": 62,
   "buttons": 7,
@@ -2115,22 +2115,22 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "buddy/verse/suggested": {
-  "h": "40da0dd103c31523",
-  "len": 8599,
+  "h": "db678d71962a7761",
+  "len": 8600,
   "els": 219,
   "buttons": 67,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 562 verses you can build right now 548 of 548 heart-verses opened · le"
+  "text": "← Library ✨ Suggested to memorize 🌱 WITHIN REACH 656 verses you can build right now 548 of 548 heart-verses opened · le"
  },
  "buddy/verse/topics": {
-  "h": "8956a562840f7bff",
+  "h": "6d6b9182ad57f820",
   "len": 4687,
   "els": 121,
   "buttons": 23,
   "svgs": 0,
   "imgs": 0,
-  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 601 verses in rea"
+  "text": "← Library 🧭 Browse by topic 🧭 FOR WHAT YOU ARE FACING 22 of 22 topics have something you can build · 613 verses in rea"
  },
  "buddy/verse/memorized": {
   "h": "d2b9f01784777611",
@@ -2313,8 +2313,8 @@
   "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
  },
  "buddy/bible/chapter-long": {
-  "h": "9087df87423b9052",
-  "len": 8826,
+  "h": "25e07973463822a5",
+  "len": 8852,
   "els": 195,
   "buttons": 4,
   "svgs": 0,
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "a35423969486a459",
+  "h": "59e277cf04ac84ac",
   "len": 120926,
   "els": 2225,
   "buttons": 583,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "0d47e29d5b9ad540",
-  "len": 197886,
-  "els": 3277,
+  "h": "122870f0440147fb",
+  "len": 198694,
+  "els": 3290,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.20.0 September 15, 2026 Videos, where there is something to watch NEW 📺 Videos. A book’s lesson no"
+  "text": "✕ Version history v2.20.1 September 15, 2026 A Psalm for every new number NEW Every number past 66 opens a Psalm of its "
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "a35423969486a459",
+  "h": "59e277cf04ac84ac",
   "len": 120926,
   "els": 2225,
   "buttons": 583,

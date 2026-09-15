@@ -6742,6 +6742,61 @@ const DAY = 86400000;
   ok(spk.cursorInBox, '...the cursor is put in the box');
   ok(spk.saysWhere, '...and it says where the key is, with the way back to Google');
 
+  describe('a Psalm for every number past the books', () => { });
+  const psalm = await $(() => {
+    const out = { err: null };
+    const keepMem = Prog.memorized.slice(), keepSkip = Prog.skipped.slice(), keepLR = lessonReturn;
+    const keepDone = Prog.doneSkills.slice();
+    const skill = id => UNITS.flatMap(u => u.skills).find(s => s.id === id);
+    try {
+      // one verse for each of 67–176, every one real and numbered below what is being learned
+      const bad = [];
+      for (let n = 67; n <= 176; n++) {
+        const a = psalmForNumber(n);
+        const shape = a && a[0] === 19 && (n <= 150 ? (a[1] === n && a[2] < n) : (a[1] === 119 && a[2] === n));
+        if (!shape || !kjvText(a[0], a[1], a[2])) bad.push(n);
+      }
+      out.bad = bad;
+      out.noneBelow = psalmForNumber(66) === null && psalmForNumber(0) === null;
+      out.suggested = (suggestedByBook()[19] || []).some(a => a[1] === 91 && a[2] === 1);
+      // finishing 91 offers Psalm 91:1 with its words, and the button builds that verse
+      Prog.memorized = keepMem.filter(k => k !== '19:91:1' && k !== '19:119:151');
+      Prog.skipped = keepSkip.filter(k => k !== '19:91:1' && k !== '19:119:151');
+      lessonReturn = null; show('learn');
+      LZ = { sk: skill('num:91'), ok: 1, miss: 0 }; finishLesson();
+      out.button = (el('lPsalm') || {}).textContent || '';
+      out.words = /secret place of the most High/.test(el('learn').textContent);
+      const real = window.openVerseWizard; let opened = null;
+      window.openVerseWizard = (b, c, v, ret) => { opened = [b, c, v, typeof ret]; };
+      el('lPsalm').click();
+      window.openVerseWizard = real;
+      out.opened = opened;
+      // learned, it is not offered again
+      Prog.memorized.push('19:91:1'); renderLessonDone();
+      out.goneWhenLearned = !el('lPsalm');
+      Prog.memorized = Prog.memorized.filter(k => k !== '19:91:1');
+      // the test of six offers none
+      LZ = { sk: skill('numtest:91'), ok: 6, miss: 0 }; finishLesson();
+      out.testOffersNone = !el('lPsalm');
+      // past 150, the verse of Psalm 119 with that number
+      LZ = { sk: skill('num:151'), ok: 1, miss: 0 }; finishLesson();
+      out.b151 = (el('lPsalm') || {}).textContent || '';
+    } catch (e) { out.err = e.message; }
+    Prog.memorized = keepMem; Prog.skipped = keepSkip; Prog.doneSkills = keepDone; lessonReturn = keepLR;
+    LZ = null; LESSON_DONE = null; bustCaches(); saveProg();
+    return out;
+  });
+  is(psalm.err, null, 'the Psalm offer runs without throwing');
+  is(psalm.bad.join(','), '', 'every number from 67 to 176 has a real Psalm verse, numbered below what is being learned');
+  ok(psalm.noneBelow, '...and 0 and the book numbers have none');
+  ok(psalm.suggested, 'the picks wait in Suggested to memorize, under Psalms');
+  is(psalm.button, 'Memorize Psalm 91:1 →', 'finishing 91 offers Psalm 91:1');
+  ok(psalm.words, '...with its words on the card');
+  is(psalm.opened && psalm.opened.join(','), '19,91,1,function', '...and the button builds that verse, and comes back after');
+  ok(psalm.goneWhenLearned, 'a Psalm already learned is not offered again');
+  ok(psalm.testOffersNone, 'the test of six offers none');
+  is(psalm.b151, 'Memorize Psalm 119:151 →', 'past 150 it is the verse of Psalm 119 with that number');
+
   describe('a book lesson will not move on half-answered', () => { });
   const bookGuard = await $(() => {
     closeEveryOverlay();
