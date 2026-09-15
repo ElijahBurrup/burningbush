@@ -4893,6 +4893,123 @@ const DAY = 86400000;
   ok(cadmin.saved, '...and saves a good one');
   ok(cadmin.news, 'Announcements opens ready to write one');
 
+  describe('suggestions and stories come from the database too, and never take a verse away', () => { });
+
+  /* The database may add a heart-verse, hide a built-in one's suggestion, change a Psalm pick and
+     replace the topics; it may rename a story, reword a milestone and add one. A hidden or replaced
+     verse stays in the pool, because someone may have memorized it. */
+  const sugs = await $(async () => {
+    const out = {};
+    const base = (Store.getJSON('vv_content', null) || {}).bundle;
+    const clone = JSON.parse(JSON.stringify(base));
+    const gems0 = totalGems(), topics0 = TOPICS.length, wasSug = isSuggested(1, 1, 1);
+    clone.v = 'test-sug';
+    clone.suggested = {
+      gemsAdd: [{ ref: '4:7:12', cat: 'promise' }, { ref: '4:7:13', cat: 'nonsense' }, { ref: '99:1:1', cat: 'faith' }],
+      gemsHide: ['1:1:1'],
+      psalmFor: { 91: 2, 92: 200, 60: 1 },
+      topics: [{ name: 'Test topic', icon: '🧪', kw: ['shepherd'], refs: [[19, 23, 1], ['x']] }, { name: '' }]
+    };
+    Content.apply(clone);
+    out.added = isSuggested(4, 7, 12) && isPromiseVerse(4, 7, 12);
+    out.badIgnored = !isSuggested(4, 7, 13) && totalGems() === gems0;
+    out.hidden = wasSug && !isSuggested(1, 1, 1) && !!verseAt('1:1:1') && verseState(1, 1, 1) !== 'sugmem';
+    out.notListed = !suggestedVerses().some(a => a.join(':') === '1:1:1');
+    out.psalm = psalmForNumber(91)[2] === 2 && psalmForNumber(92)[2] === PSALM_FOR_BUILTIN[92] && !psalmForNumber(60);
+    out.psalmKept = !!verseAt(refKey(19, 91, PSALM_FOR_BUILTIN[91]));
+    out.topics = TOPICS.length === 1 && TOPICS[0].name === 'Test topic' && TOPICS[0].refs.length === 1;
+    clone.v = 'test-sug-none'; clone.suggested = null;
+    Content.apply(clone);
+    out.sugBack = totalGems() === gems0 && isSuggested(1, 1, 1) === wasSug && !isSuggested(4, 7, 12)
+      && psalmForNumber(91)[2] === PSALM_FOR_BUILTIN[91] && TOPICS.length === topics0;
+
+    clone.v = 'test-stories';
+    clone.stories = {
+      names: { '1:1:1': 'In the Beginning', '1:3:1': 'The <i>Fall</i>', '1:99:1': 'Nowhere' },
+      milestones: { edit: { 'Creation Remembered': { t: 'Creation Kept', c: 'Five stories.' } },
+        add: [{ id: 'm1', after: 'Abraham & the Patriarchs', e: '⛺', t: 'Tents Pitched', c: 'Ten stories.', d: 'Abraham has gone out.' },
+              { id: 'm2', after: 'No Such Section', t: 'Nowhere' }] }
+    };
+    Content.apply(clone);
+    const sk = UNITS.flatMap(U => U.skills).find(s => s.id === 'story:0');
+    out.named = sk.label === 'In the Beginning' && sk.story.n === 'In the Beginning' && storyNameAt(1, 1, 1) === 'In the Beginning';
+    out.stripped = !/[<>]/.test(storyNameAt(1, 3, 1) || '<');
+    const ms = MILESTONES.find(m => m.key === 'Creation Remembered');
+    out.reworded = !!ms && ms.t === 'Creation Kept' && ms.c === 'Five stories.' && ms.d === ms._o.d;
+    const added = MILESTONES.filter(m => m.db);
+    out.addedOne = added.length === 1 && added[0].t === 'Tents Pitched';
+    const done0 = Prog.doneSkills.slice(), seen0 = JSON.stringify(Prog.msSeen || {});
+    Prog.doneSkills = Prog.doneSkills.filter(id => !/^story:/.test(id)); Prog.msSeen = {};
+    out.waits = !added[0].reached();
+    for (let i = 0; i < 10; i++) Prog.doneSkills.push('story:' + i);
+    out.reached = added[0].reached() && /Tents Pitched/.test(renderMilestone(added[0])) && !!Prog.msSeen['db:m1'];
+    out.keyed = /Creation Kept/.test(renderMilestone(ms)) && !!Prog.msSeen['Creation Remembered'] && !Prog.msSeen['Creation Kept'];
+    Prog.doneSkills = done0; Prog.msSeen = JSON.parse(seen0);
+    clone.v = 'test-stories-none'; clone.stories = null;
+    Content.apply(clone);
+    out.storiesBack = sk.label === 'Creation' && storyNameAt(1, 1, 1) === 'Creation' && !MILESTONES.some(m => m.db)
+      && MILESTONES.find(m => m.key === 'Creation Remembered').t === 'Creation Remembered';
+    Content.apply(base);
+    out.back = Content.version() === 'fixture';
+    return out;
+  });
+  ok(sugs.added, 'a heart-verse added from the database is suggested, under its category');
+  ok(sugs.badIgnored, '...and one with no such category, or no such verse, is ignored');
+  ok(sugs.hidden, 'hiding a built-in one stops the suggestion but keeps the verse, for anyone who learned it');
+  ok(sugs.notListed, '...and it leaves the list of suggestions');
+  ok(sugs.psalm, 'a Psalm number can offer a different verse, and a verse after the Psalm\'s number is refused');
+  ok(sugs.psalmKept, '...while the verse it used to offer stays in the pool');
+  ok(sugs.topics, 'the topics can be replaced, and a topic or verse that makes no sense is dropped');
+  ok(sugs.sugBack, 'taking the suggestions away puts every built-in one back');
+  ok(sugs.named, 'a story can be renamed by the verse it starts at');
+  ok(sugs.stripped, '...and a name cannot carry markup');
+  ok(sugs.reworded, 'a milestone can be reworded, keeping whatever was not changed');
+  ok(sugs.addedOne, 'a milestone can be added at the end of a section, and one after a section that does not exist is ignored');
+  ok(sugs.waits && sugs.reached, '...and it is reached when every story up to there is learned');
+  ok(sugs.keyed, 'a reworded milestone is still remembered as celebrated under its original title');
+  ok(sugs.storiesBack, 'taking the stories document away puts every name and milestone back');
+  ok(sugs.back, 'the bundle can be applied again afterwards');
+
+  const cadmin2 = await $(async () => {
+    const out = {}; const wait = ms => new Promise(r => setTimeout(r, ms));
+    const realFetch = window.fetch, sent = {};
+    const was = { user: Auth.user, token: Auth._token };
+    Auth.user = { email: 'elijahdburrup@gmail.com' }; Auth._token = 'test';
+    const json = d => new Response(JSON.stringify(d), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    window.fetch = async (url, o = {}) => {
+      const u = String(url), meth = o.method || 'GET', m = /\/admin\/content\/(suggested|stories)$/.exec(u);
+      if (m && meth === 'GET') return json({ key: m[1], current: null, history: [] });
+      if (m && meth === 'POST') { sent[m[1]] = JSON.parse(o.body).doc; return json({ ok: true, version: 1 }); }
+      return realFetch(url, o);
+    };
+    try {
+      openContentAdmin('suggested'); await wait(120);
+      out.tabs = document.querySelectorAll('#contentModal [data-catab]').length === 5;
+      el('caGRef').value = 'Numbers 7:12'; el('caGCat').value = 'promise'; el('caGAdd').click(); await wait(150);
+      out.gemSent = !!sent.suggested && sent.suggested.gemsAdd.some(g => g.ref === '4:7:12' && g.cat === 'promise');
+      delete sent.suggested;
+      el('caPNum').value = '92'; el('caPVer').value = '99'; el('caPSet').click(); await wait(60);
+      out.psalmRefused = !sent.suggested && /before 92/.test(el('caPMsg').textContent);
+      document.querySelector('#caBody [data-tedit="0"]').click(); await wait(30);
+      out.topicForm = !!el('caTName') && el('caTName').value === TOPICS[0].name;
+      openContentAdmin('stories'); await wait(120);
+      const ins = document.querySelectorAll('#caBody [data-sname]');
+      out.allStories = ins.length === STORY_TOTAL;
+      ins[0].value = 'In the Beginning'; el('caNSave').click(); await wait(150);
+      out.namesSent = !!sent.stories && sent.stories.names['1:1:1'] === 'In the Beginning' && Object.keys(sent.stories.names).length === 1;
+      out.milestones = document.querySelectorAll('#caBody details.ca-ms').length === MILESTONES.filter(m => !m.db).length;
+      document.getElementById('contentModal').style.display = 'none';
+    } finally { window.fetch = realFetch; Auth.user = was.user; Auth._token = was.token; applyAdminVisibility(); }
+    return out;
+  });
+  ok(cadmin2.tabs, 'the Content screen has Suggested and Stories tabs');
+  ok(cadmin2.gemSent, 'a heart-verse typed the way people write it is saved with its category');
+  ok(cadmin2.psalmRefused, 'a Psalm verse after the Psalm\'s own number is refused before sending');
+  ok(cadmin2.topicForm, 'a topic opens for editing');
+  ok(cadmin2.allStories, 'every story is listed for renaming');
+  ok(cadmin2.namesSent, '...and only the names that changed are saved');
+  ok(cadmin2.milestones, 'every milestone can be reworded');
+
   describe('a lesson screen can be read aloud', () => { });
 
   /* A Listen button on the lesson screens reads what the screen teaches, in a calm male voice where

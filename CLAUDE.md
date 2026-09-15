@@ -3,12 +3,13 @@
 The project itself is documented in [README.md](README.md): layout, build, tests, deploy.
 This file is how we work, not what the code is.
 
-## Videos, announcements and settings: the database, not the app
+## Content: the database, not the app
 
-Videos, announcements and settings live in the database, not the app (README → Content from the
-database). A video is one row, added from Profile → Admin → Content; the 📺 button and the camera
-mark are both drawn from it, so they come and go together. Never hand-place either, never compile
-videos back into `src/index.html`, and never make remote anything saved progress depends on.
+Videos, announcements, settings, suggested verses, topics, story names and milestone wording live
+in the database, not the app (README → Content from the database). A video is one row, added from
+Profile → Admin → Content; the 📺 button and the camera mark are both drawn from it, so they come
+and go together. Never hand-place either, never compile videos back into `src/index.html`, and
+never make remote anything saved progress depends on: section titles, story order, review stages.
 
 ## Handing work back and forth
 

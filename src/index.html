@@ -918,6 +918,10 @@
   .ca-set span{display:flex;flex-direction:column;font-size:13.5px}
   .ca-set small{font-size:11.5px;color:var(--muted)}
   .ca-set .ca-in{margin:0;width:auto;min-width:110px;flex:0 0 auto}
+  .ca-row .ca-in.ca-mini{flex:0 0 76px;width:76px}
+  .ca-grp{font-size:12.5px;font-weight:800;color:var(--gold-ink);margin:12px 0 4px}
+  .ca-ms{border-bottom:1px solid var(--line);padding:6px 0}
+  .ca-ms summary{cursor:pointer;font-weight:700;font-size:13.5px;margin-bottom:6px}
   .screenkind{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;padding:4px 10px;border-radius:999px;margin-bottom:8px}
   .screenkind.ch{background:var(--gold-soft);color:var(--gold-ink);border:1px solid var(--gold2)}
   .screenkind.vs{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent)}
@@ -2411,8 +2415,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.21.5";
+const APP_VERSION="2.21.6";
 const CHANGELOG=[
+ {v:"2.21.6", d:"September 15, 2026", t:"Suggestions and stories, kept fresh", items:[
+   ["chg","<b>Suggested verses, topics and the Bible stories now come from Burning Bush too.</b> New heart-verses, better Psalm picks, fresh topics and more milestones along the stories can reach you without waiting for an update."]
+ ]},
  {v:"2.21.5", d:"September 15, 2026", t:"Teaching on almost every chapter, and verses brought to life", items:[
    ["new","<b>Teaching on nearly 800 chapters.</b> Gary Hamrick’s verse-by-verse studies across 56 books, David Guzik on Job and Proverbs, Chuck Missler on Proverbs, and Pastor Paul on Psalms 1–41. Look for the camera on a chapter in the Bible; 📺 plays it, or lists the choices where there is more than one."],
    ["chg","<b>Videos and news now come straight from Burning Bush.</b> New videos, announcements and changes reach the app the next time you open it, on the web and on your phone, without waiting for an update."],
@@ -4172,9 +4179,19 @@ function reachableGems(){ return GEMS.filter(g=>reachable(bookNum(g.b),g.c,g.v))
 
 let _vmap=null;
 // The Psalm picks go first, so a verse curated elsewhere as well keeps its concept and its scene.
-function _vm(){ if(!_vmap){ _vmap={}; [PSALM_PICKS,GEMS,TORAH_VERSES,TORAH5_VERSES,NT_VERSES,SCENES].forEach(p=>p.forEach(v=>_vmap[refKey(bookNum(v.b),v.c,v.v)]=v)); } return _vmap; }
+function _vm(){ if(!_vmap){ _vmap={}; [GEM_KEPT,PSALM_KEPT,PSALM_PICKS,GEMS,TORAH_VERSES,TORAH5_VERSES,NT_VERSES,SCENES].forEach(p=>p.forEach(v=>_vmap[refKey(bookNum(v.b),v.c,v.v)]=v)); } return _vmap; }
 function allVerses(){ return Object.values(_vm()); }
 function verseAt(k){ return _vm()[k]; }
+/* What the database may change about suggestions (applySuggested, beside Content). Declared here,
+   before anything draws, because the Bible grid reads them while the page is still loading. A gem
+   the database hides, or a Psalm pick it replaces, moves to a *_KEPT list: it stops being suggested
+   but stays in the verse pool, because someone may have memorized it and practice draws on the pool. */
+const GEMS_BUILTIN=GEMS.slice(), PSALM_FOR_BUILTIN=Object.assign({},PSALM_FOR);
+const GEM_KEPT=[], PSALM_KEPT=[];
+let SUG_HIDDEN=new Set();
+let STORY_NAMES={};        // refKey where a story starts → the name the database gives it
+function sugAt(k){ return !!verseAt(k) && !SUG_HIDDEN.has(k); }
+function sugPool(){ return allVerses().filter(x=>!SUG_HIDDEN.has(refKey(bookNum(x.b),x.c,x.v))); }
 
 /* =================== IMAGE HELPERS (fallback to word/placeholder) =================== */
 // A tile-sized version of the number image, following a user's chosen word the same way pegImg does.
@@ -6011,7 +6028,7 @@ const ADMIN_EMAILS=["elijahdburrup@gmail.com","erinburrup@gmail.com"];   // who 
 function verseObj(b,c,v){ const p=verseAt(refKey(b,c,v));
   if(p) return {b:p.b||bookName(b),c,v,text:kjvText(b,c,v)||p.text,concept:p.concept||"",scene:p.scene,elements:p.elements};
   return {b:bookName(b),c,v,text:kjvText(b,c,v),concept:""}; }
-function isSuggested(b,c,v){ return !!verseAt(refKey(b,c,v)); } // curated heart-verse
+function isSuggested(b,c,v){ return sugAt(refKey(b,c,v)); } // curated heart-verse
 const SUGSKIP_RE=/\bbegat\b|\bthe son of\b|\bcubits?\b|\bshekels?\b|\bwere numbered\b|\bnumbered of the\b|\bnumber of the\b|\bafter their families\b|\bhe goats\b|\bhe lambs\b|\blambs of the first year\b|\bmeat offering\b|\bwave offering\b|\bthe sons of \w+ were\b|\bhundred and \w+ thousand\b/i;
 function verseState(b,c,v){
   const k=refKey(b,c,v);
@@ -6019,7 +6036,7 @@ function verseState(b,c,v){
   if(Prog.skipped.includes(k))   return "skip";
   if(Prog.saved.includes(k))     return "save";
   if(!reachable(b,c,v))          return "locked";               // can't encode yet → grey
-  if(verseAt(k))                 return "sugmem";               // curated heart-verse → suggest memorize (green)
+  if(sugAt(k))                   return "sugmem";               // curated heart-verse → suggest memorize (green)
   if(SUGSKIP_RE.test(kjvText(b,c,v))) return "sugskip";        // genealogy / offerings / cubits / census → suggest skip
   return "ready";                                                // reachable, no suggestion
 }
@@ -6038,7 +6055,7 @@ function verseBoxClass(b,c,v){
   if(Prog.memorized.includes(k))           base = isSuggested(b,c,v) ? "memgreen" : "mem";
   else if(Prog.skipped.includes(k))        base = "skip";
   else if(Prog.saved.includes(k))          base = "save";
-  else if(verseAt(k))                      base = "sugmem";
+  else if(sugAt(k))                        base = "sugmem";
   else if(SUGSKIP_RE.test(kjvText(b,c,v))) base = "sugskip";
   else                                     base = "ready";
   return base + (isPromiseVerse(b,c,v) ? " promise" : "") + (reachable(b,c,v) ? "" : " notready");
@@ -6456,7 +6473,7 @@ function storyStarts(){ if(_storyStarts) return _storyStarts; const v=new Set(),
 // refKey → the name of the Bible story that begins there
 let _storyNameMap=null;
 function storyNameAt(b,c,v){
-  if(!_storyNameMap){ _storyNameMap={}; STORY_GROUPS.forEach(g=>g.s.forEach(st=>{ _storyNameMap[bookNum(st[1])+":"+st[2]+":"+st[3]]=st[0]; })); }
+  if(!_storyNameMap){ _storyNameMap={}; STORY_GROUPS.forEach(g=>g.s.forEach(st=>{ const k=bookNum(st[1])+":"+st[2]+":"+st[3]; _storyNameMap[k]=STORY_NAMES[k]||st[0]; })); }
   return _storyNameMap[b+":"+c+":"+v]||null;
 }
 // Collapsible key, rendered UNDER the grid so the boxes start at the top of the screen.
@@ -7090,8 +7107,8 @@ function gemCountsHtml(){
 function renderMilestone(m){
   if(!m.reached()) return "";   // a milestone stays hidden until it's earned, then it appears in gold
   Prog.msSeen = Prog.msSeen || {};
-  const firstTime = !Prog.msSeen[m.t];           // celebrate it expanded the first time; collapsed forever after
-  if(firstTime){ Prog.msSeen[m.t]=Date.now(); saveProg(); }
+  const firstTime = !Prog.msSeen[m.key||m.t];    // key: the original title, which a reworded one keeps           // celebrate it expanded the first time; collapsed forever after
+  if(firstTime){ Prog.msSeen[m.key||m.t]=Date.now(); saveProg(); }
   const num = m.stories ? `<b class="gold">${storiesLearned()}</b> of ${STORY_TOTAL} stories learned`
                         : `<b class="gold">${reachableGems()}</b> of ${totalGems()} heart-verses within your reach`;
   return `<details class="milestone reached"${firstTime?" open":""}>
@@ -7550,7 +7567,7 @@ function renderStories(){
       const sub=!owned?`🔒 ${STORY_SECTION_COST} 🪙`:(done===tot?"✓ all located":(ready?`${done}/${tot} · ready`:`${done}/${tot}`));
       return `<button type="button" class="profbtn" data-sgrp="${ui}"><span class="pi">${U.ic||"📖"}</span><span>${U.name}</span><small>${sub}</small></button>`;
     }).join("")}</div>`;
-  groups.forEach(({U,ui})=>{ MILESTONES.forEach(m=>{ if(m.stories && U.name.startsWith(m.after)) html+=renderMilestone(m); }); });
+  groups.forEach(({U,ui})=>{ MILESTONES.forEach(m=>{ if(m.stories && (m.db ? U.name===m.after : U.name.startsWith(m.after))) html+=renderMilestone(m); }); });
   S.innerHTML=html;
   S.querySelectorAll("[data-sgrp]").forEach(b=>b.onclick=()=>openStorySection(+b.dataset.sgrp));
   paintTheme();
@@ -8773,7 +8790,7 @@ function renderLessonDone(){
 function finishLesson(){
   const sk=LZ.sk;
   const rk=v=>refKey(bookNum(v.b),v.c,v.v);
-  const before=new Set(allVerses().filter(v=>reachable(bookNum(v.b),v.c,v.v)).map(rk));
+  const before=new Set(sugPool().filter(v=>reachable(bookNum(v.b),v.c,v.v)).map(rk));
   const wasNew=!Prog.doneSkills.includes(sk.id);
   if(wasNew) Prog.doneSkills.push(sk.id);
   const lvlBefore=Prog.level;
@@ -8782,7 +8799,7 @@ function finishLesson(){
   try{ if(wasNew && sk.kind==="book") statBump("b", (sk.items||[]).length||1); }catch(e){}
   if(Prog.level>lvlBefore) Sfx.levelUp();
   if(wasNew && (sk.kind==="num"||sk.kind==="book"||sk.kind==="onset")) bumpGoal();   // a new number, book image or entrance counts toward today's goal
-  const newly=allVerses().filter(v=>reachable(bookNum(v.b),v.c,v.v) && !before.has(rk(v)));
+  const newly=sugPool().filter(v=>reachable(bookNum(v.b),v.c,v.v) && !before.has(rk(v)));
   let msg="";
   if(sk.kind==="num" && sk.items.length===1 && sk.items[0]===Prog.level && Prog.level>=1)
     msg=`<b>New book unlocked:</b> you can now encode <b class="gold">${bookName(Prog.level)}</b>.`;
@@ -8895,7 +8912,7 @@ function verseRow(b,c,v,st,star,note){
 }
 function suggestedVerses(){
   // all curated heart-verses, not yet memorized/skipped; reachable ones first
-  return allVerses().map(x=>[bookNum(x.b),x.c,x.v])
+  return sugPool().map(x=>[bookNum(x.b),x.c,x.v])
     .filter(a=>{ const k=refKey(a[0],a[1],a[2]); return !Prog.memorized.includes(k)&&!Prog.skipped.includes(k); })
     .sort((a,b)=>{ const ra=reachable(a[0],a[1],a[2])?0:1, rb=reachable(b[0],b[1],b[2])?0:1; return ra-rb || a[0]-b[0] || a[1]-b[1] || a[2]-b[2]; });
 }
@@ -8951,7 +8968,7 @@ function versesForTopic(t){
   const seen=new Set(), pool=[];
   const add=(b,c,v)=>{ const k=b+":"+c+":"+v; if(!seen.has(k)){ seen.add(k); pool.push([b,c,v]); } };
   if(t.refs) t.refs.forEach(r=>add(r[0],r[1],r[2]));
-  allVerses().forEach(x=>{ const b=bookNum(x.b);
+  sugPool().forEach(x=>{ const b=bookNum(x.b);
     if(t.cat && x.cat===t.cat){ add(b,x.c,x.v); return; }
     if(t.kw){ const txt=(kjvText(b,x.c,x.v)||"").toLowerCase(); if(t.kw.some(w=>txt.includes(w))) add(b,x.c,x.v); }
   });
@@ -18423,6 +18440,93 @@ function cleanAnnouncements(list){
     linkText: String(a.linkText||"").slice(0,40), start: day(a.start), end: day(a.end),
     audience: ["all","free","pro"].includes(a.audience) ? a.audience : "all"}));
 }
+/* ---- suggestions: heart-verses, Psalm picks and topics (the "suggested" document) ----
+   The database may add heart-verses, hide a built-in one's suggestion, change the verse a Psalm
+   number offers, and replace the topics. It can never take a verse out of the pool (see sugAt). */
+let TOPICS_BUILTIN=null;
+function topicsBuiltin(){ if(!TOPICS_BUILTIN) TOPICS_BUILTIN=TOPICS.slice(); return TOPICS_BUILTIN; }
+// Text from the database goes into the page as it is, so nothing that could open a tag survives.
+const dbText=(x,n)=>(typeof x==="string" && x.trim()) ? x.trim().replace(/[<>"]/g,"").slice(0,n) : "";
+function parseVerseKey(s){
+  const m=/^(\d{1,2}):(\d{1,3}):(\d{1,3})$/.exec(String(s||"")); if(!m) return null;
+  const b=+m[1], c=+m[2], v=+m[3];
+  if(b<1 || b>66 || c<1 || v<1) return null;
+  if(window.KJV && (c>chapCount(b) || v>verseCount(b,c))) return null;
+  return [b,c,v];
+}
+function cleanTopic(t){
+  if(!t || typeof t!=="object") return null;
+  const name=dbText(t.name,40); if(!name) return null;
+  const refs=(Array.isArray(t.refs)?t.refs:[]).map(r=>Array.isArray(r) ? parseVerseKey(r.join(":")) : null).filter(Boolean).slice(0,200);
+  const kw=(Array.isArray(t.kw)?t.kw:[]).map(w=>dbText(String(w),40).toLowerCase()).filter(Boolean).slice(0,20);
+  const out={name, icon:dbText(t.icon,8)||"📖", kw, refs};
+  if(GEM_CATS[t.cat]) out.cat=t.cat;
+  return out;
+}
+function applySuggested(doc){
+  const d=(doc && typeof doc==="object" && !Array.isArray(doc)) ? doc : {};
+  const key=g=>refKey(bookNum(g.b),g.c,g.v);
+  const hidden=new Set((Array.isArray(d.gemsHide)?d.gemsHide:[]).map(parseVerseKey).filter(Boolean).map(a=>refKey(...a)));
+  // Heart-verses: the built-in list less what is hidden, plus what was added. Adding a built-in
+  // verse again files it under the category given.
+  const byKey=new Map();
+  GEMS_BUILTIN.forEach(g=>{ if(!hidden.has(key(g))) byKey.set(key(g), g); });
+  (Array.isArray(d.gemsAdd)?d.gemsAdd:[]).slice(0,500).forEach(g=>{
+    const a=g && parseVerseKey(g.ref); if(!a || !GEM_CATS[g.cat]) return;
+    const k=refKey(...a); if(hidden.has(k)) return;
+    byKey.set(k, {b:bookName(a[0]), c:a[1], v:a[2], cat:g.cat});
+  });
+  GEMS.length=0; byKey.forEach(g=>GEMS.push(g));
+  GEM_KEPT.length=0; GEMS_BUILTIN.forEach(g=>{ if(hidden.has(key(g))) GEM_KEPT.push(g); });
+  // The verse each Psalm number offers. It must come before the Psalm's own number, so it is
+  // already known when the number is learned.
+  Object.keys(PSALM_FOR).forEach(n=>{ delete PSALM_FOR[n]; }); Object.assign(PSALM_FOR, PSALM_FOR_BUILTIN);
+  const pf=(d.psalmFor && typeof d.psalmFor==="object") ? d.psalmFor : {};
+  Object.keys(pf).forEach(n=>{ const c=+n, v=pf[n];
+    if(Number.isInteger(c) && c>=67 && c<=150 && Number.isInteger(v) && v>=1 && v<c && parseVerseKey("19:"+c+":"+v)) PSALM_FOR[c]=v; });
+  PSALM_PICKS.length=0;
+  for(let n=67;n<=176;n++){ const a=psalmForNumber(n); if(a) PSALM_PICKS.push({b:"Psalms",c:a[1],v:a[2]}); }
+  // A replaced pick stays in the pool, unsuggested, unless something else still suggests it.
+  const still=new Set([PSALM_PICKS,GEMS,TORAH_VERSES,TORAH5_VERSES,NT_VERSES,SCENES].flatMap(p=>p.map(key)));
+  PSALM_KEPT.length=0;
+  Object.keys(PSALM_FOR_BUILTIN).forEach(n=>{ const p={b:"Psalms",c:+n,v:PSALM_FOR_BUILTIN[n]};
+    if(!still.has(key(p))){ PSALM_KEPT.push(p); hidden.add(key(p)); } });
+  SUG_HIDDEN=hidden;
+  // Topics: the database's list replaces the built-in one whole, or not at all.
+  const base=topicsBuiltin(), tl=(Array.isArray(d.topics)?d.topics:[]).map(cleanTopic).filter(Boolean).slice(0,60);
+  TOPICS.length=0; (tl.length?tl:base).forEach(t=>TOPICS.push(t));
+  _vmap=null; _promiseSet=null;
+  _w1Pool=null;   // the W1 runner's openings are built from allVerses() and cached on first use
+}
+/* ---- stories: names and milestones (the "stories" document) ----
+   Section titles and the order of the stories are NOT here: a purchase is saved under its section's
+   title and a finished story under its position. A story is renamed by the verse it starts at; a
+   milestone is reworded by its original title, which also stays the key that remembers it has been
+   celebrated. New milestones sit at the end of a section and are reached when every story up to
+   there is learned, as the built-in ones are. */
+function applyStories(doc){
+  const d=(doc && typeof doc==="object" && !Array.isArray(doc)) ? doc : {};
+  const nm=(d.names && typeof d.names==="object") ? d.names : {}, names={};
+  Object.keys(nm).forEach(k=>{ const t=dbText(nm[k],60); if(t && parseVerseKey(k)) names[k]=t; });
+  STORY_NAMES=names; _storyNameMap=null;
+  UNITS.forEach(U=>{ if(U.story) U.skills.forEach(sk=>{ if(!sk.story) return;
+    if(sk._n0===undefined) sk._n0=sk.label;
+    const n=names[bookNum(sk.story.b)+":"+sk.story.c+":"+sk.story.v]||sk._n0; sk.label=n; sk.story.n=n; }); });
+  const ms=(d.milestones && typeof d.milestones==="object") ? d.milestones : {};
+  const edit=(ms.edit && typeof ms.edit==="object") ? ms.edit : {};
+  for(let i=MILESTONES.length-1;i>=0;i--) if(MILESTONES[i].db) MILESTONES.splice(i,1);
+  MILESTONES.forEach(m=>{
+    if(!m._o){ m._o={e:m.e, t:m.t, c:m.c, d:m.d}; m.key=m.t; }
+    const e=(edit[m.key] && typeof edit[m.key]==="object") ? edit[m.key] : {};
+    m.e=dbText(e.e,8)||m._o.e; m.t=dbText(e.t,60)||m._o.t; m.c=dbText(e.c,200)||m._o.c; m.d=dbText(e.d,400)||m._o.d;
+  });
+  (Array.isArray(ms.add)?ms.add:[]).slice(0,40).forEach(a=>{
+    const id=a && dbText(a.id,40), t=a && dbText(a.t,60), after=(a && typeof a.after==="string") ? a.after : "";
+    if(!id || !t || !sectionRange(after)) return;
+    MILESTONES.push({after, db:true, key:"db:"+id, stories:true, e:dbText(a.e,8)||"🏁", t, c:dbText(a.c,200), d:dbText(a.d,400),
+      reached:()=>{ const r=sectionRange(after); return !!r && storiesDone(0,r[1]); }});
+  });
+}
 const Content=(()=>{
   let applied=null;
   function read(){ try{ return Store.getJSON(CONTENT_CACHE, null); }catch(e){ return null; } }
@@ -18439,6 +18543,8 @@ const Content=(()=>{
     });
     MEDIA.book=next.book; MEDIA.chapter=next.chapter; MEDIA.verse=next.verse;
     applyConfig(b.config);
+    applySuggested(b.suggested);
+    applyStories(b.stories);
     ANNOUNCEMENTS=cleanAnnouncements(b.announcements);
     applied=String(b.v||"");
     return true;
@@ -18519,7 +18625,7 @@ function openContentAdmin(tab){
   m.innerHTML=`<div class="modal-card ca-card">
       <div class="ed-head"><h2>🗂️ Content</h2></div>
       <p class="hint" style="margin:0 0 8px">Changes here reach every copy of the app, on the web and on phones, the next time it opens. No update is needed.</p>
-      <div class="ca-tabs">${[["videos","📺 Videos"],["news","📣 Announcements"],["settings","⚙️ Settings"]].map(([k,t])=>
+      <div class="ca-tabs">${[["videos","📺 Videos"],["news","📣 Announcements"],["settings","⚙️ Settings"],["suggested","💎 Suggested"],["stories","📚 Stories"]].map(([k,t])=>
         `<button type="button" class="ca-tab${CA_TAB===k?" on":""}" data-catab="${k}">${t}</button>`).join("")}</div>
       <div id="caBody" class="ca-body"></div>
       <div class="btnrow"><button class="btn" id="caClose">Done</button></div></div>`;
@@ -18527,7 +18633,7 @@ function openContentAdmin(tab){
   m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
   el("caClose").onclick=()=>{ m.style.display="none"; };
   m.querySelectorAll("[data-catab]").forEach(b=>b.onclick=()=>openContentAdmin(b.dataset.catab));
-  ({videos:caVideos, news:caNews, settings:caSettings}[CA_TAB] || caVideos)();
+  ({videos:caVideos, news:caNews, settings:caSettings, suggested:caSuggested, stories:caStories}[CA_TAB] || caVideos)();
 }
 const caErr=(msg)=>`<p class="hint" style="color:var(--miss-ink)">${bbEsc(msg)}</p>`;
 function caVideos(){
@@ -18657,6 +18763,145 @@ async function caSettings(){
     catch(e){ toast(e.message||"Could not save."); }
   };
   caWireHist("config", caSettings);
+}
+
+async function caSuggested(){
+  const B=el("caBody"); B.innerHTML=`<p class="hint">Loading…</p>`;
+  let cur; try{ cur=await Auth.adminDoc("suggested"); }catch(e){ B.innerHTML=caErr(e.message||"Could not load."); return; }
+  const d0=(cur && cur.current && cur.current.doc && typeof cur.current.doc==="object") ? cur.current.doc : {};
+  const doc={gemsAdd:Array.isArray(d0.gemsAdd)?d0.gemsAdd.slice():[], gemsHide:Array.isArray(d0.gemsHide)?d0.gemsHide.slice():[],
+             psalmFor:Object.assign({}, d0.psalmFor||{}), topics:Array.isArray(d0.topics)?d0.topics.slice():null};
+  const topics=doc.topics || topicsBuiltin();
+  const save=async(note)=>{
+    try{ await Auth.adminDocSave("suggested", doc, note); await Content.refresh(true); caSuggested(); toast("Saved. Everyone gets it the next time the app opens."); }
+    catch(e){ toast(e.message||"Could not save."); }
+  };
+  B.innerHTML=`<div class="ca-sub">Heart-verses shown green</div>
+    <p class="hint" style="margin:0 0 6px">${GEMS_BUILTIN.length} are built in. Add one, or hide a built-in one's suggestion. Hiding never takes a verse from anyone who has learned it.</p>
+    <div class="ca-row"><input id="caGRef" class="ca-in" placeholder="Psalm 46:10">
+      <select id="caGCat" class="ca-in">${Object.keys(GEM_CATS).map(k=>`<option value="${k}">${bbEsc(GEM_CATS[k])}</option>`).join("")}</select></div>
+    <div class="ca-row"><button type="button" class="btn sm" id="caGAdd">Add</button><button type="button" class="btn ghost sm" id="caGHide">Hide its suggestion</button></div>
+    <div id="caGMsg" class="hint"></div>
+    ${doc.gemsAdd.map((g,i)=>`<div class="ca-item"><div class="ca-it"><b>${bbEsc(refTextFromKey(g.ref))}</b><span>added · ${bbEsc(GEM_CATS[g.cat]||g.cat)}</span></div>
+      <button type="button" class="btn ghost sm" data-gdel="${i}">Remove</button></div>`).join("")}
+    ${doc.gemsHide.map((k,i)=>`<div class="ca-item off"><div class="ca-it"><b>${bbEsc(refTextFromKey(k))}</b><span>suggestion hidden</span></div>
+      <button type="button" class="btn ghost sm" data-hdel="${i}">Show again</button></div>`).join("")}
+    <div class="ca-sub">The verse each Psalm number offers</div>
+    <p class="hint" style="margin:0 0 6px">Learning a number from 67 to 150 opens that Psalm with one verse to learn. The verse must come before the Psalm's own number.</p>
+    <div class="ca-row"><input id="caPNum" class="ca-in ca-mini" type="number" inputmode="numeric" placeholder="Psalm" min="67" max="150">
+      <input id="caPVer" class="ca-in ca-mini" type="number" inputmode="numeric" placeholder="Verse" min="1"><button type="button" class="btn sm" id="caPSet">Set</button></div>
+    <div id="caPMsg" class="hint"></div>
+    ${Object.keys(doc.psalmFor).map(n=>`<div class="ca-item"><div class="ca-it"><b>Psalm ${bbEsc(n)}:${bbEsc(String(doc.psalmFor[n]))}</b><span>built in: ${bbEsc(n)}:${PSALM_FOR_BUILTIN[n]||"none"}</span></div>
+      <button type="button" class="btn ghost sm" data-pdel="${bbEsc(n)}">Put back</button></div>`).join("")}
+    <div class="ca-sub">Topics</div>
+    <p class="hint" style="margin:0 0 6px">${doc.topics ? "Your own list of "+topics.length+"." : "The built-in list of "+topics.length+"."} Editing one saves the whole list.</p>
+    ${topics.map((t,i)=>`<div class="ca-item"><div class="ca-it"><b>${bbEsc(t.icon)} ${bbEsc(t.name)}</b><span>${(t.refs||[]).length} verses · ${(t.kw||[]).length} words looked for</span></div>
+      <button type="button" class="btn ghost sm" data-tedit="${i}">Edit</button></div>`).join("")}
+    <div class="ca-row" style="margin-top:8px"><button type="button" class="btn ghost sm" data-tedit="new">+ New topic</button>
+      ${doc.topics ? `<button type="button" class="btn ghost sm" id="caTReset">Use the built-in topics</button>` : ""}</div>
+    <div id="caTForm"></div>
+    ${caHistHTML(cur.history)}`;
+  const verseOf=id=>{ const k=refFromText(el(id).value); return (k && k.split(":").length===3) ? k : ""; };
+  el("caGAdd").onclick=()=>{
+    const k=verseOf("caGRef"); if(!k){ el("caGMsg").textContent="Give a verse, like Psalm 46:10."; return; }
+    doc.gemsAdd=doc.gemsAdd.filter(g=>g.ref!==k).concat([{ref:k, cat:el("caGCat").value}]);
+    doc.gemsHide=doc.gemsHide.filter(x=>x!==k); save("added "+k);
+  };
+  el("caGHide").onclick=()=>{
+    const k=verseOf("caGRef"); if(!k){ el("caGMsg").textContent="Give a verse, like Genesis 1:1."; return; }
+    if(!doc.gemsHide.includes(k)) doc.gemsHide.push(k);
+    doc.gemsAdd=doc.gemsAdd.filter(g=>g.ref!==k); save("hid "+k);
+  };
+  B.querySelectorAll("[data-gdel]").forEach(b=>b.onclick=()=>{ doc.gemsAdd.splice(+b.dataset.gdel,1); save("removed a heart-verse"); });
+  B.querySelectorAll("[data-hdel]").forEach(b=>b.onclick=()=>{ doc.gemsHide.splice(+b.dataset.hdel,1); save("showed a suggestion again"); });
+  el("caPSet").onclick=()=>{
+    const n=+el("caPNum").value, v=+el("caPVer").value;
+    if(!Number.isInteger(n) || n<67 || n>150){ el("caPMsg").textContent="The Psalm must be from 67 to 150."; return; }
+    if(!Number.isInteger(v) || v<1 || v>=n || !parseVerseKey("19:"+n+":"+v)){ el("caPMsg").textContent="Pick a verse of Psalm "+n+" that comes before "+n+"."; return; }
+    doc.psalmFor[n]=v; save("Psalm "+n);
+  };
+  B.querySelectorAll("[data-pdel]").forEach(b=>b.onclick=()=>{ delete doc.psalmFor[b.dataset.pdel]; save("Psalm "+b.dataset.pdel+" put back"); });
+  if(el("caTReset")) el("caTReset").onclick=()=>{ if(!confirm("Go back to the built-in topics? Your list stays in the history.")) return; doc.topics=null; save("built-in topics"); };
+  B.querySelectorAll("[data-tedit]").forEach(b=>b.onclick=()=>caTopicForm(doc, topics, b.dataset.tedit, save));
+  caWireHist("suggested", caSuggested);
+}
+function caTopicForm(doc, topics, which, save){
+  const isNew=which==="new", t=isNew ? {name:"", icon:"📖", kw:[], refs:[]} : topics[+which];
+  el("caTForm").innerHTML=`<div class="ca-form"><div class="ca-sub">${isNew ? "New topic" : "Edit "+bbEsc(t.name)}</div>
+    <div class="ca-row"><input id="caTIcon" class="ca-in ca-mini" value="${bbEsc(t.icon)}" maxlength="8">
+      <input id="caTName" class="ca-in" value="${bbEsc(t.name)}" placeholder="Name" maxlength="40"></div>
+    <input id="caTKw" class="ca-in" value="${bbEsc((t.kw||[]).join(", "))}" placeholder="Words to look for in a verse, separated by commas">
+    <textarea id="caTRefs" class="ca-in" rows="6" placeholder="One verse per line, like Psalm 23:4">${bbEsc((t.refs||[]).map(r=>refTextFromKey(r.join(":"))).join("\n"))}</textarea>
+    <div class="ca-row"><button type="button" class="btn sm" id="caTSave">Save topic</button>
+      ${isNew ? "" : `<button type="button" class="btn ghost sm" id="caTDel">Remove topic</button>`}</div>
+    <div id="caTMsg" class="hint"></div></div>`;
+  el("caTForm").scrollIntoView({block:"nearest"});
+  const list=()=>topics.map(x=>Object.assign({name:x.name, icon:x.icon, kw:(x.kw||[]).slice(), refs:(x.refs||[]).map(r=>r.slice())}, x.cat ? {cat:x.cat} : {}));
+  el("caTSave").onclick=()=>{
+    const name=el("caTName").value.trim(); if(!name){ el("caTMsg").textContent="Give the topic a name."; return; }
+    const bad=[], refs=[];
+    el("caTRefs").value.split(/\n+/).map(s=>s.trim()).filter(Boolean).forEach(s=>{
+      const k=refFromText(s); if(k && k.split(":").length===3) refs.push(k.split(":").map(Number)); else bad.push(s); });
+    if(bad.length){ el("caTMsg").textContent="Not verses the app knows: "+bad.slice(0,3).join(", "); return; }
+    const L=list(), nt={name, icon:el("caTIcon").value.trim()||"📖", kw:el("caTKw").value.split(",").map(w=>w.trim().toLowerCase()).filter(Boolean), refs};
+    if(!isNew && t.cat) nt.cat=t.cat;
+    if(isNew) L.push(nt); else L[+which]=nt;
+    doc.topics=L; save(isNew ? "new topic "+name : "topic "+name);
+  };
+  if(el("caTDel")) el("caTDel").onclick=()=>{
+    const L=list(); L.splice(+which,1); if(!L.length){ toast("Keep at least one topic."); return; }
+    doc.topics=L; save("removed topic "+t.name);
+  };
+}
+async function caStories(){
+  const B=el("caBody"); B.innerHTML=`<p class="hint">Loading…</p>`;
+  let cur; try{ cur=await Auth.adminDoc("stories"); }catch(e){ B.innerHTML=caErr(e.message||"Could not load."); return; }
+  const d0=(cur && cur.current && cur.current.doc && typeof cur.current.doc==="object") ? cur.current.doc : {};
+  const ms0=(d0.milestones && typeof d0.milestones==="object") ? d0.milestones : {};
+  const doc={names:Object.assign({}, d0.names||{}), milestones:{edit:Object.assign({}, ms0.edit||{}), add:Array.isArray(ms0.add)?ms0.add.slice():[]}};
+  const save=async(note)=>{
+    try{ await Auth.adminDocSave("stories", doc, note); await Content.refresh(true); caStories(); toast("Saved. Everyone gets it the next time the app opens."); }
+    catch(e){ toast(e.message||"Could not save."); }
+  };
+  const orig=MILESTONES.filter(m=>!m.db).map(m=>({key:m.key||m.t, o:m._o||{e:m.e, t:m.t, c:m.c, d:m.d}}));
+  B.innerHTML=`<div class="ca-sub">Milestones along the stories</div>
+    <p class="hint" style="margin:0 0 6px">Reword one, or add one at the end of any section. Blank means the built-in words.</p>
+    ${orig.map(({key,o},i)=>{ const e=doc.milestones.edit[key]||{}; return `<details class="ca-ms"><summary>${bbEsc(e.e||o.e)} ${bbEsc(e.t||o.t)}</summary>
+      <div class="ca-row"><input class="ca-in ca-mini" data-me="${i}" data-f="e" value="${bbEsc(e.e||"")}" placeholder="${bbEsc(o.e)}" maxlength="8">
+        <input class="ca-in" data-me="${i}" data-f="t" value="${bbEsc(e.t||"")}" placeholder="${bbEsc(o.t)}" maxlength="60"></div>
+      <textarea class="ca-in" rows="2" data-me="${i}" data-f="c" placeholder="${bbEsc(o.c)}" maxlength="200">${bbEsc(e.c||"")}</textarea>
+      <textarea class="ca-in" rows="3" data-me="${i}" data-f="d" placeholder="${bbEsc(o.d)}" maxlength="400">${bbEsc(e.d||"")}</textarea></details>`; }).join("")}
+    <button type="button" class="btn sm" id="caMSave" style="margin-top:6px">Save milestone wording</button>
+    ${doc.milestones.add.map((a,i)=>`<div class="ca-item"><div class="ca-it"><b>${bbEsc(a.e||"🏁")} ${bbEsc(a.t)}</b><span>after ${bbEsc(a.after)}</span></div>
+      <button type="button" class="btn ghost sm" data-madel="${i}">Remove</button></div>`).join("")}
+    <div class="ca-form"><div class="ca-sub">New milestone</div>
+      <select id="caMAfter" class="ca-in">${STORY_GROUPS.map(g=>`<option>${bbEsc(g.t)}</option>`).join("")}</select>
+      <div class="ca-row"><input id="caME" class="ca-in ca-mini" placeholder="🏁" maxlength="8"><input id="caMT" class="ca-in" placeholder="Title" maxlength="60"></div>
+      <input id="caMC" class="ca-in" placeholder="One line" maxlength="200">
+      <textarea id="caMD" class="ca-in" rows="2" placeholder="A little more" maxlength="400"></textarea>
+      <button type="button" class="btn sm" id="caMAdd">Add milestone</button><div id="caMMsg" class="hint"></div></div>
+    <div class="ca-sub">Story names</div>
+    <p class="hint" style="margin:0 0 6px">Blank means the built-in name. Sections and their order stay as they are, because purchases and progress are saved against them.</p>
+    ${STORY_GROUPS.map(g=>`<div class="ca-grp">${bbEsc(g.t)}</div>${g.s.map(st=>{ const k=bookNum(st[1])+":"+st[2]+":"+st[3];
+      return `<input class="ca-in" data-sname="${k}" value="${bbEsc(doc.names[k]||"")}" placeholder="${bbEsc(st[0])}" maxlength="60">`; }).join("")}`).join("")}
+    <button type="button" class="btn" id="caNSave" style="width:100%">Save story names</button>
+    ${caHistHTML(cur.history)}`;
+  el("caMSave").onclick=()=>{
+    const edit={};
+    B.querySelectorAll("[data-me]").forEach(i=>{ const v=i.value.trim(); if(!v) return; const k=orig[+i.dataset.me].key; (edit[k]=edit[k]||{})[i.dataset.f]=v; });
+    doc.milestones.edit=edit; save("milestone wording");
+  };
+  B.querySelectorAll("[data-madel]").forEach(b=>b.onclick=()=>{ doc.milestones.add.splice(+b.dataset.madel,1); save("removed a milestone"); });
+  el("caMAdd").onclick=()=>{
+    const t=el("caMT").value.trim(); if(!t){ el("caMMsg").textContent="Give it a title."; return; }
+    doc.milestones.add.push({id:Date.now().toString(36), after:el("caMAfter").value, e:el("caME").value.trim()||"🏁", t, c:el("caMC").value.trim(), d:el("caMD").value.trim()});
+    save("new milestone "+t);
+  };
+  el("caNSave").onclick=()=>{
+    const n={}; B.querySelectorAll("[data-sname]").forEach(i=>{ const v=i.value.trim(); if(v && v!==i.placeholder) n[i.dataset.sname]=v; });
+    doc.names=n; save("story names");
+  };
+  caWireHist("stories", caStories);
 }
 
 /* =================== INIT =================== */

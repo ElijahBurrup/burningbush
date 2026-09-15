@@ -107,6 +107,15 @@ Render's free plan.
   not a setting.
 - **Announcements** show one at a time at the top of Learn and the Library, between optional
   dates, for everyone, free or Pro users, and stay gone once dismissed.
+- **Suggested verses** (`suggested`): heart-verses added (`gemsAdd`, each with a category) or
+  hidden (`gemsHide`), the verse each Psalm number 67–150 offers (`psalmFor`), and the topics
+  (`topics`, which replaces the built-in list whole). Nothing is ever taken out of the verse pool:
+  a hidden gem or a replaced Psalm pick only stops being suggested, because someone may have
+  memorized it and practice draws on that pool.
+- **Stories** (`stories`): story names by the verse each starts at (`names`), milestone wording
+  by the milestone's original title (`milestones.edit`), and new milestones at the end of a
+  section (`milestones.add`). Section titles and the story order stay in code: purchases are saved
+  against a section's title and finished stories against their position.
 - **Editing:** Profile → Admin → 🗂️ Content, for the addresses in `ADMIN_EMAILS` (checked on the
   server too). Every saved version is kept and can be put back.
 - **Tests** never reach the API. `tests/lib/harness.js` serves `tests/fixtures/content.json`, which
