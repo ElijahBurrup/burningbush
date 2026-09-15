@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "e618719d861d541f",
+  "h": "2d13865f6e55b099",
   "len": 121837,
   "els": 2234,
   "buttons": 586,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "67eba03b23d1b18d",
-  "len": 199193,
-  "els": 3299,
+  "h": "a763e43352a5f06f",
+  "len": 199941,
+  "els": 3313,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.0 September 15, 2026 The pegs end at 00 FIX Phase 12F now finishes the two digit pegs. 97, 98, 9"
+  "text": "✕ Version history v2.21.1 September 15, 2026 Videos open full screen FIX Videos open full screen. A video now fills the "
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "7e6e8e62dd62584d",
+  "h": "cdefd025738e96cb",
   "len": 121036,
   "els": 2226,
   "buttons": 584,
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "0fd2905cf81e7cac",
+  "h": "9de6910b4cba6bd4",
   "len": 121044,
   "els": 2226,
   "buttons": 584,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "67eba03b23d1b18d",
-  "len": 199193,
-  "els": 3299,
+  "h": "a763e43352a5f06f",
+  "len": 199941,
+  "els": 3313,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.0 September 15, 2026 The pegs end at 00 FIX Phase 12F now finishes the two digit pegs. 97, 98, 9"
+  "text": "✕ Version history v2.21.1 September 15, 2026 Videos open full screen FIX Videos open full screen. A video now fills the "
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "0fd2905cf81e7cac",
+  "h": "9de6910b4cba6bd4",
   "len": 121044,
   "els": 2226,
   "buttons": 584,
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "6f44bbc34362f488",
+  "h": "7b6bcd2cc4f3e386",
   "len": 121042,
   "els": 2226,
   "buttons": 584,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "67eba03b23d1b18d",
-  "len": 199193,
-  "els": 3299,
+  "h": "a763e43352a5f06f",
+  "len": 199941,
+  "els": 3313,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.0 September 15, 2026 The pegs end at 00 FIX Phase 12F now finishes the two digit pegs. 97, 98, 9"
+  "text": "✕ Version history v2.21.1 September 15, 2026 Videos open full screen FIX Videos open full screen. A video now fills the "
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "6f44bbc34362f488",
+  "h": "7b6bcd2cc4f3e386",
   "len": 121042,
   "els": 2226,
   "buttons": 584,
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "3c5d1b520a1c85ef",
+  "h": "19a280161c9ed64b",
   "len": 121044,
   "els": 2226,
   "buttons": 584,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "67eba03b23d1b18d",
-  "len": 199193,
-  "els": 3299,
+  "h": "a763e43352a5f06f",
+  "len": 199941,
+  "els": 3313,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.0 September 15, 2026 The pegs end at 00 FIX Phase 12F now finishes the two digit pegs. 97, 98, 9"
+  "text": "✕ Version history v2.21.1 September 15, 2026 Videos open full screen FIX Videos open full screen. A video now fills the "
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "3c5d1b520a1c85ef",
+  "h": "19a280161c9ed64b",
   "len": 121044,
   "els": 2226,
   "buttons": 584,
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "e11da2c337bbf165",
+  "h": "7a555a7edcd5c9c0",
   "len": 121040,
   "els": 2226,
   "buttons": 584,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "67eba03b23d1b18d",
-  "len": 199193,
-  "els": 3299,
+  "h": "a763e43352a5f06f",
+  "len": 199941,
+  "els": 3313,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.0 September 15, 2026 The pegs end at 00 FIX Phase 12F now finishes the two digit pegs. 97, 98, 9"
+  "text": "✕ Version history v2.21.1 September 15, 2026 Videos open full screen FIX Videos open full screen. A video now fills the "
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "e11da2c337bbf165",
+  "h": "7a555a7edcd5c9c0",
   "len": 121040,
   "els": 2226,
   "buttons": 584,
