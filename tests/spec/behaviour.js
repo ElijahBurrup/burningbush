@@ -4061,7 +4061,7 @@ const DAY = 86400000;
     return out;
   });
   is(palaceWalk.driveway, 'Deuteronomy 4:2', 'a room names the verse kept in it');
-  is(palaceWalk.kitchen, 'Psalms 23:1 + 1 more', '...and says so when a room holds more than one');
+  is(palaceWalk.kitchen, 'Psalms 23:1, John 3:16', '...and names every verse when a room holds more than one');
   is(palaceWalk.loft, '', '...and stays quiet about an empty one');
   is(palaceWalk.heartNotPlaced, 0, 'a verse known by heart has no room to be listed in');
   is(palaceWalk.cues, 1, 'the verse at this stop is shown once, not on every button');
@@ -4071,7 +4071,7 @@ const DAY = 86400000;
   ok(palaceWalk.showsLast, 'every stop after that names the one before it');
   ok(palaceWalk.lastIsStation1, '...by name, so you can pick the walk back up');
   ok(palaceWalk.lastCarriesRef, '...with its verse alongside');
-  has(palaceWalk.kitchenCue, '+ 1 more', 'a stop holding two says so');
+  has(palaceWalk.kitchenCue, 'John 3:16', 'a stop holding two names both');
   is(palaceWalk.loftCues, 0, 'a stop holding nothing shows no cue at all');
 
   describe('Phase 12 is subsections of six, one number to a button', () => { });
@@ -4547,6 +4547,58 @@ const DAY = 86400000;
   ok(box.capApplied, 'the capitalisation still runs on every keystroke');
   ok(box.capHeld, '...without scrolling the box out from under the cursor');
   ok(box.followedUp, 'a cursor above the view is followed back up to');
+
+  describe('a palace station shows every verse it holds, retired ones in red', () => { });
+
+  /* Reported: a station holding two verses opened only the first one entered, and verses retired
+     from a station (known by heart, so the station was given back) vanished from the palace.
+     Every verse now has its own chip; retired ones stay where they lived, in red, and still open.
+     The block builds its own palace and verses: earlier blocks empty both, and a palace test that
+     depends on what ran before it tests the running order, not the palace. */
+  const palBox = await $(async () => {
+    const out = {};
+    const snap = { vl: Prog.verseLoc, lp: Prog.locPast, pal: Prog.palaces, mem: Prog.memorized };
+    try { markVideoSeen('palace'); } catch (e) {}      // the palace film would open over the screen
+    const k1 = '19:23:1', k2 = '43:3:16', k3 = '45:8:28';
+    Prog.memorized = [k1, k2, k3];
+    Prog.palaces = [{ place: 'My Kitchen', stations: ['Front door', 'Sink', 'Stove'], learnedAt: Date.now(), step: 1 }];
+    Prog.verseLoc = { [k1]: { p: 0, room: 'Sink' }, [k2]: { p: 0, room: 'Sink' }, [k3]: { p: 0, room: 'Sink' } };
+    Prog.locPast = {};
+    setLocHeart(k3);                                   // known by heart: the Sink is given back
+    saveProg();
+    show('palace'); renderMyPalace(0);
+    const sink = () => [...document.querySelectorAll('#palace .station')].find(s => /Sink/.test(s.textContent));
+    const box = sink();
+    out.found = !!box;
+    if (!box) { Object.assign(Prog, { verseLoc: snap.vl, locPast: snap.lp, palaces: snap.pal, memorized: snap.mem }); saveProg(); return out; }
+    out.live = [...box.querySelectorAll('.st-vchip:not(.st-retired)')].map(c => c.dataset.ref).sort().join(' ');
+    out.expectLive = [k1, k2].sort().join(' ');
+    out.retired = [...box.querySelectorAll('.st-vchip.st-retired')].map(c => c.dataset.ref).join(' ');
+    out.k3 = k3;
+    const rc = box.querySelector('.st-retired'), lc = box.querySelector('.st-vchip:not(.st-retired)');
+    out.retiredColor = rc ? getComputedStyle(rc).color : '';
+    out.liveColor = lc ? getComputedStyle(lc).color : '';
+    if (rc) rc.click();
+    out.openedPage = !!document.getElementById('lvClose');
+    if (document.getElementById('lvClose')) document.getElementById('lvClose').click();
+    out.backOnPalace = (document.querySelector('.view.active') || {}).id === 'palace' && !!document.getElementById('palBack');
+    const again = sink();
+    out.secondReachable = !!again && !![...again.querySelectorAll('.st-vchip:not(.st-retired)')].find(c => c.dataset.ref === k2);
+    out.label = stationVerseLabel(0, 'Sink');
+    out.r1 = refLabel(k1); out.r2 = refLabel(k2); out.r3 = refLabel(k3);
+    Object.assign(Prog, { verseLoc: snap.vl, locPast: snap.lp, palaces: snap.pal, memorized: snap.mem });
+    saveProg();
+    return out;
+  });
+  ok(palBox.found, 'the palace draws its stations');
+  is(palBox.live, palBox.expectLive, 'both verses stored at a station get their own chip');
+  is(palBox.retired, palBox.k3, 'the verse retired from it is still shown where it lived');
+  ok(palBox.retiredColor && palBox.retiredColor !== palBox.liveColor, '...in its own colour, apart from the live ones');
+  ok(palBox.openedPage, 'tapping the retired verse opens its page');
+  ok(palBox.backOnPalace, '...and closing it comes back to this palace');
+  ok(palBox.secondReachable, 'the second verse at a station can be reached, not just the first');
+  ok(palBox.label.includes(palBox.r1) && palBox.label.includes(palBox.r2) && !palBox.label.includes(palBox.r3) && !/more/.test(palBox.label),
+     'palace practice names every live verse at the station, and not the retired one');
 
   describe('the first practice answer does not throw you out of the test', () => { });
 

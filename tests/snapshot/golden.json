@@ -171,9 +171,9 @@
   "text": "🏛️ Memory Palace Review Lesson A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it on"
  },
  "classic/palace/mine": {
-  "h": "3a0d875344c4671c",
-  "len": 1999,
-  "els": 47,
+  "h": "e1c7ac0f81c396ba",
+  "len": 2099,
+  "els": 48,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "af612136d2501331",
+  "h": "200c7dc784b31e9c",
   "len": 119608,
   "els": 2207,
   "buttons": 580,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "75f6d8cf36f5dc2d",
-  "len": 193431,
-  "els": 3209,
+  "h": "8a1e9bc8e88c9a2d",
+  "len": 194526,
+  "els": 3227,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.1 September 14, 2026 Google listens now FIX Speaking uses Google's own recognition, in the brows"
+  "text": "✕ Version history v2.19.2 September 14, 2026 Every verse in its place NEW A palace station shows every verse it holds. T"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "6735ef311fac57fc",
+  "h": "86627c382e56a936",
   "len": 118807,
   "els": 2199,
   "buttons": 578,
@@ -693,9 +693,9 @@
   "text": "🏛️ Memory Palace Review Lesson A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it on"
  },
  "illumined/palace/mine": {
-  "h": "3a0d875344c4671c",
-  "len": 1999,
-  "els": 47,
+  "h": "e1c7ac0f81c396ba",
+  "len": 2099,
+  "els": 48,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "d2d081dbc28f6767",
+  "h": "3fcc5bb19958e2c3",
   "len": 118815,
   "els": 2199,
   "buttons": 578,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "75f6d8cf36f5dc2d",
-  "len": 193431,
-  "els": 3209,
+  "h": "8a1e9bc8e88c9a2d",
+  "len": 194526,
+  "els": 3227,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.1 September 14, 2026 Google listens now FIX Speaking uses Google's own recognition, in the brows"
+  "text": "✕ Version history v2.19.2 September 14, 2026 Every verse in its place NEW A palace station shows every verse it holds. T"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "d2d081dbc28f6767",
+  "h": "3fcc5bb19958e2c3",
   "len": 118815,
   "els": 2199,
   "buttons": 578,
@@ -1215,9 +1215,9 @@
   "text": "🏛️ Memory Palace Review Lesson A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it on"
  },
  "glass/palace/mine": {
-  "h": "3a0d875344c4671c",
-  "len": 1999,
-  "els": 47,
+  "h": "e1c7ac0f81c396ba",
+  "len": 2099,
+  "els": 48,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "627fec7633d60b69",
+  "h": "f682e316dc28ef0e",
   "len": 118813,
   "els": 2199,
   "buttons": 578,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "75f6d8cf36f5dc2d",
-  "len": 193431,
-  "els": 3209,
+  "h": "8a1e9bc8e88c9a2d",
+  "len": 194526,
+  "els": 3227,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.1 September 14, 2026 Google listens now FIX Speaking uses Google's own recognition, in the brows"
+  "text": "✕ Version history v2.19.2 September 14, 2026 Every verse in its place NEW A palace station shows every verse it holds. T"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "627fec7633d60b69",
+  "h": "f682e316dc28ef0e",
   "len": 118813,
   "els": 2199,
   "buttons": 578,
@@ -1737,9 +1737,9 @@
   "text": "🏛️ Memory Palace Review Lesson A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it on"
  },
  "quest/palace/mine": {
-  "h": "3a0d875344c4671c",
-  "len": 1999,
-  "els": 47,
+  "h": "e1c7ac0f81c396ba",
+  "len": 2099,
+  "els": 48,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "a9daf60e0525b61c",
+  "h": "0e95490af3f2dd16",
   "len": 118815,
   "els": 2199,
   "buttons": 578,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "75f6d8cf36f5dc2d",
-  "len": 193431,
-  "els": 3209,
+  "h": "8a1e9bc8e88c9a2d",
+  "len": 194526,
+  "els": 3227,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.1 September 14, 2026 Google listens now FIX Speaking uses Google's own recognition, in the brows"
+  "text": "✕ Version history v2.19.2 September 14, 2026 Every verse in its place NEW A palace station shows every verse it holds. T"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "a9daf60e0525b61c",
+  "h": "0e95490af3f2dd16",
   "len": 118815,
   "els": 2199,
   "buttons": 578,
@@ -2259,9 +2259,9 @@
   "text": "🏛️ Memory Palace Review Lesson A palace is for sequences. Walk a familiar place and leave each item at a spot. Do it on"
  },
  "buddy/palace/mine": {
-  "h": "3a0d875344c4671c",
-  "len": 1999,
-  "els": 47,
+  "h": "e1c7ac0f81c396ba",
+  "len": 2099,
+  "els": 48,
   "buttons": 3,
   "svgs": 0,
   "imgs": 0,
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "53d3470a52524a4a",
+  "h": "c4d1f417c22055b2",
   "len": 118811,
   "els": 2199,
   "buttons": 578,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "75f6d8cf36f5dc2d",
-  "len": 193431,
-  "els": 3209,
+  "h": "8a1e9bc8e88c9a2d",
+  "len": 194526,
+  "els": 3227,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.1 September 14, 2026 Google listens now FIX Speaking uses Google's own recognition, in the brows"
+  "text": "✕ Version history v2.19.2 September 14, 2026 Every verse in its place NEW A palace station shows every verse it holds. T"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "53d3470a52524a4a",
+  "h": "c4d1f417c22055b2",
   "len": 118811,
   "els": 2199,
   "buttons": 578,

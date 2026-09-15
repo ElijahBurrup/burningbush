@@ -1500,6 +1500,12 @@
   .station.st-unused .snum{background:var(--miss-ink);color:var(--no-bg)}
   .station .st-verse{display:block;margin-top:3px;font-size:12.5px;font-weight:800;color:var(--good)}
   .station .st-eye{font-size:16px;align-self:center;flex:none}
+  .station .st-vlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .station .st-vchip{display:inline-block;font-size:12.5px;font-weight:800;padding:3px 10px;border-radius:999px;
+    border:1px solid var(--green);color:var(--good);cursor:pointer}
+  .station .st-vchip::before{content:"📖 "}
+  .station .st-vchip.st-retired{border-color:var(--miss);color:var(--miss)}
+  .station .st-vchip.st-retired::before{content:"💛 "}
   .vidph{border:1px dashed var(--gold2);border-radius:14px;padding:22px;text-align:center;background:var(--vidph-bg);margin:12px 0}
   .vidph .play{width:52px;height:52px;border-radius:50%;background:var(--gold);color:var(--on-accent);display:grid;place-items:center;font-size:22px;margin:0 auto 8px}
   .vidph .vt{font-weight:800;font-size:15px} .vidph .vs{font-size:12px;color:var(--muted);margin-top:3px}
@@ -2284,8 +2290,13 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.19.1";
+const APP_VERSION="2.19.2";
 const CHANGELOG=[
+ {v:"2.19.2", d:"September 14, 2026", t:"Every verse in its place", items:[
+   ["new","<b>A palace station shows every verse it holds.</b> Two verses stored in the same spot each get their own button now, and each one opens its verse and brings you back to the palace. The box used to open only the first one entered."],
+   ["new","<b>Retired verses stay where they lived, in red.</b> A verse you know by heart gives its station back, and it used to vanish from the palace. It now shows in red at the spot it came from, and still opens \u2014 to its own page, so a tap can never put it back in a room by accident."],
+   ["chg","<b>Palace practice names every verse at a stop.</b> It used to say \u201cPsalms 23:1 + 1 more\u201d; now it lists them all."]
+ ]},
  {v:"2.19.1", d:"September 14, 2026", t:"Google listens now", items:[
    ["chg","<b>Speaking uses Google's own recognition, in the browser as well as the app.</b> The microphone button listens for itself instead of sending you to your keyboard's microphone, which kept mishearing Bible names. The first time, your browser asks whether it may use the microphone."],
    ["new","<b>Say a book and it hears a book.</b> In Chronological the recogniser is told a book is coming and given all sixty six to listen for, and of the ways it heard you it takes the one that is a book: Deuteronomy, not something that only sounds like it. Scenes you speak listen for the book names too."]
@@ -7145,12 +7156,11 @@ function versesAtStation(slot, station){
   out.sort((x,y)=>x.b-y.b || x.c-y.c || x.v-y.v);
   return out;
 }
-// "Deuteronomy 4:2", or "Deuteronomy 4:2 + 2 more" when a station holds a shelf of them.
+// "Deuteronomy 4:2", or every verse on the shelf when a station holds more than one. It used to say
+// "Deuteronomy 4:2 + 2 more", which named one and hid the rest.
 function stationVerseLabel(slot, station){
   const vs=versesAtStation(slot, station);
-  if(!vs.length) return "";
-  const first=`${bookName(vs[0].b)} ${vs[0].c}:${vs[0].v}`;
-  return vs.length>1 ? `${first} + ${vs.length-1} more` : first;
+  return vs.map(x=>`${bookName(x.b)} ${x.c}:${x.v}`).join(", ");
 }
 function startPalacePractice(slot, host, ret, onAbort){
   const p=Prog.palaces[slot]; if(!p) return;
@@ -17028,10 +17038,19 @@ function renderMyPalace(i){
         <p class="hint" style="text-align:center;margin:10px 0 0">${status}</p>
       </div>
       <button class="btn blue" id="palPractice" style="width:100%">${due?"🎯 Review now (due)":"🎯 Practice this palace"}</button>
-      <p class="hint" style="text-align:center;margin:8px 0 10px">🟢 = a verse is stored here (tap to open it) · 🔴 = free spot</p>
-      ${p.stations.map((s,idx)=>{ const vk=versesAtLoc(i,s), used=vk.length;
-        const refs=vk.map(k=>{const a=k.split(":").map(Number);return bookName(a[0])+" "+a[1]+":"+a[2];}).join(", ");
-        return `<div class="station ${used?"st-used":"st-unused"}" ${used?`data-govr="${vk[0]}"`:""}><div class="snum">${idx+1}</div><div class="sbody">${s}${used?`<div class="st-verse">📖 ${refs}</div>`:""}</div>${used?`<span class="st-eye">👁️</span>`:""}</div>`;
+      <p class="hint" style="text-align:center;margin:8px 0 10px">🟢 = a verse is stored here (tap a verse to open it) · 🔴 = free spot · <span style="color:var(--miss);font-weight:800">red verse</span> = retired, known by heart</p>
+      ${p.stations.map((s,idx)=>{ const vk=versesAtLoc(i,s), rk=retiredAtLoc(i,s), used=vk.length;
+        /* Every verse at the station gets its own chip. The whole box used to open only vk[0], so a
+           second verse stored in the same place could be read but never reached. A box holding one
+           verse can still be tapped anywhere, as before. */
+        /* Each chip is a verse reference like any other in the app (data-ref), so it goes through the
+           one tested path: the global reference handler takes the tap before the station can, opens
+           the verse, and brings the reader back to this palace. A retired verse therefore opens its
+           own page too, never the scene editor that could put it back in a room. */
+        const chips = vk.map(k=>`<span class="st-vchip" data-ref="${k}" role="link" tabindex="0">${refLabel(k)}</span>`)
+          .concat(rk.map(k=>`<span class="st-vchip st-retired" data-ref="${k}" role="link" tabindex="0" title="Retired: known by heart">${refLabel(k)}</span>`)).join("");
+        const whole = (vk.length===1 && !rk.length) ? `data-govr="${vk[0]}"` : "";
+        return `<div class="station ${used?"st-used":"st-unused"}" ${whole}><div class="snum">${idx+1}</div><div class="sbody">${s}${chips?`<div class="st-vlist">${chips}</div>`:""}</div>${whole?`<span class="st-eye">👁️</span>`:""}</div>`;
       }).join("")}
       <button class="btn ghost" id="palEdit" style="width:100%;margin-top:12px">✏️ Edit locations</button>
     </div>`;
@@ -17041,6 +17060,8 @@ function renderMyPalace(i){
   // Both ways out of the verse land back on THIS palace, not the palace list. show() matters:
   // editVerseScene switches to the verse view, so re-rendering the palace markup without switching
   // back left the reader stranded on the verse with an X that did nothing.
+  // The box itself (a station holding one verse) opens that verse's scene, as it always has. The
+  // verse chips are reference links, taken by the global handler before this ever sees the tap.
   P.querySelectorAll("[data-govr]").forEach(x=>x.onclick=()=>{ const [b,c,v]=x.dataset.govr.split(":").map(Number); const back=()=>{ show("palace"); renderMyPalace(i); }; editVerseScene(b,c,v, back, back); });
 }
 /* ---- edit an existing palace: rename, edit/reorder/add/remove locations ---- */
@@ -17048,6 +17069,16 @@ let PE=null;
 // memorized verses whose scene is stored at this palace slot + room (matched by the room's text)
 function versesAtLoc(slot, room){ const out=[], vl=Prog.verseLoc||{};
   Object.keys(vl).forEach(k=>{ const l=vl[k]; if(l && l.p===slot && (l.room||"")===room && (Prog.memorized||[]).includes(k)) out.push(k); }); return out; }
+/* Verses that USED to live at this station and were retired from it — known by heart, so the
+   station was given back. setLocHeart keeps the old station in locPast so a demotion can return
+   it, and that same record is what lets the palace still show where each one lived. Only verses
+   that are STILL retired and still known: one demoted back into a room is an ordinary verse again,
+   and one forgotten is gone. */
+function retiredAtLoc(slot, room){ const out=[], lp=Prog.locPast||{}, mem=Prog.memorized||[];
+  Object.keys(lp).forEach(k=>{ const l=lp[k];
+    if(l && l.p===slot && (l.room||"")===room && locIsHeart(k) && mem.includes(k)) out.push(k); });
+  return out; }
+function refLabel(k){ const a=String(k).split(":").map(Number); return bookName(a[0])+" "+a[1]+":"+a[2]; }
 function startPalaceEdit(i, scrollRoom, keepDraft){
   const p=palaceAt(i); if(!p){ renderPalace(); return; }
   // Coming BACK from a verse's scene screen keeps the draft for this same palace. Stepping in to
