@@ -207,11 +207,11 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "classic/bible/book": {
-  "h": "cfed6ddb35f457cc",
-  "len": 17093,
-  "els": 503,
+  "h": "4960eb55727555a0",
+  "len": 17336,
+  "els": 507,
   "buttons": 4,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "3c468ccfee9e8893",
+  "h": "87ff3836ec2c38e4",
   "len": 121837,
   "els": 2234,
   "buttons": 586,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "1c5fbaf8d48a2976",
-  "len": 201400,
-  "els": 3339,
+  "h": "ae0b0e8e599e809f",
+  "len": 201837,
+  "els": 3348,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.3 September 15, 2026 No asking for a palace before you have one FIX My Verses no longer asks you"
+  "text": "✕ Version history v2.21.4 September 15, 2026 Psalm 1, sung NEW Psalm 1, sung two ways. Open Psalm 1 in the Bible and 📺 "
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "311a6fdd34e1835a",
+  "h": "e681304a19e3c0c7",
   "len": 121036,
   "els": 2226,
   "buttons": 584,
@@ -729,11 +729,11 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "illumined/bible/book": {
-  "h": "cfed6ddb35f457cc",
-  "len": 17093,
-  "els": 503,
+  "h": "4960eb55727555a0",
+  "len": 17336,
+  "els": 507,
   "buttons": 4,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "a336e0ba4ae53b48",
+  "h": "530449e7d51dee58",
   "len": 121044,
   "els": 2226,
   "buttons": 584,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "1c5fbaf8d48a2976",
-  "len": 201400,
-  "els": 3339,
+  "h": "ae0b0e8e599e809f",
+  "len": 201837,
+  "els": 3348,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.3 September 15, 2026 No asking for a palace before you have one FIX My Verses no longer asks you"
+  "text": "✕ Version history v2.21.4 September 15, 2026 Psalm 1, sung NEW Psalm 1, sung two ways. Open Psalm 1 in the Bible and 📺 "
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "a336e0ba4ae53b48",
+  "h": "530449e7d51dee58",
   "len": 121044,
   "els": 2226,
   "buttons": 584,
@@ -1251,11 +1251,11 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "glass/bible/book": {
-  "h": "cfed6ddb35f457cc",
-  "len": 17093,
-  "els": 503,
+  "h": "4960eb55727555a0",
+  "len": 17336,
+  "els": 507,
   "buttons": 4,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "60ee63efad701f65",
+  "h": "94b273d8dee5094e",
   "len": 121042,
   "els": 2226,
   "buttons": 584,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "1c5fbaf8d48a2976",
-  "len": 201400,
-  "els": 3339,
+  "h": "ae0b0e8e599e809f",
+  "len": 201837,
+  "els": 3348,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.3 September 15, 2026 No asking for a palace before you have one FIX My Verses no longer asks you"
+  "text": "✕ Version history v2.21.4 September 15, 2026 Psalm 1, sung NEW Psalm 1, sung two ways. Open Psalm 1 in the Bible and 📺 "
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "60ee63efad701f65",
+  "h": "94b273d8dee5094e",
   "len": 121042,
   "els": 2226,
   "buttons": 584,
@@ -1773,11 +1773,11 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "quest/bible/book": {
-  "h": "cfed6ddb35f457cc",
-  "len": 17093,
-  "els": 503,
+  "h": "4960eb55727555a0",
+  "len": 17336,
+  "els": 507,
   "buttons": 4,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "ebfc9f4d1b423e30",
+  "h": "db66780f1c33bf8e",
   "len": 121044,
   "els": 2226,
   "buttons": 584,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "1c5fbaf8d48a2976",
-  "len": 201400,
-  "els": 3339,
+  "h": "ae0b0e8e599e809f",
+  "len": 201837,
+  "els": 3348,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.3 September 15, 2026 No asking for a palace before you have one FIX My Verses no longer asks you"
+  "text": "✕ Version history v2.21.4 September 15, 2026 Psalm 1, sung NEW Psalm 1, sung two ways. Open Psalm 1 in the Bible and 📺 "
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "ebfc9f4d1b423e30",
+  "h": "db66780f1c33bf8e",
   "len": 121044,
   "els": 2226,
   "buttons": 584,
@@ -2295,11 +2295,11 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "buddy/bible/book": {
-  "h": "cfed6ddb35f457cc",
-  "len": 17093,
-  "els": 503,
+  "h": "4960eb55727555a0",
+  "len": 17336,
+  "els": 507,
   "buttons": 4,
-  "svgs": 0,
+  "svgs": 1,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "22a223430747fa0d",
+  "h": "083bcf852cdd1b8c",
   "len": 121040,
   "els": 2226,
   "buttons": 584,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "1c5fbaf8d48a2976",
-  "len": 201400,
-  "els": 3339,
+  "h": "ae0b0e8e599e809f",
+  "len": 201837,
+  "els": 3348,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.3 September 15, 2026 No asking for a palace before you have one FIX My Verses no longer asks you"
+  "text": "✕ Version history v2.21.4 September 15, 2026 Psalm 1, sung NEW Psalm 1, sung two ways. Open Psalm 1 in the Bible and 📺 "
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "22a223430747fa0d",
+  "h": "083bcf852cdd1b8c",
   "len": 121040,
   "els": 2226,
   "buttons": 584,

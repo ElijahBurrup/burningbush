@@ -4615,6 +4615,13 @@ const DAY = 86400000;
     closeAll();
     renderChapterScreen(11, 3);
     out.ch3Btn = !!document.querySelector('#journey [data-media="chapter"]');
+    // Psalm 1 has two songs, so 📺 lists both to choose from rather than playing one.
+    renderChapterScreen(19, 1);
+    const pb = document.querySelector('#journey [data-media="chapter"]'); if (pb) pb.click();
+    const psh = document.getElementById('mediaSheet');
+    out.psalmList = !!psh && psh.style.display === 'flex' && psh.querySelectorAll('[data-mi]').length === 2
+      && /Hear it/.test(psh.textContent) && !document.querySelector('#mediaPlayer iframe');
+    closeAll();
 
     // Romans 16:23 has a Facebook video; 16:22 has none.
     openVerseWizard(45, 16, 23, () => {});
@@ -4654,6 +4661,7 @@ const DAY = 86400000;
   ok(media.rotBtn, 'the player has a button that turns the video sideways');
   ok(/lock:landscape/.test(media.turns) && /unlock/.test(media.turns), '...which turns it, and closing the video hands orientation back to the app');
   ok(!media.ch3Btn, 'a chapter with no video has no button at all');
+  ok(media.psalmList, 'Psalm 1 has two songs, so 📺 lists both under Hear it to choose from');
   ok(media.verseBtn, 'Romans 16:23 has a Videos button');
   ok(/^https:\/\/www\.facebook\.com\/plugins\/video\.php\?href=https%3A%2F%2Fwww\.facebook\.com%2Fwatch%2F%3Fv%3D1547436033127906/.test(media.fbSrc), '...playing through Facebook\'s own embed');
   is(media.fbFallback, 'https://www.facebook.com/watch/?v=1547436033127906', '...with a plain link to the video in case it will not play here');

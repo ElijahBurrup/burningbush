@@ -70,6 +70,12 @@ disappear together when an entry is removed. Never draw a mark or a button by ha
 keep a second list: that is how a camera ends up promising a video that is not there. The
 behaviour spec adds and removes an entry to prove the two move together.
 
+**Psalm songs** come from the Burning Bush channel (@BurningBushApp), one playlist per style:
+60's Choir Psalms (`PLT7O3cluGFuM`) and 80's Ballad Psalms (`PLN035pzuBsig`), with more styles to
+follow. Each new psalm is a `hear` entry under its chapter key (`19:<psalm>`), labelled
+`Psalm N · <style>`, so a psalm with several styles lists them all to choose from. List a playlist
+with a single request (`python -m yt_dlp --flat-playlist -J <playlist url>`), never a channel sweep.
+
 Before an id goes in, check it. A YouTube id must pass oEmbed
 (`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=<id>&format=json`) with the
 expected author and a title naming the right book, chapter or verse. A Facebook video must embed:
