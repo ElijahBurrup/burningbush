@@ -4548,6 +4548,93 @@ const DAY = 86400000;
   ok(box.capHeld, '...without scrolling the box out from under the cursor');
   ok(box.followedUp, 'a cursor above the view is followed back up to');
 
+  describe('a lesson screen can be read aloud', () => { });
+
+  /* A Listen button on the lesson screens reads what the screen teaches, in a calm male voice where
+     the device offers one. The test browser has speech but no voices, so a recording stand-in takes
+     its place: what it records is exactly what a phone would have been asked to say. */
+  const tts = await $(async () => {
+    const out = {};
+    const said = [];
+    const realSS = Object.getOwnPropertyDescriptor(window, 'speechSynthesis');
+    const realU = window.SpeechSynthesisUtterance;
+    const voices = [
+      { name: 'Samantha', lang: 'en-US', voiceURI: 'samantha' },
+      { name: 'Google UK English Male', lang: 'en-GB', voiceURI: 'gb-male' },
+      { name: 'Microsoft Andrew Online (Natural)', lang: 'en-US', voiceURI: 'andrew' },
+      { name: 'Google espanol', lang: 'es-ES', voiceURI: 'es' },
+    ];
+    window.SpeechSynthesisUtterance = function (t) { this.text = t; };
+    const fake = {
+      getVoices: () => voices, addEventListener() {},
+      cancel: () => { said.push('<cancel>'); },
+      speak: u => { said.push({ text: u.text, voice: u.voice && u.voice.name, rate: u.rate, pitch: u.pitch });
+                    if (u.onend) setTimeout(u.onend, 0); },
+    };
+    Object.defineProperty(window, 'speechSynthesis', { value: fake, configurable: true, writable: true });
+
+    out.picked = (ttsVoice() || {}).name;
+    ttsPaintVoices();
+    const opts = [...el('ttsVoiceSel').options].map(o => o.textContent);
+    out.firstOption = opts[0]; out.optionCount = opts.length;
+
+    // A number lesson's teaching screen.
+    /* Any number lesson, unlocked for the length of this block. Whether one is free depends on
+       what earlier blocks happened to grant, and this block is about reading aloud, not the paywall. */
+    const sk = UNITS.flatMap(u => u.skills).find(s => s.kind === 'num' && !s.testOnly);
+    const snapUnl = Prog.lessonUnlocks;
+    Prog.lessonUnlocks = [...(Prog.lessonUnlocks || []), sk.id]; saveProg();
+    out.skill = sk && sk.id;
+    show('learn');
+    startLesson(sk);
+    const btn = document.querySelector('#learn .qhead .tts-btn');
+    out.hasBtn = !!btn;
+    out.idle = btn && btn.textContent;
+    said.length = 0;
+    btn.click();
+    out.busy = btn.textContent;
+    const spoken = said.filter(x => typeof x === 'object');
+    out.text = spoken.map(x => x.text).join(' ');
+    out.voice = spoken.length ? spoken[0].voice : null;
+    out.rate = spoken.length ? spoken[0].rate : null;
+    const n = LZ.steps[LZ.i].n;
+    out.word = pegFor(n).word;
+    out.num = dispNum('num', n);
+    out.cleanA = ttsClean('Number / Image relationship, sounds s/z and j/sh/ch');
+    await new Promise(r => setTimeout(r, 30));
+    out.afterEnd = btn.isConnected ? btn.textContent : '(gone)';
+
+    // Moving on stops it.
+    btn.click(); said.length = 0;
+    el('lNext').click();
+    out.stoppedOnNext = said.includes('<cancel>');
+
+    // Where there is no speech at all (the store build's in-app browser): no button.
+    Object.defineProperty(window, 'speechSynthesis', { value: undefined, configurable: true, writable: true });
+    renderStep();
+    out.noSpeechNoBtn = !document.querySelector('#learn .qhead .tts-btn');
+
+    if (realSS) Object.defineProperty(window, 'speechSynthesis', realSS); else delete window.speechSynthesis;
+    window.SpeechSynthesisUtterance = realU;
+    Prog.lessonUnlocks = snapUnl; saveProg();
+    LZ = null; renderPath();
+    return out;
+  });
+  is(tts.picked, 'Microsoft Andrew Online (Natural)', 'a male voice is chosen first, the higher-quality one ahead of the rest');
+  ok(/male/.test(tts.firstOption || '') && tts.optionCount === 3, 'the voice list in Profile leads with it, marks it male, and leaves out other languages');
+  ok(tts.hasBtn, 'a lesson screen has a Listen button');
+  is(tts.idle, '\u25B6 Listen', '...that says what it does');
+  is(tts.busy, '\u25A0 Stop', '...and becomes Stop while it reads');
+  ok(tts.text.includes(tts.word) && tts.text.includes(tts.num), 'it reads the number and its picture from the screen');
+  ok(!/I can see it|Change the image word/.test(tts.text), '...but not the buttons or the picker');
+  ok(!/Build the Number|Build the Book|Choose a picture/.test(tts.text), '...nor the Build the Number box, which is controls rather than teaching');
+  is(tts.cleanA, 'Number / Image relationship, sounds s or z and j or sh or ch', 'sound codes like s/z are read as "s or z", and an ordinary slash is left alone');
+  is(tts.voice, 'Microsoft Andrew Online (Natural)', 'it reads in the chosen voice');
+  ok(tts.rate < 1, '...a little slower than normal, for calm');
+  is(tts.afterEnd, '\u25B6 Listen', 'when it finishes the button goes back to Listen');
+  ok(tts.stoppedOnNext, 'moving to the next step stops the reading');
+  ok(tts.noSpeechNoBtn, 'where the device cannot speak there is no button at all, never one that does nothing');
+
   describe('a palace station shows every verse it holds, retired ones in red', () => { });
 
   /* Reported: a station holding two verses opened only the first one entered, and verses retired
@@ -4648,6 +4735,20 @@ const DAY = 86400000;
     const out = {};
     const snapPrac = Prog.pracDay;
     Prog.pracDay = { date: dayKey(new Date()), n: 0 };   // keep clear of a goal-step pause
+    /* Its own deck, and nothing left running from earlier blocks. This block used to inherit both:
+       a number test's advance timer could draw over the question inside the very window being
+       checked, and a deck left thin by earlier blocks could hand back the round-complete screen
+       instead of a next question. Either one failed it now and then, in whichever case the timing
+       happened to land, so neither is left to chance any more. */
+    NT = null; WP = null;
+    const snapMem = Prog.memorized, snapSR = Prog.verseSR;
+    Prog.memorized = ['19:23:1', '43:3:16', '45:8:28', '1:1:1', '40:6:33'];
+    Prog.verseSR = Object.assign({}, snapSR);
+    Prog.memorized.forEach(key => {
+      Prog.verseSR[key] = Object.assign({ learnedAt: Date.now() - 5 * DAY, step: 2 },
+        (snapSR && snapSR[key]) || {}, { sz: 0, rd: false });
+    });
+    saveProg();
     deckRoundReset(); suppressGrowth = true; memTestRecent = [];
     const k = memArr()[0].join(':');
     const [b, c, v] = k.split(':').map(Number);
@@ -4692,7 +4793,8 @@ const DAY = 86400000;
     await wait(1100);
     out.clean = onScreen();
 
-    Prog.pracDay = snapPrac; MS = null; suppressGrowth = false; saveProg();
+    Prog.pracDay = snapPrac; Prog.memorized = snapMem; Prog.verseSR = snapSR;
+    MS = null; suppressGrowth = false; saveProg();
     return out;
   });
   ok(lockin.afterReveal.review, 'a verse answered after a reveal opens its review page');

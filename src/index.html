@@ -1403,6 +1403,9 @@
   .vrow-note{font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--muted);margin-top:3px}
   .feedback .prac-step{margin-top:6px;font-weight:700}
   .feedback .prac-next{margin-top:4px;opacity:.8;font-size:12px}
+  .qhead .tts-btn{flex:0 0 auto;font:inherit;font-size:12.5px;font-weight:800;padding:6px 11px;margin-left:8px;
+    border-radius:999px;border:1px solid var(--gold2);background:transparent;color:var(--gold-ink);cursor:pointer;white-space:nowrap}
+  .qhead .tts-btn.on{background:var(--panel2)}
   .lock-why{margin:10px 0 6px;padding:9px 12px;border-radius:10px;border:1px solid var(--gold);
     background:var(--panel2);color:var(--gold-ink);font-weight:800;font-size:13.5px;text-align:center}
   .mem-filter{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 8px}
@@ -2136,6 +2139,12 @@
       <div class="prof-sect" style="margin-top:16px">Get the app</div>
       <button class="btn ghost" id="pInstall" style="width:100%">📲 Install on your phone (home screen app)</button>
 
+      <div class="prof-sect" style="margin-top:16px">Reading voice</div>
+ <p class="hint" style="margin:0 0 8px">The voice that reads a lesson aloud when you press ▶ Listen. It is your device’s own voice, read slowly and calmly.</p>
+      <select class="typein" id="ttsVoiceSel" style="width:100%;text-align:left;font-size:14px;padding:10px"></select>
+      <div class="btnrow" style="margin:8px 0 0"><button class="btn ghost sm" id="ttsPreview">▶ Hear it</button></div>
+      <p class="hint" id="ttsVoiceNote" style="margin:8px 0 0"></p>
+
       <div class="prof-sect" style="margin-top:16px">Review schedule</div>
  <p class="hint" style="margin:0 0 8px">The days after learning a verse that it comes back to you.
    The first 6 are the dots drawn on a verse, so changing them changes the trail you see.
@@ -2290,8 +2299,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.19.2";
+const APP_VERSION="2.19.3";
 const CHANGELOG=[
+ {v:"2.19.3", d:"September 14, 2026", t:"Lessons you can listen to", items:[
+   ["new","<b>▶ Listen on every lesson screen.</b> Press it and the screen is read aloud, slowly and calmly: the number, its picture, the sounds and the teaching, but not the buttons. Press it again to stop; it stops by itself when you move on or leave. Choose the voice in Profile → Reading voice, where male voices come first."],
+   ["chg","<b>On Android, the voice lives in your phone.</b> Chrome on Android reads in whichever voice your phone’s Text-to-speech settings use — every name it lists speaks in that one voice — so the Reading voice panel says exactly where to choose a male one."]
+ ]},
  {v:"2.19.2", d:"September 14, 2026", t:"Every verse in its place", items:[
    ["new","<b>A palace station shows every verse it holds.</b> Two verses stored in the same spot each get their own button now, and each one opens its verse and brings you back to the palace. The box used to open only the first one entered."],
    ["new","<b>Retired verses stay where they lived, in red.</b> A verse you know by heart gives its station back, and it used to vanish from the palace. It now shows in red at the spot it came from, and still opens \u2014 to its own page, so a tap can never put it back in a room by accident."],
@@ -5924,6 +5937,7 @@ function setLoginModal(open){
   if(pw){ pw.type = open ? "password" : "text"; pw.setAttribute("autocomplete", open ? "current-password" : "off"); }
 }
 function show(tab){
+  try{ ttsStop(); }catch(e){}   // a new tab: nothing keeps talking
   // leaving the intro via a tab tap = onboarding is done; stamp it so Journey doesn't re-show the intro from step 0 (state desync)
   if(!Prog.onboarded && tab!=="journey"){ Prog.onboarded=true; saveProg(); }
   try{ if(["learn","verse","palace","journey","stories"].includes(tab)) Store.set("vv_tab", tab); }catch(e){}  // remember the tab so a page refresh returns here
@@ -7495,6 +7509,7 @@ function relBoxes(n){
 }
 function distractDigits(n,c){ const out=[]; while(out.length<c){ const r=Math.floor(Math.random()*10); if(r!==n && !out.includes(r)) out.push(r); } return out; }
 function renderSoundStep(s,pct){
+  try{ ttsStop(); }catch(e){}
   const L=el("learn"); let body="";
   if(s.type==="teach"){
     body=`<div class="stage">
@@ -7513,7 +7528,7 @@ function renderSoundStep(s,pct){
       <div class="opts">${opts.map(d=>`<button class="opt" data-sok="${d===s.n?1:0}">${d}</button>`).join("")}</div>`;
   }
   L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>${s.type==="teach"?lessonFilm():""}</div><div id="lBody">${body}</div></div>`;
-  el("lClose").onclick=()=>renderPath();
+  el("lClose").onclick=()=>{ ttsStop(); renderPath(); }; addTtsBtn(L);
   attachLessonSwipe(L);
   if(s.type==="teach"){ el("lNext").onclick=advance; return; }
   document.querySelectorAll("[data-sok]").forEach(b=>b.onclick=()=>{
@@ -7542,7 +7557,110 @@ function lessonFilm(){
   if(k==="num") return reviewLessonBtn("major");
   return "";
 }
+/* ---- reading a lesson aloud ------------------------------------------------------------------
+   A Listen button on every lesson screen reads what the screen teaches, slowly and calmly.
+
+   The voice is the device's own. On a computer or an iPhone the app can choose a named male voice.
+   On Android, Chrome hands web pages the ONE voice set in the phone's Text-to-speech settings, and
+   every name it lists speaks in that same voice, so the choice there is made in the phone. The
+   store build's in-app browser has no speech at all (a long-standing Android WebView gap), so it
+   uses the native plugin when that is installed and shows no button when it is not: never a button
+   that does nothing. */
+const TTS_RATE=0.9, TTS_PITCH=0.95;
+const TTS_MALE=/\b(male|daniel|aaron|arthur|guy|davis|andrew|brian|christopher|eric|roger|ryan|thomas|fred|oliver|george|james|david|mark|tom|alex|reed|evan|nathan|jacob)\b/i;
+const TTS_FEMALE=/\b(female|samantha|victoria|karen|moira|tessa|fiona|zira|aria|jenny|susan|hazel|libby|sonia|emma|ava|allison|serena|kate|joanna|salli|kimberly|ivy|nicole|catherine|zoe|michelle|elizabeth|linda)\b/i;
+let ttsBusy=false, ttsToken=0, ttsBtnEl=null;
+function ttsNative(){ try{ const C=window.Capacitor; return (C && C.Plugins && C.Plugins.TextToSpeech) || null; }catch(e){ return null; } }
+function ttsWeb(){ return (typeof window.speechSynthesis!=="undefined" && window.speechSynthesis && typeof window.SpeechSynthesisUtterance!=="undefined") ? window.speechSynthesis : null; }
+function ttsAvailable(){ return !!(ttsNative() || ttsWeb()); }
+function ttsVoices(){ const s=ttsWeb(); try{ return s ? (s.getVoices()||[]).filter(v=>/^en/i.test(v.lang||"")) : []; }catch(e){ return []; } }
+// Male first, then the higher-quality "natural" voices, then American English.
+function ttsScore(v){ const nm=v.name||""; let n=0;
+  if(TTS_MALE.test(nm)) n+=10; if(TTS_FEMALE.test(nm)) n-=10;
+  if(/natural|neural|enhanced|premium|online/i.test(nm)) n+=3;
+  if(/en[-_]US/i.test(v.lang||"")) n+=1;
+  return n; }
+function ttsVoice(){
+  const vs=ttsVoices(); if(!vs.length) return null;
+  const want=Prog && Prog.ttsVoice;
+  if(want){ const hit=vs.find(v=>v.voiceURI===want || v.name===want); if(hit) return hit; }
+  return vs.slice().sort((a,b)=>ttsScore(b)-ttsScore(a))[0];
+}
+// Emoji and arrows would be read out by name, and "s/z" as "s slash z".
+function ttsClean(t){
+  return String(t||"")
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{21FF}\u{2300}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu," ")
+    .replace(/\b([a-z]{1,3})\s*\/\s*(?=[a-z]{1,3}\b)/g,"$1 or ")   // sound codes only: "s/z", "j/sh/ch"
+    .replace(/[\u00B7\u2022|]/g,", ")
+    .replace(/\s+/g," ").trim();
+}
+// Chrome stops a long utterance after about fifteen seconds, so the text goes in sentence-sized parts.
+function ttsChunks(t){ const out=[];
+  (t.match(/[^.!?]+[.!?]*/g)||[t]).forEach(s=>{ s=s.trim(); if(!s) return;
+    if(out.length && (out[out.length-1]+" "+s).length<180) out[out.length-1]+=" "+s; else out.push(s); });
+  return out; }
+// What the screen teaches, in reading order: the words, not the buttons, the pickers or the pictures.
+function lessonReadText(root){
+  if(!root) return "";
+  const c=root.cloneNode(true);
+  c.querySelectorAll("button,input,select,textarea,img,svg,details,.qhead,.opts,.pegedit,.bb,[data-noread]").forEach(x=>x.remove());
+  const BLOCK=/^(DIV|P|LI|H1|H2|H3|H4|SECTION|BR|TR)$/;
+  c.querySelectorAll("*").forEach(e=>{ if(BLOCK.test(e.tagName)) e.appendChild(document.createTextNode("\n")); });
+  return (c.textContent||"").split("\n").map(s=>s.replace(/\s+/g," ").trim()).filter(Boolean)
+    .map(s=>/[.!?:]$/.test(s)?s:s+".").join(" ");
+}
+function ttsPaintBtn(){ const b=ttsBtnEl; if(!b || !b.isConnected) return;
+  b.textContent = ttsBusy ? "\u25A0 Stop" : "\u25B6 Listen";
+  b.classList.toggle("on", ttsBusy); b.setAttribute("aria-pressed", ttsBusy?"true":"false"); }
+function ttsStop(){
+  ttsToken++; ttsBusy=false;
+  try{ const s=ttsWeb(); if(s) s.cancel(); }catch(e){}
+  try{ const n=ttsNative(); if(n && n.stop) n.stop(); }catch(e){}
+  ttsPaintBtn();
+}
+function ttsSpeak(text){
+  ttsStop();
+  const clean=ttsClean(text); if(!clean) return false;
+  const my=++ttsToken; ttsBusy=true; ttsPaintBtn();
+  const done=()=>{ if(my!==ttsToken) return; ttsBusy=false; ttsPaintBtn(); };
+  const nat=ttsNative();
+  if(nat){ try{ nat.speak({text:clean, lang:"en-US", rate:TTS_RATE, pitch:TTS_PITCH, category:"playback"}).then(done, done); return true; }catch(e){} }
+  const s=ttsWeb(); if(!s){ ttsBusy=false; ttsPaintBtn(); return false; }
+  const parts=ttsChunks(clean), v=ttsVoice();
+  parts.forEach((p,i)=>{ const u=new SpeechSynthesisUtterance(p);
+    if(v){ u.voice=v; u.lang=v.lang; } else u.lang="en-US";
+    u.rate=TTS_RATE; u.pitch=TTS_PITCH;
+    if(i===parts.length-1){ u.onend=done; u.onerror=done; }
+    s.speak(u); });
+  return true;
+}
+/* Put the Listen button into a lesson screen's header, after it has been drawn. Added this way
+   rather than written into three header templates, so the lesson markup itself is untouched. */
+function addTtsBtn(host){
+  if(!ttsAvailable() || !host) return;
+  const q=host.querySelector(".qhead"); if(!q || q.querySelector(".tts-btn")) return;
+  const b=document.createElement("button"); b.type="button"; b.className="tts-btn";
+  b.setAttribute("aria-label","Read this screen aloud");
+  q.appendChild(b); ttsBtnEl=b;
+  b.onclick=()=>{ if(ttsBusy){ ttsStop(); return; } ttsSpeak(lessonReadText(host.querySelector(".lesson")||host)); };
+  ttsPaintBtn();
+}
+function ttsPaintVoices(){
+  const sel=el("ttsVoiceSel"), note=el("ttsVoiceNote"); if(!sel) return;
+  const vs=ttsVoices().slice().sort((a,b)=>ttsScore(b)-ttsScore(a)), cur=ttsVoice();
+  if(!vs.length){
+    sel.innerHTML=`<option>${ttsNative()?"The phone's own voice":(ttsWeb()?"Voices are still loading":"No reading voice on this device")}</option>`;
+    sel.disabled=true;
+  } else {
+    sel.disabled=false;
+    sel.innerHTML=vs.map(v=>`<option value="${bbEsc(v.voiceURI||v.name)}"${cur && (cur.voiceURI||cur.name)===(v.voiceURI||v.name)?" selected":""}>${bbEsc(v.name)}${TTS_MALE.test(v.name||"")?" \u00B7 male":""}</option>`).join("");
+  }
+  if(note) note.innerHTML = /Android/i.test(navigator.userAgent||"")
+    ? "On Android the voice is chosen in the phone, not here: open <b>Settings</b>, search for <b>Text-to-speech</b>, tap the gear beside <b>Google</b>, choose <b>English (United States)</b> and pick a male voice. Every name in this list speaks in that one voice."
+    : "Voices marked <b>male</b> are chosen first. Pick whichever sounds best to you.";
+}
 function renderStep(){
+  try{ ttsStop(); }catch(e){}   // a new step: the last one stops talking
   const L=el("learn");
   if(LZ.i>=LZ.steps.length) return finishLesson();
   const s=LZ.steps[LZ.i];
@@ -7607,7 +7725,7 @@ function renderStep(){
     <div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div>${lessonFilm()}</div>
     <div id="lBody">${body}</div></div>`;
   const c=document.querySelector(".content"); if(c) c.scrollTop=0;   // every lesson step starts at the top
-  el("lClose").onclick=()=>renderPath();
+  el("lClose").onclick=()=>{ ttsStop(); renderPath(); }; addTtsBtn(L);
   attachLessonSwipe(L);
   wireStep(s);
 }
@@ -14301,6 +14419,7 @@ function startAdhocLearn(n,isBook,ret){
   AB.kind=kind; renderAdhoc();
 }
 function renderAdhoc(){
+  try{ ttsStop(); }catch(e){}
   const L=el("verse"), s=AB.steps[AB.i], n=AB.n, word=pegFor(n).word, kind=AB.kind, p=pegFor(n);
   const pct=Math.round(100*AB.i/AB.steps.length);
   let body="";
@@ -14317,7 +14436,7 @@ function renderAdhoc(){
       <div class="opts">${opts.map(o=>`<button class="opt" data-ok="${o===n?1:0}">${dispNum(kind,o)}</button>`).join("")}</div>`;
   }
   L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="abClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div></div><div id="abBody">${body}</div></div>`;
-  el("abClose").onclick=()=>AB.ret();
+  el("abClose").onclick=()=>{ ttsStop(); AB.ret(); }; addTtsBtn(L);
   if(s.t==="teach"){ el("abNext").onclick=()=>{ AB.i++; renderAdhoc(); }; wireTeachCard(kind, n, renderAdhoc); return; }
   L.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
     if(b.dataset.ok==="1"){ b.classList.add("correct"); L.querySelectorAll("[data-ok]").forEach(x=>x.disabled=true); setTimeout(()=>{ AB.i++; if(AB.i>=AB.steps.length) finishAdhoc(); else renderAdhoc(); },500); }
@@ -15922,6 +16041,7 @@ function applyFeatureVisibility(){
    which is the whole reason for doing it this way rather than re-authoring the markup.        */
 const PROF_ICONS={ "Admin":"🛠️", "Badges":"🎖️", "Feature store":"✨", "Account":"👤",
   "Review schedule":"🗓️",
+  "Reading voice":"🗣️",
   "Group licences":"🎫", "Give":"🎁",
   "Bible translation":"📗", "Reference library":"📚", "What's new":"📋", "Theme":"🎨",
   "Get the app":"📲", "Sound effects":"🔔", "Sync":"🔄", "Back up your progress":"💾" };
@@ -15942,6 +16062,7 @@ const PROF_SUBS={
     return {classic:"Classic",illumined:"Illumined Night",glass:"Stained Glass",quest:"Scripture Quest",buddy:"Verse Buddy"}[t]||t; },
   "Get the app":()=>"Home screen",
   "Review schedule":()=>srLadderIsCustom() ? "Your own" : "Default",
+  "Reading voice":()=>{ const v=ttsVoice(); return v ? v.name : (ttsAvailable() ? "Device voice" : "Not on this device"); },
   "Sound effects":()=>{ const off=Object.keys((Prog&&Prog.sfxOff)||{}).length;
     return off ? off+" switched off" : "All on"; },
   "Sync":()=>((typeof Auth!=="undefined"&&Auth._token)?"Across your devices":"Sign in to sync"),
@@ -16217,6 +16338,16 @@ if(el("srResetLadder")) el("srResetLadder").onclick=()=>{
   srApplyLadder(); srLadderPaint(); toast("Back to the default schedule.");
 };
 srLadderPaint();
+/* The reading voice list fills in when the device has its voices ready, which on Chrome is after
+   the page has loaded rather than during it. */
+(function(){
+  const s=ttsWeb();
+  if(s){ try{ s.addEventListener("voiceschanged", ttsPaintVoices); }catch(e){ s.onvoiceschanged=ttsPaintVoices; } }
+  if(el("ttsVoiceSel")) el("ttsVoiceSel").onchange=()=>{ Prog.ttsVoice=el("ttsVoiceSel").value; saveProg(); ttsPaintVoices(); };
+  if(el("ttsPreview")) el("ttsPreview").onclick=()=>{ if(ttsBusy){ ttsStop(); return; }
+    ttsSpeak("This is how your lessons will sound. Take a breath, and let the picture settle."); };
+  ttsPaintVoices();
+})();
 /* The sound list is built from the palette itself rather than from a second list kept beside it —
    a sound that exists but is missing from this screen is a sound nobody can switch off, and a row
    for a sound that no longer exists is a switch that does nothing. One source, so neither happens. */

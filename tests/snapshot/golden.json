@@ -261,22 +261,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "classic/learn/build-the-book": {
-  "h": "c99f4fb622cbc67c",
-  "len": 3412,
-  "els": 61,
-  "buttons": 12,
+  "h": "98508e9a35fcff6e",
+  "len": 3524,
+  "els": 62,
+  "buttons": 13,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
+  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
  },
  "classic/learn/build-the-book-done": {
-  "h": "189d51433dd40378",
-  "len": 3632,
-  "els": 66,
-  "buttons": 12,
+  "h": "dcf677b4d440e4be",
+  "len": 3744,
+  "els": 67,
+  "buttons": 13,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
+  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
  },
  "classic/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -288,10 +288,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "200c7dc784b31e9c",
-  "len": 119608,
-  "els": 2207,
-  "buttons": 580,
+  "h": "f79c0c401f573cf2",
+  "len": 120811,
+  "els": 2222,
+  "buttons": 582,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "8a1e9bc8e88c9a2d",
-  "len": 194526,
-  "els": 3227,
+  "h": "be1b8a5dd3bb2bff",
+  "len": 195423,
+  "els": 3240,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.2 September 14, 2026 Every verse in its place NEW A palace station shows every verse it holds. T"
+  "text": "✕ Version history v2.19.3 September 14, 2026 Lessons you can listen to NEW ▶ Listen on every lesson screen. Press it and"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,10 +387,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "86627c382e56a936",
-  "len": 118807,
-  "els": 2199,
-  "buttons": 578,
+  "h": "3eb42f2057907200",
+  "len": 120010,
+  "els": 2214,
+  "buttons": 580,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -783,22 +783,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "illumined/learn/build-the-book": {
-  "h": "c99f4fb622cbc67c",
-  "len": 3412,
-  "els": 61,
-  "buttons": 12,
+  "h": "98508e9a35fcff6e",
+  "len": 3524,
+  "els": 62,
+  "buttons": 13,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
+  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
  },
  "illumined/learn/build-the-book-done": {
-  "h": "189d51433dd40378",
-  "len": 3632,
-  "els": 66,
-  "buttons": 12,
+  "h": "dcf677b4d440e4be",
+  "len": 3744,
+  "els": 67,
+  "buttons": 13,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
+  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
  },
  "illumined/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -810,10 +810,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "3fcc5bb19958e2c3",
-  "len": 118815,
-  "els": 2199,
-  "buttons": 578,
+  "h": "2d4d235d61c8909d",
+  "len": 120018,
+  "els": 2214,
+  "buttons": 580,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "8a1e9bc8e88c9a2d",
-  "len": 194526,
-  "els": 3227,
+  "h": "be1b8a5dd3bb2bff",
+  "len": 195423,
+  "els": 3240,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.2 September 14, 2026 Every verse in its place NEW A palace station shows every verse it holds. T"
+  "text": "✕ Version history v2.19.3 September 14, 2026 Lessons you can listen to NEW ▶ Listen on every lesson screen. Press it and"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,10 +909,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "3fcc5bb19958e2c3",
-  "len": 118815,
-  "els": 2199,
-  "buttons": 578,
+  "h": "2d4d235d61c8909d",
+  "len": 120018,
+  "els": 2214,
+  "buttons": 580,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -1305,22 +1305,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "glass/learn/build-the-book": {
-  "h": "c99f4fb622cbc67c",
-  "len": 3412,
-  "els": 61,
-  "buttons": 12,
+  "h": "98508e9a35fcff6e",
+  "len": 3524,
+  "els": 62,
+  "buttons": 13,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
+  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
  },
  "glass/learn/build-the-book-done": {
-  "h": "189d51433dd40378",
-  "len": 3632,
-  "els": 66,
-  "buttons": 12,
+  "h": "dcf677b4d440e4be",
+  "len": 3744,
+  "els": 67,
+  "buttons": 13,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
+  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
  },
  "glass/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -1332,10 +1332,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "f682e316dc28ef0e",
-  "len": 118813,
-  "els": 2199,
-  "buttons": 578,
+  "h": "cf05fc92d0ec5f2e",
+  "len": 120016,
+  "els": 2214,
+  "buttons": 580,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "8a1e9bc8e88c9a2d",
-  "len": 194526,
-  "els": 3227,
+  "h": "be1b8a5dd3bb2bff",
+  "len": 195423,
+  "els": 3240,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.2 September 14, 2026 Every verse in its place NEW A palace station shows every verse it holds. T"
+  "text": "✕ Version history v2.19.3 September 14, 2026 Lessons you can listen to NEW ▶ Listen on every lesson screen. Press it and"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,10 +1431,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "f682e316dc28ef0e",
-  "len": 118813,
-  "els": 2199,
-  "buttons": 578,
+  "h": "cf05fc92d0ec5f2e",
+  "len": 120016,
+  "els": 2214,
+  "buttons": 580,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -1827,22 +1827,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "quest/learn/build-the-book": {
-  "h": "c99f4fb622cbc67c",
-  "len": 3412,
-  "els": 61,
-  "buttons": 12,
+  "h": "98508e9a35fcff6e",
+  "len": 3524,
+  "els": 62,
+  "buttons": 13,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
+  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
  },
  "quest/learn/build-the-book-done": {
-  "h": "189d51433dd40378",
-  "len": 3632,
-  "els": 66,
-  "buttons": 12,
+  "h": "dcf677b4d440e4be",
+  "len": 3744,
+  "els": 67,
+  "buttons": 13,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
+  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
  },
  "quest/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -1854,10 +1854,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "0e95490af3f2dd16",
-  "len": 118815,
-  "els": 2199,
-  "buttons": 578,
+  "h": "c21ea4b2f70ce7a6",
+  "len": 120018,
+  "els": 2214,
+  "buttons": 580,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "8a1e9bc8e88c9a2d",
-  "len": 194526,
-  "els": 3227,
+  "h": "be1b8a5dd3bb2bff",
+  "len": 195423,
+  "els": 3240,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.2 September 14, 2026 Every verse in its place NEW A palace station shows every verse it holds. T"
+  "text": "✕ Version history v2.19.3 September 14, 2026 Lessons you can listen to NEW ▶ Listen on every lesson screen. Press it and"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,10 +1953,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "0e95490af3f2dd16",
-  "len": 118815,
-  "els": 2199,
-  "buttons": 578,
+  "h": "c21ea4b2f70ce7a6",
+  "len": 120018,
+  "els": 2214,
+  "buttons": 580,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -2349,22 +2349,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "buddy/learn/build-the-book": {
-  "h": "c99f4fb622cbc67c",
-  "len": 3412,
-  "els": 61,
-  "buttons": 12,
+  "h": "98508e9a35fcff6e",
+  "len": 3524,
+  "els": 62,
+  "buttons": 13,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
+  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
  },
  "buddy/learn/build-the-book-done": {
-  "h": "189d51433dd40378",
-  "len": 3632,
-  "els": 66,
-  "buttons": 12,
+  "h": "dcf677b4d440e4be",
+  "len": 3744,
+  "els": 67,
+  "buttons": 13,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change the image w"
+  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
  },
  "buddy/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -2376,10 +2376,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "c4d1f417c22055b2",
-  "len": 118811,
-  "els": 2199,
-  "buttons": 578,
+  "h": "7a23c43fa5cb04c4",
+  "len": 120014,
+  "els": 2214,
+  "buttons": 580,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "8a1e9bc8e88c9a2d",
-  "len": 194526,
-  "els": 3227,
+  "h": "be1b8a5dd3bb2bff",
+  "len": 195423,
+  "els": 3240,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.2 September 14, 2026 Every verse in its place NEW A palace station shows every verse it holds. T"
+  "text": "✕ Version history v2.19.3 September 14, 2026 Lessons you can listen to NEW ▶ Listen on every lesson screen. Press it and"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,10 +2475,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "c4d1f417c22055b2",
-  "len": 118811,
-  "els": 2199,
-  "buttons": 578,
+  "h": "7a23c43fa5cb04c4",
+  "len": 120014,
+  "els": 2214,
+  "buttons": 580,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
