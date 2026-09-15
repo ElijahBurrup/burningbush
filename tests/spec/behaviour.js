@@ -2626,10 +2626,12 @@ const DAY = 86400000;
   is(split.stash.join(','), 'ASV', 'only the inactive translations are stashed');
 
   const trMerge = await $(() => {
-    // phone on the KJV, laptop on the ASV: neither ladder may leak into the other
-    const phone = migrateProg({ memorized: ['43:3:16'], trActive: 'KJV',
+    // phone on the KJV, laptop on the ASV: neither ladder may leak into the other.
+    // Both are devices already on the letter stages version (cueMig). Without that they would be old
+    // saves, and the update would rightly move each heart into stage 1 before the merge began.
+    const phone = migrateProg({ memorized: ['43:3:16'], trActive: 'KJV', cueMig: true,
       verseStage: { '43:3:16': 'heart' }, w4w: { '43:3:16': { count: 7, times: [] } } });
-    const laptop = migrateProg({ memorized: ['43:3:16'], trActive: 'ASV',
+    const laptop = migrateProg({ memorized: ['43:3:16'], trActive: 'ASV', cueMig: true,
       verseStage: { '43:3:16': 'heart' }, w4w: { '43:3:16': { count: 3, times: [] } } });
     const m = mergeProg(phone, laptop);
     const b = trBuckets(m);
@@ -6199,6 +6201,146 @@ const DAY = 86400000;
   is(quiet.tabTap, 0, 'the tap on the Bible tab is silent too');
   is(quiet.verseFromBible, 0, 'a verse opened from a chapter is still the Bible');
   ok(quiet.afterTab > 0, 'choosing a tab leaves the Bible, and the sound comes back');
+
+  // Chronological: type only until the letters leave one book, and the rest fills itself in.
+  describe('chronological: a book fills in once only one could fit', () => { });
+  const chrono = await $(async () => {
+    const out = {};
+    const names = t => bookCandidates(t).map(bookName).join(',');
+    out.g = names('G'); out.ge = names('Ge'); out.ga = names('ga');
+    out.j = bookCandidates('J').length; out.joh = names('Joh');
+    out.oneJ = names('1 j'); out.firstS = names('first s'); out.digitOnly = bookCandidates('1').length;
+    // the run itself asks Genesis first
+    startChronoTest();
+    out.firstQ = bookName(NT.qs[NT.i].n);
+    let inp = el('chIn');
+    const type = v => { inp.value = v; inp.dispatchEvent(new Event('input')); };
+    type('G'); out.afterG = inp.value;
+    const before = NT.ok;
+    type('Ge'); out.afterGe = inp.value; out.accepted = NT.ok === before + 1;
+    // a wrong book: Exodus asked, "Ga" typed
+    NT.i = 1; renderNumTest(); inp = el('chIn');
+    type('Ga'); out.wrongFill = inp.value;
+    await new Promise(r => setTimeout(r, 900));
+    out.afterWrong = el('chIn').value; out.stillAsking = !el('chIn').disabled;
+    NT = null; renderVerse();
+    return out;
+  });
+  is(chrono.g, 'Genesis,Galatians', '"G" could be Genesis or Galatians, so nothing fills in');
+  is(chrono.ge, 'Genesis', '..."Ge" can only be Genesis');
+  is(chrono.ga, 'Galatians', '...and "ga" only Galatians');
+  ok(chrono.j > 5, '"J" is still a crowd');
+  is(chrono.joh, 'John', '"Joh" is John, not 1 John');
+  is(chrono.oneJ, '1 John', '"1 j" is 1 John');
+  is(chrono.firstS, '1 Samuel', '..."first s" reads the same as "1 s"');
+  is(chrono.digitOnly, 0, 'a number on its own names nothing yet');
+  is(chrono.firstQ, 'Genesis', 'the run asks Genesis first');
+  is(chrono.afterG, 'G', 'typing G leaves it as typed');
+  is(chrono.afterGe, 'Genesis', '...typing Ge fills in Genesis');
+  ok(chrono.accepted, '...and marks it right there and then');
+  is(chrono.wrongFill, 'Galatians', 'a wrong book is filled in too, so you see what your letters said');
+  is(chrono.afterWrong, '', '...then the box empties and waits, never showing the answer');
+  ok(chrono.stillAsking, '...with the question still open');
+
+  // Word for word: seven practices start three letter stages, and a reveal is day 1 again.
+  describe('word for word: the letter stages', () => { });
+  const cue = await $(() => {
+    const keep = JSON.parse(JSON.stringify(Prog)), out = {}, k = '43:3:16';
+    let moved = 0; const ahead = ms => { moved += ms; window.__advanceClock(ms); };
+    Prog.memorized = [k]; Prog.verseStage = {}; Prog.cueSR = {};
+    Prog.w4w = { [k]: { count: W4W_PRACTICE_FOR_POOL, times: [] } }; saveProg(); bustCaches();
+    out.enter = cueStart(k); out.st = cueObj(k).st; out.again = cueStart(k);
+    out.dueToday = cueDue(k);
+    ahead(DAY); out.dueTomorrow = cueDue(k);
+    out.inList = cueDueList().includes(k); out.inCount = reviewDueCount() >= 1;
+    out.notPractised = !w4wPracticePool().some(a => a.join(':') === k);
+    const w = ['For', 'God', 'so', 'loved', 'the', 'world'];
+    out.s1 = w.map((x, i) => cueToken(x, i, 1)).join(' ');
+    out.s2 = w.map((x, i) => cueToken(x, i, 2)).join(' ');
+    out.s3 = w.map((x, i) => cueToken(x, i, 3)).join(' ');
+    const days = []; let r;
+    for (let i = 0; i < 5; i++) { r = cueAdvance(k); days.push(r.stageUp ? 'up' : r.step); ahead(40 * DAY); }
+    out.walk = days.join(','); out.st2 = cueObj(k).st; out.st2step = cueObj(k).step;
+    cueAdvance(k); cueAdvance(k); cueRestart(k);
+    let o = cueObj(k); out.afterReveal = o.st + ':' + o.step; out.revealDue = Math.round((o.dueAt - Date.now()) / DAY);
+    o.st = 3; o.step = 5; r = cueAdvance(k);
+    out.heart = !!(r && r.heart) && isHeart(k); out.cueHeld = cueObj(k).st; out.quietAfter = !cueDue(k);
+    Prog.verseSR = { [k]: { learnedAt: Date.now() - 20 * DAY, step: 4, dueAt: Date.now(), r0: 1 } };
+    verseSRRestart(k); out.peek = Prog.verseSR[k].step + ':' + Math.round((Prog.verseSR[k].dueAt - Date.now()) / DAY);
+    window.__advanceClock(-moved);
+    Object.assign(Prog, keep); Prog.cueSR = keep.cueSR || {}; saveProg(); bustCaches();
+    return out;
+  });
+  ok(cue.enter, 'the seventh practice starts the letter stages');
+  is(cue.st, 1, '...at stage 1');
+  no(cue.again, '...and only once');
+  no(cue.dueToday, 'today is day 0, so it is not asked today');
+  ok(cue.dueTomorrow, '...it comes back tomorrow as day 1');
+  ok(cue.inList, '...in the daily review');
+  ok(cue.inCount, '...counted in what is due');
+  ok(cue.notPractised, 'a verse in the stages has left the practice pool');
+  is(cue.s1, 'F__ G__ s_ l____ t__ w____', 'stage 1 shows the first letter of every word');
+  is(cue.s2, 'F__ ___ s_ _____ t__ _____', 'stage 2, the first letter of every other word');
+  is(cue.s3, 'F__ ___ __ _____ ___ _____', 'stage 3, only the first letter of the verse');
+  is(cue.walk, '2,3,4,5,up', 'a day, three, a week, a fortnight and a month walk a stage');
+  is(cue.st2, 2, '...and day 30 opens the next stage');
+  is(cue.st2step, 1, '...at day 1');
+  is(cue.afterReveal, '2:1', 'a reveal sends it back to day 1 of the same stage');
+  is(cue.revealDue, 1, '...due tomorrow');
+  ok(cue.heart, 'stage 3 walked makes it Known by heart');
+  is(cue.cueHeld, 4, '...and the stage record says so');
+  ok(cue.quietAfter, '...so the stages never ask for it again');
+  is(cue.peek, '1:1', 'a peek in the address review restarts that trail too, back tomorrow');
+
+  const cmig = await $(() => {
+    const old = { memorized: ['43:3:16', '19:23:1', '1:1:1'], verseStage: { '43:3:16': 'heart' },
+      w4w: { '19:23:1': { count: 7, times: [] }, '1:1:1': { count: 2, times: [] } },
+      locPast: { '43:3:16': { p: 0, room: 'Sink' } }, verseLoc: { '43:3:16': { heart: true, auto: true } } };
+    const p = migrateProg(JSON.parse(JSON.stringify(old)));
+    const again = migrateProg(Object.assign(JSON.parse(JSON.stringify(p)), { verseStage: { '43:3:16': 'heart' } }));
+    return { heartOut: !p.verseStage['43:3:16'], heartSt: (p.cueSR['43:3:16'] || {}).st,
+      sevenSt: (p.cueSR['19:23:1'] || {}).st, twoLeft: !p.cueSR['1:1:1'],
+      station: (p.verseLoc['43:3:16'] || {}).room, flag: !!p.cueMig,
+      dueDays: Math.round((p.cueSR['43:3:16'].dueAt - Date.now()) / DAY), once: again.verseStage['43:3:16'] === 'heart' };
+  });
+  ok(cmig.heartOut, 'a verse Known by heart before the stages starts them');
+  is(cmig.heartSt, 1, '...at stage 1');
+  is(cmig.sevenSt, 1, 'so does one past seven practices');
+  ok(cmig.twoLeft, '...but one still being practised is left alone');
+  is(cmig.station, 'Sink', 'a heart verse gets back the station the app had freed');
+  ok(cmig.flag, 'the move is recorded');
+  is(cmig.dueDays, 1, '...due tomorrow as day 1');
+  ok(cmig.once, '...and it is never done twice');
+
+  const cmrg = await $(() => {
+    const k = '43:3:16', now = Date.now(), base = { memorized: [k], cueMig: true, talents: 5 };
+    const J = o => JSON.parse(JSON.stringify(o));
+    const phone = Object.assign({}, base, { verseStage: {}, cueSR: { [k]: { st: 1, step: 1, learnedAt: now, dueAt: now + DAY, at: now } } });
+    const cloud = Object.assign({}, base, { verseStage: { [k]: 'heart' }, cueSR: {} });
+    const m1 = mergeProg(J(phone), J(cloud));
+    const grad = Object.assign({}, base, { verseStage: { [k]: 'heart' }, cueSR: { [k]: { st: 4, at: now + 5 } } });
+    const stale = Object.assign({}, base, { verseStage: {}, cueSR: { [k]: { st: 3, step: 4, at: now - 5 } } });
+    const m2 = mergeProg(J(stale), J(grad));
+    const reset = Object.assign({}, base, { verseStage: {}, cueSR: { [k]: { st: 2, step: 1, at: now + 9 } } });
+    const further = Object.assign({}, base, { verseStage: {}, cueSR: { [k]: { st: 2, step: 5, at: now } } });
+    const m3 = mergeProg(J(further), J(reset));
+    // the real update: this device has just migrated, the cloud still holds the heart from before
+    const oldCloud = { memorized: [k], talents: 5, verseStage: { [k]: 'heart' } };
+    const justUpdated = migrateProg(J({ memorized: [k], talents: 5, verseStage: { [k]: 'heart' } }));
+    const m4 = mergeProg(J(justUpdated), J(oldCloud));
+    // and an old copy arriving late, from an app still on the old code, against real progress
+    const real = Object.assign({}, base, { verseStage: {}, cueSR: { [k]: { st: 2, step: 3, learnedAt: now, dueAt: now + DAY, at: now } } });
+    const m5 = mergeProg(J(real), J(oldCloud));
+    return { olderHeartLoses: !(m1.verseStage || {})[k] && m1.cueSR[k].st === 1,
+      graduatedWins: m2.verseStage[k] === 'heart', resetSticks: m3.cueSR[k].step === 1,
+      updateHolds: !(m4.verseStage || {})[k] && m4.cueSR[k].st === 1,
+      oldNeverResets: m5.cueSR[k].st === 2 && m5.cueSR[k].step === 3 && !(m5.verseStage || {})[k] };
+  });
+  ok(cmrg.olderHeartLoses, 'an older copy cannot put a verse back at heart');
+  ok(cmrg.graduatedWins, 'a verse that walked its stages stays Known by heart');
+  ok(cmrg.resetSticks, 'a reveal on one device is not undone by a sync');
+  ok(cmrg.updateHolds, 'updating migrates both copies, so the old heart does not come back');
+  ok(cmrg.oldNeverResets, 'an old copy arriving late never resets real progress in the stages');
 
   describe('a book lesson will not move on half-answered', () => { });
   const bookGuard = await $(() => {

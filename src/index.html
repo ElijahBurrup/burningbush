@@ -666,6 +666,9 @@
   .ttdisplay{height:86px;overflow-y:auto;font-size:18px;line-height:1.6;text-align:center;margin:12px 0;color:var(--ink)}   /* FIXED height so committed words never push the input/buttons — the box scrolls internally */
   .ttdisplay .ttdone{color:var(--good);font-weight:700}
   .ttdisplay .ttcur{font-weight:800}
+  /* the letter stages: the rest of the verse, as the stage shows it */
+  .ttdisplay .ttcue{color:var(--muted);letter-spacing:.06em;font-family:ui-monospace,Consolas,monospace;font-size:16px}
+  .ttdisplay .ttcue.now{color:var(--gold-ink);border-bottom:2px solid var(--gold-ink)}
   .ttdisplay .ttcur.good{color:var(--gold-ink)}
   .ttdisplay .ttcur.bad{color:var(--miss-ink)}
   .ttx{display:inline-block;color:var(--miss-ink);font-weight:800;font-size:15px;letter-spacing:3px;margin:0 5px;vertical-align:middle}
@@ -2281,8 +2284,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.18.1";
+const APP_VERSION="2.19.0";
 const CHANGELOG=[
+ {v:"2.19.0", d:"September 14, 2026", t:"Letters first, then by heart", items:[
+   ["new","<b>Word for word has three stages now, between practice and Known by heart.</b> Seven practices no longer asks whether you know a verse by heart. It goes into spaced repetition showing <b>the first letter of every word</b>. After a month of reviews, a day, three days, a week, a fortnight and a month, it shows <b>the first letter of every other word</b> for a month, then <b>only the first letter of the verse</b>. A month of that and it is Known by heart."],
+   ["chg","<b>A reveal sends a verse back to day 1.</b> Use one in its letter stage, or peek in the address review, and that trail starts again: it comes back tomorrow as day 1, and keeps the stage it had reached."],
+   ["chg","<b>Every verse past seven practices starts at stage 1, Known by heart included.</b> They all come back tomorrow with the first letter of every word showing."],
+   ["new","<b>Chronological fills the book in for you</b> once your letters could only be one book. G could be Genesis or Galatians, so nothing happens yet; Ge can only be Genesis, so it fills in and goes green. A wrong book fills in red for a moment, then empties and waits."]
+ ]},
  {v:"2.18.1", d:"September 14, 2026", t:"The Bible is silent", items:[
    ["chg","<b>Nothing on the Bible makes a sound any more.</b> People have it open in church during the sermon, so the shelf, every book and chapter, a verse you open from a chapter, and the lists the Bible opens are all quiet now, whatever your sound setting says. Tapping the Bible tab is quiet too. Everywhere else sounds exactly as it did."]
  ]},
@@ -4732,6 +4741,9 @@ function save(k,v){ const r=Store.setJSON(k,v);
 // streak code it belongs to. A const used above its declaration is a ReferenceError, not a
 // hoisted undefined, and it takes the whole app down on boot.
 const GOAL_LOG_DAYS=14;
+// Practices that move a verse into the letter stages. Declared up here rather than beside the other
+// word for word numbers because migrateProg reads it while the file is still loading.
+const W4W_TO_STAGES=7;
 function migrateProg(p){
   p=p||{};
   // coerce WRONG-typed fields (corrupt/tampered/older-shape saves), not just missing ones, so a parseable-but-malformed blob self-heals instead of throwing downstream
@@ -4813,6 +4825,7 @@ function migrateProg(p){
   if(typeof p.weekKey!=="string") p.weekKey=""; if(typeof p.weekDays!=="number") p.weekDays=0; if(typeof p.weekGoalHit!=="boolean") p.weekGoalHit=false; // Perfect-Week tracking
   // Caesar's weekly levy + the church it builds
   if(!p.verseStage||typeof p.verseStage!=="object") p.verseStage={};  // the verse ladder; absent key = "located"
+  if(!p.cueSR||typeof p.cueSR!=="object") p.cueSR={};                 // the letter stages, per verse (see cueStart)
   // The ladder lost its middle rung. Anyone sitting on it had already said the words were ready to
   // be tested, which is exactly what Known by heart now means - so they go UP, never back to zero.
   Object.keys(p.verseStage).forEach(k=>{ if(p.verseStage[k]==="w4w") p.verseStage[k]="heart"; });
@@ -4880,7 +4893,38 @@ function migrateProg(p){
   if(!p.reminder.times.length) p.reminder.times=[{t:"20:00",on:true}];
   p.reminder.time=p.reminder.times[0].t;   // keep the legacy field in step
   p.saved=p.saved.filter(k=>!p.memorized.includes(k)); p.skipped=p.skipped.filter(k=>!p.memorized.includes(k)); // heal verses stuck in saved/skip after being learned
-  // (future) if(p.__v<2){ ...transform... }
+  /* The letter stages, 2.19.0. Seven practices used to earn the offer of Known by heart; now they
+     start the stages instead, and everything already past that point starts them too, Known by
+     heart included: every verse with seven practices or a heart claim begins stage 1, due tomorrow
+     as day 1. Done once (cueMig) and for every translation's ladder, since each has its own words.
+     Gated on its own flag rather than the schema number: the Android app keeps the old code until
+     it is next built, and would stamp its saves as the old schema and have them migrated again.
+     A heart verse gets back any palace station the app had freed for it, as a demotion would. */
+  if(!p.cueMig){
+    const mem=new Set(arr(p.memorized)), NOW=Date.now();
+    const move=(bk, active)=>{
+      bk.verseStage=obj(bk.verseStage); bk.w4w=obj(bk.w4w); bk.w4wSR=obj(bk.w4wSR);
+      bk.stageAsk=obj(bk.stageAsk); bk.cueSR=obj(bk.cueSR);
+      mem.forEach(k=>{
+        const s=bk.verseStage[k], heart=(s==="heart"||s==="w4w"), n=(bk.w4w[k]&&bk.w4w[k].count)||0;
+        if(!heart && n<W4W_TO_STAGES) return;
+        if(heart){
+          delete bk.verseStage[k];
+          if(active && p.locPast && p.locPast[k]){ const cur=obj(p.verseLoc)[k];
+            if(!cur || cur.auto){ p.verseLoc=obj(p.verseLoc); p.verseLoc[k]=p.locPast[k]; }
+            delete p.locPast[k]; }
+        }
+        if(bk.w4wSR[k]) bk.w4wSR[k].cr=0;
+        delete bk.stageAsk[k];
+        // Stamped at time zero, the weakest a record can be: a copy migrated late, say from the
+        // Android app still on the old code, must never out-date anything the reader actually did.
+        bk.cueSR[k]={st:1, step:1, learnedAt:NOW, dueAt:NOW+DAY, at:0};
+      });
+    };
+    move(p, true);
+    Object.keys(obj(p.trStash)).forEach(t=>{ if(p.trStash[t] && typeof p.trStash[t]==="object") move(p.trStash[t], false); });
+    p.cueMig=true;
+  }
   /* Until now goalDay.count held review AND other work together, with the review part taken back
      out by subtraction. The two are separate counters now, so a record written under the old shape
      is converted once: what is left after removing the review part IS the other work. Marked on the
@@ -5072,13 +5116,28 @@ function mergeProg(a,b){
       { const pa=x.w4w||{}, pb=y.w4w||{};
         new Set([...Object.keys(pa),...Object.keys(pb)]).forEach(k=>{
           const p=pa[k], q=pb[k]; pr[k]=!q?p:(!p?q:(((p.count||0)>=(q.count||0))?p:q)); }); }
-      out[t]={ verseStage:st, w4wSR:sr, w4w:pr, stageAsk:Object.assign({},x.stageAsk||{},y.stageAsk||{}) };
+      /* The letter stages: the NEWER record wins, per verse, because a reveal sends a verse back to
+         day 1 and "whichever has got further" would quietly undo it. The stage record then has the
+         last word on Known by heart: every move to heart or back out of it writes one (st 4 = heart,
+         0 = back in practice, 1 to 3 = the stages), so a verse one device moved into the stages
+         cannot be put back at heart by an older copy from another. */
+      const cs={};
+      { const ca=x.cueSR||{}, cb=y.cueSR||{};
+        new Set([...Object.keys(ca),...Object.keys(cb)]).forEach(k=>{
+          const p=ca[k], q=cb[k]; cs[k]=!q?p:(!p?q:(((p.at||0)>=(q.at||0))?p:q)); }); }
+      // A record only a migration made (at 0) never overrides heart by itself; one from something the
+      // reader did does. Both copies are migrated before they get here, so an old heart from before
+      // the stages has already been turned into stage 1 on its own side.
+      Object.keys(cs).forEach(k=>{ const r=cs[k]||{}, s=r.st;
+        if(s===4) st[k]="heart"; else if(s!=null && (r.at||0)>0) delete st[k]; });
+      out[t]={ verseStage:st, w4wSR:sr, w4w:pr, stageAsk:Object.assign({},x.stageAsk||{},y.stageAsk||{}), cueSR:cs };
     });
     applyBuckets(m, out, a.trActive||b.trActive||"KJV"); }
   // A verse that came out of the merge at rest must not still be holding a station: one device may
   // have promoted it while the other still had the location recorded.
   Object.keys(m.verseStage).forEach(k=>{ if(m.verseStage[k]==="heart" && m.verseLoc && m.verseLoc[k] && !m.verseLoc[k].heart){
     m.locPast=m.locPast||{}; m.locPast[k]=m.verseLoc[k]; delete m.verseLoc[k]; } });
+  m.cueMig=!!(a.cueMig||b.cueMig);   // moved into the stages once, on any device, is moved for good
   return migrateProg(m);
 }
 /* The number and book cards used to merge with Object.assign({}, cloud, local) — which is not a
@@ -7015,7 +7074,7 @@ function booksDueList(){ const soon=Date.now()+SR_GRACE, eod=endOfToday(), out=[
     if(st.due<=limit) out.push(n); });
   return out.sort((a,b)=>a-b); }
 function booksDueCount(){ return booksDueList().length; }
-function reviewDueCount(){ return newVersesDueCount()+numbersDueCount()+booksDueCount()+versesDueCount()+palacesDueCount(); }   // everything due for spaced repetition today
+function reviewDueCount(){ return newVersesDueCount()+numbersDueCount()+booksDueCount()+cueDueCount()+versesDueCount()+palacesDueCount(); }   // everything due for spaced repetition today
 /* A verse you saved an hour ago has not been forgotten yet, so testing it proves nothing. Four
    hours after it is saved it comes back ONCE - the palace, the location and the scene you wrote,
    to read over and confirm. Only after that does it join the testing rotation. r0 holds when that
@@ -7040,6 +7099,14 @@ function reviewVerseSR(k){
   const wasD1 = srDueIndex(o)===1;
   const advanced = srAdvance(o);
   if(advanced && wasD1) bumpGoalFromReview();
+}
+// A reveal in the address review: the verse starts its trail again, today being day 0 and tomorrow
+// day 1. It still counts as reviewed today; it simply earns no checkpoint.
+function verseSRRestart(k){
+  if(!Prog.memorized.includes(k)) return; Prog.verseSR=Prog.verseSR||{};
+  const o=Prog.verseSR[k]||(Prog.verseSR[k]=newSR()), now=Date.now();
+  o.step=1; o.dueAt=now+(SR_TRAIL[1]-SR_TRAIL[0])*DAY; if(!o.r0) o.r0=now;
+  saveProg();
 }
 function srHuman(ms){ if(ms==null) return "—"; if(ms<=0) return "today"; const d=Math.round(ms/DAY); return d<=1?"1 day":d+" days"; }
 // the 6-node D0…D30 trail: done = filled gold, due = pulsing, upcoming = dim
@@ -9895,10 +9962,11 @@ function startMemTest(){
   const numDue=numbersDueList(), bookDue=booksDueList();
   const due=mem.map(a=>a.join(":")).filter(k=>verseDue(k));   // verses whose next SR checkpoint has come due
   const fresh=newVersesDueList();                             // saved 4h+ ago and not yet read back once
-  const anyDue = fresh.length>0 || numDue.length>0 || bookDue.length>0 || due.length>0 || palacesDueCount()>0;
+  const cueDue=cueDueList();                                  // verses in the letter stages whose day has come
+  const anyDue = fresh.length>0 || numDue.length>0 || bookDue.length>0 || cueDue.length>0 || due.length>0 || palacesDueCount()>0;
   if(!mem.length && !anyDue){ renderVerse(); return; }
   // shuffle each group so items aren't quizzed in the fixed order they were learned (numbers ascending, verses in memorized order)
-  MS={ phase:"start", newQueue:fresh.slice(), numQueue:shuffle(numDue.slice()), bookQueue:shuffle(bookDue.slice()), srQueue:shuffle(due.slice()), dueWork:anyDue };
+  MS={ phase:"start", newQueue:fresh.slice(), numQueue:shuffle(numDue.slice()), bookQueue:shuffle(bookDue.slice()), cueQueue:shuffle(cueDue.slice()), srQueue:shuffle(due.slice()), dueWork:anyDue };
   if(anyDue) srBanner("start");       // combined counter → Begin → numbers → verses → palaces → practice
   else practiceNext(true);            // nothing due → straight to free practice (skip the "done for today" moment)
 }
@@ -9907,7 +9975,8 @@ function beginDueReview(){
   if(MS.newQueue && MS.newQueue.length) return runNewVerseReview();   // new verses first, always
   // Each phase empties its own queue and comes back here, so the order is decided in one place.
   if(MS.numQueue && MS.numQueue.length){ const q=MS.numQueue.slice(); MS.numQueue=[]; startNumberReview(q, beginDueReview, "num"); return; }
-  if(MS.bookQueue && MS.bookQueue.length){ const q=MS.bookQueue.slice(); MS.bookQueue=[]; startNumberReview(q, startVersePhase, "book"); return; }
+  if(MS.bookQueue && MS.bookQueue.length){ const q=MS.bookQueue.slice(); MS.bookQueue=[]; startNumberReview(q, beginDueReview, "book"); return; }
+  if(MS.cueQueue && MS.cueQueue.length) return runCueReview();   // the letter stages, one verse at a time
   startVersePhase();
 }
 // One new verse, shown as the screen it was built on: palace, location and the scene, ready to be
@@ -9968,7 +10037,7 @@ function resumeActiveTest(){
    never back out to the Library: the reader is part way through something, and this is a pause
    in it, not the end of it. Practice and the daily review both come through here. */
 const LOCK_WHY={
-  reveal:"You needed a reveal \u2014 let\u2019s lock it in.",
+  reveal:"You needed a reveal, so it starts its trail again: tomorrow is day 1. Let\u2019s lock it in.",
   missed:"A bit of a struggle \u2014 let\u2019s lock it in."
 };
 function lockItIn(b,c,v,why,next){
@@ -10314,7 +10383,7 @@ function openFeatureStore(){
    The four maps below stay at the top of Prog, always holding the ACTIVE translation, so the sixty
    or so places that read Prog.verseStage never had to learn about any of this. The inactive ones sit
    in Prog.trStash and are swapped in when the reader changes text.                              */
-const TR_FIELDS=["verseStage","w4w","w4wSR","stageAsk"];
+const TR_FIELDS=["verseStage","w4w","w4wSR","stageAsk","cueSR"];
 function trBuckets(p){
   const out={}; Object.keys(p.trStash||{}).forEach(t=>out[t]=Object.assign({},p.trStash[t]));
   const act=p.trActive||"KJV";
@@ -10374,6 +10443,12 @@ function setVerseStage(k,s){
   Prog.verseStage=Prog.verseStage||{};
   if(s==="loc") delete Prog.verseStage[k]; else Prog.verseStage[k]=s;
   let freed=null;
+  // Every move to heart or back out of it leaves a dated stage record. That is what lets a sync tell
+  // an old heart claim from a verse since moved into the letter stages (see mergeProg).
+  if(s==="heart" || was==="heart"){
+    Prog.cueSR=Prog.cueSR||{};
+    Prog.cueSR[k]=Object.assign(Prog.cueSR[k]||{}, {st: s==="heart" ? CUE_STAGES+1 : 0, at:Date.now()});
+  }
   if(s==="heart" && was!=="heart"){
     // Claiming a verse STARTS its spaced repetition practice. Day 0 is the claim itself; the trail
     // then asks for it at day 1, 3, 7, 16 and 30, and walking that is what seals it. A verse
@@ -10578,18 +10653,19 @@ function srBanner(kind){
     // (see beginDueReview), so leaving them out of this total made it one short of the "Due (N)" on
     // the Library button, and the very item it forgot was the one that appeared next.
     const nf=(MS.newQueue||[]).length, nn=(MS.numQueue||[]).length, nb=(MS.bookQueue||[]).length,
-          nv=(MS.srQueue||[]).length, np=palacesDueCount();
-    const total=nf+nn+nb+nv+np;
+          nc=(MS.cueQueue||[]).length, nv=(MS.srQueue||[]).length, np=palacesDueCount();
+    const total=nf+nn+nb+nc+nv+np;
     const parts=[];
     if(nf)parts.push(`<b class="gold">${nf}</b> new verse${nf>1?"s":""}`);
     if(nn)parts.push(`<b class="gold">${nn}</b> number${nn>1?"s":""}`);
     if(nb)parts.push(`<b class="gold">${nb}</b> book${nb>1?"s":""}`);
+    if(nc)parts.push(`<b class="gold">${nc}</b> verse${nc>1?"s":""} by letters`);
     if(nv)parts.push(`<b class="gold">${nv}</b> verse${nv>1?"s":""}`);
     if(np)parts.push(`<b class="gold">${np}</b> palace${np>1?"s":""}`);
     V.innerHTML=`<div class="card center srflash"><div style="font-size:54px">🔔</div>
  <h2 class="gold">Spaced Repetition · Today</h2>
       <div class="srcount">${total}</div>
- <p class="lead">${parts.join(" · ")} due for review. We'll lock them back in, ${nf?"<b>the new ones first</b>, then ":""}<b>numbers, then books, then verses, then palaces</b>, then move on to free practice + your streak.</p>
+ <p class="lead">${parts.join(" · ")} due for review. We'll lock them back in, ${nf?"<b>the new ones first</b>, then ":""}<b>numbers, then books, ${nc?"then verses by letters, ":""}then verses, then palaces</b>, then move on to free practice + your streak.</p>
       <button class="btn blue" id="srGo">Begin review →</button></div>`;
     el("srGo").onclick=()=>srCountdown(beginDueReview); return;
   }
@@ -11210,7 +11286,64 @@ function goalBarHTML(){ const c=goalCount(), t=goalToday(), met=c>=t;
    A TEST is the typing screen ALONE - no preview, no warm up, no hint - and a single wrong word
    breaks it. Five clean passes in a row is what earns "known by heart", which is why the bar has
    to be higher than practice: it retires a verse from review and gives its palace station back. */
-const W4W_TEST_CR=5, W4W_PRACTICE_FOR_POOL=7;
+const W4W_TEST_CR=5, W4W_PRACTICE_FOR_POOL=W4W_TO_STAGES;
+/* ---- the letter stages ------------------------------------------------------------------------
+   Seven practices do not make a verse Known by heart. They put it into spaced repetition with help
+   that fades: stage 1 shows the first letter of every word, stage 2 the first letter of every other
+   word, stage 3 only the first letter of the verse. Each stage walks the same trail as everything
+   else, a day, three days, a week, a fortnight and a month, and the month is what opens the next
+   stage, starting again at day 1. The third stage's month makes the verse Known by heart.
+   A reveal is day 1 again: today is day 0, tomorrow day 1, and the stage it had reached is kept.
+   One record per verse in Prog.cueSR, per translation like the rest of word for word:
+     st   1 to 3 the stage · 4 Known by heart · 0 back in practice
+     step checkpoints done on this stage's trail (1 = day 0) · dueAt · learnedAt (stage began) · at  */
+const CUE_STAGES=3;
+const CUE_WHAT={1:"the first letter of every word", 2:"the first letter of every other word", 3:"only the first letter of the verse"};
+function cueObj(k){ return (Prog.cueSR||{})[k]||null; }
+function cueActive(k){ const o=cueObj(k); return !!o && o.st>=1 && o.st<=CUE_STAGES; }
+function cueFirstGap(){ return (SR_TRAIL[1]-SR_TRAIL[0])*DAY; }
+// Entering the stages. Returns true only on the way in, so the caller can say so once.
+function cueStart(k){
+  const o=cueObj(k); if(isHeart(k) || (o && o.st>=1)) return false;
+  const now=Date.now(); Prog.cueSR=Prog.cueSR||{};
+  Prog.cueSR[k]={st:1, step:1, learnedAt:now, dueAt:now+cueFirstGap(), at:now};
+  saveProg(); return true;
+}
+function cueDue(k){ return cueActive(k) && srDueIndex(cueObj(k))>=0; }
+function cueDueList(){ if(!feat("w4w")) return [];
+  return (Prog.memorized||[]).filter(k=>kjvText.apply(null,k.split(":").map(Number)) && cueDue(k)); }
+function cueDueCount(){ return cueDueList().length; }
+// A reveal: back to day 1 of the stage it is in, due tomorrow.
+function cueRestart(k){ const o=cueObj(k); if(!cueActive(k)) return;
+  const now=Date.now(); o.step=1; o.learnedAt=now; o.dueAt=now+cueFirstGap(); o.at=now; saveProg(); }
+// A clean review: one checkpoint along. Day 30 opens the next stage at day 1; the third stage's day
+// 30 makes the verse Known by heart.
+function cueAdvance(k){
+  const o=cueObj(k); if(!cueActive(k)) return null;
+  const now=Date.now(); o.step=(o.step||1)+1; o.at=now;
+  if(o.step<SR_TRAIL.length){ o.dueAt=now+(SR_TRAIL[o.step]-SR_TRAIL[o.step-1])*DAY; saveProg(); return {st:o.st, step:o.step}; }
+  if(o.st<CUE_STAGES){ o.st++; o.step=1; o.learnedAt=now; o.dueAt=now+cueFirstGap(); saveProg(); return {st:o.st, step:1, stageUp:true}; }
+  o.st=CUE_STAGES+1; o.dueAt=null; saveProg();
+  setVerseStage(k,"heart");
+  return {st:o.st, heart:true};
+}
+// One word as the stage shows it: its first letter where the stage gives one, then a blank for
+// each letter after it, so the length of the word is always there to go on.
+function cueToken(w,i,st){
+  const letters=String(w).replace(/[^A-Za-z]/g,"");
+  if(!letters) return String(w);
+  const show = st===1 || (st===2 && i%2===0) || (st===3 && i===0);
+  return (show?letters[0]:"_")+"_".repeat(letters.length-1);
+}
+// A verse in the stages, reviewed: the typing test, with its letters.
+function runCueReview(){
+  if(!MS) return;
+  const k=(MS.cueQueue||[]).shift();
+  if(!k) return beginDueReview();
+  if(!cueDue(k)) return runCueReview();
+  const [b,c,v]=k.split(":").map(Number);
+  startTypeTest(b,c,v, ()=>beginDueReview(), true, cueObj(k).st);
+}
 function w4wsr(k){ return (Prog.w4wSR||{})[k]||null; }
 function w4wTestStreak(k){ const r=w4wsr(k); return (r&&r.cr)||0; }
 function w4wTestRecord(k, clean){
@@ -11326,7 +11459,7 @@ function w4wPracticePool(){
   const today=dayKey(new Date());
   const doneToday=(Prog.w4wToday&&Prog.w4wToday.date===today)?Prog.w4wToday.set:{};
   return (Prog.memorized||[]).map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2]))
-    .filter(a=>{ const k=a.join(":"); return !isHeart(k) && w4wCount(k)<W4W_PRACTICE_FOR_POOL && !doneToday[k]; });
+    .filter(a=>{ const k=a.join(":"); return !isHeart(k) && !cueActive(k) && w4wCount(k)<W4W_PRACTICE_FOR_POOL && !doneToday[k]; });
 }
 const w4wWords=a=>(kjvText(a[0],a[1],a[2])||"").split(/\s+/).filter(Boolean).length;
 // Three ways to line the pool up. "Closest" puts the most-practised first, because those are the
@@ -12625,15 +12758,26 @@ function knownBookNums(){ const out=[]; for(let b=1;b<=66;b++) if(knownNum(b)) o
 /* Typed or spoken, so it has to forgive the ways a right answer arrives: "1 Samuel", "first
    samuel", "I Samuel"; "Psalm" for "Psalms"; a recogniser that heard "revelations". None of
    those is somebody who does not know the book. */
-function bookAnswerOk(typed, n){
-  const ord = s => (s||"").toLowerCase()
+function bookOrd(s){ return (s||"").toLowerCase()
     .replace(/\bfirst\b/g,"1").replace(/\bsecond\b/g,"2").replace(/\bthird\b/g,"3")
-    .replace(/\biii\b/g,"3").replace(/\bii\b/g,"2");
+    .replace(/\biii\b/g,"3").replace(/\bii\b/g,"2"); }
+function bookAnswerOk(typed, n){
+  const ord = bookOrd;
   const a=normWord(ord(typed)), b=normWord(ord(bookName(n)));
   if(!a) return false;
   if(a===b) return true;
   const s = a.length<b.length ? a : b, l = a.length<b.length ? b : a;
   return s.length>=5 && l.indexOf(s)===0;   // a plural or a missing ending is not a wrong answer
+}
+/* Every book a half-typed name could still be, read the way bookAnswerOk reads it, so "1 s" and
+   "first s" are both 1 Samuel. All sixty-six count, learned or not: "G" is Genesis or Galatians
+   whether or not the reader has met Galatians yet. A number on its own names nothing. */
+function bookCandidates(typed){
+  const t=normWord(bookOrd(typed));
+  if(!/[a-z]/.test(t)) return [];
+  const out=[];
+  BOOKS.forEach((nm,i)=>{ if(normWord(bookOrd(nm)).indexOf(t)===0) out.push(i+1); });
+  return out;
 }
 const NT_COUNTS=Array.from({length:46},(_,i)=>i+5);             // 5 - 50
 function ntPrefs(){
@@ -12918,13 +13062,22 @@ function renderChronoQ(){
     try{ Sfx.tick(streak); }catch(e){}
   };
 
+  let filling=false;
   inp.addEventListener("input", ()=>{
-    if(answered) return;
+    if(answered || filling) return;
     streak=0;                                    // "three in a row" means in a row
-    // Typed it exactly? Then there is nothing to press. Note this is the strict comparison and
-    // not the forgiving one: "Genes" must not be accepted as Genesis while somebody is still
-    // typing it. Check, pressed deliberately, is where the forgiving match lives.
-    if(normWord(inp.value)===normWord(name)) accept();
+    if(normWord(inp.value)===normWord(name)) return accept();   // typed it whole: nothing to press
+    /* Type only until the letters rule out every other book, and the rest fills itself in. "G" is
+       still Genesis or Galatians, so nothing happens; "Ge" can only be one book, so it becomes
+       Genesis and is marked there and then. A wrong book is filled in too and shown red for a
+       moment before the box empties: the reader sees what their letters said, never the answer. */
+    const c=bookCandidates(inp.value);
+    if(c.length!==1) return;
+    inp.value=bookName(c[0]);
+    if(c[0]===n) return accept();
+    filling=true;
+    inp.style.borderColor="var(--miss-ink)"; inp.style.color="var(--miss)";
+    setTimeout(()=>{ filling=false; if(!answered) wrongFlash(); }, 650);
   });
   go.onclick=check;
   inp.addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); if(answered) next(); else check(); } });
@@ -13109,7 +13262,7 @@ function memTestRender(){
       const firstTry=memTestWrong===0, kk=refKey(b,c,v), peeked=memHintUses>0;
       if(peeked){ if(Prog.streak>(Prog.bestStreak||0)) Prog.bestStreak=Prog.streak; }   // peeked → streak is PRESERVED but not increased
       else bumpStreak(true);
-      reviewVerseSR(kk); const cr=markAnswer(kk,true,firstTry); const pts=awardTalents(kk, firstTry, MS && MS.phase==="sr"); saveProg(); refreshHUD(); checkBadges();
+      (peeked ? verseSRRestart : reviewVerseSR)(kk); const cr=markAnswer(kk,true,firstTry); const pts=awardTalents(kk, firstTry, MS && MS.phase==="sr"); saveProg(); refreshHUD(); checkBadges();
       if(!reviewedThisSession.includes(kk)) reviewedThisSession.push(kk);   // remember what we reviewed → show trails at the end
       creditToday();   // a real recall = showing up today (idempotent per day; credits SR & free practice alike, never a no-recall open)
       const pracStep = pracGoalTick();              // every third verse in free practice is a goal step
@@ -13725,7 +13878,7 @@ function renderLearnedVerse(b,c,v,ret,why){
         <span class="w4w-rect-lbl">${inPool?(w4wTestLocked(vkey)?"😴 Resting until tomorrow":"🗣️ Test Word for Word"):"📖 Learn Word for Word"}</span>
         <span class="w4w-rect-count">${inPool?(w4wTestLocked(vkey)?fmtWhen(w4wTestNextAt(vkey)):`${heartTrailStep(vkey)}/${SR_TRAIL.length} trail`):`${cnt}/${W4W_PRACTICE_FOR_POOL}${mastered?" ✓":""}`}</span>
       </button>${libUsed("verses")?"":`${foilHTML("Practice Verses to Unlock","sl-lvw4w")}</span>`}
- ${inPool?"":`<p class="hint" style="text-align:center;margin:8px 0 0">${mastered?`Ready when you are, move it to <b class="gold">Known by heart</b> below.`:`Recite it word for word ${W4W_PRACTICE_FOR_POOL}× and it is ready for <b class="gold">Known by heart</b>, or say so below any time.`}</p>`}`:""}
+ ${inPool?"":`<p class="hint" style="text-align:center;margin:8px 0 0">${cueActive(vkey)?`In the letter stages: <b class="gold">stage ${cueObj(vkey).st} of ${CUE_STAGES}</b>, ${CUE_WHAT[cueObj(vkey).st]}. Next review ${fmtWhen(cueObj(vkey).dueAt)}.`:mastered?`Ready when you are, move it to <b class="gold">Known by heart</b> below.`:`Recite it word for word ${W4W_PRACTICE_FOR_POOL}× and it is ready for <b class="gold">Known by heart</b>, or say so below any time.`}</p>`}`:""}
       <div class="lv-sr">
         <div class="lv-sr-lbl">Spaced repetition</div>
         ${o?srTrailHTML(o):`<p class="hint" style="text-align:center;margin:0">This verse joins your review trail as you practice it.</p>`}
@@ -15942,7 +16095,7 @@ function paintSyncDiag(){
     const box=el("syncDiag"); if(!box) return;
     const parts=[
       ["new verses", newVersesDueCount()], ["numbers", numbersDueCount()],
-      ["books", booksDueCount()], ["verses", versesDueCount()], ["palaces", palacesDueCount()],
+      ["books", booksDueCount()], ["letter stages", cueDueCount()], ["verses", versesDueCount()], ["palaces", palacesDueCount()],
     ];
     const total=parts.reduce((n,[,v])=>n+v,0);
     const last=Number(Store.get("vv_lastsync",0))||0;
@@ -16473,8 +16626,9 @@ function isTypo(typed, expected, words){
   if((words||[]).some(w=>normWord(w)===a)) return false;
   return offByOne(a,b);
 }
-function startTypeTest(b,c,v,ret,isTest){ const words=(kjvText(b,c,v)||"").split(/\s+/).filter(Boolean);
-  TT={b,c,v,ret,words,idx:0,wrong:false,wrongWord:null,hintUsed:false,test:!!isTest,misses:0,typos:0,typoNote:"",typedOut:false}; renderTypeTest(); }
+// `cue` is a letter stage (1 to 3) when this is a review in the stages, and 0 otherwise.
+function startTypeTest(b,c,v,ret,isTest,cue){ const words=(kjvText(b,c,v)||"").split(/\s+/).filter(Boolean);
+  TT={b,c,v,ret,words,idx:0,wrong:false,wrongWord:null,hintUsed:false,test:!!isTest,misses:0,typos:0,typoNote:"",typedOut:false,cue:cue||0}; renderTypeTest(); }
 function renderTypeTest(){
   srClockResumeIfReviewing();
   /* Word for word is the test people leave most often, because looking the verse up is the whole
@@ -16490,9 +16644,10 @@ function renderTypeTest(){
       </div>
       <div class="ttrow">
         <input class="typein tt-in" id="ttIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="type word 1…">
-        <button class="btn ghost sm" id="ttHint"${TT.test?' style="display:none"':""}>Reveal</button>
+        <button class="btn ghost sm" id="ttHint"${(TT.test && !TT.cue)?' style="display:none"':""}>Reveal</button>
       </div>
- <p class="hint tthelp" style="text-align:center;margin-top:8px">Each word jumps to the top the moment you finish it · <b>green</b> if right, <b>red</b> if wrong (then it clears to retry). <b>Reveal</b> shows a letter; you retype that word clean.</p>
+ ${TT.cue ? `<p class="hint tthelp" style="text-align:center;margin-top:8px">Stage ${TT.cue} of ${CUE_STAGES}: ${CUE_WHAT[TT.cue]}. <b>Reveal</b> shows a letter, and starts this stage again at day 1.</p>`
+ : `<p class="hint tthelp" style="text-align:center;margin-top:8px">Each word jumps to the top the moment you finish it · <b>green</b> if right, <b>red</b> if wrong (then it clears to retry). <b>Reveal</b> shows a letter; you retype that word clean.</p>`}
     </div>`;
   const inp=el("ttIn"), disp=el("ttDisplay"), cnt=el("ttCount"), hintBtn=el("ttHint");
   el("ttClose").onclick=()=>{ const r=TT.ret; TT=null; r?r():renderVerse(); };
@@ -16502,8 +16657,16 @@ function renderTypeTest(){
     const xs = TT.typos ? `<span class="ttx">${"✗".repeat(TT.typos)}</span>` : "";
     const note = TT.typoNote || "↻ Try again";
     const wrongTop = TT.wrongWord ? ` <span class="ttcur bad">${TT.wrongWord.replace(/</g,"&lt;")}</span>${xs} <span class="tt-tryagain">${note}</span>` : "";
-    disp.innerHTML=`<span class="ttdone">${committed}</span>`+(wrongTop||(done||TT.wrongWord?"":`<span style="color:var(--muted)">your words appear here as you go…</span>`));
-    disp.scrollTop=disp.scrollHeight;                                  // keep the newest words visible inside the fixed box
+    // In the letter stages the rest of the verse waits after what has been typed: the stage's first
+    // letters, and a blank the length of every word.
+    const cueTail = TT.cue ? TT.words.slice(done).map((w,i)=>`<span class="ttcue${i===0?" now":""}">${cueToken(w,done+i,TT.cue)}</span>`).join(" ") : "";
+    disp.innerHTML=`<span class="ttdone">${committed}</span>`+wrongTop+(cueTail ? " "+cueTail
+      : ((wrongTop||done||TT.wrongWord) ? "" : `<span style="color:var(--muted)">your words appear here as you go…</span>`));
+    // Keep the newest words in view. With the letters showing, "newest" is where the reader IS, not
+    // the end of the verse: the word being typed sits a line down, with the last typed line above it.
+    const nowTok = cueTail ? disp.querySelector(".ttcue.now") : null;
+    if(nowTok) disp.scrollTop += nowTok.getBoundingClientRect().top - disp.getBoundingClientRect().top - 28;
+    else disp.scrollTop=disp.scrollHeight;                             // keep the newest words visible inside the fixed box
     cnt.textContent=`${done}/${total}`; cnt.className="ttcount "+(TT.wrong?"ttbad":(done>0?"ttgood":""));
     inp.placeholder=`type word ${done+1}…`;
      hintBtn.textContent = TT.hintUsed ? "Used" : "Reveal";
@@ -16555,6 +16718,7 @@ function renderTypeTest(){
     const expected=TT.words[TT.idx]; if(expected===undefined) return;
     sfx("hintReveal");
     if(!TT.hintCharged){ TT.hintCharged=true; spendTalents(3); }   // a hint costs talents (once per session)
+    if(TT.cue && !TT.hintUsed) cueRestart(refKey(TT.b,TT.c,TT.v));   // in the stages a reveal is day 1 again, at once
     TT.hintUsed=true;
     inp.value=expected.slice(0, inp.value.length+1);
     try{inp.focus();}catch(e){}
@@ -16563,6 +16727,7 @@ function renderTypeTest(){
 }
 function typeTestComplete(){
   try{ libUse("w4w"); }catch(e){}
+  if(TT.cue) return cueTestResult();
   const b=TT.b,c=TT.c,v=TT.v,ret=TT.ret, vkey=refKey(b,c,v);
   const V=el("verse");
   if(TT.hintUsed){   // a hint was used → this attempt doesn't count; blank out and retype it clean
@@ -16579,6 +16744,8 @@ function typeTestComplete(){
   }
   if(TT.test){ w4wTestResult(b,c,v,vkey,ret); return; }
   const r=w4wRecord(vkey); reviewVerseSR(vkey);
+  // The seventh practice is where the letter stages begin, instead of the offer of Known by heart.
+  const toStages = r.count>=W4W_PRACTICE_FOR_POOL && cueStart(vkey);
   const justMastered=r.count===10, mastered=r.count>=10;
   const w4wReward = 10 + (justMastered?40:0);   // +10 per recitation, +40 bonus the run they master it
   try{ statBump("w"); }catch(e){}
@@ -16598,10 +16765,42 @@ function typeTestComplete(){
  <button class="btn" id="ttDone" style="margin-top:16px">Done</button></div>`;
   el("ttDone").onclick=()=>{
     const go=()=>{ ret?ret():renderVerse(); showGoal(); creditToday(); };
-    if(shouldOfferHeart(vkey)) openStagePromote(b,c,v,vkey,"heart",go); else go();
+    if(toStages){ toast("\u{1F520} Seven times through. From tomorrow it comes back in review with the first letter of every word."); go(); }
+    else if(shouldOfferHeart(vkey)) openStagePromote(b,c,v,vkey,"heart",go); else go();
   };
 }
 
+/* A review in the letter stages. A clean run moves the verse one checkpoint along its stage; the
+   stage's day 30 moves it to the next stage at day 1, and the third stage's day 30 makes it Known by
+   heart. A reveal has already sent it back to day 1 of its stage (cueRestart, the moment it was
+   used). A run with slips leaves it where it was, and it comes round again. */
+function cueTestResult(){
+  const b=TT.b, c=TT.c, v=TT.v, ret=TT.ret, k=refKey(b,c,v), V=el("verse");
+  const revealed=!!TT.hintUsed, clean=!TT.misses && !revealed;
+  let moved=null;
+  if(clean){ moved=cueAdvance(k); creditToday(); earnTalents(10); refreshHUD&&refreshHUD(); try{ statBump("r"); }catch(e){} }
+  const o=cueObj(k)||{st:TT.cue, step:1};
+  const showGoal = clean ? bumpGoalFromReview(true) : (()=>{});
+  if(moved && moved.heart) Sfx.heart(); else if(clean) sfx("verseNew");
+  const heart = !!(moved && moved.heart), up = !!(moved && moved.stageUp);
+  const head = revealed ? "Back to day 1" : heart ? "Known by heart" : up ? `On to stage ${o.st}`
+    : clean ? "Every word" : (TT.typedOut ? "Let's give this one more time" : "Not quite · but you finished");
+  const lead = revealed ? `You used a reveal, so stage ${o.st} starts again. It comes back tomorrow as day 1.`
+    : heart ? `Three stages walked, a month each. From here it is the strict test, with no letters at all.`
+    : up ? `A month of stage ${o.st-1} is behind it. From tomorrow it shows ${CUE_WHAT[o.st]}.`
+    : clean ? `Next time is ${fmtWhen(o.dueAt)}.`
+    : `It stays where it is on the trail and comes round again.`;
+  const where = heart ? "Known by heart"
+    : `Stage ${o.st} of ${CUE_STAGES} · ${Math.max(0,(o.step||1)-1)} of ${SR_TRAIL.length-1} reviews on this stage`;
+  V.innerHTML=`<div class="card center">
+      <div style="font-size:44px">${revealed?"\u{1F504}":heart?"\u{1F49B}":clean?"\u{1F54A}️":"\u{1F331}"}</div>
+      <h2 style="font-size:21px;margin:8px 0 2px">${head}</h2>
+      <div style="font-weight:800;color:var(--gold-ink);margin:2px 0">${bookName(b)} ${c}:${v}</div>
+      <p class="lead" style="margin:8px 0 0">${lead}</p>
+      <div style="font-weight:800;color:var(--gold-ink);margin:10px 0 0">${where}${clean?" · +10 \u{1FA99}":""}</div>
+      <button class="btn" id="cueDone" style="margin-top:16px">Done</button></div>`;
+  el("cueDone").onclick=()=>{ ret?ret():renderVerse(); showGoal(); };
+}
 // The result of a TEST. A pass means every word right, first time, unaided - anything less breaks
 // the streak, because five of these is what retires a verse from review.
 function w4wTestResult(b,c,v,vkey,ret){
