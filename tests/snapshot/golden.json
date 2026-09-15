@@ -261,22 +261,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "classic/learn/build-the-book": {
-  "h": "98508e9a35fcff6e",
-  "len": 3524,
-  "els": 62,
-  "buttons": 13,
+  "h": "8d4c0b699e468e8b",
+  "len": 3736,
+  "els": 65,
+  "buttons": 14,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
+  "text": "✕ Review Lesson ▶ Listen 📺 Videos Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎"
  },
  "classic/learn/build-the-book-done": {
-  "h": "dcf677b4d440e4be",
-  "len": 3744,
-  "els": 67,
-  "buttons": 13,
+  "h": "7417bbda36bdb177",
+  "len": 3956,
+  "els": 70,
+  "buttons": 14,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
+  "text": "✕ Review Lesson ▶ Listen 📺 Videos Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎"
  },
  "classic/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "45c3eacc22e4f7e4",
+  "h": "8b565671ae8681b0",
   "len": 121723,
   "els": 2233,
   "buttons": 585,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "bc5e71f8143131c0",
-  "len": 196842,
-  "els": 3262,
+  "h": "0d47e29d5b9ad540",
+  "len": 197886,
+  "els": 3277,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.5 September 15, 2026 Speak with your keyboard, or with Google NEW Profile → Speaking chooses wha"
+  "text": "✕ Version history v2.20.0 September 15, 2026 Videos, where there is something to watch NEW 📺 Videos. A book’s lesson no"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "df3f88fc9e3d6dc3",
+  "h": "c5b61931692ada43",
   "len": 120922,
   "els": 2225,
   "buttons": 583,
@@ -783,22 +783,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "illumined/learn/build-the-book": {
-  "h": "98508e9a35fcff6e",
-  "len": 3524,
-  "els": 62,
-  "buttons": 13,
+  "h": "8d4c0b699e468e8b",
+  "len": 3736,
+  "els": 65,
+  "buttons": 14,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
+  "text": "✕ Review Lesson ▶ Listen 📺 Videos Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎"
  },
  "illumined/learn/build-the-book-done": {
-  "h": "dcf677b4d440e4be",
-  "len": 3744,
-  "els": 67,
-  "buttons": 13,
+  "h": "7417bbda36bdb177",
+  "len": 3956,
+  "els": 70,
+  "buttons": 14,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
+  "text": "✕ Review Lesson ▶ Listen 📺 Videos Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎"
  },
  "illumined/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "43bc6fce5ee4a8f5",
+  "h": "2b4140bfbb6a708b",
   "len": 120930,
   "els": 2225,
   "buttons": 583,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "bc5e71f8143131c0",
-  "len": 196842,
-  "els": 3262,
+  "h": "0d47e29d5b9ad540",
+  "len": 197886,
+  "els": 3277,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.5 September 15, 2026 Speak with your keyboard, or with Google NEW Profile → Speaking chooses wha"
+  "text": "✕ Version history v2.20.0 September 15, 2026 Videos, where there is something to watch NEW 📺 Videos. A book’s lesson no"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "43bc6fce5ee4a8f5",
+  "h": "2b4140bfbb6a708b",
   "len": 120930,
   "els": 2225,
   "buttons": 583,
@@ -1305,22 +1305,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "glass/learn/build-the-book": {
-  "h": "98508e9a35fcff6e",
-  "len": 3524,
-  "els": 62,
-  "buttons": 13,
+  "h": "8d4c0b699e468e8b",
+  "len": 3736,
+  "els": 65,
+  "buttons": 14,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
+  "text": "✕ Review Lesson ▶ Listen 📺 Videos Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎"
  },
  "glass/learn/build-the-book-done": {
-  "h": "dcf677b4d440e4be",
-  "len": 3744,
-  "els": 67,
-  "buttons": 13,
+  "h": "7417bbda36bdb177",
+  "len": 3956,
+  "els": 70,
+  "buttons": 14,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
+  "text": "✕ Review Lesson ▶ Listen 📺 Videos Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎"
  },
  "glass/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "33eef7bdafdf7c6b",
+  "h": "470fbc14376492f7",
   "len": 120928,
   "els": 2225,
   "buttons": 583,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "bc5e71f8143131c0",
-  "len": 196842,
-  "els": 3262,
+  "h": "0d47e29d5b9ad540",
+  "len": 197886,
+  "els": 3277,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.5 September 15, 2026 Speak with your keyboard, or with Google NEW Profile → Speaking chooses wha"
+  "text": "✕ Version history v2.20.0 September 15, 2026 Videos, where there is something to watch NEW 📺 Videos. A book’s lesson no"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "33eef7bdafdf7c6b",
+  "h": "470fbc14376492f7",
   "len": 120928,
   "els": 2225,
   "buttons": 583,
@@ -1827,22 +1827,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "quest/learn/build-the-book": {
-  "h": "98508e9a35fcff6e",
-  "len": 3524,
-  "els": 62,
-  "buttons": 13,
+  "h": "8d4c0b699e468e8b",
+  "len": 3736,
+  "els": 65,
+  "buttons": 14,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
+  "text": "✕ Review Lesson ▶ Listen 📺 Videos Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎"
  },
  "quest/learn/build-the-book-done": {
-  "h": "dcf677b4d440e4be",
-  "len": 3744,
-  "els": 67,
-  "buttons": 13,
+  "h": "7417bbda36bdb177",
+  "len": 3956,
+  "els": 70,
+  "buttons": 14,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
+  "text": "✕ Review Lesson ▶ Listen 📺 Videos Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎"
  },
  "quest/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "f3715efcb6ac3e47",
+  "h": "a14f14260280bd70",
   "len": 120930,
   "els": 2225,
   "buttons": 583,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "bc5e71f8143131c0",
-  "len": 196842,
-  "els": 3262,
+  "h": "0d47e29d5b9ad540",
+  "len": 197886,
+  "els": 3277,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.5 September 15, 2026 Speak with your keyboard, or with Google NEW Profile → Speaking chooses wha"
+  "text": "✕ Version history v2.20.0 September 15, 2026 Videos, where there is something to watch NEW 📺 Videos. A book’s lesson no"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "f3715efcb6ac3e47",
+  "h": "a14f14260280bd70",
   "len": 120930,
   "els": 2225,
   "buttons": 583,
@@ -2349,22 +2349,22 @@
   "text": "✕ Which palace? ✓ 📖 Creation begins at Genesis 1:1 . Put those three pictures in a room you know. Which palace? My Kitc"
  },
  "buddy/learn/build-the-book": {
-  "h": "98508e9a35fcff6e",
-  "len": 3524,
-  "els": 62,
-  "buttons": 13,
+  "h": "8d4c0b699e468e8b",
+  "len": 3736,
+  "els": 65,
+  "buttons": 14,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
+  "text": "✕ Review Lesson ▶ Listen 📺 Videos Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎"
  },
  "buddy/learn/build-the-book-done": {
-  "h": "dcf677b4d440e4be",
-  "len": 3744,
-  "els": 67,
-  "buttons": 13,
+  "h": "7417bbda36bdb177",
+  "len": 3956,
+  "els": 70,
+  "buttons": 14,
   "svgs": 1,
   "imgs": 6,
-  "text": "✕ Review Lesson ▶ Listen Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎ Change th"
+  "text": "✕ Review Lesson ▶ Listen 📺 Videos Nehemiah 🖼️ Change my book image Book 16 Tissue image coming sounds: t/d · j·sh·ch ✎"
  },
  "buddy/reference/foundations": {
   "h": "ec29e14be344e033",
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "fd707e00e0a138b3",
+  "h": "a35423969486a459",
   "len": 120926,
   "els": 2225,
   "buttons": 583,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "bc5e71f8143131c0",
-  "len": 196842,
-  "els": 3262,
+  "h": "0d47e29d5b9ad540",
+  "len": 197886,
+  "els": 3277,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.19.5 September 15, 2026 Speak with your keyboard, or with Google NEW Profile → Speaking chooses wha"
+  "text": "✕ Version history v2.20.0 September 15, 2026 Videos, where there is something to watch NEW 📺 Videos. A book’s lesson no"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "fd707e00e0a138b3",
+  "h": "a35423969486a459",
   "len": 120926,
   "els": 2225,
   "buttons": 583,

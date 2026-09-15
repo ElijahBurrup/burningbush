@@ -1406,6 +1406,25 @@
   .qhead .tts-btn{flex:0 0 auto;font:inherit;font-size:12.5px;font-weight:800;padding:6px 11px;margin-left:8px;
     border-radius:999px;border:1px solid var(--gold2);background:transparent;color:var(--gold-ink);cursor:pointer;white-space:nowrap}
   .qhead .tts-btn.on{background:var(--panel2)}
+  .media-btn{white-space:nowrap}
+  .qhead .media-btn{flex:0 0 auto;margin-left:6px;padding:6px 10px;border-radius:999px}
+  /* A verse bar already holds the close, two verse arrows and Review Lesson, so here the button takes
+     Review Lesson's own shape, the picture over a small label, and the bar still fits a phone. */
+  .lv-topbar .media-btn{flex:0 0 auto;display:grid;justify-items:center;gap:3px;padding:0 2px;border:0;background:none;
+    box-shadow:none;min-height:0;color:var(--gold-ink);font-size:10.5px;font-weight:800;line-height:1.2}
+  .lv-topbar .media-btn .mb-ic{font-size:26px;line-height:1}
+  .ms-card{max-width:520px;width:94%}
+  .ms-title{flex:1;text-align:center;font-weight:800;font-size:14px}
+  .ms-group{margin:10px 0 0}
+  .ms-h{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+  .ms-item{display:flex;gap:10px;align-items:center;width:100%;text-align:left;font:inherit;padding:10px 12px;margin:0 0 6px;
+    border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);cursor:pointer}
+  .ms-play{flex:0 0 auto;color:var(--gold-ink);font-weight:800}
+  .ms-txt{display:flex;flex-direction:column;min-width:0}
+  .ms-by{font-size:11.5px;color:var(--muted)}
+  .mp-card{max-width:560px;width:94%}
+  .mp-frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:var(--panel2)}
+  .mp-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
   .lock-why{margin:10px 0 6px;padding:9px 12px;border-radius:10px;border:1px solid var(--gold);
     background:var(--panel2);color:var(--gold-ink);font-weight:800;font-size:13.5px;text-align:center}
   .mem-filter{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 8px}
@@ -2305,8 +2324,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.19.5";
+const APP_VERSION="2.20.0";
 const CHANGELOG=[
+ {v:"2.20.0", d:"September 15, 2026", t:"Videos, where there is something to watch", items:[
+   ["new","<b>📺 Videos.</b> A book’s lesson now offers BibleProject’s animated overview of that book, all 66 of them, in two parts where the book has two. 1 Kings 1 and 2 have Gary Hamrick’s verse-by-verse study of each chapter, and Romans 16:23 has a video that goes deep on that one verse. The button appears only where there is something to watch, always at the top right, and everything plays inside the app."],
+   ["fix","<b>The streak review called today “missed” before it was over.</b> A streak only breaks when a whole day has been missed, and the count always worked that way; the review now shows today as <i>in progress</i> until it ends."]
+ ]},
  {v:"2.19.5", d:"September 15, 2026", t:"Speak with your keyboard, or with Google", items:[
    ["new","<b>Profile → Speaking chooses what listens when you tap 🎤.</b> The keyboard’s microphone is the default: the key beside your space bar, or Windows key + H on a PC, and it needs no permission. Google speech is the better ear for Bible names; switch to it there, and it asks for the microphone as you do."],
    ["chg","<b>When Google speech isn’t allowed, the 🎤 offers your keyboard instead of a dead end.</b> One tap switches to the keyboard’s microphone and says where the key is. In the Android app a second button opens the app’s settings for you."]
@@ -4733,6 +4756,78 @@ function teachCardBody(kind, n){
     ${hasRel?buildTheNumberBox(n):""}
     ${hasRel?`<button class="btn ghost" id="tcNumEdit" style="width:100%;margin-top:10px">✏️ ${(Prog.numScene||{})[n]?"Edit my scene":"Write my scene"}</button>`:""}${mine}`;
 }
+/* ---- videos, by book, chapter and verse ------------------------------------------------------
+   One structure for every level. A book has its overview (BibleProject, all 66 checked against
+   YouTube's own record before they were written here), a chapter can have teaching on it, and a
+   verse can have a video that goes deep on that one verse. "Hear it" (the text read aloud) has a
+   place kept for it. A level only shows its own videos, so nothing is repeated screen to screen.
+
+   The 📺 Videos button appears ONLY where there is something to watch, always at the top right:
+   a lesson's header, a chapter's top row, a verse's top bar. Screens without videos are exactly as
+   they were. Every button opens the same list, and every video plays in the same player inside
+   the app. Nothing plays until it is tapped, which keeps the Bible quiet in church. Adding more is
+   data only: a new entry below, no new screen. */
+const MEDIA={"book": {"1": [{"kind": "overview", "by": "BibleProject", "yt": "GQI72THyO5I", "label": "Part 1"}, {"kind": "overview", "by": "BibleProject", "yt": "F4isSyennFo", "label": "Part 2"}], "2": [{"kind": "overview", "by": "BibleProject", "yt": "jH_aojNJM3E", "label": "Part 1"}, {"kind": "overview", "by": "BibleProject", "yt": "oNpTha80yyE", "label": "Part 2"}], "3": [{"kind": "overview", "by": "BibleProject", "yt": "IJ-FekWUZzE", "label": "Overview"}], "4": [{"kind": "overview", "by": "BibleProject", "yt": "tp5MIrMZFqo", "label": "Overview"}], "5": [{"kind": "overview", "by": "BibleProject", "yt": "q5QEH9bH8AU", "label": "Overview"}], "6": [{"kind": "overview", "by": "BibleProject", "yt": "JqOqJlFF_eU", "label": "Overview"}], "7": [{"kind": "overview", "by": "BibleProject", "yt": "kOYy8iCfIJ4", "label": "Overview"}], "8": [{"kind": "overview", "by": "BibleProject", "yt": "0h1eoBeR4Jk", "label": "Overview"}], "9": [{"kind": "overview", "by": "BibleProject", "yt": "QJOju5Dw0V0", "label": "Overview"}], "10": [{"kind": "overview", "by": "BibleProject", "yt": "YvoWDXNDJgs", "label": "Overview"}], "11": [{"kind": "overview", "by": "BibleProject", "yt": "bVFW3wbi9pk", "label": "Overview", "covers": "1 Kings and 2 Kings"}], "12": [{"kind": "overview", "by": "BibleProject", "yt": "bVFW3wbi9pk", "label": "Overview", "covers": "1 Kings and 2 Kings"}], "13": [{"kind": "overview", "by": "BibleProject", "yt": "HR7xaHv3Ias", "label": "Overview", "covers": "1 Chronicles and 2 Chronicles"}], "14": [{"kind": "overview", "by": "BibleProject", "yt": "HR7xaHv3Ias", "label": "Overview", "covers": "1 Chronicles and 2 Chronicles"}], "15": [{"kind": "overview", "by": "BibleProject", "yt": "MkETkRv9tG8", "label": "Overview", "covers": "Ezra and Nehemiah"}], "16": [{"kind": "overview", "by": "BibleProject", "yt": "MkETkRv9tG8", "label": "Overview", "covers": "Ezra and Nehemiah"}], "17": [{"kind": "overview", "by": "BibleProject", "yt": "JydNSlufRIs", "label": "Overview"}], "18": [{"kind": "overview", "by": "BibleProject", "yt": "xQwnH8th_fs", "label": "Overview"}], "19": [{"kind": "overview", "by": "BibleProject", "yt": "j9phNEaPrv8", "label": "Overview"}], "20": [{"kind": "overview", "by": "BibleProject", "yt": "AzmYV8GNAIM", "label": "Overview"}], "21": [{"kind": "overview", "by": "BibleProject", "yt": "lrsQ1tc-2wk", "label": "Overview"}], "22": [{"kind": "overview", "by": "BibleProject", "yt": "4KC7xE4fgOw", "label": "Overview"}], "23": [{"kind": "overview", "by": "BibleProject", "yt": "d0A6Uchb1F8", "label": "Part 1"}, {"kind": "overview", "by": "BibleProject", "yt": "_TzdEPuqgQg", "label": "Part 2"}], "24": [{"kind": "overview", "by": "BibleProject", "yt": "RSK36cHbrk0", "label": "Overview"}], "25": [{"kind": "overview", "by": "BibleProject", "yt": "p8GDFPdaQZQ", "label": "Overview"}], "26": [{"kind": "overview", "by": "BibleProject", "yt": "R-CIPu1nko8", "label": "Part 1"}, {"kind": "overview", "by": "BibleProject", "yt": "SDeCWW_Bnyw", "label": "Part 2"}], "27": [{"kind": "overview", "by": "BibleProject", "yt": "9cSC9uobtPM", "label": "Overview"}], "28": [{"kind": "overview", "by": "BibleProject", "yt": "kE6SZ1ogOVU", "label": "Overview"}], "29": [{"kind": "overview", "by": "BibleProject", "yt": "zQLazbgz90c", "label": "Overview"}], "30": [{"kind": "overview", "by": "BibleProject", "yt": "mGgWaPGpGz4", "label": "Overview"}], "31": [{"kind": "overview", "by": "BibleProject", "yt": "i4ogCrEoG5s", "label": "Overview"}], "32": [{"kind": "overview", "by": "BibleProject", "yt": "dLIabZc0O4c", "label": "Overview"}], "33": [{"kind": "overview", "by": "BibleProject", "yt": "MFEUEcylwLc", "label": "Overview"}], "34": [{"kind": "overview", "by": "BibleProject", "yt": "Y30DanA5EhU", "label": "Overview"}], "35": [{"kind": "overview", "by": "BibleProject", "yt": "OPMaRqGJPUU", "label": "Overview"}], "36": [{"kind": "overview", "by": "BibleProject", "yt": "oFZknKPNvz8", "label": "Overview"}], "37": [{"kind": "overview", "by": "BibleProject", "yt": "juPvv_xcX-U", "label": "Overview"}], "38": [{"kind": "overview", "by": "BibleProject", "yt": "_106IfO6Kc0", "label": "Overview"}], "39": [{"kind": "overview", "by": "BibleProject", "yt": "HPGShWZ4Jvk", "label": "Overview"}], "40": [{"kind": "overview", "by": "BibleProject", "yt": "3Dv4-n6OYGI", "label": "Part 1"}, {"kind": "overview", "by": "BibleProject", "yt": "GGCF3OPWN14", "label": "Part 2"}], "41": [{"kind": "overview", "by": "BibleProject", "yt": "HGHqu9-DtXk", "label": "Overview"}], "42": [{"kind": "overview", "by": "BibleProject", "yt": "XIb_dCIxzr0", "label": "Part 1"}, {"kind": "overview", "by": "BibleProject", "yt": "26z_KhwNdD8", "label": "Part 2"}], "43": [{"kind": "overview", "by": "BibleProject", "yt": "G-2e9mMf7E8", "label": "Part 1"}, {"kind": "overview", "by": "BibleProject", "yt": "RUfh_wOsauk", "label": "Part 2"}], "44": [{"kind": "overview", "by": "BibleProject", "yt": "CGbNw855ksw", "label": "Part 1"}, {"kind": "overview", "by": "BibleProject", "yt": "Z-17KxpjL0Q", "label": "Part 2"}], "45": [{"kind": "overview", "by": "BibleProject", "yt": "ej_6dVdJSIU", "label": "Part 1"}, {"kind": "overview", "by": "BibleProject", "yt": "0SVTl4Xa5fY", "label": "Part 2"}], "46": [{"kind": "overview", "by": "BibleProject", "yt": "yiHf8klCCc4", "label": "Overview"}], "47": [{"kind": "overview", "by": "BibleProject", "yt": "3lfPK2vfC54", "label": "Overview"}], "48": [{"kind": "overview", "by": "BibleProject", "yt": "vmx4UjRFp0M", "label": "Overview"}], "49": [{"kind": "overview", "by": "BibleProject", "yt": "Y71r-T98E2Q", "label": "Overview"}], "50": [{"kind": "overview", "by": "BibleProject", "yt": "oE9qqW1-BkU", "label": "Overview"}], "51": [{"kind": "overview", "by": "BibleProject", "yt": "pXTXlDxQsvc", "label": "Overview"}], "52": [{"kind": "overview", "by": "BibleProject", "yt": "No7Nq6IX23c", "label": "Overview"}], "53": [{"kind": "overview", "by": "BibleProject", "yt": "kbPBDKOn1cc", "label": "Overview"}], "54": [{"kind": "overview", "by": "BibleProject", "yt": "7RoqnGcEjcs", "label": "Overview"}], "55": [{"kind": "overview", "by": "BibleProject", "yt": "urlvnxCaL00", "label": "Overview"}], "56": [{"kind": "overview", "by": "BibleProject", "yt": "PUEYCVXJM3k", "label": "Overview"}], "57": [{"kind": "overview", "by": "BibleProject", "yt": "aW9Q3Jt6Yvk", "label": "Overview"}], "58": [{"kind": "overview", "by": "BibleProject", "yt": "1fNWTZZwgbs", "label": "Overview"}], "59": [{"kind": "overview", "by": "BibleProject", "yt": "qn-hLHWwRYY", "label": "Overview"}], "60": [{"kind": "overview", "by": "BibleProject", "yt": "WhP7AZQlzCg", "label": "Overview"}], "61": [{"kind": "overview", "by": "BibleProject", "yt": "wWLv_ITyKYc", "label": "Overview"}], "62": [{"kind": "overview", "by": "BibleProject", "yt": "l3QkE6nKylM", "label": "Overview", "covers": "1 John, 2 John and 3 John"}], "63": [{"kind": "overview", "by": "BibleProject", "yt": "l3QkE6nKylM", "label": "Overview", "covers": "1 John, 2 John and 3 John"}], "64": [{"kind": "overview", "by": "BibleProject", "yt": "l3QkE6nKylM", "label": "Overview", "covers": "1 John, 2 John and 3 John"}], "65": [{"kind": "overview", "by": "BibleProject", "yt": "6UoCmakZmys", "label": "Overview"}], "66": [{"kind": "overview", "by": "BibleProject", "yt": "5nvVVcYD-0w", "label": "Part 1"}, {"kind": "overview", "by": "BibleProject", "yt": "QpnIrbq2bKo", "label": "Part 2"}]}, "chapter": {"11:1": [{"kind": "teach", "by": "Gary Hamrick · Cornerstone Chapel", "yt": "XQqD-4jPEDs", "label": "1 Kings 1 · verse by verse"}], "11:2": [{"kind": "teach", "by": "Gary Hamrick · Cornerstone Chapel", "yt": "3oOt46E3dgM", "label": "1 Kings 2 · verse by verse"}]}, "verse": {"45:16:23": [{"kind": "deep", "by": "Facebook video", "fb": "https://www.facebook.com/watch/?v=1547436033127906", "label": "Romans 16:23 · a closer look"}]}};
+const MEDIA_KINDS=[["overview","Overview"],["hear","Hear it"],["teach","Teach"],["deep","Deep dive"]];
+function mediaFor(level,key){ const L=MEDIA[level]; return (L && L[String(key)]) || []; }
+function mediaBtnHTML(level,key,title){
+  if(!mediaFor(level,key).length) return "";
+  return `<button type="button" class="btn ghost sm media-btn" data-media="${level}" data-key="${key}" data-title="${bbEsc(title)}" aria-label="Videos for ${bbEsc(title)}"><span class="mb-ic">📺</span> <span class="mb-tx">Videos</span></button>`;
+}
+// The lesson that teaches a book's number and picture gets its overview; other steps get nothing.
+function addLessonMediaBtn(host,kind,n,isTeach){
+  if(kind!=="book" || !isTeach || !host) return;
+  const q=host.querySelector(".qhead"); if(!q || q.querySelector(".media-btn")) return;
+  const html=mediaBtnHTML("book", n, bookName(n)); if(html) q.insertAdjacentHTML("beforeend", html);
+}
+function mediaModal(id){ return el(id)||(()=>{ const d=document.createElement("div"); d.id=id; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })(); }
+function openMediaSheet(title, items){
+  if(!items || !items.length) return;
+  try{ ttsStop(); }catch(e){}
+  const m=mediaModal("mediaSheet");
+  const groups=MEDIA_KINDS.map(([k,name])=>{
+    const its=items.filter(x=>x.kind===k); if(!its.length) return "";
+    return `<div class="ms-group"><div class="ms-h">${name}</div>${its.map(x=>`<button type="button" class="ms-item" data-mi="${items.indexOf(x)}">
+      <span class="ms-play">▶</span><span class="ms-txt"><b>${bbEsc(x.label)}</b><span class="ms-by">${bbEsc(x.by||"")}${x.covers?` · covers ${bbEsc(x.covers)}`:""}</span></span></button>`).join("")}</div>`;
+  }).join("");
+  m.innerHTML=`<div class="modal-card ms-card">
+      <div class="lv-topbar" style="margin:0 0 4px"><button class="lclose lclose-red" id="msClose" style="margin:0">✕</button>
+        <div class="ms-title">📺 ${bbEsc(title)}</div><span style="width:34px"></span></div>
+      ${groups}
+      <p class="hint" style="margin:10px 0 0;text-align:center">Plays right here, without leaving the app.</p></div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; };
+  el("msClose").onclick=close; m.onclick=e=>{ if(e.target===m) close(); };
+  m.querySelectorAll("[data-mi]").forEach(b=>b.onclick=()=>openMediaPlayer(items[+b.dataset.mi], title));
+}
+/* YouTube plays from its privacy-enhanced embed. Facebook plays through Facebook's own embed, which
+   only works when the video's owner allows embedding, so a plain link to the video sits under it
+   for when it will not play here. Closing removes the player, which is what stops the video. */
+function openMediaPlayer(it, title){
+  if(!it) return;
+  let url="", fallback="";
+  if(it.yt && /^[A-Za-z0-9_-]{11}$/.test(it.yt)) url=`https://www.youtube-nocookie.com/embed/${it.yt}?rel=0&modestbranding=1&playsinline=1&autoplay=1`;
+  else if(it.fb && /^https:\/\/www\.facebook\.com\//.test(it.fb)){ url=`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(it.fb)}&show_text=false&autoplay=true`; fallback=it.fb; }
+  if(!url) return;
+  try{ ttsStop(); }catch(e){}
+  const m=mediaModal("mediaPlayer");
+  const close=()=>{ m.innerHTML=""; m.style.display="none"; };
+  m.innerHTML=`<div class="modal-card mp-card">
+      <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="mpClose" style="margin:0">✕</button>
+        <div class="ms-title">${bbEsc(it.label||title||"Video")}</div><span style="width:34px"></span></div>
+      <div class="mp-frame"><iframe src="${url}" title="${bbEsc(it.label||"Video")}"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen; clipboard-write; web-share"
+        allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+      <p class="hint" style="margin:8px 0 0;text-align:center">${bbEsc(it.by||"")}${fallback?` · <a class="mp-out" href="${fallback}" target="_blank" rel="noopener">Won’t play? Open it on Facebook</a>`:""}</p></div>`;
+  m.style.display="flex"; raiseModal(m);
+  el("mpClose").onclick=close; m.onclick=e=>{ if(e.target===m) close(); };
+}
+// Every 📺 button, on any screen, is handled here, so a new level needs no wiring of its own.
+document.addEventListener("click", ev=>{
+  const t=ev.target && ev.target.closest && ev.target.closest("[data-media]"); if(!t) return;
+  ev.preventDefault(); ev.stopPropagation();
+  openMediaSheet(t.dataset.title, mediaFor(t.dataset.media, t.dataset.key));
+}, true);
 function wireTeachCard(kind, n, rerender){
   if(el("tcBookImg")) el("tcBookImg").onclick=()=>openBookImagePicker(n, rerender);
   wireBuildTheBook(n, rerender);   // both boxes use the same rows and the same sheets
@@ -6206,6 +6301,7 @@ function renderChapterScreen(bn,c){
     <div class="navrow">
       <button class="btn ghost sm" id="chBack">← ${bookName(bn)}</button>
       <div style="display:flex;gap:6px">
+        ${mediaBtnHTML("chapter", bn+":"+c, bookName(bn)+" "+c)}
         ${prevC?`<button class="btn ghost sm" data-goc="${prevC}">← Ch ${prevC}</button>`:""}
         ${nextC?`<button class="btn ghost sm" data-goc="${nextC}">Ch ${nextC} →</button>`:""}
       </div>
@@ -7749,6 +7845,7 @@ function renderStep(){
   el("lClose").onclick=()=>{ ttsStop(); renderPath(); }; addTtsBtn(L);
   attachLessonSwipe(L);
   wireStep(s);
+  addLessonMediaBtn(L, s.kind, s.n, s.type==="teach");   // a book lesson's overview
 }
 function encodingOptions(kind,n,word){
   // multiple valid framings of the SAME peg (all decode identically)
@@ -11736,8 +11833,14 @@ function streakDayRows(){
     const need = rec && rec.need!=null ? rec.need : (isToday ? goalToday() : goalForDate(new Date(ms)));
     const got  = rec ? (rec.got|0) : (isToday ? goalCount() : 0);
     const ok   = isToday ? (Prog.lastReviewDay===k) : !!(rec && rec.ok);
-    const missed = !ok && got===0;
+    /* Today is not over, so it has not been missed and it is not short: it is in progress. Only a
+       day that has ended can be missed, which is also the only kind the streak ever counts against
+       (streakGapDays counts whole days BETWEEN the last one done and today). This row used to judge
+       today like a finished day, "missed" in red before anything was done. */
+    const open = isToday && !ok;
+    const missed = !ok && !open && got===0;
     const why = ok ? `<span class="gold">✓ counted</span>`
+      : open ? `<span class="muted">in progress</span>`
       : missed ? `<span style="color:var(--miss)">missed</span>`
       : (rec && rec.due>0) ? `<span style="color:var(--miss)">${rec.due} review${rec.due>1?"s":""} due</span>`
       : `<span style="color:var(--miss)">${Math.max(0,need-got)} short</span>`;
@@ -13977,7 +14080,7 @@ function verseNavBar(b,c,v,closeId){
           <button class="lv-navbtn wlbl" data-nav="vprev" ${bPrev?"":"disabled"} title="Previous verse">${navVerseLabel(bPrev,b,c,-1)}</button>
           <button class="lv-navbtn wlbl" data-nav="vnext" ${bNext?"":"disabled"} title="Next verse">${navVerseLabel(bNext,b,c,1)}</button>
         </div>
-      </div>${reviewLessonBtn("verse")}</div>`;
+      </div>${mediaBtnHTML("verse", b+":"+c+":"+v, bookName(b)+" "+c+":"+v)}${reviewLessonBtn("verse")}</div>`;
   return {html,bPrev,bNext};
 }
 // Where a swipe should go, kept outside the render so the listener below never holds a stale verse.
@@ -14464,7 +14567,7 @@ function renderAdhoc(){
       <div class="opts">${opts.map(o=>`<button class="opt" data-ok="${o===n?1:0}">${dispNum(kind,o)}</button>`).join("")}</div>`;
   }
   L.innerHTML=`<div class="lesson"><div class="qhead"><button class="lclose" id="abClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div></div><div id="abBody">${body}</div></div>`;
-  el("abClose").onclick=()=>{ ttsStop(); AB.ret(); }; addTtsBtn(L);
+  el("abClose").onclick=()=>{ ttsStop(); AB.ret(); }; addTtsBtn(L); addLessonMediaBtn(L, kind, n, s.t==="teach");
   if(s.t==="teach"){ el("abNext").onclick=()=>{ AB.i++; renderAdhoc(); }; wireTeachCard(kind, n, renderAdhoc); return; }
   L.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{
     if(b.dataset.ok==="1"){ b.classList.add("correct"); L.querySelectorAll("[data-ok]").forEach(x=>x.disabled=true); setTimeout(()=>{ AB.i++; if(AB.i>=AB.steps.length) finishAdhoc(); else renderAdhoc(); },500); }

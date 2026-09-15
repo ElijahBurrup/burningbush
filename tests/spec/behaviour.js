@@ -4548,6 +4548,94 @@ const DAY = 86400000;
   ok(box.capHeld, '...without scrolling the box out from under the cursor');
   ok(box.followedUp, 'a cursor above the view is followed back up to');
 
+  describe('videos: one button, only where there is something to watch', () => { });
+
+  /* Overview on a book's lesson, teaching on a chapter, a deep dive on a verse. Each opens the same
+     list and plays in the same player inside the app. A screen with no video shows no button. */
+  const media = await $(async () => {
+    const out = {};
+    const snapUnl = Prog.lessonUnlocks;
+    let opened = 0; const realOpen = window.open; window.open = () => { opened++; return null; };
+    const startHref = location.href;
+    const closeAll = () => document.querySelectorAll('#mediaPlayer,#mediaSheet').forEach(m => { m.innerHTML = m.id === 'mediaPlayer' ? '' : m.innerHTML; m.style.display = 'none'; });
+    try { markVideoSeen('book'); markVideoSeen('verse'); } catch (e) {}
+
+    out.books = Object.keys(MEDIA.book).length;
+    out.idsOk = Object.values(MEDIA.book).every(vs => vs.every(v => /^[A-Za-z0-9_-]{11}$/.test(v.yt)));
+
+    // Genesis: a book lesson, its overview in two parts.
+    const skills = UNITS.flatMap(u => u.skills).filter(s => s.kind === 'book' && !s.testOnly);
+    const sk = skills.find(s => s.items && s.items[0] === 1) || skills[0];
+    Prog.lessonUnlocks = [...(Prog.lessonUnlocks || []), sk.id]; saveProg();
+    show('learn'); startLesson(sk);
+    const lb = document.querySelector('#learn .qhead [data-media="book"]');
+    out.lessonBtn = !!lb;
+    if (lb) lb.click();
+    const sheet = document.getElementById('mediaSheet');
+    out.sheetShown = !!sheet && sheet.style.display === 'flex';
+    out.overviewHead = !!sheet && /Overview/.test(sheet.textContent);
+    out.parts = sheet ? sheet.querySelectorAll('[data-mi]').length : 0;
+    const first = sheet && sheet.querySelector('[data-mi]'); if (first) first.click();
+    const f1 = document.querySelector('#mediaPlayer iframe');
+    out.ytSrc = f1 ? f1.getAttribute('src') : '';
+    const pc = document.getElementById('mpClose'); if (pc) pc.click();
+    out.playerGone = !document.querySelector('#mediaPlayer iframe');
+    out.sheetStillOpen = !!sheet && sheet.style.display === 'flex';
+    closeAll();
+    Prog.lessonUnlocks = snapUnl; saveProg(); LZ = null;
+
+    // 1 Kings 1 has teaching; 1 Kings 3 has none.
+    show('journey'); renderChapterScreen(11, 1);
+    const cb = document.querySelector('#journey [data-media="chapter"]');
+    out.ch1Btn = !!cb;
+    if (cb) cb.click();
+    out.ch1Teach = !!document.getElementById('mediaSheet') && /Teach/.test(document.getElementById('mediaSheet').textContent);
+    const ci = document.querySelector('#mediaSheet [data-mi]'); if (ci) ci.click();
+    const f2 = document.querySelector('#mediaPlayer iframe');
+    out.ch1Src = f2 ? f2.getAttribute('src') : '';
+    closeAll();
+    renderChapterScreen(11, 3);
+    out.ch3Btn = !!document.querySelector('#journey [data-media="chapter"]');
+
+    // Romans 16:23 has a Facebook video; 16:22 has none.
+    openVerseWizard(45, 16, 23, () => {});
+    const vb = document.querySelector('#verse [data-media="verse"]');
+    out.verseBtn = !!vb && vb.dataset.key === '45:16:23';
+    const bar = document.querySelector('#verse .lv-topbar');
+    out.barFits = !!bar && [...bar.children].every(ch => ch.getBoundingClientRect().right <= bar.getBoundingClientRect().right + 1);
+    if (vb) vb.click();
+    out.deepHead = !!document.getElementById('mediaSheet') && /Deep dive/.test(document.getElementById('mediaSheet').textContent);
+    const vi = document.querySelector('#mediaSheet [data-mi]'); if (vi) vi.click();
+    const f3 = document.querySelector('#mediaPlayer iframe');
+    out.fbSrc = f3 ? f3.getAttribute('src') : '';
+    const out3 = document.querySelector('#mediaPlayer .mp-out');
+    out.fbFallback = out3 ? out3.getAttribute('href') : '';
+    closeAll();
+    openVerseWizard(45, 16, 22, () => {});
+    out.otherVerseBtn = !!document.querySelector('#verse [data-media="verse"]');
+
+    out.leftApp = opened > 0 || location.href !== startHref;
+    window.open = realOpen;
+    show('learn'); renderPath();
+    return out;
+  });
+  is(media.books, 66, 'every book of the Bible has its BibleProject overview');
+  ok(media.idsOk, '...and every stored id has the shape of a YouTube id');
+  ok(media.lessonBtn, 'a book lesson has a Videos button in its header');
+  ok(media.sheetShown && media.overviewHead, '...that opens the list, starting with the Overview');
+  is(media.parts, 2, '...one entry for each part of Genesis');
+  ok(/^https:\/\/www\.youtube-nocookie\.com\/embed\/GQI72THyO5I\?/.test(media.ytSrc), 'it plays in the player inside the app, from the privacy-enhanced embed');
+  ok(media.playerGone && media.sheetStillOpen, 'closing the player stops the video and goes back to the list');
+  ok(media.ch1Btn && media.ch1Teach, '1 Kings 1 has a Videos button, and its teaching is listed under Teach');
+  ok(/embed\/XQqD-4jPEDs\?/.test(media.ch1Src), '...playing the verse-by-verse study of that chapter');
+  ok(!media.ch3Btn, 'a chapter with no video has no button at all');
+  ok(media.verseBtn && media.deepHead, 'Romans 16:23 has a Videos button, and its video is listed as a Deep dive');
+  ok(/^https:\/\/www\.facebook\.com\/plugins\/video\.php\?href=https%3A%2F%2Fwww\.facebook\.com%2Fwatch%2F%3Fv%3D1547436033127906/.test(media.fbSrc), '...playing through Facebook\'s own embed');
+  is(media.fbFallback, 'https://www.facebook.com/watch/?v=1547436033127906', '...with a plain link to the video in case it will not play here');
+  ok(media.barFits, '...and the verse bar still fits a phone, Review Lesson included');
+  ok(!media.otherVerseBtn, 'a verse with no video has no button');
+  ok(!media.leftApp, 'none of it navigates away or opens a new window');
+
   describe('a lesson screen can be read aloud', () => { });
 
   /* A Listen button on the lesson screens reads what the screen teaches, in a calm male voice where
@@ -4760,7 +4848,8 @@ const DAY = 86400000;
     const onScreen = () => ({
       review: !!document.getElementById('lvClose'),
       why: ((document.querySelector('.lock-why') || {}).textContent || '').trim(),
-      test: !!document.getElementById('mtCheck'),
+      // The next question can be asked by address or, for a verse already known by heart, by its words.
+      test: !!(document.getElementById('mtCheck') || document.getElementById('ttIn') || document.getElementById('tfNext')),
       hub: !!document.getElementById('vPracVerse')
     });
     const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -4924,6 +5013,41 @@ const DAY = 86400000;
   is(tally.convertedOther, 2, 'a day recorded under the old shape converts to the same number it showed');
   ok(tally.convertedFlag, '...and is marked so it is only converted once');
   is(tally.convertedTwice, 2, '...so a second pass cannot take it down again');
+
+  describe('today is never counted as missed while it is still today', () => { });
+
+  /* The user's rule: a streak breaks only when a day is FULLY missed, meaning yesterday or earlier,
+     never the day still in progress. The streak arithmetic already did that. The streak review
+     labelled today like a finished day, though: "missed" in red before anything was done, and
+     "N short" in red part way through. Today reads as in progress until it is over. */
+  const todayOpen = await $(() => {
+    const out = {};
+    const t = dayKey(new Date()), y = dayKey(new Date(Date.now() - DAY));
+    const snap = { l: Prog.lastReviewDay, s: Prog.dayStreak, x: Prog.streakLost,
+                   g: Prog.goalDay, sg: Prog.srGoalDay, d: Prog.srDay };
+    Prog.lastReviewDay = y; Prog.dayStreak = 12; Prog.streakLost = null;
+    Prog.goalDay = { date: t, count: 0, target: 5, met: false, split: true };
+    Prog.srGoalDay = { date: t, count: 0 }; delete Prog.srDay;
+    saveProg(); try { bustCaches(); } catch (e) {}
+    out.lapse = streakLapseCheck();
+    out.streak = Prog.dayStreak;
+    const todayRow = () => { const d = document.createElement('div'); d.innerHTML = streakDayRows();
+      return (([...d.children].find(r => /today/.test(r.textContent)) || {}).textContent || '').replace(/\s+/g, ' '); };
+    out.rowNothing = todayRow();
+    goalState().count = 2; saveProg(); try { bustCaches(); } catch (e) {}
+    out.rowPartial = todayRow();
+    Object.assign(Prog, { lastReviewDay: snap.l, dayStreak: snap.s, streakLost: snap.x,
+                          goalDay: snap.g, srGoalDay: snap.sg });
+    if (snap.d) Prog.srDay = snap.d; else delete Prog.srDay;
+    saveProg(); try { bustCaches(); } catch (e) {}
+    return out;
+  });
+  ok(!todayOpen.lapse, 'with yesterday done, opening the app today breaks nothing');
+  is(todayOpen.streak, 12, '...and the streak keeps its number');
+  ok(/in progress/i.test(todayOpen.rowNothing) && !/missed/i.test(todayOpen.rowNothing),
+     'the streak review shows today as in progress, not missed, before anything is done');
+  ok(/in progress/i.test(todayOpen.rowPartial) && !/short/i.test(todayOpen.rowPartial),
+     '...and still in progress, not short, part way through');
 
   describe('a lapsed streak is noticed when it lapses', () => { });
 
