@@ -134,6 +134,12 @@ should cost an image in the scene — they are the manner of arrival, not an obj
 | 6 | The Open Door | verses that begin cold on a noun — you are already inside | 4,720 · 15.2% |
 | T | **Test the Threshold** | all eight, both directions | |
 
+> **The marks above are superseded.** Checked against every peg word and alternate, five of them
+> are pegs already — chain (alt 62), rope (alt 49), door (14), bell (alt 95), road (alt 41) — and
+> *And* as a chain would be confused with *of* as a link in W3. The final marks come from
+> `docs/fable-brief-W1-threshold.md`, which carries the full collision list as constraints. The
+> lesson titles in the app now name what each word does rather than a mark.
+
 ### Phase W2 · The Doorway — the first word that carries meaning
 *The first content word is what recall actually reaches for, and it is heavily concentrated: ten
 words open about one verse in six.*
@@ -244,6 +250,14 @@ text verbatim across centuries did it in clauses, with a rhythm.*
 ## 6. A lesson, fully written
 
 `onset:and` — the highest-value single item on the track. Everything else follows this shape.
+
+> **As built (2.21.0, behind the preview switch).** The runner keeps this shape with Fable's
+> entrances in place of the marks. *Recognise* asks for every opening entered a given way.
+> *Produce* shows a reference and its entrance and takes the first word typed, or *none* for the
+> open entrance. *Contrast* sorts four openings onto entrance chips: the lesson's own entrances,
+> their nearest neighbours, then what the phase has already taught. `wtest:W1` asks all ten
+> entrances both ways round; *In place* waits until scenes carry their entrance. Openings are real
+> KJV verses, the app's curated ones first; the code is `startOnsetLesson` and `renderWStep`.
 
 ### TEACH — "The Chain"
 

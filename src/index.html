@@ -751,6 +751,17 @@
   .opt.dim{opacity:.5}
   .opt:disabled{cursor:default}
   .opt.wrong:disabled{opacity:.6}
+  /* Word for Word: tap-to-mark openings, and the entrance chips a verse is sorted onto */
+  .opt.on{border-color:var(--gold2);box-shadow:inset 0 0 0 1px var(--gold2)}
+  .opt.missed{border-color:var(--green);border-style:dashed}
+  .wref{color:var(--gold-ink);font-weight:800;margin-right:4px}
+  .wrow{background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:12px 14px;font-size:15px;font-weight:700;color:var(--ink)}
+  .wchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .wchip{background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer}
+  .wchip.on{border-color:var(--gold2);box-shadow:inset 0 0 0 1px var(--gold2)}
+  .wchip.correct{border-color:var(--green);background:var(--ok-bg)}
+  .wchip.wrong{border-color:var(--miss-ink);background:var(--no-bg)}
+  .wchip:disabled{cursor:default}
   .typein.correct{border-color:var(--green);background:var(--ok-bg)}
   .typein.wrong{border-color:var(--miss-ink);background:var(--no-bg)}
   .matchwrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
@@ -1174,6 +1185,20 @@
   .mtradio .rdot{flex:0 0 16px;width:16px;height:16px;border-radius:50%;border:2px solid var(--line);box-sizing:border-box}
   .mtradio.sel{color:var(--accent);border-color:var(--accent)}
   .mtradio.sel .rdot{border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--accent)}
+  /* The fork: two ladders, a card each, at the foot of the Learn path. Tokens only, so every theme
+     draws it in its own colours without a line of its own. */
+  .trackpick{margin:34px 0 8px}
+  .trackpick .tp-t{text-align:center;color:var(--gold-ink);font-weight:800;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 10px}
+  .trackpick .tp-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .trackcard{display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;cursor:pointer;font:inherit;color:inherit;
+    padding:12px;border-radius:var(--radius-card);border:2px solid var(--box-line);background:var(--panel2);box-shadow:0 4px 0 var(--tile-shadow)}
+  .trackcard.on{border-color:var(--gold);background:var(--gold-soft)}
+  .trackcard .tc-h{font-weight:800;font-size:13px}
+  .trackcard .tc-p{font-size:12.5px;color:var(--muted);line-height:1.25}
+  .trackcard .tc-d{display:flex;gap:4px;flex-wrap:wrap}
+  .trackcard .tc-d i{width:8px;height:8px;border-radius:50%;background:var(--gray1)}
+  .trackcard .tc-d i.on{background:var(--gold)}
+  .trackcard .tc-n{font-size:11.5px;color:var(--muted);font-weight:700}
   .phasedivider{display:flex;align-items:center;gap:10px;margin:30px 0 14px;color:var(--gold-ink);font-weight:800;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;line-height:1.3;text-align:center}
   .phasedivider::before,.phasedivider::after{content:"";flex:1;height:1px;background:var(--gold2);opacity:.7}
   .phasedivider:first-of-type{margin-top:6px}
@@ -2111,6 +2136,7 @@
         <button class="btn ghost" id="testChurch" style="width:100%;margin-top:8px">⛪ Open the church in Rome</button>
         <button class="btn ghost" id="testRomeLetter" style="width:100%;margin-top:8px">📜 Replay Rome's letter</button>
         <button class="btn ghost" id="testFinishPhase" style="width:100%;margin-top:8px">🎓 Finish this phase (scratch off + palace offer)</button>
+        <button class="btn ghost" id="testWTrack" style="width:100%;margin-top:8px">📖 Word for Word track: hidden</button>
         <button class="btn ghost" id="testAdd500" style="width:100%;margin-top:8px">🪙 Give talents…</button>
         <button class="btn ghost" id="testRestore" style="width:100%;margin-top:8px;color:var(--miss-ink);border-color:var(--miss)">↩ Restore my real progress (after a simulation)</button>
         <div id="bugReportsWrap" style="display:none">
@@ -2324,8 +2350,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.20.1";
+const APP_VERSION="2.21.0";
 const CHANGELOG=[
+ {v:"2.21.0", d:"September 15, 2026", t:"The pegs end at 00", items:[
+   ["chg","<b>Phase 12F now finishes the two digit pegs.</b> 97, 98, 99 and 00 close the set, and the hundreds begin their own sets of six at 100. Everything you have learned stays learned, and a test you passed carries over wherever it covered the same numbers."]
+ ]},
  {v:"2.20.1", d:"September 15, 2026", t:"A Psalm for every new number", items:[
    ["new","<b>Every number past 66 opens a Psalm of its own.</b> Learn 91 and the lesson ends with a verse from Psalm 91 to memorize straight away, so the number you just learned goes to work, and into review, the same day. Psalms stops at 150; Psalm 119 runs to verse 176, so 151 to 176 each open the verse of Psalm 119 with that number."],
    ["new","<b>All of them wait in Suggested to memorize, under Psalms,</b> as their numbers are learned: one verse from each psalm, chosen to stand on its own."]
@@ -4940,6 +4969,22 @@ function migrateProg(p){
       });
       p.doneSkills=[...new Set(out)];
     } }
+  /* The pegs used to be chunked as one continuous run, so 00 sat inside 12F beside 100 and 101, and
+     every hundreds test was named for a different first number than it is now (numtest:102,
+     numtest:108 … are now numtest:100, numtest:106 …). A test is exchanged for its new name only
+     when every number it asks was already asked together under an old one; numbers only ever taught
+     one at a time earn nothing. Neither layout ever folded a tail, so plain sixes reproduce both.
+     New ids go to the FRONT of doneSkills, which is read newest-last, so they never pose as recent. */
+  { const done=new Set(arr(p.doneSkills)), rng=(a,b)=>{ const r=[]; for(let i=a;i<=b;i++) r.push(i); return r; };
+    const six=list=>{ const o=[]; for(let i=0;i<list.length;i+=6) o.push(list.slice(i,i+6)); return o; };
+    const tested=new Set();
+    six(rng(67,99).concat([0], rng(100,176))).forEach(c=>{ if(done.has("numtest:"+c[0])) c.forEach(n=>tested.add(n)); });
+    if(tested.size){
+      const add=[];
+      [rng(67,99).concat([0]), rng(100,176)].forEach(run=>six(run).forEach(c=>{
+        const id="numtest:"+c[0]; if(!done.has(id) && c.every(n=>tested.has(n))) add.push(id); }));
+      if(add.length) p.doneSkills=add.concat(arr(p.doneSkills));
+    } }
   p.lessonUnlocks=arr(p.lessonUnlocks); // individual paid lessons unlocked with talents (500 each) instead of subscribing
   if(typeof p.firstWin!=="boolean") p.firstWin=false; // completed the 90-second "first verse hidden" onboarding win
   if(!("persona" in p)) p.persona=null; if(!("dailyMin" in p)) p.dailyMin=null; if(!("bibleFam" in p)) p.bibleFam=null; // intake answers (tailor copy/goalpost/pacing)
@@ -5002,6 +5047,8 @@ function migrateProg(p){
   // which for all but a handful of people is the KJV.
   if(!p.trStash||typeof p.trStash!=="object") p.trStash={};
   if(typeof p.trActive!=="string" || !p.trActive) p.trActive=(typeof Store!=="undefined" ? Store.get("vv_trans","KJV") : "KJV");
+  if(typeof p.wPhaseMax!=="number") p.wPhaseMax=-1;                   // the same, for the Word for Word ladder
+  if(p.track!=="w4w") p.track="num";                                  // which ladder the Learn path is showing
   if(typeof p.phaseMax!=="number") p.phaseMax=-1;                     // -1 = work it out from what they have done
   p.videoOrder=arr(p.videoOrder);                                    // films unlocked, in the order they arrived
   if(!p.revPrefs||typeof p.revPrefs!=="object") p.revPrefs={};       // how the user wants to be asked in review
@@ -5216,6 +5263,8 @@ function mergeProg(a,b){
   m.libBackfilled=a.libBackfilled||b.libBackfilled;
   m.locPast=Object.assign({},a.locPast||{},b.locPast||{});
   m.phaseMax=Math.max(a.phaseMax||0,b.phaseMax||0);
+  m.wPhaseMax=Math.max(a.wPhaseMax||0,b.wPhaseMax||0);       // each ladder reveals independently
+  m.track=a.track||b.track||"num";
   m.videoOrder=[...(a.videoOrder||[])]; (b.videoOrder||[]).forEach(k=>{ if(!m.videoOrder.includes(k)) m.videoOrder.push(k); });
 
   /* ---- the verse ladder and the word-for-word record are progress, and merge like the rest ---- */
@@ -6541,12 +6590,22 @@ function buildUnits(){
   /* 00 is taught with the two-digit pegs it belongs to rather than at the very start, so it lands
      after 99 and before the hundreds begin. It is a real peg — PEGS[0] is "Sauce" and pegFor(0)
      has always worked — it simply had no place on the path and nothing tying it to the world. */
-  { const NUMS=range(67,99).concat([0], range(100,176)), PER=6, chunks=[];
-    for(let i=0;i<NUMS.length;i+=PER) chunks.push(NUMS.slice(i,i+PER));
-    // 110 does not divide by six. Rather than end on a stub of two, the tail joins the last full set.
-    if(chunks.length>1 && chunks[chunks.length-1].length<PER/2){
-      const tail=chunks.pop(); chunks[chunks.length-1]=chunks[chunks.length-1].concat(tail); }
-    chunks.forEach((nums,ci)=>{
+  /* Two runs, chunked separately. The two-digit pegs end on 00, and that is where the path forks:
+     from there every word in the Bible can be given a picture the reader already owns, so Word for
+     Word opens as a second ladder beside this one. Chunked as one continuous run, 00 landed in the
+     middle of 12F (97 98 99 00 100 101) and there was no seam to fork on. Now 12F is 97, 98, 99 and
+     00, four lessons, and the hundreds begin a set of their own. It is still nineteen subsections,
+     so every phase index an account has saved still points at the phase it meant. */
+  { const PER=6, RUNS=[range(67,99).concat([0]), range(100,176)], chunks=[];
+    RUNS.forEach((run,ri)=>{
+      const part=[];
+      for(let i=0;i<run.length;i+=PER) part.push(run.slice(i,i+PER));
+      // A tail of one or two joins the set before it rather than standing as a stub.
+      if(part.length>1 && part[part.length-1].length<PER/2){
+        const tail=part.pop(); part[part.length-1]=part[part.length-1].concat(tail); }
+      part.forEach((nums,pi)=>chunks.push({nums, pegsEnd:ri===0 && pi===part.length-1}));
+    });
+    chunks.forEach(({nums,pegsEnd},ci)=>{
       const a=nums[0], b=nums[nums.length-1];
       const letter=String.fromCharCode(65+ci);            // A, B, C …
       const skills=nums.map(n=>({id:`num:${n}`, label:dispNum("num",n), kind:"num", items:[n]}));
@@ -6554,7 +6613,7 @@ function buildUnits(){
       // rather than one number being taught and quizzed in the same breath.
       const A=dispNum("num",a), B=dispNum("num",b);
       skills.push({id:`numtest:${a}`, label:`Test ${A}–${B}`, kind:"num", items:nums.slice(), testOnly:true});
-      units.push({name:`Phase 12${letter}: ${A}–${B}`, ic:ROUND_ICONS[12], skills});
+      units.push({name:`Phase 12${letter}: ${A}–${B}`, ic:ROUND_ICONS[12], skills, pegsEnd});
     }); }
   // 5) Bible Stories — 20 themed sections of 5, learned after the numbers.
   let sgid=0;
@@ -6562,9 +6621,161 @@ function buildUnits(){
     const skills=g.s.map(st=>{ const id=sgid++; return {id:"story:"+id,label:st[0],kind:"story",items:[id],story:{n:st[0],b:st[1],c:st[2],v:st[3]}}; });
     units.push({name:g.t, ic:STORY_ICONS[gi], story:true, firstStory:gi===0, skills});
   });
+  // 6) Word for Word, the second ladder. Appended AFTER the stories so that no phase or story that
+  //    already exists changes its index: saved phase reveals and story purchases both lean on it.
+  W_PHASES.forEach(P=>{
+    const skills=P.lessons.map(([kind,id,label,face,items,teach])=>({id:kind+":"+id, label, kind, items:items.slice(), face, teach}));
+    skills.push({id:"wtest:"+P.n, label:P.test, kind:"wtest", items:skills.map(s=>s.id), face:"★", testOnly:true});
+    units.push({name:`Phase ${P.n}: ${P.t}`, ic:P.ic, track:"w4w", skills});
+  });
   return units;
 }
 function range(a,b){ const r=[]; for(let i=a;i<=b;i++) r.push(i); return r; }
+/* ---- Word for Word: the second ladder ---------------------------------------------------------
+   Opens when the pegs 00–99 are complete, at the end of Phase 12F, and is climbed BESIDE the
+   numbers rather than after them. Why each lesson exists and what it will teach is in
+   docs/word-for-word-curriculum.md; every frequency quoted here was counted from kjv.js.
+   Each lesson is [kind, id, title, face, items, what it teaches]. An item is one thing to be known,
+   and becomes its own review card, sk:<kind>:<item>, exactly as a number does.
+   The faces are stand-ins until the marks are drawn, and say what a word DOES rather than naming a
+   mark: five of the first marks proposed turned out to be peg words already (docs/fable-brief-W1). */
+const W_PHASES=[
+ {n:"W1", t:"The Threshold", ic:"🚪", test:"Test W1", lessons:[
+  ["onset","and","Mid Stride","⏩",["and"],"And walks straight on out of the verse before without breaking stride. It opens 11,615 verses, more than one in three."],
+  ["onset","for-but","Reason & Turn","↩️",["for","but"],"For backs in, pointing at the verse before: because of that. But skids, spins and comes in the other way. Between them, one verse in ten."],
+  ["onset","the-then","This, and Next","🕰️",["the","then"],"The fixes its stare on one thing only. Then waits its turn and steps in after. 2,676 verses between them."],
+  ["onset","i-he","Centre & Edge","🎭",["i","he"],"I strides in centre stage, fist on its chest. He edges in at the side, watching someone else."],
+  ["onset","now-so","Now, and So","⚡",["now","so","therefore"],"Now slams down from above, this instant. So and Therefore are shoved in from behind by what came before."],
+  ["onset","open","Already Inside","🔓",["open"],"Some verses have no entrance at all. The scene snaps on and you are already standing in it. One verse in seven."]]},
+ {n:"W2", t:"The Doorway", ic:"🗝️", test:"Test W2", lessons:[
+  ["door","lord","The Name","🌟",["lord"],"LORD is the first word of weight in 993 verses, more than any other word in the Bible."],
+  ["door","said","The Saying","💬",["said"],"said carries the meaning of 886 verses in from the door."],
+  ["door","came","The Coming","🚶",["came"],"came, in 652 verses."],
+  ["door","shalt-behold","Command & Look","👁️",["shalt","behold"],"shalt and behold: the word that commands and the word that makes you look."],
+  ["door","thus-king","Declaration","👑",["thus","king"],"thus and king, 745 verses between them."],
+  ["door","households","Households","🏠",["children","god","jesus"],"children, God and Jesus. With the seven before them, ten words open one verse in six."]]},
+ {n:"W3", t:"Where Things Sit", ic:"📦", test:"Test W3", lessons:[
+  ["op","in-on","Inside, On Top","📥",["in","on"],"in is held inside. on is resting on top, taking the weight. The sound cannot tell them apart; the shape can."],
+  ["op","of","The Link","🔗",["of"],"of is a chain between two things: this belongs to that. 34,618 times."],
+  ["op","to-from","Toward & Away","↔️",["to","unto","from"],"to and unto move toward. from moves away."],
+  ["op","upon-under","Over & Under","⬆️",["upon","under"],"upon is laid over. under is beneath."],
+  ["op","through-into","Through & Into","➡️",["through","into"],"through passes bodily through. into goes in and stays."],
+  ["op","beside","Beside","🤝",["by","at","with"],"by, at and with: standing near, standing at, standing together."]]},
+ {n:"W4", t:"Who Is Speaking", ic:"🫵", test:"Test W4", lessons:[
+  ["pro","i","Myself","🙋",["i","me","my"],"I, me, my. Point at your own chest."],
+  ["pro","thou","You, One","👉",["thou","thee","thy"],"thou, thee, thy. Point at one listener."],
+  ["pro","he","Him","🧍",["he","him","his"],"he, him, his. A figure standing to one side."],
+  ["pro","they","Her and Them","👥",["she","her","they","them"],"she, her, they, them."],
+  ["pro","we","Us","⭕",["we","us","our"],"we, us, our. A closed circle, and you are in it."],
+  ["pro","ye","You, Many","🙌",["ye","you","your"],"ye, you, your. A sweep of the hand across a crowd."]]},
+ {n:"W5", t:"The Small Change", ic:"🪙", test:"Test W5", lessons:[
+  ["gl","articles","The Articles","📌",["the","a","an"],"the, a, an. The commonest word in the Bible appears 63,919 times."],
+  ["gl","joins","The Joins","➕",["and","but","or"],"and, but, or, in the middle of a sentence."],
+  ["gl","being","Being","🌱",["is","was","be","art","am"],"is, was, be, art, am."],
+  ["gl","will","What Will Be","⏳",["shall","shalt","will","would"],"shall, shalt, will, would."],
+  ["gl","denials","The Denials","🚫",["not","no","nor"],"not, no, nor."],
+  ["gl","pointers","The Pointers","☝️",["that","which","all"],"that, which, all."]]},
+ {n:"W6", t:"The Spark", ic:"✨", test:"Test W6", lessons:[
+  ["spark","read","Reading a Word","🔎",["read"],"Take the first two consonant sounds of a word and the Major System turns them into a peg you already own."],
+  ["spark","back","Backwards","🔁",["back"],"A picture, two digits, two sounds, and the sentence closes the gap to the word."],
+  ["spark","things","On Things","🪨",["things"],"Sparks on nouns."],
+  ["spark","doings","On Doings","🏃",["doings"],"Sparks on verbs."],
+  ["spark","tie","Breaking a Tie","⚖️",["tie"],"No spark names one word on its own. The sentence around it chooses between the few that fit."],
+  ["spark","when","When Not To","🤚",["when"],"The small words never get a spark. They have a code of their own already."]]},
+ {n:"W7", t:"Breath and Cadence", ic:"🌬️", test:"Test W7", lessons:[
+  ["chunk","breath","Breath Groups","💨",["breath"],"A verse is not twenty five words. It is four to six breaths."],
+  ["chunk","station","Breath Stations","📍",["station"],"Walk the verse's own scene, one breath at each stop."],
+  ["fmla","came","Set Phrases I","📜",["came"],"And it came to pass, and its relatives, learned as one move."],
+  ["fmla","saith","Set Phrases II","📣",["saith"],"Thus saith the LORD. Verily I say unto you."],
+  ["pros","cadence","Cadence","🎵",["cadence"],"One rhythm for each verse, kept for good."],
+  ["pros","voice","Your Own Voice","🎙️",["voice"],"Record a verse once, and review it against your own voice."]]},
+ {n:"W8", t:"The Whole Verse", ic:"📖", test:"Test W8", lessons:[
+  ["asm","short","A Short Verse","1️⃣",["short"],"Address, entrance, doorway, and the breaths that follow, end to end."],
+  ["asm","longer","A Longer Verse","2️⃣",["longer"],"More breaths, more stations."],
+  ["asm","cold","Cold","🧊",["cold"],"The whole verse from nothing, with only the hint ladder to lean on."],
+  ["asm","repair","Repair","🩹",["repair"],"What to do with a word that will not come."],
+  ["asm","own","Your Own","✍️",["own"],"Encode a verse you chose yourself."],
+  ["asm","sealed","Sealed","🔏",["sealed"],"Take one verse the whole way down the review trail."]]}
+];
+const W_KINDS=["onset","door","op","pro","gl","spark","chunk","fmla","pros","asm","wtest"];
+/* Phase W1's entrances, authored with Fable 5 from docs/fable-brief-W1-threshold.md and kept as it
+   returned them in docs/w1-entrances.json (only hyphens taken out, as everywhere in the app's
+   wording). Each is a way of ARRIVING at a verse's scene, never a thing in it, and none is a peg
+   word: that was checked against every peg and every alternate. Therefore shares So's entrance.
+   n: the word as shown · e: the entrance · a: arriving · d: reading it back · c: its nearest neighbour */
+const W1_ENTRANCES={
+ and:{n:"And", e:"Walk straight through without breaking stride",
+  a:"You are still walking out of the last verse's scene, mouth open, mid sentence, and you simply keep going: same pace, same direction, not even a pause, straight into this scene where the three address pegs are already waiting. The ground of the last scene runs on under you; you never glanced down to see where one ended and the other began.",
+  d:"Never stopped, never paused, still mid sentence = this verse is joined straight onto the one before: And.",
+  c:"The open entrance has no walk at all (you are already standing there with nothing behind you); And is always caught mid step with the previous scene still at your back."},
+ for:{n:"For", e:"Back in, pointing at last scene",
+  a:"You come in backwards, eyes fixed on the scene you just left, jabbing a finger at it the whole way: 'Because of THAT.' You do not turn round until you are fully inside among the pegs, and even then you keep glancing back over your shoulder at it.",
+  d:"Backing in while pointing at what was just said = you are giving the reason for it: For (because).",
+  c:"So is shoved in from behind and stumbles forward facing away from the last scene; For walks in backwards facing it and pointing, and nobody pushed."},
+ but:{n:"But", e:"Skid to a halt and U turn",
+  a:"You march in one way, fully committed, then screech to a stop, spin a half turn on the spot, and stride in the exact opposite direction into the scene. The three pegs watch you arrive facing the way nobody expected.",
+  d:"Arriving the opposite way from the way you set out = the reverse of what was expected: But.",
+  c:"For also faces backwards, but For backs in steadily and points; But skids, spins hard and marches off the opposite way with no pointing at all."},
+ the:{n:"The", e:"Fixed stare, straight to one thing",
+  a:"You cross in with your stare already fixed: everything else in the scene drains to grey and you walk dead straight, unblinking, to the one thing you came for, and stop right in front of it. You never look at anything else, because there is only the one.",
+  d:"A stare fixed on one particular thing and nothing else = this one in particular: The.",
+  c:"Then steps in on its turn after someone else has left; The ignores everyone else entirely and homes in on the single thing."},
+ then:{n:"Then", e:"Step in next, on your turn",
+  a:"The last scene's actor finishes, bows, and walks off; there is one clear beat of empty silence, and only then do you step forward into the space they left, exactly on your turn. Not with them, not before them: after.",
+  d:"One finishes, a beat, then the next steps in = what comes next in order: Then.",
+  c:"The has you homing in on one thing with nobody leaving; Then is always someone finishing first and you stepping in after the gap (and unlike And, there IS a gap)."},
+ i:{n:"I", e:"Stride in centre stage, thumping your chest",
+  a:"You come in dead centre, chest out, one fist thumping your own breastbone — 'ME' — and the whole scene is seen from behind your own eyes. You are not watching anyone; you are the one it is happening to.",
+  d:"Thumping your own chest and seeing it all from your own eyes = the speaker is yourself: I.",
+  c:"He edges in at the side and watches someone else; I barges in centre stage and points at itself."},
+ he:{n:"He", e:"Edge in sideways, watching him",
+  a:"You slide in sideways along the very edge of the scene, arms folded, and stay there, because the action belongs to someone else: a third figure in the middle whom you nod towards. You watch him; you are not him.",
+  d:"You on the edge, nodding at someone else in the middle = a third person: He.",
+  c:"I is centre stage thumping its own chest; He hugs the edge and nods at another figure."},
+ now:{n:"Now", e:"Slam down from above, this instant",
+  a:"No approach, no lead up: you plummet straight down out of nowhere and slam into the middle of the scene with a thump that makes all three pegs jump. One second you were not here; this second you are.",
+  d:"No approach at all, just a sudden slam landing = this instant: Now.",
+  c:"Open has you already standing there, unmoving, when the scene begins; Now slams in with a thump everyone hears."},
+ so:{n:"So · Therefore", e:"Shoved in from behind, stumbling forward",
+  a:"A hard shove straight out of the last scene hits you in the back and you stumble in forward, arms windmilling, facing away from where you came, carried by the push. You did not choose this scene; the last one sent you here.",
+  d:"Pushed here by what came before = you are its result: So / Therefore.",
+  c:"For backs in facing the last scene and points at it; So is propelled in facing away from it, the last scene at its back and no pointing."},
+ open:{n:"No little word", e:"Already standing there, no arrival",
+  a:"There is no crossing. The scene snaps on and you are simply already in the middle of it, perfectly still, as if you had always been there. Nobody saw you come in, because you did not.",
+  d:"No entrance at all, nothing before the scene = no little word before the first heavy one; the verse starts straight on it: open.",
+  c:"And is always mid step with the last scene at your back; open never moved and has no last scene behind it."}
+};
+// Fable's worked example for each entrance, from the same docs/w1-entrances.json.
+const W1_EXAMPLES={
+ and:"Genesis 1:3 — you walk on out of 1:2 without breaking stride, still talking, and the three pegs are already there with a voice already speaking: And God said.",
+ for:"John 3:16 — you back into the scene, finger jabbed at 3:15, explaining it: For God so.",
+ but:"Isaiah 40:31 — you were marching along with 40:30, you skid, spin, and stride into the scene the opposite way: But they that.",
+ the:"Psalm 23:1 — you cross in with everything greyed out but one presence, shown as glory, and walk dead straight to it: The LORD is.",
+ then:"Matthew 4:1 — the scene of 3:17 finishes and clears, a beat, and you step in as the next in turn: Then was Jesus.",
+ i:"Philippians 4:13 — you stride in centre stage, fist on your chest, first person: I can do.",
+ he:"Psalm 91:1 — you edge in at the side, arms folded, nodding at the one in the middle of the scene: He that dwelleth.",
+ now:"Hebrews 11:1 — you drop in from above and land with a thump among the pegs: Now faith is.",
+ so:"Genesis 1:27 — a shove straight out of 1:26 sends you stumbling in among the pegs: So God created; Romans 5:1 — the same shove, out of chapter 4: Therefore being justified.",
+ open:"John 11:35 — no crossing, the scene snaps on and you are already standing in it: Jesus wept; Matthew 5:3 — the same, already there: Blessed are the."
+};
+// What each entrance is called on a chip, where the whole sentence will not fit.
+const W1_SHORT={and:"Mid stride", for:"Backing in", but:"U turn", the:"Fixed stare", then:"On your turn",
+  i:"Centre stage", he:"At the edge", now:"Slam down", so:"Shoved in", open:"Already there"};
+// Each entrance's nearest neighbour: the one it is most often mistaken for, as its c line says.
+const W1_NEAR={and:"open", for:"so", but:"for", the:"then", then:"the", i:"he", he:"i", now:"open", so:"for", open:"and"};
+// What a reader may type for each. So and Therefore share an entrance; open has no little word.
+const W1_SAY={and:["and"], for:["for"], but:["but"], the:["the"], then:["then"], i:["i"], he:["he"], now:["now"],
+  so:["so","therefore"], open:["none","no","nothing","open"]};
+/* The small words of LATER phases. A verse opening on one of these (In, Thou, O, Let …) has no
+   entrance in W1 and is never used in its lessons. Anything that is neither this nor an entrance
+   word is a word of weight, and a verse that starts on one starts cold: the open entrance. */
+const W1_LATER=new Set(("a an in of to unto from into upon on at by with without within through over under after before "+
+  "behind beside between among against about above below toward towards until till while when whence whither where "+
+  "wherefore why how who whom whose which what whatsoever whosoever whoso whether that this these those there here thus "+
+  "if lest though although because as neither nor or yea nay also even not no all every each both either some any many "+
+  "much more most such o oh lo behold let thou thee thy thine ye you your we us our they them their she her it its his "+
+  "him me my mine one am is are was were be been art hast hath had have has do doth did shall shalt will wilt would "+
+  "should could can may might must verily surely moreover furthermore likewise howbeit nevertheless yet again only").split(" "));
 const UNITS=buildUnits();
 // A bought section used to be recorded by its POSITION, which reordering the list silently
 // invalidates - you would come back owning a different section. It is recorded by NAME now.
@@ -6583,7 +6794,12 @@ const STORY_ORDER_V1=["Creation & the Fall","Abraham & the Patriarchs","Jacob & 
 
 function skillDue(sk){ // min due across items (single-direction key)
   let min=Infinity, any=false;
-  sk.items.forEach(n=>{ const k=`sk:${sk.kind}:${n}`; if(SRS[k]){ any=true; min=Math.min(min,SRS[k].due); } });
+  // A Word for Word test holds no cards of its own: its items are lessons, and it is as due as
+  // the entrances those lessons put in review.
+  const keys = sk.kind==="wtest"
+    ? UNITS.flatMap(u=>u.skills).filter(s=>sk.items.includes(s.id)).flatMap(s=>s.items.map(n=>`sk:${s.kind}:${n}`))
+    : sk.items.map(n=>`sk:${sk.kind}:${n}`);
+  keys.forEach(k=>{ if(SRS[k]){ any=true; min=Math.min(min,SRS[k].due); } });
   return any?min:null;
 }
 function skillColor(sk,unlocked){
@@ -6602,8 +6818,12 @@ function skillUnlocked(ui,si){
   if(sk0&&sk0.kind==="story"){ const s=sk0.story; return reachable(bookNum(s.b),s.c,s.v); }
   // Pro subscribers roam the books freely — sounds, numbers and palaces still come in order.
   if(sk0&&sk0.kind==="book"&&Billing.isPro()) return true;
-  const flat=flatSkills(), idx=flat.findIndex(x=>x.ui===ui&&x.si===si);
-  if(idx<=0) return true;
+  // Each track is its own ladder. A number waits on the number before it and a word lesson on the
+  // word lesson before it, never on the other track, so neither can hold the other back.
+  const track=unitTrack(UNITS[ui]);
+  const flat=flatSkills().filter(x=>unitTrack(UNITS[x.ui])===track), idx=flat.findIndex(x=>x.ui===ui&&x.si===si);
+  if(idx<0) return true;
+  if(idx===0) return track==="w4w" ? forkOpen() : true;   // the word ladder's first rung is the fork
   // unlock when the previous REQUIRED skill is done — optional (bonus palace) tiles never gate progress
   let j=idx-1; while(j>=0 && flat[j].optional) j--;
   return j<0 ? true : Prog.doneSkills.includes(flat[j].id);
@@ -6679,8 +6899,10 @@ function renderMilestone(m){
 }
 // The next lesson to work on: first unlocked, not-yet-done skill in path order (a "blue" tile).
 // Prefer the main path; fall back to optional skills only if the main path is complete.
-function nextBlueSkill(){
-  const flat=flatSkills(), isStory=f=>UNITS[f.ui].skills[f.si].kind==="story";   // stories have their own tab; keep Learn focus off them
+function nextBlueSkill(track){
+  // On the ladder being climbed. The other ladder's next lesson is its own card's business.
+  track=track||activeTrack();
+  const flat=flatSkills().filter(f=>unitTrack(UNITS[f.ui])===track), isStory=f=>UNITS[f.ui].skills[f.si].kind==="story";   // stories have their own tab; keep Learn focus off them
   for(const f of flat){ if(!isStory(f) && !f.optional && !Prog.doneSkills.includes(f.id) && skillUnlocked(f.ui,f.si)) return f; }
   for(const f of flat){ if(!isStory(f) && !Prog.doneSkills.includes(f.id) && skillUnlocked(f.ui,f.si)) return f; }
   return null;
@@ -6904,6 +7126,22 @@ function goalpostCard(){
 // The section you are working through and the one before it stand open; everything else is
 // folded away. Finish a section and the next one opens itself, because "cur" has moved on.
 function defaultExpanded(ui){ const s=new Set([ui]); if(ui>0) s.add(ui-1); return s; }
+/* The fork, at the foot of the Learn path once 00–99 is complete: a card per ladder, each naming the
+   furthest phase opened on it and how much of that phase is done. Tapping one climbs that ladder,
+   and the path above redraws as that ladder alone. */
+function trackCardHTML(t, on){
+  const U=UNITS[ensurePhaseMax(t)]||{skills:[]};
+  const req=U.skills.filter(sk=>!sk.optional), done=req.filter(sk=>Prog.doneSkills.includes(sk.id)).length;
+  const dots=req.map(sk=>`<i class="${Prog.doneSkills.includes(sk.id)?"on":""}"></i>`).join("");
+  return `<button class="trackcard${on?" on":""}" data-track="${t}">
+    <span class="tc-h">${t==="w4w"?"📖 Word for Word":"🔢 Numbers"}</span>
+    <span class="tc-p">${U.ic?U.ic+" ":""}${bbEsc(String(U.name||"").replace(/^Phase\s+/,""))}</span>
+    <span class="tc-d">${dots}</span><span class="tc-n">${done} of ${req.length}</span></button>`;
+}
+function trackChooserHTML(track){
+  return `<div class="trackpick"><div class="tp-t">Choose your climb</div>
+    <div class="tp-row">${trackCardHTML("w4w",track==="w4w")}${trackCardHTML("num",track==="num")}</div></div>`;
+}
 function renderPath(focus){
   markScreen(()=>{ show("learn"); renderPath(); });
   updateMetrics();
@@ -6923,9 +7161,10 @@ function renderPath(focus){
       <span class="ift"><b>${V.title}</b><small>${seen?"Watched · play it again any time":"4 minutes · start here"}</small></span>
       ${seen?'<span class="ifdone">✓</span>':""}</button>`;
   }
-  const upTo=ensurePhaseMax();
+  const track=activeTrack(), upTo=ensurePhaseMax(track);
   UNITS.forEach((U,ui)=>{
     if(U.story) return;                       // stories live in their own tab
+    if(unitTrack(U)!==track) return;          // one ladder at a time; the cards at the foot swap them
     if(ui>upTo) return;                       // not earned yet — its scratch off opens it
     html+=`<div class="phasedivider">${U.ic?U.ic+" ":""}${U.name}</div>`;
     html+=`<div class="path" style="--band:${phase++ % 4}">`;   // a lighter band every phase, cycling
@@ -6939,13 +7178,15 @@ function renderPath(focus){
         return;
       }
       const pro=skillPaywalled(sk);
-      const label = sk.kind==="book" ? sk.label : (sk.items.length===1?`${sk.items[0]} · ${sk.label}`:sk.label);
-      const face = sk.items.length===1?sk.items[0]:"★";
+      // A word lesson carries its own face and title; numbers and books show what they teach.
+      const label = (sk.kind==="book" || sk.face) ? sk.label : (sk.items.length===1?`${sk.items[0]} · ${sk.label}`:sk.label);
+      const face = sk.face || (sk.items.length===1?sk.items[0]:"★");
       html+=`<button class="tile ${color} ${d} ${pro?"pro":""}" data-ui="${ui}" data-si="${si}" ${(color==="locked")?"disabled":""}>
         ${pro?`<span class="lockbadge">${sk.kind==="book"?"🪙":"🔒"}</span>`:""}${face}<small>${label}</small></button>`;
     });
     html+=`</div>`;
   });
+  if(trackOpen()) html+=trackChooserHTML(track);
   L.innerHTML=html;
   if(el("introFilm")) el("introFilm").onclick=()=>openVideoScreen("intro", ()=>renderPath(true));
   L.querySelectorAll(".tile.video").forEach(t=>t.onclick=()=>openVideoScreen(t.dataset.video, ()=>renderPath(true)));
@@ -6953,6 +7194,10 @@ function renderPath(focus){
     if(t.classList.contains("locked")) return;   // out of sequence — not even buyable
     if(t.classList.contains("pro")){ openPaywall(UNITS[+t.dataset.ui].skills[+t.dataset.si]); return; }
     startLesson(UNITS[+t.dataset.ui].skills[+t.dataset.si]);
+  });
+  L.querySelectorAll(".trackcard").forEach(b=>b.onclick=()=>{
+    if(b.dataset.track===activeTrack()) return;
+    Prog.track=b.dataset.track; saveProg(); renderPath(true);
   });
   if(nb){
     const tile=L.querySelector(`.tile[data-ui="${nb.ui}"][data-si="${nb.si}"]`);
@@ -7537,6 +7782,7 @@ function startLesson(sk, ret){
   lessonReturn = ret || null;
   if(!sk || !sk.id) return renderPath();           // nothing to open — go back to the path rather than throw
   if(skillPaywalled(sk)) return openPaywall(sk);   // Pro-only content — offer whole-app subscription or a single-lesson talent unlock
+  if(W_KINDS.includes(sk.kind)) return startWLesson(sk);   // Word for Word keeps a runner of its own
   // The film that explains what a book lesson even is, once, immediately before the first one.
   // NOT maybeVideo: it runs the callback even when the film has already been seen, and a callback
   // that re-enters startLesson would then recurse forever. Watching marks it seen, so the re-entry
@@ -7571,6 +7817,252 @@ function startLesson(sk, ret){
   LZ={sk,steps:steps.concat(tests),i:0,total:0,ok:0};
   LZ.total=LZ.steps.length;
   renderStep();
+}
+/* ---- Word for Word: running a lesson ---------------------------------------------------------
+   An entrance lesson is the number lesson's shape with beats of its own (docs/word-for-word-
+   curriculum.md, sections 4 and 6): TEACH the entrance; RECOGNISE it among real openings; PRODUCE
+   the word cold from the entrance, which is the beat that does the work; and CONTRAST it with its
+   nearest neighbours last, when the trace is warm. Every answer grades sk:onset:<entrance> through
+   gradeKey, so an entrance goes into review exactly as a number does. The openings are the KJV's
+   own, since the counts and the first words were taken from kjv.js.
+   Phases W2–W8 are still being written, so their tiles open onto what they will cover and record
+   nothing: a lesson marked done that taught nothing would put a card in review nothing earned. */
+function startWLesson(sk){
+  if(sk.kind==="onset") return startOnsetLesson(sk);
+  if(sk.id==="wtest:W1") return startW1Test(sk);
+  const U=UNITS.find(u=>u.skills.indexOf(sk)>=0)||{skills:[]};
+  const body = sk.testOnly
+    ? U.skills.filter(s=>!s.testOnly).map(s=>`<div style="margin:6px 0"><b>${s.face||""} ${bbEsc(s.label)}</b></div>`).join("")
+    : `<p class="lead" style="margin:0">${bbEsc(sk.teach)}</p>`;
+  const still = sk.testOnly ? "Asks all six together, both ways round. This test is being written."
+    : "Teach it, work with it, then test it. This lesson is being written.";
+  pkSheet(`${sk.face||""} ${bbEsc(sk.label)}`, bbEsc(String(U.name||"").replace(/^Phase\s+/,"")),
+    `<div style="grid-column:1/-1">${body}
+      <p class="hint" style="margin:14px 0 0">${still}</p></div>`);
+}
+// The entrances a lesson teaches. Therefore shares So's.
+function onsetEnts(sk){ return [...new Set((sk.items||[]).map(w=>w==="therefore"?"so":w))].filter(w=>W1_ENTRANCES[w]); }
+function w1Text(b,c,v){ try{ return (window.KJV[b-1][c-1][v-1])||""; }catch(e){ return ""; } }
+// How a verse is entered, from its first word: an entrance, "open", or null for a later phase's word.
+function w1EntranceOf(text){
+  const w=String(text||"").trim().split(/\s+/)[0].replace(/[^A-Za-z]/g,"").toLowerCase();
+  if(!w) return null;
+  if(w==="therefore") return "so";
+  if(W1_ENTRANCES[w]) return w;
+  return W1_LATER.has(w) ? null : "open";
+}
+/* Openings for each entrance, gathered over the whole KJV once, on first use. The verses a reader
+   is likely to meet, the app's curated ones, are kept apart and drawn from first. */
+let _w1Pool=null;
+function w1Pool(){
+  if(_w1Pool) return _w1Pool;
+  const known={}, rest={}, count={};
+  Object.keys(W1_ENTRANCES).forEach(e=>{ known[e]=[]; rest[e]=[]; count[e]=0; });
+  const mine=new Set();
+  allVerses().forEach(x=>{ const b=bookNum(x.b), k=refKey(b,x.c,x.v), e=w1EntranceOf(w1Text(b,x.c,x.v));
+    if(e && !mine.has(k)){ mine.add(k); known[e].push([b,x.c,x.v]); } });
+  (window.KJV||[]).forEach((bk,bi)=>(bk||[]).forEach((ch,ci)=>(ch||[]).forEach((t,vi)=>{
+    const e=w1EntranceOf(t); if(!e) return;
+    count[e]++;
+    if(!mine.has(refKey(bi+1,ci+1,vi+1))) rest[e].push([bi+1,ci+1,vi+1]);
+  })));
+  _w1Pool={known, rest, count};
+  return _w1Pool;
+}
+// Up to n openings for an entrance, none of them in `avoid`: curated verses first, then any.
+function w1Pick(e, n, avoid){
+  const P=w1Pool(), no=new Set((avoid||[]).map(r=>r.join(":"))), out=[];
+  [P.known[e]||[], P.rest[e]||[]].forEach(list=>{
+    for(let tries=0; out.length<n && list.length && tries<200; tries++){
+      const r=list[Math.floor(Math.random()*list.length)], k=r.join(":");
+      if(!no.has(k)){ no.add(k); out.push(r); }
+    }
+  });
+  return out;
+}
+// A verse's first six words: as much as it takes to hear how it opens.
+function w1Opening(r){ const w=w1Text(r[0],r[1],r[2]).split(/\s+/); return w.slice(0,6).join(" ")+(w.length>6?" …":""); }
+// What a lesson's contrast sets beside its own entrances: each one's nearest neighbour, then what the
+// phase has already taught, most recent first. Four doors at most.
+function w1ContrastSet(sk, E){
+  const set=E.slice(), add=e=>{ if(e && W1_ENTRANCES[e] && !set.includes(e) && set.length<4) set.push(e); };
+  E.forEach(e=>add(W1_NEAR[e]));
+  const U=UNITS.find(u=>u.skills.indexOf(sk)>=0), before=[];
+  if(U) for(const s of U.skills){ if(s===sk) break; if(s.kind==="onset") before.push(...onsetEnts(s)); }
+  before.reverse().forEach(add);
+  return set;
+}
+function startOnsetLesson(sk){
+  const E=onsetEnts(sk), steps=[];
+  E.forEach(e=>steps.push({w:"teach", kind:"onset", n:e}));
+  E.forEach(e=>steps.push({w:"recognise", kind:"onset", n:e, ents:E}));
+  // Produced cold: three times for a lesson of one entrance, twice each for more, mixed together.
+  const prod=[];
+  E.forEach(e=>w1Pick(e, E.length===1?3:2).forEach(r=>prod.push({w:"produce", kind:"onset", n:e, ref:r})));
+  steps.push(...shuffle(prod));
+  steps.push({w:"contrast", kind:"onset", n:E[0], ents:E, opts:w1ContrastSet(sk,E)});
+  LZ={sk, steps, i:0, total:steps.length, ok:0};
+  renderStep();
+}
+// The phase test: every entrance in the phase, both ways round. From the entrance to the word, typed
+// cold; and from a verse's opening to its entrance.
+function startW1Test(sk){
+  const U=UNITS.find(u=>u.skills.indexOf(sk)>=0)||{skills:[]};
+  const E=[...new Set(U.skills.filter(s=>s.kind==="onset").flatMap(onsetEnts))], steps=[];
+  E.forEach(e=>{ const r=w1Pick(e,1)[0];
+    if(r) steps.push({w:"produce", kind:"onset", n:e, ref:r, test:true});
+    steps.push({w:"which", kind:"onset", n:e, test:true}); });
+  LZ={sk, steps:shuffle(steps), i:0, total:steps.length, ok:0};
+  renderStep();
+}
+// Six openings for a recognise beat: two or three entered this way, the rest other ways, the
+// nearest neighbour and the lesson's other entrances most often.
+function w1RecogniseRows(s){
+  const k=2+Math.floor(Math.random()*2), rows=w1Pick(s.n,k).map(ref=>({ref, hit:true}));
+  const others=Object.keys(W1_ENTRANCES).filter(x=>x!==s.n);
+  const near=[W1_NEAR[s.n], ...(s.ents||[])].filter(x=>x && x!==s.n);
+  for(let tries=0; rows.length<6 && tries<30; tries++){
+    const x=(near.length && Math.random()<.5) ? pick(near) : pick(others);
+    const r=w1Pick(x,1,rows.map(o=>o.ref))[0]; if(r) rows.push({ref:r, hit:false});
+  }
+  return shuffle(rows);
+}
+// Four openings to sort, at least one for each of the lesson's own entrances.
+function w1ContrastRows(s){
+  const want=s.ents.slice(); while(want.length<4) want.push(pick(s.opts));
+  const rows=[];
+  want.forEach(e=>{ const r=w1Pick(e,1,rows.map(o=>o.ref))[0]; if(r) rows.push({e, ref:r}); });
+  return shuffle(rows);
+}
+function renderWStep(s,pct){
+  const L=el("learn"), E=W1_ENTRANCES[s.n]||{};
+  let body="";
+  if(s.w==="teach"){
+    const cnt=(w1Pool().count[s.n]||0).toLocaleString();
+    body=`<div class="stage">
+        <div class="prompt">${s.n==="open"?"The verse opens":"The verse opens with"}</div>
+        <div class="bigword">${bbEsc(E.n)}</div>
+        <div class="sounds">${s.n==="open"?`<b>${cnt}</b> verses start straight on a word of weight`:`<b>${cnt}</b> verses in the Bible open this way`}</div></div>
+      <div class="teachbox"><b class="gold">${bbEsc(E.e)}.</b><br><br>${bbEsc(E.a)}<br><br><b>Reading it back:</b> ${bbEsc(E.d)}</div>
+      ${W1_EXAMPLES[s.n]?`<div class="callout" style="text-align:left">${bbEsc(W1_EXAMPLES[s.n])}</div>`:""}
+      <p class="hint" style="margin:10px 0 0"><b>Not to be confused with:</b> ${bbEsc(E.c)}</p>
+      <button class="btn" id="lNext" style="margin-top:12px;width:100%">I can see it →</button>`;
+  } else if(s.w==="recognise"){
+    if(!s.rows) s.rows=w1RecogniseRows(s);
+    body=`<div class="prompt">You arrive: ${bbEsc(W1_SHORT[s.n])}</div>
+      <p class="hint" style="margin:0 0 10px"><b class="qkey">${bbEsc(E.e)}.</b> Tap every verse that opens this way, then check.</p>
+      <div class="opts">${s.rows.map((r,i)=>`<button class="opt" data-wi="${i}"><span class="wref">${refShort(r.ref)}</span> ${bbEsc(w1Opening(r.ref))}</button>`).join("")}</div>
+      <button class="btn" id="wCheck" style="margin-top:12px;width:100%">Check</button>`;
+  } else if(s.w==="produce"){
+    body=`<div class="prompt">${s.test?"Which word opens it?":"Say it, then type it"}</div>
+      <div class="bigword" style="font-size:26px">${refShort(s.ref)}</div>
+      <div class="teachbox" style="text-align:center">You arrive: <b class="gold">${bbEsc(E.e)}</b></div>
+      <p class="hint" style="margin:8px 0">Which word does the verse start with? If there is no little word before the first word of weight, type <b>none</b>.</p>
+      <input class="typein" id="wIn" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="?">
+      <button class="btn" id="wGo" style="margin-top:12px;width:100%">Check</button>`;
+  } else if(s.w==="which"){
+    if(!s.ref) s.ref=w1Pick(s.n,1)[0];
+    if(!s.choices){ const others=shuffle(Object.keys(W1_ENTRANCES).filter(x=>x!==s.n && x!==W1_NEAR[s.n]));
+      s.choices=shuffle([s.n, W1_NEAR[s.n], others[0], others[1]].filter(Boolean)); }
+    body=`<div class="prompt">Which way do you arrive?</div>
+      <div class="teachbox"><span class="wref">${refShort(s.ref)}</span> ${bbEsc(w1Opening(s.ref))}</div>
+      <div class="opts">${s.choices.map(e=>`<button class="opt" data-we="${e}">${bbEsc(W1_ENTRANCES[e].e)}</button>`).join("")}</div>`;
+  } else if(s.w==="contrast"){
+    if(!s.rows) s.rows=w1ContrastRows(s);
+    body=`<div class="prompt">How do you arrive at each?</div>
+      <div class="opts">${s.rows.map((r,i)=>`<div class="wrow"><span class="wref">${refShort(r.ref)}</span> ${bbEsc(w1Opening(r.ref))}
+        <div class="wchips">${s.opts.map(e=>`<button class="wchip" data-wi="${i}" data-we="${e}">${bbEsc(W1_SHORT[e])}</button>`).join("")}</div></div>`).join("")}</div>
+      <button class="btn" id="wCheck" style="margin-top:12px;width:100%" disabled>Check</button>`;
+  }
+  L.innerHTML=`<div class="lesson">
+    <div class="qhead"><button class="lclose" id="lClose">✕</button><div class="lbar" style="flex:1"><span style="width:${pct}%"></span></div></div>
+    <div id="lBody">${body}</div></div>`;
+  const c=document.querySelector(".content"); if(c) c.scrollTop=0;
+  el("lClose").onclick=()=>{ ttsStop(); renderPath(); }; addTtsBtn(L);
+  wireWStep(s);
+}
+function wireWStep(s){
+  const E=W1_ENTRANCES[s.n]||{};
+  if(s.w==="teach"){ el("lNext").onclick=advance; return; }
+  if(s.w==="recognise"){
+    const bs=[...el("lBody").querySelectorAll(".opt[data-wi]")];
+    bs.forEach(b=>b.onclick=()=>{ if(!b.disabled) b.classList.toggle("on"); });
+    el("wCheck").onclick=()=>{
+      let right=true;
+      bs.forEach(b=>{ const r=s.rows[+b.dataset.wi], on=b.classList.contains("on"); b.disabled=true;
+        if(r.hit && on) b.classList.add("correct");
+        else if(r.hit){ b.classList.add("missed"); right=false; }
+        else if(on){ b.classList.add("wrong"); right=false; }
+        else b.classList.add("dim"); });
+      el("wCheck").remove();
+      wAnswer(s, right, [[s.n,right]], right ? `Every one of them opens <b>${bbEsc(E.n)}</b>.`
+        : `The ones outlined in green open <b>${bbEsc(E.n)}</b>.`);
+    };
+    return;
+  }
+  if(s.w==="produce"){
+    const inp=el("wIn"), go=el("wGo");
+    const check=()=>{
+      if(go.disabled) return;
+      const said=inp.value.trim().toLowerCase().replace(/[^a-z]/g,""); if(!said) return;
+      const good=(W1_SAY[s.n]||[]).includes(said);
+      go.disabled=true; inp.disabled=true; inp.classList.add(good?"correct":"wrong");
+      wAnswer(s, good, [[s.n,good]], `${refShort(s.ref)} opens <b>${bbEsc(w1Opening(s.ref))}</b><br>${bbEsc(E.d)}`);
+    };
+    go.onclick=check;
+    inp.addEventListener("keydown",e=>{ if(e.key==="Enter") check(); });
+    inp.addEventListener("input",()=>inp.classList.remove("wrong"));
+    try{ inp.focus(); }catch(e){}
+    return;
+  }
+  if(s.w==="which"){
+    const bs=[...el("lBody").querySelectorAll(".opt[data-we]")];
+    bs.forEach(b=>b.onclick=()=>{
+      if(b.disabled) return;
+      const good=b.dataset.we===s.n;
+      bs.forEach(x=>{ x.disabled=true; if(x.dataset.we===s.n) x.classList.add("correct"); });
+      if(!good) b.classList.add("wrong");
+      wAnswer(s, good, [[s.n,good]], `It opens <b>${bbEsc(E.n)}</b>: ${bbEsc(String(E.e).toLowerCase())}.`);
+    });
+    return;
+  }
+  if(s.w==="contrast"){
+    const chosen={}, chips=[...el("lBody").querySelectorAll(".wchip")];
+    chips.forEach(b=>b.onclick=()=>{
+      if(b.disabled) return;
+      const i=b.dataset.wi; chosen[i]=b.dataset.we;
+      chips.forEach(x=>{ if(x.dataset.wi===i) x.classList.toggle("on", x===b); });
+      el("wCheck").disabled = Object.keys(chosen).length < s.rows.length;
+    });
+    el("wCheck").onclick=()=>{
+      let right=true; const grades=[];
+      s.rows.forEach((r,i)=>{ const ok=chosen[i]===r.e; if(!ok) right=false;
+        if(s.ents.includes(r.e)) grades.push([r.e, ok]);   // only what this lesson teaches is graded
+        chips.forEach(x=>{ if(x.dataset.wi!==String(i)) return; x.disabled=true;
+          if(x.dataset.we===r.e) x.classList.add("correct"); else if(x.dataset.we===chosen[i]) x.classList.add("wrong"); }); });
+      el("wCheck").remove();
+      wAnswer(s, right, grades, right ? "Every one through its own entrance." : "The green chip is the way in for each.");
+    };
+  }
+}
+/* One answer, marked. Each entrance it touched is graded once, good only if every part of it was
+   right; a miss sends that card back to the beginning and asks the beat again, with a fresh verse. */
+function wAnswer(s, good, grades, detail){
+  if(good){ LZ.miss=0; Sfx.right(); LZ.ok++; } else { LZ.miss=(LZ.miss||0)+1; Sfx.wrong(LZ.miss); }
+  try{ statBump("q"); if(good) statBump("qc"); }catch(e){}
+  const each={}; (grades||[]).forEach(([e,ok])=>{ each[e]=(each[e]!==false) && ok; });
+  Object.keys(each).forEach(e=>gradeKey(`sk:onset:${e}`, each[e]?"good":"miss"));
+  if(!good){
+    const again={w:s.w, kind:s.kind, n:s.n, ents:s.ents, opts:s.opts, test:s.test};
+    if(s.w==="produce") again.ref=w1Pick(s.n,1,[s.ref])[0]||s.ref;
+    LZ.steps.push(again); LZ.total++;
+  }
+  const fb=document.createElement("div");
+  fb.className="feedback "+(good?"ok":"no");
+  fb.innerHTML=`<div class="ttl">${good?"Correct!":"Not quite"}</div><div class="sub">${detail}</div>
+    <button class="btn ${good?"":"blue"}" id="fbNext" style="margin-top:10px">Continue</button>`;
+  el("lBody").appendChild(fb);
+  el("fbNext").onclick=advance;
 }
 // the last `max` learned number/book items before this skill (most recent first)
 function recentLearnedItems(skId, max){
@@ -7813,6 +8305,7 @@ function renderStep(){
   const s=LZ.steps[LZ.i];
   const pct=Math.round(100*LZ.i/LZ.total);
   if(s.kind==="sound") return renderSoundStep(s,pct);
+  if(s.w) return renderWStep(s,pct);          // a Word for Word beat
   let body="";
   const word=itemWord(s.kind,s.n), p=pegFor(s.n), snd=p.sounds;
   const PQ = s.kind==="book" ? "prompt qbig" : "prompt";   // books read half again as large
@@ -7963,20 +8456,36 @@ function advance(){ LZ.i++; renderStep(); }
    Only what has been earned: every phase already worked through, plus the one being worked on.
    Finishing the last lesson of a phase wins a scratch off, and scratching it opens the next.
    Prog.phaseMax is the index of the deepest phase revealed.                                   */
-function phaseIdxs(){ const out=[]; UNITS.forEach((U,i)=>{ if(!U.story) out.push(i); }); return out; }
+/* ---- Two ladders --------------------------------------------------------------------------------
+   Every unit belongs to a track. "num" is the path as it has always been. "w4w" is Word for Word,
+   which forks off it once the pegs 00–99 are complete (the phase marked pegsEnd) and is climbed
+   beside it, never after it. Each keeps its own reveal: Prog.phaseMax for the numbers, meaning
+   exactly what it always meant, and Prog.wPhaseMax for words, so opening a phase on one ladder
+   never moves the other.
+   Word for Word stays behind a preview switch (Profile → Admin) until its lessons are written. */
+function unitTrack(U){ return (U && U.track) || "num"; }
+function forkOpen(){ const i=UNITS.findIndex(U=>U.pegsEnd); return i>=0 && phaseComplete(i); }
+function wTrackOn(){ return Store.get("vv_wtrack","")==="1"; }
+function trackOpen(){ return wTrackOn() && forkOpen(); }
+function activeTrack(){ return (trackOpen() && Prog.track==="w4w") ? "w4w" : "num"; }
+function phaseMaxKey(track){ return track==="w4w" ? "wPhaseMax" : "phaseMax"; }
+function setPhaseMax(idx){ Prog[phaseMaxKey(unitTrack(UNITS[idx]))]=idx; }
+function phaseIdxs(track){ track=track||"num"; const out=[]; UNITS.forEach((U,i)=>{ if(!U.story && unitTrack(U)===track) out.push(i); }); return out; }
 function phaseComplete(ui){ const U=UNITS[ui]; return !!U && U.skills.every(sk=>sk.optional||Prog.doneSkills.includes(sk.id)); }
-function furthestStartedPhase(){ let m=0; phaseIdxs().forEach(i=>{ if(UNITS[i].skills.some(sk=>Prog.doneSkills.includes(sk.id))) m=i; }); return m; }
-function ensurePhaseMax(){
+function furthestStartedPhase(track){ const list=phaseIdxs(track); let m=list.length?list[0]:0; list.forEach(i=>{ if(UNITS[i].skills.some(sk=>Prog.doneSkills.includes(sk.id))) m=i; }); return m; }
+function ensurePhaseMax(track){
   // Grandfathered on first run: anyone already part-way keeps everything they had reached.
   // It only ever RISES — never below a phase that already has work in it. It must not rise to the
   // phase holding the next lesson: that one is earned by scratching, and auto-revealing it here
   // would quietly remove the gate (the suite caught exactly that when I tried it).
-  if(typeof Prog.phaseMax!=="number" || Prog.phaseMax<0) Prog.phaseMax=furthestStartedPhase();
-  if(Prog.phaseMax<furthestStartedPhase()){ Prog.phaseMax=furthestStartedPhase(); saveProg(); }
-  return Prog.phaseMax;
+  track=track||"num";
+  const k=phaseMaxKey(track), f=furthestStartedPhase(track);
+  if(typeof Prog[k]!=="number" || Prog[k]<0) Prog[k]=f;
+  if(Prog[k]<f){ Prog[k]=f; saveProg(); }
+  return Prog[k];
 }
-function nextPhaseIdx(){ const list=phaseIdxs(), at=list.indexOf(ensurePhaseMax()); return (at>=0 && at+1<list.length) ? list[at+1] : -1; }
-function openPhase(idx){ sfx("phaseDone"); Prog.phaseMax=idx; saveProg(); show("learn"); renderPath(true); }
+function nextPhaseIdx(track){ const list=phaseIdxs(track), at=list.indexOf(ensurePhaseMax(track)); return (at>=0 && at+1<list.length) ? list[at+1] : -1; }
+function openPhase(idx){ sfx("phaseDone"); setPhaseMax(idx); saveProg(); show("learn"); renderPath(true); }
 function openPhaseScratch(idx, after){
   const U=UNITS[idx];
   Scratch.open(0, {
@@ -7984,11 +8493,11 @@ function openPhaseScratch(idx, after){
  card:{ icon:U.ic||"🎫", name:U.name, desc:"The next stretch of your path. Scratch to open it." },
     // The phase is opened either way; where you are left is the caller's business, because the
     // screen worth returning to is not the same one every time.
-    onClaim:()=>{ Prog.phaseMax=idx; saveProg(); show("learn"); if(after) after(); else renderPath(true); },
+    onClaim:()=>{ setPhaseMax(idx); saveProg(); show("learn"); if(after) after(); else renderPath(true); },
   });
 }
 function maybePhaseScratch(after){
-  const cur=ensurePhaseMax(), nxt=nextPhaseIdx();
+  const t=activeTrack(), cur=ensurePhaseMax(t), nxt=nextPhaseIdx(t);
   if(nxt<0 || !phaseComplete(cur)) return false;
   openPhaseScratch(nxt, after);
   return true;
@@ -8067,14 +8576,20 @@ function finishLesson(){
   if(wasNew) Sfx.lessonDone();
   try{ if(wasNew && sk.kind==="book") statBump("b", (sk.items||[]).length||1); }catch(e){}
   if(Prog.level>lvlBefore) Sfx.levelUp();
-  if(wasNew && (sk.kind==="num"||sk.kind==="book")) bumpGoal();   // learning a new number/book image counts toward today's goal
+  if(wasNew && (sk.kind==="num"||sk.kind==="book"||sk.kind==="onset")) bumpGoal();   // a new number, book image or entrance counts toward today's goal
   const newly=allVerses().filter(v=>reachable(bookNum(v.b),v.c,v.v) && !before.has(rk(v)));
   let msg="";
   if(sk.kind==="num" && sk.items.length===1 && sk.items[0]===Prog.level && Prog.level>=1)
     msg=`<b>New book unlocked:</b> you can now encode <b class="gold">${bookName(Prog.level)}</b>.`;
   else if(sk.kind==="book")
     msg=`<b>${sk.items.length===1?"Book image learned":sk.items.length+" book images learned"}:</b> <b class="gold">${sk.items.map(bookName).join(", ")}</b>.`;
-  const unlocked = newly.length
+  else if(sk.kind==="onset"){ const ents=onsetEnts(sk);
+    msg=`<b>${ents.length===1?"Entrance learned":"Entrances learned"}:</b> `+ents.map(e=>`<b class="gold">${bbEsc(W1_ENTRANCES[e].n)}</b>, ${bbEsc(W1_ENTRANCES[e].e.toLowerCase())}`).join(" · ")+"."; }
+  else if(sk.id==="wtest:W1")
+    msg=`<b>The Threshold, tested.</b> Every entrance, both ways round.`;
+  // Word for Word opens no verses and names no book, so neither the reach callout nor the build offer applies.
+  const wk=W_KINDS.includes(sk.kind);
+  const unlocked = wk ? "" : newly.length
     ? `<div class="callout" style="border-left-color:var(--good)"><b style="color:var(--good)">🌿 ${newly.length} more of His Word within reach</b> Now buildable: <b class="gold">${newly.slice(0,4).map(v=>v.b+" "+v.c+":"+v.v).join(", ")}${newly.length>4?", …":""}</b>.</div>`
  : `<div class="callout">Keep going. Verses unlock once their <b>book, chapter and verse numbers</b> are all learned.</div>`;
   // built below, once the book to land in is known
@@ -8089,7 +8604,7 @@ function finishLesson(){
   // The offer used to appear only when the lesson itself put new verses in reach, so finishing a
   // book that opened nothing new ended with "Learn another" and no way through to a verse at all.
   // It is the way into the Library now, so it appears whenever that book has a verse to build.
-  const canBuild = newly.length>0 || (buildBook && ((suggestedByBook()[buildBook]||[]).length>0));
+  const canBuild = !wk && (newly.length>0 || (buildBook && ((suggestedByBook()[buildBook]||[]).length>0)));
   // Past 66 a number opens a Psalm of its own, and the lesson ends with one verse from it to learn.
   const pa=(sk.kind==="num" && !sk.testOnly && (sk.items||[]).length===1) ? psalmForNumber(sk.items[0]) : null;
   const psalm=(pa && reachable(pa[0],pa[1],pa[2]) && !Prog.skipped.includes(refKey(pa[0],pa[1],pa[2]))) ? pa : null;
@@ -16821,7 +17336,7 @@ if(el("testChurch")) el("testChurch").onclick=()=>{ closeProfile(); openChurch()
 if(el("testFinishPhase")) el("testFinishPhase").onclick=()=>{
   closeProfile();
   if(!Store.get("vv_simbak")) Store.setJSON("vv_simbak", Prog);   // snapshot real progress once, so Restore can undo this
-  const cur=ensurePhaseMax();
+  const cur=ensurePhaseMax(activeTrack());
   UNITS[cur].skills.forEach(sk=>{ if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id); });
   bustCaches(); saveProg(); updateMetrics(); recomputeLevel&&recomputeLevel();
   show("learn"); renderPath(true);
@@ -16830,6 +17345,16 @@ if(el("testFinishPhase")) el("testFinishPhase").onclick=()=>{
     if(!maybePhaseScratch(()=>{ renderPath(true); setTimeout(maybeSuggestPalace,600); })) maybeSuggestPalace();
   }, 500);
 };
+// Word for Word stays out of sight until its lessons are written. This shows it on this device only,
+// so the fork, the chooser and the ladder can be walked before anybody else meets them.
+function wTrackLabel(){ const b=el("testWTrack"); if(b) b.textContent=`📖 Word for Word track: ${wTrackOn()?"shown":"hidden"}`; }
+if(el("testWTrack")){ wTrackLabel(); el("testWTrack").onclick=()=>{
+  if(wTrackOn()) Store.remove("vv_wtrack"); else Store.set("vv_wtrack","1");
+  wTrackLabel();
+  toast(!wTrackOn() ? "📖 Word for Word hidden."
+    : forkOpen() ? "📖 Word for Word shown. Choose it at the foot of Learn."
+    : "📖 Shown. The fork opens once Phase 12F is finished.");
+  if(el("learn").classList.contains("active")) renderPath(); }; }
 if(el("testRomeLetter")) el("testRomeLetter").onclick=()=>{ closeProfile(); Prog.romeLetterSeen=false; saveProg(); openRomeLetter(); };
 if(el("testUnpaid")) el("testUnpaid").onclick=()=>{
  if(Billing.isPro()){ Billing.revoke(); bustCaches(); closeProfile(); toast("🆓 Now simulating an unpaid (free) user. Pro content is locked."); show("learn"); }

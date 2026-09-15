@@ -4108,7 +4108,7 @@ const DAY = 86400000;
   ok(p12.everyLessonOneNumber, 'every lesson button teaches exactly one number');
   ok(p12.oneTestEach, '...with one test tile at the end of each subsection');
   ok(p12.testCoversAll, '...asking for exactly the six that subsection taught');
-  is(p12.sizes, '6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,3', 'sixes throughout, and a last set of three that stands on its own');
+  is(p12.sizes, '6,6,6,6,6,4,6,6,6,6,6,6,6,6,6,6,6,6,5', 'sixes, except 12F, which ends the two-digit pegs on 00, and a last set of five');
   is(p12.covered, 111, 'all 111 numbers are taught');   // 67-99, then 00, then 100-176
   ok(p12.complete, '...every one of 67 to 176');
   ok(p12.noDupes, '...and none of them twice');
@@ -6797,6 +6797,83 @@ const DAY = 86400000;
   ok(psalm.testOffersNone, 'the test of six offers none');
   is(psalm.b151, 'Memorize Psalm 119:151 →', 'past 150 it is the verse of Psalm 119 with that number');
 
+  describe('word for word: the Threshold runs, and goes into review like a number', () => { });
+  const w1 = await $(async () => {
+    const out = { err: null };
+    const keep = { done: Prog.doneSkills.slice(), srs: JSON.parse(JSON.stringify(SRS)) };
+    const skill = id => UNITS.flatMap(u => u.skills).find(s => s.id === id);
+    // play the current beat the right way, from what the beat itself knows
+    const play = () => {
+      const s = LZ.steps[LZ.i];
+      if (s.w === 'teach') { el('lNext').click(); return 'teach'; }
+      if (s.w === 'recognise') { el('lBody').querySelectorAll('.opt[data-wi]').forEach(b => { if (s.rows[+b.dataset.wi].hit) b.click(); }); el('wCheck').click(); }
+      else if (s.w === 'produce') { el('wIn').value = W1_SAY[s.n][0]; el('wGo').click(); }
+      else if (s.w === 'which') el('lBody').querySelector('[data-we="' + s.n + '"]').click();
+      else if (s.w === 'contrast') { s.rows.forEach((r, i) => el('lBody').querySelector('.wchip[data-wi="' + i + '"][data-we="' + r.e + '"]').click()); el('wCheck').click(); }
+      const ok = !!el('lBody').querySelector('.feedback.ok'); el('fbNext').click();
+      return s.w + (ok ? '' : '!');
+    };
+    try {
+      out.entranceOf = ['And God said', 'Therefore being justified', 'Jesus wept.', 'In the beginning', 'Thy word is', 'I can do', 'For God so'].map(w1EntranceOf).join(',');
+      const P = w1Pool();
+      out.thin = Object.keys(W1_ENTRANCES).filter(e => (P.known[e].length + P.rest[e].length) < 20);
+      out.andCount = P.count.and;
+      Prog.doneSkills = keep.done.filter(id => !/^(onset|wtest):/.test(id));
+      Object.keys(SRS).forEach(k => { if (/^sk:onset:/.test(k)) delete SRS[k]; });
+      // lesson two: two entrances, taught, recognised, produced cold, and set side by side
+      show('learn'); startWLesson(skill('onset:for-but'));
+      out.shape = LZ.steps.map(s => s.w[0]).join('');
+      out.teachShows = /Back in, pointing/.test(el('learn').textContent) && /verses in the Bible open this way/.test(el('learn').textContent);
+      const played = []; let guard = 0;
+      while (LZ && guard++ < 40) played.push(play());
+      out.played = played.join(' ');
+      out.done = Prog.doneSkills.includes('onset:for-but');
+      out.cards = !!SRS['sk:onset:for'] && !!SRS['sk:onset:but'] && SRS['sk:onset:for'].box > 1;
+      out.card = el('learn').textContent;
+      // a wrong word is named, asked again, and its card starts over
+      startWLesson(skill('onset:and'));
+      while (LZ.steps[LZ.i].w !== 'produce') play();
+      const before = LZ.total;
+      el('wIn').value = 'but'; el('wGo').click();
+      out.wrongSays = /Not quite/.test(el('lBody').textContent) && /And/.test(el('lBody').textContent);
+      out.requeued = LZ.total === before + 1;
+      out.missResets = SRS['sk:onset:and'].box === 1;
+      LZ = null;
+      out.sayTherefore = W1_SAY.so.includes('therefore') && W1_SAY.open.includes('none');
+      // the phase test asks every entrance, both ways round
+      startWLesson(skill('wtest:W1'));
+      const ents = new Set(LZ.steps.map(s => s.n));
+      out.testShape = { n: LZ.steps.length, ents: ents.size, produce: LZ.steps.filter(s => s.w === 'produce').length };
+      LZ = null;
+      out.dueLesson = skillDue(skill('onset:for-but')) !== null;
+      out.dueTest = skillDue(skill('wtest:W1')) !== null;
+    } catch (e) { out.err = e.message + ' @ ' + String(e.stack || '').split('\n')[1]; }
+    await new Promise(r => setTimeout(r, 900));   // let the finished lesson's own timers run out first
+    Prog.doneSkills = keep.done;
+    Object.keys(SRS).forEach(k => { if (/^sk:onset:/.test(k)) delete SRS[k]; });
+    Object.assign(SRS, keep.srs); save(SRS_KEY, SRS);
+    LZ = null; LESSON_DONE = null; closeEveryOverlay(); bustCaches(); saveProg(); show('learn'); renderPath();
+    return out;
+  });
+  is(w1.err, null, 'the Threshold runs without throwing');
+  is(w1.entranceOf, 'and,so,open,,,i,for', 'the first word of a verse finds its entrance, and a later phase\'s word finds none');
+  is(w1.thin.join(','), '', 'every entrance has openings enough to practise on');
+  ok(w1.andCount > 11000, 'And opens more than eleven thousand verses, counted from the KJV (' + w1.andCount + ')');
+  is(w1.shape, 'ttrrppppc', 'a lesson of two entrances teaches both, recognises each, produces four cold, then contrasts');
+  ok(w1.teachShows, '...and its teaching names the entrance and how many verses open that way');
+  ok(!/!/.test(w1.played), 'played right, every beat is marked correct (' + w1.played + ')');
+  ok(w1.done, 'finishing it marks the lesson done');
+  ok(w1.cards, '...and both entrances are in review, promoted like a number');
+  ok(/Entrances learned/.test(w1.card) && !/Verses unlock/.test(w1.card), '...and its finish card names the entrances, not verses unlocked');
+  ok(w1.wrongSays, 'a wrong word is named, with the right one beside it');
+  ok(w1.requeued, '...asked again');
+  ok(w1.missResets, '...and its card starts over');
+  ok(w1.sayTherefore, 'So also takes Therefore, and the open entrance takes none');
+  is(w1.testShape.ents, 10, 'the Threshold test asks all ten entrances');
+  ok(w1.testShape.n === 20 && w1.testShape.produce === 10, '...each of them both ways round');
+  ok(w1.dueLesson, 'a learned entrance lesson is as due as its cards');
+  ok(w1.dueTest, '...and the test as due as the entrances it asks');
+
   describe('a book lesson will not move on half-answered', () => { });
   const bookGuard = await $(() => {
     closeEveryOverlay();
@@ -7115,6 +7192,95 @@ const DAY = 86400000;
   // ================= THE LEARN PATH (v1.18) =================
   const learnSnap = await $(() => JSON.stringify(Prog));
 
+  // ───────────────────────── the fork: Word for Word beside the numbers ─────────────────────────
+  describe('the fork: two ladders after 00', () => { });
+  const fork = await $(() => {
+    const snap = { done: (Prog.doneSkills || []).slice(), max: Prog.phaseMax, wmax: Prog.wPhaseMax, track: Prog.track, flag: Store.get('vv_wtrack', '') };
+    const out = {};
+    const f = UNITS.find(U => U.pegsEnd), fi = UNITS.indexOf(f);
+    out.forkName = f ? f.name : '';
+    out.forkItems = f ? f.skills.filter(s => !s.testOnly).map(s => s.items[0]).join(',') : '';
+    const w = UNITS.filter(U => unitTrack(U) === 'w4w');
+    out.wCount = w.length;
+    out.wSixEach = w.every(U => U.skills.filter(s => !s.testOnly).length === 6 && U.skills.filter(s => s.testOnly).length === 1);
+    out.wAfterStories = UNITS.findIndex(U => unitTrack(U) === 'w4w') > UNITS.map(U => !!U.story).lastIndexOf(true);
+    out.wIdsUnique = new Set(w.flatMap(U => U.skills.map(s => s.id))).size === w.reduce((n, U) => n + U.skills.length, 0);
+    const w1 = UNITS.indexOf(w[0]);
+
+    // before the fork: the first word lesson is shut and the numbers are the only ladder
+    Prog.doneSkills = []; Prog.track = 'w4w'; Store.set('vv_wtrack', '1'); bustCaches(); saveProg();
+    out.shutBefore = !skillUnlocked(w1, 0);
+    out.trackBefore = activeTrack();
+
+    // finish 12F: the fork opens, word lesson one opens, and the numbers go on regardless
+    Prog.doneSkills = f.skills.map(s => s.id); bustCaches(); saveProg();
+    out.forkOpen = forkOpen();
+    out.w1Open = skillUnlocked(w1, 0);
+    out.w1SecondShut = !skillUnlocked(w1, 1);
+    out.numbersGoOn = skillUnlocked(fi + 1, 0);
+    out.nextNumName = UNITS[fi + 1] ? UNITS[fi + 1].name : '';
+
+    // each ladder keeps its own reveal
+    Prog.phaseMax = fi; Prog.wPhaseMax = -1; saveProg();
+    out.wReveal = ensurePhaseMax('w4w') === w1;
+    out.numReveal = ensurePhaseMax('num') === fi;
+    setPhaseMax(UNITS.indexOf(w[1]));
+    out.wMoved = Prog.wPhaseMax === UNITS.indexOf(w[1]) && Prog.phaseMax === fi;
+
+    // the path draws one ladder, with a card for each at its foot
+    Prog.wPhaseMax = w1; Prog.track = 'w4w'; saveProg(); show('learn'); renderPath();
+    const L = el('learn');
+    out.wDividers = [...L.querySelectorAll('.phasedivider')].map(d => d.textContent).join(' | ');
+    out.cards = L.querySelectorAll('.trackcard').length;
+    const on = L.querySelector('.trackcard.on'); out.cardOn = on ? on.dataset.track : '';
+    L.querySelector('.trackcard[data-track="num"]').click();
+    out.afterTap = Prog.track;
+    out.numPathHasNoWords = ![...el('learn').querySelectorAll('.phasedivider')].some(d => /Phase W/.test(d.textContent));
+
+    // with the preview switched off nobody meets any of it
+    Store.remove('vv_wtrack'); Prog.track = 'w4w'; saveProg(); renderPath();
+    out.hiddenCards = el('learn').querySelectorAll('.trackcard').length;
+    out.hiddenTrack = activeTrack();
+
+    // an account part way through the hundreds keeps its tests under their new names
+    const mig = migrateProg({ doneSkills: ['numtest:97', 'numtest:102', 'num:100', 'num:106'] }).doneSkills;
+    out.migNew = mig.indexOf('numtest:100') >= 0;
+    out.migNotUnearned = mig.indexOf('numtest:106') < 0;
+    out.migFront = mig[0] === 'numtest:100';
+
+    Prog.doneSkills = snap.done; Prog.phaseMax = snap.max; Prog.wPhaseMax = snap.wmax; Prog.track = snap.track;
+    if (snap.flag) Store.set('vv_wtrack', snap.flag); else Store.remove('vv_wtrack');
+    bustCaches(); saveProg();
+    return out;
+  });
+  has(fork.forkName, 'Phase 12F', 'the fork is at Phase 12F');
+  is(fork.forkItems, '97,98,99,0', '...which ends the two-digit pegs on 00');
+  is(fork.wCount, 8, 'Word for Word is eight phases');
+  ok(fork.wSixEach, '...each six lessons and a test, like the numbers');
+  ok(fork.wAfterStories, '...appended after the stories, so no saved index moves');
+  ok(fork.wIdsUnique, '...and no lesson id is used twice');
+  ok(fork.shutBefore, 'before the pegs are complete the word ladder is shut');
+  is(fork.trackBefore, 'num', '...and the numbers are the only ladder');
+  ok(fork.forkOpen, 'finishing 12F opens the fork');
+  ok(fork.w1Open, '...the first word lesson opens');
+  ok(fork.w1SecondShut, '...and the second waits on the first');
+  ok(fork.numbersGoOn, 'the numbers go on without waiting for any word lesson');
+  has(fork.nextNumName, '100', '...starting at 100');
+  ok(fork.wReveal, 'the word ladder reveals its own first phase');
+  ok(fork.numReveal, '...without touching the number reveal');
+  ok(fork.wMoved, 'opening a word phase moves only the word reveal');
+  has(fork.wDividers, 'Phase W1', 'the path draws the word ladder when it is chosen');
+  hasNot(fork.wDividers, 'Phase 12', '...and only that ladder');
+  is(fork.cards, 2, 'a card for each ladder at the foot of the path');
+  is(fork.cardOn, 'w4w', '...the one being climbed marked');
+  is(fork.afterTap, 'num', 'tapping the other card switches ladders');
+  ok(fork.numPathHasNoWords, '...and the path redraws as that ladder alone');
+  is(fork.hiddenCards, 0, 'with the preview off there is no chooser');
+  is(fork.hiddenTrack, 'num', '...and no word ladder, whatever was chosen');
+  ok(fork.migNew, 'a hundreds test already passed survives the re-chunk under its new name');
+  ok(fork.migNotUnearned, '...but a test never taken is never handed out');
+  ok(fork.migFront, '...and the exchanged id never poses as recent work');
+
   describe('learn path', () => { });
   const lpath = await $(() => {
     markVideoSeen('major');
@@ -7122,7 +7288,8 @@ const DAY = 86400000;
     Prog.phaseMax = 99;
     show('learn'); renderPath(true);
     const L = el('learn');
-    const phases = UNITS.filter(U => !U.story);
+    // The number ladder. Word for Word is a second ladder with a spec of its own, below.
+    const phases = UNITS.filter(U => !U.story && unitTrack(U) === 'num');
     return {
       headers: L.querySelectorAll('.grouphead').length,
       dividers: L.querySelectorAll('.phasedivider').length,
