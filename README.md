@@ -51,6 +51,33 @@ Every release bumps `APP_VERSION` and adds a `CHANGELOG` entry at the top of the
 `src/index.html` (see §5b of `docs/burningbush.md`). A version the device hasn't seen shows the
 "What's new" card once; the full history lives under Profile → What's new.
 
+## Videos
+
+Every video in the app comes from one list, `MEDIA` in `src/index.html`, keyed by level:
+
+| level | key | where its 📺 button is | where its camera mark is |
+|---|---|---|---|
+| `book` | `"11"` (canonical book number) | the book lesson's header | none |
+| `chapter` | `"11:1"` (book:chapter) | the chapter screen's top row | over that chapter's box in the Bible |
+| `verse` | `"45:16:23"` (book:chapter:verse) | the verse page's top bar | over that verse number, and over its chapter's box |
+
+Each entry is `{kind, by, label, yt | fb, covers?}`. `kind` is one of `overview`, `hear`, `teach`
+or `deep`, and sets the group it is listed under.
+
+**Adding a video is adding an entry. Nothing else.** The 📺 button and the camera mark both read
+`MEDIA` (`mediaFor`, `mediaChapterSet`, `mediaVerseHas`), so they appear together, and they
+disappear together when an entry is removed. Never draw a mark or a button by hand, and never
+keep a second list: that is how a camera ends up promising a video that is not there. The
+behaviour spec adds and removes an entry to prove the two move together.
+
+Before an id goes in, check it. A YouTube id must pass oEmbed
+(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=<id>&format=json`) with the
+expected author and a title naming the right book, chapter or verse. A Facebook video must embed:
+its plugin page carries a playable source. Videos play inside the app: YouTube through the
+privacy-enhanced embed, full screen, with Close, Back and Esc all returning to the screen they
+came from. The app is held upright (the manifest says portrait), but while a video is full screen
+that lock is lifted so it follows the phone, and ⟳ turns it on purpose; closing hands it back.
+
 ## Guardrails
 
 Run before every deploy:

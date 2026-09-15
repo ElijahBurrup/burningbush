@@ -3,6 +3,12 @@
 The project itself is documented in [README.md](README.md): layout, build, tests, deploy.
 This file is how we work, not what the code is.
 
+## Videos: one list, button and camera together
+
+A video is one entry in `MEDIA` (see README → Videos). The 📺 button and the camera mark in the
+Bible are both drawn from it, so adding or removing an entry adds or removes both. Never hand-place
+either one, and verify every id (oEmbed or Facebook embed) before it goes in.
+
 ## Handing work back and forth
 
 **Instructions written for the user contain only the steps that genuinely need a person.**

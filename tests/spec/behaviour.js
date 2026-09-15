@@ -4601,8 +4601,17 @@ const DAY = 86400000;
     out.ch1Title = (document.querySelector('#mediaPlayer .mp-title') || {}).textContent || '';
     const f2 = document.querySelector('#mediaPlayer iframe');
     out.ch1Src = f2 ? f2.getAttribute('src') : '';
+    // Sideways: the ⟳ button asks for landscape, and closing hands orientation back to the app.
+    const so = screen.orientation, turns = [];
+    out.rotBtn = !!document.getElementById('mpRot');
+    if (so) { so.lock = k => { turns.push('lock:' + k); return Promise.resolve(); }; so.unlock = () => { turns.push('unlock'); };
+      Object.defineProperty(so, 'type', { value: 'portrait-primary', configurable: true }); }   // the test browser's screen is landscape
+    const rot = document.getElementById('mpRot'); if (rot) rot.click();
+    for (let i = 0; i < 30 && !turns.some(t => t === 'lock:landscape'); i++) await new Promise(r => setTimeout(r, 100));
     out.backClosed = appBack() && !document.querySelector('#mediaPlayer iframe')
       && !!document.querySelector('#journey [data-media="chapter"]');
+    out.turns = turns.join(',');
+    if (so) { delete so.lock; delete so.unlock; delete so.type; }
     closeAll();
     renderChapterScreen(11, 3);
     out.ch3Btn = !!document.querySelector('#journey [data-media="chapter"]');
@@ -4642,6 +4651,8 @@ const DAY = 86400000;
   ok(/1 Kings 1/.test(media.ch1Title), '...titled with what it is');
   ok(/embed\/XQqD-4jPEDs\?/.test(media.ch1Src), '...playing the verse-by-verse study of that chapter');
   ok(media.backClosed, "the phone's Back closes the video, sound and all, and stays on the chapter");
+  ok(media.rotBtn, 'the player has a button that turns the video sideways');
+  ok(/lock:landscape/.test(media.turns) && /unlock/.test(media.turns), '...which turns it, and closing the video hands orientation back to the app');
   ok(!media.ch3Btn, 'a chapter with no video has no button at all');
   ok(media.verseBtn, 'Romans 16:23 has a Videos button');
   ok(/^https:\/\/www\.facebook\.com\/plugins\/video\.php\?href=https%3A%2F%2Fwww\.facebook\.com%2Fwatch%2F%3Fv%3D1547436033127906/.test(media.fbSrc), '...playing through Facebook\'s own embed');
@@ -4650,6 +4661,104 @@ const DAY = 86400000;
   ok(media.barFits, '...and the verse bar still fits a phone, Review Lesson included');
   ok(!media.otherVerseBtn, 'a verse with no video has no button');
   ok(!media.leftApp, 'none of it navigates away or opens a new window');
+
+  describe('the Bible marks what has a video, from the same list the buttons use', () => { });
+
+  /* A camera over a chapter or verse number means a video. It is drawn from MEDIA, the same list the
+     📺 buttons read, so the two can never disagree: add an entry and both appear, remove it and
+     both go. */
+  const marks = await $(async () => {
+    const out = {};
+    try { markVideoSeen('verse'); } catch (e) {}
+    show('journey');
+    const chap = c => document.querySelector('#journey .chapbox[data-chap="' + c + '"]');
+    const vbox = v => document.querySelector('#journey .vbox[data-v="' + v + '"]');
+    renderBookScreen(11);
+    out.k1 = !!chap(1).querySelector('.vidmark');
+    out.k2 = !!chap(2).querySelector('.vidmark');
+    out.k3 = !!chap(3).querySelector('.vidmark');
+    renderBookScreen(45);
+    out.rom16 = !!chap(16).querySelector('.vidmark');
+    out.rom15 = !!chap(15).querySelector('.vidmark');
+    renderChapterScreen(45, 16);
+    out.v23 = !!vbox(23).querySelector('.vidmark');
+    out.v22 = !!vbox(22).querySelector('.vidmark');
+    out.above = (() => { const m = vbox(23).querySelector('.vidmark'); if (!m) return false;
+      return m.getBoundingClientRect().top < vbox(23).getBoundingClientRect().top + 4; })();
+    MEDIA.verse['43:3:16'] = [{ kind: 'deep', by: 'test', yt: 'aaaaaaaaaaa', label: 'test' }];
+    renderChapterScreen(43, 3);
+    out.addedMark = !!vbox(16).querySelector('.vidmark');
+    renderBookScreen(43);
+    out.addedChap = !!chap(3).querySelector('.vidmark');
+    openVerseWizard(43, 3, 16, () => {});
+    out.addedBtn = !!document.querySelector('#verse [data-media="verse"]');
+    delete MEDIA.verse['43:3:16'];
+    show('journey'); renderChapterScreen(43, 3);
+    out.removed = !vbox(16).querySelector('.vidmark');
+    show('learn'); renderPath();
+    return out;
+  });
+  ok(marks.k1 && marks.k2 && !marks.k3, 'the chapters with a video carry a camera, and the others do not');
+  ok(marks.rom16 && !marks.rom15, '...including a chapter whose video is on one of its verses');
+  ok(marks.v23 && !marks.v22, 'on the verse numbers, only the verse with a video is marked');
+  ok(marks.above, '...with the camera above the number');
+  ok(marks.addedMark && marks.addedChap && marks.addedBtn, 'a new MEDIA entry brings its camera and its 📺 button together');
+  ok(marks.removed, '...and taking it out takes the camera away');
+
+  describe('the translation can be changed where it is read', () => { });
+
+  /* Beside the saved ribbon on the Bible, and beside I Know By Heart on a verse's page. Changing it
+     there switches the text the same way Profile → Translations does, and redraws the same screen in
+     the new words. */
+  const trpick = await $(async () => {
+    const out = {};
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    const until = async f => { for (let i = 0; i < 80 && !f(); i++) await wait(100); return f(); };
+    const start = curTrans();
+    const pick = () => document.querySelector('.view.active [data-trsel]');
+    const change = (s, id) => { s.value = id; s.dispatchEvent(new Event('change', { bubbles: true })); };
+    const words = () => ((document.querySelector('#verse .lv-versetext') || {}).textContent || '').trim();
+    show('journey'); renderJourney();
+    const s1 = pick(), rib = document.getElementById('bibleSaved');
+    out.home = !!s1 && !!rib && rib.parentElement === s1.parentElement
+      && rib.getBoundingClientRect().right <= s1.getBoundingClientRect().left + 1;
+    out.opts = s1 ? [...s1.options].map(o => o.textContent).join(',') : '';
+    out.shows = s1 ? s1.value : '';
+    // A verse already learned: the picker shares a row with I Know By Heart, which gives it room.
+    const k = memArr()[0];
+    renderLearnedVerse(k[0], k[1], k[2], () => {});
+    const heart = document.getElementById('lvStage'), s2 = pick();
+    out.row = !!heart && !!s2 && heart.parentElement === s2.parentElement
+      && heart.getBoundingClientRect().right <= s2.getBoundingClientRect().left + 1
+      && Math.abs(heart.getBoundingClientRect().top - s2.getBoundingClientRect().top) < 14;
+    const before = words();
+    change(s2, 'ASV');
+    out.switched = await until(() => curTrans() === 'ASV' && !!document.getElementById('lvStage'));
+    out.stayed = !!document.getElementById('lvStage');
+    out.newWords = !!words() && words() !== before;
+    out.pickerShows = (pick() || {}).value;
+    // A verse being learned: its own copy of the words is replaced too.
+    const all = []; for (let v = 1; v <= verseCount(19, 23); v++) all.push(v);
+    const v = all.find(x => !Prog.memorized.includes('19:23:' + x)) || 2;
+    openVerseWizard(19, 23, v, () => {});
+    const wizBefore = words(), s3 = pick();
+    out.wizPicker = !!s3 && !!s3.closest('.heartrow');
+    change(s3, start);
+    out.back = await until(() => curTrans() === start);
+    out.wizStayed = !!document.querySelector('#verse .lv-triple');
+    out.wizNewWords = !!words() && words() !== wizBefore;
+    show('learn'); renderPath();
+    return out;
+  });
+  ok(trpick.home, 'the Bible has a translation picker just right of the saved ribbon');
+  is(trpick.opts, 'KJV,ASV,NLT', '...listing the translations by their initials');
+  is(trpick.shows, 'KJV', '...showing the one in use');
+  ok(trpick.row, 'on a learned verse it shares a row with I Know By Heart, which moves to the left');
+  ok(trpick.switched && trpick.stayed, 'changing it there switches the text and stays on the verse');
+  ok(trpick.newWords, '...which is redrawn in the new words');
+  is(trpick.pickerShows, 'ASV', '...with the picker showing the new text');
+  ok(trpick.wizPicker, 'a verse being learned has the picker too');
+  ok(trpick.back && trpick.wizStayed && trpick.wizNewWords, '...and switching there redraws the same step in the new words');
 
   describe('a lesson screen can be read aloud', () => { });
 
@@ -6420,8 +6529,20 @@ const DAY = 86400000;
     // jar drops to its quietest, however large the sum. By this point in the suite the app has
     // been paying out for thousands of lines, so this is the state that actually reaches a reader.
     const fatigued = await drain(() => Sfx.coins(500));
+    // Which sound each screen asks for. Each screen opens its own door, and a door plays its recording
+    // once that has arrived and silence until then, so neither counting notes nor listening for clips
+    // could tell the screens apart: what a test heard depended on which clips earlier tests had
+    // happened to load. What each screen asks the engine to play is always observable.
+    const asked = [], wrapped = {};
+    Object.keys(Sfx).filter(k => k.indexOf('_preview_') === 0).forEach(k => {
+      wrapped[k] = Sfx[k];
+      Sfx[k] = function () { asked.push(k.slice(9)); return wrapped[k].apply(this, arguments); };
+    });
     const screens = {};
-    ['learn', 'verse', 'palace', 'journey', 'stories'].forEach(s => { screens[s] = count(() => Sfx.screen(s)); });
+    ['learn', 'verse', 'palace', 'journey', 'stories'].forEach(s => {
+      asked.length = 0; screens[s] = count(() => Sfx.screen(s)) + '|' + asked.join('+');
+    });
+    Object.keys(wrapped).forEach(k => { Sfx[k] = wrapped[k]; });
     const unknown = count(() => Sfx.screen('not-a-screen'));
     setFeat('sound', false);
     const off = await drain(() => { Sfx.right(); Sfx.wrong(); Sfx.coins(50); Sfx.screen('learn'); });
@@ -8155,7 +8276,8 @@ const DAY = 86400000;
     reset();
     const card = document.querySelector('#verse .card');
     const kids = [...card.children].map(n => n.id || String(n.className).split(' ')[0]);
-    const btn = kids.indexOf('wHeart'), ref = kids.indexOf('lv-ref'), pics = kids.indexOf('lv-triple');
+    // The button shares a row with the translation picker now; the row is what sits in the card.
+    const btn = kids.indexOf('wHeart') >= 0 ? kids.indexOf('wHeart') : kids.indexOf('heartrow'), ref = kids.indexOf('lv-ref'), pics = kids.indexOf('lv-triple');
     const label = el('wHeart').textContent.trim();
 
     // it asks which, and will not act until it is told
