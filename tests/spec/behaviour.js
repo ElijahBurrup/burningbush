@@ -4590,6 +4590,9 @@ const DAY = 86400000;
     const btn = document.querySelector('#learn .qhead .tts-btn');
     out.hasBtn = !!btn;
     out.idle = btn && btn.textContent;
+    // Something the screen is not showing, planted beside the picture: it must not be read.
+    const stage = document.querySelector('#learn .lesson .stage');
+    if (stage) stage.insertAdjacentHTML('beforeend', '<span style="display:none">planted hidden words</span>');
     said.length = 0;
     btn.click();
     out.busy = btn.textContent;
@@ -4628,6 +4631,8 @@ const DAY = 86400000;
   ok(tts.text.includes(tts.word) && tts.text.includes(tts.num), 'it reads the number and its picture from the screen');
   ok(!/I can see it|Change the image word/.test(tts.text), '...but not the buttons or the picker');
   ok(!/Build the Number|Build the Book|Choose a picture/.test(tts.text), '...nor the Build the Number box, which is controls rather than teaching');
+  ok(!/image coming/i.test(tts.text), 'the "image coming" stand-in is never read, though it sits beside every picture');
+  ok(!/planted hidden words/.test(tts.text), '...nor anything else the screen is not showing');
   is(tts.cleanA, 'Number / Image relationship, sounds s or z and j or sh or ch', 'sound codes like s/z are read as "s or z", and an ordinary slash is left alone');
   is(tts.voice, 'Microsoft Andrew Online (Natural)', 'it reads in the chosen voice');
   ok(tts.rate < 1, '...a little slower than normal, for calm');

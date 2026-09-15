@@ -2299,8 +2299,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.19.3";
+const APP_VERSION="2.19.4";
 const CHANGELOG=[
+ {v:"2.19.4", d:"September 15, 2026", t:"Listen reads only what you can see", items:[
+   ["fix","<b>Listen said “image coming” over a picture that was plainly there.</b> Every picture carries a hidden stand-in for when it fails to load, and the reader was reading the page’s text rather than the screen. It now reads only what is actually showing, and never the stand-in."]
+ ]},
  {v:"2.19.3", d:"September 14, 2026", t:"Lessons you can listen to", items:[
    ["new","<b>▶ Listen on every lesson screen.</b> Press it and the screen is read aloud, slowly and calmly: the number, its picture, the sounds and the teaching, but not the buttons. Press it again to stop; it stops by itself when you move on or leave. Choose the voice in Profile → Reading voice, where male voices come first."],
    ["chg","<b>On Android, the voice lives in your phone.</b> Chrome on Android reads in whichever voice your phone’s Text-to-speech settings use — every name it lists speaks in that one voice — so the Reading voice panel says exactly where to choose a male one."]
@@ -7602,8 +7605,16 @@ function ttsChunks(t){ const out=[];
 // What the screen teaches, in reading order: the words, not the buttons, the pickers or the pictures.
 function lessonReadText(root){
   if(!root) return "";
+  /* Only what the screen is actually showing. Every picture carries an "image coming" stand-in in
+     its markup, hidden once the picture loads, so reading the markup read it aloud over a picture
+     that was plainly there. A copy has no styles to ask, so anything hidden is marked on the live
+     screen, left out of the copy, and the marks taken straight off again. The stand-in is never
+     read even when it IS showing: a missing picture is nothing to say out loud. */
+  const hidden=[...root.querySelectorAll("*")].filter(e=>{ try{ const s=getComputedStyle(e); return s.display==="none" || s.visibility==="hidden"; }catch(x){ return false; } });
+  hidden.forEach(e=>e.setAttribute("data-ttshide",""));
   const c=root.cloneNode(true);
-  c.querySelectorAll("button,input,select,textarea,img,svg,details,.qhead,.opts,.pegedit,.bb,[data-noread]").forEach(x=>x.remove());
+  hidden.forEach(e=>e.removeAttribute("data-ttshide"));
+  c.querySelectorAll("[data-ttshide],.imgph,.imgph-sm,button,input,select,textarea,img,svg,details,.qhead,.opts,.pegedit,.bb,[data-noread]").forEach(x=>x.remove());
   const BLOCK=/^(DIV|P|LI|H1|H2|H3|H4|SECTION|BR|TR)$/;
   c.querySelectorAll("*").forEach(e=>{ if(BLOCK.test(e.tagName)) e.appendChild(document.createTextNode("\n")); });
   return (c.textContent||"").split("\n").map(s=>s.replace(/\s+/g," ").trim()).filter(Boolean)
