@@ -7010,6 +7010,32 @@ const DAY = 86400000;
   ok(w1.dueLesson, 'a learned entrance lesson is as due as its cards');
   ok(w1.dueTest, '...and the test as due as the entrances it asks');
 
+  describe('the palace nudge waits until palaces are won', () => { });
+  const palNudge = await $(() => {
+    const keep = { won: (Prog.scratchWon || []).slice(), mem: Prog.memorized.slice(),
+      loc: JSON.parse(JSON.stringify(Prog.verseLoc || {})), scene: JSON.parse(JSON.stringify(Prog.customScene || {})) };
+    const out = {};
+    const nudgeText = () => { openVerseView('mem', 'library'); const b = document.querySelector('#verse .mem-backfill'); return b ? b.textContent.replace(/\s+/g, ' ').trim() : ''; };
+    // one verse, its scene written, with no palace or room
+    Prog.memorized = ['20:3:5'];
+    Prog.customScene = Object.assign({}, keep.scene, { '20:3:5': 'A lamp on a path' });
+    Prog.verseLoc = Object.assign({}, keep.loc); delete Prog.verseLoc['20:3:5'];
+    Prog.scratchWon = keep.won.filter(t => t !== 'palace');
+    out.before = nudgeText();
+    Prog.scratchWon = keep.won.filter(t => t !== 'palace').concat(['palace']);
+    out.after = nudgeText();
+    // before palaces, a verse with no scene is still worth a word, and palaces are not mentioned
+    Prog.scratchWon = keep.won.filter(t => t !== 'palace');
+    Prog.customScene['20:3:5'] = '';
+    out.sceneOnly = nudgeText();
+    Object.assign(Prog, { scratchWon: keep.won, memorized: keep.mem, verseLoc: keep.loc, customScene: keep.scene });
+    bustCaches(); saveProg(); vView = 'hub'; show('learn');
+    return out;
+  });
+  is(palNudge.before, '', 'before palaces are won, a verse without a palace is not flagged for one');
+  ok(/missing a scene, a palace or a room/.test(palNudge.after), 'once they are won, the nudge asks for the palace and the room');
+  ok(/missing its scene/.test(palNudge.sceneOnly) && !/palace/.test(palNudge.sceneOnly), 'before then, only a missing scene is mentioned, and no palace');
+
   describe('a book lesson will not move on half-answered', () => { });
   const bookGuard = await $(() => {
     closeEveryOverlay();

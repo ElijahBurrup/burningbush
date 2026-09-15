@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "def028e1dfe9cc36",
+  "h": "3c468ccfee9e8893",
   "len": 121837,
   "els": 2234,
   "buttons": 586,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "2534d07d587f224d",
-  "len": 200843,
-  "els": 3330,
+  "h": "1c5fbaf8d48a2976",
+  "len": 201400,
+  "els": 3339,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.2 September 15, 2026 See where the videos are, and change translation where you read NEW A small"
+  "text": "✕ Version history v2.21.3 September 15, 2026 No asking for a palace before you have one FIX My Verses no longer asks you"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "5c675a7573f2d9eb",
+  "h": "311a6fdd34e1835a",
   "len": 121036,
   "els": 2226,
   "buttons": 584,
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "a7ecc24bb50aec1d",
+  "h": "a336e0ba4ae53b48",
   "len": 121044,
   "els": 2226,
   "buttons": 584,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "2534d07d587f224d",
-  "len": 200843,
-  "els": 3330,
+  "h": "1c5fbaf8d48a2976",
+  "len": 201400,
+  "els": 3339,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.2 September 15, 2026 See where the videos are, and change translation where you read NEW A small"
+  "text": "✕ Version history v2.21.3 September 15, 2026 No asking for a palace before you have one FIX My Verses no longer asks you"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "a7ecc24bb50aec1d",
+  "h": "a336e0ba4ae53b48",
   "len": 121044,
   "els": 2226,
   "buttons": 584,
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "d200f36a279afff4",
+  "h": "60ee63efad701f65",
   "len": 121042,
   "els": 2226,
   "buttons": 584,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "2534d07d587f224d",
-  "len": 200843,
-  "els": 3330,
+  "h": "1c5fbaf8d48a2976",
+  "len": 201400,
+  "els": 3339,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.2 September 15, 2026 See where the videos are, and change translation where you read NEW A small"
+  "text": "✕ Version history v2.21.3 September 15, 2026 No asking for a palace before you have one FIX My Verses no longer asks you"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "d200f36a279afff4",
+  "h": "60ee63efad701f65",
   "len": 121042,
   "els": 2226,
   "buttons": 584,
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "af5a793fb6434bdd",
+  "h": "ebfc9f4d1b423e30",
   "len": 121044,
   "els": 2226,
   "buttons": 584,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "2534d07d587f224d",
-  "len": 200843,
-  "els": 3330,
+  "h": "1c5fbaf8d48a2976",
+  "len": 201400,
+  "els": 3339,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.2 September 15, 2026 See where the videos are, and change translation where you read NEW A small"
+  "text": "✕ Version history v2.21.3 September 15, 2026 No asking for a palace before you have one FIX My Verses no longer asks you"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "af5a793fb6434bdd",
+  "h": "ebfc9f4d1b423e30",
   "len": 121044,
   "els": 2226,
   "buttons": 584,
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "466401b4cb5171b8",
+  "h": "22a223430747fa0d",
   "len": 121040,
   "els": 2226,
   "buttons": 584,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "2534d07d587f224d",
-  "len": 200843,
-  "els": 3330,
+  "h": "1c5fbaf8d48a2976",
+  "len": 201400,
+  "els": 3339,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.2 September 15, 2026 See where the videos are, and change translation where you read NEW A small"
+  "text": "✕ Version history v2.21.3 September 15, 2026 No asking for a palace before you have one FIX My Verses no longer asks you"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "466401b4cb5171b8",
+  "h": "22a223430747fa0d",
   "len": 121040,
   "els": 2226,
   "buttons": 584,

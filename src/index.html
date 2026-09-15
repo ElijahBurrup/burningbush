@@ -2383,8 +2383,11 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.21.2";
+const APP_VERSION="2.21.3";
 const CHANGELOG=[
+ {v:"2.21.3", d:"September 15, 2026", t:"No asking for a palace before you have one", items:[
+   ["fix","<b>My Verses no longer asks you to finish your verses with a palace and a room before palaces are yours.</b> Until the Memory Palaces ticket is won there is nowhere to put a verse, so that nudge waits. Once palaces open, it counts any verse still missing its palace or room, as before."]
+ ]},
  {v:"2.21.2", d:"September 15, 2026", t:"See where the videos are, and change translation where you read", items:[
    ["new","<b>A small camera over a chapter or verse number means there is a video for it.</b> Look for it on the chapter boxes and the verse numbers in the Bible. Open the chapter or verse and the 📺 button plays it."],
    ["new","<b>Change translation right where you read.</b> A KJV · ASV · NLT picker now sits beside the saved ribbon on the Bible, and on a verse’s own page beside I Know By Heart. The verse redraws in the new text on the spot."],
@@ -9213,11 +9216,15 @@ function renderVerse(){
         +`<div class="sbhead">WHAT ARE YOU WALKING THROUGH?</div><p class="hint" style="margin:2px 0 8px">Tap a topic to open its verses.</p>`
         +topicGrid();
     } else if(vView==="mem"){ title="💛 My Verses";
-      // anything still missing its scene text, its palace, OR its room shows up here
+      // anything still missing its scene text, its palace, OR its room shows up here. The palace and
+      // room are asked for only once palaces are won: before that there is nowhere to put a verse,
+      // and being told to finish what cannot be finished yet is a nag.
+      const palacesOpen=tabWon("palace");
       memBare=mem.filter(a=>{ const k=a.join(":"); if(isHeart(k)||locIsHeart(k)) return false;   // known by heart -> never nagged for a scene or a station
         const loc=(Prog.verseLoc&&Prog.verseLoc[k])||null; const sc=((Prog.customScene&&Prog.customScene[k])||"").trim();
-        return !sc || !loc || loc.p==null || !((loc.room||"").trim()); });
- const nudge = memBare.length ? `<div class="mem-backfill"><div class="mem-backfill-t"><b>🏛️ ${memBare.length} verse${memBare.length>1?"s":""}</b> ${memBare.length>1?"are":"is"} missing a scene, a palace or a room, fill ${memBare.length>1?"them":"it"} in so ${memBare.length>1?"they":"it"} stick${memBare.length>1?"":"s"}.</div><button class="btn sm" id="memBackfill">Finish ${memBare.length>1?"Them":"It"} →</button></div>` : "";
+        return !sc || (palacesOpen && (!loc || loc.p==null || !((loc.room||"").trim()))); });
+      const lacks=palacesOpen ? "a scene, a palace or a room" : (memBare.length>1 ? "their scenes" : "its scene");
+ const nudge = memBare.length ? `<div class="mem-backfill"><div class="mem-backfill-t"><b>${palacesOpen?"🏛️":"✍️"} ${memBare.length} verse${memBare.length>1?"s":""}</b> ${memBare.length>1?"are":"is"} missing ${lacks}, fill ${memBare.length>1?"them":"it"} in so ${memBare.length>1?"they":"it"} stick${memBare.length>1?"":"s"}.</div><button class="btn sm" id="memBackfill">Finish ${memBare.length>1?"Them":"It"} →</button></div>` : "";
       body=mem.length
         ? scoreboardHTML()+nudge+`<div class="sbhead">YOUR BOOKS</div><p class="hint" style="margin:2px 0 8px">Tap one to see your verses in it.</p>`+bookGrid(mem,"mem")+memListHTML(mem)
         : `<div class="card center" style="padding:26px 18px"><div style="font-size:44px">\u{1F49B}</div>
