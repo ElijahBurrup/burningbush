@@ -114,6 +114,12 @@ async function open(browser, o = {}) {
   page.on('pageerror', e => errors.push('PAGEERROR: ' + e.message));
 
   await page.addInitScript(determinism, { now: FIXED_NOW, seed });
+  // The content bundle (videos, announcements, settings) comes from the API in real life. Tests are
+  // served a fixed copy built from the API's own seed, so they never reach the network and never
+  // change when somebody adds a video. `content` replaces it for a test that needs something else.
+  const bundle = o.content ? JSON.stringify(o.content) : CONTENT_FIXTURE;
+  await page.route(/\/api\/content(\?|$)/, r => r.fulfill({ status: 200, contentType: 'application/json', body: bundle,
+    headers: { 'Access-Control-Allow-Origin': '*' } }));
   // Run as the phone app. Set BEFORE the app loads, because some of what the shell changes is
   // decided at boot rather than asked again later — the profile menu is built once.
   if (native) await page.addInitScript(() => {
@@ -136,6 +142,8 @@ async function open(browser, o = {}) {
   await page.waitForFunction(() => typeof window.Prog !== 'undefined' && typeof window.show === 'function', null, { timeout: 15000 })
     .catch(() => { });
   await page.waitForTimeout(400);
+  // The app asks for its bundle a moment after boot; ask now, so every test starts with it applied.
+  await page.evaluate(() => (typeof Content !== 'undefined' && Content.refresh) ? Content.refresh(true) : null).catch(() => { });
 
   // A known starting state: onboarding gone, every tab reachable, no modal left open.
   await page.evaluate(({ prog, pro }) => {
@@ -166,6 +174,9 @@ async function open(browser, o = {}) {
 }
 
 /** A fully-stocked account: every number known, palaces, verses, talents. */
+/** The API's content bundle as the app would receive it, frozen for tests (tests/fixtures/content.json). */
+const CONTENT_FIXTURE = require('fs').readFileSync(path.join(__dirname, '..', 'fixtures', 'content.json'), 'utf8');
+
 const SEEDED = {
   extraKnown: Array.from({ length: 176 }, (_, i) => i + 1),
   doneSkills: ['snd:0-4', 'snd:5-9', 'num:1', 'num:2', 'num:3', 'num:4', 'num:5', 'book:40', 'book:19', 'book:45'],

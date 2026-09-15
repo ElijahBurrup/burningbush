@@ -4613,14 +4613,15 @@ const DAY = 86400000;
     out.turns = turns.join(',');
     if (so) { delete so.lock; delete so.unlock; delete so.type; }
     closeAll();
-    renderChapterScreen(11, 3);
+    renderChapterScreen(1, 1);      // Genesis 1: nothing to watch
     out.ch3Btn = !!document.querySelector('#journey [data-media="chapter"]');
     // Psalm 1 has two songs, so 📺 lists both to choose from rather than playing one.
     renderChapterScreen(19, 1);
     const pb = document.querySelector('#journey [data-media="chapter"]'); if (pb) pb.click();
     const psh = document.getElementById('mediaSheet');
-    out.psalmList = !!psh && psh.style.display === 'flex' && psh.querySelectorAll('[data-mi]').length === 2
-      && /Hear it/.test(psh.textContent) && !document.querySelector('#mediaPlayer iframe');
+    out.psalmList = !!psh && psh.style.display === 'flex' && psh.querySelectorAll('[data-mi]').length >= 2
+      && /Hear it/.test(psh.textContent) && /60’s Choir/.test(psh.textContent) && /80’s Ballad/.test(psh.textContent)
+      && !document.querySelector('#mediaPlayer iframe');
     closeAll();
 
     // Romans 16:23 has a Facebook video; 16:22 has none.
@@ -4684,30 +4685,31 @@ const DAY = 86400000;
     renderBookScreen(11);
     out.k1 = !!chap(1).querySelector('.vidmark');
     out.k2 = !!chap(2).querySelector('.vidmark');
-    out.k3 = !!chap(3).querySelector('.vidmark');
-    renderBookScreen(45);
-    out.rom16 = !!chap(16).querySelector('.vidmark');
-    out.rom15 = !!chap(15).querySelector('.vidmark');
+    renderBookScreen(1);            // Genesis: no chapter teaching, but a few verse videos
+    out.k3 = !!chap(1).querySelector('.vidmark');
+    out.rom16 = !!chap(22).querySelector('.vidmark');
+    out.rom15 = !!chap(21).querySelector('.vidmark');
     renderChapterScreen(45, 16);
     out.v23 = !!vbox(23).querySelector('.vidmark');
     out.v22 = !!vbox(22).querySelector('.vidmark');
     out.above = (() => { const m = vbox(23).querySelector('.vidmark'); if (!m) return false;
       return m.getBoundingClientRect().top < vbox(23).getBoundingClientRect().top + 4; })();
-    MEDIA.verse['43:3:16'] = [{ kind: 'deep', by: 'test', yt: 'aaaaaaaaaaa', label: 'test' }];
-    renderChapterScreen(43, 3);
-    out.addedMark = !!vbox(16).querySelector('.vidmark');
-    renderBookScreen(43);
-    out.addedChap = !!chap(3).querySelector('.vidmark');
-    openVerseWizard(43, 3, 16, () => {});
+    // Numbers 7:12 — a verse, and a chapter, with no video of their own.
+    MEDIA.verse['4:7:12'] = [{ kind: 'deep', by: 'test', yt: 'aaaaaaaaaaa', label: 'test' }];
+    renderChapterScreen(4, 7);
+    out.addedMark = !!vbox(12).querySelector('.vidmark');
+    renderBookScreen(4);
+    out.addedChap = !!chap(7).querySelector('.vidmark');
+    openVerseWizard(4, 7, 12, () => {});
     out.addedBtn = !!document.querySelector('#verse [data-media="verse"]');
-    delete MEDIA.verse['43:3:16'];
-    show('journey'); renderChapterScreen(43, 3);
-    out.removed = !vbox(16).querySelector('.vidmark');
+    delete MEDIA.verse['4:7:12'];
+    show('journey'); renderChapterScreen(4, 7);
+    out.removed = !vbox(12).querySelector('.vidmark');
     show('learn'); renderPath();
     return out;
   });
-  ok(marks.k1 && marks.k2 && !marks.k3, 'the chapters with a video carry a camera, and the others do not');
-  ok(marks.rom16 && !marks.rom15, '...including a chapter whose video is on one of its verses');
+  ok(marks.k1 && marks.k2 && !marks.k3, 'the chapters with a video carry a camera, and one with none does not');
+  ok(marks.rom16 && !marks.rom15, '...including a chapter whose only video is on one of its verses');
   ok(marks.v23 && !marks.v22, 'on the verse numbers, only the verse with a video is marked');
   ok(marks.above, '...with the camera above the number');
   ok(marks.addedMark && marks.addedChap && marks.addedBtn, 'a new MEDIA entry brings its camera and its 📺 button together');
@@ -4767,6 +4769,129 @@ const DAY = 86400000;
   is(trpick.pickerShows, 'ASV', '...with the picker showing the new text');
   ok(trpick.wizPicker, 'a verse being learned has the picker too');
   ok(trpick.back && trpick.wizStayed && trpick.wizNewWords, '...and switching there redraws the same step in the new words');
+
+  describe('content comes from the database, and a bad value cannot break anything', () => { });
+
+  /* Videos, announcements and settings arrive in one bundle from the API and are kept on the device.
+     Every value is checked on arrival: out of range, or not a whole number, and the built-in amount
+     stays in charge. */
+  const content = await $(async () => {
+    const out = {};
+    const base = (Store.getJSON('vv_content', null) || {}).bundle;
+    out.fromBundle = Content.version() === 'fixture' && (MEDIA.chapter['11:1'] || []).length > 0;
+    out.cached = !!base && !!base.media;
+    const clone = JSON.parse(JSON.stringify(base));
+    const today = new Date().toISOString().slice(0, 10);
+    clone.v = 'test-ann';
+    clone.announcements = [
+      { id: 'hello', text: 'Psalm 23, in four styles', link: 'https://burningbush.app', linkText: 'Listen', start: today, end: today, audience: 'all' },
+      { id: 'later', text: 'Not yet', start: '2999-01-01' },
+      { id: 'bad', text: 'Sneaky', link: 'javascript:alert(1)' }];
+    Content.apply(clone);
+    show('learn'); renderPath();
+    const b = document.querySelector('#learn [data-ann]');
+    out.banner = !!b && /Psalm 23/.test(b.textContent) && !/Not yet/.test(document.getElementById('learn').textContent);
+    out.link = !!b && b.querySelector('a') && b.querySelector('a').getAttribute('href') === 'https://burningbush.app';
+    if (b) b.querySelector('[data-annx]').click();
+    renderPath();
+    const next = document.querySelector('#learn [data-ann]');
+    out.dismissed = !next || next.dataset.ann !== 'hello';
+    out.noScript = !next || !next.querySelector('a');
+    const before = { freeze: FREEZE_COST, palace: PALACE_COST, goal: GOAL_MAX, verse: REWARD.verse };
+    clone.v = 'test-cfg'; clone.announcements = [];
+    clone.config = { numbers: { freezeCost: 300, palaceCost: -5, goalMax: 'x', rewardVerse: 20, hintCost: 2.5 },
+                     features: { dict: true, nonsense: true }, switches: { w4wTrack: true } };
+    Content.apply(clone);
+    out.goodTakes = FREEZE_COST === 300 && REWARD.verse === 20;
+    out.badIgnored = PALACE_COST === before.palace && GOAL_MAX === before.goal && HINT_COST === cfgDefaults().hintCost;
+    const had = (Prog.features || {}).dict;
+    if (Prog.features) delete Prog.features.dict;
+    out.featDefault = feat('dict') === true && !FEATURES.some(f => f.id === 'nonsense');
+    const localTrack = Store.get('vv_wtrack', ''); Store.remove('vv_wtrack');
+    out.switchOn = wTrackOn() === true;
+    clone.v = 'test-none'; clone.config = null;
+    Content.apply(clone);
+    out.restored = FREEZE_COST === before.freeze && REWARD.verse === before.verse && feat('dict') === false && wTrackOn() === false;
+    if (had !== undefined) Prog.features.dict = had;
+    if (localTrack) Store.set('vv_wtrack', localTrack);
+    clone.v = 'test-media';
+    clone.media.verse['45:16:23'] = [{ kind: 'deep', label: 'x', fb: 'https://evil.example/v' }, { kind: 'deep', label: 'y', yt: 'short' }];
+    Content.apply(clone);
+    out.badVideoDropped = !MEDIA.verse['45:16:23'];
+    Content.apply(base);
+    out.back = Content.version() === 'fixture' && (MEDIA.verse['45:16:23'] || []).length === 1 && FREEZE_COST === before.freeze;
+    try { Store.setJSON('vv_ann_dismissed', []); } catch (e) {}
+    renderPath();
+    return out;
+  });
+  ok(content.fromBundle, 'videos come from the content bundle, not from the app');
+  ok(content.cached, '...which is kept on the device for the next start, and for offline');
+  ok(content.banner, 'an announcement shows at the top of Learn while it is current, and one dated later waits');
+  ok(content.link, '...with its link');
+  ok(content.dismissed, 'dismissing it keeps it gone');
+  ok(content.noScript, 'a link that is not https is dropped');
+  ok(content.goodTakes, 'a setting from the database takes effect');
+  ok(content.badIgnored, '...and one out of range, not a number or not whole is ignored for the built-in amount');
+  ok(content.featDefault, 'a feature default can be changed for people who have not chosen, and no feature can be invented');
+  ok(content.switchOn, 'the Word for Word track can be switched on for everyone');
+  ok(content.restored, 'taking the settings away puts every built-in amount back');
+  ok(content.badVideoDropped, 'a video without a proper YouTube id or Facebook address is dropped');
+  ok(content.back, 'the bundle can be applied again at any time');
+
+  describe('admins change content from inside the app', () => { });
+
+  /* Against a stand-in server: the Content screen finds a reference, adds a video, refuses a setting out
+     of range before sending it, saves a good one, and offers earlier versions back. */
+  const cadmin = await $(async () => {
+    const out = {}; const wait = ms => new Promise(r => setTimeout(r, ms));
+    const realFetch = window.fetch, calls = [];
+    const was = { user: Auth.user, token: Auth._token };
+    Auth.user = { email: 'elijahdburrup@gmail.com' }; Auth._token = 'test';
+    const json = d => new Response(JSON.stringify(d), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    window.fetch = async (url, o = {}) => {
+      const u = String(url), meth = o.method || 'GET';
+      calls.push(meth + ' ' + u.replace(/^.*\/api/, ''));
+      if (/\/admin\/media\?ref=/.test(u)) return json({ rows: [{ id: 7, level: 'verse', ref_key: '45:16:23', kind: 'deep', fb: 'https://www.facebook.com/watch/?v=1', label: 'Romans 16:23 · Quartus', by_line: 'Josh Howerton', active: true }] });
+      if (/\/admin\/media$/.test(u) && meth === 'POST') return json({ ok: true, row: { id: 8 }, note: '' });
+      if (/\/admin\/media\/7$/.test(u)) return json({ ok: true, row: { id: 7 } });
+      if (/\/admin\/content\/announcements$/.test(u) && meth === 'GET') return json({ key: 'announcements', current: null, history: [] });
+      if (/\/admin\/content\/config$/.test(u) && meth === 'GET') return json({ key: 'config', current: { doc: { numbers: { freezeCost: 300 } }, version: 2 }, history: [{ id: 3, version: 1, saved_at: '2026-09-15T12:00:00Z', saved_by: 'x' }] });
+      if (/\/admin\/content\/\w+$/.test(u) && meth === 'POST') return json({ ok: true, version: 3 });
+      return realFetch(url, o);
+    };
+    try {
+      applyAdminVisibility();
+      out.button = !!document.getElementById('adminContentBtn');
+      out.keptTrack = !!document.getElementById('testWTrack');
+      Store.remove('vv_ca_ref');
+      openContentAdmin('videos'); await wait(30);
+      el('caRef').value = 'Romans 16:23'; el('caFind').click(); await wait(120);
+      out.listed = /Quartus/.test(el('caList').textContent) && calls.some(c => /GET \/admin\/media\?ref=45%3A16%3A23/.test(c));
+      out.badRef = refFromText('Genesis 51') === '' && refFromText('1 Kings 1') === '11:1' && refFromText('Psalm 23') === '19:23' && refFromText('45:16:23') === '45:16:23';
+      el('caUrl').value = 'https://youtu.be/hPOi8WG6Aeg'; el('caAdd').click(); await wait(120);
+      out.added = calls.includes('POST /admin/media');
+      openContentAdmin('settings'); await wait(120);
+      const fi = document.querySelector('#caBody [data-cfg="freezeCost"]');
+      out.settingsShown = !!fi && fi.value === '300' && /Version 1/.test(el('caBody').textContent);
+      fi.value = '-3'; el('caSSave').click(); await wait(40);
+      out.rangeChecked = !calls.includes('POST /admin/content/config');
+      document.querySelector('#caBody [data-cfg="freezeCost"]').value = '275'; el('caSSave').click(); await wait(120);
+      out.saved = calls.includes('POST /admin/content/config');
+      openContentAdmin('news'); await wait(120);
+      out.news = !!el('caAText') && /No announcements/.test(el('caBody').textContent);
+      document.getElementById('contentModal').style.display = 'none';
+    } finally { window.fetch = realFetch; Auth.user = was.user; Auth._token = was.token; applyAdminVisibility(); }
+    return out;
+  });
+  ok(cadmin.button, 'Profile → Admin has a Content button');
+  ok(cadmin.keptTrack, '...next to the Word for Word track switch, which stays');
+  ok(cadmin.listed, 'Videos finds a reference typed the way people write it, and lists what is there');
+  ok(cadmin.badRef, '...and knows a reference that does not exist');
+  ok(cadmin.added, 'a pasted link is sent to be checked and added');
+  ok(cadmin.settingsShown, 'Settings shows what is saved, and the earlier versions');
+  ok(cadmin.rangeChecked, '...refuses a number out of range before sending anything');
+  ok(cadmin.saved, '...and saves a good one');
+  ok(cadmin.news, 'Announcements opens ready to write one');
 
   describe('a lesson screen can be read aloud', () => { });
 

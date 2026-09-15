@@ -207,22 +207,22 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "classic/bible/book": {
-  "h": "4960eb55727555a0",
-  "len": 17336,
-  "els": 507,
+  "h": "bfe050ab4abcc674",
+  "len": 27120,
+  "els": 667,
   "buttons": 4,
-  "svgs": 1,
+  "svgs": 41,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "classic/bible/chapter": {
-  "h": "be4420a16df47d2f",
-  "len": 1192,
-  "els": 25,
-  "buttons": 4,
+  "h": "edeab26ddd8b771f",
+  "len": 1413,
+  "els": 28,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
+  "text": "← Psalms 📺 Videos ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one t"
  },
  "classic/bible/chapter-long": {
   "h": "25e07973463822a5",
@@ -288,10 +288,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "87ff3836ec2c38e4",
-  "len": 121837,
-  "els": 2234,
-  "buttons": 586,
+  "h": "f8cf831b1d9d03da",
+  "len": 121970,
+  "els": 2235,
+  "buttons": 587,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "ae0b0e8e599e809f",
-  "len": 201837,
-  "els": 3348,
+  "h": "ae4b03f94f0dd1a5",
+  "len": 203029,
+  "els": 3365,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.4 September 15, 2026 Psalm 1, sung NEW Psalm 1, sung two ways. Open Psalm 1 in the Bible and 📺 "
+  "text": "✕ Version history v2.21.5 September 15, 2026 Teaching on almost every chapter, and verses brought to life NEW Teaching o"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,10 +387,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "e681304a19e3c0c7",
-  "len": 121036,
-  "els": 2226,
-  "buttons": 584,
+  "h": "334526d5ae7a38df",
+  "len": 121169,
+  "els": 2227,
+  "buttons": 585,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -729,22 +729,22 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "illumined/bible/book": {
-  "h": "4960eb55727555a0",
-  "len": 17336,
-  "els": 507,
+  "h": "bfe050ab4abcc674",
+  "len": 27120,
+  "els": 667,
   "buttons": 4,
-  "svgs": 1,
+  "svgs": 41,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "illumined/bible/chapter": {
-  "h": "be4420a16df47d2f",
-  "len": 1192,
-  "els": 25,
-  "buttons": 4,
+  "h": "edeab26ddd8b771f",
+  "len": 1413,
+  "els": 28,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
+  "text": "← Psalms 📺 Videos ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one t"
  },
  "illumined/bible/chapter-long": {
   "h": "25e07973463822a5",
@@ -810,10 +810,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "530449e7d51dee58",
-  "len": 121044,
-  "els": 2226,
-  "buttons": 584,
+  "h": "0c32323031c412dd",
+  "len": 121177,
+  "els": 2227,
+  "buttons": 585,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "ae0b0e8e599e809f",
-  "len": 201837,
-  "els": 3348,
+  "h": "ae4b03f94f0dd1a5",
+  "len": 203029,
+  "els": 3365,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.4 September 15, 2026 Psalm 1, sung NEW Psalm 1, sung two ways. Open Psalm 1 in the Bible and 📺 "
+  "text": "✕ Version history v2.21.5 September 15, 2026 Teaching on almost every chapter, and verses brought to life NEW Teaching o"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,10 +909,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "530449e7d51dee58",
-  "len": 121044,
-  "els": 2226,
-  "buttons": 584,
+  "h": "0c32323031c412dd",
+  "len": 121177,
+  "els": 2227,
+  "buttons": 585,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -1251,22 +1251,22 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "glass/bible/book": {
-  "h": "4960eb55727555a0",
-  "len": 17336,
-  "els": 507,
+  "h": "bfe050ab4abcc674",
+  "len": 27120,
+  "els": 667,
   "buttons": 4,
-  "svgs": 1,
+  "svgs": 41,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "glass/bible/chapter": {
-  "h": "be4420a16df47d2f",
-  "len": 1192,
-  "els": 25,
-  "buttons": 4,
+  "h": "edeab26ddd8b771f",
+  "len": 1413,
+  "els": 28,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
+  "text": "← Psalms 📺 Videos ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one t"
  },
  "glass/bible/chapter-long": {
   "h": "25e07973463822a5",
@@ -1332,10 +1332,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "94b273d8dee5094e",
-  "len": 121042,
-  "els": 2226,
-  "buttons": 584,
+  "h": "8d22dd7479aae22d",
+  "len": 121175,
+  "els": 2227,
+  "buttons": 585,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "ae0b0e8e599e809f",
-  "len": 201837,
-  "els": 3348,
+  "h": "ae4b03f94f0dd1a5",
+  "len": 203029,
+  "els": 3365,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.4 September 15, 2026 Psalm 1, sung NEW Psalm 1, sung two ways. Open Psalm 1 in the Bible and 📺 "
+  "text": "✕ Version history v2.21.5 September 15, 2026 Teaching on almost every chapter, and verses brought to life NEW Teaching o"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,10 +1431,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "94b273d8dee5094e",
-  "len": 121042,
-  "els": 2226,
-  "buttons": 584,
+  "h": "8d22dd7479aae22d",
+  "len": 121175,
+  "els": 2227,
+  "buttons": 585,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -1773,22 +1773,22 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "quest/bible/book": {
-  "h": "4960eb55727555a0",
-  "len": 17336,
-  "els": 507,
+  "h": "bfe050ab4abcc674",
+  "len": 27120,
+  "els": 667,
   "buttons": 4,
-  "svgs": 1,
+  "svgs": 41,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "quest/bible/chapter": {
-  "h": "be4420a16df47d2f",
-  "len": 1192,
-  "els": 25,
-  "buttons": 4,
+  "h": "edeab26ddd8b771f",
+  "len": 1413,
+  "els": 28,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
+  "text": "← Psalms 📺 Videos ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one t"
  },
  "quest/bible/chapter-long": {
   "h": "25e07973463822a5",
@@ -1854,10 +1854,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "db66780f1c33bf8e",
-  "len": 121044,
-  "els": 2226,
-  "buttons": 584,
+  "h": "55d0d49034efae73",
+  "len": 121177,
+  "els": 2227,
+  "buttons": 585,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "ae0b0e8e599e809f",
-  "len": 201837,
-  "els": 3348,
+  "h": "ae4b03f94f0dd1a5",
+  "len": 203029,
+  "els": 3365,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.4 September 15, 2026 Psalm 1, sung NEW Psalm 1, sung two ways. Open Psalm 1 in the Bible and 📺 "
+  "text": "✕ Version history v2.21.5 September 15, 2026 Teaching on almost every chapter, and verses brought to life NEW Teaching o"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,10 +1953,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "db66780f1c33bf8e",
-  "len": 121044,
-  "els": 2226,
-  "buttons": 584,
+  "h": "55d0d49034efae73",
+  "len": 121177,
+  "els": 2227,
+  "buttons": 585,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -2295,22 +2295,22 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "buddy/bible/book": {
-  "h": "4960eb55727555a0",
-  "len": 17336,
-  "els": 507,
+  "h": "bfe050ab4abcc674",
+  "len": 27120,
+  "els": 667,
   "buttons": 4,
-  "svgs": 1,
+  "svgs": 41,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
  "buddy/bible/chapter": {
-  "h": "be4420a16df47d2f",
-  "len": 1192,
-  "els": 25,
-  "buttons": 4,
+  "h": "edeab26ddd8b771f",
+  "len": 1413,
+  "els": 28,
+  "buttons": 5,
   "svgs": 0,
   "imgs": 1,
-  "text": "← Psalms ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one to memorize"
+  "text": "← Psalms 📺 Videos ← Ch 22 Ch 24 → ✒️ VERSES · Psalms 23 image coming Psalms 23 Chapter 23 = Gnome · 6 verses. Tap one t"
  },
  "buddy/bible/chapter-long": {
   "h": "25e07973463822a5",
@@ -2376,10 +2376,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "083bcf852cdd1b8c",
-  "len": 121040,
-  "els": 2226,
-  "buttons": 584,
+  "h": "2f06431a8b933fce",
+  "len": 121173,
+  "els": 2227,
+  "buttons": 585,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "ae0b0e8e599e809f",
-  "len": 201837,
-  "els": 3348,
+  "h": "ae4b03f94f0dd1a5",
+  "len": 203029,
+  "els": 3365,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.4 September 15, 2026 Psalm 1, sung NEW Psalm 1, sung two ways. Open Psalm 1 in the Bible and 📺 "
+  "text": "✕ Version history v2.21.5 September 15, 2026 Teaching on almost every chapter, and verses brought to life NEW Teaching o"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,10 +2475,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "083bcf852cdd1b8c",
-  "len": 121040,
-  "els": 2226,
-  "buttons": 584,
+  "h": "2f06431a8b933fce",
+  "len": 121173,
+  "els": 2227,
+  "buttons": 585,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "

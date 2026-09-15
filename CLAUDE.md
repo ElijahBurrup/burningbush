@@ -3,11 +3,12 @@
 The project itself is documented in [README.md](README.md): layout, build, tests, deploy.
 This file is how we work, not what the code is.
 
-## Videos: one list, button and camera together
+## Videos, announcements and settings: the database, not the app
 
-A video is one entry in `MEDIA` (see README → Videos). The 📺 button and the camera mark in the
-Bible are both drawn from it, so adding or removing an entry adds or removes both. Never hand-place
-either one, and verify every id (oEmbed or Facebook embed) before it goes in.
+Videos, announcements and settings live in the database, not the app (README → Content from the
+database). A video is one row, added from Profile → Admin → Content; the 📺 button and the camera
+mark are both drawn from it, so they come and go together. Never hand-place either, never compile
+videos back into `src/index.html`, and never make remote anything saved progress depends on.
 
 ## Handing work back and forth
 
