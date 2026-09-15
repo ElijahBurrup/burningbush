@@ -2284,8 +2284,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.19.0";
+const APP_VERSION="2.19.1";
 const CHANGELOG=[
+ {v:"2.19.1", d:"September 14, 2026", t:"Google listens now", items:[
+   ["chg","<b>Speaking uses Google's own recognition, in the browser as well as the app.</b> The microphone button listens for itself instead of sending you to your keyboard's microphone, which kept mishearing Bible names. The first time, your browser asks whether it may use the microphone."],
+   ["new","<b>Say a book and it hears a book.</b> In Chronological the recogniser is told a book is coming and given all sixty six to listen for, and of the ways it heard you it takes the one that is a book: Deuteronomy, not something that only sounds like it. Scenes you speak listen for the book names too."]
+ ]},
  {v:"2.19.0", d:"September 14, 2026", t:"Letters first, then by heart", items:[
    ["new","<b>Word for word has three stages now, between practice and Known by heart.</b> Seven practices no longer asks whether you know a verse by heart. It goes into spaced repetition showing <b>the first letter of every word</b>. After a month of reviews, a day, three days, a week, a fortnight and a month, it shows <b>the first letter of every other word</b> for a month, then <b>only the first letter of the verse</b>. A month of that and it is Known by heart."],
    ["chg","<b>A reveal sends a verse back to day 1.</b> Use one in its letter stage, or peek in the address review, and that trail starts again: it comes back tomorrow as day 1, and keeps the stage it had reached."],
@@ -12983,8 +12987,10 @@ function renderChronoQ(){
       if(Dictation.listening()) return Dictation.stop();
       mic.textContent="● Listening…"; mic.classList.add("blue");
       Dictation.start(
-        (fin,mid)=>{ inp.value=((inp.__heard=(inp.__heard||"")+fin)+mid).trim(); },
-        ()=>{ mic.textContent="🎤 Say it instead"; mic.classList.remove("blue"); inp.__heard=""; }
+        (fin,mid)=>{ inp.value=((inp.__heard=(inp.__heard||"")+fin)+mid).trim();
+          if(fin) inp.dispatchEvent(new Event("input")); },   // a finished hearing is judged like a typed one
+        ()=>{ mic.textContent="🎤 Say it instead"; mic.classList.remove("blue"); inp.__heard=""; },
+        bookSpeechOpts()
       );
     };
   }
@@ -14442,9 +14448,21 @@ const Dictation = (()=>{
      and listening picks up again, until they tap the button or say nothing twice running.
      It reports the whole utterance so far on every partial rather than the new words, so this
      owns the accumulation and hands the editor one interim string carrying everything. */
-  async function nativeStart(SR, onText, onEnd){
+  /* Of the ways the recogniser heard something, the first one the caller recognises, else its own
+     best guess. A book name wanted means "do you to Ronnie" loses to "Deuteronomy" even when the
+     recogniser ranked it second. */
+  const choose=(alts, pick)=>{ const list=(alts||[]).map(a=>String(a||"").trim()).filter(Boolean);
+    return (pick && list.find(pick)) || list[0] || ""; };
+  /* o.model  "search" for a short answer such as a book name: Android's web-search model, the one
+              behind Google's own voice search. Anything else is dictation, for sentences.
+     o.hints  words to listen for (Android 13 and later).  o.pick  which hearing to take. */
+  async function nativeStart(SR, onText, onEnd, o){
+    o=o||{};
     let ended=false, wantStop=false, kept="", thisRun="", quiet=0;
-    const opts = { language: (navigator.language || "en-US"), partialResults: true, popup: false, maxResults: 1 };
+    const opts = { language: (navigator.language || "en-US"), partialResults: true, popup: false,
+                   maxResults: o.pick ? 5 : 1,
+                   languageModel: o.model==="search" ? "web_search" : "free_form",
+                   biasingStrings: (o.hints||[]).slice(0, 500) };
     const finish=(why)=>{
       if(ended) return; ended=true; live=false; stopNative=null;
       try{ if(SR.removeAllListeners) SR.removeAllListeners(); }catch(e){}
@@ -14462,7 +14480,7 @@ const Dictation = (()=>{
     }catch(e){ return finish("not-allowed"); }
     try{
       await SR.addListener("partialResults", d=>{
-        const said = (((d && d.matches) || [])[0] || "").trim();
+        const said = choose((d && d.matches) || [], o.pick);
         if(!said) return;
         thisRun = said;
         onText("", (kept ? kept + " " : "") + said);
@@ -14484,22 +14502,26 @@ const Dictation = (()=>{
     stop(){ if(stopNative) return stopNative();
             try{ if(rec) rec.stop(); }catch(e){} live=false; },
     /* onText(finalChunk, interimChunk) is called as they speak; onEnd(reason) once, always. */
-    start(onText, onEnd){
+    start(onText, onEnd, o){
+      o=o||{};
       const SR = nativeSR();
-      if(SR){ live=true; nativeStart(SR, onText, onEnd); return; }
+      if(SR){ live=true; nativeStart(SR, onText, onEnd, o); return; }
       const Rec = engine();
       if(!Rec) return onEnd("unsupported");
       try{ rec = new Rec(); }catch(e){ return onEnd("unsupported"); }
       rec.lang = (navigator.language || "en-US");
       rec.continuous = true;          // a scene is sentences, not one phrase
       rec.interimResults = true;      // so words appear while they are still talking
+      rec.maxAlternatives = o.pick ? 5 : 1;   // several hearings, when there is a way to choose between them
       let ended=false;
       const finish=(why)=>{ if(ended) return; ended=true; live=false; rec=null; onEnd(why); };
       rec.onresult = ev=>{
         let fin="", mid="";
         for(let i=ev.resultIndex; i<ev.results.length; i++){
           const r=ev.results[i];
-          if(r.isFinal) fin += r[0].transcript; else mid += r[0].transcript;
+          // Untouched for sentences, whose spacing the engine carries; chosen when a word is wanted.
+          const t = o.pick ? choose(Array.from(r).map(a=>a.transcript), o.pick) : r[0].transcript;
+          if(r.isFinal) fin += t; else mid += t;
         }
         onText(fin, mid);
       };
@@ -14522,16 +14544,24 @@ const Dictation = (()=>{
    rather than the web page. There is nothing for a reader to switch on and nothing for us to get
    wrong.
 
-   So on a phone browser we stop competing with it and point at it. In the native app the plugin
-   is the platform recogniser and asks the ordinary way, so that stays. On a desktop there is no
-   keyboard microphone and the web engine is genuinely useful, so that stays too. */
+   That was the reasoning, and for a while phone browsers were pointed at the keyboard. It lost on
+   the thing this app says most: Bible names. The keyboard's recogniser turned Deuteronomy into
+   something else, while Google's own recogniser, which is what the web engine is in Chrome and
+   what the app's plugin hands the job to, gets them right. It can also be told when a book is
+   wanted and choose between its hearings (see Dictation). So the web engine is used on phones too,
+   and the keyboard's microphone is only the way to speak where there is no engine at all. */
 function speechRoute(){
   if((typeof nativePlatform==="function") && nativePlatform()!=="web" &&
      (typeof Dictation!=="undefined") && Dictation.supported()) return "native";
-  const ua=navigator.userAgent||"";
-  if(/Android|iPhone|iPad|iPod/i.test(ua)) return "keyboard";   // the phone already has a better one
   if(typeof Dictation!=="undefined" && Dictation.supported()) return "web";
+  if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent||"")) return "keyboard";   // no engine: the keyboard's mic
   return "none";
+}
+// What to listen for when the answer is a book. The recogniser is given all sixty-six, and of its
+// hearings the one that names a book is taken.
+function bookSpeechOpts(){
+  return { model:"search", hints:BOOKS.slice(),
+           pick:t=>bookCandidates(t).length===1 || BOOKS.some((nm,i)=>bookAnswerOk(t,i+1)) };
 }
 // Said in one place because it is said on three screens.
 const KEYBOARD_MIC_TIP = "Tap in the box, then the <b>🎤</b> on your keyboard — bottom row, beside the space bar. It punctuates as you talk and needs no permission.";
@@ -14774,7 +14804,9 @@ function wireSpeakButton(btn, note, ta, opts){
         if(why==="audio-capture"){ say('<span class="muted">No microphone was found on this device.</span>'); return; }
         if(opts.autoCap && ta.value){ const v=capAfterPunct(ta.value); if(v!==ta.value) ta.value=v; }
         say(heard.trim() ? '<span class="muted">Tap the microphone again to add more.</span>' : "");
-      }
+      },
+      // Sentences, so dictation rather than search, but still listening for the books by name.
+      { model:"dictation", hints:BOOKS.slice() }
     );
   };
 }

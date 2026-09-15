@@ -1,0 +1,55 @@
+diff --git a/node_modules/@capacitor-community/speech-recognition/android/src/main/java/com/getcapacitor/community/speechrecognition/SpeechRecognition.java b/node_modules/@capacitor-community/speech-recognition/android/src/main/java/com/getcapacitor/community/speechrecognition/SpeechRecognition.java
+index a99ea69..7645f98 100644
+--- a/node_modules/@capacitor-community/speech-recognition/android/src/main/java/com/getcapacitor/community/speechrecognition/SpeechRecognition.java
++++ b/node_modules/@capacitor-community/speech-recognition/android/src/main/java/com/getcapacitor/community/speechrecognition/SpeechRecognition.java
+@@ -81,7 +81,16 @@ public class SpeechRecognition extends Plugin implements Constants {
+         String prompt = call.getString("prompt", null);
+         boolean partialResults = call.getBoolean("partialResults", false);
+         boolean popup = call.getBoolean("popup", false);
+-        beginListening(language, maxResults, prompt, partialResults, popup, call);
++        // Burning Bush: which of Android's models to listen with, and words to listen for.
++        String languageModel = call.getString("languageModel", "free_form");
++        ArrayList<String> biasing = new ArrayList<>();
++        JSArray bias = call.getArray("biasingStrings");
++        if (bias != null) {
++            try {
++                for (int i = 0; i < bias.length(); i++) biasing.add(bias.getString(i));
++            } catch (Exception ignored) {}
++        }
++        beginListening(language, maxResults, prompt, partialResults, popup, call, languageModel, biasing);
+     }
+ 
+     @PluginMethod
+@@ -157,17 +166,29 @@ public class SpeechRecognition extends Plugin implements Constants {
+         String prompt,
+         final boolean partialResults,
+         boolean showPopup,
+-        PluginCall call
++        PluginCall call,
++        String languageModel,
++        ArrayList<String> biasing
+     ) {
+         Logger.info(getLogTag(), "Beginning to listen for audible speech");
+ 
++        // Burning Bush: "web_search" is the model behind Google's own voice search, which hears short
++        // answers and proper names, such as the books of the Bible, far better than dictation does.
++        final boolean search = "web_search".equals(languageModel);
+         final Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
++        intent.putExtra(
++            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
++            search ? RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH : RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
++        );
++        // Words to listen for, where Android can take them (13 and later).
++        if (Build.VERSION.SDK_INT >= 33 && biasing != null && !biasing.isEmpty()) {
++            intent.putStringArrayListExtra(RecognizerIntent.EXTRA_BIASING_STRINGS, biasing);
++        }
+         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language);
+         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, maxResults);
+         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, bridge.getActivity().getPackageName());
+         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, partialResults);
+-        intent.putExtra("android.speech.extra.DICTATION_MODE", partialResults);
++        intent.putExtra("android.speech.extra.DICTATION_MODE", partialResults && !search);
+ 
+         if (prompt != null) {
+             intent.putExtra(RecognizerIntent.EXTRA_PROMPT, prompt);

@@ -6342,6 +6342,71 @@ const DAY = 86400000;
   ok(cmrg.updateHolds, 'updating migrates both copies, so the old heart does not come back');
   ok(cmrg.oldNeverResets, 'an old copy arriving late never resets real progress in the stages');
 
+  // Speaking: Google's recognition on phones too, and steered to book names when a book is wanted.
+  describe('speaking: Google recognition, steered to book names', () => { });
+  const speech = await $(() => {
+    const out = {};
+    Object.defineProperty(navigator, 'userAgent', { configurable: true, get: () => 'Mozilla/5.0 (Linux; Android 14) Chrome/140' });
+    const realSR = window.SpeechRecognition, realWK = window.webkitSpeechRecognition;
+    let made = null;
+    function FakeRec() { made = this; this.start = () => {}; this.stop = () => {}; }
+    window.SpeechRecognition = FakeRec;
+    out.phoneWithEngine = speechRoute();
+    let heard = '';
+    Dictation.start(fin => { heard += fin; }, () => {}, bookSpeechOpts());
+    out.alts = made.maxAlternatives;
+    const res = [{ transcript: 'do you to Ronnie' }, { transcript: 'Deuteronomy' }]; res.isFinal = true;
+    made.onresult({ resultIndex: 0, results: [res] });
+    out.webHeard = heard;
+    if (made.onend) made.onend();
+    // sentences keep the engine's own best hearing, spacing and all
+    let said = '';
+    Dictation.start(fin => { said += fin; }, () => {}, { model: 'dictation', hints: BOOKS.slice() });
+    out.sentenceAlts = made.maxAlternatives;
+    const s1 = [{ transcript: 'In the beginning' }]; s1.isFinal = true;
+    made.onresult({ resultIndex: 0, results: [s1] });
+    out.sentence = said;
+    if (made.onend) made.onend();
+    window.SpeechRecognition = undefined; window.webkitSpeechRecognition = undefined;
+    out.phoneNoEngine = speechRoute();
+    window.SpeechRecognition = realSR; window.webkitSpeechRecognition = realWK;
+    delete navigator.userAgent;
+    return out;
+  });
+  is(speech.phoneWithEngine, 'web', 'a phone browser with a speech engine uses it, not the keyboard');
+  is(speech.alts, 5, '...asking for several hearings when a book is wanted');
+  is(speech.webHeard, 'Deuteronomy', '...and taking the one that is a book');
+  is(speech.sentenceAlts, 1, 'a sentence asks for one hearing');
+  is(speech.sentence, 'In the beginning', '...and keeps it as heard');
+  is(speech.phoneNoEngine, 'keyboard', 'only a phone with no engine is pointed at its keyboard');
+
+  const nativeSpeech = await $(async () => {
+    const out = {}; let opts = null, partial = null, state = null, heard = '';
+    window.Capacitor = { getPlatform: () => 'android', Plugins: { SpeechRecognition: {
+      async checkPermissions() { return { speechRecognition: 'granted' }; },
+      async requestPermissions() { return { speechRecognition: 'granted' }; },
+      async available() { return { available: true }; },
+      async start(o) { opts = o; }, async stop() {},
+      async addListener(ev, fn) { if (ev === 'partialResults') partial = fn; if (ev === 'listeningState') state = fn; return { remove() {} }; },
+      removeAllListeners() {} } } };
+    Dictation.start((fin, mid) => { heard = mid || fin || heard; }, () => {}, bookSpeechOpts());
+    await new Promise(r => setTimeout(r, 60));
+    out.model = opts && opts.languageModel; out.max = opts && opts.maxResults;
+    out.biasBooks = !!(opts && Array.isArray(opts.biasingStrings) && opts.biasingStrings.includes('Deuteronomy'));
+    if (partial) partial({ matches: ['do you to Ronnie', 'Deuteronomy'] });
+    out.nativeHeard = heard;
+    Dictation.stop();
+    if (state) await state({ status: 'stopped' });
+    out.stopped = !Dictation.listening();
+    delete window.Capacitor;
+    return out;
+  });
+  is(nativeSpeech.model, 'web_search', 'the app asks Android for its search model when a book is wanted');
+  is(nativeSpeech.max, 5, '...for several hearings');
+  ok(nativeSpeech.biasBooks, '...with the sixty six books to listen for');
+  is(nativeSpeech.nativeHeard, 'Deuteronomy', '...and takes the one that is a book');
+  ok(nativeSpeech.stopped, '...and stops cleanly');
+
   describe('a book lesson will not move on half-answered', () => { });
   const bookGuard = await $(() => {
     closeEveryOverlay();
