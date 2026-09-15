@@ -2145,6 +2145,12 @@
       <div class="btnrow" style="margin:8px 0 0"><button class="btn ghost sm" id="ttsPreview">▶ Hear it</button></div>
       <p class="hint" id="ttsVoiceNote" style="margin:8px 0 0"></p>
 
+      <div class="prof-sect" style="margin-top:16px">Speaking</div>
+      <p class="hint" style="margin:0 0 8px">What listens when you tap 🎤 to say an answer or a scene. This is kept on this device.</p>
+      <button class="btn" id="spkKb" style="width:100%">⌨️ Keyboard microphone</button>
+      <button class="btn ghost" id="spkG" style="width:100%;margin-top:8px">🎤 Google speech</button>
+      <p class="hint" id="spkNote" style="margin:8px 0 0"></p>
+
       <div class="prof-sect" style="margin-top:16px">Review schedule</div>
  <p class="hint" style="margin:0 0 8px">The days after learning a verse that it comes back to you.
    The first 6 are the dots drawn on a verse, so changing them changes the trail you see.
@@ -2299,8 +2305,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.19.4";
+const APP_VERSION="2.19.5";
 const CHANGELOG=[
+ {v:"2.19.5", d:"September 15, 2026", t:"Speak with your keyboard, or with Google", items:[
+   ["new","<b>Profile → Speaking chooses what listens when you tap 🎤.</b> The keyboard’s microphone is the default: the key beside your space bar, or Windows key + H on a PC, and it needs no permission. Google speech is the better ear for Bible names; switch to it there, and it asks for the microphone as you do."],
+   ["chg","<b>When Google speech isn’t allowed, the 🎤 offers your keyboard instead of a dead end.</b> One tap switches to the keyboard’s microphone and says where the key is. In the Android app a second button opens the app’s settings for you."]
+ ]},
  {v:"2.19.4", d:"September 15, 2026", t:"Listen reads only what you can see", items:[
    ["fix","<b>Listen said “image coming” over a picture that was plainly there.</b> Every picture carries a hidden stand-in for when it fails to load, and the reader was reading the page’s text rather than the screen. It now reads only what is actually showing, and never the stand-in."]
  ]},
@@ -13116,11 +13126,16 @@ function renderChronoQ(){
   const inp=el("chIn"), fb=el("ntFb"), go=el("chGo");
   try{ inp.focus(); }catch(e){}
 
-  // Speaking is the whole reason a typed answer is bearable on a phone.
-  if(speechRoute()==="keyboard"){
-    el("chMic").innerHTML=`<p class="hint" style="margin:8px 0 0;font-size:11.5px">${KEYBOARD_MIC_TIP}</p>`;
-  } else if(speechRoute()!=="none"){
-    el("chMic").innerHTML=`<button class="btn ghost" id="chSpeak" style="width:100%;margin-top:8px">🎤 Say it instead</button>`;
+  // Speaking is the whole reason a typed answer is bearable on a phone. Wired again whenever the
+  // reader switches between the keyboard's microphone and Google speech from here.
+  const wireMic=()=>{
+    const box=el("chMic"); if(!box) return;
+    if(speechRoute()==="keyboard"){
+      box.innerHTML=`<p class="hint" style="margin:8px 0 0;font-size:11.5px">${keyboardMicTip()}${googleLinkHtml("chUseG")}</p>`;
+      wireGoogleLink("chUseG", wireMic);
+      return;
+    }
+    box.innerHTML=`<button class="btn ghost" id="chSpeak" style="width:100%;margin-top:8px">🎤 Say it instead</button>`;
     const mic=el("chSpeak");
     mic.onclick=()=>{
       if(Dictation.listening()) return Dictation.stop();
@@ -13128,11 +13143,13 @@ function renderChronoQ(){
       Dictation.start(
         (fin,mid)=>{ inp.value=((inp.__heard=(inp.__heard||"")+fin)+mid).trim();
           if(fin) inp.dispatchEvent(new Event("input")); },   // a finished hearing is judged like a typed one
-        ()=>{ mic.textContent="🎤 Say it instead"; mic.classList.remove("blue"); inp.__heard=""; },
+        why=>{ mic.textContent="🎤 Say it instead"; mic.classList.remove("blue"); inp.__heard="";
+          if(SPEAK_REFUSED.includes(why)) offerKeyboardMic(why, ()=>{ wireMic(); try{ inp.focus(); }catch(e){} }); },
         bookSpeechOpts()
       );
     };
-  }
+  };
+  wireMic();
 
   const name=bookName(n), mask=el("chMask"), hint=el("chHint");
   let answered=false, shown=0, streak=0, helped=false;
@@ -14671,31 +14688,32 @@ const Dictation = (()=>{
     }
   };
 })();
-/* ---- which speech engine to use ---------------------------------------------------------------
-   There are two on an Android phone and they are not close.
+/* ---- which way of speaking ----------------------------------------------------------------------
+   Two ways, and the reader chooses between them in Profile → Speaking. The choice is kept on this
+   device and never follows the account: whether a microphone may be used is decided per device.
 
-   The web one — webkitSpeechRecognition — streams your voice to a server, comes back without
-   punctuation, stops when it feels like it, and first has to be given permission through a chain
-   of three settings that has already cost this project three rounds of instructions.
-
-   The KEYBOARD one is the microphone key beside the space bar. It is the recogniser the phone
-   uses for everything else, it punctuates, you can edit while it runs, and — the part that
+   The KEYBOARD microphone is the default. It is the key beside the space bar (Windows key + H on a
+   PC), the recogniser the device uses for everything else, it punctuates, and — the part that
    matters most — it needs no permission from us AT ALL, because the keyboard owns the microphone
-   rather than the web page. There is nothing for a reader to switch on and nothing for us to get
-   wrong.
+   rather than the page. There is nothing for a reader to switch on and nothing for us to get wrong.
 
-   That was the reasoning, and for a while phone browsers were pointed at the keyboard. It lost on
-   the thing this app says most: Bible names. The keyboard's recogniser turned Deuteronomy into
-   something else, while Google's own recogniser, which is what the web engine is in Chrome and
-   what the app's plugin hands the job to, gets them right. It can also be told when a book is
-   wanted and choose between its hearings (see Dictation). So the web engine is used on phones too,
-   and the keyboard's microphone is only the way to speak where there is no engine at all. */
+   GOOGLE speech is the better ear for the thing this app says most, Bible names. The keyboard
+   turned Deuteronomy into something else, while Google's own recogniser, which is what the web
+   engine is in Chrome and what the app's plugin hands the job to, gets them right, and it can be
+   told when a book is wanted (see Dictation). But it has to be allowed the microphone first, and
+   getting that permission granted has been the shaky part. So Google is the one you opt into, the
+   permission is asked at the moment you choose it, and a refusal at the 🎤 offers the keyboard
+   rather than a dead end. */
+function speakPref(){ return Store.get("vv_speak")==="google" ? "google" : "keyboard"; }
+function setSpeakPref(v){
+  Store.set("vv_speak", v==="google" ? "google" : "keyboard");
+  paintSpeakPanel();
+  if(el("profGrid")) paintProfileGrid();
+}
 function speechRoute(){
-  if((typeof nativePlatform==="function") && nativePlatform()!=="web" &&
-     (typeof Dictation!=="undefined") && Dictation.supported()) return "native";
-  if(typeof Dictation!=="undefined" && Dictation.supported()) return "web";
-  if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent||"")) return "keyboard";   // no engine: the keyboard's mic
-  return "none";
+  const engine = (typeof Dictation!=="undefined") && Dictation.supported();
+  if(!engine || speakPref()!=="google") return "keyboard";
+  return ((typeof nativePlatform==="function") && nativePlatform()!=="web") ? "native" : "web";
 }
 // What to listen for when the answer is a book. The recogniser is given all sixty-six, and of its
 // hearings the one that names a book is taken.
@@ -14703,8 +14721,60 @@ function bookSpeechOpts(){
   return { model:"search", hints:BOOKS.slice(),
            pick:t=>bookCandidates(t).length===1 || BOOKS.some((nm,i)=>bookAnswerOk(t,i+1)) };
 }
-// Said in one place because it is said on three screens.
-const KEYBOARD_MIC_TIP = "Tap in the box, then the <b>🎤</b> on your keyboard — bottom row, beside the space bar. It punctuates as you talk and needs no permission.";
+// Said in one place because it is said on three screens. Where the key is depends on the device.
+function keyboardMicTip(){
+  const ua=navigator.userAgent||"";
+  if(/Android|iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints>1))
+    return "Tap in the box, then the <b>🎤</b> on your keyboard — bottom row, beside the space bar. It punctuates as you talk and needs no permission.";
+  if(/CrOS/.test(ua)) return "Click in the box, then press <b>Search + D</b> and talk. Your Chromebook types what you say, and needs no permission.";
+  if(/Macintosh|Mac OS X/.test(ua)) return "Click in the box, then press <b>Fn</b> twice (or the <b>🎤</b> key) and talk. Your Mac types what you say, and needs no permission.";
+  if(/Windows/.test(ua)) return "Click in the box, then press <b>Windows key + H</b> and talk. Windows types what you say, and needs no permission.";
+  return "Click in the box and use your computer’s own voice typing. It needs no permission.";
+}
+// The plugin behind Google speech in the Android app, or null in a browser.
+function speechPlugin(){
+  try{ const P=window.Capacitor && window.Capacitor.Plugins;
+       return ((typeof nativePlatform==="function") && nativePlatform()!=="web" && P && P.SpeechRecognition) || null; }
+  catch(e){ return null; }
+}
+/* The microphone as Google speech would find it: "granted", "denied", or "prompt" when it has not
+   been asked yet or there is no way to tell. Only read: reading it never asks anybody anything. */
+async function micState(){
+  try{
+    const SR=speechPlugin();
+    if(SR){ const p=await SR.checkPermissions(), s=p && p.speechRecognition;
+            return s==="granted" ? "granted" : (s==="denied" ? "denied" : "prompt"); }
+    if(navigator.permissions && navigator.permissions.query)
+      return (await navigator.permissions.query({name:"microphone"})).state;
+  }catch(e){}
+  return "prompt";
+}
+// Asked while they are looking at the reason for it: switching Google speech on is that moment.
+async function askMic(){
+  try{
+    const SR=speechPlugin();
+    if(SR){ let p=await SR.checkPermissions();
+            if(!p || p.speechRecognition!=="granted") p=await SR.requestPermissions();
+            return !!p && p.speechRecognition==="granted"; }
+    const md=navigator.mediaDevices;
+    if(md && md.getUserMedia){ const s=await md.getUserMedia({audio:true}); s.getTracks().forEach(t=>t.stop()); return true; }
+  }catch(e){ return false; }
+  return true;   // nothing to ask here; the engine asks for itself when it starts
+}
+async function switchToGoogle(after){
+  if(!(typeof Dictation!=="undefined" && Dictation.supported())) return false;
+  if(!(await askMic())){ openMicHelp(); return false; }
+  setSpeakPref("google"); toast("Google speech is on"); if(after) after();
+  return true;
+}
+// The way back to Google from wherever the keyboard tip is showing, where there is a Google to go to.
+function googleLinkHtml(id){
+  return (typeof Dictation!=="undefined" && Dictation.supported())
+    ? ` <u id="${id}" style="cursor:pointer;white-space:nowrap">Use Google speech instead</u>` : "";
+}
+function wireGoogleLink(id, after){ const u=el(id); if(u) u.onclick=()=>switchToGoogle(after); }
+// Endings that mean Google speech cannot be used here, rather than one attempt that went wrong.
+const SPEAK_REFUSED=["not-allowed","service-not-allowed","unsupported"];
 
 /* Where microphone permission actually lives, for the way THIS person is running the app. Getting
    this wrong is worse than saying nothing: it sends somebody hunting through a settings screen that
@@ -14774,16 +14844,63 @@ function openMicHelp(){
   m.style.display="flex"; raiseModal(m);
   const close=()=>{ m.style.display="none"; };
   el("mhX").onclick=el("mhNo").onclick=close;
-  // In the Android app the settings screen can be opened directly, which is the whole point of
-  // being an app. Everywhere else the steps above are the best that can be done.
   if(el("mhOpen")) el("mhOpen").onclick=async ()=>{
-    try{
-      const P=window.Capacitor && window.Capacitor.Plugins;
-      if(P && P.NativeSettings && P.NativeSettings.openAndroid){ await P.NativeSettings.openAndroid({option:"application_details"}); close(); return; }
-      if(P && P.App && P.App.openSettings){ await P.App.openSettings(); close(); return; }
-    }catch(e){}
+    if(await openAppSettings()){ close(); return; }
     toast("Open Settings → Apps → Burning Bush → Permissions.");
   };
+}
+/* In the Android app the settings screen can be opened directly, which is the whole point of being
+   an app: it lands on Burning Bush's own page, one tap from Permissions → Microphone. A web page
+   cannot open the browser's settings at all, so everywhere else the steps are the best there is. */
+async function openAppSettings(){
+  try{
+    const P=window.Capacitor && window.Capacitor.Plugins;
+    if(P && P.NativeSettings && P.NativeSettings.openAndroid){ await P.NativeSettings.openAndroid({option:"application_details"}); return true; }
+    if(P && P.App && P.App.openSettings){ await P.App.openSettings(); return true; }
+  }catch(e){}
+  return false;
+}
+/* Google speech was refused, or cannot run here. The keyboard's microphone always can, so that is
+   offered first, with where its key is, and the way to put Google right comes second. */
+function offerKeyboardMic(why, then){
+  const m=el("kbOfferModal")||(()=>{ const d=document.createElement("div"); d.id="kbOfferModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const native=!!speechPlugin(), refused=(why==="not-allowed" || why==="service-not-allowed");
+  m.innerHTML=`<div class="modal-card">
+      <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="kbX" style="margin:0">✕</button>
+        <div style="flex:1;text-align:center;font-weight:800">${refused?"Google speech isn’t allowed yet":"Google speech can’t listen here"}</div><span style="width:34px"></span></div>
+      <p style="margin:0 0 12px;font-size:14px;line-height:1.5">${refused
+        ? "This device hasn’t let Burning Bush use the microphone. Your keyboard has a microphone of its own, and it needs no permission."
+        : "Google speech isn’t available on this device. Your keyboard has a microphone of its own, and it needs no permission."}</p>
+      <button class="btn" id="kbUse" style="width:100%">⌨️ Use my keyboard’s microphone</button>
+      <p class="hint" style="margin:8px 0 0;font-size:12px">${keyboardMicTip()}</p>
+      ${refused?`<button class="btn ghost" id="kbFix" style="width:100%;margin-top:12px">${native?"Open settings for me":"Show me how to allow Google speech"}</button>`:""}
+      <p class="hint" style="margin:10px 0 0;font-size:11.5px">Switch between the two any time in Profile → Speaking.</p>
+    </div>`;
+  m.style.display="flex"; raiseModal(m);
+  const close=()=>{ m.style.display="none"; };
+  el("kbX").onclick=close;
+  el("kbUse").onclick=()=>{ close(); setSpeakPref("keyboard"); if(then) then(); };
+  if(el("kbFix")) el("kbFix").onclick=async ()=>{ close(); if(!native || !(await openAppSettings())) openMicHelp(); };
+}
+async function paintSpeakPanel(){
+  const kb=el("spkKb"), g=el("spkG"), note=el("spkNote"); if(!kb || !g || !note) return;
+  const p=speakPref(), can=(typeof Dictation!=="undefined") && Dictation.supported();
+  kb.className="btn"+(p==="keyboard"?"":" ghost"); g.className="btn"+(p==="google"?"":" ghost");
+  kb.textContent=(p==="keyboard"?"✓ ":"")+"⌨️ Keyboard microphone";
+  g.textContent=(p==="google"?"✓ ":"")+"🎤 Google speech";
+  g.disabled=!can;
+  if(p!=="google"){
+    note.innerHTML="Your device’s own voice typing does the listening. "+keyboardMicTip()
+      +(can ? " Google speech is the better ear for Bible names, and asks for the microphone when you switch to it."
+            : " Google speech isn’t available in this browser.");
+    return;
+  }
+  const st=await micState();
+  if(speakPref()!=="google") return;   // switched back while that was being read
+  note.innerHTML = st==="granted" ? "Google speech is on, and the microphone is allowed."
+    : st==="denied" ? `The microphone is blocked for Burning Bush, so the 🎤 will offer your keyboard instead. <u id="spkHow" style="cursor:pointer">Show me how to allow it</u>`
+    : "Google speech is on. The first time you tap 🎤, allow the microphone when you’re asked.";
+  const h=el("spkHow"); if(h) h.onclick=()=>openMicHelp();
 }
 
 /* ---- writing with the keyboard up -------------------------------------------------------------
@@ -14887,9 +15004,11 @@ function wireSpeakButton(btn, note, ta, opts){
   if(!btn || !ta) return;
   opts=opts||{};
   const say=(html)=>{ if(note) note.innerHTML=html; };
-  const route=speechRoute();
+  // Wired again whenever the reader switches between the keyboard and Google, from either side.
+  const again=()=>wireSpeakButton(btn, note, ta, opts);
+  btn.classList.remove("bigmic","blue");
 
-  if(route==="keyboard"){
+  if(speechRoute()==="keyboard"){
     // A page cannot press the keyboard’s microphone key — there is no API for it, and there is
     // no getting round that. What it CAN do is put the cursor in the right place, bring the
     // keyboard up, and say which key. That is the whole of it, so make the button big and plain.
@@ -14897,14 +15016,10 @@ function wireSpeakButton(btn, note, ta, opts){
     btn.classList.add("bigmic");
     btn.onclick=()=>{
       try{ ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }catch(e){}
-      say(`<span class="muted">${KEYBOARD_MIC_TIP}</span>`);
+      const gid=((note && note.id) || "spk")+"G";
+      say(`<span class="muted">${keyboardMicTip()}</span>${googleLinkHtml(gid)}`);
+      wireGoogleLink(gid, ()=>{ again(); say(""); });
     };
-    return;
-  }
-  if(route==="none"){
-    btn.textContent="🎤 Speaking isn't available here";
-    btn.style.opacity=".65";
-    btn.onclick=()=>openMicHelp();
     return;
   }
 
@@ -14912,6 +15027,7 @@ function wireSpeakButton(btn, note, ta, opts){
      from a mishearing: what was before it, plus what has been heard, plus what was after it. */
   let at=0, before="", after="", heard="";
   const idle=()=>{ btn.textContent="🎤 Speak it instead"; btn.classList.remove("blue"); };
+  idle();
   const paint=(interim)=>{
     const said=(heard+interim).replace(/\s+/g," ");
     const join=(a,b)=>!a?b:(!b?a:(/\s$/.test(a)?a+b:a+" "+b));
@@ -14936,11 +15052,13 @@ function wireSpeakButton(btn, note, ta, opts){
         idle();
         if(why==="not-allowed" || why==="service-not-allowed"){
           say('<b style="color:var(--miss)">The microphone is switched off.</b> <u id="edMicFix" style="cursor:pointer">Show me where</u>');
-          const f=el("edMicFix"); if(f) f.onclick=()=>openMicHelp(); return;
+          const f=el("edMicFix"); if(f) f.onclick=()=>openMicHelp();
+          offerKeyboardMic(why, ()=>{ again(); btn.click(); }); return;
         }
         if(why==="no-speech"){ say('<span class="muted">Nothing was heard. Tap again and speak a little closer.</span>'); return; }
         if(why==="network"){ say('<span class="muted">Speaking needs a connection, and there is none just now.</span>'); return; }
-        if(why==="unsupported"){ say('<span class="muted">Speaking is not available on this device.</span>'); return; }
+        if(why==="unsupported"){ say('<span class="muted">Speaking is not available on this device.</span>');
+          offerKeyboardMic(why, ()=>{ again(); btn.click(); }); return; }
         if(why==="audio-capture"){ say('<span class="muted">No microphone was found on this device.</span>'); return; }
         if(opts.autoCap && ta.value){ const v=capAfterPunct(ta.value); if(v!==ta.value) ta.value=v; }
         say(heard.trim() ? '<span class="muted">Tap the microphone again to add more.</span>' : "");
@@ -16052,7 +16170,7 @@ function applyFeatureVisibility(){
    which is the whole reason for doing it this way rather than re-authoring the markup.        */
 const PROF_ICONS={ "Admin":"🛠️", "Badges":"🎖️", "Feature store":"✨", "Account":"👤",
   "Review schedule":"🗓️",
-  "Reading voice":"🗣️",
+  "Reading voice":"🗣️", "Speaking":"🎤",
   "Group licences":"🎫", "Give":"🎁",
   "Bible translation":"📗", "Reference library":"📚", "What's new":"📋", "Theme":"🎨",
   "Get the app":"📲", "Sound effects":"🔔", "Sync":"🔄", "Back up your progress":"💾" };
@@ -16074,6 +16192,7 @@ const PROF_SUBS={
   "Get the app":()=>"Home screen",
   "Review schedule":()=>srLadderIsCustom() ? "Your own" : "Default",
   "Reading voice":()=>{ const v=ttsVoice(); return v ? v.name : (ttsAvailable() ? "Device voice" : "Not on this device"); },
+  "Speaking":()=>speakPref()==="google" ? "Google speech" : "Keyboard mic",
   "Sound effects":()=>{ const off=Object.keys((Prog&&Prog.sfxOff)||{}).length;
     return off ? off+" switched off" : "All on"; },
   "Sync":()=>((typeof Auth!=="undefined"&&Auth._token)?"Across your devices":"Sign in to sync"),
@@ -16186,6 +16305,7 @@ function openProfSection(slug){
   const body=m.querySelector("#psBody");
   body.appendChild(p.el); p.el.style.display="";
   m.style.display="flex"; raiseModal(m);
+  if(slug==="speaking") paintSpeakPanel();   // the microphone may have been allowed or blocked since
   const close=()=>{ stowProfPanels(); m.style.display="none"; paintProfileGrid(); };
   el("psClose").onclick=close; el("psDone").onclick=close;
   m.onclick=ev=>{ if(ev.target===m) close(); };
@@ -16358,6 +16478,22 @@ srLadderPaint();
   if(el("ttsPreview")) el("ttsPreview").onclick=()=>{ if(ttsBusy){ ttsStop(); return; }
     ttsSpeak("This is how your lessons will sound. Take a breath, and let the picture settle."); };
   ttsPaintVoices();
+})();
+(function(){
+  const kb=el("spkKb"), g=el("spkG");
+  if(kb) kb.onclick=()=>setSpeakPref("keyboard");
+  // Google is switched on only once the microphone is actually allowed; refused, the keyboard stays.
+  if(g) g.onclick=async ()=>{
+    if(speakPref()==="google") return;
+    const note=el("spkNote");
+    g.disabled=true; if(note) note.textContent="Asking for the microphone…";
+    const ok=await askMic();
+    g.disabled=false;
+    if(ok){ setSpeakPref("google"); return; }
+    if(note){ note.innerHTML=`The microphone wasn’t allowed, so the keyboard microphone stays on. <u id="spkHow" style="cursor:pointer">Show me how to allow it</u>`;
+              const h=el("spkHow"); if(h) h.onclick=()=>openMicHelp(); }
+  };
+  paintSpeakPanel();
 })();
 /* The sound list is built from the palette itself rather than from a second list kept beside it —
    a sound that exists but is missing from this screen is a sound nobody can switch off, and a row

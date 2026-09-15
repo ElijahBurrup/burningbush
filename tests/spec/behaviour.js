@@ -6501,8 +6501,8 @@ const DAY = 86400000;
   ok(cmrg.updateHolds, 'updating migrates both copies, so the old heart does not come back');
   ok(cmrg.oldNeverResets, 'an old copy arriving late never resets real progress in the stages');
 
-  // Speaking: Google's recognition on phones too, and steered to book names when a book is wanted.
-  describe('speaking: Google recognition, steered to book names', () => { });
+  // Speaking: the keyboard's microphone unless Google speech is chosen, and Google steered to book names.
+  describe('speaking: the keyboard by default, Google when chosen, steered to book names', () => { });
   const speech = await $(() => {
     const out = {};
     Object.defineProperty(navigator, 'userAgent', { configurable: true, get: () => 'Mozilla/5.0 (Linux; Android 14) Chrome/140' });
@@ -6510,6 +6510,9 @@ const DAY = 86400000;
     let made = null;
     function FakeRec() { made = this; this.start = () => {}; this.stop = () => {}; }
     window.SpeechRecognition = FakeRec;
+    Store.remove('vv_speak');
+    out.byDefault = speechRoute();
+    Store.set('vv_speak', 'google');
     out.phoneWithEngine = speechRoute();
     let heard = '';
     Dictation.start(fin => { heard += fin; }, () => {}, bookSpeechOpts());
@@ -6529,15 +6532,17 @@ const DAY = 86400000;
     window.SpeechRecognition = undefined; window.webkitSpeechRecognition = undefined;
     out.phoneNoEngine = speechRoute();
     window.SpeechRecognition = realSR; window.webkitSpeechRecognition = realWK;
+    Store.remove('vv_speak');
     delete navigator.userAgent;
     return out;
   });
-  is(speech.phoneWithEngine, 'web', 'a phone browser with a speech engine uses it, not the keyboard');
+  is(speech.byDefault, 'keyboard', 'the keyboard microphone is the default, even where Google speech exists');
+  is(speech.phoneWithEngine, 'web', 'choosing Google speech uses the engine');
   is(speech.alts, 5, '...asking for several hearings when a book is wanted');
   is(speech.webHeard, 'Deuteronomy', '...and taking the one that is a book');
   is(speech.sentenceAlts, 1, 'a sentence asks for one hearing');
   is(speech.sentence, 'In the beginning', '...and keeps it as heard');
-  is(speech.phoneNoEngine, 'keyboard', 'only a phone with no engine is pointed at its keyboard');
+  is(speech.phoneNoEngine, 'keyboard', 'with no engine to use, it is the keyboard whatever was chosen');
 
   const nativeSpeech = await $(async () => {
     const out = {}; let opts = null, partial = null, state = null, heard = '';
@@ -6565,6 +6570,53 @@ const DAY = 86400000;
   ok(nativeSpeech.biasBooks, '...with the sixty six books to listen for');
   is(nativeSpeech.nativeHeard, 'Deuteronomy', '...and takes the one that is a book');
   ok(nativeSpeech.stopped, '...and stops cleanly');
+
+  describe('Profile → Speaking, and the keyboard offered when Google is refused', () => { });
+  const spk = await $(async () => {
+    const out = {}; const tick = () => new Promise(r => setTimeout(r, 0));
+    closeEveryOverlay(); Store.remove('vv_speak');
+    const realSR = window.SpeechRecognition; let inst = null;
+    function FakeRec() { inst = this; this.start = () => {}; this.stop = () => { if (this.onend) this.onend(); }; }
+    window.SpeechRecognition = FakeRec;
+    await paintSpeakPanel();
+    out.defaultTicked = /✓/.test(el('spkKb').textContent) && !/✓/.test(el('spkG').textContent);
+    out.sub = PROF_SUBS['Speaking']();
+    // switching to Google asks for the microphone there and then; refused, the keyboard stays
+    const gum = f => Object.defineProperty(navigator, 'mediaDevices', { configurable: true, value: { getUserMedia: f } });
+    gum(async () => { throw new Error('NotAllowedError'); });
+    el('spkG').click(); await tick(); await tick();
+    out.refusedStays = speakPref() === 'keyboard' && /allowed/.test(el('spkNote').textContent) && !!el('spkHow');
+    let stopped = false;
+    gum(async () => ({ getTracks: () => [{ stop() { stopped = true; } }] }));
+    el('spkG').click(); await tick(); await tick(); await tick();
+    out.allowedSwitches = speakPref() === 'google' && /✓/.test(el('spkG').textContent) && stopped;
+    out.subNow = PROF_SUBS['Speaking']();
+    // a refusal at the 🎤 offers the keyboard; one tap switches, and the cursor is put in the box
+    editText({ title: 'A scene', value: 'Kept.', onSave() {} });
+    el('edMic').click(); inst.onerror({ error: 'not-allowed' });
+    const offer = el('kbOfferModal');
+    out.offered = !!offer && offer.style.display === 'flex' && !!el('kbUse');
+    out.keptText = el('edTa').value === 'Kept.';
+    el('kbUse').click();
+    out.switched = speakPref() === 'keyboard' && offer.style.display === 'none';
+    out.buttonIsKeyboard = /Speak it/.test(el('edMic').textContent) && !/instead/.test(el('edMic').textContent);
+    out.cursorInBox = document.activeElement === el('edTa');
+    out.saysWhere = /box/.test(el('edMicNote').textContent) && !!el('edMicNoteG');
+    delete navigator.mediaDevices;
+    window.SpeechRecognition = realSR; Store.remove('vv_speak'); closeEveryOverlay();
+    return out;
+  });
+  ok(spk.defaultTicked, 'Profile → Speaking starts on the keyboard microphone');
+  is(spk.sub, 'Keyboard mic', '...and its tile says so');
+  ok(spk.refusedStays, 'choosing Google with the microphone refused keeps the keyboard, and says how to allow it');
+  ok(spk.allowedSwitches, 'allowed, it switches to Google, and lets the microphone go again');
+  is(spk.subNow, 'Google speech', '...and the tile follows');
+  ok(spk.offered, 'a refused microphone at the 🎤 offers the keyboard microphone');
+  ok(spk.keptText, '...losing nothing already written');
+  ok(spk.switched, 'one tap switches to the keyboard and closes the offer');
+  ok(spk.buttonIsKeyboard, '...the button becomes the keyboard one');
+  ok(spk.cursorInBox, '...the cursor is put in the box');
+  ok(spk.saysWhere, '...and it says where the key is, with the way back to Google');
 
   describe('a book lesson will not move on half-answered', () => { });
   const bookGuard = await $(() => {

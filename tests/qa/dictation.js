@@ -38,6 +38,8 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
       fail(code) { this.onerror({ error: code }); }
     }
     window.SpeechRecognition = FakeRec;
+    // Sections 1–6 are Google speech, which a reader chooses in Profile → Speaking.
+    Store.set('vv_speak', 'google');
 
     const openEditor = (starting) => {
       closeEveryOverlay();
@@ -86,6 +88,7 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
     res.denied = { kept: el('edTa').value === 'Already written.',
                    said: (el('edMicNote').innerText || ''),
                    offersHelp: !!el('edMicFix'),
+                   offersKeyboard: !!el('kbUse'),
                    backToIdle: /Speak it instead/.test(el('edMic').textContent) };
 
     // 6. every other ending is named rather than lumped together
@@ -108,10 +111,10 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
       iphone: helpFor('Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)', false)
     };
 
-    // 7b. ON A PHONE BROWSER, where the app must NOT use the web engine even though it exists.
-    //     The keyboard's own microphone is better at the job and needs no permission from us,
-    //     which is the entire reason this branch exists — three rounds of permission instructions
-    //     for an engine that was the worse one anyway.
+    // 7b. ON A PHONE BROWSER, left as it comes: the keyboard's own microphone, even though the web
+    //     engine exists. It needs no permission from us, and permission is the part that kept
+    //     failing people; Google speech is there for whoever switches it on in Profile → Speaking.
+    Store.remove('vv_speak');
     const asPhone = (ua) => {
       Object.defineProperty(navigator, 'userAgent', { value: ua, configurable: true });
       openEditor('');
@@ -148,6 +151,7 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
     };
     const realCap = window.Capacitor;
     window.Capacitor = { getPlatform: () => 'android', Plugins: { SpeechRecognition: SR } };
+    Store.set('vv_speak', 'google');
 
     res.nat = { offeredWithNoWebEngine: (openEditor(''), !!el('edMic') && /Speak it/.test(el('edMic').textContent)) };
 
@@ -185,6 +189,7 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
     openEditor('Already written.'); el('edMic').click(); await tick(); await tick(); await tick();
     res.nat.denied = { kept: el('edTa').value === 'Already written.',
                        offersHelp: !!el('edMicFix'),
+                       opensSettings: /Open settings for me/.test((el('kbFix') || {}).textContent || ''),
                        said: (el('edMicNote').innerText || '') };
     SR.perm = 'granted';
 
@@ -199,6 +204,7 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
     res.nat.helpOpensSettings = !!h.native;
 
     window.Capacitor = realCap;
+    Store.remove('vv_speak');
     closeEveryOverlay();
     return res;
   });
@@ -214,6 +220,7 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
   say(r.denied.kept, 'a denied microphone loses nothing that was written');
   say(/switched off/i.test(r.denied.said), '...says the microphone is off');
   say(r.denied.offersHelp, '...offers to show where the switch is');
+  say(r.denied.offersKeyboard, '...and offers the keyboard microphone instead');
   say(r.denied.backToIdle, '...and the button goes back to how it was');
   say(/Nothing was heard/i.test(r.messages.silence), 'silence is its own message, not an error');
   say(/connection/i.test(r.messages.offline), 'being offline is its own message');
@@ -233,7 +240,7 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
   say(/keyboard/i.test(r.paths.iphone), '...and on iPhone it points at the keyboard microphone, which always works');
 
   const ph = r.phone;
-  say(ph.android.route === 'keyboard', 'on an Android browser it chooses the keyboard, not the web engine');
+  say(ph.android.route === 'keyboard', 'on an Android browser it starts on the keyboard, not the web engine');
   // The button is deliberately short and big — "Speak it" — with the how in the line beneath it,
   // because a page cannot press the keyboard's key and a long label does not change that.
   say(/speak it/i.test(ph.android.label), '...the button is plain and short: "' + ph.android.label.trim() + '"');
@@ -256,6 +263,7 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
   say(n.givesUpOnSilence, 'silence twice running gives up, and says nothing was heard');
   say(n.denied.kept && n.denied.offersHelp && /switched off/i.test(n.denied.said),
       'a refused microphone loses nothing and offers the way out');
+  say(n.denied.opensSettings, '...and in the app, a button that opens the settings screen itself');
   say(n.noEngine.ended && /not available/i.test(n.noEngine.said),
       'a phone with no recogniser on it says so rather than hanging');
   say(n.helpOpensSettings, 'and in the app the help offers to open the settings screen itself');
