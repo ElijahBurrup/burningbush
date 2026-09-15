@@ -2415,8 +2415,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.21.6";
+const APP_VERSION="2.21.7";
 const CHANGELOG=[
+ {v:"2.21.7", d:"September 15, 2026", t:"Stay where you are", items:[
+   ["fix","<b>Closing a video, or coming back to the app, no longer drops you in the Library.</b> The app checks for progress from your other devices whenever it comes back into view, and it used to redraw the Library over whatever you were doing, a review included. Now it never moves you."],
+   ["chg","<b>The camera in the Bible now marks only chapters with a verse video.</b> Nearly every chapter has teaching of its own, still on the chapter’s 📺 button, so a camera on every one said nothing."]
+ ]},
  {v:"2.21.6", d:"September 15, 2026", t:"Suggestions and stories, kept fresh", items:[
    ["chg","<b>Suggested verses, topics and the Bible stories now come from Burning Bush too.</b> New heart-verses, better Psalm picks, fresh topics and more milestones along the stories can reach you without waiting for an update."]
  ]},
@@ -4937,11 +4941,13 @@ const MEDIA_KINDS=[["overview","Overview"],["hear","Hear it"],["teach","Teach"],
 function mediaFor(level,key){ const L=MEDIA[level]; return (L && L[String(key)]) || []; }
 /* The camera over a chapter or verse number in the Bible reads this same MEDIA, so a mark and a 📺
    button can never disagree: add an entry and both appear, take it out and both go. A chapter is
-   marked when it has a video of its own or any of its verses does, so someone hunting for videos
-   can find them from the chapter grid. Worked out afresh on every draw rather than cached, so it
-   always matches what MEDIA says right now. */
+   marked only when one of its VERSES has a video. Nearly every chapter has teaching of its own, so
+   a camera on each would say nothing (the owner: "we don't need to put this icon on everything and
+   clutter things up"); a verse video is the rare thing worth hunting for. A chapter's own teaching
+   is still one tap away, on the chapter screen's 📺 button. Worked out afresh on every draw rather
+   than cached, so it always matches what MEDIA says right now. */
 function mediaChapterSet(){
-  const s=new Set(Object.keys(MEDIA.chapter||{}).filter(k=>(MEDIA.chapter[k]||[]).length));
+  const s=new Set();
   Object.keys(MEDIA.verse||{}).forEach(k=>{ if((MEDIA.verse[k]||[]).length) s.add(k.split(":").slice(0,2).join(":")); });
   return s;
 }
@@ -5979,8 +5985,13 @@ const Auth = {
           Store.setJSON(PROG_KEY,Prog); Store.setJSON(SRS_KEY,SRS); Store.setJSON(PROG_KEY+"_bak",Prog);
           bustCaches(); recomputeLevel(); updateMetrics();
           if(Prog.theme && Prog.theme!==Store.get("vv_theme",null)) applyTheme(Prog.theme);   // the theme follows the account too
-          const active=document.querySelector(".view.active");
-          if(active){ if(active.id==="journey")renderJourney(); else if(active.id==="learn")renderPath(); else if(active.id==="verse")renderVerse(); else if(active.id==="palace")renderPalaceHere(); else if(active.id==="stories")renderStories(); }
+          /* Show what arrived, but never by moving anybody. This runs every time the app comes back
+             into view, and closing a video counts, because focus comes back from the player. It used
+             to redraw whatever tab was up, which on the Library drew the hub over a review, a test or
+             a verse being read, and on the Bible put a reader back at the book list.
+             refreshCurrentView() redraws a tab only while it is at its home; anywhere else, the next
+             screen drawn picks the merged progress up. */
+          refreshCurrentView();
         }
       }
       await Auth.push();   // seed cloud on first login, or upload the merged result
@@ -17519,7 +17530,7 @@ if(el("syncNow")) el("syncNow").onclick=async(e)=>{
   b.textContent = ok ? "✅ Up to date" : "Couldn't reach the server";
   setTimeout(()=>{ b.textContent=was; b.disabled=false; }, 1800);
   try{ paintSyncDiag(); }catch(err){}
-  try{ const a=document.querySelector(".view.active"); if(a && a.id==="verse") renderVerse(); }catch(err){}
+  try{ refreshCurrentView(); }catch(err){}      // only where that cannot move anybody
 };
 el("impBtn").onclick=()=>el("impFile").click();
 // Share progress and the Talents Store were removed from Profile — the store lives on the

@@ -4708,12 +4708,55 @@ const DAY = 86400000;
     show('learn'); renderPath();
     return out;
   });
-  ok(marks.k1 && marks.k2 && !marks.k3, 'the chapters with a video carry a camera, and one with none does not');
-  ok(marks.rom16 && !marks.rom15, '...including a chapter whose only video is on one of its verses');
+  ok(!marks.k1 && !marks.k2 && !marks.k3, 'a chapter whose only video is its own teaching carries no camera: nearly every chapter has one');
+  ok(marks.rom16 && !marks.rom15, 'a chapter is marked when one of its verses has a video');
   ok(marks.v23 && !marks.v22, 'on the verse numbers, only the verse with a video is marked');
   ok(marks.above, '...with the camera above the number');
   ok(marks.addedMark && marks.addedChap && marks.addedBtn, 'a new MEDIA entry brings its camera and its 📺 button together');
   ok(marks.removed, '...and taking it out takes the camera away');
+
+  describe('a sync never moves you off the screen you are on', () => { });
+
+  /* The app syncs whenever it comes back into view, and closing a video counts. It used to redraw
+     whatever tab was up afterwards, which on the Library drew the hub over a review or a verse. */
+  const syncStay = await $(async () => {
+    const out = {};
+    const realFetch = window.fetch;
+    const was = { user: Auth.user, token: Auth._token, stale: Auth._stale };
+    const cloud = JSON.parse(JSON.stringify(Prog)); delete cloud.owner;
+    const json = d => new Response(JSON.stringify(d), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    window.fetch = async (url, o = {}) => {
+      const u = String(url);
+      if (/\/sync$/.test(u) && (o.method || 'GET') === 'GET') return json({ progJson: JSON.stringify(cloud), srsJson: JSON.stringify(SRS), updatedAt: Date.now() });
+      if (u.indexOf(API_BASE) === 0) return json({ ok: true });
+      return realFetch(url, o);
+    };
+    const probe = sel => { const n = document.querySelector(sel); if (n) n.dataset.probe = '1'; return !!n; };
+    const kept = () => !!document.querySelector('[data-probe="1"]');
+    const clear = () => document.querySelectorAll('[data-probe]').forEach(n => { delete n.dataset.probe; });
+    try {
+      Auth.user = { email: 'sync@example.com' }; Auth._token = 'test'; Auth._stale = false;
+      show('verse'); openVerseWizard(19, 23, 1, () => {});
+      out.verseProbe = probe('#verse > *');
+      await Auth.pull();
+      out.verseKept = kept(); clear();
+      show('journey'); renderChapterScreen(45, 16);
+      probe('#journey > *');
+      await Auth.pull();
+      out.chapterKept = kept(); clear();
+      show('verse'); vView = 'hub'; renderVerse();
+      probe('#verse .vhub');
+      await Auth.pull();
+      out.homeRedrawn = !kept() && !!document.querySelector('#verse .vhub'); clear();
+    } finally {
+      window.fetch = realFetch; Auth.user = was.user; Auth._token = was.token; Auth._stale = was.stale;
+      show('learn'); renderPath();
+    }
+    return out;
+  });
+  ok(syncStay.verseProbe && syncStay.verseKept, 'a sync while a verse is open in the Library leaves it open');
+  ok(syncStay.chapterKept, 'a sync while a chapter is open in the Bible leaves it open');
+  ok(syncStay.homeRedrawn, '...and the Library at its home is still redrawn with what arrived');
 
   describe('the translation can be changed where it is read', () => { });
 

@@ -11,6 +11,14 @@ Profile → Admin → Content; the 📺 button and the camera mark are both draw
 and go together. Never hand-place either, never compile videos back into `src/index.html`, and
 never make remote anything saved progress depends on: section titles, story order, review stages.
 
+## Nothing in the background moves the user
+
+A sync, a content refresh, a timer, or the app coming back into view (closing a video counts) may
+redraw only through `refreshCurrentView()`, which redraws a tab only while it is at its home. Never
+call `renderVerse()`, `renderJourney()` or `renderPath()` from those paths: the Library, the Bible
+and Learn each hold screens (a review, a test, a verse, a chapter) that such a redraw replaces.
+The owner, after being thrown out of a review: "refreshes should never change screens."
+
 ## Handing work back and forth
 
 **Instructions written for the user contain only the steps that genuinely need a person.**

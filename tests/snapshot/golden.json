@@ -207,11 +207,11 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "classic/bible/book": {
-  "h": "bfe050ab4abcc674",
-  "len": 27120,
-  "els": 667,
+  "h": "cfed6ddb35f457cc",
+  "len": 17093,
+  "els": 503,
   "buttons": 4,
-  "svgs": 41,
+  "svgs": 0,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "bce7fe878879a398",
+  "h": "31366f0555e24fa9",
   "len": 121970,
   "els": 2235,
   "buttons": 587,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "a8f42de672171f93",
-  "len": 203513,
-  "els": 3374,
+  "h": "241d029ee1b15e4f",
+  "len": 204308,
+  "els": 3387,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.6 September 15, 2026 Suggestions and stories, kept fresh FIX Suggested verses, topics and the Bi"
+  "text": "✕ Version history v2.21.7 September 15, 2026 Stay where you are FIX Closing a video, or coming back to the app, no longe"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "17606982f24f48de",
+  "h": "1cee6aa6b502fe11",
   "len": 121169,
   "els": 2227,
   "buttons": 585,
@@ -729,11 +729,11 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "illumined/bible/book": {
-  "h": "bfe050ab4abcc674",
-  "len": 27120,
-  "els": 667,
+  "h": "cfed6ddb35f457cc",
+  "len": 17093,
+  "els": 503,
   "buttons": 4,
-  "svgs": 41,
+  "svgs": 0,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "3b2920eba6956688",
+  "h": "1ce564f7bac572db",
   "len": 121177,
   "els": 2227,
   "buttons": 585,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "a8f42de672171f93",
-  "len": 203513,
-  "els": 3374,
+  "h": "241d029ee1b15e4f",
+  "len": 204308,
+  "els": 3387,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.6 September 15, 2026 Suggestions and stories, kept fresh FIX Suggested verses, topics and the Bi"
+  "text": "✕ Version history v2.21.7 September 15, 2026 Stay where you are FIX Closing a video, or coming back to the app, no longe"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "3b2920eba6956688",
+  "h": "1ce564f7bac572db",
   "len": 121177,
   "els": 2227,
   "buttons": 585,
@@ -1251,11 +1251,11 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "glass/bible/book": {
-  "h": "bfe050ab4abcc674",
-  "len": 27120,
-  "els": 667,
+  "h": "cfed6ddb35f457cc",
+  "len": 17093,
+  "els": 503,
   "buttons": 4,
-  "svgs": 41,
+  "svgs": 0,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "bb1a2ac50c9f38ba",
+  "h": "8a68686010643e02",
   "len": 121175,
   "els": 2227,
   "buttons": 585,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "a8f42de672171f93",
-  "len": 203513,
-  "els": 3374,
+  "h": "241d029ee1b15e4f",
+  "len": 204308,
+  "els": 3387,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.6 September 15, 2026 Suggestions and stories, kept fresh FIX Suggested verses, topics and the Bi"
+  "text": "✕ Version history v2.21.7 September 15, 2026 Stay where you are FIX Closing a video, or coming back to the app, no longe"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "bb1a2ac50c9f38ba",
+  "h": "8a68686010643e02",
   "len": 121175,
   "els": 2227,
   "buttons": 585,
@@ -1773,11 +1773,11 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "quest/bible/book": {
-  "h": "bfe050ab4abcc674",
-  "len": 27120,
-  "els": 667,
+  "h": "cfed6ddb35f457cc",
+  "len": 17093,
+  "els": 503,
   "buttons": 4,
-  "svgs": 41,
+  "svgs": 0,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "465f99fe844059c9",
+  "h": "fb6ba4ca5caf3108",
   "len": 121177,
   "els": 2227,
   "buttons": 585,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "a8f42de672171f93",
-  "len": 203513,
-  "els": 3374,
+  "h": "241d029ee1b15e4f",
+  "len": 204308,
+  "els": 3387,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.6 September 15, 2026 Suggestions and stories, kept fresh FIX Suggested verses, topics and the Bi"
+  "text": "✕ Version history v2.21.7 September 15, 2026 Stay where you are FIX Closing a video, or coming back to the app, no longe"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "465f99fe844059c9",
+  "h": "fb6ba4ca5caf3108",
   "len": 121177,
   "els": 2227,
   "buttons": 585,
@@ -2295,11 +2295,11 @@
   "text": "Bible 🔍 Every book, chapter and verse. Each one opening as you learn its numbers. Tap a book for its chapters, the vers"
  },
  "buddy/bible/book": {
-  "h": "bfe050ab4abcc674",
-  "len": 27120,
-  "els": 667,
+  "h": "cfed6ddb35f457cc",
+  "len": 17093,
+  "els": 503,
   "buttons": 4,
-  "svgs": 41,
+  "svgs": 0,
   "imgs": 1,
   "text": "← All books ← Job Proverbs → 📖 CHAPTERS Psalms Book 19 · image “Tuba” · tap a chapter CH 01 CH 02 CH 03 CH 04 CH 05 CH "
  },
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "42a84ccb86967e15",
+  "h": "b40b0bb64df40356",
   "len": 121173,
   "els": 2227,
   "buttons": 585,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "a8f42de672171f93",
-  "len": 203513,
-  "els": 3374,
+  "h": "241d029ee1b15e4f",
+  "len": 204308,
+  "els": 3387,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.6 September 15, 2026 Suggestions and stories, kept fresh FIX Suggested verses, topics and the Bi"
+  "text": "✕ Version history v2.21.7 September 15, 2026 Stay where you are FIX Closing a video, or coming back to the app, no longe"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "42a84ccb86967e15",
+  "h": "b40b0bb64df40356",
   "len": 121173,
   "els": 2227,
   "buttons": 585,

@@ -59,8 +59,8 @@ as part of `GET /api/content`) and lands in one list in the app, `MEDIA`, keyed 
 | level | key | where its 📺 button is | where its camera mark is |
 |---|---|---|---|
 | `book` | `"11"` (canonical book number) | the book lesson's header | none |
-| `chapter` | `"11:1"` (book:chapter) | the chapter screen's top row | over that chapter's box in the Bible |
-| `verse` | `"45:16:23"` (book:chapter:verse) | the verse page's top bar | over that verse number, and over its chapter's box |
+| `chapter` | `"11:1"` (book:chapter) | the chapter screen's top row | none: nearly every chapter has one |
+| `verse` | `"45:16:23"` (book:chapter:verse) | the verse page's top bar | over that verse number, and over its chapter's box (the only thing that marks a chapter) |
 
 Each entry is `{kind, by, label, yt | fb, covers?}`. `kind` is one of `overview`, `hear`, `teach`
 or `deep`, and sets the group it is listed under.
