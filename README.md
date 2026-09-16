@@ -80,8 +80,10 @@ mapped them, with every id checked, is summarised on the owner's review page, no
 
 **Psalm songs** come from the Burning Bush channel (@BurningBushApp), one playlist per style:
 60's Choir Psalms (`PLT7O3cluGFuM`) and 80's Ballad Psalms (`PLN035pzuBsig`), with more styles to
-follow. Each new psalm is added from Admin → Content → Videos as a Hear it video on `19:<psalm>`, labelled
-`Psalm N · <style>`, so a psalm with several styles lists them all to choose from. List a playlist
+follow. The styles are named ensembles (chosen 2026-09-16): **The Still Waters Choir** (60's choir),
+**Deep Unto Deep** (80's rock ballad) and **Jordan & Grace** (90's country duo). Each new psalm is added
+from Admin → Content → Videos as a Hear it video on `19:<psalm>`, labelled `Psalm N · <ensemble>` (e.g.
+`Psalm 23 · Deep Unto Deep`), so a psalm with several lists them all to choose from. List a playlist
 with a single request (`python -m yt_dlp --flat-playlist -J <playlist url>`), never a channel sweep.
 
 Before an id goes in, check it. A YouTube id must pass oEmbed
