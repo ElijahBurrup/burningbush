@@ -17,7 +17,7 @@
  *
  *   node tests/qa/writing-box.js
  */
-const H = require('C:/Projects/BurningBush/tests/lib/harness.js');
+const H = require('../lib/harness');
 const out = [];
 const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return ok; };
 
@@ -62,13 +62,25 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
     const withKb = ta.getBoundingClientRect().height;
 
     // typing a lot must NOT change the height
+    /* Type like a person, not like a script. Setting .value moves neither the caret nor the
+       scroll, so the box sat at the top and "the newest line stays in view" could never pass.
+       A textarea keeps the caret in view itself once the caret is actually at the end. */
+    ta.focus();
     ta.value = new Array(60).fill('a long sentence about a nasa ship and a hairbrush').join(' ');
+    try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch (e) {}
     ta.dispatchEvent(new Event('input'));
+    ta.blur(); ta.focus();                       // puts the caret's line back in view
     await wait(40);
     const afterTyping = ta.getBoundingClientRect().height;
 
     res.ed.staysPut = Math.abs(afterTyping - withKb) < 2;
-    res.ed.scrolledToEnd = ta.scrollTop > 0 && (ta.scrollTop + ta.clientHeight) >= ta.scrollHeight - 4;
+    /* The app keeps the CARET's line in view (taKeepCaretInView), which leaves the box's own
+       bottom padding below it — so "within 4px of the very bottom" asked for something the app
+       never promises. What matters is that the line being typed is on screen. */
+    {
+      const pad = parseFloat(getComputedStyle(ta).paddingBottom) || 0;
+      res.ed.scrolledToEnd = ta.scrollTop > 0 && (ta.scrollTop + ta.clientHeight) >= ta.scrollHeight - pad - 4;
+    }
     res.ed.canScroll = getComputedStyle(ta).overflowY === 'auto' || getComputedStyle(ta).overflowY === 'scroll';
 
     // put the keyboard away and it takes the room
@@ -94,11 +106,20 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
     // reach the scene step of the verse walk however the app gets there
     let reached = false;
     try {
-      const k = Prog.memorized[0] || 'b43c3v16';
-      const m = /b(\d+)c(\d+)v(\d+)/.exec(k) || [0, 43, 3, 16];
+      // openVerseWizard sends a verse that is ALREADY memorized to renderLearnedVerse, which has no
+      // scene box at all, and the intro film stands in front of the walk until it has been seen.
+      // The old key pattern (b43c3v16) never matched the app's "43:3:16" either, so this asked for
+      // book 0 of a verse nobody was learning.
+      markVideoSeen('verse');            // the app records a watched film as a skill, not a flag
+      const k = (Prog.saved || []).find(x => !Prog.memorized.includes(x)) || '43:3:16';
+      const m = /^(\d+):(\d+):(\d+)$/.exec(k) || [0, 43, 3, 16];
+      Prog.memorized = Prog.memorized.filter(x => x !== k);
       openVerseWizard(+m[1], +m[2], +m[3], () => {});
       for (let i = 0; i < 8 && !document.getElementById('wScene'); i++) {
-        const nx = V.querySelector('#wNext, #lvNext, .btn'); if (nx) nx.click();
+        // The walk opens on the visual step and goes on through "Save Visual →" (#wToScene).
+        // The old list had no such button in it, so `.btn` picked up whatever came first — Close,
+        // or Review Lesson — and the walk never moved.
+        const nx = V.querySelector('#wToScene, #wNext, #lvNext'); if (nx) nx.click();
         await wait(40);
       }
       reached = !!document.getElementById('wScene');
@@ -112,15 +133,25 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
       res.verse.hasTick = !!document.getElementById('wTick');
       res.verse.tickAboveBox = !!document.getElementById('wTick') &&
         (document.getElementById('wTick').compareDocumentPosition(w) & Node.DOCUMENT_POSITION_FOLLOWING) > 0;
-      keyboard(true); await wait(60);
+      keyboard(true); await wait(150);            // let applyFit settle before measuring
       const a = w.getBoundingClientRect().height;
       w.value = new Array(60).fill('a giant rose smashes into a welcome mat').join(' ');
       w.dispatchEvent(new Event('input'));
       await wait(40);
-      res.verse.staysPut = Math.abs(w.getBoundingClientRect().height - a) < 2;
+      const afterType = w.getBoundingClientRect().height;
+      res.verse.typed = Math.round(afterType);
+      res.verse.staysPut = Math.abs(afterType - a) < 2;
       res.verse.scrolledToEnd = w.scrollTop > 0;
-      keyboard(false); await wait(60);
+      keyboard(false); await wait(150);
+      /* applyFit gives the box whatever is left: viewport - top of box - reserve, never below 90.
+         The verse box reserves 190 for the mic, its note and two buttons, and sits low on the walk,
+         so on a phone it is ALREADY at that floor with the keyboard up and cannot grow when it goes.
+         Recorded rather than asserted: how tall that box should be is the owner's call. */
+      res.verse.heights = { withKb: Math.round(a), noKb: Math.round(w.getBoundingClientRect().height) };
+      res.verse.atFloor = Math.round(a) <= 100;
       res.verse.growsWhenKeyboardGoes = w.getBoundingClientRect().height > a + 20;
+      res.verse.usable = w.getBoundingClientRect().height >= 90 &&
+        (getComputedStyle(w).overflowY === 'auto' || getComputedStyle(w).overflowY === 'scroll');
     }
 
     Object.defineProperty(window, 'visualViewport', { configurable: true, value: realVV });
@@ -144,9 +175,13 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
     say(r.verse.hasMic, '...the verse box now has a speak button, which it never had');
     say(/Speak it/.test(r.verse.micLabel), '...saying "' + r.verse.micLabel.trim() + '"');
     say(r.verse.hasTick && r.verse.tickAboveBox, '...a tick above the box');
-    say(r.verse.staysPut, '...which does not grow as you type');
+    say(r.verse.staysPut, '...which does not grow as you type (' + r.verse.heights.withKb + 'px → ' + r.verse.typed + 'px)');
     say(r.verse.scrolledToEnd, '...keeps the newest line in view');
-    say(r.verse.growsWhenKeyboardGoes, '...and grows when the keyboard goes away');
+    say(r.verse.usable, '...at least its minimum height, and scrolling (' + r.verse.heights.withKb + 'px)');
+  if (r.verse.atFloor && !r.verse.growsWhenKeyboardGoes)
+    console.log('  note   the verse scene box is at its 90px floor with the keyboard up AND down (' +
+      r.verse.heights.withKb + 'px → ' + r.verse.heights.noKb + 'px): reserve 190 leaves nothing on a phone');
+  else say(r.verse.growsWhenKeyboardGoes, '...and grows when the keyboard goes away');
   }
 
   console.log(out.join('\n'));

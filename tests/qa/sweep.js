@@ -313,8 +313,13 @@ const drive = (page, go) => page.evaluate(fn => {
         if (!p || !p.word) out.push('peg ' + n + ' has no word');
       }
       // phases: contiguous, all covered, and the walk terminates
+      // phaseIdxs(track) answers for ONE ladder: the numbers, or Word for Word beside them.
+      // Counting it against every non-story unit counted both ladders and always came up short.
+      ['num', 'w4w'].forEach(track => {
+        const got = phaseIdxs(track).length, want = UNITS.filter(U => !U.story && unitTrack(U) === track).length;
+        if (got !== want) out.push(`phaseIdxs("${track}") lists ${got} of ${want} phases`);
+      });
       const list = phaseIdxs();
-      if (list.length !== UNITS.filter(U => !U.story).length) out.push('phaseIdxs misses some non-story units');
       // ensurePhaseMax() raises phaseMax to the furthest phase with work in it, so the walk has to
       // start from an account with no work at all or it jumps several phases at a time.
       const keepSkills = Prog.doneSkills; Prog.doneSkills = [];
@@ -664,5 +669,11 @@ const drive = (page, go) => page.evaluate(fn => {
     list.slice(0, 25).forEach(d => console.log('  • ' + d));
     if (list.length > 25) console.log(`  … and ${list.length - 25} more`);
   });
-  console.log(`\n${findings.length} findings in ${Object.keys(byArea).length} areas.`);
+  // One line is printed per distinct finding; the raw list counts every screen it was seen on,
+  // which read as hundreds of problems when there were five.
+  const distinct = Object.values(byArea).reduce((n, list) => n + new Set(list).size, 0);
+  const areas = Object.keys(byArea).length;
+  console.log(`
+${distinct} finding${distinct === 1 ? '' : 's'} in ${areas} area${areas === 1 ? '' : 's'}` +
+    (findings.length !== distinct ? ` (seen ${findings.length} times across the screens swept)` : '') + '.');
 })().catch(e => { console.error(e.stack); process.exit(1); });

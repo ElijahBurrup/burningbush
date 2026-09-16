@@ -9,7 +9,7 @@
  *
  *   node tests/qa/library-door.js
  */
-const H = require('C:/Projects/BurningBush/tests/lib/harness.js');
+const H = require('../lib/harness');
 const out = [];
 const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return ok; };
 
@@ -87,6 +87,8 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
 
   console.log(out.join('\n'));
   console.log(errs.length ? '\npage errors:\n  ' + errs.join('\n  ') : '\npage errors: none');
-  console.log(out.some(l => l.startsWith('  FAIL')) ? '\nWALK FAILED' : '\nwalk clean');
+  const failed = out.some(l => l.startsWith('  FAIL'));
+  console.log(failed ? '\nWALK FAILED' : '\nwalk clean');
   await browser.close(); await H.stopServer();
+  process.exitCode = failed ? 1 : 0;   // printed FAIL and exited 0 before, so all.js counted it clean
 })();

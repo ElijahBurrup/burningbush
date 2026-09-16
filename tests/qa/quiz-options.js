@@ -15,7 +15,7 @@
  *
  *   node tests/qa/quiz-options.js
  */
-const H = require('C:/Projects/BurningBush/tests/lib/harness.js');
+const H = require('../lib/harness');
 const out = [];
 const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return ok; };
 

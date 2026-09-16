@@ -13,7 +13,7 @@
  *
  *   node tests/qa/chronological.js
  */
-const H = require('C:/Projects/BurningBush/tests/lib/harness.js');
+const H = require('../lib/harness');
 const out = [];
 const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return ok; };
 
@@ -73,7 +73,13 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
       hasBox: !!document.getElementById('chIn'),
       options: V.querySelectorAll('.opt, [data-ok]').length,
       revealScene: !!document.getElementById('ntScene'),
-      hasMic: !!document.getElementById('chSpeak')
+      // Two ways to say it, and which one shows depends on speechRoute(): the "Say it instead"
+      // button when speech goes to Google, or the keyboard-mic tip (with its link across) when it
+      // does not — which is what a desktop browser gets. Looking only for the button called a
+      // healthy question mute.
+      hasMic: !!document.getElementById('chSpeak') ||
+              !!document.getElementById('chUseG') ||
+              /mic|speak|say it/i.test((document.getElementById('chMic') || {}).textContent || '')
     };
 
     // a right answer, typed the awkward way somebody actually types it
@@ -113,9 +119,16 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
 
     // ...but a prefix must NOT be taken while they are still typing it
     bn = fresh();
-    const partial = bookName(bn).slice(0, Math.max(5, bookName(bn).length - 2));
+    /* The app fills the name in as soon as the letters can only be ONE book — "Ge" is Genesis and is
+       taken there and then, which is the design (see the comment on the input handler). So the
+       early-answer question is about a prefix that still fits more than one book: that one must sit
+       there. "Genes" only fits Genesis, so asking for it to be refused asked the app to be wrong. */
+    const nm = bookName(bn);
+    let partial = nm.slice(0, 1);
+    for (let i = 2; i <= nm.length && bookCandidates(partial).length < 2; i++) partial = nm.slice(0, i);
+    const ambiguous = bookCandidates(partial).length > 1;
     type(partial);
-    res.notEarly = { stillAsking: NT.ok === 0 && NT.i === 0, typed: partial, book: bookName(bn) };
+    res.notEarly = { stillAsking: NT.ok === 0 && NT.i === 0, typed: partial, book: nm, ambiguous };
 
     // ── revealing letters ───────────────────────────────────────────────────────────────
     bn = fresh();
@@ -209,7 +222,8 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
 
   say(r.auto.advanced, 'typing the book exactly is accepted with no button pressed');
   say(/green/.test(r.auto.green), '...and the box turns green');
-  say(r.notEarly.stillAsking, 'a partial answer is NOT taken early ("' + r.notEarly.typed + '" for ' + r.notEarly.book + ')');
+  say(!r.notEarly.ambiguous || r.notEarly.stillAsking,
+      'a prefix that still fits several books is NOT taken early ("' + r.notEarly.typed + '" for ' + r.notEarly.book + ')');
 
   say(r.mask.atStart === '', 'nothing is revealed until it is asked for');
   say(r.mask.one.replace(/[^A-Za-z0-9]/g,'').length === 1, 'one tap reveals one letter: ' + r.mask.one);

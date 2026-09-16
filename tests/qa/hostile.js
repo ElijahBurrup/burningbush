@@ -7,13 +7,15 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const { chromium } = require('C:/Projects/BurningBush/tests/lib/harness');
+const { chromium } = require('../lib/harness');
 
 const T = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png',
             '.webmanifest': 'application/manifest+json', '.json': 'application/json',
             '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.mp4': 'video/mp4' };
 const server = http.createServer((q, r) => {
-  const f = path.join('C:/Projects/BurningBush', decodeURIComponent(q.url.split('?')[0]));
+  const SITE = path.resolve(__dirname, '..', '..', 'burningbush');   // the published folder IS the site root:
+    // the built app asks for /kjv.js and friends absolutely, exactly as production serves them
+    const f = path.join(SITE, decodeURIComponent(q.url.split('?')[0]));
   fs.stat(f, (e, st) => {
     if (e || !st.isFile()) { r.writeHead(404).end(); return; }
     r.writeHead(200, { 'Content-Type': T[path.extname(f).toLowerCase()] || 'application/octet-stream' });
@@ -30,7 +32,7 @@ const flag = (area, detail) => findings.push({ area, detail });
   const p = await b.newPage({ viewport: { width: 412, height: 915 } });
   const errs = [];
   p.on('pageerror', e => errs.push(e.message));
-  await p.goto('http://127.0.0.1:8841/burningbush/index.html', { waitUntil: 'load' });
+  await p.goto('http://127.0.0.1:8841/app/index.html', { waitUntil: 'load' });
 
   const seed = () => p.evaluate(() => {
     // each scenario starts on a clear screen; residue from the last one is not this one's finding

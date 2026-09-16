@@ -6,8 +6,8 @@
  * snapshot suite knows about and collects what is actually written, then looks for the places the
  * app contradicts itself.
  */
-const { chromium, open, stopServer, SEEDED } = require('C:/Projects/BurningBush/tests/lib/harness');
-const SCREENS = require('C:/Projects/BurningBush/tests/snapshot/screens');
+const { chromium, open, stopServer, SEEDED } = require('../lib/harness');
+const SCREENS = require('../snapshot/screens');
 
 const findings = [];
 const flag = (area, detail) => findings.push({ area, detail });
@@ -59,7 +59,8 @@ const SYNONYMS = [
     // a bare decimal that is really a count, e.g. "3.0 verses"
     // Version numbers are not counts and are written exactly as released, so v1.101.0 is stripped
     // before the check rather than reported afresh every release.
-    const dec = t.replace(/v?\d+\.\d+\.\d+/g, '').match(/\b\d+\.0\b/);
+    // "Version 2.0" names a release the same way, with two parts rather than three.
+    const dec = t.replace(/v?\d+\.\d+\.\d+/g, '').replace(/\b(?:version|v)\s*\d+\.\d+\b/gi, '').match(/\b\d+\.0\b/);
     if (dec) flag('format', `${name}: writes a whole number as "${dec[0]}"`);
     // two spaces mid-sentence, usually a template seam
     if (/[a-z]{2}  [A-Za-z]/.test(t)) flag('format', `${name}: a double space mid-sentence`);

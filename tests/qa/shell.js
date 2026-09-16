@@ -15,9 +15,9 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const { chromium } = require('C:/Projects/BurningBush/tests/lib/harness.js');
+const { chromium } = require('../lib/harness');
 
-const WWW = path.resolve('C:/Projects/BurningBush/mobile/www');
+const WWW = path.resolve(path.join(__dirname, '..', '..', 'mobile/www'));
 // Read rather than written down, so a release does not have to remember to come and edit a test.
 const WANT = (fs.readFileSync(path.resolve(__dirname, '..', '..', 'src', 'index.html'), 'utf8')
   .match(/const APP_VERSION="([^"]+)"/) || [])[1];   // resolved, so the containment check below compares like with like
@@ -69,6 +69,15 @@ if (!fs.existsSync(path.join(WWW, 'index.html'))) {
       }
     };
   });
+
+  /* The shell is served here from http://127.0.0.1, an origin the production API rightly refuses —
+     on a phone the app runs at https://localhost, which it allows. Left alone, the content fetch
+     is blocked by CORS and Chrome logs it as a console error, which reads as the app misbehaving.
+     Answer it with the same frozen bundle the regression harness uses, and every OTHER console
+     error still counts. */
+  const CONTENT = require('fs').readFileSync(require('path').join(__dirname, '..', 'fixtures', 'content.json'), 'utf8');
+  await page.route(/\/api\/content(\?|$)/, r => r.fulfill({ status: 200, contentType: 'application/json', body: CONTENT,
+    headers: { 'Access-Control-Allow-Origin': '*' } }));
 
   await page.goto(base + '/', { waitUntil: 'networkidle', timeout: 45000 });
   await page.waitForTimeout(1500);

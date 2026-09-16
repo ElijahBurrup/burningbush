@@ -3587,6 +3587,9 @@ const DAY = 86400000;
     Billing.grant(); markVideoSeen('book');
     show('verse'); startAdhocLearn(n, true, () => { });
     const sc = document.querySelector('.content');
+    // This used to lean on the Library overflowing the screen. It fits now (2.21.8), so the
+    // scroller is given room of its own, outside every tab, where no redraw can take it away.
+    const pad = document.createElement('div'); pad.style.height = '1500px'; sc.appendChild(pad);
     sc.scrollTop = sc.scrollHeight;
     const before = sc.scrollTop;
     document.querySelector('[data-rel="peg"]').click();
@@ -3597,7 +3600,9 @@ const DAY = 86400000;
     document.querySelector('[data-rel="word"]').click();
     document.querySelectorAll('#relGrid [data-pick]')[0].click();
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-    return { before, afterPeg, afterWord: document.querySelector('.content').scrollTop };
+    const afterWord = document.querySelector('.content').scrollTop;
+    pad.remove();
+    return { before, afterPeg, afterWord };
   });
   ok(stay.before > 0, 'the lesson card is long enough to scroll');
   is(stay.afterPeg, stay.before, 'choosing an image leaves you where you were, not back at the top');
@@ -5052,6 +5057,120 @@ const DAY = 86400000;
   ok(cadmin2.allStories, 'every story is listed for renaming');
   ok(cadmin2.namesSent, '...and only the names that changed are saved');
   ok(cadmin2.milestones, 'every milestone can be reworded');
+
+  describe('the verse scene box keeps its size while you write', () => { });
+
+  /* Two sizers fought over this box: fitBoxTo pins it to the room above the keyboard, and an older
+     auto-grow set it to the height of its text on every keystroke, so a long scene pushed the mic and
+     both buttons off a phone screen. */
+  const scenebox = await $(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms)); const out = {};
+    const memo = Prog.memorized.slice(), done = Prog.doneSkills.slice();
+    try {
+      markVideoSeen('verse');
+      Prog.memorized = Prog.memorized.filter(x => x !== '43:3:16');
+      openVerseWizard(43, 3, 16, () => {}); await wait(80);
+      const V = document.getElementById('verse');
+      for (let i = 0; i < 6 && !document.getElementById('wScene'); i++) {
+        const nx = V.querySelector('#wToScene'); if (nx) nx.click(); await wait(60);
+      }
+      const w = document.getElementById('wScene'); out.reached = !!w;
+      if (w) {
+        await wait(150);
+        const a = w.getBoundingClientRect().height;
+        w.value = new Array(60).fill('a giant rose smashes into a welcome mat').join(' ');
+        w.dispatchEvent(new Event('input')); await wait(80);
+        out.a = Math.round(a); out.b = Math.round(w.getBoundingClientRect().height);
+        out.scrolls = getComputedStyle(w).overflowY === 'auto';
+      }
+    } finally {
+      Prog.memorized = memo; Prog.doneSkills = done; saveProg();
+      try { closeEveryOverlay(); } catch (e) {}
+      show('learn'); renderPath();
+    }
+    return out;
+  });
+  ok(scenebox.reached, 'the verse walk reaches its scene box');
+  ok(scenebox.reached && Math.abs(scenebox.a - scenebox.b) < 2,
+    '...which keeps its size while a long scene is typed (' + scenebox.a + 'px → ' + scenebox.b + 'px)');
+  ok(scenebox.scrolls, '...and scrolls instead');
+
+  describe('learning number 3 offers Exodus 3:2, the burning bush', () => { });
+
+  /* The app is named for Exodus 3:2, so the moment 3 is learned — and the verse can first be built —
+     it is the verse offered, ahead of the general "build a new verse" (which for 3 means Leviticus). */
+  const bush = await $(async () => {
+    const out = {};
+    const memo = Prog.memorized.slice();
+    try {
+      out.pick = (numberPick(3) || []).join(':');
+      out.psalmStill = (numberPick(91) || []).join(':') === (psalmForNumber(91) || []).join(':');
+      out.curated = !!verseAt('2:3:2');
+      Prog.memorized = Prog.memorized.filter(k => k !== '2:3:2');
+      lessonReturn = null;
+      LESSON_DONE = { ok: 5, msg: '', unlocked: '', hasNew: false, canBuild: true, buildBook: 3, psalm: [2, 3, 2], num: 3 };
+      show('learn'); renderLessonDone();
+      const btn = document.getElementById('lPsalm');
+      out.button = btn ? btn.textContent.trim() : '';
+      out.note = /burning bush/.test(document.getElementById('learn').textContent);
+      out.noBuild = !document.getElementById('lBuild');
+      Prog.memorized = memo.concat(memo.includes('2:3:2') ? [] : ['2:3:2']);
+      renderLessonDone();
+      out.afterLearned = !document.getElementById('lPsalm') && !!document.getElementById('lBuild');
+    } finally {
+      Prog.memorized = memo; saveProg(); LESSON_DONE = null; show('learn'); renderPath();
+    }
+    return out;
+  });
+  is(bush.pick, '2:3:2', 'number 3 has Exodus 3:2 as its verse');
+  ok(bush.curated, '...a curated verse, so it is suggested in the Bible too');
+  ok(bush.psalmStill, '...and the Psalm picks past 66 are untouched');
+  is(bush.button, 'Memorize Exodus 3:2 →', 'finishing number 3 offers it as the main button');
+  ok(bush.note && bush.noBuild, '...saying why, in place of "Build a new verse"');
+  ok(bush.afterLearned, 'once it is learned, the card goes back to building a new verse');
+
+  describe('the Library fits the screen, and the levy warning can be put away', () => { });
+
+  /* The Library's seven tiles must all be reachable without a scroll, whatever sits above them. The
+     levy warning can be dismissed for the levy it warns about, without opening the Store. */
+  const libFit = await $(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms)); const out = {};
+    const realDays = window.taxWarnDays, realDue = window.taxDueAt;
+    try {
+      Store.remove('vv_taxwarn_x');
+      window.taxWarnDays = () => 2; window.taxDueAt = () => 1893456000000;
+      try { closeEveryOverlay(); } catch (e) {}
+      show('verse'); vView = 'hub'; renderVerse(); await wait(60);
+      const w = document.getElementById('taxWarnBtn'), x = document.getElementById('taxWarnX');
+      out.shown = !!w && !!x;
+      out.xLabelled = !!x && x.getAttribute('aria-label') === 'Dismiss this warning';
+      const sc = document.querySelector('.content');
+      out.fitsWithWarning = sc.scrollHeight <= sc.clientHeight + 1;
+      out.w4wVisible = (() => { const b = document.getElementById('vW4W'); if (!b) return false;
+        const r = b.getBoundingClientRect(), s = sc.getBoundingClientRect(); return r.bottom <= s.bottom + 1; })();
+      if (x) x.click(); await wait(40);
+      const store = document.getElementById('storeModal');
+      out.gone = !document.getElementById('taxWarnBtn');
+      out.noStore = !store || store.style.display === 'none' || store.style.display === '';
+      renderVerse(); await wait(40);
+      out.staysGone = !document.getElementById('taxWarnBtn');
+      window.taxDueAt = () => 1893456000000 + 7 * 864e5;
+      renderVerse(); await wait(40);
+      out.nextLevyWarns = !!document.getElementById('taxWarnBtn');
+      out.fitsAfter = sc.scrollHeight <= sc.clientHeight + 1;
+    } finally {
+      window.taxWarnDays = realDays; window.taxDueAt = realDue; Store.remove('vv_taxwarn_x');
+      try { closeEveryOverlay(); } catch (e) {}
+      show('learn'); renderPath();
+    }
+    return out;
+  });
+  ok(libFit.shown && libFit.xLabelled, 'the levy warning has a labelled close button');
+  ok(libFit.fitsWithWarning && libFit.w4wVisible, 'the Library fits without scrolling, warning and all, Word for Word in view');
+  ok(libFit.gone && libFit.noStore, 'closing puts the warning away without opening the Store');
+  ok(libFit.staysGone, '...and it stays away for that levy');
+  ok(libFit.nextLevyWarns, '...while the next levy warns again');
+  ok(libFit.fitsAfter, 'the Library still fits afterwards');
 
   describe('a lesson screen can be read aloud', () => { });
 
@@ -9037,6 +9156,14 @@ const DAY = 86400000;
   ok(who.revokeForgetsBoth, 'revoking forgets the server answer as well as the local one');
   ok(who.noLinksInConfig, 'no payment link is held in the client — the server opens checkout');
   is(who.priceLabel, '$35/year', 'the paywall quotes the price actually charged');
+
+  describe('nothing asserted while all of that ran', () => { });
+
+  /* bbAssert() fires when the app is about to write something no screen could read back: a
+     talent count that is not a number, a verse key built from an undefined. Nothing above may
+     trip one, and the run says so rather than leaving it in a console nobody reads. */
+  const asserted = await $(() => (window.__BB_ASSERTS || []).slice(0, 6));
+  is(asserted.join(' | '), '', 'no assert fired anywhere in this run');
 
   const bad = T.report('behaviour');
   const consoleErrs = page.__errors.filter(e => !/favicon/i.test(e));

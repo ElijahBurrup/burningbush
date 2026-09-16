@@ -269,27 +269,31 @@
     0%,70%,100%{transform:scale(1);opacity:.95}
     78%{transform:scale(1.1);opacity:1}
     86%{transform:scale(1);opacity:.95} }
-  /* All seven must be reachable without a scroll. The base sizes suit a tall phone; shorter
-     screens step down. Measured at 320x568, 360x640 and 390x844 by the layout suite. */
-  @media (max-height:760px){
-    .versehub{gap:7px}
-    .versehub .vhub{padding:10px 8px;font-size:14.5px}
-    .vhub.sq{aspect-ratio:1.64}
-    .vhub .vi{font-size:32px;height:35px}
-    .vhub .vi svg{width:36px;height:36px}
-    .vhub small{font-size:11.5px}
-    .versehub .vhub.wide{padding:10px 14px}
-  }
-  @media (max-height:620px){
-    .versehub{gap:5px}
-    .versehub .vhub{padding:6px 5px;font-size:12.5px}
-    .vhub.sq{aspect-ratio:2.05}
-    .vhub .vi{font-size:24px;height:26px}
-    .vhub .vi svg{width:25px;height:25px}
-    .vhub small{font-size:10.5px}
-    .versehub .vhub.wide{padding:7px 12px}
-    .vhub.wide .vi{font-size:22px;height:24px}
-  }
+  /* All seven must be reachable without a scroll. The base sizes suit a tall phone with nothing
+     above the tiles. What IS above them varies — the goal, a levy warning, an announcement — so the
+     screen's height alone could not decide: a tall phone with all three still scrolled. After the
+     Library draws, fitLibraryHub() steps down these tiers one at a time until it fits the screen it
+     is actually on. Measured by the layout suite at 320x568, 360x640 and 390x844. */
+  #libHub.lib-fit1 .versehub{gap:7px}
+  #libHub.lib-fit1 .versehub .vhub{padding:10px 8px;font-size:14.5px}
+  #libHub.lib-fit1 .vhub.sq{aspect-ratio:1.64}
+  #libHub.lib-fit1 .vhub .vi{font-size:32px;height:35px}
+  #libHub.lib-fit1 .vhub .vi svg{width:36px;height:36px}
+  #libHub.lib-fit1 .vhub small{font-size:11.5px}
+  #libHub.lib-fit1 .versehub .vhub.wide{padding:10px 14px}
+  #libHub.lib-fit2 .versehub,#libHub.lib-fit3 .versehub{gap:5px}
+  #libHub.lib-fit2 .versehub .vhub,#libHub.lib-fit3 .versehub .vhub{padding:6px 5px;font-size:12.5px}
+  #libHub.lib-fit2 .vhub.sq{aspect-ratio:2.05}
+  #libHub.lib-fit2 .vhub .vi,#libHub.lib-fit3 .vhub .vi{font-size:24px;height:26px}
+  #libHub.lib-fit2 .vhub .vi svg,#libHub.lib-fit3 .vhub .vi svg{width:25px;height:25px}
+  #libHub.lib-fit2 .vhub small,#libHub.lib-fit3 .vhub small{font-size:10.5px}
+  #libHub.lib-fit2 .versehub .vhub.wide,#libHub.lib-fit3 .versehub .vhub.wide{padding:7px 12px}
+  #libHub.lib-fit2 .vhub.wide .vi,#libHub.lib-fit3 .vhub.wide .vi{font-size:22px;height:24px}
+  /* the last tier gives up the hint line and tightens the bars above the tiles */
+  #libHub.lib-fit3 .vhub.sq{aspect-ratio:2.6}
+  #libHub.lib-fit3 .lib-hint{display:none}
+  #libHub.lib-fit3 .goalbar{padding:8px 12px;margin-bottom:6px}
+  #libHub.lib-fit3 .taxwarn{padding:6px 10px;margin-bottom:6px}
   .vhub:active{transform:scale(.98)}
   /* Spaced Repetition sits on the same ground as every other button; only the due count stands
      out, and only when something is actually waiting. */
@@ -1046,6 +1050,7 @@
   /* "the collectors ride in N days" */
   .taxwarn{display:flex;align-items:center;gap:9px;background:var(--panel2);border:1px solid var(--rome-gold);border-radius:12px;padding:9px 12px;margin-bottom:8px;cursor:pointer;font-size:13px;font-weight:700;color:var(--ink-soft);text-align:left}
   .taxwarn .tw-ic{font-size:19px;flex:0 0 auto}
+  .taxwarn .tw-x{margin-left:auto;flex:0 0 auto;border:0;background:none;color:var(--muted);font-size:16px;line-height:1;padding:4px 6px;cursor:pointer}
   /* very short screens (SE-class): compress the letter so it still reads without scrolling */
   @media (max-height:700px){
     .taxcard{padding:10px 12px 12px}
@@ -2415,8 +2420,15 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.21.7";
+const APP_VERSION="2.21.8";
 const CHANGELOG=[
+ {v:"2.21.8", d:"September 16, 2026", t:"The burning bush, and a Library that fits", items:[
+   ["new","<b>Learn number 3 and you are offered Exodus 3:2.</b> The burning bush — the verse this app is named for — is the first verse you can build once you know 3, so the lesson ends by offering it."],
+   ["chg","<b>The Library fits your screen.</b> All seven tiles, Word for Word included, sit on one screen without scrolling, however much is showing above them: your goal, an announcement, or Caesar’s warning."],
+   ["new","<b>Caesar’s warning can be put away.</b> Tap the ✕ and it goes for that levy. The next one still warns you."],
+   ["fix","<b>The scene box no longer grows while you write.</b> A long scene pushed the microphone and both buttons off the screen. The box now stays its size and scrolls."],
+   ["fix","<b>The Library draws even if the Bible is slow to arrive.</b> It used to show nothing at all."]
+ ]},
  {v:"2.21.7", d:"September 15, 2026", t:"Stay where you are", items:[
    ["fix","<b>Closing a video, or coming back to the app, no longer drops you in the Library.</b> The app checks for progress from your other devices whenever it comes back into view, and it used to redraw the Library over whatever you were doing, a review included. Now it never moves you."],
    ["chg","<b>The camera in the Bible now marks only chapters with a verse video.</b> Nearly every chapter has teaching of its own, still on the chapter’s 📺 button, so a camera on every one said nothing."]
@@ -3382,7 +3394,7 @@ function releaseHTML(r){
     + `</div>`;
 }
 function openWhatsNew(all){
-  const m=el("whatsNewModal")||(()=>{ const d=document.createElement("div"); d.id="whatsNewModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("whatsNewModal");
   const list=all?CHANGELOG:[CHANGELOG[0]];
   m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose" id="wnClose">✕</button>
       <div style="flex:1;text-align:center;font-weight:800">${all?"Version history":"What's new"}</div><span style="width:34px"></span></div>
@@ -4174,6 +4186,17 @@ function psalmForNumber(n){
   if(n>=151 && n<=176) return [19, 119, n];
   return null;
 }
+/* A number below 67 can have a verse of its own too: the one offered the moment that number is
+   learned, ahead of the general "build a new verse". Number 3 opens Exodus 3:2 — the burning bush,
+   the verse this app is named for, and reachable right then (Exodus is 2, the chapter 3, the verse 2).
+   `why` is what the lesson-done card says about it. Psalm picks (67 and up) are unchanged. */
+const NUMBER_PICKS={
+  3:{ b:2, c:3, v:2, why:"the burning bush, the verse this app is named for" },
+};
+function numberPick(n){
+  const p=NUMBER_PICKS[n];
+  return p ? [p.b, p.c, p.v] : psalmForNumber(n);
+}
 const PSALM_PICKS=[];
 for(let n=67;n<=176;n++){ const a=psalmForNumber(n); if(a) PSALM_PICKS.push({b:"Psalms",c:a[1],v:a[2]}); }
 function reachableGemCounts(){ const c={}; GEMS.forEach(g=>{ if(reachable(bookNum(g.b),g.c,g.v)) c[g.cat]=(c[g.cat]||0)+1; }); return c; }
@@ -4331,7 +4354,7 @@ function chosenBookImg(n, big){
 function bookImageIcon(n, big){ return chosenBookImg(n, big) || pegImg("book", n, bookName(n), big); }
 // Choosing one is a single tap; choosing the drawn icon again is the way back to the default.
 function openBookImagePicker(n, after){
-  const m=el("bookImgModal")||(()=>{ const d=document.createElement("div"); d.id="bookImgModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("bookImgModal");
   const cur=Prog.customBookImg[n]||"";
   const opts=bookImageOptions(n);
   // Only ask for a file that exists; an option not yet drawn simply shows no picture.
@@ -4641,6 +4664,38 @@ function optWhy(o){ return Array.isArray(o) ? (o[1]||"") : ""; }
 // The two chosen words are the user's own text, never an icon, so they are stored as plain strings.
 function bookWordOf(n){ return (Prog.bookWord||{})[n] || ""; }
 function numRefOf(n){ return (Prog.numRef||{})[n] || ""; }
+/* Every pop-up sits in the same host: a `.modal` div made the first time it is opened and kept
+   afterwards. This was written out by hand 54 times, in two spellings, which is 54 chances to
+   forget the class and ship a sheet nobody can see. The id is a literal at every call, so the
+   static check can still find which ids exist. */
+/* An assert earns its place only when it fires BEFORE somebody is hurt by what it caught: progress
+   about to be written with a talent count that is not a number, a review card with no due date, a
+   verse key that no screen can read back. It never interrupts the person using the app — it writes
+   to the console, and keeps the last few so the suite can fail the run (tests/lib/harness.js reads
+   window.__BB_ASSERTS). Anything merely surprising belongs in a test, not here. */
+window.__BB_ASSERTS=[];
+function bbAssert(ok, what){
+  if(ok) return true;
+  try{
+    const line="assert: "+what;
+    if(window.__BB_ASSERTS.length<50) window.__BB_ASSERTS.push(line);
+    console.error(line);
+  }catch(e){}
+  return false;
+}
+const isCount=n=>typeof n==="number" && isFinite(n) && n>=0;
+/* Which screen is showing: "learn", "journey", "verse", … or "" before any is. Asked by hand seven
+   times in three spellings before this. */
+function activeViewId(){ return (document.querySelector(".view.active")||{}).id||""; }
+function modalHost(id){
+  let m=el(id);
+  if(!m){
+    const host=document.querySelector(".phone");
+    if(!bbAssert(!!host, "modalHost("+id+"): no .phone to hang a pop-up on")) return document.createElement("div");
+    m=document.createElement("div"); m.id=id; m.className="modal"; host.appendChild(m);
+  }
+  return m;
+}
 function bbEsc(s){ return String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 
 // The payoff line. It only appears once both choices are in, because a sentence with a hole in it
@@ -4732,7 +4787,7 @@ function buildTheNumberBox(n){
 // else. Writing the choice to Prog.customPeg is what keeps this and the chip picker in step.
 function openPegPicker(n, after){
   const cur=pegFor(n).word, def=defaultPegWord(n), code=pegCode(n);
-  const m=el("relModal")||(()=>{ const d=document.createElement("div"); d.id="relModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("relModal");
   const tile=w=>`<button type="button" class="pickbtn bbopt${w===cur?" on":""}" data-peg="${bbEsc(w)}">
       <span class="pkt">${bbEsc(w)}</span><span class="pks">${w===def?"the code's own word":"decodes to "+bbEsc(code)+" as well"}</span></button>`;
   m.innerHTML=`<div class="modal-card">
@@ -4757,7 +4812,7 @@ function openRelationPicker(n, kind, after){
   const list = isWord ? bookWordOptions(n) : numRefOptions(n);
   const cur  = isWord ? bookWordOf(n) : numRefOf(n);
   const store= isWord ? Prog.bookWord : Prog.numRef;
-  const m=el("relModal")||(()=>{ const d=document.createElement("div"); d.id="relModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("relModal");
   const tile=o=>{ const nm=optName(o);
     return `<button type="button" class="pickbtn bbopt${nm===cur?" on":""}" data-pick="${bbEsc(nm)}">
       <span class="pkt">${bbEsc(nm)}</span><span class="pks">${bbEsc(optWhy(o))}</span></button>`; };
@@ -4968,8 +5023,7 @@ function addLessonMediaBtn(host,kind,n,isTeach){
 function openMediaSheet(title, items){
   if(!items || !items.length) return;
   try{ ttsStop(); }catch(e){}
-  const m=el("mediaSheet")||(()=>{ const d=document.createElement("div"); d.id="mediaSheet"; d.className="modal";
-    document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("mediaSheet");
   const groups=MEDIA_KINDS.map(([k,name])=>{
     const its=items.filter(x=>x.kind===k); if(!its.length) return "";
     return `<div class="ms-group"><div class="ms-h">${name}</div>${its.map(x=>`<button type="button" class="ms-item" data-mi="${items.indexOf(x)}">
@@ -5645,6 +5699,15 @@ let SRS = load(SRS_KEY,{}); if(!SRS || typeof SRS!=="object" || Array.isArray(SR
 let Prog = loadProg();
 let _saveWarned=false;
 function saveProg(){
+  // Written 143 times over. If any of this is wrong the damage is already done in memory; catching
+  // it here is what stops it reaching the device, the cloud, and every other device after that.
+  bbAssert(Prog && typeof Prog==="object", "saveProg: progress is not an object");
+  bbAssert(isCount(Prog.talents), "saveProg: talents is "+JSON.stringify(Prog && Prog.talents));
+  bbAssert(Array.isArray(Prog.memorized) && Array.isArray(Prog.doneSkills), "saveProg: memorized/doneSkills are not lists");
+  // A card may have no due date (graduated, or back-filled from an old save) — but a due date that
+  // is there and is not a number (now + an undefined gap) is a verse that never comes due again.
+  bbAssert(!Prog.verseSR || Object.keys(Prog.verseSR).every(k=>{ const d=Prog.verseSR[k] && Prog.verseSR[k].dueAt;
+    return d==null || (typeof d==="number" && isFinite(d)); }), "saveProg: a review card has a due date that is not a number");
   const ok=save(PROG_KEY,Prog);
   if(ok){ try{ Store.setJSON(PROG_KEY+"_bak",Prog); }catch(e){} }   // rolling last-known-good copy — a later corrupt/failed write can roll back to this
  else if(!_saveWarned){ _saveWarned=true; try{ toast("⚠️ Couldn't save. Device storage may be full. Export a backup in Settings and free up space."); }catch(e){} }
@@ -5834,7 +5897,7 @@ function cmpVersion(a,b){
   return 0;
 }
 function openStaleAppNotice(){
-  const m=el("staleAppModal")||(()=>{ const d=document.createElement("div"); d.id="staleAppModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("staleAppModal");
   m.innerHTML=`<div class="modal-card center">
       <div style="font-size:46px">⬆️</div>
       <h2 class="gold" style="margin:6px 0 4px">Update to keep syncing</h2>
@@ -6101,7 +6164,13 @@ function knownNumbers(){
 function knownNum(n){ return knownNumbers().has(n); }
 // a verse is reachable when its book, chapter AND verse numbers are ALL known (any order — supports skip-ahead)
 function reachable(b,c,v){ const k=knownNumbers(); return k.has(b)&&k.has(c)&&k.has(v); }
-function refKey(b,c,v){ return `${b}:${c}:${v}`; }
+function refKey(b,c,v){
+  // Every list of verses — memorized, saved, skipped, the review — is keyed by this string, so a
+  // key built from a name or an undefined quietly makes a verse nobody can ever find again.
+  bbAssert(Number.isInteger(b) && b>=1 && b<=66 && Number.isInteger(c) && c>=1 && Number.isInteger(v) && v>=1,
+           "refKey("+b+","+c+","+v+")");
+  return `${b}:${c}:${v}`;
+}
 function recomputeLevel(){ const k=knownNumbers(); let L=0; while(k.has(L+1)) L++; Prog.level=L; saveProg(); }
 function booksKnown(){ const k=knownNumbers(); let n=0; for(let b=1;b<=66;b++) if(k.has(b)) n++; return n; }
 const TALENT_CAP=9999;   // above this the counter shows ∞; the true total keeps counting internally
@@ -6196,7 +6265,7 @@ function showScratchReqs(){
  if(i<0){ toast("Every feature is unlocked. The whole app is yours 🔥"); return; }
   const L=SCRATCH_LADDER[i], earned=L.gate();
   const bullets=L.reqs.map(r=>{ const ok=r.done(); return `<div class="reqrow">${ok?"✅":"⬜"} <span>${r.label}${r.prog?` <b class="muted" style="font-weight:700">${r.prog()}</b>`:""}</span></div>`; }).join("");
-  let m=el("reqsModal"); if(!m){ m=document.createElement("div"); m.id="reqsModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  let m=modalHost("reqsModal");
   m.innerHTML=`<div class="modal-card" style="text-align:center">
     <div style="font-size:38px;line-height:1">🎫</div>
     <h2 style="font-size:20px;margin:6px 0 2px">${earned?"Your golden ticket is ready!":"Earn a golden ticket"}</h2>
@@ -6362,7 +6431,7 @@ function show(tab){
   // Arriving somewhere has its own short motif, so where you are is audible before it is read.
   // Only on an actual change: re-rendering the screen you are already on is not an arrival.
   // Except the Bible, where arriving is silent like everything else there (bibleQuiet).
-  { const was=(document.querySelector(".view.active")||{}).id; if(was!==tab && tab!=="journey") Sfx.screen(tab); }
+  { const was=activeViewId(); if(was!==tab && tab!=="journey") Sfx.screen(tab); }
   if(tab!=="verse") bibleVerseOpen=false;   // a verse opened from the Bible ends when you go anywhere else
   views.forEach(v=>v.classList.toggle("active",v.id===tab));
   document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
@@ -6382,7 +6451,7 @@ document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
   if(b.classList.contains("pending")){ const p=pendingScratchRung(); if(p>=0){ Scratch.open(p); return; } }  // a flashing ticket → open the scratch card
   if(b.classList.contains("ticket")){ showScratchReqs(); return; }                                          // any golden ticket → show how to earn a scratch off
   // tapping Verse while already in a Verse sub-view backs out to the main hub (a second tap = home)
-  if(b.dataset.tab==="verse" && document.querySelector(".view.active")?.id==="verse" && typeof vView!=="undefined" && vView!=="hub"){ vView="hub"; vFrom="library"; }
+  if(b.dataset.tab==="verse" && activeViewId()==="verse" && typeof vView!=="undefined" && vView!=="hub"){ vView="hub"; vFrom="library"; }
   show(b.dataset.tab);
   bibleVerseOpen=false;   // choosing a tab, Library included, is leaving the Bible behind
   // the only automatic check there is. Tapping a tab means this screen is already being left.
@@ -7289,7 +7358,7 @@ function videoIcon(k){ const f=VIDEO_ICON[k]; return f?f():"🎬"; }
 function openVideoScreen(key, after){
   const V=VIDEOS[key]; if(!V){ if(after) after(); return; }
   noteVideoShown(key);
-  const m=el("videoModal")||(()=>{ const d=document.createElement("div"); d.id="videoModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("videoModal");
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="vsClose" style="margin:0">✕</button>
         <div style="flex:1;text-align:center;font-weight:800">${V.title}</div><span style="width:34px"></span></div>
@@ -7468,7 +7537,7 @@ function peelFoil(sel, after){
   setTimeout(()=>{ if(f.parentNode) f.parentNode.removeChild(f); if(after) after(); }, 1000);
 }
 function pkSheet(title, hint, body, onOpen){
-  const m=el("pickSheet")||(()=>{ const d=document.createElement("div"); d.id="pickSheet"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("pickSheet");
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="psClose" style="margin:0">✕</button>
         <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${title}</div><span style="width:34px"></span></div>
@@ -7603,7 +7672,7 @@ function storySectionBody(ui){
 }
 function openStorySection(ui){
   const U=UNITS[ui];
-  const m=el("storySecModal")||(()=>{ const d=document.createElement("div"); d.id="storySecModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("storySecModal");
   const draw=()=>{
     m.innerHTML=`<div class="modal-card">
         <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="ssClose" style="margin:0">✕</button>
@@ -8107,7 +8176,7 @@ function w1Pick(e, n, avoid){
   const P=w1Pool(), no=new Set((avoid||[]).map(r=>r.join(":"))), out=[];
   [P.known[e]||[], P.rest[e]||[]].forEach(list=>{
     for(let tries=0; out.length<n && list.length && tries<200; tries++){
-      const r=list[Math.floor(Math.random()*list.length)], k=r.join(":");
+      const r=pick(list), k=r.join(":");
       if(!no.has(k)){ no.add(k); out.push(r); }
     }
   });
@@ -8743,7 +8812,7 @@ function palacesWanted(){ return Math.floor(lessonsDoneCount()/LESSONS_PER_PALAC
 function needsPalace(){ return tabWon("palace") && palaceCount() < palacesWanted(); }
 function maybeSuggestPalace(){
   if(!needsPalace()) return false;                 // caught up, or palaces not open to them yet
-  const m=el("palaceAskModal")||(()=>{ const d=document.createElement("div"); d.id="palaceAskModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("palaceAskModal");
   const have=palaceCount(), want=palacesWanted(), n=lessonsDoneCount();
   m.innerHTML=`<div class="modal-card center">
       <div style="font-size:34px">🏛️</div>
@@ -8775,7 +8844,11 @@ function renderLessonDone(){
     markScreen(()=>{ LESSON_DONE=_d; lessonReturn=_r; renderLessonDone(); }); }
   // The Psalm of the number just learned, offered until that verse has been learned too.
   const ps=(d.psalm && !lessonReturn && !Prog.memorized.includes(refKey(d.psalm[0],d.psalm[1],d.psalm[2]))) ? d.psalm : null;
-  const psNote=ps?`<div class="callout" style="text-align:left"><b>📖 ${d.num>150?`Psalm 119 runs to verse 176, so ${d.num} opens Psalm 119:${d.num}.`:`${d.num} opens Psalm ${d.num}.`}</b> A verse from it to practice your new number with:
+  const featured=ps && ps[0]!==19 ? NUMBER_PICKS[d.num] : null;
+  const psNote=featured
+    ? `<div class="callout" style="text-align:left"><b>🔥 ${d.num} opens ${bookName(ps[0])} ${ps[1]}:${ps[2]}: ${bbEsc(featured.why)}.</b>
+      <div style="margin-top:6px"><b class="gold">${bookName(ps[0])} ${ps[1]}:${ps[2]}</b> ${bbEsc(kjvText(ps[0],ps[1],ps[2]))}</div></div>`
+    : ps?`<div class="callout" style="text-align:left"><b>📖 ${d.num>150?`Psalm 119 runs to verse 176, so ${d.num} opens Psalm 119:${d.num}.`:`${d.num} opens Psalm ${d.num}.`}</b> A verse from it to practice your new number with:
       <div style="margin-top:6px"><b class="gold">Psalm ${ps[1]}:${ps[2]}</b> ${bbEsc(kjvText(ps[0],ps[1],ps[2]))}</div></div>`:"";
   el("learn").innerHTML=`<div class="card center">
     <div style="font-size:56px">🏅</div>
@@ -8786,7 +8859,7 @@ function renderLessonDone(){
     ${d.unlocked}
     <div class="btnrow">
       ${lessonReturn?`<button class="btn" id="lBackVerse">Back to Your Verse →</button>`
-        :ps?`<button class="btn" id="lPsalm">Memorize Psalm ${ps[1]}:${ps[2]} →</button>`
+        :ps?`<button class="btn" id="lPsalm">Memorize ${featured?bookName(ps[0]):"Psalm"} ${ps[1]}:${ps[2]} →</button>`
         :(d.canBuild?`<button class="btn" id="lBuild">Build a new verse →</button>`:`<button class="btn" id="lNextNum">Learn another →</button>`)}
       <button class="btn ghost" id="lPath2">Back to path</button></div></div>`;
   // Somebody who came here from a half-saved verse wants that verse back, not the path.
@@ -8838,8 +8911,9 @@ function finishLesson(){
   // book that opened nothing new ended with "Learn another" and no way through to a verse at all.
   // It is the way into the Library now, so it appears whenever that book has a verse to build.
   const canBuild = !wk && (newly.length>0 || (buildBook && ((suggestedByBook()[buildBook]||[]).length>0)));
-  // Past 66 a number opens a Psalm of its own, and the lesson ends with one verse from it to learn.
-  const pa=(sk.kind==="num" && !sk.testOnly && (sk.items||[]).length===1) ? psalmForNumber(sk.items[0]) : null;
+  // A number with a verse of its own ends the lesson offering it: Exodus 3:2 for 3, and past 66 a
+  // Psalm of the same number.
+  const pa=(sk.kind==="num" && !sk.testOnly && (sk.items||[]).length===1) ? numberPick(sk.items[0]) : null;
   const psalm=(pa && reachable(pa[0],pa[1],pa[2]) && !Prog.skipped.includes(refKey(pa[0],pa[1],pa[2]))) ? pa : null;
   LESSON_DONE={ ok:LZ.ok, msg, unlocked, hasNew:newly.length>0, canBuild, buildBook, psalm, num:psalm?sk.items[0]:null };
   renderLessonDone();
@@ -8875,7 +8949,7 @@ const NO_MORE_REVEALS="That's your one reveal. Tap Review my scene to walk it ag
 // Reaching for a second reveal is the moment the scene is worth walking again, so ask rather than
 // simply refusing. No leaves them exactly where they were, mid-answer, with nothing lost.
 function askReviewNotes(b,c,v){
-  const m=el("oneHintModal")||(()=>{ const d=document.createElement("div"); d.id="oneHintModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("oneHintModal");
   m.innerHTML=`<div class="modal-card center">
       <div style="font-size:34px">👁️</div>
       <div style="font-size:20px;font-weight:800;margin-top:6px">One reveal per verse</div>
@@ -8892,7 +8966,7 @@ function askReviewNotes(b,c,v){
 let memHintUses=0;
 // A generic "spend talents?" confirm used before revealing a paid hint.
 function confirmSpend(title, sub, onYes, opts){ opts=opts||{};
-  let m=el("spendModal"); if(!m){ m=document.createElement("div"); m.id="spendModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  let m=modalHost("spendModal");
   m.innerHTML=`<div class="modal-card center" style="max-width:320px">
     <div style="font-size:38px">${opts.icon||"🪙"}</div>
     <p class="lead" style="font-size:15px;margin:10px 0 4px">${title}</p>
@@ -8937,7 +9011,7 @@ function randomReachableVerse(){
   const k=knownNumbers(); const books=[]; for(let b=1;b<=66;b++) if(k.has(b)&&window.KJV[b-1]) books.push(b);
   if(!books.length) return null;
   for(let tries=0;tries<300;tries++){
-    const b=books[Math.floor(Math.random()*books.length)], chs=window.KJV[b-1];
+    const b=pick(books), chs=window.KJV[b-1];
     const c=1+Math.floor(Math.random()*chs.length); if(!k.has(c)) continue;
     const v=1+Math.floor(Math.random()*chs[c-1].length); if(!k.has(v)) continue;
     const key=refKey(b,c,v);
@@ -9045,7 +9119,7 @@ const SCORE_LIST={
 };
 function openScoreList(kind, back){
   const cfg=SCORE_LIST[kind]||SCORE_LIST.heart, list=scoreVerseList(kind);
-  const m=el("scoreListModal")||(()=>{ const d=document.createElement("div"); d.id="scoreListModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("scoreListModal");
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="slClose" style="margin:0">✕</button>
         <div style="flex:1;text-align:center;font-weight:800;font-size:15px">${cfg.icon} ${cfg.title}</div><span style="width:34px"></span></div>
@@ -9105,7 +9179,7 @@ function scoreboardHTML(){
 // One book's verses, in a popup that scrolls by itself.
 function openBookVerses(bn, back, section){
   section = section==="saved" ? "saved" : "mem";
-  const m=el("bkVerseModal")||(()=>{ const d=document.createElement("div"); d.id="bkVerseModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("bkVerseModal");
   const list=versesInBook(bn, section);
   const hearts=section==="mem" ? list.filter(a=>isHeart(refKey(a[0],a[1],a[2]))).length : 0;
   const sub = section==="saved"
@@ -9156,7 +9230,7 @@ function topicGrid(){
 }
 function openTopic(ti, back){
   const t=TOPICS[ti]; if(!t) return;
-  const m=el("topicModal")||(()=>{ const d=document.createElement("div"); d.id="topicModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("topicModal");
   const list=versesForTopic(t);
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="tpClose" style="margin:0">✕</button>
@@ -9209,7 +9283,7 @@ function suggBookGrid(books, groups){
   }).join("")+`</div>`;
 }
 function openSuggBook(bn, back){
-  const m=el("suggBookModal")||(()=>{ const d=document.createElement("div"); d.id="suggBookModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("suggBookModal");
   const list=(suggestedByBook()[bn]||[]);
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 8px"><button class="lclose lclose-red" id="sgClose" style="margin:0">✕</button>
@@ -9275,7 +9349,9 @@ function renderVerse(){
   const mem=Prog.memorized.map(k=>k.split(":").map(Number)).filter(a=>kjvText(a[0],a[1],a[2]));
   const suggGroups=suggestedByBook();
   const kNums=knownNumbers(), unlockedBooks=[];
-  for(let b=1;b<=66;b++) if(kNums.has(b)&&window.KJV[b-1]) unlockedBooks.push(b);
+  // kjv.js is a separate file. If it has not landed yet, or failed to, the Library draws what it can rather than throwing the whole screen away.
+  const KJV=window.KJV||[];
+  for(let b=1;b<=66;b++) if(kNums.has(b)&&KJV[b-1]) unlockedBooks.push(b);
   const suggReach=unlockedBooks.reduce((s,bn)=>s+((suggGroups[bn]||[]).length),0);
 
   // ---- sub-list pages (opened from a hub button; each has a back button) ----
@@ -9373,8 +9449,8 @@ function renderVerse(){
 
   // ---- HUB: six big buttons; review last ----
   const dueAll=reviewDueCount();   // numbers + verses + palaces due for spaced repetition today
-  V.innerHTML=`${pageHead("\u{1F4DA}","Library")}
-    <p class="hint" style="margin:0 0 10px">Everything you have hidden away, and every way to practise it.</p>
+  V.innerHTML=`${pageHead("\u{1F4DA}","Library")}<div class="libhub" id="libHub">
+    <p class="hint lib-hint" style="margin:0 0 10px">Everything you have hidden away, and every way to practise it.</p>
     ${announcementHTML()}${taxWarnHTML()}${feat("goal")?`<div class="goalbar" id="goalBtn">${libStatusHTML()}</div>`:""}
     <div class="versehub">
       ${srUnlocked()
@@ -9389,8 +9465,9 @@ function renderVerse(){
         ? `<button class="vhub wide" id="vW4W"><span class="vi ani ani-speak">${speakIconSVG()}</span><span>Practice Word for Word</span></button>`
         // the same rectangle, under a sticker that says what lifts it — nothing is hidden, only closed
         : `<span class="slockwrap wide"><button class="vhub wide" id="vW4W"><span class="vi ani ani-speak">${speakIconSVG()}</span><span>Practice Word for Word</span></button>${foilHTML("Practice Verses to Unlock","sl-w4w")}</span>`) : ""}
-    </div>`;
+    </div></div>`;
   if(el("goalBtn")) el("goalBtn").onclick=openGoalSettings; wireTaxWarn();
+  fitLibraryHub(); requestAnimationFrame(fitLibraryHub);   // and again once icons and fonts have their size
   V.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ vView=b.dataset.view; renderVerse(); document.querySelector(".content").scrollTop=0;
     // looking IS the feature for My Verses; Video Review needs a film actually opened (below)
     if(b.dataset.view==="mem") try{ libUse("mem"); }catch(e){} });
@@ -10743,7 +10820,7 @@ function PALETTE_HAS(k){ return !!(typeof Sfx!=="undefined" && Sfx._palette && S
 var bibleVerseOpen=false;   // var, so nothing that reads it early can meet an undeclared name
 function bibleQuiet(){
   try{
-    const a=(document.querySelector(".view.active")||{}).id;
+    const a=activeViewId();
     if(a==="journey") return true;
     if(a==="verse") return bibleVerseOpen || (vFrom==="bible" && vView!=="hub");
   }catch(e){}
@@ -10796,6 +10873,7 @@ function statTotal(field){ let n=0; const s=Prog.stats||{};
 function statYear(field, yr){ let n=0; const s=Prog.stats||{}, pre=String(yr||new Date().getFullYear())+"-";
   Object.keys(s).forEach(k=>{ if(k.indexOf(pre)===0) n+=(s[k]||{})[field]||0; }); return n; }
 function earnTalents(delta){
+  if(!bbAssert(typeof delta==="number" && isFinite(delta), "earnTalents("+delta+")")) return;
   if(!(delta>0)) return;
   Prog.talents=(Prog.talents||0)+delta; saveProg();
   try{ statBump("t", delta); }catch(e){}
@@ -10806,6 +10884,7 @@ function earnTalents(delta){
 }
 // Talents are reduced when a hint is used (verse review, word for word). Never below 0.
 function spendTalents(n){
+  if(!bbAssert(typeof n==="number" && isFinite(n), "spendTalents("+n+")")) return;
   n=Math.max(0,Math.round(n)); if(!n) return;
   Prog.talents=Math.max(0,(Prog.talents||0)-n); saveProg(); updateMetrics();
   const el2=el("talMetric"); if(el2){ el2.classList.add("talspend"); setTimeout(()=>el2.classList.remove("talspend"),700); }
@@ -11093,7 +11172,7 @@ function lockItIn(b,c,v,why,next){
   renderLearnedVerse(b,c,v,onward,why);
 }
 function openAnswerPopup(b,c,v,onNext,btnLabel){
-  const m=el("answerModal")||(()=>{ const d=document.createElement("div"); d.id="answerModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("answerModal");
   const text=(kjvText(b,c,v)||"").trim();
   const more=memArr().length>1;
   m.innerHTML=`<div class="modal-card center">
@@ -11185,7 +11264,7 @@ function practiceNext(first){
   }
   const avoid=new Set(memTestRecent);
   let pool=deck.filter(k=>!avoid.has(k)); if(!pool.length) pool=deck;
-  const cur=pool[Math.floor(Math.random()*pool.length)];
+  const cur=pick(pool);
   memTestRecent.push(cur); while(memTestRecent.length>Math.min(deck.length-1,6)) memTestRecent.shift();
   askVerseIn(cur);
 }
@@ -11222,7 +11301,7 @@ function openPracRangeSetup(){
         how long ago you learned them \u2014 a checkpoint walked on purpose instead of waited for.</p>
         ${rs.map((r,i)=>`<div class="srl-row">
           <button type="button" class="sfx-sw${r.on?" on":""}" data-pron="${i}"
-            aria-pressed="${r.on?"true":"false"}"><span></span></button>
+            aria-label="Checkpoint ${i+1} on or off" aria-pressed="${r.on?"true":"false"}"><span></span></button>
           <span style="flex:0 0 auto;font-size:13px;font-weight:700">Learned</span>
           <input class="typein srl-in" type="number" min="0" max="3650" value="${r.lo}" data-prlo="${i}" aria-label="from days ago">
           <span style="flex:0 0 auto;color:var(--muted)">to</span>
@@ -11383,7 +11462,7 @@ function grandfatherFeatures(){
   saveProg();
 }
 function openFeatureStore(){
-  const m=el("featModal")||(()=>{ const d=document.createElement("div"); d.id="featModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("featModal");
   const paint=()=>{
     el("fsList").innerHTML=FEATURES.map(f=>`<div class="fcard">
         <span class="fic">${f.icon}</span>
@@ -11405,7 +11484,7 @@ function openFeatureStore(){
       <div id="fsList" style="margin-top:12px"></div>
     </div>`;
   m.style.display="flex"; raiseModal(m);
-  el("fsClose").onclick=()=>{ m.style.display="none"; renderVerse&&(document.querySelector(".view.active")||{}).id==="verse"&&renderVerse(); };
+  el("fsClose").onclick=()=>{ m.style.display="none"; renderVerse&&activeViewId()==="verse"&&renderVerse(); };
   m.onclick=ev=>{ if(ev.target===m) el("fsClose").click(); };
   paint();
 }
@@ -11664,7 +11743,7 @@ function markAnswer(k, correct, firstTry){ Prog.verseSR=Prog.verseSR||{}; const 
 // Five clean recalls in a row -> offer to rest the verse for a fortnight. It gets its own popup now:
 // tucked under the card it was easy to miss, and easy to scroll past without ever deciding.
 function openSnoozeAsk(b,c,v,kk,after){
-  const m=el("snoozeModal")||(()=>{ const d=document.createElement("div"); d.id="snoozeModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("snoozeModal");
   m.innerHTML=`<div class="modal-card center">
     <div style="font-size:34px">😴</div>
     <div style="font-size:20px;font-weight:800;margin-top:6px">That's 5 in a row</div>
@@ -11898,8 +11977,7 @@ function openStreakGapNotice(){
   const need=L.missed||1, have=Prog.freezes||0;
   const short=Math.max(0, need-have);
   const cost=short*FREEZE_COST, canPay=(Prog.talents||0)>=cost;
-  const m=el("streakGapModal")||(()=>{ const d=document.createElement("div"); d.id="streakGapModal";
-    d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("streakGapModal");
   const days=need===1?"a day":`${need} days`;
   m.innerHTML=`<div class="modal-card center">
     <div style="font-size:52px">${have>=need?"\u{1F9CA}":"\u{1F614}"}</div>
@@ -12148,7 +12226,7 @@ function fmtSecs(s){
 // 3 · 2 · 1 and then the clock starts. It is a .modal, so nothing else can open on top of it while
 // it counts — the same rule that keeps a scratch card off a film.
 function srCountdown(after){
-  const m=el("srCountModal")||(()=>{ const d=document.createElement("div"); d.id="srCountModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("srCountModal");
   let n=3;
   const paint=()=>{ m.innerHTML=`<div class="modal-card center srcd"><div class="srcd-n">${n>0?n:"Go"}</div>
     <p class="hint" style="margin:10px 0 0">${n>0?"Get ready…":"Timing your review"}</p></div>`; };
@@ -12244,7 +12322,7 @@ function askSrNow(){
   if(!onlySrLeft()) return;
   if(typeof anyOverlayUp==="function" && anyOverlayUp()) return;   // never on top of something else
   const due=reviewDueCount();
-  const m=el("srAskModal")||(()=>{ const d=document.createElement("div"); d.id="srAskModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("srAskModal");
   m.innerHTML=`<div class="modal-card center">
       <div style="font-size:44px;line-height:1">🔁</div>
       <h2 style="margin:8px 0 4px;color:var(--blue)">One thing left</h2>
@@ -12467,7 +12545,7 @@ const HEART_PARTS={
   both: {n:"Both",         i:"\u{1F49B}", d:"I know where it lives and how it reads."},
 };
 function openHeartClaim(b,c,v,k,after){
-  const m=el("heartModal")||(()=>{ const d=document.createElement("div"); d.id="heartModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("heartModal");
   const ref=`${bookName(b)} ${c}:${v}`, here=stationName((Prog.verseLoc||{})[k]);
   let pick=null;
   const row=x=>`<button type="button" class="mtradio" data-part="${x}" style="align-items:flex-start;text-align:left">
@@ -12504,7 +12582,7 @@ function openHeartClaim(b,c,v,k,after){
   };
 }
 function openStagePromote(b,c,v,k,to,after){
-  const m=el("promoteModal")||(()=>{ const d=document.createElement("div"); d.id="promoteModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("promoteModal");
   const ref=`${bookName(b)} ${c}:${v}`, here=stationName((Prog.verseLoc||{})[k]);
   // This modal is reached two ways now: earned, after seven practices, and claimed from the practice
   // screen by someone who already knew the verse. It must not tell the second person they have
@@ -12611,7 +12689,7 @@ function pickW4WVerse(){
 function markW4WToday(vkey){ const today=dayKey(new Date()); if(!Prog.w4wToday||Prog.w4wToday.date!==today) Prog.w4wToday={date:today,set:{}}; Prog.w4wToday.set[vkey]=true; }
 function onGoalComplete(){
   if(!feat("goal")) return;
-  const m=el("goalDoneModal")||(()=>{ const d=document.createElement("div"); d.id="goalDoneModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("goalDoneModal");
   m.innerHTML=`<div class="modal-card center"><div style="font-size:46px">🙏</div>
     <h2 style="margin:6px 0 2px;font-size:20px">Well done, good and faithful servant</h2>
     <p class="lead" style="font-style:italic;margin:8px 0 2px">“Thou hast been faithful over a few things, I will make thee ruler over many things.”</p>
@@ -12701,7 +12779,7 @@ function streakTimelineHTML(R){
    AND every review that came due — and somebody who did one of them has genuinely worked and is
    owed a straight answer about which half was missing, rather than a number quietly resetting. */
 function openStreakReview(){
-  const m=el("streakRevModal")||(()=>{ const d=document.createElement("div"); d.id="streakRevModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("streakRevModal");
   let receipt=null;   // survives the redraw that clears the offer
   const draw=()=>{
     const log=[...(Prog.goalLog||[])].reverse().slice(0,14);
@@ -12749,7 +12827,7 @@ function openStreakReview(){
   m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
 }
 function openGoalSettings(){
-  const m=el("goalSetModal")||(()=>{ const d=document.createElement("div"); d.id="goalSetModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("goalSetModal");
   const DOW=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   const base=Prog.dailyGoal!=null?Prog.dailyGoal:1;
   const draft={ mode:goalMode(), same:base,
@@ -12876,7 +12954,7 @@ function wireVerseWords(){
   const content=document.querySelector(".content"); if(content) content.addEventListener("scroll",cancel,{passive:true});
 }
 function openWordDef(b,c,v,i,word){
-  const m=el("wordDefModal")||(()=>{ const d=document.createElement("div"); d.id="wordDefModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("wordDefModal");
   const clean=(word||"").replace(/[^A-Za-z'-]/g,"");
   const shell=body=>{
     m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose" id="wdClose">✕</button>
@@ -12980,7 +13058,7 @@ const PACE_VERSES=[
    day's goal, and this nudge exists precisely because somebody has gone far past it. "That's 1 today
    · a full day's work and more" would be a strange thing to say to somebody who has done fifteen. */
 function openPaceNudge(){
-  const m=el("paceModal")||(()=>{ const d=document.createElement("div"); d.id="paceModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("paceModal");
   const i=(Prog.paceIdx||0)%PACE_VERSES.length;
   Prog.paceIdx=((Prog.paceIdx||0)+1)%1000; saveProg();
   const [ref,why]=PACE_VERSES[i];
@@ -13087,9 +13165,44 @@ function taxPending(){ return Billing.isPro() && (!!Prog.taxOwed || (!!Prog.taxA
 // whole days until the collectors arrive, or 0 when it isn't worth warning about yet
 function taxWarnDays(){ if(!Billing.isPro()||!Prog.taxAt) return 0;
   const d=Math.ceil((taxDueAt()-Date.now())/DAY); return (d>0&&d<=TAX_WARN_DAYS)?d:0; }
-function taxWarnHTML(){ if(!feat("rome")) return ""; const d=taxWarnDays(); if(!d) return "";
- return `<div class="taxwarn" id="taxWarnBtn"><span class="tw-ic">\u{1F985}</span><span>Caesar's collectors ride in <b>${d} day${d>1?"s":""}</b>. Spend what you can.</span></div>`; }
-function wireTaxWarn(){ const b=el("taxWarnBtn"); if(b) b.onclick=openStore; }
+/* The warning can be put away. It is remembered against the levy it warns about — the due date —
+   so dismissing it silences this levy only, and the next one still warns once. */
+function taxWarnDismissed(){ try{ return Store.get("vv_taxwarn_x","")===String(taxDueAt()); }catch(e){ return false; } }
+function taxWarnHTML(){ if(!feat("rome")) return ""; const d=taxWarnDays(); if(!d || taxWarnDismissed()) return "";
+ return `<div class="taxwarn" id="taxWarnBtn"><span class="tw-ic">\u{1F985}</span><span>Caesar's collectors ride in <b>${d} day${d>1?"s":""}</b>. Spend what you can.</span><button type="button" class="tw-x" id="taxWarnX" aria-label="Dismiss this warning">✕</button></div>`; }
+function wireTaxWarn(){
+  const b=el("taxWarnBtn"); if(b) b.onclick=openStore;
+  const x=el("taxWarnX");
+  if(x) x.onclick=e=>{ e.stopPropagation();                    // the warning itself opens the Store; the x must not
+    try{ Store.set("vv_taxwarn_x", String(taxDueAt())); }catch(err){}
+    const w=el("taxWarnBtn"); if(w) w.remove();
+    fitLibraryHub(); };
+}
+/* The Library fits the screen it is on. Steps through the density tiers (CSS: #libHub.lib-fitN) until
+   the scroller has nothing to scroll, stopping at the first that fits. Only classes change — nothing
+   is redrawn — so it is safe to run on a resize or after a banner goes, without moving anybody.
+   The classes sit on the hub's own wrapper, never on the Library tab: a lesson or a verse drawn into
+   the same tab reuses the tile styles, and a class left on the tab shrank those too. */
+const LIB_FIT_TIERS=["lib-fit1","lib-fit2","lib-fit3"];
+function fitLibraryHub(){
+  const V=el("verse"), hub=el("libHub"), sc=document.querySelector(".content");
+  if(!hub || !sc || !V || !V.classList.contains("active")) return;
+  hub.classList.remove(...LIB_FIT_TIERS);
+  if(libHubFits(hub, sc)) return;
+  for(const t of LIB_FIT_TIERS){
+    hub.classList.remove(...LIB_FIT_TIERS); hub.classList.add(t);
+    if(libHubFits(hub, sc)) return;
+  }
+}
+// Does the hub itself end inside the visible scroller? Asked of the hub, not of everything the
+// scroller holds: anything else in it would otherwise force the smallest tier, and the tier would
+// then change on a redraw and move the page under the reader.
+function libHubFits(hub, sc){
+  const padB=parseFloat(getComputedStyle(sc).paddingBottom)||0;
+  const bottom=hub.getBoundingClientRect().bottom - sc.getBoundingClientRect().top + sc.scrollTop + padB;
+  return bottom <= sc.clientHeight + 1;
+}
+window.addEventListener("resize", ()=>{ try{ fitLibraryHub(); }catch(e){} });
 
 /* ---- the church your levy builds ---- */
 function church(){ Prog.church=Prog.church||{given:0,built:0,total:0}; return Prog.church; }
@@ -13166,7 +13279,7 @@ function churchAdd(n){
   saveProg(); return finished;
 }
 function openChurch(){
-  const m=el("churchModal")||(()=>{ const d=document.createElement("div"); d.id="churchModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("churchModal");
   const c=church(), pct=churchPct();
   m.innerHTML=`<div class="modal-card center churchcard"><div class="lv-topbar"><button class="lclose lclose-red" id="chClose" style="margin:0">✕</button>
       <div style="flex:1;text-align:center;font-weight:800">The Churches in Rome</div><span style="width:34px"></span></div>
@@ -13352,7 +13465,7 @@ function tapBuild(x,y){
   if(BLD.used.length>=piece.w.length) BLD.used=[];
   let i; do{ i=Math.floor(Math.random()*piece.w.length); }while(BLD.used.includes(i));
   BLD.used.push(i);
-  const glyph=piece.g||TOOLS[Math.floor(Math.random()*TOOLS.length)];
+  const glyph=piece.g||pick(TOOLS);
   const cr=el("bldCraft"); cr.textContent=`${glyph} ${piece.w[i]}`;
   cr.classList.remove("show"); void cr.offsetWidth; cr.classList.add("show");
   const fx=el("bldFx");
@@ -13537,7 +13650,7 @@ function romeHelmet(cls){
     <circle cx="50" cy="52" r="2" fill="var(--rome-ink)"/></svg>`;
 }
 function openSpqrNote(){
-  const m=el("spqrModal")||(()=>{ const d=document.createElement("div"); d.id="spqrModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("spqrModal");
   m.innerHTML=`<div class="modal-card center">
     <div style="font-weight:800;letter-spacing:.06em">S · P · Q · R</div>
     <div style="font-size:23px;font-weight:800;color:var(--gold-ink);letter-spacing:.06em;margin-top:12px">Senātus Populusque Rōmānus</div>
@@ -13635,7 +13748,7 @@ function openTaxWheel(preview, after){
     // land on a wedge that actually bears the drawn value, with a little jitter inside it
     const step=360/vals.length;
     const seats=vals.map((v,i)=>v===rate?i:-1).filter(i=>i>=0);   // rate 0 (exempt) lands on NO TAX
-    const seat=seats[Math.floor(Math.random()*seats.length)];
+    const seat=pick(seats);
     const jitter=(Math.random()-0.5)*step*0.6;
     const deg=360*5 + (360 - (seat*step + step/2 + jitter));
     wheel.classList.add("spin");
@@ -13733,7 +13846,7 @@ function encourageHTML(){ const r=WORD_VERSES[Math.floor(Date.now()/DAY)%WORD_VE
    Four buttons on the Library, and the ways of choosing a verse live one tap behind one of them,
    rather than crowding the front of the screen.                                               */
 function libSheet(title, rows, extra){
-  const m=el("libModal")||(()=>{ const d=document.createElement("div"); d.id="libModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("libModal");
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar"><button class="lclose" id="lbClose">✕</button><div style="flex:1;text-align:center;font-weight:800">${title}</div><span style="width:34px"></span></div>
       <div class="mtradiolist one" id="lbRows" style="margin-top:10px">${rows.map(r=>`<button type="button" class="mtradio" data-lb="${r.id}" style="align-items:flex-start;text-align:left"><span class="rdot" style="margin-top:3px"></span><span><b>${r.icon} ${r.name}</b><br><span style="font-weight:600;font-size:12px;color:var(--muted)">${r.sub}</span></span></button>`).join("")}</div>
@@ -13756,8 +13869,7 @@ function openLearnVerses(){
   libSheet("Learn Verses", rows);
 }
 function openStore(){
-  let m=document.getElementById("storeModal");
-  if(!m){ m=document.createElement("div"); m.id="storeModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  let m=modalHost("storeModal");
   const cap=freezeMax();
   const t=Prog.talents||0, freezeFull=(Prog.freezes||0)>=cap, canFreeze=t>=FREEZE_COST&&!freezeFull;
   const palaces=palaceCount(), canPalace=!Billing.isPro() && t>=PALACE_COST;
@@ -14177,7 +14289,7 @@ function renderChronoQ(){
 }
 // Text-only pop-up: whatever the user has written (or the built-in scene) for this number/book.
 function showSceneReveal(n, isBook){
-  const m=el("sceneRevealModal")||(()=>{ const d=document.createElement("div"); d.id="sceneRevealModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("sceneRevealModal");
   const p=pegFor(n), mine=isBook?((Prog.customBook&&Prog.customBook[n])||""):"";
   const built=isBook
     ? ((typeof REL!=="undefined" && REL[n] && REL[n].imgToBook) || (MNEM_BOOK[n]&&MNEM_BOOK[n].t) || "")
@@ -14507,8 +14619,7 @@ function checkBadges(defer){
 function showBadgeModal(b){
   Sfx.badge();
   sfx("praise");   // a rotating flourish behind the struck metal, so the tenth badge is not the first
-  let m=document.getElementById("badgeModal");
-  if(!m){ m=document.createElement("div"); m.id="badgeModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  let m=modalHost("badgeModal");
   m.innerHTML=`<div class="modal-card center" style="max-width:320px">
     <div class="badge-pop" style="margin-bottom:14px">${b.icon}</div>
     <div class="prof-sect" style="color:var(--gold-ink)">Badge earned · ${b.cat}</div>
@@ -14630,7 +14741,7 @@ function vpStart(){
   const avoid=new Set(vpRecent);
   let p=pool.filter(s=>!avoid.has(refKey(bookNum(s.b),s.c,s.v)));
   if(!p.length) p=pool;
-  vpCur=p[Math.floor(Math.random()*p.length)];
+  vpCur=pick(p);
   vpRecent.push(refKey(bookNum(vpCur.b),vpCur.c,vpCur.v));
   while(vpRecent.length > Math.min(pool.length-1, 6)) vpRecent.shift();
   vpWrong=0;
@@ -14818,13 +14929,13 @@ let SCREEN_NOW = null;
    screen that DID mark would be replayed on a tab it knows nothing about, and coming back from a
    palace would land on the lesson path. A mark from another tab is no mark at all. */
 function markScreen(fn){
-  const v=(document.querySelector(".view.active")||{}).id||null;
+  const v=activeViewId()||null;
   SCREEN_NOW = v ? {view:v, fn:fn} : null;
 }
 const VIEW_RENDER={learn:()=>renderPath(), verse:()=>renderVerse(), palace:()=>renderPalaceHere(),
   journey:()=>renderJourney(), stories:()=>renderStories()};
 function hereAgain(){
-  const view=(document.querySelector(".view.active")||{}).id||"verse";
+  const view=activeViewId()||"verse";
   // show("palace") renders the LIST, which clears palHere — so which palace screen was open has to
   // be carried across by hand, or coming back always lands on the list
   const here = view==="palace" ? palHere : null;
@@ -15003,7 +15114,7 @@ function lvStageBlock(vkey){
     </div>`;
 }
 function openStagePicker(b,c,v,vkey,after){
-  const m=el("stageModal")||(()=>{ const d=document.createElement("div"); d.id="stageModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("stageModal");
   const cur=verseStage(vkey), here=stationName((Prog.verseLoc||{})[vkey]);
   const rungs=V_STAGES.filter(x=>x!=="heart"||feat("w4w")||cur==="heart");   // nothing to claim without the feature
   const row=x=>`<button type="button" class="mtradio ${x===cur?"sel":""}" data-stage="${x}" style="align-items:flex-start;text-align:left"><span class="rdot" style="margin-top:3px"></span><span><b>${STAGE_INFO[x].i} ${STAGE_INFO[x].n}</b><br><span style="font-weight:600;font-size:12px;color:var(--muted)">${STAGE_WHAT[x]}</span></span></button>`;
@@ -15317,9 +15428,10 @@ function renderWalk(){
   };
   if(el("wDone")) el("wDone").onclick=doneAction;
   if(el("wDoneTop")) el("wDoneTop").onclick=doneAction;   // green ✓ in the top bar = same as Done (no scrolling)
-  // auto-grow the scene box so it never needs its own scrollbar (grows AND shrinks with the text)
-  const ta=el("wScene");
-  if(ta){ const grow=()=>{ ta.style.height="auto"; ta.style.height=Math.max(96, ta.scrollHeight)+"px"; }; ta.addEventListener("input",grow); requestAnimationFrame(grow); }
+  /* The scene box is sized by fitBoxTo (above): the room left over the keyboard, scrolling inside.
+     An older auto-grow here set it to the height of its text on every keystroke, and the two
+     fought: a long scene grew the box to 1,374px and pushed the mic and both buttons off a
+     phone screen while the reader was still writing. One sizer, not two. */
   document.querySelector(".content").scrollTop=0;   // Save Visual → start the entry screen at the top
 }
 /* Hold-to-talk voice dictation lived here (wireSceneMic + openMicHelp). Taken out because the
@@ -15327,8 +15439,8 @@ function renderWalk(){
    does nothing is worse than no button. Recover it from git history rather than rewriting it. */
 // Encourage (never block) writing the scene — writing it IS the learning.
 function confirmBlankScene(onSkip){
-  const msg=SCENE_NUDGES[Math.floor(Math.random()*SCENE_NUDGES.length)];
-  let m=el("blankSceneModal"); if(!m){ m=document.createElement("div"); m.id="blankSceneModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  const msg=pick(SCENE_NUDGES);
+  let m=modalHost("blankSceneModal");
   m.innerHTML=`<div class="modal-card center" style="max-width:320px">
     <div style="font-size:38px">✍️</div>
     <p class="lead" style="font-size:14.5px;margin:10px 0 16px">${msg}</p>
@@ -15759,7 +15871,7 @@ function micSettingsHelp(){
 }
 function openMicHelp(){
   const h=micSettingsHelp();
-  const m=el("micHelpModal")||(()=>{ const d=document.createElement("div"); d.id="micHelpModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("micHelpModal");
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="mhX" style="margin:0">✕</button>
         <div style="flex:1;text-align:center;font-weight:800">${bbEsc(h.title)}</div><span style="width:34px"></span></div>
@@ -15794,7 +15906,7 @@ async function openAppSettings(){
 /* Google speech was refused, or cannot run here. The keyboard's microphone always can, so that is
    offered first, with where its key is, and the way to put Google right comes second. */
 function offerKeyboardMic(why, then){
-  const m=el("kbOfferModal")||(()=>{ const d=document.createElement("div"); d.id="kbOfferModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("kbOfferModal");
   const native=!!speechPlugin(), refused=(why==="not-allowed" || why==="service-not-allowed");
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="kbX" style="margin:0">✕</button>
@@ -16001,7 +16113,7 @@ function wireSpeakButton(btn, note, ta, opts){
 }
 
 function editText({title, hint, value, onSave, autoCap, keyWords, tagWord}){
-  let m=el("editModal"); if(!m){ m=document.createElement("div"); m.id="editModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  let m=modalHost("editModal");
   const esc=s=>(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   const close=()=>{ m.style.display="none"; };
   function editor(){
@@ -16071,7 +16183,7 @@ function isStandalone(){ return window.matchMedia("(display-mode: standalone)").
 function devicePlatform(){ const ua=navigator.userAgent||""; if(/iPhone|iPad|iPod/i.test(ua)) return "ios"; if(/Android/i.test(ua)) return "android"; return "other"; }
 function isSafari(){ const ua=navigator.userAgent||""; return /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS|Chrome|Android/i.test(ua); }
 function openInstallDialog(){
-  let m=el("installModal"); if(!m){ m=document.createElement("div"); m.id="installModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  let m=modalHost("installModal");
   const plat=devicePlatform();
  const iosSteps=`<ol class="inst-steps"><li>Open this page in <b>Safari</b>${isSafari()||plat!=="ios"?"":" (you're in another browser right now)"}.</li><li>Tap the <b>Share</b> button <span class="inst-ic">⬆️</span> at the bottom.</li><li>Choose <b>Add to Home Screen</b> <span class="inst-ic">➕</span>.</li><li>Tap <b>Add</b>. Burning Bush lands on your home screen like an app.</li></ol>`;
  const andSteps=`<ol class="inst-steps"><li>Open this page in <b>Chrome</b>.</li><li>Tap the menu <span class="inst-ic">⋮</span> (top-right).</li><li>Choose <b>Install app</b> / <b>Add to Home screen</b>.</li><li>Confirm. It installs like a normal app.</li></ol>`;
@@ -16095,7 +16207,7 @@ function openInstallDialog(){
   m.querySelectorAll("[data-plat]").forEach(t=>t.onclick=()=>{ m.querySelectorAll(".inst-tab").forEach(x=>x.classList.remove("on")); t.classList.add("on"); el("instBody").innerHTML=body(t.dataset.plat); wireNow(); });
 }
 function openBrandMenu(){
-  let m=el("brandModal"); if(!m){ m=document.createElement("div"); m.id="brandModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  let m=modalHost("brandModal");
   m.innerHTML=`<div class="modal-card">
     <div style="text-align:center"><div style="font-size:38px;line-height:1">🔥</div>
       <h2 style="font-size:19px;margin:6px 0 2px">Burning Bush</h2>
@@ -16115,7 +16227,7 @@ function openBrandMenu(){
   el("bmFeat").onclick=()=>{ m.style.display="none"; openTicketForm({type:"feature", title:"💡 Request a feature", intro:"What would make Burning Bush better for you?", placeholder:"Describe your idea…"}); };
 }
 function openTicketForm(o){
-  let m=el("ticketModal"); if(!m){ m=document.createElement("div"); m.id="ticketModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  let m=modalHost("ticketModal");
   const min=o.minWords||0, max=o.maxWords||0;
   m.innerHTML=`<div class="modal-card">
     <div class="ed-head"><h2>${o.title}</h2>${min?`<div class="tkcount" id="tkCount">0/${min}</div>`:""}</div>
@@ -16142,7 +16254,7 @@ function openTicketForm(o){
   };
 }
 function openStatsInfo(){
-  let m=el("statsModal"); if(!m){ m=document.createElement("div"); m.id="statsModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  let m=modalHost("statsModal");
   m.innerHTML=`<div class="modal-card">
     <h2 style="font-size:19px;margin:0 0 12px;text-align:center">Your progress at a glance</h2>
  <div class="statrow"><span class="static">🪙</span><div><b>${talDisp(Prog.talents||0)} talents</b><div class="hint" style="margin:2px 0 0">Earn talents for everything you accomplish. Finishing lessons, memorizing verses, streaks, badges and spaced repetition reviews. Spend them in the Talents Store. Past 9,999 they show as ∞.</div></div></div>
@@ -16207,7 +16319,7 @@ function renderAcctBox(){
   if(el("resetAcct")) el("resetAcct").onclick=()=>{
     const who=String((acct()&&acct().email)||"").toLowerCase();
     if(!who) return toast("Sign in first.");
-    const m=el("resetAcctModal")||(()=>{ const d=document.createElement("div"); d.id="resetAcctModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+    const m=modalHost("resetAcctModal");
     m.innerHTML=`<div class="modal-card">
         <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="raX" style="margin:0">✕</button>
           <div style="flex:1;text-align:center;font-weight:800">Reset this account</div><span style="width:34px"></span></div>
@@ -16246,7 +16358,7 @@ function renderAcctBox(){
   if(el("delAcct")) el("delAcct").onclick=()=>{
     const who=String((acct()&&acct().email)||"").toLowerCase();
     if(!who) return toast("Sign in first.");
-    const m=el("delAcctModal")||(()=>{ const d=document.createElement("div"); d.id="delAcctModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+    const m=modalHost("delAcctModal");
     m.innerHTML=`<div class="modal-card">
         <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="daX" style="margin:0">✕</button>
           <div style="flex:1;text-align:center;font-weight:800">Delete my account</div><span style="width:34px"></span></div>
@@ -16376,7 +16488,7 @@ async function maybeGiveNudge(){
     ? `This month readers here have hidden away <b class="gold">${c.verses}</b> verse${c.verses===1?"":"s"} and answered <b class="gold">${c.questions.toLocaleString()}</b> questions between them.`
     : `Some people here are only able to use this because somebody else paid for it.`;
 
-  const m = el("nudgeModal") || (()=>{ const d=document.createElement("div"); d.id="nudgeModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("nudgeModal");
   m.innerHTML = `<div class="modal-card center" style="max-width:330px">
       <div style="font-size:38px;line-height:1">\u{1F381}</div>
       <h2 style="font-size:19px;margin:8px 0 4px">Carry someone else</h2>
@@ -16399,7 +16511,7 @@ async function maybeGiveNudge(){
    much it is actually being used. Counts, never content. */
 /*STRIP:LICENCES:START*/
 function openLicences(){
-  const m=el("licModal")||(()=>{ const d=document.createElement("div"); d.id="licModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("licModal");
   const shell=(body)=>{ m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="lcX" style="margin:0">✕</button>
         <div style="flex:1;text-align:center;font-weight:800">Group licences</div><span style="width:34px"></span></div>
@@ -16469,7 +16581,7 @@ function openLicences(){
 /*STRIP:LICENCES:END*/
 /* Owners want a code they can say out loud, and a minted one is awkward at the front of a room. */
 function askNewCode(from, after){
-  const m=el("codeSetModal")||(()=>{ const d=document.createElement("div"); d.id="codeSetModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("codeSetModal");
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="csX" style="margin:0">✕</button>
         <div style="flex:1;text-align:center;font-weight:800">Choose your code</div><span style="width:34px"></span></div>
@@ -16513,7 +16625,7 @@ const GIVE_YEAR_CENTS=3500, GIVE_FIVE_CENTS=9900;
 function openGive(){
   if(!canBuyHere()) return;
   sfx("giftOpen");
-  const m=el("giveModal")||(()=>{ const d=document.createElement("div"); d.id="giveModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("giveModal");
   let batches=1, custom="";
   const draw=()=>{
     const people=batches*5, total=batches*99;
@@ -16591,7 +16703,7 @@ function openGroupBuy(){
     try{ openAccountScreen&&openAccountScreen(); }catch(e){}
     return;
   }
-  const m=el("groupModal")||(()=>{ const d=document.createElement("div"); d.id="groupModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("groupModal");
   let qty=1;
   const draw=()=>{
     const people=qty*GROUP_SEATS_PER, total=qty*GROUP_PRICE_EACH;
@@ -16638,7 +16750,7 @@ function openGroupBuy(){
    checked by the server; a comp code is checked here. The reader does not need to know which they
    have, so the sheet tries the server first and falls back without comment. */
 function openCodeSheet(){
-  const m=el("codeModal")||(()=>{ const d=document.createElement("div"); d.id="codeModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("codeModal");
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="ccX" style="margin:0">✕</button>
         <div style="flex:1;text-align:center;font-weight:800">Enter your code</div><span style="width:34px"></span></div>
@@ -17225,7 +17337,7 @@ function stowProfPanels(){
 }
 function openProfSection(slug){
   const p=PROF_PANELS.find(x=>x.slug===slug); if(!p) return;
-  const m=el("profSecModal")||(()=>{ const d=document.createElement("div"); d.id="profSecModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("profSecModal");
   stowProfPanels();
   m.innerHTML=`<div class="modal-card">
       <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="psClose" style="margin:0">✕</button>
@@ -17267,7 +17379,7 @@ function applyAdminVisibility(){
 }
 // Platform-specific walkthrough for turning notifications on.
 function openNotifyHelp(denied){
-  const m=el("notifyHelpModal")||(()=>{ const d=document.createElement("div"); d.id="notifyHelpModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("notifyHelpModal");
   const plat=devicePlatform(), standalone=isStandalone();
   const step=(n,t)=>`<div class="nhstep"><b class="n">${n}</b><span>${t}</span></div>`;
   let title="Turning on reminders", body="", extra="";
@@ -17459,7 +17571,7 @@ function paintSfxList(){
             title="Hear this take">▶</button>
           <div class="sfx-t"><small>${bbEsc(sfxTakeName(f))}</small></div>
           <button type="button" class="sfx-sw sm${von?" on":""}" data-take-on="${bbEsc(k)}"
-            data-take-file="${bbEsc(f)}" aria-pressed="${von?"true":"false"}"><span></span></button>
+            data-take-file="${bbEsc(f)}" aria-label="${bbEsc(sfxTakeName(f))} on or off" aria-pressed="${von?"true":"false"}"><span></span></button>
         </div>`;
       }).join("");
       const expand = takes.length
@@ -17470,7 +17582,7 @@ function paintSfxList(){
         <div class="sfx-t"><b>${bbEsc(e.label||k)}</b>${badge}
           <small>${bbEsc(e.desc||"")}</small>${expand}</div>
         <button type="button" class="sfx-sw${on?" on":""}" data-sfx-on="${bbEsc(k)}"
-          aria-pressed="${on?"true":"false"}"><span></span></button>
+          aria-label="${bbEsc(e.label||k)} on or off" aria-pressed="${on?"true":"false"}"><span></span></button>
       </div>`; }).join("")).join("");
   host.querySelectorAll("[data-sfx-more]").forEach(b=>b.onclick=()=>{
     const k=b.getAttribute("data-sfx-more");
@@ -17545,7 +17657,7 @@ if(el("adminContentBtn")) el("adminContentBtn").onclick=()=>openContentAdmin();
 
 // Admin-only: review every user's submitted bug reports (email · text · done/undone · delete).
 async function openBugReports(){
-  let m=el("bugModal"); if(!m){ m=document.createElement("div"); m.id="bugModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  let m=modalHost("bugModal");
   const esc=s=>String(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
   const shell=(inner)=>`<div class="modal-card" style="max-height:88vh;display:flex;flex-direction:column">
       <div class="ed-head"><h2>🐞 Bug reports</h2></div>
@@ -17645,7 +17757,7 @@ function repairLearnProgress(){
   return before-(Prog.doneSkills||[]).length;
 }
 function confirmRepairLearn(){
-  const m=el("repairModal")||(()=>{ const d=document.createElement("div"); d.id="repairModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("repairModal");
   const n=(Prog.doneSkills||[]).filter(id=>/^(num|book|snd|peg|palace):/.test(id)).length;
   m.innerHTML=`<div class="modal-card center">
       <div style="font-size:34px">↩</div>
@@ -18107,7 +18219,7 @@ function w4wTestResult(b,c,v,vkey,ret){
 }
 // Never demote silently. The user said they knew this verse; only the user takes that back.
 function offerHeartDemote(b,c,v,k,after){
-  const m=el("demoteModal")||(()=>{ const d=document.createElement("div"); d.id="demoteModal"; d.className="modal"; document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("demoteModal");
   const earned = w4wCount(k) >= W4W_PRACTICE_FOR_POOL, had = w4wCount(k);
   m.innerHTML=`<div class="modal-card center">
       <div style="font-size:34px">\u{1F331}</div>
@@ -18605,6 +18717,7 @@ document.addEventListener("click", ev=>{
   const gone=annDismissed(); gone.push(box.dataset.ann);
   try{ Store.setJSON("vv_ann_dismissed", gone.slice(-50)); }catch(e){}
   box.remove();
+  try{ fitLibraryHub(); }catch(e){}
 }, true);
 /* ---- the admin screen: Profile → Admin → Content ---- */
 // "Romans 16:23", "1 Kings 1", "Genesis", or the app's own "45:16:23" — to the app's key, or "".
@@ -18630,8 +18743,7 @@ function refTextFromKey(k){ const [b,c,v]=String(k).split(":").map(Number); retu
 let CA_TAB="videos";
 function openContentAdmin(tab){
   if(tab) CA_TAB=tab;
-  const m=el("contentModal")||(()=>{ const d=document.createElement("div"); d.id="contentModal"; d.className="modal";
-    document.querySelector(".phone").appendChild(d); return d; })();
+  const m=modalHost("contentModal");
   m.style.zIndex="220";          // above the Profile panel it is opened from
   m.innerHTML=`<div class="modal-card ca-card">
       <div class="ed-head"><h2>🗂️ Content</h2></div>
@@ -19194,7 +19306,7 @@ const Scratch = (()=>{
       if(L.tab==="verse" && Prog.dailyGoal==null){ Prog.dailyGoal=1; }   // unlocking Verses sets a starter daily goal of 1
       if(!sim) saveProg();
       updateTabLocks();
-      if(!sim && document.querySelector(".view.active")?.id==="learn") renderPath();   // reveal a newly-unlocked Learn lesson (e.g. the palace)
+      if(!sim && activeViewId()==="learn") renderPath();   // reveal a newly-unlocked Learn lesson (e.g. the palace)
       if(btn){ btn.classList.add("justwon"); setTimeout(()=>btn.classList.remove("justwon"),700); }
       if(sim && opts.onClaimed) opts.onClaimed(rung);
       else {

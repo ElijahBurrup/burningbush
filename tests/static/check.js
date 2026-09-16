@@ -55,6 +55,8 @@ is(stray.length, 0, `every Store key is namespaced${stray.length ? ' — stray: 
 // they are listed here explicitly. Add to this list only when the id really is dynamic.
 const DYNAMIC_IDS = ['lvClose'];   // verseNavBar(b,c,v,closeId) renders id="${closeId}"
 const created = new Set([...script.matchAll(/id="([\w-]+)"/g)].map(m => m[1]));
+// Pop-ups are hosted by modalHost("id"), which makes the div the first time it is opened.
+[...script.matchAll(/modalHost\("([\w-]+)"\)/g)].forEach(m => created.add(m[1]));
 [...html.matchAll(/id="([\w-]+)"/g)].forEach(m => created.add(m[1]));
 DYNAMIC_IDS.forEach(id => created.add(id));
 const referenced = [...new Set([...script.matchAll(/\bel\("([\w-]+)"\)/g)].map(m => m[1]))];

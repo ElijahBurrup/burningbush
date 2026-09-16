@@ -11,7 +11,7 @@
  *
  *   node tests/qa/sound.js
  */
-const H = require('C:/Projects/BurningBush/tests/lib/harness.js');
+const H = require('../lib/harness');
 const out = [];
 const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return ok; };
 
@@ -20,26 +20,32 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
   const page = await H.open(browser, { which: 'built', prog: H.SEEDED });
   const errs = []; page.on('pageerror', e => errs.push(e.message));
 
-  const r = await page.evaluate(() => {
+  const r = await page.evaluate(async () => {
+    /* Sound is recorded files now, not tones: a sound is fetched, decoded, and played through a
+       buffer source. Counting createOscillator alone counted only the fallback tones, and counting
+       it the instant after asking counted before the decode had finished — so a working palette
+       looked silent. Both kinds are counted, and each is given a moment to arrive. */
     let made = 0;
     const proto = (window.AudioContext || window.webkitAudioContext).prototype;
-    const real = proto.createOscillator;
+    const real = proto.createOscillator, realBuf = proto.createBufferSource;
     proto.createOscillator = function () { made++; return real.apply(this, arguments); };
-    const count = fn => { made = 0; try { fn(); } catch (e) { return 'threw: ' + e.message; } return made; };
+    proto.createBufferSource = function () { made++; return realBuf.apply(this, arguments); };
+    const count = async fn => { made = 0; try { fn(); } catch (e) { return 'threw: ' + e.message; }
+      await new Promise(r => setTimeout(r, 250)); return made; };
 
     // nothing has been touched yet
-    const cold = count(() => { Sfx.right(); Sfx.wrong(); Sfx.coins(50); Sfx.screen('verse'); });
-    const alsoCold = count(() => show('verse'));          // even arriving somewhere is silent
+    const cold = await count(() => { Sfx.right(); Sfx.wrong(); Sfx.coins(50); Sfx.screen('verse'); });
+    const alsoCold = await count(() => show('verse'));    // even arriving somewhere is silent
 
     // the reader touches the screen, which is what browsers require and what manners require
     window.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
-    const warm = count(() => Sfx.right());
+    const warm = await count(() => Sfx.right());
 
     // and the wake listeners are done with — a second gesture changes nothing
     window.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
-    const stillWarm = count(() => Sfx.right());
+    const stillWarm = await count(() => Sfx.right());
 
-    proto.createOscillator = real;
+    proto.createOscillator = real; proto.createBufferSource = realBuf;
     return { cold, alsoCold, warm, stillWarm };
   });
 
@@ -50,6 +56,10 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
 
   console.log(out.join('\n'));
   console.log(errs.length ? '\npage errors:\n  ' + errs.join('\n  ') : '\npage errors: none');
-  console.log(out.some(l => l.startsWith('  FAIL')) ? '\nSOUND FAILED' : '\nsound clean');
+  const failed = out.some(l => l.startsWith('  FAIL'));
+  console.log(failed ? '\nSOUND FAILED' : '\nsound clean');
   await browser.close(); await H.stopServer();
+  // Say so in the exit code as well: a probe that prints FAIL and returns success is counted
+  // clean by tests/qa/all.js, which is how this one's failures went unnoticed.
+  process.exitCode = failed ? 1 : 0;
 })();

@@ -5,7 +5,7 @@
  * an index that no longer exists, a reference that is not a verse, a key for something deleted.
  * A throw here is a white screen for somebody.
  */
-const { chromium, open, stopServer } = require('C:/Projects/BurningBush/tests/lib/harness');
+const { chromium, open, stopServer } = require('../lib/harness');
 
 const findings = [];
 const flag = (area, detail) => findings.push({ area, detail });

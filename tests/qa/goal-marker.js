@@ -15,7 +15,7 @@
  *
  *   node tests/qa/goal-marker.js
  */
-const H = require('C:/Projects/BurningBush/tests/lib/harness.js');
+const H = require('../lib/harness');
 const out = [];
 const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return ok; };
 
@@ -31,7 +31,9 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
     // A day with a goal of 3 and reviews waiting.
     const setUp = (goal, due, srDone, otherWork) => {
       Prog.dailyGoal = goal; Prog.goalByDay = {}; Prog.goalWeekday = null; Prog.goalWeekend = null;
-      Prog.goalDay = { date: today, count: otherWork + (srDone ? 1 : 0), celebrated: false, target: goal };
+      // The review keeps its OWN counter: bumpGoal(defer, fromReview) deliberately does not raise
+      // this one, and goalCount() adds srDoneToday() itself. Counting it here counted it twice.
+      Prog.goalDay = { date: today, count: otherWork, celebrated: false, target: goal };
       Prog.srGoalDay = { date: today, count: srDone ? 1 : 0 };
       Prog.srDay = srDone ? today : '';
       window.reviewDueCount = () => due;
