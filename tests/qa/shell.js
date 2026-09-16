@@ -113,7 +113,9 @@ if (!fs.existsSync(path.join(WWW, 'index.html'))) {
       const note = document.getElementById('payIosNote');
       const res = { yearly: vis('payYearly'), monthly: vis('payMonthly'),
                     note: !!note && note.style.display !== 'none',
-                    lesson: !!document.getElementById('payLesson') };
+                    lesson: !!document.getElementById('payLesson'),
+                    noModal: !document.getElementById('payModal'),
+                    allOpen: typeof Billing !== 'undefined' && Billing.isPro() === true };
       closeEveryOverlay();
       return res;
     } catch (e) { return { threw: String(e.message) }; }
@@ -138,8 +140,12 @@ if (!fs.existsSync(path.join(WWW, 'index.html'))) {
   t(r.micLives === true,          'the microphone is live through the native recogniser');
   t(r.micHelp === true,           '...and its help offers to open the settings screen');
   t(pay.yearly === false && pay.monthly === false, 'the paywall has no price buttons');
-  t(pay.note === true,            '...and says where Pro is set up instead');
-  t(pay.lesson === true,          '...while unlocking a lesson with talents still stands');
+  // The first store release is free from end to end (bin/build.js, stripPayments): the paywall is
+  // removed rather than hidden, and isPro() is true. So there is no note about where Pro is set up,
+  // and nothing locked to open with talents. The old two checks described a paywall with its prices
+  // taken off, which is not what shipped.
+  t(pay.noModal === true,         '...because there is no paywall in this build at all');
+  t(pay.allOpen === true,         '...and nothing is locked: every lesson is open');
 
   console.log(bad.length ? '\nSHELL CHECK FAILED — ' + bad.length : '\nthe packaged app boots clean');
   await browser.close();

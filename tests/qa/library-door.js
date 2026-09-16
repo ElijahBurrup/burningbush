@@ -66,9 +66,14 @@ const say = (ok, msg) => { out.push((ok ? '  ok   ' : '  FAIL ') + msg); return 
       '...and two stickers saying what opens them: ' + room.foils.join(' + '));
 
   // practice lifts one of them, on both screens, and wins the Bible
-  const practised = await page.evaluate(() => {
+  const practised = await page.evaluate(async () => {
     libUse('verses');
     show('verse'); vView = 'hub'; renderVerse();
+    // The sticker is peeled, not deleted: libUse marks the peel pending, the Library runs it a moment
+    // later (400ms), and the foil animates away over a second before the hub redraws. Reading the
+    // stickers straight after the round asked for a sticker that was still mid-peel.
+    await new Promise(r => setTimeout(r, 1700));
+    renderVerse();
     const hub = [...document.querySelectorAll('#verse .slock .slock-t')].map(x => x.textContent);
     renderLearnedVerse(40, 6, 33, () => {});
     const onVerse = [...document.querySelectorAll('#verse .slock .slock-t')].map(x => x.textContent);

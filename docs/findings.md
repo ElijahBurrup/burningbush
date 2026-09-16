@@ -10,20 +10,25 @@ why), or **deferred** (with what would change that). The plan is in
 
 ---
 
-## Open — carried into the next pass
+## Pass 5 — the two that failed on the baseline too
 
-**#29 [store build] the store paywall probe expects a note and a talents unlock it does not find.**
-`shell.js`, as the phone app: "...and says where Pro is set up instead" (`#payIosNote`) and "...while
-unlocking a lesson with talents still stands" (`#payLesson`) both fail. Identical on a pristine copy of
-3aa60ab, so nothing in 2.21.8 caused it. Still to decide: a real gap in the store build, or a probe
-written against an earlier paywall.
-*Verdict:* open.
+**#29 [tests] the store paywall probe described a paywall that did not ship.**
+`shell.js`, as the phone app, asked for a note saying where Pro is set up (`#payIosNote`) and for
+unlocking a lesson with talents (`#payLesson`). Both failed, identically on a pristine 3aa60ab. The
+first store release is free from end to end: `bin/build.js` removes the paywall rather than hiding
+it (`openPaywall` becomes a no-op) and `isPro()` is true, so there is no note to show and nothing
+locked to open. The two checks described an earlier plan, a paywall with its prices taken off.
+*Verdict:* not a bug. The probe now checks what shipped: no paywall in the build, every lesson open.
 
-**#28 [library] the Library door probe expects stickers to lift that do not.**
-`library-door.js`: "a round of practice lifts the Word for Word sticker" and "the first palace lifts
-the last sticker". Identical on 3aa60ab. The probe also printed FAIL and exited 0 (fixed now), which
-is why no run ever reported it.
-*Verdict:* open. The sweep also times out at 15 minutes on this machine; run it on its own.
+**#28 [tests] the Library door probe read the sticker while it was still peeling.**
+`library-door.js` asked that a round of practice lift the Word for Word sticker, and read the Library
+straight after the round. The sticker is peeled, not deleted: `libUse("verses")` marks the peel pending,
+the Library runs it 400ms later, and the foil animates away over a second. Real use is covered — the
+hub runs a pending peel whenever it draws ("earned in a test, peeled here"), so finishing a round on the
+practice screen still lifts it next time the Library opens. The leftover sticker also made "the first
+palace lifts the last sticker" count one too many. The probe printed FAIL and exited 0, so no run ever
+reported it (fixed).
+*Verdict:* not a bug. The probe waits for the peel. Both probes are clean on 2.21.8.
 
 ## Pass 4 — owner requests, and what building them turned up
 
