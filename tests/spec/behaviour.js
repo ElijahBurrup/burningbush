@@ -5172,6 +5172,92 @@ const DAY = 86400000;
   ok(libFit.nextLevyWarns, '...while the next levy warns again');
   ok(libFit.fitsAfter, 'the Library still fits afterwards');
 
+  describe('the Library tiles are all one height, and use the room there is', () => { });
+
+  /* The tiles used to step between fixed sizes, leaving up to 200px unused on a phone, and a tile with
+     a due count stood taller than its neighbour. Now they share one height that fills the screen. */
+  const libFill = await $(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms)); const out = {};
+    const realDue = window.reviewDueCount;
+    try {
+      markVideoSeen('sr'); window.reviewDueCount = () => 4;
+      try { closeEveryOverlay(); } catch (e) {}
+      show('verse'); vView = 'hub'; renderVerse(); await wait(120);
+      const hs = [...document.querySelectorAll('#libHub .versehub .vhub.sq')].map(t => t.getBoundingClientRect().height);
+      out.count = hs.length;
+      out.spread = Math.round(Math.max(...hs) - Math.min(...hs));
+      const sc = document.querySelector('.content'), last = document.getElementById('vW4W');
+      out.unused = Math.round(sc.getBoundingClientRect().bottom - last.getBoundingClientRect().bottom);
+      const w = document.querySelector('#libHub .vhub.sq').getBoundingClientRect().width;
+      out.atMost = Math.round(hs[0]) >= Math.floor(w) - 1;
+      out.fits = sc.scrollHeight <= sc.clientHeight + 1;
+    } finally {
+      window.reviewDueCount = realDue;
+      show('learn'); renderPath();
+    }
+    return out;
+  });
+  is(libFill.count, 6, 'the Library has its six square tiles');
+  ok(libFill.spread <= 1, 'they are all one height, the one with a due count too (spread ' + libFill.spread + 'px)');
+  ok(libFill.fits, '...the Library still fits without scrolling');
+  ok(libFill.unused <= 40 || libFill.atMost, '...and the room is used: ' + libFill.unused + 'px left over, or the tiles are already square');
+
+  describe('videos carry on from where they were left', () => { });
+
+  /* Every video remembers where it was paused or closed, and opens there next time — YouTube through
+     its player's reported time and start=, the app's own films through the <video> element. */
+  const vpos = await $(async () => {
+    const out = {}; const was = JSON.stringify(Prog.videoPos || {});
+    try {
+      Prog.videoPos = {};
+      videoPosSet('yt:aaaaaaaaaaa', 125.6, 600, true);
+      out.saved = videoPosGet('yt:aaaaaaaaaaa');
+      videoPosSet('yt:aaaaaaaaaaa', 130, 600, false);
+      out.throttled = videoPosGet('yt:aaaaaaaaaaa');
+      videoPosSet('yt:aaaaaaaaaaa', 590, 600, true);
+      out.finished = videoPosGet('yt:aaaaaaaaaaa');
+      out.unknown = videoPosGet('yt:bbbbbbbbbbb');
+
+      videoPosSet('yt:ccccccccccc', 200, 900, true);
+      openMediaPlayer({ kind: 'teach', by: 'test', label: 'test', yt: 'ccccccccccc' }, 'test');
+      const src = (document.querySelector('#mediaPlayer iframe') || {}).src || '';
+      out.startsThere = /[?&]start=200(&|$)/.test(src) && /enablejsapi=1/.test(src);
+      mpTrack({ currentTime: 342.4, duration: 900, playerState: 1 });
+      mediaClose();
+      out.closeSaves = videoPosGet('yt:ccccccccccc');
+
+      const fake = new EventTarget(); fake.currentTime = 0; fake.duration = 300;
+      videoPosSet('film:intro', 90, 300, true);
+      wireFilmResume(fake, 'film:intro');
+      fake.dispatchEvent(new Event('loadedmetadata'));
+      out.filmResumes = fake.currentTime;
+      fake.currentTime = 150; fake.dispatchEvent(new Event('pause'));
+      out.filmSaves = videoPosGet('film:intro');
+
+      const a = JSON.parse(JSON.stringify(Prog)), b = JSON.parse(JSON.stringify(Prog));
+      a.memorized = b.memorized = ['1:1:1']; a.doneSkills = b.doneSkills = ['num:1'];
+      a.videoPos = { 'yt:ddddddddddd': { t: 100, d: 600, at: 1000 } };
+      b.videoPos = { 'yt:ddddddddddd': { t: 400, d: 600, at: 2000 } };
+      out.newestWins = mergeProg(a, b).videoPos['yt:ddddddddddd'].t === 400 &&
+                       mergeProg(b, a).videoPos['yt:ddddddddddd'].t === 400;
+      out.cleaned = Object.keys(migrateProg({ videoPos: { 'yt:x': { t: 'lots' }, 'yt:y': { t: 12 } } }).videoPos).join(',');
+    } finally {
+      Prog.videoPos = JSON.parse(was); saveProg();
+      try { mediaClose(); } catch (e) {}
+    }
+    return out;
+  });
+  is(vpos.saved, 125, 'a video remembers where it was left, to the second');
+  is(vpos.throttled, 125, '...without writing every few seconds of playback');
+  is(vpos.finished, 0, 'watched to the end, it starts from the beginning next time');
+  is(vpos.unknown, 0, 'a video never opened starts at the beginning');
+  ok(vpos.startsThere, 'reopening a YouTube video starts it where it was left');
+  is(vpos.closeSaves, 342, 'closing the player keeps the last time the player reported');
+  is(vpos.filmResumes, 90, 'one of the app\'s own films carries on from where it was left');
+  is(vpos.filmSaves, 150, '...and pausing it keeps the new place');
+  ok(vpos.newestWins, 'on two devices, the more recent position wins');
+  is(vpos.cleaned, 'yt:y', 'a stored position that is not a number is dropped when progress loads');
+
   describe('a lesson screen can be read aloud', () => { });
 
   /* A Listen button on the lesson screens reads what the screen teaches, in a calm male voice where

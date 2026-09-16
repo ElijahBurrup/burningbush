@@ -294,6 +294,10 @@
   #libHub.lib-fit3 .lib-hint{display:none}
   #libHub.lib-fit3 .goalbar{padding:8px 12px;margin-bottom:6px}
   #libHub.lib-fit3 .taxwarn{padding:6px 10px;margin-bottom:6px}
+  /* Filled: every square tile is given the one height that uses the room there is (--tile-h, set by
+     fitLibraryHub). The shape no longer comes from aspect-ratio, which is also what let a tile with
+     more in it — Spaced Repetition's due count — stand taller than its neighbour on the same row. */
+  #libHub.lib-filled .versehub .vhub.sq{aspect-ratio:auto;height:var(--tile-h);overflow:hidden}
   .vhub:active{transform:scale(.98)}
   /* Spaced Repetition sits on the same ground as every other button; only the due count stands
      out, and only when something is actually waiting. */
@@ -2420,8 +2424,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.21.8";
+const APP_VERSION="2.21.9";
 const CHANGELOG=[
+ {v:"2.21.9", d:"September 16, 2026", t:"Pick up where you left off", items:[
+   ["new","<b>Videos carry on where you left them.</b> Pause or close a video, come back to it later, even on another device, and it starts where you stopped. Watch it to the end and it starts fresh next time."],
+   ["chg","<b>Bigger Library buttons, all the same size.</b> The tiles now use the whole screen instead of leaving a gap at the bottom, and Spaced Repetition no longer stands taller than My Verses."]
+ ]},
  {v:"2.21.8", d:"September 16, 2026", t:"The burning bush, and a Library that fits", items:[
    ["new","<b>Learn number 3 and you are offered Exodus 3:2.</b> The burning bush — the verse this app is named for — is the first verse you can build once you know 3, so the lesson ends by offering it."],
    ["chg","<b>The Library fits your screen.</b> All seven tiles, Word for Word included, sit on one screen without scrolling, however much is showing above them: your goal, an announcement, or Caesar’s warning."],
@@ -5086,10 +5094,84 @@ function mpRotate(){
   }
   go();
 }
+/* ---- where each video was left -------------------------------------------------------------
+   Coming back to a video carries on from where it was paused or closed. Kept in progress
+   (Prog.videoPos, keyed "yt:<id>" or "film:<key>"), so it follows the account to another device;
+   where two devices disagree, the more recent position wins (mergeProg).
+
+   YouTube: the embed asks for the IFrame API (enablejsapi=1) and is told once it loads that the page
+   is listening, after which the player reports its time; reopening passes start=<seconds>. The app's
+   own films are <video> elements and are simply read and set. A Facebook reel reports nothing, so it
+   cannot carry on and starts from the beginning.
+
+   Written at most every VIDEO_POS_EVERY seconds of playback, and always on pause, on close and when
+   the app goes into the background. Watched to the end (or within 15 seconds of it) goes back to the
+   start. Only the most recent VIDEO_POS_KEEP videos are remembered. */
+let MP_POS=null;                         // the video in the player now: { key, t, d }
+const VIDEO_POS_KEEP=300, VIDEO_POS_EVERY=10;
+function videoPosGet(key){
+  const v=((typeof Prog!=="undefined" && Prog && Prog.videoPos)||{})[key];
+  return (v && Number.isFinite(v.t) && v.t>=5) ? Math.floor(v.t) : 0;
+}
+function videoPosSet(key, t, d, force){
+  if(!key || !Number.isFinite(t) || t<0 || !Prog) return;
+  Prog.videoPos=Prog.videoPos||{};
+  const prev=Prog.videoPos[key];
+  const dur=(Number.isFinite(d) && d>0) ? d : ((prev && prev.d) || 0);
+  const done=dur>0 && (t>=dur-15 || t/dur>=0.95);
+  const nt=done ? 0 : Math.floor(t);
+  if(prev && prev.t===nt) return;
+  if(!force){
+    if(!prev && nt<5) return;                                         // barely started: nothing to keep yet
+    if(prev && Math.abs(nt-prev.t)<VIDEO_POS_EVERY) return;
+  }
+  Prog.videoPos[key]={ t:nt, d:dur ? Math.round(dur) : 0, at:Date.now() };
+  const ks=Object.keys(Prog.videoPos);
+  if(ks.length>VIDEO_POS_KEEP) ks.sort((x,y)=>(Prog.videoPos[x].at||0)-(Prog.videoPos[y].at||0))
+    .slice(0, ks.length-VIDEO_POS_KEEP).forEach(k=>{ delete Prog.videoPos[k]; });
+  saveProg();
+}
+// What the YouTube player reports: currentTime, duration, and playerState (0 ended, 1 playing, 2 paused).
+function mpTrack(info){
+  if(!MP_POS || !info) return;
+  if(Number.isFinite(info.duration) && info.duration>0) MP_POS.d=info.duration;
+  if(Number.isFinite(info.currentTime)) MP_POS.t=info.currentTime;
+  if(info.playerState===0){ videoPosSet(MP_POS.key, MP_POS.d || MP_POS.t, MP_POS.d, true); return; }
+  videoPosSet(MP_POS.key, MP_POS.t, MP_POS.d, info.playerState===2);
+}
+function mpFlushPos(){ if(MP_POS){ videoPosSet(MP_POS.key, MP_POS.t, MP_POS.d, true); MP_POS=null; } }
+window.addEventListener("message", ev=>{
+  if(!MP_POS || !/^https:\/\/www\.youtube(-nocookie)?\.com$/.test(ev.origin||"")) return;
+  const fr=document.querySelector("#mediaPlayer iframe"); if(!fr || ev.source!==fr.contentWindow) return;
+  let d=ev.data; if(typeof d==="string"){ try{ d=JSON.parse(d); }catch(e){ return; } }
+  if(!d) return;
+  if(d.event==="infoDelivery") mpTrack(d.info);
+  else if(d.event==="onStateChange") mpTrack({ playerState:d.info });
+});
+document.addEventListener("visibilitychange", ()=>{
+  if(document.visibilityState==="hidden" && MP_POS) videoPosSet(MP_POS.key, MP_POS.t, MP_POS.d, true);
+});
+// The app's own films: start where it was left once the file knows its length, and keep up as it plays.
+function wireFilmResume(vd, key){
+  if(!vd || vd.__resumeWired) return; vd.__resumeWired=true;
+  vd.addEventListener("loadedmetadata", ()=>{
+    const from=videoPosGet(key), d=vd.duration;
+    if(from && (!Number.isFinite(d) || from<d-15)){ try{ vd.currentTime=from; }catch(e){} }
+  });
+  vd.addEventListener("timeupdate", ()=>videoPosSet(key, vd.currentTime, vd.duration, false));
+  vd.addEventListener("pause", ()=>videoPosSet(key, vd.currentTime, vd.duration, true));
+  vd.addEventListener("ended", ()=>videoPosSet(key, vd.duration || vd.currentTime, vd.duration, true));
+}
 function openMediaPlayer(it, title){
   if(!it) return;
   let url="", fallback="";
-  if(it.yt && /^[A-Za-z0-9_-]{11}$/.test(it.yt)) url=`https://www.youtube-nocookie.com/embed/${it.yt}?rel=0&modestbranding=1&playsinline=1&autoplay=1`;
+  mpFlushPos();
+  if(it.yt && /^[A-Za-z0-9_-]{11}$/.test(it.yt)){
+    const from=videoPosGet("yt:"+it.yt);
+    const org=/^https?:/.test(location.origin||"") ? `&origin=${encodeURIComponent(location.origin)}` : "";
+    url=`https://www.youtube-nocookie.com/embed/${it.yt}?rel=0&modestbranding=1&playsinline=1&autoplay=1&enablejsapi=1${org}${from?`&start=${from}`:""}`;
+    MP_POS={ key:"yt:"+it.yt, t:from, d:0 };
+  }
   else if(it.fb && /^https:\/\/www\.facebook\.com\//.test(it.fb)){ url=`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(it.fb)}&show_text=false&autoplay=true`; fallback=it.fb; }
   if(!url) return;
   try{ ttsStop(); }catch(e){}
@@ -5109,6 +5191,10 @@ function openMediaPlayer(it, title){
       allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
     ${fallback?`<div class="mp-foot"><a class="mp-out" href="${fallback}" target="_blank" rel="noopener">Won’t play? Open it on Facebook</a></div>`:""}`;
   m.style.display="flex";
+  // Tell the YouTube player the page is listening, which is what starts it reporting its time.
+  { const fr=m.querySelector("iframe");
+    if(fr && MP_POS) fr.addEventListener("load", ()=>{
+      try{ fr.contentWindow.postMessage(JSON.stringify({ event:"listening", id:1, channel:"widget" }), "*"); }catch(e){} }); }
   el("mpClose").onclick=()=>mediaClose();
   if(el("mpRot")) el("mpRot").onclick=mpRotate;
   try{ el("mpClose").focus({preventScroll:true}); }catch(e){}
@@ -5126,6 +5212,7 @@ function mediaClose(){
   const m=el("mediaPlayer"), s=el("mediaSheet");
   const playing=mediaPlayerOpen(), listed=!!s && s.style.display==="flex";
   if(!playing && !listed) return false;
+  mpFlushPos();                              // every way out keeps where the video was
   if(m){ m.innerHTML=""; m.style.display="none"; }
   if(s) s.style.display="none";
   MP_IN_FS=false;
@@ -5268,6 +5355,9 @@ function migrateProg(p){
   // Which Library tools have been USED, not merely opened. One timestamp each. It lifts the Word
   // for Word sticker and it is what the Bible ticket asks for.
   p.libUsed=obj(p.libUsed);
+  p.videoPos=obj(p.videoPos);                  // where each video was left (see videoPosSet)
+  Object.keys(p.videoPos).forEach(k=>{ const v=p.videoPos[k];
+    if(!v || typeof v!=="object" || !Number.isFinite(v.t) || v.t<0) delete p.videoPos[k]; });
   // What this account did, month by month. Keyed "YYYY-MM"; see statBump for the fields.
   p.stats=obj(p.stats);
   p.nudge=obj(p.nudge);   // when we last asked about giving, and whether we were told to stop
@@ -5516,7 +5606,12 @@ function mergeProg(a,b){
   { const ca=(a.church||{}), cb=(b.church||{});   // never lose a finished church to a sync
     m.church={ built:Math.max(ca.built||0,cb.built||0), total:Math.max(ca.total||0,cb.total||0),
                given:Math.max(ca.given||0,cb.given||0) }; }
-  m.libUsed=Object.assign({},b.libUsed||{},a.libUsed||{});   // using a tool on either device counts
+  m.libUsed=Object.assign({},b.libUsed||{},a.libUsed||{});
+  // Where a video was left: the more recent position wins, from whichever device it came.
+  m.videoPos={};
+  [b.videoPos||{}, a.videoPos||{}].forEach(src=>Object.keys(src).forEach(k=>{
+    const x=src[k], y=m.videoPos[k];
+    if(x && Number.isFinite(x.t) && (!y || (x.at||0)>=(y.at||0))) m.videoPos[k]=x; }));   // using a tool on either device counts
   // Monthly counters merge field by field, taking the HIGHER of the two. Not the sum: a merge runs
   // every time either device syncs, and adding would count the same verse again on every pass.
   // Each device's number already includes everything it has seen, so the larger is the truer one.
@@ -7366,7 +7461,7 @@ function openVideoScreen(key, after){
       <p class="lead" style="text-align:center;margin:12px 0 0">${V.sub}</p>
       <button class="btn" id="vsDone" style="width:100%;margin-top:14px">Got It!</button>
     </div>`;
-  { const vd=m.querySelector("[data-vsrc]"); if(vd && vd.dataset.vsrc) vd.src=vd.dataset.vsrc; }
+  { const vd=m.querySelector("[data-vsrc]"); if(vd && vd.dataset.vsrc){ wireFilmResume(vd, "film:"+key); vd.src=vd.dataset.vsrc; } }
   m.style.display="flex"; raiseModal(m);
   // No hold is taken here: a film that is ON SCREEN is already a visible .modal, which anyOverlayUp
   // sees on its own. Counting it again would leak — anything that hides this modal without coming
@@ -13178,21 +13273,39 @@ function wireTaxWarn(){
     const w=el("taxWarnBtn"); if(w) w.remove();
     fitLibraryHub(); };
 }
-/* The Library fits the screen it is on. Steps through the density tiers (CSS: #libHub.lib-fitN) until
-   the scroller has nothing to scroll, stopping at the first that fits. Only classes change — nothing
-   is redrawn — so it is safe to run on a resize or after a banner goes, without moving anybody.
-   The classes sit on the hub's own wrapper, never on the Library tab: a lesson or a verse drawn into
-   the same tab reuses the tile styles, and a class left on the tab shrank those too. */
+/* The Library fills the screen it is on. Stepping between fixed sizes left a phone 80 to 200px of
+   empty space whenever the next size up missed by a little, so the six square tiles are given the one
+   height that uses the room exactly: the grid is laid out at two trial heights, which gives how much
+   it grows per pixel of tile, and that is solved for the space left under whatever sits above it.
+   A tile is never taller than it is wide. The density tiers (#libHub.lib-fitN) now only shrink the
+   lettering and icons, and only when the tiles would otherwise be too short to read at full size.
+   Only classes and one custom property change — nothing is redrawn — so it is safe on a resize or
+   after a banner goes. The classes sit on the hub's own wrapper, never on the Library tab: a lesson or
+   a verse drawn into the same tab reuses the tile styles. */
 const LIB_FIT_TIERS=["lib-fit1","lib-fit2","lib-fit3"];
+const LIB_TILE_MIN={ "":150, "lib-fit1":112, "lib-fit2":84, "lib-fit3":64 };   // shortest tile each size of lettering reads at
 function fitLibraryHub(){
   const V=el("verse"), hub=el("libHub"), sc=document.querySelector(".content");
   if(!hub || !sc || !V || !V.classList.contains("active")) return;
-  hub.classList.remove(...LIB_FIT_TIERS);
-  if(libHubFits(hub, sc)) return;
-  for(const t of LIB_FIT_TIERS){
-    hub.classList.remove(...LIB_FIT_TIERS); hub.classList.add(t);
-    if(libHubFits(hub, sc)) return;
+  const grid=hub.querySelector(".versehub"), first=grid && grid.querySelector(".vhub.sq");
+  if(!grid || !first) return;
+  const padB=parseFloat(getComputedStyle(sc).paddingBottom)||0;
+  let tile=0;
+  for(const tier of ["", ...LIB_FIT_TIERS]){
+    hub.classList.remove(...LIB_FIT_TIERS); if(tier) hub.classList.add(tier);
+    hub.classList.add("lib-filled");
+    grid.style.setProperty("--tile-h","100px"); const g100=grid.getBoundingClientRect().height;
+    grid.style.setProperty("--tile-h","200px"); const g200=grid.getBoundingClientRect().height;
+    const perPx=(g200-g100)/100, fixed=g100-100*perPx;                  // rows of tiles, and everything else
+    const top=grid.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop;
+    const room=sc.clientHeight - padB - top - 2;
+    tile=perPx>0 ? Math.floor((room - fixed)/perPx) : 0;
+    const most=Math.floor(first.getBoundingClientRect().width);          // never taller than it is wide
+    if(tile>=LIB_TILE_MIN[tier]){ grid.style.setProperty("--tile-h", Math.min(tile, most)+"px"); return; }
   }
+  // Even the smallest lettering does not fit (a very short screen): the smallest readable tile, and
+  // the Library scrolls rather than squeezing a tile into nonsense.
+  grid.style.setProperty("--tile-h", Math.max(tile, LIB_TILE_MIN["lib-fit3"])+"px");
 }
 // Does the hub itself end inside the visible scroller? Asked of the hub, not of everything the
 // scroller holds: anything else in it would otherwise force the smallest tier, and the tier would

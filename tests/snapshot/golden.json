@@ -9,8 +9,8 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "classic/verse/hub": {
-  "h": "bdd4631f0ff4c46c",
-  "len": 3320,
+  "h": "3f0461793196fd5c",
+  "len": 3356,
   "els": 66,
   "buttons": 7,
   "svgs": 3,
@@ -18,8 +18,8 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. 🎯 1 Due 🔥 4 day streak Spaced Repetition Due"
  },
  "classic/verse/hub-full": {
-  "h": "22a1ed07b02cf6b7",
-  "len": 3096,
+  "h": "5a1e1f61a27eda66",
+  "len": 3132,
   "els": 60,
   "buttons": 7,
   "svgs": 3,
@@ -288,7 +288,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "6e667b0338be4fc1",
+  "h": "43ffcd9090aaf9b7",
   "len": 130428,
   "els": 2235,
   "buttons": 587,
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "6754e1805c8a9c4f",
-  "len": 205700,
-  "els": 3413,
+  "h": "8a7121fe20501b8a",
+  "len": 206415,
+  "els": 3426,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.8 September 16, 2026 The burning bush, and a Library that fits NEW Learn number 3 and you are of"
+  "text": "✕ Version history v2.21.9 September 16, 2026 Pick up where you left off NEW Videos carry on where you left them. Pause o"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,7 +387,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "83cc64ff28507d36",
+  "h": "79dc1b065f7a9fd3",
   "len": 129627,
   "els": 2227,
   "buttons": 585,
@@ -531,8 +531,8 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "illumined/verse/hub": {
-  "h": "36c935388f6e92b6",
-  "len": 3668,
+  "h": "700151c6fa15fb52",
+  "len": 3704,
   "els": 69,
   "buttons": 7,
   "svgs": 4,
@@ -540,8 +540,8 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "illumined/verse/hub-full": {
-  "h": "cb71667a34622cc1",
-  "len": 3444,
+  "h": "2571e3e5030442b2",
+  "len": 3480,
   "els": 63,
   "buttons": 7,
   "svgs": 4,
@@ -810,7 +810,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "cf18cf1f9cc95b0e",
+  "h": "3be39295c07f0c04",
   "len": 129635,
   "els": 2227,
   "buttons": 585,
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "6754e1805c8a9c4f",
-  "len": 205700,
-  "els": 3413,
+  "h": "8a7121fe20501b8a",
+  "len": 206415,
+  "els": 3426,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.8 September 16, 2026 The burning bush, and a Library that fits NEW Learn number 3 and you are of"
+  "text": "✕ Version history v2.21.9 September 16, 2026 Pick up where you left off NEW Videos carry on where you left them. Pause o"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,7 +909,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "cf18cf1f9cc95b0e",
+  "h": "3be39295c07f0c04",
   "len": 129635,
   "els": 2227,
   "buttons": 585,
@@ -1053,8 +1053,8 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "glass/verse/hub": {
-  "h": "36c935388f6e92b6",
-  "len": 3668,
+  "h": "d1910d736ee28e61",
+  "len": 3704,
   "els": 69,
   "buttons": 7,
   "svgs": 4,
@@ -1062,8 +1062,8 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "glass/verse/hub-full": {
-  "h": "cb71667a34622cc1",
-  "len": 3444,
+  "h": "7b9cd49eef9cdd31",
+  "len": 3480,
   "els": 63,
   "buttons": 7,
   "svgs": 4,
@@ -1332,7 +1332,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "53f0eae16fc1bf4b",
+  "h": "6a348fb1757f5132",
   "len": 129633,
   "els": 2227,
   "buttons": 585,
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "6754e1805c8a9c4f",
-  "len": 205700,
-  "els": 3413,
+  "h": "8a7121fe20501b8a",
+  "len": 206415,
+  "els": 3426,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.8 September 16, 2026 The burning bush, and a Library that fits NEW Learn number 3 and you are of"
+  "text": "✕ Version history v2.21.9 September 16, 2026 Pick up where you left off NEW Videos carry on where you left them. Pause o"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,7 +1431,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "53f0eae16fc1bf4b",
+  "h": "6a348fb1757f5132",
   "len": 129633,
   "els": 2227,
   "buttons": 585,
@@ -1575,8 +1575,8 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "quest/verse/hub": {
-  "h": "36c935388f6e92b6",
-  "len": 3668,
+  "h": "5dac8299eb2f2ae9",
+  "len": 3704,
   "els": 69,
   "buttons": 7,
   "svgs": 4,
@@ -1584,8 +1584,8 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "quest/verse/hub-full": {
-  "h": "cb71667a34622cc1",
-  "len": 3444,
+  "h": "4c75800ccf478823",
+  "len": 3480,
   "els": 63,
   "buttons": 7,
   "svgs": 4,
@@ -1854,7 +1854,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "78886fc6991b5bbd",
+  "h": "19d4b7807ecf45ee",
   "len": 129635,
   "els": 2227,
   "buttons": 585,
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "6754e1805c8a9c4f",
-  "len": 205700,
-  "els": 3413,
+  "h": "8a7121fe20501b8a",
+  "len": 206415,
+  "els": 3426,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.8 September 16, 2026 The burning bush, and a Library that fits NEW Learn number 3 and you are of"
+  "text": "✕ Version history v2.21.9 September 16, 2026 Pick up where you left off NEW Videos carry on where you left them. Pause o"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,7 +1953,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "78886fc6991b5bbd",
+  "h": "19d4b7807ecf45ee",
   "len": 129635,
   "els": 2227,
   "buttons": 585,
@@ -2097,8 +2097,8 @@
   "text": "🎓 Learn Your whole path, in order. The next lesson is marked. ▶ Start Here: How Burning Bush Works 4 minutes · start he"
  },
  "buddy/verse/hub": {
-  "h": "36c935388f6e92b6",
-  "len": 3668,
+  "h": "93382eb2ae6a949a",
+  "len": 3704,
   "els": 69,
   "buttons": 7,
   "svgs": 4,
@@ -2106,8 +2106,8 @@
   "text": "📚 Library Everything you have hidden away, and every way to practise it. Caught Up Today 🔥 4 day streak Spaced Repetit"
  },
  "buddy/verse/hub-full": {
-  "h": "cb71667a34622cc1",
-  "len": 3444,
+  "h": "27e86c3b7f6a0d12",
+  "len": 3480,
   "els": 63,
   "buttons": 7,
   "svgs": 4,
@@ -2376,7 +2376,7 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "4a3d85fb81c4ac89",
+  "h": "26f24dd6ab43d980",
   "len": 129631,
   "els": 2227,
   "buttons": 585,
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "6754e1805c8a9c4f",
-  "len": 205700,
-  "els": 3413,
+  "h": "8a7121fe20501b8a",
+  "len": 206415,
+  "els": 3426,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ Version history v2.21.8 September 16, 2026 The burning bush, and a Library that fits NEW Learn number 3 and you are of"
+  "text": "✕ Version history v2.21.9 September 16, 2026 Pick up where you left off NEW Videos carry on where you left them. Pause o"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,7 +2475,7 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "4a3d85fb81c4ac89",
+  "h": "26f24dd6ab43d980",
   "len": 129631,
   "els": 2227,
   "buttons": 585,
