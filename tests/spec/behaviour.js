@@ -5258,6 +5258,35 @@ const DAY = 86400000;
   ok(vpos.newestWins, 'on two devices, the more recent position wins');
   is(vpos.cleaned, 'yt:y', 'a stored position that is not a number is dropped when progress loads');
 
+  describe('release notes are for the owner; everyone else hears Update Available and Now Installed', () => { });
+
+  const notes = await $(() => {
+    const out = {}; const wasUser = Auth.user;
+    const card = () => { const m = el('whatsNewModal'); return { shown: !!m && m.style.display === 'flex',
+      text: m ? m.innerText : '', items: m ? m.querySelectorAll('.cl-item').length : 0 }; };
+    const shut = () => { const m = el('whatsNewModal'); if (m) m.style.display = 'none'; };
+    try {
+      Auth.user = { email: 'someone@example.com' };
+      openWhatsNew(false); out.popup = card(); shut();
+      openWhatsNew(true); out.history = card(); shut();
+      out.updateText = updateReadyText('9.9.9');
+      Auth.user = null;
+      openWhatsNew(false); out.signedOut = card(); shut();
+      Auth.user = { email: 'ElijahDBurrup@gmail.com' };
+      openWhatsNew(false); out.owner = card(); shut();
+      out.ownerUpdateText = updateReadyText('9.9.9');
+    } finally { Auth.user = wasUser; shut(); }
+    return out;
+  });
+  ok(notes.popup.shown && /Now Installed!/.test(notes.popup.text) && notes.popup.items === 0,
+    'after an update, anyone but the owner sees Now Installed! and no release notes');
+  ok(notes.history.shown && notes.history.items === 0 && /v\d+\.\d+\.\d+/.test(notes.history.text),
+    '...and Profile shows only the version, not the history');
+  is(notes.updateText, 'Update Available', 'an update on its way says Update Available');
+  ok(notes.signedOut.items === 0 && /Now Installed!/.test(notes.signedOut.text), '...signed out too');
+  ok(notes.owner.items > 0, 'the owner still sees the release notes (email matched whatever its capitals)');
+  ok(/9\.9\.9/.test(notes.ownerUpdateText), '...and the version the update brings');
+
   describe('a lesson screen can be read aloud', () => { });
 
   /* A Listen button on the lesson screens reads what the screen teaches, in a calm male voice where
@@ -8424,12 +8453,15 @@ const DAY = 86400000;
     out.noSectionPopup = !el('profSecModal') || el('profSecModal').style.display !== 'flex';
     shut();
 
+    // Release notes are the owner's (seesReleaseNotes); signed in as the owner, Profile opens them.
+    const wasUser = Auth.user; Auth.user = { email: 'elijahdburrup@gmail.com' };
     tap('what-s-new');
     out.whatsNew = !!el('whatsNewModal') && el('whatsNewModal').style.display === 'flex';
     out.notesHaveVersions = /Version history|v1\./i.test(el('whatsNewModal').innerText);
     out.profileStillBehind = el('themeModal').style.display === 'flex';
     el('wnClose').click();
     out.backOnProfile = el('themeModal').style.display === 'flex' && el('whatsNewModal').style.display === 'none';
+    Auth.user = wasUser;
     shut();
 
     tap('get-the-app');

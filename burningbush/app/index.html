@@ -2424,8 +2424,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.21.9";
+const APP_VERSION="2.21.10";
 const CHANGELOG=[
+ {v:"2.21.10", d:"September 16, 2026", t:"Release notes are yours", items:[
+   ["chg","<b>Only you see release notes.</b> Everyone else is told just <b>Update Available</b> when one is on its way and <b>Now Installed!</b> once it is running, and Profile shows them the version number only."],
+   ["fix","<b>The Library no longer moves the page while it sizes its buttons.</b> Scrolled down, the page could jump up by a row as the tiles were measured."]
+ ]},
  {v:"2.21.9", d:"September 16, 2026", t:"Pick up where you left off", items:[
    ["new","<b>Videos carry on where you left them.</b> Pause or close a video, come back to it later, even on another device, and it starts where you stopped. Watch it to the end and it starts fresh next time."],
    ["chg","<b>Bigger Library buttons, all the same size.</b> The tiles now use the whole screen instead of leaving a gap at the bottom, and Spaced Repetition no longer stands taller than My Verses."]
@@ -3401,7 +3405,29 @@ function releaseHTML(r){
     + r.items.map(it=>`<div class="cl-item"><span class="cl-tag ${it[0]}">${it[0]==="new"?"NEW":"FIX"}</span><span>${it[1]}</span></div>`).join("")
     + `</div>`;
 }
+/* Release notes are for the owner. Everybody else is told only that an update is there ("Update
+   Available") and, once it is running, that it is installed ("Now Installed!") — never what changed. */
+const RELEASE_NOTES_FOR=["elijahdburrup@gmail.com"];
+function seesReleaseNotes(){
+  try{ return RELEASE_NOTES_FOR.includes(String((Auth.user && Auth.user.email)||"").toLowerCase()); }catch(e){ return false; }
+}
+function updateReadyText(v){
+  return seesReleaseNotes() ? (v ? "Version "+v+" is ready. Updating…" : "A newer version is ready. Updating…") : "Update Available";
+}
+function openInstalledCard(all){
+  const m=modalHost("whatsNewModal");
+  m.innerHTML=`<div class="modal-card center"><div class="lv-topbar"><button class="lclose" id="wnClose">✕</button><span style="flex:1"></span></div>
+      <div style="font-size:46px">${all?"📋":"✨"}</div>
+      <h2 class="gold" style="margin:6px 0 4px">${all?"Burning Bush v"+APP_VERSION:"Now Installed!"}</h2>
+      <p class="lead" style="margin:0 0 14px">${all?"This is the version on this device.":"Burning Bush v"+APP_VERSION+" is ready to use."}</p>
+      <button class="btn" id="wnOk" style="width:100%">${all?"Done":"Got it"}</button></div>`;
+  m.style.display="flex"; raiseModal(m); m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("wnClose").onclick=()=>m.style.display="none";
+  el("wnOk").onclick=()=>m.style.display="none";
+  try{ Store.set("vv_version",APP_VERSION); }catch(e){}   // seen · don't pop again for this release
+}
 function openWhatsNew(all){
+  if(!seesReleaseNotes()) return openInstalledCard(all);
   const m=modalHost("whatsNewModal");
   const list=all?CHANGELOG:[CHANGELOG[0]];
   m.innerHTML=`<div class="modal-card"><div class="lv-topbar"><button class="lclose" id="wnClose">✕</button>
@@ -5995,7 +6021,7 @@ function openStaleAppNotice(){
   const m=modalHost("staleAppModal");
   m.innerHTML=`<div class="modal-card center">
       <div style="font-size:46px">⬆️</div>
-      <h2 class="gold" style="margin:6px 0 4px">Update to keep syncing</h2>
+      <h2 class="gold" style="margin:6px 0 4px">${seesReleaseNotes()?"Update to keep syncing":"Update Available"}</h2>
       <p class="lead" style="margin:0 0 10px">This app is on <b>v${APP_VERSION}</b> and the website has moved on.
         Until it is updated, <b>your progress here will not sync</b> to your other devices.</p>
       <p class="hint" style="margin:0 0 14px">Nothing on this device is lost — it keeps working, and it will
@@ -13289,6 +13315,9 @@ function fitLibraryHub(){
   if(!hub || !sc || !V || !V.classList.contains("active")) return;
   const grid=hub.querySelector(".versehub"), first=grid && grid.querySelector(".vhub.sq");
   if(!grid || !first) return;
+  // Measuring lays the tiles out at trial heights, and a shorter trial makes the scroller clamp a reader
+  // who is scrolled down. Put them back where they were, whatever the trials did.
+  const keepTop=sc.scrollTop;
   const padB=parseFloat(getComputedStyle(sc).paddingBottom)||0;
   let tile=0;
   for(const tier of ["", ...LIB_FIT_TIERS]){
@@ -13301,11 +13330,12 @@ function fitLibraryHub(){
     const room=sc.clientHeight - padB - top - 2;
     tile=perPx>0 ? Math.floor((room - fixed)/perPx) : 0;
     const most=Math.floor(first.getBoundingClientRect().width);          // never taller than it is wide
-    if(tile>=LIB_TILE_MIN[tier]){ grid.style.setProperty("--tile-h", Math.min(tile, most)+"px"); return; }
+    if(tile>=LIB_TILE_MIN[tier]){ grid.style.setProperty("--tile-h", Math.min(tile, most)+"px"); sc.scrollTop=keepTop; return; }
   }
   // Even the smallest lettering does not fit (a very short screen): the smallest readable tile, and
   // the Library scrolls rather than squeezing a tile into nonsense.
   grid.style.setProperty("--tile-h", Math.max(tile, LIB_TILE_MIN["lib-fit3"])+"px");
+  sc.scrollTop=keepTop;
 }
 // Does the hub itself end inside the visible scroller? Asked of the hub, not of everything the
 // scroller holds: anything else in it would otherwise force the smallest tier, and the tier would
@@ -17904,7 +17934,7 @@ if(el("refBtn")) el("refBtn").onclick=()=>{ closeProfile(); openFoundations(); }
 if(el("pFeatures")) el("pFeatures").onclick=()=>openFeatureStore();
 if(el("pLicences")) el("pLicences").onclick=()=>openLicences();
 if(el("pGive")){ if(canBuyHere()) el("pGive").onclick=()=>openGive(); else el("pGive").style.display="none"; }
-el("pChangelog").textContent=`📋 Version history · v${APP_VERSION}`;
+el("pChangelog").textContent=`📋 Version${seesReleaseNotes()?" history":""} · v${APP_VERSION}`;
 el("pChangelog").onclick=()=>{ closeProfile(); openWhatsNew(true); };
 el("themeModal").onclick=e=>{ if(e.target===el("themeModal")) closeProfile(); };
 document.querySelectorAll(".theme-opt").forEach(b=>b.onclick=()=>applyTheme(b.dataset.th));
@@ -19753,7 +19783,7 @@ const Update = (()=>{
       try{
         const v=await latest();
         last=Date.now();
-        if(v && v!==APP_VERSION){ toast("Version "+v+" is ready. Updating…"); setTimeout(apply,900); return; }
+        if(v && v!==APP_VERSION){ toast(updateReadyText(v)); setTimeout(apply,900); return; }
         toast(v ? "You are on the newest version ("+APP_VERSION+")." : "Could not reach the server just now.");
       }catch(e){ toast("Could not reach the server just now."); }
       finally{ if(btn){ btn.disabled=false; btn.textContent=was; } busy=false; }
@@ -19765,7 +19795,7 @@ const Update = (()=>{
       try{
         const v=await latest();
         last=Date.now();
-        if(v && v!==APP_VERSION){ toast("A newer version is ready. Updating…"); setTimeout(apply,900); }
+        if(v && v!==APP_VERSION){ toast(updateReadyText()); setTimeout(apply,900); }
       }catch(e){ /* offline, or the server is asleep — try again at the next tab tap */ }
       finally{ busy=false; }
     }
