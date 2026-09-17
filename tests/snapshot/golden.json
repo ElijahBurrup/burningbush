@@ -288,10 +288,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "classic/modal/profile": {
-  "h": "7a31d27f13b2fc14",
-  "len": 130425,
-  "els": 2235,
-  "buttons": 587,
+  "h": "53a1d823007a92d5",
+  "len": 130580,
+  "els": 2237,
+  "buttons": 588,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -351,13 +351,13 @@
   "text": "📖 Talents Store You have 🪙 1210 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "classic/modal/whats-new": {
-  "h": "358e5908fb169cc8",
+  "h": "c527203fd1aa8e91",
   "len": 387,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 📋 Burning Bush v2.21.10 This is the version on this device. Done"
+  "text": "✕ 📋 Burning Bush v2.21.11 This is the version on this device. Done"
  },
  "classic/modal/church": {
   "h": "dc775bc73669666e",
@@ -387,10 +387,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "classic/modal/translations": {
-  "h": "0762fb2e3bf2f5bd",
-  "len": 129624,
-  "els": 2227,
-  "buttons": 585,
+  "h": "6eda96a3ac59b5af",
+  "len": 129779,
+  "els": 2229,
+  "buttons": 586,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -810,10 +810,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "illumined/modal/profile": {
-  "h": "396f0c6ff9dbe7ac",
-  "len": 129632,
-  "els": 2227,
-  "buttons": 585,
+  "h": "48264a1704831c20",
+  "len": 129787,
+  "els": 2229,
+  "buttons": 586,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -873,13 +873,13 @@
   "text": "📖 Talents Store You have 🪙 1220 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "illumined/modal/whats-new": {
-  "h": "358e5908fb169cc8",
+  "h": "c527203fd1aa8e91",
   "len": 387,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 📋 Burning Bush v2.21.10 This is the version on this device. Done"
+  "text": "✕ 📋 Burning Bush v2.21.11 This is the version on this device. Done"
  },
  "illumined/modal/church": {
   "h": "4d777de6a04fe980",
@@ -909,10 +909,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "illumined/modal/translations": {
-  "h": "396f0c6ff9dbe7ac",
-  "len": 129632,
-  "els": 2227,
-  "buttons": 585,
+  "h": "48264a1704831c20",
+  "len": 129787,
+  "els": 2229,
+  "buttons": 586,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -1332,10 +1332,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "glass/modal/profile": {
-  "h": "10811556f82bc969",
-  "len": 129630,
-  "els": 2227,
-  "buttons": 585,
+  "h": "42c28e6e171256d7",
+  "len": 129785,
+  "els": 2229,
+  "buttons": 586,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -1395,13 +1395,13 @@
   "text": "📖 Talents Store You have 🪙 1230 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "glass/modal/whats-new": {
-  "h": "358e5908fb169cc8",
+  "h": "c527203fd1aa8e91",
   "len": 387,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 📋 Burning Bush v2.21.10 This is the version on this device. Done"
+  "text": "✕ 📋 Burning Bush v2.21.11 This is the version on this device. Done"
  },
  "glass/modal/church": {
   "h": "5130c37e9262840c",
@@ -1431,10 +1431,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "glass/modal/translations": {
-  "h": "10811556f82bc969",
-  "len": 129630,
-  "els": 2227,
-  "buttons": 585,
+  "h": "42c28e6e171256d7",
+  "len": 129785,
+  "els": 2229,
+  "buttons": 586,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -1854,10 +1854,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "quest/modal/profile": {
-  "h": "d707b49e0f27aeec",
-  "len": 129632,
-  "els": 2227,
-  "buttons": 585,
+  "h": "024092d46aeb0c23",
+  "len": 129787,
+  "els": 2229,
+  "buttons": 586,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -1917,13 +1917,13 @@
   "text": "📖 Talents Store You have 🪙 1240 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "quest/modal/whats-new": {
-  "h": "358e5908fb169cc8",
+  "h": "c527203fd1aa8e91",
   "len": 387,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 📋 Burning Bush v2.21.10 This is the version on this device. Done"
+  "text": "✕ 📋 Burning Bush v2.21.11 This is the version on this device. Done"
  },
  "quest/modal/church": {
   "h": "4cc9f4ebc2f37f93",
@@ -1953,10 +1953,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "quest/modal/translations": {
-  "h": "d707b49e0f27aeec",
-  "len": 129632,
-  "els": 2227,
-  "buttons": 585,
+  "h": "024092d46aeb0c23",
+  "len": 129787,
+  "els": 2229,
+  "buttons": 586,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -2376,10 +2376,10 @@
   "text": "← Back Foundations The reference library. Build the structure once; every verse hangs on it. Major System Numbers Books "
  },
  "buddy/modal/profile": {
-  "h": "68d8aa8c7a4736eb",
-  "len": 129628,
-  "els": 2227,
-  "buttons": 585,
+  "h": "77d87121098dfb45",
+  "len": 129783,
+  "els": 2229,
+  "buttons": 586,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
@@ -2439,13 +2439,13 @@
   "text": "📖 Talents Store You have 🪙 1250 talents . Spend them on tools that keep you going. 🧊 Streak Freeze have 2 Auto-saves "
  },
  "buddy/modal/whats-new": {
-  "h": "358e5908fb169cc8",
+  "h": "c527203fd1aa8e91",
   "len": 387,
   "els": 8,
   "buttons": 2,
   "svgs": 0,
   "imgs": 0,
-  "text": "✕ 📋 Burning Bush v2.21.10 This is the version on this device. Done"
+  "text": "✕ 📋 Burning Bush v2.21.11 This is the version on this device. Done"
  },
  "buddy/modal/church": {
   "h": "3aefac3f5e8cba44",
@@ -2475,10 +2475,10 @@
   "text": "✕ Memory Palaces Walk a place you know and leave each item at a spot. Do it once and the order sticks. Got It!"
  },
  "buddy/modal/translations": {
-  "h": "68d8aa8c7a4736eb",
-  "len": 129628,
-  "els": 2227,
-  "buttons": 585,
+  "h": "77d87121098dfb45",
+  "len": 129783,
+  "els": 2229,
+  "buttons": 586,
   "svgs": 0,
   "imgs": 0,
   "text": "✕ Profile &amp; Settings 🛠️ Admin Test tools 🎖️ Badges 12 earned 📲 Get the app Home screen ✨ Feature store all on 🎫 "
