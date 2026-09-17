@@ -4181,6 +4181,72 @@ const DAY = 86400000;
   is(settings.unsetGains, 5, '...it adopts the choice instead');
   is(settings.together, 'week,3,7,2', 'a goal arrives whole, never half from each device');
 
+  describe('the reader report has something true to read', () => { });
+
+  const report = await $(() => {
+    const out = {};
+    const snap = JSON.parse(JSON.stringify(Prog));
+    const month = statMonth();
+    const g = () => ((Prog.stats || {})[month] || {}).g || 0;
+
+    // Ordinary work counts one unit into the month it happened in.
+    Prog.dailyGoal = 20; Prog.goalMode = 'same';       // room to work without finishing the day
+    const before = g();
+    bumpGoal(true);                                    // defer: the celebration is returned, not played
+    out.counted = g() - before;
+
+    // A review's unit is credited on its own counter and must land once, not twice.
+    const mid = g();
+    bumpGoalFromReview(true);
+    out.reviewCounted = g() - mid;
+
+    // Finishing a lesson stamps what it was and when.
+    Prog.lastLesson = null;
+    markLessonTaken({ id: 'book:40' });
+    out.lessonId = Prog.lastLesson && Prog.lastLesson.id;
+    out.lessonStamped = !!(Prog.lastLesson && Prog.lastLesson.at > 0);
+    // A repeat moves the stamp: the question is what they last sat down to, not what they unlocked.
+    const backdated = Prog.lastLesson.at - 60000;
+    Prog.lastLesson.at = backdated;
+    markLessonTaken({ id: 'snd:0-4' });
+    out.repeatMoves = Prog.lastLesson.id === 'snd:0-4' && Prog.lastLesson.at > backdated;
+    markLessonTaken({}); markLessonTaken(null);
+    out.ignoresJunk = Prog.lastLesson.id === 'snd:0-4';
+
+    // Two devices: the later lesson wins, and a device with none does not erase one.
+    const base = { memorized: ['1:1:1'], doneSkills: ['x'] };
+    const early = Object.assign({}, base, { lastLesson: { id: 'book:1', at: 1000 } });
+    const late = Object.assign({}, base, { lastLesson: { id: 'book:2', at: 2000 } });
+    out.laterWins = mergeProg(early, late).lastLesson.id;
+    out.laterWinsBothWays = mergeProg(late, early).lastLesson.id;
+    out.noneKeepsOne = (mergeProg(late, base).lastLesson || {}).id;
+    out.neitherIsNull = mergeProg(base, base).lastLesson;
+
+    // Monthly rows take the higher of the two, so a sync cannot count the same unit again.
+    const a = Object.assign({}, base, { stats: { '2026-09': { g: 9 } } });
+    const b = Object.assign({}, base, { stats: { '2026-09': { g: 4 } } });
+    out.mergedUnits = mergeProg(a, b).stats['2026-09'].g;
+    out.mergeIsIdempotent = mergeProg(mergeProg(a, b), b).stats['2026-09'].g;
+
+    Object.assign(Prog, JSON.parse(JSON.stringify(snap)));
+    Prog.stats = snap.stats ? JSON.parse(JSON.stringify(snap.stats)) : {};
+    Prog.lastLesson = snap.lastLesson || null;
+    saveProg(); bustCaches(); closeEveryOverlay();
+    return out;
+  });
+  is(report.counted, 1, 'a unit of work counts one goal unit into this month');
+  is(report.reviewCounted, 1, '...and a review counts one, not two');
+  is(report.lessonId, 'book:40', 'finishing a lesson records which one');
+  ok(report.lessonStamped, '...with the day it happened on');
+  ok(report.repeatMoves, '...and doing one again moves the stamp');
+  ok(report.ignoresJunk, 'a lesson with no id leaves the record alone');
+  is(report.laterWins, 'book:2', 'the later lesson survives a merge');
+  is(report.laterWinsBothWays, 'book:2', '...whichever device the merge runs on');
+  is(report.noneKeepsOne, 'book:2', 'a device with no lesson does not erase one');
+  is(report.neitherIsNull, null, 'two accounts with no lesson merge to nothing, not undefined');
+  is(report.mergedUnits, 9, 'goal units merge by the higher month, never the sum');
+  is(report.mergeIsIdempotent, 9, '...so syncing twice does not inflate them');
+
   describe('every sound exists, is switchable, and can be heard', () => { });
 
   const sfx = await $(() => {

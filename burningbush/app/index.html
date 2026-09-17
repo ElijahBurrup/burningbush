@@ -2216,6 +2216,8 @@
         <div id="bugReportsWrap" style="display:none">
           <div class="prof-sect" style="margin-top:18px">Bug reports</div>
           <button class="btn ghost" id="bugReportsBtn" style="width:100%">🐞 Review bug reports</button>
+          <div class="prof-sect" style="margin-top:18px">Readers</div>
+          <button class="btn ghost" id="userReportBtn" style="width:100%">📊 Who is using the app</button>
         </div>
       </div>
 
@@ -2424,8 +2426,12 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.21.10";
+const APP_VERSION="2.21.11";
 const CHANGELOG=[
+ {v:"2.21.11", d:"September 17, 2026", t:"The daily goal keeps its history", items:[
+   ["new","<b>Your goal units are kept by the month.</b> The daily goal only ever remembered today and the fortnight behind it, so a year of faithful work left no trace. Every unit is now counted into the same monthly record your verses and reviews go into, and it merges across your devices like the rest of it."],
+   ["chg","<b>The last lesson you finished is remembered with its day.</b> Finishing a lesson used to tick it off a list with no note of when, so nothing could tell you what you last sat down to."]
+ ]},
  {v:"2.21.10", d:"September 16, 2026", t:"Release notes are yours", items:[
    ["chg","<b>Only you see release notes.</b> Everyone else is told just <b>Update Available</b> when one is on its way and <b>Now Installed!</b> once it is running, and Profile shows them the version number only."],
    ["fix","<b>The Library no longer moves the page while it sizes its buttons.</b> Scrolled down, the page could jump up by a row as the tiles were measured."]
@@ -5648,6 +5654,11 @@ function mergeProg(a,b){
       Object.keys(x).concat(Object.keys(y)).forEach(f=>{ row[f]=Math.max(x[f]||0, y[f]||0); });
       out[k]=row; });
     return out; })();
+  // The last lesson finished on EITHER device, which is whichever one happened later.
+  m.lastLesson=(()=>{ const x=a.lastLesson, y=b.lastLesson;
+    if(!x||!x.id) return (y&&y.id)?y:null;
+    if(!y||!y.id) return x;
+    return ((x.at|0)>=(y.at|0)) ? x : y; })();
   m.compPro=a.compPro||b.compPro||0;                         // a comp code redeemed anywhere holds everywhere
   // Asked on one device is asked on all of them, and "never again" is honoured everywhere at once.
   m.nudge={ at:Math.max((a.nudge||{}).at||0, (b.nudge||{}).at||0),
@@ -6216,7 +6227,8 @@ const Auth = {
   adminMediaEdit(id,b){ return Auth._req("/admin/media/"+id,"POST",b); },
   adminDoc(key){ return Auth._req("/admin/content/"+key,"GET"); },
   adminDocSave(key,doc,note){ return Auth._req("/admin/content/"+key,"POST",{doc,note}); },
-  adminDocRevert(key,id){ return Auth._req("/admin/content/"+key+"/revert","POST",{id}); }
+  adminDocRevert(key,id){ return Auth._req("/admin/content/"+key+"/revert","POST",{id}); },
+  adminUsers(fresh){ return Auth._req("/admin/users"+(fresh?"?fresh=1":""),"GET"); }
 };
 const ADMIN_EMAILS=["elijahdburrup@gmail.com","erinburrup@gmail.com"];   // who may review every user's bug reports and see the Admin tools
 // any verse (curated pool object if present, else built from the full KJV)
@@ -7721,6 +7733,7 @@ function startStoryLesson(sk, host, ret){
 function finishStory(){
   const sk=ST.sk, host=ST.host||"learn", ret=ST.ret||renderPath;
   if(!Prog.doneSkills.includes(sk.id)) Prog.doneSkills.push(sk.id);
+  markLessonTaken(sk);
   sk.items.forEach(id=>gradeKey(`sk:story:${id}`,"good"));
   const s=sk.story, b=bookNum(s.b), c=s.c, v=s.v, k=refKey(b,c,v);
   Prog.saved=Prog.saved.filter(x=>x!==k); Prog.skipped=Prog.skipped.filter(x=>x!==k);
@@ -8992,12 +9005,21 @@ function renderLessonDone(){
   el("lPath2").onclick=()=>{ lessonReturn=null; renderPath(true); };
   return true;
 }
+/* The last lesson finished, and when. doneSkills is a set of ids with no history in it — nothing
+   records WHEN one was done, and a repeat leaves no trace at all — so this is the one field the
+   admin report reads for "what did they do last". Every finish writes it, new or repeated, because
+   the question is what they last sat down to, not what they last unlocked. */
+function markLessonTaken(sk){
+  if(!sk || !sk.id) return;
+  Prog.lastLesson={ id:String(sk.id), at:Date.now() };
+}
 function finishLesson(){
   const sk=LZ.sk;
   const rk=v=>refKey(bookNum(v.b),v.c,v.v);
   const before=new Set(sugPool().filter(v=>reachable(bookNum(v.b),v.c,v.v)).map(rk));
   const wasNew=!Prog.doneSkills.includes(sk.id);
   if(wasNew) Prog.doneSkills.push(sk.id);
+  markLessonTaken(sk);
   const lvlBefore=Prog.level;
   bustCaches(); recomputeLevel(); saveProg(); updateMetrics(); if(wasNew) earnTalents(REWARD.lesson); checkBadges();
   if(wasNew) Sfx.lessonDone();
@@ -12234,7 +12256,8 @@ function bumpGoalFromReview(defer){
   // day rather than re-measured later.
   const cleared = reviewDueCount()<=1;
   if(s.count>=SR_GOAL_MAX){ if(cleared) markSrDone(); return function(){}; }
-  s.count++; saveProg();
+  s.count++; try{ statBump("g"); }catch(e){}   // a review unit counts toward the month's tally like any other
+  saveProg();
   const done=bumpGoal(defer, true);   // the review's own counter is the one above
   if(cleared && markSrDone()){ updateMetrics(); creditToday(); }
   return done;
@@ -12419,8 +12442,12 @@ function goalMet(){
 function bumpGoal(defer, fromReview){ const noop=function(){};
   const st=goalState(), target=goalToday();
   const wasMet=goalMet();
-  if(wasMet){ if(!fromReview) st.count++; saveProg(); maybePaceNudge(); return noop; }   // already met → still count, no flash
-  if(!fromReview) st.count++;
+  /* The month's tally of goal units, for the admin report. goalDay holds today and goalLog holds a
+     fortnight, so without this there is no answer to "how much has this person done" older than two
+     weeks. Counted where the unit is actually credited: a review credits its own on the counter in
+     bumpGoalFromReview, which is why the fromReview pass through here counts nothing. */
+  if(wasMet){ if(!fromReview){ st.count++; try{ statBump("g"); }catch(e){} } saveProg(); maybePaceNudge(); return noop; }   // already met → still count, no flash
+  if(!fromReview){ st.count++; try{ statBump("g"); }catch(e){} }
   saveProg(); updateMetrics();                                           // refresh HUD + the Verses tab badge
   maybePaceNudge();                                                      // a big day earns the "little and often" word, not applause
   const celebrate=()=>{ goalFlash(goalCount(), target);
@@ -17797,8 +17824,81 @@ if(el("testWalkBtn")) el("testWalkBtn").onclick=()=>{ closeProfile(); OnboardWal
 if(el("testOnboardBtn")) el("testOnboardBtn").onclick=()=>{ closeProfile(); Onboard.preview(); };
 if(el("bugReportsBtn")) el("bugReportsBtn").onclick=()=>openBugReports();
 if(el("adminContentBtn")) el("adminContentBtn").onclick=()=>openContentAdmin();
+if(el("userReportBtn")) el("userReportBtn").onclick=()=>openUserReport();
 
 // Admin-only: review every user's submitted bug reports (email · text · done/undone · delete).
+/* ---- Admin: who is using the app ---------------------------------------------------------------
+   One card per account, newest activity first. Two of the numbers can only be as good as the data
+   behind them: an account that has not been opened since v2.21.11 has no lesson stamp and no goal
+   tally, so the server falls back to the last id in doneSkills and to the fortnight the goal log
+   keeps. Anything estimated is drawn with a "~" and says so at the foot, because a guess that looks
+   like a measurement is worse than a blank. */
+function skillLabel(id){
+  if(!id) return "";
+  for(const U of UNITS){ for(const sk of (U.skills||[])){ if(sk.id===id) return sk.label || sk.id; } }
+  return String(id);
+}
+function adminWhen(ms, never){
+  if(!ms) return never||"never";
+  const d=new Date(ms), now=new Date(), mins=Math.round((now-d)/60000);
+  if(mins<1) return "just now";
+  if(mins<60) return mins+" min ago";
+  if(mins<24*60) return Math.round(mins/60)+" hr ago";
+  if(mins<48*60) return "yesterday";
+  return d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:(d.getFullYear()===now.getFullYear()?undefined:"numeric")});
+}
+async function openUserReport(fresh){
+  let m=el("usersModal"); if(!m){ m=document.createElement("div"); m.id="usersModal"; m.className="modal"; document.querySelector(".phone").appendChild(m); }
+  const esc=s=>String(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  const shell=(inner)=>`<div class="modal-card" style="max-height:88vh;display:flex;flex-direction:column">
+      <div class="ed-head"><h2>📊 Readers</h2></div>
+      <div id="usersList" style="flex:1;overflow:auto;margin:6px 0 10px">${inner}</div>
+      <div class="btnrow"><button class="btn ghost" id="usersCopy">📋 Copy as CSV</button><button class="btn ghost" id="usersRefresh">↻ Refresh</button><button class="btn" id="usersClose">Done</button></div>
+    </div>`;
+  m.innerHTML=shell(`<p class="hint" style="text-align:center;margin:20px 0">Loading…</p>`);
+  m.style.display="flex"; raiseModal(m);
+  m.onclick=e=>{ if(e.target===m) m.style.display="none"; };
+  el("usersClose").onclick=()=>m.style.display="none";
+  el("usersRefresh").onclick=()=>openUserReport(true);   // Refresh means refresh: skip the server's cache
+  // Wired before the load, not after it: a button that does nothing when the fetch failed is a
+  // control with no handler, and this screen has two ways to end up without a list.
+  let list=[];
+  el("usersCopy").onclick=async()=>{
+    if(!list.length){ toast("Nothing to copy yet."); return; }
+    const cell=v=>`"${String(v==null?"":v).replace(/"/g,'""')}"`;
+    const csv=[["Email","Last login","Last synced","Last lesson","Lesson day","Goal units","Goal units estimated","Verses","Days active","Pro"].map(cell).join(",")]
+      .concat(list.map(u=>[u.email,
+        u.lastLoginAt?new Date(u.lastLoginAt).toISOString():"",
+        u.lastSyncAt?new Date(u.lastSyncAt).toISOString():"",
+        skillLabel(u.lastLesson), u.lastLessonAt?new Date(u.lastLessonAt).toISOString():"",
+        u.goalUnits|0, u.goalUnitsEstimated?"yes":"no", u.verses|0, u.daysActive|0, u.pro?"yes":"no"].map(cell).join(",")))
+      .join("\r\n");
+    try{ await navigator.clipboard.writeText(csv); toast("📋 Copied for a spreadsheet."); }
+    catch(e){ toast("Couldn't copy on this device."); }
+  };
+  try{
+    const {users}=await Auth.adminUsers(!!fresh);
+    list=(users||[]).slice().sort((a,b)=>(b.lastSyncAt||0)-(a.lastSyncAt||0));
+    if(!list.length){ el("usersList").innerHTML=`<p class="hint" style="text-align:center;margin:20px 0">No accounts yet.</p>`; return; }
+    const anyEst=list.some(u=>u.lastLessonEstimated||u.goalUnitsEstimated);
+    const row=(k,v)=>`<div style="display:flex;justify-content:space-between;gap:10px;font-size:13px"><span class="muted">${k}</span><span>${v}</span></div>`;
+    el("usersList").innerHTML=list.map(u=>`<div class="teachbox" style="margin:0 0 8px;text-align:left">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+          <b class="gold" style="word-break:break-all;font-size:13.5px">${esc(u.email)}</b>
+          ${u.pro?`<span class="muted" style="font-size:11px">${esc(u.plan==="group-seat"?"seat":"Pro")}</span>`:""}
+        </div>
+        ${row("Last login", esc(adminWhen(u.lastLoginAt,"not since this was added")))}
+        ${row("Last synced", esc(adminWhen(u.lastSyncAt)))}
+        ${row("Last lesson", u.lastLesson
+            ? esc(skillLabel(u.lastLesson))+" <span class=\"muted\">"+(u.lastLessonAt?esc(adminWhen(u.lastLessonAt)):"day unknown")+"</span>"
+            : `<span class="muted">none yet</span>`)}
+        ${row("Goal units", (u.goalUnitsEstimated?"~":"")+(u.goalUnits|0))}
+      </div>`).join("")
+      + `<p class="hint" style="margin:10px 2px 0">${list.length} account${list.length===1?"":"s"}.`
+      + (anyEst?` A <b>~</b> is an estimate from before this report existed: goal units then cover only the last fortnight, and a lesson with no day was read from the order lessons were finished in.`:"")
+      + `</p>`;
+  }catch(e){ el("usersList").innerHTML=`<p class="hint" style="text-align:center;margin:20px 0;color:var(--miss-ink)">${esc(e.message||"Couldn't load the reader report.")}</p>`; }
+}
 async function openBugReports(){
   let m=modalHost("bugModal");
   const esc=s=>String(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));

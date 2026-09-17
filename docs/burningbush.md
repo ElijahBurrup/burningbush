@@ -290,6 +290,32 @@ learned, the pool is the Foundation (`PHASE1_BOOKS`). `otherPictures` follows th
 - **Count where the thing actually happens, not where the function is called.** `statBump("v")` sat
   at the top of `addMemorized` and so counted a verse the reader already had. It now sits inside the
   branch that actually adds one.
+- **`g` is goal units**, added in v2.21.11 and counted where a unit is credited: in `bumpGoal` when it
+  is not a review (the review credits its own on `bumpGoalFromReview`'s counter, which is why the
+  `fromReview` pass through `bumpGoal` counts nothing). `goalDay` holds today and `goalLog` a
+  fortnight, so this row is the only lifetime answer there is.
+
+## 8e. The reader report (Admin)
+
+Profile → Admin → **Who is using the app** (`openUserReport`, admins only) asks
+`GET /api/admin/users` and draws one card per account: email, last login, last synced, the last
+lesson with its day, and goal units. "Copy as CSV" puts the same thing on the clipboard with verses
+and active days as well.
+
+- **Two fields had no history to read.** `doneSkills` is a set of ids that nothing stamps, and no
+  lifetime goal tally existed, so v2.21.11 added `Prog.lastLesson = {id, at}` (written by
+  `markLessonTaken` from `finishLesson` and `finishStory`, on every finish including a repeat) and
+  the monthly `g` above. **Accounts not opened since fall back** to the tail of `doneSkills` and to
+  the fortnight in `goalLog`; the server flags both (`lastLessonEstimated`, `goalUnitsEstimated`) and
+  the card draws a `~`. Never let an estimate render as a measurement.
+- **Last login is not last use.** The token lasts a year, so signing in is rare; `${D}.user_meta`
+  records it from `/api/login` (fire-and-forget — a report is not worth failing a login over), and
+  the card shows **Last synced** from `progress.saved_at` beside it, which is what actually says
+  whether somebody is using the app.
+- `report.js` holds the blob reading, apart from `server.js`, so it is testable with no database:
+  `node test/report.test.js`.
+- The endpoint reads every progress blob, so it is cached for 60 s; the screen asks with `?fresh=1`.
+  Counts and timestamps only — nothing anybody wrote is in the response.
 
 ## 9. Gotchas worth remembering
 
