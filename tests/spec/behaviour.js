@@ -9341,6 +9341,158 @@ const DAY = 86400000;
   ok(who.noLinksInConfig, 'no payment link is held in the client — the server opens checkout');
   is(who.priceLabel, '$35/year', 'the paywall quotes the price actually charged');
 
+  // ─────────────── agreeing to the terms, before any money moves ───────────────
+  describe('the terms are agreed before a purchase', () => { });
+  // The tick above the prices is the gate, not decoration: the server refuses to open checkout
+  // without its own record of it (burningbush-api/legal.js), and every path that leads to money
+  // asks first. What is checked here is the client half — that nothing reaches checkout unticked,
+  // that the box says what it is agreeing to, and that Profile can always reach the pages.
+  const law = await $(() => {
+    const out = {}, snap = Prog.legal;
+    const calls = [];
+    const realCheckout = Billing.startCheckout;
+    Billing.startCheckout = p => { calls.push(p || 'yearly'); };
+    delete Prog.legal; saveProg();
+    openPaywall(null);
+
+    out.version = LEGAL_VERSION;
+    out.notAcceptedYet = !legalAccepted();
+    out.boxUnticked = el('payAgree').checked === false;
+    const label = el('payAgreeWrap').textContent;
+    out.saysTerms = /Terms of Service/.test(label);
+    out.saysPrivacy = /Privacy Policy/.test(label);
+    out.saysArbitration = /arbitration/i.test(label) && /class-action/i.test(label);
+    out.saysRenews = /renew/i.test(label);
+    out.linksOut = [...el('payAgreeWrap').querySelectorAll('a')].map(a => a.getAttribute('href')).join(' ');
+
+    // pressing a price without agreeing reaches nothing
+    el('payYearly').onclick();
+    el('payMonthly').onclick();
+    out.noCheckoutUntilAgreed = calls.length === 0;
+
+    // agreeing, then pressing, does
+    el('payAgree').checked = true; el('payAgree').onchange();
+    out.acceptedNow = legalAccepted();
+    out.recordKept = !!(Prog.legal && Prog.legal.v === LEGAL_VERSION && Prog.legal.at > 0 && Prog.legal.where === 'paywall');
+    el('payYearly').onclick();
+    out.checkoutAfterAgreeing = calls.join(',') === 'yearly';
+
+    // un-ticking takes the agreement back
+    el('payAgree').checked = false; el('payAgree').onchange();
+    out.untickTakesItBack = !legalAccepted() && !Prog.legal;
+
+    // and the sheet always shows the truth when it opens
+    Prog.legal = { v: LEGAL_VERSION, at: Date.now(), where: 'paywall' }; saveProg();
+    el('payAgree').checked = false;
+    openPaywall(null);
+    out.reopensTicked = el('payAgree').checked === true;
+
+    // an old version is not an agreement to this one
+    Prog.legal = { v: '1999-01-01', at: Date.now(), where: 'paywall' }; saveProg();
+    out.oldVersionIsNotAgreement = !legalAccepted();
+
+    Billing.startCheckout = realCheckout;
+    closePaywall();
+    if (snap) Prog.legal = snap; else delete Prog.legal;
+    saveProg();
+    return out;
+  });
+  ok(/^\d{4}-\d{2}-\d{2}$/.test(law.version), 'the terms the app asks about carry a dated version');
+  ok(law.notAcceptedYet && law.boxUnticked, 'nothing is agreed to by default, and the box starts empty');
+  ok(law.saysTerms && law.saysPrivacy, 'the box names the Terms and the Privacy Policy');
+  ok(law.saysArbitration, '...and says plainly that it includes the arbitration and class-action waiver');
+  ok(law.saysRenews, '...and that a subscription renews until cancelled');
+  ok(/burningbush\.app\/terms/.test(law.linksOut) && /burningbush\.app\/privacy/.test(law.linksOut),
+    '...with both pages one tap away, before agreeing');
+  ok(law.noCheckoutUntilAgreed, 'neither price opens checkout while the box is empty');
+  ok(law.acceptedNow && law.recordKept, 'ticking it is recorded with the version, the time and where it was ticked');
+  ok(law.checkoutAfterAgreeing, '...and then the price opens checkout');
+  ok(law.untickTakesItBack, 'un-ticking takes the agreement back');
+  ok(law.reopensTicked, 'the sheet shows what is already agreed when it opens');
+  ok(law.oldVersionIsNotAgreement, 'agreeing to older terms is not agreeing to these');
+
+  const help = await $(() => {
+    const out = {};
+    el('themeBtn').onclick();                       // Profile, which builds its panels on first open
+    out.panel = !!document.getElementById('pp-help-legal');
+    out.order = PROF_ORDER.indexOf('Help & legal') > -1;
+    out.support = !!el('pSupport'); out.terms = !!el('pTerms');
+    out.privacy = !!el('pPrivacy'); out.deleteData = !!el('pDeleteData');
+    out.email = (el('pLegalNote') || {}).textContent || '';
+    out.urls = [LEGAL_URLS.terms, LEGAL_URLS.privacy, LEGAL_URLS.deleteData].join(' ');
+    closeProfile();
+    return out;
+  });
+  ok(help.panel && help.order, 'Profile has a Help & legal panel');
+  ok(help.support && help.terms && help.privacy && help.deleteData,
+    '...with contact us, the Terms, the Privacy Policy and deleting your data');
+  ok(/support@burningbush\.app/.test(help.email), '...and the address a person reads');
+  ok(/\/terms/.test(help.urls) && /\/privacy/.test(help.urls) && /\/delete/.test(help.urls),
+    '...pointing at the published pages');
+
+  // ─────────────── signing in with Google, and what it changes ───────────────
+  describe('sign in with Google', () => { });
+  // The client id ships empty until the Web client exists in Google Cloud, so nothing about Google
+  // may appear, and no script may be fetched from Google. What is here is the wiring: the button is
+  // Google's own, mounted by whichever sheet is open, and an account with no password confirms a
+  // deletion by signing in again instead.
+  const g = await $(() => {
+    const out = {};
+    out.offByDefault = !googleSignInOn();
+    out.noClientId = GOOGLE_CLIENT_ID === '';
+
+    // our own button, and the "or with email" rule, stay hidden while it is off
+    setLoginModal(true);
+    const btn = el('btnGoogle'), or = document.querySelector('#loginModal .ordiv');
+    out.btnHidden = btn.style.display === 'none';
+    out.orHidden = or.style.display === 'none';
+    out.noGoogleButtonDrawn = !document.querySelector('.gsi-slot');
+    out.noGoogleScript = ![...document.scripts].some(x => /accounts\.google\.com/.test(x.src || ''));
+    setLoginModal(false);
+
+    // mounting is refused quietly while it is off, rather than leaving a gap
+    const host = document.createElement('button');
+    document.body.appendChild(host);
+    mountGoogleButton(host, { onDone(){}, onErr(){} });
+    out.mountHidesHost = host.style.display === 'none' && !host.parentNode.querySelector('.gsi-slot');
+    host.remove();
+
+    // an account made with Google has no password, so the delete sheet asks Google instead
+    const snap = Store.getJSON('vv_acct', null);
+    Store.setJSON('vv_acct', { email: 'g@example.com', provider: 'google', verified: true, hasPassword: false });
+    el('delAcct').onclick();
+    out.googlePwHidden = /display:\s*none/.test(el('daPw').getAttribute('style') || '');
+    out.googleAsksGoogle = !!el('daGoogleBtn');
+    out.googleHint = /confirm with Google/i.test(document.getElementById('delAcctModal').textContent);
+    out.googleCannotDeleteYet = el('daGo').disabled;          // nothing typed, nothing confirmed
+    el('daNo').onclick();
+
+    // a password account is untouched: the password is still what confirms it
+    Store.setJSON('vv_acct', { email: 'p@example.com', provider: 'email', verified: true, hasPassword: true });
+    el('delAcct').onclick();
+    out.pwShown = !/display:\s*none/.test(el('daPw').getAttribute('style') || '');
+    out.pwNoGoogle = /display:\s*none/.test(el('daGoogleWrap').getAttribute('style') || '');
+    el('daEmail').value = 'p@example.com'; el('daEmail').oninput();
+    out.pwStillLocked = el('daGo').disabled;                  // the email alone is not enough
+    el('daPw').value = 'whatever'; el('daPw').oninput();
+    out.pwUnlocks = !el('daGo').disabled;
+    el('daNo').onclick();
+
+    if (snap) Store.setJSON('vv_acct', snap); else Store.remove('vv_acct');
+    return out;
+  });
+  ok(g.offByDefault && g.noClientId, 'Google sign-in is off until a client id is set');
+  ok(g.btnHidden && g.orHidden, '...so neither the Google button nor "or with email" is shown');
+  ok(g.noGoogleButtonDrawn, '...and no Google button is drawn');
+  ok(g.noGoogleScript, '...and nothing is fetched from Google');
+  ok(g.mountHidesHost, 'mounting the button while it is off leaves no gap behind');
+  ok(g.googlePwHidden, 'a Google account is not asked for a password it never had');
+  ok(g.googleAsksGoogle && g.googleHint, '...it is asked to confirm with Google instead');
+  ok(g.googleCannotDeleteYet, '...and cannot delete until that confirmation is in');
+  ok(g.pwShown && g.pwNoGoogle, 'a password account still confirms with its password');
+  ok(g.pwStillLocked, '...the typed email alone does not arm the button');
+  ok(g.pwUnlocks, '...and the password does');
+
   describe('nothing asserted while all of that ran', () => { });
 
   /* bbAssert() fires when the app is about to write something no screen could read back: a

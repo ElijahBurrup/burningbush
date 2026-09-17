@@ -2250,6 +2250,14 @@
       <div class="prof-sect" style="margin-top:16px">What's new</div>
       <button class="btn ghost" id="pChangelog" style="width:100%">📋 Version history</button>
 
+      <div class="prof-sect" style="margin-top:16px">Help &amp; legal</div>
+      <p class="hint" style="margin:0 0 8px">A person reads every message. Tell us which screen you were on and we will find it.</p>
+      <button class="btn ghost" id="pSupport" style="width:100%">✉️ Help &amp; contact us</button>
+      <button class="btn ghost" id="pTerms" style="width:100%;margin-top:8px">📜 Terms of Service</button>
+      <button class="btn ghost" id="pPrivacy" style="width:100%;margin-top:8px">🔒 Privacy Policy</button>
+      <button class="btn ghost" id="pDeleteData" style="width:100%;margin-top:8px">🗑️ Delete your data</button>
+      <p class="hint" id="pLegalNote" style="margin:8px 0 0;font-size:11.5px"></p>
+
       <div class="prof-sect" style="margin-top:16px">Theme</div>
       <button class="theme-opt" data-th="illumined"><span class="sw" style="background:linear-gradient(135deg,#0e0a26,#8b7bff,#f6dd8c)"></span><div><div class="tn">Illumined Night</div><div class="td">Glowing worship starfield · main theme</div></div></button>
       <button class="theme-opt" data-th="classic"><span class="sw" style="background:linear-gradient(135deg,#171a21,#e3b34a)"></span><div><div class="tn">Classic</div><div class="td">Midnight navy &amp; gold</div></div></button>
@@ -2351,6 +2359,14 @@
         <div>✦ All 100+ Bible story lessons</div>
         <div>✦ Unlimited bonus memory palaces</div>
       </div>
+      <label class="mtradio chk" id="payAgreeWrap" style="display:flex;align-items:flex-start;gap:9px;margin:0 0 10px;text-align:left;cursor:pointer">
+        <input type="checkbox" id="payAgree" style="margin-top:3px">
+        <span style="font-size:12px;line-height:1.45">I agree to the
+          <a href="https://burningbush.app/terms" target="_blank" rel="noopener">Terms of Service</a> and
+          <a href="https://burningbush.app/privacy" target="_blank" rel="noopener">Privacy Policy</a>,
+          including the limit on liability and the individual-arbitration and class-action waiver in section 9.
+          <span class="muted">Subscriptions renew until cancelled; cancel any time from Profile &rarr; Account.</span></span>
+      </label>
       <div class="hint" style="margin:0 0 8px;font-weight:700">💳 A subscription unlocks the <b class="gold">entire app, forever</b>:</div>
  <button class="btn blue" id="payYearly" style="width:100%">$35 / year · Go Pro <span style="font-size:11px;font-weight:700;opacity:.85"> · best value</span></button>
       <button class="btn blue" id="payMonthly" style="width:100%;margin-top:8px">$5 / month · Go Pro</button>
@@ -2426,8 +2442,14 @@ function loadTranslation(id){
 // Releasing: bump APP_VERSION and add an entry at the TOP of CHANGELOG. A new version
 // pops the "What's new" card once per device; the full history lives under
 // Profile → What's new. Each item is ["new"|"fix", "what changed"].
-const APP_VERSION="2.21.11";
+const APP_VERSION="2.22.0";
 const CHANGELOG=[
+ {v:"2.22.0", d:"September 17, 2026", t:"Terms, help, and a way in with Google", items:[
+   ["new","<b>Help &amp; legal, in Profile.</b> Contact us, the Terms of Service, the Privacy Policy and deleting your data, all in one place, with the address a person reads."],
+   ["new","<b>The Terms are agreed before a subscription, not after.</b> The paywall asks you to agree, says plainly what is in them, and links both pages so you can read them first. The agreement is kept with your account, not only on this device."],
+   ["chg","<b>The Terms of Service now cover what terms have to cover</b> — what we promise and what we do not, a limit on what we could ever owe, and how a disagreement would be settled: individual arbitration rather than a class action. There is a 30-day window to opt out of that part, and small claims court stays open either way."],
+   ["new","<b>Groundwork for signing in with Google.</b> The app and the server are ready for it, and one email address means one account, so signing in with Google finds the verses you already have rather than starting again. The button appears once it is switched on."]
+ ]},
  {v:"2.21.11", d:"September 17, 2026", t:"The daily goal keeps its history", items:[
    ["new","<b>Your goal units are kept by the month.</b> The daily goal only ever remembered today and the fortnight behind it, so a year of faithful work left no trace. Every unit is now counted into the same monthly record your verses and reviews go into, and it merges across your devices like the rest of it."],
    ["chg","<b>The last lesson you finished is remembered with its day.</b> Finishing a lesson used to tick it off a list with no note of when, so nothing could tell you what you last sat down to."]
@@ -5946,10 +5968,21 @@ const Billing = {
     }
     toast("Opening checkout…");
     try{
-      const d=await Auth._req("/checkout","POST",{plan: plan==="monthly"?"monthly":"yearly"});
+      const d=await Auth._req("/checkout","POST",{plan: plan==="monthly"?"monthly":"yearly",
+                                                  terms: LEGAL_VERSION});
       if(d && d.url){ location.href=d.url; return; }
       toast((d&&d.error)||"Checkout isn't set up yet.");
-    }catch(e){ toast("Couldn't reach the server to open checkout."); }
+    }catch(e){
+      // The server refuses checkout without an acceptance on its own record. That is the one error
+      // here with something to do about it, so say what it is rather than blaming the network.
+      if(/accept the Terms/i.test(e.message||"")){
+        if(Prog.legal){ delete Prog.legal; saveProg(); }
+        const a=el("payAgree"); if(a) a.checked=false;
+        toast("Please agree to the Terms first.");
+        return;
+      }
+      toast("Couldn't reach the server to open checkout.");
+    }
   },
   // Manage or cancel. Also a server-made session, so there is no shared link to guess.
   async manage(){
@@ -6015,6 +6048,98 @@ const API_BASE = (() => {
   }catch(e){}
   return /burningbush-qa|localhost|127\.0\.0\.1|^$/.test(location.hostname) ? SANDBOX : PROD;
 })();
+/* Agreeing to the terms, before any money changes hands.
+   The tick is kept with the progress (so it travels between devices) AND recorded on the server,
+   which is what the record is actually worth later: burningbush-api/legal.js. The server refuses
+   to open checkout without its own row, so this is not decoration — it is the gate.
+   LEGAL_VERSION must match TERMS_VERSION in the API. Raising it asks for agreement again before
+   the next purchase, and never interrupts anybody mid-use. */
+const LEGAL_VERSION = "2026-09-17";
+const LEGAL_URLS = { terms:"https://burningbush.app/terms", privacy:"https://burningbush.app/privacy",
+                     deleteData:"https://burningbush.app/delete", support:"support@burningbush.app" };
+function legalAccepted(){ const L=Prog&&Prog.legal; return !!(L && L.v===LEGAL_VERSION); }
+/* Ticked the box: kept here, and put on the server's record. Returns true once it is on file —
+   false means it is not, and nothing that needs it may go ahead. */
+async function acceptLegal(where){
+  Prog.legal = { v:LEGAL_VERSION, at:Date.now(), where:String(where||"app").slice(0,40) };
+  saveProg();
+  if(!(typeof Auth!=="undefined" && Auth.loggedIn())) return true;   // no account yet: recorded when they sign in
+  try{ await Auth._req("/legal/accept","POST",{ version:LEGAL_VERSION, source:where||"app" }); return true; }
+  catch(e){ return false; }
+}
+/* Signed in with a tick already kept on this device? Make sure the server holds it too — a record
+   only on the device that was cleared is no record at all. */
+function syncLegal(){
+  if(!legalAccepted() || !(typeof Auth!=="undefined" && Auth.loggedIn())) return;
+  Auth._req("/legal/accept","POST",{ version:LEGAL_VERSION, source:(Prog.legal&&Prog.legal.where)||"app" }).catch(()=>{});
+}
+
+/* Sign in with Google (2026-09-17).
+
+   The client id is not a secret — it names our app on Google's sign-in screen and sits in every
+   page that offers the button. What it can do is bounded on the server: the token Google hands
+   back is verified there, against this same id, before it counts as anybody at all
+   (burningbush-api/google-auth.js).
+
+   Empty means the button does not appear, which is how this ships until the Web client exists in
+   Google Cloud. It is also kept out of the phone app: Google refuses its web sign-in inside a
+   WebView, so the store builds stay with email until the Android plugin is in. */
+const GOOGLE_CLIENT_ID = "";
+function googleSignInOn(){ return !!GOOGLE_CLIENT_ID && nativePlatform() === "web"; }
+let _gsiLoad = null;
+function loadGoogleSignIn(){
+  if(_gsiLoad) return _gsiLoad;
+  _gsiLoad = new Promise((res,rej)=>{
+    if(window.google && window.google.accounts && window.google.accounts.id) return res();
+    const sc=document.createElement("script");
+    sc.src="https://accounts.google.com/gsi/client"; sc.async=true; sc.defer=true;
+    sc.onload=()=>res(); sc.onerror=()=>rej(new Error("Google sign-in could not load."));
+    document.head.appendChild(sc);
+  });
+  return _gsiLoad;
+}
+/* Google's own button, in place of ours: their sign-in only reports back through a button they drew
+   themselves, and their terms ask for their wording and mark in any case.
+
+   Google's library holds ONE callback for the whole page, whichever button is clicked, so the sheet
+   that is open owns it: a sheet mounts its button as it opens and the callback is re-pointed there.
+   Mounting once at boot would leave an earlier sheet's handler behind, and a click would then go
+   somewhere invisible.
+
+   opts.onCredential takes Google's token raw, without signing in — what deleting an account needs,
+   since it is confirming somebody already signed in. opts.onDone / opts.onErr are for signing in.
+   opts.alsoHide is hidden along with our button when Google is not set up. */
+let _gsiHandler = null;
+function mountGoogleButton(host, opts){
+  opts = opts || {};
+  if(!host) return;
+  if(!googleSignInOn()){
+    host.style.display="none";
+    (opts.alsoHide||[]).forEach(e=>{ if(e) e.style.display="none"; });
+    return;
+  }
+  host.style.display="none";
+  let slot = host.parentNode.querySelector(".gsi-slot");
+  if(!slot){
+    slot=document.createElement("div"); slot.className="gsi-slot";
+    slot.style.cssText="display:flex;justify-content:center;min-height:44px";
+    host.parentNode.insertBefore(slot, host);
+  }
+  slot.innerHTML="";
+  _gsiHandler = r=>{
+    const cred = r && r.credential;
+    if(opts.onCredential) return opts.onCredential(cred);
+    Promise.resolve(Auth.googleSignIn(cred)).then(d=>opts.onDone&&opts.onDone(d)).catch(e=>opts.onErr&&opts.onErr(e));
+  };
+  loadGoogleSignIn().then(()=>{
+    google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: r=>{ if(_gsiHandler) _gsiHandler(r); } });
+    google.accounts.id.renderButton(slot, { theme:"outline", size:"large", shape:"pill",
+      text: opts.text || "continue_with", width: Math.min(320, Math.max(220, host.offsetWidth||260)) });
+  }).catch(e=>{
+    // No network, or Google blocked: leave email sign-in standing rather than an empty gap.
+    slot.remove(); host.style.display="none"; if(opts.onErr) opts.onErr(e);
+  });
+}
 // Where the web publishes what it is running. Absolute, because the shell's own origin is the
 // bundle rather than the site.
 const WEB_VERSION_URL = "https://burningbush.kingdombuilders.ai/version.json";
@@ -6089,11 +6214,19 @@ const Auth = {
     // merges local into cloud and pushes the result, so leaving it would write their verses into
     // this account's row for good.
     if(owner && owner!==email) wipeLocalUserData();
-    Auth._token=d.token; Auth.user={email:d.email, provider:"email", verified:true};
+    // How they signed in, and whether the account has a password at all: deleting an account asks
+    // for the password again, and a Google-only account has none to give.
+    Auth._token=d.token; Auth.user={email:d.email, provider:d.provider||"email", verified:true,
+                                    hasPassword: d.hasPassword !== false};
     Store.set("vv_token",d.token); Store.setJSON("vv_acct",Auth.user); setProgOwner(email);
-    await Auth.pull(); renderAcctBox(); return d; },
+    await Auth.pull(); renderAcctBox();
+    try{ syncLegal(); }catch(e){}
+    return d; },
   // interface used by wireLogin / renderAcctBox
-  google(){ return Promise.reject(new Error("Please use email sign-in.")); },   // no Google OAuth on this backend (button hidden)
+  // Google's button hands us the token it got from Google; the server verifies it with Google and
+  // hands back one of ours. An account already on that email address is the same account: the
+  // server links them rather than starting a second one.
+  googleSignIn(credential){ return Auth._req("/auth/google","POST",{credential}).then(d=>Auth._onAuth(d)); },
   signIn(email,pw){ return Auth._req("/login","POST",{email,password:pw}).then(d=>Auth._onAuth(d)); },
   signUp(email,pw){ return Auth._req("/signup","POST",{email,password:pw}).then(d=>Auth._onAuth(d)); },
   resetPassword(email){ return Auth._req("/forgot","POST",{email}); },
@@ -6552,6 +6685,8 @@ const views=document.querySelectorAll(".view");
 function setLoginModal(open){
   const m=el("loginModal"); if(!m) return;
   m.style.display = open ? "flex" : "none";
+  // Google's single callback belongs to whichever sheet is open: claim it again on the way in.
+  if(open) try{ wireGoogleLogin(); }catch(e){}
   const pw=el("loginPass");
   if(pw){ pw.type = open ? "password" : "text"; pw.setAttribute("autocomplete", open ? "current-password" : "off"); }
 }
@@ -16528,6 +16663,10 @@ function renderAcctBox(){
   if(el("delAcct")) el("delAcct").onclick=()=>{
     const who=String((acct()&&acct().email)||"").toLowerCase();
     if(!who) return toast("Sign in first.");
+    /* An account made with Google has no password, so the one thing that cannot be undone is
+       confirmed the only way it can be: by signing in with Google again, here, now (owner's
+       decision, 2026-09-17). The server checks that token names this same account first. */
+    const byGoogle = !!(acct() && acct().provider==="google" && acct().hasPassword===false);
     const m=modalHost("delAcctModal");
     m.innerHTML=`<div class="modal-card">
         <div class="lv-topbar" style="margin:0 0 10px"><button class="lclose lclose-red" id="daX" style="margin:0">✕</button>
@@ -16540,18 +16679,28 @@ function renderAcctBox(){
           <span style="font-size:12.5px;line-height:1.4">Also delete my Kingdom Builders sign-in.<br>
             <span class="muted">This ends access to every Kingdom Builders app, not just this one.</span></span>
         </label>
-        <p class="hint" style="margin:0 0 6px">Type your email address, then your password.</p>
+        <p class="hint" style="margin:0 0 6px">${byGoogle ? "Type your email address, then confirm with Google." : "Type your email address, then your password."}</p>
         <input id="daEmail" class="typein" style="width:100%;box-sizing:border-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${bbEsc(who)}">
-        <input id="daPw" type="password" class="typein" style="width:100%;box-sizing:border-box;margin-top:8px" autocomplete="current-password" placeholder="Your password">
+        <input id="daPw" type="password" class="typein" style="width:100%;box-sizing:border-box;margin-top:8px${byGoogle ? ";display:none" : ""}" autocomplete="current-password" placeholder="Your password">
+        <div id="daGoogleWrap" style="margin-top:8px${byGoogle ? "" : ";display:none"}">
+          <button class="btn ghost loginbtn" id="daGoogleBtn" style="width:100%">Confirm with Google</button>
+        </div>
         <div id="daMsg" class="hint" style="margin:8px 0 0;min-height:18px"></div>
         <button class="btn" id="daGo" style="width:100%;margin-top:10px" disabled>Delete for ever</button>
         <button class="btn ghost" id="daNo" style="width:100%;margin-top:8px">Keep my account</button>
       </div>`;
     m.style.display="flex"; raiseModal(m);
     const go=el("daGo"), em=el("daEmail"), pw=el("daPw"), msg=el("daMsg");
-    const paint=()=>{ const ok=em.value.trim().toLowerCase()===who && pw.value.length>0;
+    let cred=null;
+    const paint=()=>{ const ok=em.value.trim().toLowerCase()===who && (byGoogle ? !!cred : pw.value.length>0);
       go.disabled=!ok; go.style.opacity=ok?"":".5"; };
     paint(); em.oninput=paint; pw.oninput=paint;
+    // The token is held here and sent with the deletion rather than signing them in again: they are
+    // already signed in, and this is only the proof that it is really them.
+    if(byGoogle) mountGoogleButton(el("daGoogleBtn"), { text:"signin_with",
+      onCredential: c=>{ if(!c) return;
+        cred=c; msg.innerHTML='<b style="color:var(--good)">Confirmed with Google.</b>'; paint(); },
+      onErr: e=>{ msg.innerHTML=`<b style="color:var(--miss)">${bbEsc((e&&e.message)||"Google sign-in did not finish.")}</b>`; } });
     const close=()=>{ m.style.display="none"; };
     el("daX").onclick=close; el("daNo").onclick=close;
     go.onclick=async ()=>{
@@ -16560,6 +16709,7 @@ function renderAcctBox(){
       const wideDeleted = !!(el("daWide") && el("daWide").checked);
       try{
         await Auth._req("/account/delete","POST",{ email:em.value.trim().toLowerCase(), password:pw.value,
+                                                   googleCredential: cred || undefined,
                                                    scope: wideDeleted ? "identity" : "product" });
         // Everything local goes with it, and the app ends where a new arrival starts.
         Auth._token=null; Auth.user=null;
@@ -16963,6 +17113,7 @@ function fmtDay(ms){ try{ return new Date(ms).toLocaleDateString(undefined,{year
 let payTargetSkill=null;
 /*STRIP:PAYWALL:START*/
 function openPaywall(sk){ const m=el("payModal"); if(!m) return;
+  { const a=el("payAgree"); if(a) a.checked=legalAccepted(); }
   // On iOS the two price buttons come out and a line goes in their place. Restore, the talent
   // unlock and the assistance request all stay: none of them is a purchase.
   { const ios=isStoreApp();
@@ -16988,9 +17139,32 @@ function openPaywall(sk){ const m=el("payModal"); if(!m) return;
 }
 /*STRIP:PAYWALL:END*/
 function closePaywall(){ if(el("payModal")) el("payModal").style.display="none"; }
+/* The tick above the prices. Nothing that costs money runs until it is on file: the server refuses
+   checkout without its own record, and this keeps that refusal from being a surprise. */
+function legalGate(where){
+  if(legalAccepted()) return true;
+  const wrap=el("payAgreeWrap");
+  if(wrap){
+    wrap.style.transition="background .2s"; wrap.style.background="var(--panel2)";
+    wrap.scrollIntoView({block:"nearest", behavior:"smooth"});
+    setTimeout(()=>{ wrap.style.background=""; }, 900);
+  }
+  toast("Please agree to the Terms first.");
+  return false;
+}
 function wirePaywall(){
-  if(el("payYearly")) el("payYearly").onclick=()=>Billing.startCheckout("yearly");
-  if(el("payMonthly")) el("payMonthly").onclick=()=>Billing.startCheckout("monthly");
+  const agree=el("payAgree");
+  if(agree){
+    agree.checked = legalAccepted();
+    agree.onchange = async ()=>{
+      if(!agree.checked){ if(Prog.legal){ delete Prog.legal; saveProg(); } return; }
+      const on = await acceptLegal("paywall");
+      if(!on){ agree.checked=false; if(Prog.legal){ delete Prog.legal; saveProg(); }
+        toast("Couldn't record that — check your connection."); }
+    };
+  }
+  if(el("payYearly")) el("payYearly").onclick=()=>{ if(legalGate("yearly")) Billing.startCheckout("yearly"); };
+  if(el("payMonthly")) el("payMonthly").onclick=()=>{ if(legalGate("monthly")) Billing.startCheckout("monthly"); };
   if(el("payHelp")) el("payHelp").onclick=()=>{ el("payModal").style.display="none"; openTicketForm({type:"assistance", title:"🙏 Request assistance", intro:"If cost is a barrier, tell us your story. Please share at least 250 words about why you'd like help (up to 500).", minWords:250, maxWords:500, placeholder:"Share why you're asking…"}); };
   if(el("payLesson")) el("payLesson").onclick=()=>{
     if(!payTargetSkill) return;
@@ -17008,9 +17182,9 @@ function wirePaywall(){
     // If a subscriber returns on a new device, they re-open checkout; a real backend would look
     // up their subscription. Here, direct them to checkout (Stripe recognizes existing subscribers).
     if(Billing.isPro()){ toast("You're already Pro ✨"); closePaywall(); renderPath(); }
-    else Billing.startCheckout();
+    else if(legalGate("restore")) Billing.startCheckout();
   };
-  if(el("payGroup")) el("payGroup").onclick=()=>{ closePaywall(); openGroupBuy(); };
+  if(el("payGroup")) el("payGroup").onclick=()=>{ if(!legalGate("group")) return; closePaywall(); openGroupBuy(); };
   if(el("payCode")) el("payCode").onclick=()=>{ closePaywall(); openCodeSheet(); };
 }
 function authErr(e){ const c=(e&&e.code)||"";
@@ -17024,13 +17198,24 @@ function authErr(e){ const c=(e&&e.code)||"";
  if(c.includes("network")) return "Network error, check your connection.";
   return (e&&e.message)||"Something went wrong.";
 }
+/* The Google button on the sign-in sheet. Called again each time the sheet opens, so Google's one
+   callback belongs to the sheet in front of the reader. */
+function wireGoogleLogin(msg){
+  const say = msg || (t=>{ const m=el("loginMsg"); if(m){ m.textContent=t||""; m.style.color="var(--miss)"; } });
+  const ordiv = document.querySelector("#loginModal .ordiv");
+  mountGoogleButton(el("btnGoogle"), {
+    onDone: ()=>{ setLoginModal(false); Store.remove("vv_skiplogin"); toast("Welcome. Your progress is synced! \u2601"); },
+    onErr: e=>say((e&&e.message)||"Google sign-in did not finish."),
+    alsoHide: [ordiv],
+  });
+}
 function wireLogin(){
   const msg=(t,ok)=>{ const m=el("loginMsg"); if(m){ m.textContent=t||""; m.style.color=ok?"var(--good)":"var(--miss)"; } };
   const email=()=>(el("loginEmail").value||"").trim();
   const pass=()=>(el("loginPass").value||"");
   const okEmail=e=>/.+@.+\..+/.test(e);
-  if(el("btnGoogle")) el("btnGoogle").style.display="none";                 // email-only backend
-  const ordiv=document.querySelector("#loginModal .ordiv"); if(ordiv) ordiv.style.display="none";
+  // Google's button where it is set up; otherwise the sheet is email-only, as it was.
+  wireGoogleLogin(msg);
   ["btnSignin","btnCreate","btnForgot"].forEach(id=>{ if(el(id)) el(id).disabled=false; });
 
   // Arrived from a password-reset email (?reset=TOKEN) → show a "set a new password" form instead of sign-in.
@@ -17050,7 +17235,10 @@ function wireLogin(){
     return;
   }
 
-  if(el("loginNote")) el("loginNote").innerHTML = "Create a free <b>Kingdom Builders</b> account to back up your progress to the cloud and restore it on any device. One login works across all our apps.";
+  if(el("loginNote")) el("loginNote").innerHTML = "Create a free <b>Kingdom Builders</b> account to back up your progress to the cloud and restore it on any device. One login works across all our apps."
+    + "<br><span style=\"opacity:.85\">By creating an account you agree to our "
+    + "<a href=\"" + LEGAL_URLS.terms + "\" target=\"_blank\" rel=\"noopener\">Terms of Service</a> and "
+    + "<a href=\"" + LEGAL_URLS.privacy + "\" target=\"_blank\" rel=\"noopener\">Privacy Policy</a>.</span>";
   const done=(t)=>{ setLoginModal(false); Store.remove("vv_skiplogin"); toast(t); };
 
   if(el("btnSignin")) el("btnSignin").onclick=()=>{
@@ -17386,7 +17574,8 @@ const PROF_ICONS={ "Admin":"🛠️", "Badges":"🎖️", "Feature store":"✨",
   "Reading voice":"🗣️", "Speaking":"🎤",
   "Group licences":"🎫", "Give":"🎁",
   "Bible translation":"📗", "Reference library":"📚", "What's new":"📋", "Theme":"🎨",
-  "Get the app":"📲", "Sound effects":"🔔", "Sync":"🔄", "Back up your progress":"💾" };
+  "Get the app":"📲", "Sound effects":"🔔", "Sync":"🔄", "Back up your progress":"💾",
+  "Help & legal":"⚖️" };
 const PROF_SUBS={
   "Admin":()=>"Test tools",
   "Badges":()=>{ const n=BADGES.filter(b=>b.have()).length; return n+" earned"; },
@@ -17410,11 +17599,12 @@ const PROF_SUBS={
     return off ? off+" switched off" : "All on"; },
   "Sync":()=>((typeof Auth!=="undefined"&&Auth._token)?"Across your devices":"Sign in to sync"),
   "Back up your progress":()=>"Export or restore",
+  "Help & legal":()=>"Contact, terms, privacy",
   "App version":()=>"v"+APP_VERSION,
 };
 // The order Profile reads in. Anything not named here follows, in the order it was authored.
 const PROF_ORDER=["Admin","Badges","Get the app","Feature store","Group licences","Give","Bible translation","Theme",
-  "Reference library","Sound effects","Sync","Back up your progress","What's new","App version"];   // the version sits last
+  "Reference library","Sound effects","Sync","Back up your progress","What's new","Help & legal","App version"];   // the version sits last
 // Installed already? Then there is nothing to install, and the button is noise.
 function isInstalledApp(){
   try{ return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone===true; }
@@ -18035,6 +18225,15 @@ if(el("pFeatures")) el("pFeatures").onclick=()=>openFeatureStore();
 if(el("pLicences")) el("pLicences").onclick=()=>openLicences();
 if(el("pGive")){ if(canBuyHere()) el("pGive").onclick=()=>openGive(); else el("pGive").style.display="none"; }
 el("pChangelog").textContent=`📋 Version${seesReleaseNotes()?" history":""} · v${APP_VERSION}`;
+// Help & legal. The support form is the same one used everywhere else, so a message still says
+// which screen it came from; the pages open outside the app, where they can be read and kept.
+if(el("pSupport")) el("pSupport").onclick=()=>{ closeProfile();
+  openTicketForm({type:"support", title:"✉️ Help & contact", intro:"Tell us what happened, or ask us anything. A person reads it, and replies to your account's email address.", placeholder:"What's going on?"}); };
+if(el("pTerms")) el("pTerms").onclick=()=>window.open(LEGAL_URLS.terms,"_blank","noopener");
+if(el("pPrivacy")) el("pPrivacy").onclick=()=>window.open(LEGAL_URLS.privacy,"_blank","noopener");
+if(el("pDeleteData")) el("pDeleteData").onclick=()=>window.open(LEGAL_URLS.deleteData,"_blank","noopener");
+if(el("pLegalNote")) el("pLegalNote").innerHTML = '<a href="mailto:'+LEGAL_URLS.support+'">'+LEGAL_URLS.support+'</a>'
+  + (legalAccepted() ? ' · terms accepted '+new Date(Prog.legal.at).toLocaleDateString()+' (v'+Prog.legal.v+')' : '');
 el("pChangelog").onclick=()=>{ closeProfile(); openWhatsNew(true); };
 el("themeModal").onclick=e=>{ if(e.target===el("themeModal")) closeProfile(); };
 document.querySelectorAll(".theme-opt").forEach(b=>b.onclick=()=>applyTheme(b.dataset.th));
